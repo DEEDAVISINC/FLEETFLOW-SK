@@ -170,6 +170,59 @@ export default function Page() {
             </Link>
           </div>
 
+          {/* DOT Compliance Services */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gap: '20px',
+            marginBottom: '30px'
+          }}>
+            <Link href="/dot-compliance" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(255, 193, 7, 0.8))',
+                padding: '30px',
+                borderRadius: '15px',
+                textAlign: 'center',
+                border: '2px solid rgba(255, 255, 255, 0.4)',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '15px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  padding: '5px 10px',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: 'bold'
+                }}>
+                  NEW SERVICE
+                </div>
+                <h3 style={{ margin: '0 0 15px 0', fontSize: '2rem' }}>🛡️ DOT Compliance</h3>
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '1.2rem', fontWeight: 'normal' }}>
+                  AI-Powered Compliance Management
+                </h4>
+                <p style={{ margin: '0 0 15px 0', opacity: 0.95, lineHeight: '1.5' }}>
+                  Automated FMCSA compliance monitoring, document generation, audit preparation, and violation management
+                </p>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  fontSize: '0.9rem',
+                  opacity: 0.9
+                }}>
+                  <span>📄 Auto Documents</span>
+                  <span>📊 Real-time Monitoring</span>
+                  <span>💰 Cost Savings</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+
           {/* Fleet Management */}
           <div style={{
             display: 'grid',
