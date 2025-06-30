@@ -9,9 +9,9 @@ sensitive_patterns = [
     r'TWILIO_ACCOUNT_SID=AC[a-f0-9]{32}',
     r'TWILIO_AUTH_TOKEN=[a-f0-9]{32}',
     r'TWILIO_PHONE_NUMBER=\+\d{11}',
-    r'AC2e547d7c5d39dc8735c7bdb5546ded25',
-    r'4cda06498e86cc8f150d81e4e48b2aed',
-    r'\+18333863509',
+    r'EXAMPLE_ACCOUNT_SID_PATTERN',
+    r'EXAMPLE_AUTH_TOKEN_PATTERN',
+    r'EXAMPLE_PHONE_PATTERN',
     # FMCSA API key (if needed)
     r'FMCSA_API_KEY=[a-f0-9]{40}',
     r'7de24c4a0eade12f34685829289e0446daf7880e',
