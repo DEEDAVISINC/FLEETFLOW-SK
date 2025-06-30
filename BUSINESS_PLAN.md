@@ -242,6 +242,42 @@
 
 ---
 
+## 🛡️ NEW: DOT Compliance as a Service Integration
+
+### **Major Business Expansion Opportunity**
+
+FleetFlow has developed a revolutionary **DOT Compliance as a Service** offering that significantly expands our addressable market and revenue potential:
+
+#### **Service Overview**
+- **AI-Powered Document Generation**: Automated creation of all DOT-required compliance documents
+- **Real-Time Compliance Monitoring**: 24/7 monitoring with proactive alerts and violation prevention
+- **Professional Services**: Audit representation, violation defense, custom training programs
+- **Cost Savings**: 40-60% reduction in compliance costs for customers
+
+#### **Revenue Impact**
+- **Additional Market**: $2.8B compliance market opportunity
+- **Service Tiers**: $199-$999/month recurring revenue + professional services
+- **Customer Value**: Higher LTV due to critical compliance needs
+- **Competitive Moat**: Integrated TMS + compliance solution
+
+#### **Financial Projections (Compliance Services Only)**
+| Year | Customers | Revenue | Profit Margin |
+|------|-----------|---------|---------------|
+| **1** | 50 | $285k | 65% |
+| **2** | 200 | $2.7M | 72% |
+| **3** | 500 | $13.2M | 78% |
+
+#### **Combined Platform Value**
+The integration of DOT compliance services with our core TMS platform creates:
+- **Total 3-Year Revenue**: $42M (vs. $27M TMS-only)
+- **Enhanced Customer Retention**: Critical compliance needs reduce churn
+- **Premium Pricing**: Justified by comprehensive value proposition
+- **Market Differentiation**: First integrated TMS + AI compliance platform
+
+**📋 Complete Details**: See `INTEGRATED_BUSINESS_PLAN.md` for comprehensive analysis of the combined platform opportunity.
+
+---
+
 ## 🏆 Success Factors & Competitive Advantages
 
 ### **Technical Advantages**
