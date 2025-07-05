@@ -6,7 +6,7 @@ import { getCurrentUser, checkPermission } from '../config/access'
 
 export default function DocumentationPage() {
   // Always call hook-using functions at the top
-  const { role } = getCurrentUser()
+  const { user } = getCurrentUser()
   const hasManagementAccess = checkPermission('hasManagementAccess')
 
   const [selectedDoc, setSelectedDoc] = useState('user-guide')
@@ -75,7 +75,7 @@ export default function DocumentationPage() {
             This page requires management-level access.
           </p>
           <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
-            Current Role: {role.toUpperCase()}
+            Current Role: {user?.role?.toUpperCase() || 'UNKNOWN'}
           </p>
           <Link href="/" style={{
             display: 'inline-block',
@@ -217,7 +217,7 @@ export default function DocumentationPage() {
                 color: '#4CAF50',
                 fontWeight: '500'
               }}>
-                🔐 Management Access | Role: {role.toUpperCase()}
+                🔐 Management Access | Role: {user?.role?.toUpperCase() || 'UNKNOWN'}
               </div>
             </div>
 
