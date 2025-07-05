@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function ResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<'drivers' | 'dispatch' | 'broker' | 'heavyhaul'>('drivers')
@@ -47,674 +48,1025 @@ export default function ResourcesPage() {
       type: 'Mobile App'
     },
     {
-      name: 'Rest Area Finder',
-      description: 'Locate official rest areas and facilities',
-      website: 'https://restareafinderr.com',
-      type: 'Web Tool'
+      name: 'Park My Truck',
+      description: 'Real-time truck parking availability tracker',
+      website: 'https://parkmytruck.com',
+      type: 'Web Platform'
     },
     {
-      name: 'BigRigTravels',
-      description: 'Comprehensive truck stop directory',
-      website: 'https://bigrigtravels.com',
+      name: 'Truck Smart Parking',
+      description: 'Verified safe parking locations for professional drivers',
+      website: 'https://trucksmartparking.com',
       type: 'Directory'
     }
   ]
 
   const driverServices = [
     {
-      name: 'Truck Driver Institute',
-      description: 'Professional development and safety training',
-      website: 'https://truckdriverinstitute.com',
-      category: 'Training'
-    },
-    {
-      name: 'OOIDA (Owner-Operator Independent Drivers Association)',
-      description: 'Advocacy and resources for independent drivers',
+      name: 'OOIDA',
+      description: 'Owner-Operator Independent Drivers Association - advocacy and support',
       website: 'https://ooida.com',
-      category: 'Association'
+      category: 'Advocacy'
     },
     {
-      name: 'DOT Physical Locator',
-      description: 'Find certified medical examiners nationwide',
-      website: 'https://nationalregistry.fmcsa.dot.gov',
-      category: 'Medical'
+      name: 'FMCSA',
+      description: 'Federal Motor Carrier Safety Administration - regulations and compliance',
+      website: 'https://fmcsa.dot.gov',
+      category: 'Compliance'
     },
     {
-      name: 'Overdrive Magazine',
-      description: 'Industry news and business advice for truckers',
-      website: 'https://overdriveonline.com',
-      category: 'News'
+      name: 'DAT Load Board',
+      description: 'Premium load matching platform for owner-operators',
+      website: 'https://dat.com',
+      category: 'Load Boards'
     }
   ]
 
   // Dispatch Resources Data
   const dispatchTools = [
     {
-      name: 'DAT Load Board',
-      description: 'Premier load matching and freight marketplace',
-      website: 'https://dat.com',
-      category: 'Load Boards'
+      name: 'McLeod Software',
+      description: 'Comprehensive transportation management system',
+      website: 'https://mcleodsoft.com',
+      category: 'TMS'
     },
     {
-      name: 'Truckstop.com',
-      description: 'Comprehensive logistics and load board platform',
-      website: 'https://truckstop.com',
-      category: 'Load Boards'
+      name: 'Sylectus',
+      description: 'Real-time dispatch and tracking platform',
+      website: 'https://sylectus.com',
+      category: 'Dispatch'
     },
     {
-      name: 'Internet Truckstop (ITS)',
-      description: 'Load board and transportation management',
-      website: 'https://internettruckstop.com',
-      category: 'Load Boards'
-    },
-    {
-      name: 'HOS247',
-      description: 'Hours of Service compliance and tracking',
-      website: 'https://hos247.com',
-      category: 'Compliance'
-    },
-    {
-      name: 'Trucking Office',
-      description: 'Dispatch and fleet management software',
-      website: 'https://truckingoffice.com',
-      category: 'Software'
-    }
-  ]
-
-  const routingTools = [
-    {
-      name: 'PC Miler',
-      description: 'Professional truck routing and mileage',
-      website: 'https://pcmiler.com',
-      features: ['Truck Routing', 'HazMat Routes', 'Toll Costs', 'Fuel Optimization']
-    },
-    {
-      name: 'Rand McNally TruckGPS',
-      description: 'Professional truck navigation and routing',
-      website: 'https://randmcnally.com',
-      features: ['Truck Specific Routes', 'Bridge Heights', 'Weight Restrictions', 'Construction Updates']
-    },
-    {
-      name: 'CoPilot Truck',
-      description: 'Commercial vehicle navigation and fleet tracking',
-      website: 'https://copilotgps.com',
-      features: ['Commercial Routing', 'Fleet Tracking', 'ELD Integration', 'Real-time Traffic']
+      name: 'LoadDex',
+      description: 'Load board and freight matching system',
+      website: 'https://loaddex.com',
+      category: 'Load Board'
     }
   ]
 
   // Broker Resources Data
-  const brokerageTools = [
+  const brokerPlatforms = [
     {
-      name: 'TIA (Transportation Intermediaries Association)',
-      description: 'Industry association for freight brokers and forwarders',
-      website: 'https://tianet.org',
-      category: 'Association'
-    },
-    {
-      name: 'Freight Broker Boot Camp',
-      description: 'Comprehensive broker training and certification',
-      website: 'https://freightbrokerbootcamp.com',
-      category: 'Training'
-    },
-    {
-      name: 'LoadDelivered',
-      description: 'Freight broker training and resources',
-      website: 'https://loaddelivered.com',
-      category: 'Training'
-    },
-    {
-      name: 'C.H. Robinson',
-      description: 'Industry-leading logistics and freight services',
-      website: 'https://chrobinson.com',
-      category: 'Marketplace'
-    }
-  ]
-
-  const complianceResources = [
-    {
-      name: 'FMCSA Regulations',
-      description: 'Federal Motor Carrier Safety Administration guidelines',
-      website: 'https://fmcsa.dot.gov',
-      category: 'Compliance'
-    },
-    {
-      name: 'Broker Authority Application',
-      description: 'Apply for freight broker operating authority',
-      website: 'https://fmcsa.dot.gov/registration',
-      category: 'Licensing'
-    },
-    {
-      name: 'SAFER Web',
-      description: 'Verify carrier safety and registration information',
-      website: 'https://safer.fmcsa.dot.gov',
+      name: 'Carrier411',
+      description: 'Carrier verification and monitoring platform',
+      website: 'https://carrier411.com',
       category: 'Verification'
     },
     {
-      name: 'BOC-3 Designation',
-      description: 'Process agent designation for freight brokers',
-      website: 'https://fmcsa.dot.gov/registration/boc3-designation-agents',
-      category: 'Compliance'
+      name: 'RMIS',
+      description: 'Risk Management Information System for freight brokers',
+      website: 'https://rmis.com',
+      category: 'Risk Management'
+    },
+    {
+      name: 'FreightPath',
+      description: 'Modern TMS built for freight brokers',
+      website: 'https://freightpath.com',
+      category: 'TMS'
     }
   ]
 
   // Heavy Haul Resources Data
-  const permitServices = [
+  const heavyHaulServices = [
     {
-      name: 'Overdimensional.com',
-      description: 'Complete permit service for oversized loads nationwide',
-      website: 'https://overdimensional.com',
-      features: ['All State Permits', 'Route Planning', 'Escort Requirements', '24/7 Support'],
-      category: 'Permit Service'
+      name: 'Heavy Haul Pro',
+      description: 'Specialized routing and permitting for oversized loads',
+      website: 'https://heavyhaulpro.com',
+      category: 'Routing'
     },
     {
-      name: 'Heavy Haul and Oversized',
-      description: 'Specialized permit and route planning services',
-      website: 'https://heavyhaulandoversized.com',
-      features: ['Permit Processing', 'Route Analysis', 'Bridge Analysis', 'Pilot Car Requirements'],
-      category: 'Permit Service'
+      name: 'Permit Service Inc',
+      description: 'Nationwide permit processing and route planning',
+      website: 'https://permitservice.com',
+      category: 'Permits'
     },
     {
-      name: 'BridgeMap by Bridges.com',
-      description: 'Bridge height and weight restriction database',
-      website: 'https://bridges.com',
-      features: ['Bridge Database', 'Height/Weight Limits', 'Route Restrictions', 'API Access'],
-      category: 'Route Planning'
-    },
-    {
-      name: 'ProMiles',
-      description: 'Professional routing with heavy haul capabilities',
-      website: 'https://promiles.com',
-      features: ['Heavy Haul Routing', 'Bridge Analysis', 'Permit Integration', 'Toll Calculations'],
-      category: 'Route Planning'
-    }
-  ]
-
-  const pilotCarServices = [
-    {
-      name: 'PilotCars.com',
-      description: 'National network of certified pilot car operators',
-      website: 'https://pilotcars.com',
-      services: ['Escort Services', 'Certified Operators', 'Insurance Coverage', 'Real-time Coordination'],
-      coverage: 'Nationwide'
-    },
-    {
-      name: 'Oversize.io',
-      description: 'Digital platform connecting shippers with pilot cars',
-      website: 'https://oversize.io',
-      services: ['Instant Booking', 'Route Optimization', 'Live Tracking', 'Automated Dispatch'],
-      coverage: 'US & Canada'
-    },
-    {
-      name: 'Heavy Haul Pilot Cars',
-      description: 'Specialized escort services for heavy equipment',
-      website: 'https://heavyhaulpilotcars.com',
-      services: ['Height Poles', 'Wide Load Signs', 'Two-way Radios', 'Emergency Equipment'],
-      coverage: 'Regional'
-    },
-    {
-      name: 'Escort Flagging',
-      description: 'Professional flagging and escort services',
-      website: 'https://escortflagging.com',
-      services: ['Certified Flaggers', 'Traffic Control', 'Safety Equipment', 'Liability Insurance'],
-      coverage: 'Multi-state'
-    }
-  ]
-
-  const routeOptimization = [
-    {
-      name: 'PC Miler Heavy Haul',
-      description: 'Advanced routing for oversized and heavy loads',
-      website: 'https://pcmiler.com/heavy-haul',
-      features: ['Bridge Analysis', 'Weight Restrictions', 'Height Clearances', 'Permit Requirements', 'Toll Costs'],
-      specialization: 'Heavy Haul'
-    },
-    {
-      name: 'Bestpass Toll Management',
-      description: 'Comprehensive toll management and optimization',
-      website: 'https://bestpass.com',
-      features: ['Toll Optimization', 'Account Management', 'Violation Processing', 'Reporting & Analytics'],
-      specialization: 'Toll Management'
-    },
-    {
-      name: 'PrePass Plus',
-      description: 'Weigh station bypass and toll management',
-      website: 'https://prepass.com',
-      features: ['Weigh Station Bypass', 'Toll Payments', 'Safety Compliance', 'Fleet Analytics'],
-      specialization: 'Compliance & Tolls'
-    },
-    {
-      name: 'TollGuru',
-      description: 'Real-time toll calculation and route optimization',
-      website: 'https://tollguru.com',
-      features: ['Real-time Toll Rates', 'Route Comparison', 'Cost Analysis', 'API Integration'],
-      specialization: 'Toll Optimization'
-    }
-  ]
-
-  const heavyHaulCompliance = [
-    {
-      name: 'OOIDA (Owner-Operator Independent Drivers Association)',
-      description: 'Resources and advocacy for independent truckers',
-      website: 'https://ooida.com',
-      category: 'Association'
-    },
-    {
-      name: 'Specialized Carriers & Rigging Association',
-      description: 'Industry association for heavy haul and specialized transport',
-      website: 'https://scranet.org',
-      category: 'Association'
-    },
-    {
-      name: 'Heavy Haul Regulations Guide',
-      description: 'Comprehensive guide to heavy haul regulations by state',
-      website: 'https://www.fhwa.dot.gov/reports/tswstudy/Vol3-Appendix-B.pdf',
-      category: 'Regulations'
-    },
-    {
-      name: 'DOT Size and Weight Regulations',
-      description: 'Federal size and weight regulations for commercial vehicles',
-      website: 'https://ops.fhwa.dot.gov/freight/sw/overview/index.htm',
-      category: 'Compliance'
+      name: 'Pilot Car Services',
+      description: 'Directory of certified pilot car operators nationwide',
+      website: 'https://pilotcarservices.com',
+      category: 'Pilot Cars'
     }
   ]
 
   return (
-    <div className="container py-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-gray-900 mb-2" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-          Resources Center
-        </h1>
-        <p className="text-gray-600">
-          Essential tools, services, and information for drivers, dispatchers, and brokers
-        </p>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0891b2 0%, #155e75 100%)',
+      paddingTop: '80px'
+    }}>
+      {/* Back Button */}
+      <div style={{ padding: '24px' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <button style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '16px'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}>
+            ← Back to Dashboard
+          </button>
+        </Link>
       </div>
 
-      {/* Category Tabs */}
-      <div className="mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setSelectedCategory('drivers')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                selectedCategory === 'drivers'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              🚛 Driver Resources
-            </button>
-            <button
-              onClick={() => setSelectedCategory('dispatch')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                selectedCategory === 'dispatch'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              📋 Dispatch Resources
-            </button>
-            <button
-              onClick={() => setSelectedCategory('broker')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                selectedCategory === 'broker'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              🏢 Broker Resources
-            </button>
-            <button
-              onClick={() => setSelectedCategory('heavyhaul')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                selectedCategory === 'heavyhaul'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              🏗️ Heavy Haul
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      {/* Driver Resources */}
-      {selectedCategory === 'drivers' && (
-        <div className="space-y-8">
-          {/* Trucker-Friendly Hotels & Motels */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🏨 Trucker-Friendly Hotels & Motels
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {truckerHotels.map((hotel, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">{hotel.name}</h4>
-                  <p className="text-sm text-gray-600 mb-3">{hotel.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {hotel.features.map((feature, idx) => (
-                      <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                  <a href={hotel.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Visit Website
-                  </a>
-                </div>
-              ))}
-            </div>
+      {/* Main Content Container */}
+      <div style={{ 
+        maxWidth: '1400px', 
+        margin: '0 auto', 
+        padding: '0 24px 80px 24px' 
+      }}>
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '20px',
+          padding: '40px',
+          marginBottom: '40px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '32px'
+          }}>
+            <h1 style={{
+              fontSize: '48px',
+              fontWeight: '700',
+              background: 'linear-gradient(45deg, #ffffff, #e0f2fe)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              margin: '0 0 16px 0'
+            }}>
+              📚 Resource Library
+            </h1>
+            <p style={{
+              fontSize: '20px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              margin: '0',
+              maxWidth: '600px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              lineHeight: '1.6'
+            }}>
+              Comprehensive tools and resources for drivers, dispatchers, brokers, and heavy haul specialists
+            </p>
           </div>
 
-          {/* Rest Stops & Truck Stops */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              ⛽ Rest Stops & Truck Stop Finders
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {restStops.map((stop, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{stop.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {stop.type}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{stop.description}</p>
-                  <a href={stop.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Access Tool
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Driver Services */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🛠️ Driver Services & Support
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {driverServices.map((service, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      {service.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{service.description}</p>
-                  <a href={service.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Learn More
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Dispatch Resources */}
-      {selectedCategory === 'dispatch' && (
-        <div className="space-y-8">
-          {/* Load Boards & Dispatch Tools */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              📋 Load Boards & Dispatch Tools
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {dispatchTools.map((tool, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{tool.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      {tool.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
-                  <a href={tool.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Access Platform
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Routing & Navigation Tools */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🗺️ Routing & Navigation Tools
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {routingTools.map((tool, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">{tool.name}</h4>
-                  <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {tool.features.map((feature, idx) => (
-                      <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                  <a href={tool.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Learn More
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Broker Resources */}
-      {selectedCategory === 'broker' && (
-        <div className="space-y-8">
-          {/* Brokerage Tools & Training */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🏢 Brokerage Tools & Training
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {brokerageTools.map((tool, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{tool.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {tool.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
-                  <a href={tool.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Access Resource
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Compliance & Licensing */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              📜 Compliance & Licensing Resources
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {complianceResources.map((resource, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{resource.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      {resource.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{resource.description}</p>
-                  <a href={resource.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Visit Official Site
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Heavy Haul Resources */}
-      {selectedCategory === 'heavyhaul' && (
-        <div className="space-y-8">
-          {/* Permit Services */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              📋 Permit Services & Route Planning
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {permitServices.map((service, index) => (
-                <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {service.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{service.description}</p>
-                  
-                  <div className="mb-3">
-                    <div className="flex flex-wrap gap-1">
-                      {service.features.map((feature, idx) => (
-                        <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-blue-700 border border-blue-200">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <a href={service.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Get Permits & Route Planning →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pilot Car Services */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🚗 Pilot Car & Escort Services
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {pilotCarServices.map((service, index) => (
-                <div key={index} className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      {service.coverage}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{service.description}</p>
-                  
-                  <div className="mb-3">
-                    <div className="flex flex-wrap gap-1">
-                      {service.services.map((svc, idx) => (
-                        <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-yellow-700 border border-yellow-200">
-                          {svc}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <a href={service.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
-                    Book Pilot Car Services →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Route Optimization & Toll Management */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🗺️ Route Optimization & Toll Management
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {routeOptimization.map((tool, index) => (
-                <div key={index} className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{tool.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {tool.specialization}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
-                  
-                  <div className="mb-3">
-                    <div className="flex flex-wrap gap-1">
-                      {tool.features.map((feature, idx) => (
-                        <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-green-700 border border-green-200">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <a href={tool.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-green-600 hover:text-green-800 text-sm font-medium">
-                    Access Route Planning →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Heavy Haul Compliance & Associations */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              📜 Heavy Haul Compliance & Industry Resources
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {heavyHaulCompliance.map((resource, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{resource.name}</h4>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      {resource.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">{resource.description}</p>
-                  <a href={resource.website} target="_blank" rel="noopener noreferrer" 
-                     className="text-purple-600 hover:text-purple-800 text-sm font-medium">
-                    Visit Resource →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Access Banner */}
-          <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-xl p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold mb-2">🚨 Heavy Haul Emergency Services</h3>
-                <p className="text-orange-100">
-                  Need immediate permit processing or pilot car services? Access our emergency contact directory for 24/7 heavy haul support.
-                </p>
-              </div>
-              <div className="ml-6">
-                <button className="bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition-colors">
-                  Emergency Contacts
+          {/* Navigation Tabs */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '20px'
+          }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {(['drivers', 'dispatch', 'broker', 'heavyhaul'] as const).map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  style={{
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: selectedCategory === category 
+                      ? 'rgba(255, 255, 255, 0.25)' 
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    backdropFilter: 'blur(10px)',
+                    fontSize: '14px'
+                  }}
+                >
+                  {category === 'drivers' && '🚛 Drivers'}
+                  {category === 'dispatch' && '📋 Dispatch'}
+                  {category === 'broker' && '🏢 Brokers'}
+                  {category === 'heavyhaul' && '🏗️ Heavy Haul'}
                 </button>
-              </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
+
+        {/* Content Sections */}
+        {selectedCategory === 'drivers' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            
+            {/* Trucker-Friendly Hotels & Motels */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                🏨 Trucker-Friendly Hotels & Motels
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {truckerHotels.map((hotel, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <h4 style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: '0 0 12px 0'
+                    }}>
+                      {hotel.name}
+                    </h4>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {hotel.description}
+                    </p>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '6px',
+                      marginBottom: '16px'
+                    }}>
+                      {hotel.features.map((feature, idx) => (
+                        <span key={idx} style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          padding: '4px 8px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          background: 'rgba(59, 130, 246, 0.3)',
+                          color: '#93c5fd',
+                          border: '1px solid rgba(59, 130, 246, 0.2)'
+                        }}>
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                    <a href={hotel.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(59, 130, 246, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(59, 130, 246, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(59, 130, 246, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(59, 130, 246, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Visit Website →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Rest Stops & Truck Stops */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                ⛽ Rest Stops & Truck Stop Finders
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {restStops.map((stop, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px'
+                    }}>
+                      <h4 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0'
+                      }}>
+                        {stop.name}
+                      </h4>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: 'rgba(34, 197, 94, 0.3)',
+                        color: '#86efac',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        border: '1px solid rgba(34, 197, 94, 0.2)'
+                      }}>
+                        {stop.type}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {stop.description}
+                    </p>
+                    <a href={stop.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(34, 197, 94, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(34, 197, 94, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Access Tool →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Driver Services */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                🛠️ Driver Services & Support
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {driverServices.map((service, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px'
+                    }}>
+                      <h4 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0'
+                      }}>
+                        {service.name}
+                      </h4>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: 'rgba(147, 51, 234, 0.3)',
+                        color: '#c4b5fd',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        border: '1px solid rgba(147, 51, 234, 0.2)'
+                      }}>
+                        {service.category}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {service.description}
+                    </p>
+                    <a href={service.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(147, 51, 234, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(147, 51, 234, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(147, 51, 234, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(147, 51, 234, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(147, 51, 234, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Learn More →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Dispatch Resources */}
+        {selectedCategory === 'dispatch' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                📋 Dispatch Management Tools
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {dispatchTools.map((tool, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px'
+                    }}>
+                      <h4 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0'
+                      }}>
+                        {tool.name}
+                      </h4>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: 'rgba(34, 197, 94, 0.3)',
+                        color: '#86efac',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        border: '1px solid rgba(34, 197, 94, 0.2)'
+                      }}>
+                        {tool.category}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {tool.description}
+                    </p>
+                    <a href={tool.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(34, 197, 94, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(34, 197, 94, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Learn More →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Access Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              color: 'white'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    margin: '0 0 8px 0'
+                  }}>
+                    📊 Dispatch Central Hub
+                  </h3>
+                  <p style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    margin: '0'
+                  }}>
+                    Access your main dispatch dashboard for real-time load management and driver coordination.
+                  </p>
+                </div>
+                <div style={{ marginLeft: '24px' }}>
+                  <Link href="/dispatch" style={{ textDecoration: 'none' }}>
+                    <button style={{
+                      background: 'white',
+                      color: '#10b981',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      border: 'none',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      Go to Dispatch
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Broker Resources */}
+        {selectedCategory === 'broker' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                🏢 Broker Platforms & Tools
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {brokerPlatforms.map((platform, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px'
+                    }}>
+                      <h4 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0'
+                      }}>
+                        {platform.name}
+                      </h4>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: 'rgba(59, 130, 246, 0.3)',
+                        color: '#93c5fd',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        border: '1px solid rgba(59, 130, 246, 0.2)'
+                      }}>
+                        {platform.category}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {platform.description}
+                    </p>
+                    <a href={platform.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(59, 130, 246, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(59, 130, 246, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(59, 130, 246, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(59, 130, 246, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Learn More →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Access Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              color: 'white'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    margin: '0 0 8px 0'
+                  }}>
+                    🤝 Broker Network Hub
+                  </h3>
+                  <p style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    margin: '0'
+                  }}>
+                    Connect with our broker dashboard for load posting, carrier management, and rate negotiations.
+                  </p>
+                </div>
+                <div style={{ marginLeft: '24px' }}>
+                  <button style={{
+                    background: 'white',
+                    color: '#1d4ed8',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    border: 'none',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    Broker Portal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Heavy Haul Resources */}
+        {selectedCategory === 'heavyhaul' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: 'white',
+                margin: '0 0 24px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                🏗️ Heavy Haul Specialized Services
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px'
+              }}>
+                {heavyHaulServices.map((service, index) => (
+                  <div key={index} style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px'
+                    }}>
+                      <h4 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0'
+                      }}>
+                        {service.name}
+                      </h4>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: 'rgba(245, 158, 11, 0.3)',
+                        color: '#fbbf24',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        border: '1px solid rgba(245, 158, 11, 0.2)'
+                      }}>
+                        {service.category}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.5'
+                    }}>
+                      {service.description}
+                    </p>
+                    <a href={service.website} target="_blank" rel="noopener noreferrer" style={{
+                      color: '#ffffff',
+                      background: 'rgba(245, 158, 11, 0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(245, 158, 11, 0.8)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(245, 158, 11, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(245, 158, 11, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(245, 158, 11, 0.6)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}>
+                      Learn More →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Access Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              color: 'white'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    margin: '0 0 8px 0'
+                  }}>
+                    🚨 Heavy Haul Emergency Services
+                  </h3>
+                  <p style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    margin: '0'
+                  }}>
+                    Need immediate permit processing or pilot car services? Access our emergency contact directory for 24/7 heavy haul support.
+                  </p>
+                </div>
+                <div style={{ marginLeft: '24px' }}>
+                  <button style={{
+                    background: 'white',
+                    color: '#d97706',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    border: 'none',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    Emergency Contacts
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
