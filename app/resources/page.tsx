@@ -1066,6 +1066,148 @@ export default function ResourcesPage() {
             </div>
           </div>
         )}
+        
+        {/* Workflow Navigation Cards */}
+        <div style={{
+          marginTop: '48px',
+          padding: '32px',
+          background: 'rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            color: 'white',
+            margin: '0 0 24px 0',
+            textAlign: 'center'
+          }}>
+            🔗 Continue Your Workflow
+          </h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px'
+          }}>
+            <Link href="/documents" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #FF9800 0%, #E65100 100%)',
+                borderRadius: '12px',
+                padding: '20px',
+                color: 'white',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 152, 0, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>📄</div>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                    Document Hub
+                  </h4>
+                  <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
+                    Generate rate confirmations and bills of lading
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/compliance" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)',
+                borderRadius: '12px',
+                padding: '20px',
+                color: 'white',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(59, 130, 246, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>✅</div>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                    Compliance Hub
+                  </h4>
+                  <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
+                    Monitor DOT compliance and safety metrics
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/safety" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #DC2626 0%, #991B1B 100%)',
+                borderRadius: '12px',
+                padding: '20px',
+                color: 'white',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(220, 38, 38, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>🚨</div>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                    Safety Resources
+                  </h4>
+                  <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
+                    Emergency contacts and safety protocols
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/dispatch" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                borderRadius: '12px',
+                padding: '20px',
+                color: 'white',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(16, 185, 129, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>📊</div>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                    Dispatch Hub
+                  </h4>
+                  <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
+                    Load management and driver coordination
+                  </p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
