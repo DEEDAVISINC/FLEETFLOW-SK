@@ -1,9 +1,37 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 
 // Professional Navigation Component with Dropdowns matching Dashboard Quick Links
 export default function ProfessionalNavigation() {
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+
+  const handleDropdownEnter = (dropdown: string) => {
+    setActiveDropdown(dropdown)
+  }
+
+  const handleDropdownLeave = () => {
+    setActiveDropdown(null)
+  }
+
+  const handleDropdownClick = (dropdown: string) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown)
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element
+      if (!target.closest('.dropdown')) {
+        setActiveDropdown(null)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   return (
     <nav style={{
       background: 'rgba(255, 255, 255, 0.95)',
@@ -42,25 +70,33 @@ export default function ProfessionalNavigation() {
           alignItems: 'center'
         }}>
           {/* OPERATIONS Dropdown - Blue (matches dashboard) */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: 'white',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
+          <div 
+            className="dropdown" 
+            style={{ position: 'relative', display: 'inline-block' }}
+            onMouseEnter={() => handleDropdownEnter('operations')}
+            onMouseLeave={handleDropdownLeave}
+          >
+            <button 
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              onClick={() => handleDropdownClick('operations')}
+            >
               🚛 OPERATIONS ▼
             </button>
             <div className="dropdown-content" style={{
-              display: 'none',
+              display: activeDropdown === 'operations' ? 'block' : 'none',
               position: 'absolute',
               background: 'white',
               minWidth: '200px',
@@ -82,25 +118,33 @@ export default function ProfessionalNavigation() {
           </div>
 
           {/* DRIVER MANAGEMENT Dropdown - Yellow/Orange (matches dashboard) */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
-              color: '#2d3748',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
+          <div 
+            className="dropdown" 
+            style={{ position: 'relative', display: 'inline-block' }}
+            onMouseEnter={() => handleDropdownEnter('drivers')}
+            onMouseLeave={handleDropdownLeave}
+          >
+            <button 
+              style={{
+                background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
+                color: '#2d3748',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              onClick={() => handleDropdownClick('drivers')}
+            >
               🚛 DRIVER MANAGEMENT ▼
             </button>
             <div className="dropdown-content" style={{
-              display: 'none',
+              display: activeDropdown === 'drivers' ? 'block' : 'none',
               position: 'absolute',
               background: 'white',
               minWidth: '200px',
@@ -125,25 +169,33 @@ export default function ProfessionalNavigation() {
           </div>
 
           {/* FLEETFLOW Dropdown - Teal/Green (matches dashboard) */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-              color: 'white',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
+          <div 
+            className="dropdown" 
+            style={{ position: 'relative', display: 'inline-block' }}
+            onMouseEnter={() => handleDropdownEnter('fleetflow')}
+            onMouseLeave={handleDropdownLeave}
+          >
+            <button 
+              style={{
+                background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              onClick={() => handleDropdownClick('fleetflow')}
+            >
               🚛 FLEETFLOW ▼
             </button>
             <div className="dropdown-content" style={{
-              display: 'none',
+              display: activeDropdown === 'fleetflow' ? 'block' : 'none',
               position: 'absolute',
               background: 'white',
               minWidth: '200px',
@@ -208,25 +260,33 @@ export default function ProfessionalNavigation() {
           </Link>
 
           {/* RESOURCES Dropdown - Orange */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #f97316, #ea580c)',
-              color: 'white',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
+          <div 
+            className="dropdown" 
+            style={{ position: 'relative', display: 'inline-block' }}
+            onMouseEnter={() => handleDropdownEnter('resources')}
+            onMouseLeave={handleDropdownLeave}
+          >
+            <button 
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              onClick={() => handleDropdownClick('resources')}
+            >
               📚 RESOURCES ▼
             </button>
             <div className="dropdown-content" style={{
-              display: 'none',
+              display: activeDropdown === 'resources' ? 'block' : 'none',
               position: 'absolute',
               background: 'white',
               minWidth: '200px',
