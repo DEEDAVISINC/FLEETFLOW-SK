@@ -13,131 +13,232 @@ export default function DocumentsPage() {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #FF9800 0%, #E65100 100%)',
       minHeight: '100vh',
-      color: 'white'
+      background: 'linear-gradient(135deg, #FF9800 0%, #E65100 100%)',
+      paddingTop: '80px'
     }}>
-      {/* Simple Back to Dashboard Button */}
-      <div style={{ padding: '20px' }}>
+      {/* Back Button */}
+      <div style={{ padding: '24px' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
+            backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
-            padding: '10px 20px',
-            borderRadius: '10px',
-            fontSize: '14px',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
             fontWeight: '600',
             cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            fontSize: '16px'
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
             e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
           }}
           onMouseOut={(e) => {
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
             e.currentTarget.style.transform = 'translateY(0)';
-          }}
-          >
-            ← Back to Dashboard
+            e.currentTarget.style.boxShadow = 'none';
+          }}>
+            <span style={{ marginRight: '8px' }}>←</span>
+            Back to Dashboard
           </button>
         </Link>
       </div>
-      
-      {/* Header */}
+
+      {/* Main Container */}
       <div style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-        backdropFilter: 'blur(10px)',
-        marginTop: '-20px',
-        paddingTop: '20px'
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 24px 32px'
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <Logo />
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px'
+              }}>
+                <span style={{ fontSize: '32px' }}>📄</span>
+              </div>
               <div>
                 <h1 style={{
-                  fontSize: '2rem',
+                  fontSize: '36px',
                   fontWeight: 'bold',
                   color: 'white',
-                  margin: 0,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-                }}>📄 Document Generation</h1>
+                  margin: '0 0 8px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                }}>
+                  Document Generation
+                </h1>
                 <p style={{
-                  color: 'rgba(255,255,255,0.9)',
-                  margin: 0
-                }}>Create ironclad freight documents with auto-populated load data</p>
+                  fontSize: '18px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0 0 8px 0'
+                }}>
+                  Create ironclad freight documents with auto-populated load data
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      background: '#4ade80',
+                      borderRadius: '50%',
+                      animation: 'pulse 2s infinite'
+                    }}></div>
+                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                      Auto-Population Active
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                    {loadHistory.length} loads available
+                  </span>
+                </div>
               </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {(['rate-confirmation', 'bill-of-lading'] as const).map((docType) => (
+                <button
+                  key={docType}
+                  onClick={() => setActiveDocument(docType)}
+                  style={{
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: activeDocument === docType 
+                      ? 'rgba(255, 255, 255, 0.25)' 
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  {docType === 'rate-confirmation' ? '📄 Rate Confirmation' : '📋 Bill of Lading'}
+                </button>
+              ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Load Selection Section */}
         {loadHistory.length > 0 && (
-          <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Recent Loads</h3>
-              <span className="text-sm text-gray-500">{loadHistory.length} loads available</span>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            marginBottom: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: '600', color: 'white', margin: 0 }}>
+                Recent Loads
+              </h3>
+              <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                {loadHistory.length} loads available
+              </span>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+              marginBottom: '24px'
+            }}>
               {loadHistory.slice(0, 6).map((load) => (
                 <div 
                   key={load.id}
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                    selectedLoad?.id === load.id 
-                      ? 'border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
+                  style={{
+                    background: selectedLoad?.id === load.id 
+                      ? 'rgba(255, 255, 255, 0.25)' 
+                      : 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    border: selectedLoad?.id === load.id 
+                      ? '2px solid rgba(255, 255, 255, 0.5)' 
+                      : '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: selectedLoad?.id === load.id 
+                      ? '0 8px 32px rgba(0, 0, 0, 0.2)' 
+                      : '0 4px 16px rgba(0, 0, 0, 0.1)'
+                  }}
                   onClick={() => setSelectedLoad(load)}
+                  onMouseOver={(e) => {
+                    if (selectedLoad?.id !== load.id) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (selectedLoad?.id !== load.id) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
+                    }
+                  }}
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="font-bold text-gray-900 text-lg">#{load.id}</span>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      load.status === 'In Transit' ? 'bg-blue-100 text-blue-800' :
-                      load.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                      load.status === 'Assigned' ? 'bg-yellow-100 text-yellow-800' :
-                      load.status === 'Available' ? 'bg-gray-100 text-gray-800' :
-                      'bg-purple-100 text-purple-800'
-                    }`}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+                    <span style={{ fontWeight: 'bold', color: 'white', fontSize: '18px' }}>#{load.id}</span>
+                    <span style={{
+                      fontSize: '12px',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      fontWeight: '600',
+                      background: load.status === 'In Transit' ? 'rgba(59, 130, 246, 0.8)' :
+                                 load.status === 'Delivered' ? 'rgba(34, 197, 94, 0.8)' :
+                                 load.status === 'Assigned' ? 'rgba(251, 191, 36, 0.8)' :
+                                 load.status === 'Available' ? 'rgba(156, 163, 175, 0.8)' :
+                                 'rgba(147, 51, 234, 0.8)',
+                      color: 'white'
+                    }}>
                       {load.status}
                     </span>
                   </div>
                   
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-gray-700">
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: 'white' }}>
                       {load.origin}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <svg className="w-3 h-3 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                      </svg>
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                      <span style={{ marginRight: '8px' }}>↓</span>
                       {load.destination}
                     </div>
                     
                     {load.carrierName && (
-                      <div className="text-xs text-blue-600 font-medium">
+                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: '600' }}>
                         🚛 {load.carrierName}
                       </div>
                     )}
                     
-                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                      <span className="text-xs text-gray-400">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                      <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
                         {load.pickupDate}
                       </span>
                       {typeof load.rate === 'string' ? (
-                        <span className="text-sm font-semibold text-green-600">
+                        <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#4ade80' }}>
                           {load.rate}
                         </span>
                       ) : (
-                        <span className="text-sm font-semibold text-green-600">
-                          ${load.rate?.toLocaleString()}
+                        <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#4ade80' }}>
+                          ${typeof load.rate === 'number' ? load.rate.toLocaleString() : '0'}
                         </span>
                       )}
                     </div>
@@ -147,30 +248,36 @@ export default function DocumentsPage() {
             </div>
             
             {selectedLoad ? (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-green-800 font-medium">
+              <div style={{
+                background: 'rgba(34, 197, 94, 0.2)',
+                border: '1px solid rgba(34, 197, 94, 0.4)',
+                borderRadius: '12px',
+                padding: '20px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '20px' }}>✅</span>
+                  <span style={{ color: 'white', fontWeight: '600', fontSize: '16px' }}>
                     Load #{selectedLoad.id} Selected
                   </span>
                 </div>
-                <p className="text-green-700 text-sm mt-1">
+                <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px', margin: '8px 0 0 32px' }}>
                   Document forms will be automatically populated with this load's information. You can modify any details as needed.
                 </p>
               </div>
             ) : (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-blue-800 font-medium">
+              <div style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                borderRadius: '12px',
+                padding: '20px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '20px' }}>ℹ️</span>
+                  <span style={{ color: 'white', fontWeight: '600', fontSize: '16px' }}>
                     Click a load to auto-populate document forms
                   </span>
                 </div>
-                <p className="text-blue-700 text-sm mt-1">
+                <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px', margin: '8px 0 0 32px' }}>
                   Select a load from above to automatically fill in Rate Confirmation and Bill of Lading forms.
                 </p>
               </div>
@@ -178,49 +285,44 @@ export default function DocumentsPage() {
           </div>
         )}
 
-        {/* Document Type Tabs */}
-        <div className="mb-8">
-          <div className="flex justify-center">
-            <div className="flex space-x-2 bg-gradient-to-r from-gray-100 to-gray-50 p-2 rounded-xl shadow-lg border border-gray-200">
-              <button
-                onClick={() => setActiveDocument('rate-confirmation')}
-                className={`px-8 py-4 rounded-xl font-bold transition-all duration-300 ${
-                  activeDocument === 'rate-confirmation'
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105 border-2 border-blue-600'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/70 bg-white/50'
-                }`}
-              >
-                📄 Rate Confirmation
-              </button>
-              <button
-                onClick={() => setActiveDocument('bill-of-lading')}
-                className={`px-8 py-4 rounded-xl font-bold transition-all duration-300 ${
-                  activeDocument === 'bill-of-lading'
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105 border-2 border-blue-600'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/70 bg-white/50'
-                }`}
-              >
-                📋 Bill of Lading
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Document Generator */}
-        <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl shadow-2xl border border-blue-100 overflow-hidden">
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden'
+        }}>
           {activeDocument === 'rate-confirmation' && <RateConfirmation />}
           {activeDocument === 'bill-of-lading' && <BillOfLading />}
         </div>
 
         {/* Legal Notice */}
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <svg className="w-6 h-6 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+        <div style={{
+          background: 'rgba(251, 191, 36, 0.2)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(251, 191, 36, 0.4)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '32px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+            <div style={{
+              padding: '12px',
+              background: 'rgba(251, 191, 36, 0.3)',
+              borderRadius: '12px',
+              flexShrink: 0
+            }}>
+              <span style={{ fontSize: '24px' }}>⚠️</span>
+            </div>
             <div>
-              <h4 className="text-sm font-semibold text-yellow-800">Legal Notice</h4>
-              <p className="text-sm text-yellow-700 mt-1">
+              <h4 style={{ fontSize: '18px', fontWeight: '600', color: 'white', margin: '0 0 12px 0' }}>
+                Legal Notice
+              </h4>
+              <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)', margin: 0, lineHeight: '1.6' }}>
                 These documents are generated for freight transportation purposes and contain legally binding terms. 
                 Please ensure all information is accurate and complete before finalizing. FleetFlow recommends 
                 consulting with legal counsel for specific freight contract requirements.
@@ -228,6 +330,222 @@ export default function DocumentsPage() {
             </div>
           </div>
         </div>
+
+        {/* Integrated Workflow Navigation */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ color: 'white', fontSize: '24px', fontWeight: '600', marginBottom: '24px', textAlign: 'center' }}>
+            🔗 Integrated Workflow Access
+          </h3>
+          <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '16px', marginBottom: '32px', textAlign: 'center' }}>
+            Connect directly to dispatch, carrier, and broker systems for seamless document workflow
+          </p>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px'
+          }}>
+            {/* Dispatch Central */}
+            <Link href="/dispatch" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚛</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Dispatch Central
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Load assignments & dispatch management
+                </p>
+              </div>
+            </Link>
+
+            {/* Broker Dashboard */}
+            <Link href="/broker/dashboard" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏢</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Broker Dashboard
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Broker communications & load coordination
+                </p>
+              </div>
+            </Link>
+
+            {/* Driver Portal */}
+            <Link href="/driver-portal" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>👨‍💼</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Driver Portal
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Document delivery & digital signatures
+                </p>
+              </div>
+            </Link>
+
+            {/* Carrier Management */}
+            <Link href="/carriers" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚚</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Carrier Management
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Carrier-specific templates & branding
+                </p>
+              </div>
+            </Link>
+
+            {/* Individual Dispatch Portal */}
+            <Link href="/workflow-portal" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Workflow Portal
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Individual dispatcher workflows
+                </p>
+              </div>
+            </Link>
+
+            {/* Shipper Portal */}
+            <Link href="/shipper-portal" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Shipper Portal
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Shipper documentation & approvals
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
       </div>
     </div>
   );
