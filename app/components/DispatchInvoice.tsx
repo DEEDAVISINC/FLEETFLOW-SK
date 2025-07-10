@@ -2,6 +2,7 @@
 
 import React, { forwardRef, useState } from 'react';
 import { jsPDF } from 'jspdf';
+import { calculateDispatchFee, getDefaultFeePercentage, getFeeDisplayText } from '../config/dispatch';
 
 interface InvoiceData {
   id: string;

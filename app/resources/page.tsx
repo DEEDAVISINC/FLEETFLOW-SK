@@ -151,7 +151,7 @@ export default function ResourcesPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0891b2 0%, #155e75 100%)',
+      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       paddingTop: '80px'
     }}>
       {/* Back Button */}
@@ -1202,6 +1202,35 @@ export default function ResourcesPage() {
                   </h4>
                   <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
                     Load management and driver coordination
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/training" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                borderRadius: '12px',
+                padding: '20px',
+                color: 'white',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(139, 92, 246, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>🎓</div>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                    Training Center
+                  </h4>
+                  <p style={{ fontSize: '14px', opacity: 0.9, margin: '0' }}>
+                    Professional development and certification
                   </p>
                 </div>
               </div>

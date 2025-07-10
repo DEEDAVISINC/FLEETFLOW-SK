@@ -543,6 +543,38 @@ export default function DocumentsPage() {
                 </p>
               </div>
             </Link>
+
+            {/* Training Center */}
+            <Link href="/training" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textAlign: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(139, 92, 246, 0.3)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎓</div>
+                <h4 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 8px 0' }}>
+                  Training Center
+                </h4>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+                  Professional development & certification
+                </p>
+              </div>
+            </Link>
           </div>
         </div>
 

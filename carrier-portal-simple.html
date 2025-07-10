@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow - Carrier Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #667eea;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .header {
+            text-align: center;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            margin: -30px -30px 30px -30px;
+            border-radius: 10px 10px 0 0;
+        }
+        .nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav a {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .nav a:hover {
+            background: #5a6fd8;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .carrier-list {
+            margin-top: 20px;
+        }
+        .carrier-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .carrier-item.invalid {
+            border-left-color: #dc3545;
+            background: #fff8f8;
+        }
+        .carrier-info h4 {
+            margin: 0 0 5px 0;
+        }
+        .carrier-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .carrier-actions button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            font-size: 14px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .validation-result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .validation-result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .validation-result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .validation-result.loading {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 FleetFlow Carrier Portal</h1>
+            <p>Add and Manage Carriers with FMCSA Validation</p>
+        </div>
+
+        <div class="nav">
+            <a href="dispatch-central-simple.html">📋 Dispatch Central</a>
+            <a href="carrier-demo-working.html">📊 Validation Demo</a>
+            <a href="#settings">⚙️ Settings</a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCarriers">3</div>
+                <div class="stat-label">Total Carriers</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #28a745;">
+                <div class="stat-number" id="validCarriers">2</div>
+                <div class="stat-label">Valid Carriers</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #dc3545;">
+                <div class="stat-number" id="invalidCarriers">1</div>
+                <div class="stat-label">Invalid Carriers</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #17a2b8;">
+                <div class="stat-number" id="monitoringActive">2</div>
+                <div class="stat-label">Monitoring Active</div>
+            </div>
+        </div>
+
+        <!-- Add New Carrier -->
+        <div class="section">
+            <h2>➕ Add New Carrier</h2>
+            <p>Register a new carrier for FMCSA validation and BrokerSnapshot monitoring</p>
+            
+            <form id="carrierForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Company Name *</label>
+                        <input type="text" id="companyName" placeholder="Enter company name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mcNumber">MC Number *</label>
+                        <input type="text" id="mcNumber" placeholder="MC-123456" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dotNumber">DOT Number</label>
+                        <input type="text" id="dotNumber" placeholder="DOT123456">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email *</label>
+                        <input type="email" id="contactEmail" placeholder="contact@carrier.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactPhone">Contact Phone *</label>
+                        <input type="tel" id="contactPhone" placeholder="(555) 123-4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentType">Equipment Type</label>
+                        <select id="equipmentType">
+                            <option value="">Select Equipment Type</option>
+                            <option value="dry_van">Dry Van</option>
+                            <option value="reefer">Reefer</option>
+                            <option value="flatbed">Flatbed</option>
+                            <option value="step_deck">Step Deck</option>
+                            <option value="lowboy">Lowboy</option>
+                            <option value="tanker">Tanker</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="address">Business Address</label>
+                    <input type="text" id="address" placeholder="123 Main St, City, State, ZIP">
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="submit" class="btn">🔍 Add Carrier & Validate</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Clear Form</button>
+                </div>
+            </form>
+
+            <!-- Validation Result Display -->
+            <div id="validationResult" class="validation-result"></div>
+        </div>
+
+        <!-- Existing Carriers -->
+        <div class="section">
+            <h2>📋 Existing Carriers</h2>
+            <div class="carrier-list" id="carrierList">
+                <!-- Carriers will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample carrier data
+        const carriers = [
+            {
+                id: 1,
+                companyName: 'Reliable Transport LLC',
+                mcNumber: 'MC-123456',
+                dotNumber: 'DOT123456',
+                email: 'dispatch@reliabletransport.com',
+                phone: '(555) 123-4567',
+                equipmentType: 'Dry Van',
+                status: 'valid',
+                fmcsaStatus: 'AUTHORIZED',
+                safetyRating: 'SATISFACTORY',
+                insuranceStatus: 'ACTIVE',
+                creditScore: 750,
+                riskLevel: 'Low'
+            },
+            {
+                id: 2,
+                companyName: 'Problem Carrier Inc',
+                mcNumber: 'MC-789012',
+                dotNumber: 'DOT789012',
+                email: 'office@problemcarrier.com',
+                phone: '(555) 789-0123',
+                equipmentType: 'Reefer',
+                status: 'invalid',
+                fmcsaStatus: 'OUT OF SERVICE',
+                safetyRating: 'UNSATISFACTORY',
+                insuranceStatus: 'INACTIVE',
+                creditScore: 450,
+                riskLevel: 'High'
+            },
+            {
+                id: 3,
+                companyName: 'Good Logistics Co',
+                mcNumber: 'MC-345678',
+                dotNumber: 'DOT345678',
+                email: 'dispatch@goodlogistics.com',
+                phone: '(555) 345-6789',
+                equipmentType: 'Flatbed',
+                status: 'valid',
+                fmcsaStatus: 'AUTHORIZED',
+                safetyRating: 'SATISFACTORY',
+                insuranceStatus: 'ACTIVE',
+                creditScore: 680,
+                riskLevel: 'Medium'
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateCarrierList();
+            setupFormHandler();
+        });
+
+        function populateCarrierList() {
+            const carrierList = document.getElementById('carrierList');
+            carrierList.innerHTML = '';
+
+            carriers.forEach(carrier => {
+                const carrierElement = createCarrierElement(carrier);
+                carrierList.appendChild(carrierElement);
+            });
+        }
+
+        function createCarrierElement(carrier) {
+            const div = document.createElement('div');
+            div.className = `carrier-item ${carrier.status}`;
+
+            const statusBadge = carrier.status === 'valid' ? '✅ VALID' : '❌ INVALID';
+
+            div.innerHTML = `
+                <div class="carrier-info">
+                    <h4>🏢 ${carrier.companyName} - ${statusBadge}</h4>
+                    <p>${carrier.mcNumber} | ${carrier.dotNumber || 'No DOT'} | ${carrier.equipmentType} | Credit: ${carrier.creditScore} | Risk: ${carrier.riskLevel}</p>
+                </div>
+                <div class="carrier-actions">
+                    <button class="btn" onclick="viewCarrierDetails(${carrier.id})">👁️ View</button>
+                    <button class="btn" onclick="revalidateCarrier(${carrier.id})">🔄 Revalidate</button>
+                    ${carrier.status === 'valid' ? 
+                        '<button class="btn" onclick="assignLoad(' + carrier.id + ')">📦 Assign Load</button>' : 
+                        '<button class="btn" style="background: #dc3545;" onclick="showIssues(' + carrier.id + ')">🚫 Issues</button>'
+                    }
+                </div>
+            `;
+
+            return div;
+        }
+
+        function setupFormHandler() {
+            const form = document.getElementById('carrierForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewCarrier();
+            });
+        }
+
+        function addNewCarrier() {
+            const formData = {
+                companyName: document.getElementById('companyName').value,
+                mcNumber: document.getElementById('mcNumber').value,
+                dotNumber: document.getElementById('dotNumber').value,
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                equipmentType: document.getElementById('equipmentType').value,
+                address: document.getElementById('address').value
+            };
+
+            // Show loading state
+            showValidationResult('loading', '⏳ Validating carrier with FMCSA and BrokerSnapshot...');
+
+            // Simulate validation process
+            setTimeout(() => {
+                const validation = simulateValidation(formData.mcNumber);
+                showValidationResult(validation.status, validation.message);
+                
+                if (validation.status === 'success') {
+                    // Add to carriers list
+                    const newCarrier = {
+                        id: carriers.length + 1,
+                        companyName: formData.companyName,
+                        mcNumber: formData.mcNumber,
+                        dotNumber: formData.dotNumber,
+                        email: formData.email,
+                        phone: formData.phone,
+                        equipmentType: formData.equipmentType || 'Dry Van',
+                        status: validation.isValid ? 'valid' : 'invalid',
+                        fmcsaStatus: validation.fmcsaStatus,
+                        safetyRating: validation.safetyRating,
+                        insuranceStatus: validation.insuranceStatus,
+                        creditScore: validation.creditScore,
+                        riskLevel: validation.riskLevel
+                    };
+                    
+                    carriers.push(newCarrier);
+                    populateCarrierList();
+                    updateStats();
+                    
+                    // Clear form
+                    document.getElementById('carrierForm').reset();
+                }
+            }, 3000);
+        }
+
+        function simulateValidation(mcNumber) {
+            // Simulate different validation outcomes
+            const lastDigit = mcNumber.slice(-1);
+            
+            if (['1', '3', '5', '7', '9'].includes(lastDigit)) {
+                return {
+                    status: 'success',
+                    message: '✅ Carrier validation successful! Carrier is VALID and approved for load assignments.',
+                    isValid: true,
+                    fmcsaStatus: 'AUTHORIZED',
+                    safetyRating: 'SATISFACTORY',
+                    insuranceStatus: 'ACTIVE',
+                    creditScore: 720,
+                    riskLevel: 'Low'
+                };
+            } else {
+                return {
+                    status: 'error',
+                    message: '❌ Carrier validation failed! Issues found: OUT OF SERVICE, Insurance Inactive. Carrier is BLOCKED from load assignments.',
+                    isValid: false,
+                    fmcsaStatus: 'OUT OF SERVICE',
+                    safetyRating: 'UNSATISFACTORY',
+                    insuranceStatus: 'INACTIVE',
+                    creditScore: 480,
+                    riskLevel: 'High'
+                };
+            }
+        }
+
+        function showValidationResult(status, message) {
+            const resultDiv = document.getElementById('validationResult');
+            resultDiv.className = `validation-result ${status}`;
+            resultDiv.innerHTML = `<strong>${message}</strong>`;
+            resultDiv.style.display = 'block';
+        }
+
+        function updateStats() {
+            const valid = carriers.filter(c => c.status === 'valid').length;
+            const invalid = carriers.filter(c => c.status === 'invalid').length;
+            
+            document.getElementById('totalCarriers').textContent = carriers.length;
+            document.getElementById('validCarriers').textContent = valid;
+            document.getElementById('invalidCarriers').textContent = invalid;
+            document.getElementById('monitoringActive').textContent = valid;
+        }
+
+        function viewCarrierDetails(carrierId) {
+            const carrier = carriers.find(c => c.id === carrierId);
+            if (carrier) {
+                alert(`🏢 ${carrier.companyName}\n\n` +
+                      `MC: ${carrier.mcNumber}\n` +
+                      `Status: ${carrier.status.toUpperCase()}\n` +
+                      `FMCSA: ${carrier.fmcsaStatus}\n` +
+                      `Safety: ${carrier.safetyRating}\n` +
+                      `Insurance: ${carrier.insuranceStatus}\n` +
+                      `Credit Score: ${carrier.creditScore}\n` +
+                      `Risk Level: ${carrier.riskLevel}`);
+            }
+        }
+
+        function revalidateCarrier(carrierId) {
+            alert('🔄 Revalidation started!\n\nThis will check:\n• Latest FMCSA status\n• Updated BrokerSnapshot data\n• Insurance status\n• Safety ratings');
+        }
+
+        function assignLoad(carrierId) {
+            const carrier = carriers.find(c => c.id === carrierId);
+            alert(`📦 Ready to assign load to ${carrier.companyName}!\n\nThis will redirect to Dispatch Central to select an available load.`);
+        }
+
+        function showIssues(carrierId) {
+            const carrier = carriers.find(c => c.id === carrierId);
+            alert(`🚫 Carrier Issues: ${carrier.companyName}\n\n` +
+                  `• FMCSA Status: ${carrier.fmcsaStatus}\n` +
+                  `• Safety Rating: ${carrier.safetyRating}\n` +
+                  `• Insurance: ${carrier.insuranceStatus}\n\n` +
+                  `This carrier cannot receive loads until issues are resolved.`);
+        }
+
+        console.log('FleetFlow Carrier Portal loaded successfully!');
+    </script>
+</body>
+</html>

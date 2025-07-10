@@ -1,39 +1,44 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
-// Professional Navigation Component with Dropdowns matching Dashboard Quick Links
+// Professional Navigation Component with Working Dropdowns
 export default function ProfessionalNavigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const navRef = useRef<HTMLDivElement>(null)
 
-  const handleDropdownEnter = (dropdown: string) => {
-    setActiveDropdown(dropdown)
+  const handleDropdownToggle = (dropdownName: string) => {
+    console.log('Navigation render - activeDropdown:', activeDropdown)
+    console.log('Dropdown toggle clicked:', dropdownName)
+    setActiveDropdown(prev => {
+      const newValue = prev === dropdownName ? null : dropdownName
+      console.log('Setting activeDropdown from', prev, 'to', newValue)
+      return newValue
+    })
   }
 
-  const handleDropdownLeave = () => {
+  const handleDropdownClose = () => {
+    console.log('Closing dropdown')
     setActiveDropdown(null)
-  }
-
-  const handleDropdownClick = (dropdown: string) => {
-    setActiveDropdown(activeDropdown === dropdown ? null : dropdown)
   }
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element
-      if (!target.closest('.dropdown')) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setActiveDropdown(null)
       }
     }
 
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [])
 
   return (
-    <nav style={{
+    <nav ref={navRef} style={{
       background: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(10px)',
       borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
@@ -55,7 +60,7 @@ export default function ProfessionalNavigation() {
         <Link href="/" style={{
           fontSize: '1.8rem',
           fontWeight: 'bold',
-          background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
+          background: 'linear-gradient(45deg, #f59e0b, #d97706)',
           backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
@@ -69,16 +74,16 @@ export default function ProfessionalNavigation() {
           gap: '3px', 
           alignItems: 'center'
         }}>
-          {/* OPERATIONS Dropdown - Blue (matches dashboard) */}
-          <div 
-            className="dropdown" 
-            style={{ position: 'relative', display: 'inline-block' }}
-            onMouseEnter={() => handleDropdownEnter('operations')}
-            onMouseLeave={handleDropdownLeave}
-          >
+          {/* OPERATIONS Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button 
+              onClick={() => handleDropdownToggle('operations')}
+              onMouseDown={() => console.log('Operations button mousedown')}
+              onMouseUp={() => console.log('Operations button mouseup')}
               style={{
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                background: activeDropdown === 'operations' 
+                  ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
+                  : 'linear-gradient(135deg, #fbbf24, #f59e0b)',
                 color: 'white',
                 padding: '8px 14px',
                 border: 'none',
@@ -89,42 +94,42 @@ export default function ProfessionalNavigation() {
                 transition: 'all 0.3s ease',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '4px',
+                transform: activeDropdown === 'operations' ? 'scale(1.05)' : 'scale(1)'
               }}
-              onClick={() => handleDropdownClick('operations')}
             >
-              🚛 OPERATIONS ▼
+              🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
             </button>
-            <div className="dropdown-content" style={{
-              display: activeDropdown === 'operations' ? 'block' : 'none',
-              position: 'absolute',
-              background: 'white',
-              minWidth: '200px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-              borderRadius: '12px',
-              padding: '12px 0',
-              top: '100%',
-              left: 0,
-              border: '1px solid rgba(0,0,0,0.1)',
-              zIndex: 1001
-            }}>
-              <Link href="/dispatch" style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🚛 Dispatch Central
-              </Link>
-              <Link href="/broker" style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🏢 Broker Box
-              </Link>
-            </div>
+            {activeDropdown === 'operations' && (
+              <div style={{
+                position: 'absolute',
+                background: 'white',
+                minWidth: '200px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                borderRadius: '12px',
+                padding: '12px 0',
+                top: '100%',
+                left: 0,
+                border: '2px solid #3b82f6',
+                zIndex: 1001
+              }}>
+                <div style={{ padding: '8px 20px', background: '#f0f9ff', fontWeight: 'bold', color: '#1e40af', fontSize: '0.8rem' }}>
+                  🚛 OPERATIONS MENU
+                </div>
+                <Link href="/dispatch" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500', transition: 'background 0.2s' }}>
+                  🚛 Dispatch Central
+                </Link>
+                <Link href="/broker" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500', transition: 'background 0.2s' }}>
+                  🏢 Broker Box
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* DRIVER MANAGEMENT Dropdown - Yellow/Orange (matches dashboard) */}
-          <div 
-            className="dropdown" 
-            style={{ position: 'relative', display: 'inline-block' }}
-            onMouseEnter={() => handleDropdownEnter('drivers')}
-            onMouseLeave={handleDropdownLeave}
-          >
+          {/* DRIVER MANAGEMENT Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button 
+              onClick={() => handleDropdownToggle('drivers')}
               style={{
                 background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
                 color: '#2d3748',
@@ -139,43 +144,45 @@ export default function ProfessionalNavigation() {
                 alignItems: 'center',
                 gap: '4px'
               }}
-              onClick={() => handleDropdownClick('drivers')}
             >
               🚛 DRIVER MANAGEMENT ▼
             </button>
-            <div className="dropdown-content" style={{
-              display: activeDropdown === 'drivers' ? 'block' : 'none',
-              position: 'absolute',
-              background: 'white',
-              minWidth: '200px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-              borderRadius: '12px',
-              padding: '12px 0',
-              top: '100%',
-              left: 0,
-              border: '1px solid rgba(0,0,0,0.1)',
-              zIndex: 1001
-            }}>
-              <Link href="/drivers" style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🚛 Driver Management
-              </Link>
-              <Link href="/drivers/dashboard" style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                📱 Driver Dashboard
-              </Link>
-              <Link href="/drivers#live-tracking" style={{ display: 'block', padding: '8px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
-                🗺️ Live Load Tracking
-              </Link>
-            </div>
+            {activeDropdown === 'drivers' && (
+              <div style={{
+                position: 'absolute',
+                background: 'white',
+                minWidth: '220px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                borderRadius: '12px',
+                padding: '12px 0',
+                top: '100%',
+                left: 0,
+                border: '1px solid rgba(0,0,0,0.1)',
+                zIndex: 1001
+              }}>
+                <Link href="/drivers" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🚛 Driver Management
+                </Link>
+                <Link href="/drivers/enhanced-portal" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  👥 Enhanced Driver Portal
+                </Link>
+                <Link href="/onboarding/carrier-onboarding" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🚛 Carrier Onboarding
+                </Link>
+                <Link href="/carriers/enhanced-portal" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🏢 Enhanced Carrier Portal
+                </Link>
+                <Link href="/drivers#live-tracking" onClick={handleDropdownClose} style={{ display: 'block', padding: '8px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
+                  �️ Live Load Tracking
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* FLEETFLOW Dropdown - Teal/Green (matches dashboard) */}
-          <div 
-            className="dropdown" 
-            style={{ position: 'relative', display: 'inline-block' }}
-            onMouseEnter={() => handleDropdownEnter('fleetflow')}
-            onMouseLeave={handleDropdownLeave}
-          >
+          {/* FLEETFLOW Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button 
+              onClick={() => handleDropdownToggle('fleet')}
               style={{
                 background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
                 color: 'white',
@@ -190,36 +197,36 @@ export default function ProfessionalNavigation() {
                 alignItems: 'center',
                 gap: '4px'
               }}
-              onClick={() => handleDropdownClick('fleetflow')}
             >
               🚛 FLEETFLOW ▼
             </button>
-            <div className="dropdown-content" style={{
-              display: activeDropdown === 'fleetflow' ? 'block' : 'none',
-              position: 'absolute',
-              background: 'white',
-              minWidth: '200px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-              borderRadius: '12px',
-              padding: '12px 0',
-              top: '100%',
-              left: 0,
-              border: '1px solid rgba(0,0,0,0.1)',
-              zIndex: 1001
-            }}>
-              <Link href="/routes" style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🗺️ Route Optimization
-              </Link>
-              <Link href="/quoting" style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                💰 Freight Quoting
-              </Link>
-              <Link href="/vehicles" style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🚚 Fleet Management
-              </Link>
-            </div>
+            {activeDropdown === 'fleet' && (
+              <div style={{
+                position: 'absolute',
+                background: 'white',
+                minWidth: '200px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                borderRadius: '12px',
+                padding: '12px 0',
+                top: '100%',
+                left: 0,
+                border: '1px solid rgba(0,0,0,0.1)',
+                zIndex: 1001
+              }}>
+                <Link href="/routes" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🗺️ Route Optimization
+                </Link>
+                <Link href="/quoting" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  💰 Freight Quoting
+                </Link>
+                <Link href="/vehicles" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🚚 Fleet Management
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* ANALYTICS - Single Button (indigo/blue from dashboard) */}
+          {/* ANALYTICS - Single Button */}
           <Link href="/analytics" style={{ textDecoration: 'none' }}>
             <button style={{
               background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -239,7 +246,7 @@ export default function ProfessionalNavigation() {
             </button>
           </Link>
 
-          {/* COMPLIANCE - Single Button (red from dashboard) */}
+          {/* COMPLIANCE - Single Button */}
           <Link href="/compliance" style={{ textDecoration: 'none' }}>
             <button style={{
               background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
@@ -259,14 +266,10 @@ export default function ProfessionalNavigation() {
             </button>
           </Link>
 
-          {/* RESOURCES Dropdown - Orange */}
-          <div 
-            className="dropdown" 
-            style={{ position: 'relative', display: 'inline-block' }}
-            onMouseEnter={() => handleDropdownEnter('resources')}
-            onMouseLeave={handleDropdownLeave}
-          >
+          {/* RESOURCES Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button 
+              onClick={() => handleDropdownToggle('resources')}
               style={{
                 background: 'linear-gradient(135deg, #f97316, #ea580c)',
                 color: 'white',
@@ -281,39 +284,39 @@ export default function ProfessionalNavigation() {
                 alignItems: 'center',
                 gap: '4px'
               }}
-              onClick={() => handleDropdownClick('resources')}
             >
               📚 RESOURCES ▼
             </button>
-            <div className="dropdown-content" style={{
-              display: activeDropdown === 'resources' ? 'block' : 'none',
-              position: 'absolute',
-              background: 'white',
-              minWidth: '200px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-              borderRadius: '12px',
-              padding: '12px 0',
-              top: '100%',
-              left: 0,
-              border: '1px solid rgba(0,0,0,0.1)',
-              zIndex: 1001
-            }}>
-              <Link href="/documents" style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                📄 Document Generation
-              </Link>
-              <Link href="/resources" style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                📚 Resource Library
-              </Link>
-              <Link href="/safety" style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🦺 Safety Resources
-              </Link>
-              <Link href="/documentation" style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                📚 Documentation Hub
-              </Link>
-              <Link href="/training" style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                🎓 Training
-              </Link>
-            </div>
+            {activeDropdown === 'resources' && (
+              <div style={{
+                position: 'absolute',
+                background: 'white',
+                minWidth: '220px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                borderRadius: '12px',
+                padding: '12px 0',
+                top: '100%',
+                left: 0,
+                border: '1px solid rgba(0,0,0,0.1)',
+                zIndex: 1001
+              }}>
+                <Link href="/documents" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  📄 Document Generation
+                </Link>
+                <Link href="/resources" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  📚 Resource Library
+                </Link>
+                <Link href="/safety" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🦺 Safety Resources
+                </Link>
+                <Link href="/documentation" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  📚 Documentation Hub
+                </Link>
+                <Link href="/training" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f97316', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🎓 Training
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* User Profile Icon */}

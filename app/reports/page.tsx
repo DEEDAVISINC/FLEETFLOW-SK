@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import StickyNote from '../components/StickyNote'
+import StickyNote from '../components/StickyNote-Enhanced'
 
 export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState('overview')

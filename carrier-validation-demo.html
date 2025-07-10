@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow Carrier Validation & Monitoring Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+
+        .workflow-section {
+            margin: 30px 0;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            background: #f8f9ff;
+        }
+
+        .scenario {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .scenario h3 {
+            margin-top: 0;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .monitoring {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .carrier-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .carrier-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #6c757d;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #721c24;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #155724;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .step {
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border-top: 4px solid #667eea;
+        }
+
+        .step-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .integration-points {
+            background: #e8f4fd;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .integration-points h3 {
+            color: #0c5460;
+            margin-top: 0;
+        }
+
+        .integration-points ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .integration-points li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .integration-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .demo-controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .demo-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .demo-button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .carrier-card {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 FleetFlow Carrier Validation & Monitoring</h1>
+            <div class="subtitle">FMCSA Validation + BrokerSnapshot Monitoring Integration</div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>🔄 Complete Carrier Management Workflow</h2>
+            
+            <div class="workflow-steps">
+                <div class="step">
+                    <div class="step-icon">🛡️</div>
+                    <h4>FMCSA Validation</h4>
+                    <p>Real-time carrier verification when uploaded to system</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">📊</div>
+                    <h4>BrokerSnapshot Monitoring</h4>
+                    <p>Ongoing carrier surveillance and credit monitoring</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🚚</div>
+                    <h4>Load Processing</h4>
+                    <p>Validated carriers only for load assignments</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🚨</div>
+                    <h4>Real-time Alerts</h4>
+                    <p>Instant notifications for carrier status changes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario">
+            <h3>✅ Scenario 1: Valid Carrier Upload</h3>
+            <div class="carrier-card">
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">MC Number:</span>
+                        <span class="info-value">MC-123456</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Company:</span>
+                        <span class="info-value">Elite Transport LLC</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Operating Status:</span>
+                        <span class="info-value status-badge valid">ACTIVE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Safety Rating:</span>
+                        <span class="info-value status-badge valid">SATISFACTORY</span>
+                    </div>
+                </div>
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">Insurance:</span>
+                        <span class="info-value status-badge valid">ACTIVE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Power Units:</span>
+                        <span class="info-value">25</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Drivers:</span>
+                        <span class="info-value">30</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monitoring:</span>
+                        <span class="info-value status-badge monitoring">ENABLED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="success-box">
+                <strong>✅ FMCSA Validation: PASSED</strong><br>
+                <strong>✅ BrokerSnapshot Monitoring: ENABLED</strong><br>
+                Carrier approved for load assignments
+            </div>
+        </div>
+
+        <div class="scenario">
+            <h3>❌ Scenario 2: Invalid Carrier (Safety Issues)</h3>
+            <div class="carrier-card">
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">MC Number:</span>
+                        <span class="info-value">MC-999999</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Company:</span>
+                        <span class="info-value">Risk Carriers Inc</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Operating Status:</span>
+                        <span class="info-value status-badge valid">ACTIVE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Safety Rating:</span>
+                        <span class="info-value status-badge invalid">UNSATISFACTORY</span>
+                    </div>
+                </div>
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">Insurance:</span>
+                        <span class="info-value status-badge valid">ACTIVE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Power Units:</span>
+                        <span class="info-value">5</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Drivers:</span>
+                        <span class="info-value">8</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monitoring:</span>
+                        <span class="info-value status-badge invalid">DISABLED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="error-box">
+                <strong>❌ FMCSA Validation: FAILED</strong><br>
+                <strong>Error:</strong> Carrier has UNSATISFACTORY safety rating<br>
+                Carrier rejected - cannot assign loads
+            </div>
+        </div>
+
+        <div class="scenario">
+            <h3>⛔ Scenario 3: Out of Service Carrier</h3>
+            <div class="carrier-card">
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">MC Number:</span>
+                        <span class="info-value">MC-000000</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Company:</span>
+                        <span class="info-value">Out Of Service Transport</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Operating Status:</span>
+                        <span class="info-value status-badge invalid">OUT_OF_SERVICE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Safety Rating:</span>
+                        <span class="info-value status-badge invalid">CONDITIONAL</span>
+                    </div>
+                </div>
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">Insurance:</span>
+                        <span class="info-value status-badge invalid">INACTIVE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Power Units:</span>
+                        <span class="info-value">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Drivers:</span>
+                        <span class="info-value">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monitoring:</span>
+                        <span class="info-value status-badge invalid">DISABLED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="error-box">
+                <strong>❌ FMCSA Validation: FAILED</strong><br>
+                <strong>Errors:</strong> Carrier is OUT OF SERVICE, Carrier insurance is INACTIVE<br>
+                Carrier completely blocked from system
+            </div>
+        </div>
+
+        <div class="scenario">
+            <h3>📊 Scenario 4: Ongoing Carrier Monitoring</h3>
+            <div class="alert-box">
+                <strong>🚨 BrokerSnapshot Monitoring Alert</strong><br><br>
+                <strong>Carrier:</strong> MC-555666<br>
+                <strong>Alert:</strong> Credit score dropped to 45 (below threshold of 70)<br>
+                <strong>Action Required:</strong> Review carrier status and consider load restrictions
+            </div>
+            
+            <div class="success-box">
+                <strong>📍 Location Update</strong><br>
+                Carrier MC-123456 - Last seen: Dallas, TX<br>
+                GPS tracking active, no route deviations detected
+            </div>
+        </div>
+
+        <div class="scenario">
+            <h3>🚛 Scenario 5: Load Processing with Validation</h3>
+            
+            <div class="success-box">
+                <strong>✅ Load LD-2025-001 - APPROVED</strong><br><br>
+                <strong>Carrier:</strong> MC-123456 (Elite Transport LLC)<br>
+                <strong>Route:</strong> Atlanta, GA → Miami, FL<br>
+                <strong>Rate:</strong> $2,500<br>
+                <strong>Status:</strong> Carrier validated and approved ✅<br><br>
+                <strong>Workflow Steps Completed:</strong><br>
+                📋 Route document generated<br>
+                🗺️ Route optimized<br>
+                📅 Schedule created<br>
+                🤖 AI dispatch executed<br>
+                🛰️ Live tracking initialized<br>
+                📧 Notifications sent
+            </div>
+
+            <div class="error-box">
+                <strong>❌ Load LD-2025-002 - REJECTED</strong><br><br>
+                <strong>Carrier:</strong> MC-999999 (Risk Carriers Inc)<br>
+                <strong>Route:</strong> Dallas, TX → Houston, TX<br>
+                <strong>Rate:</strong> $1,200<br>
+                <strong>Error:</strong> Cannot process load - Carrier MC-999999 validation failed<br>
+                <strong>Reason:</strong> UNSATISFACTORY safety rating
+            </div>
+        </div>
+
+        <div class="integration-points">
+            <h3>🎯 Key Integration Points</h3>
+            <ul>
+                <li><strong>FMCSA Validation:</strong> Runs automatically when carriers are uploaded to system</li>
+                <li><strong>BrokerSnapshot Monitoring:</strong> Enables ongoing carrier surveillance and credit monitoring</li>
+                <li><strong>Load Processing Block:</strong> Invalid/unvalidated carriers cannot be assigned loads</li>
+                <li><strong>Real-time Alerts:</strong> Instant notifications for carrier status changes</li>
+                <li><strong>Audit Trail:</strong> Complete validation and monitoring history for compliance</li>
+                <li><strong>System Integration:</strong> Seamlessly connects with route generation, dispatch, and tracking</li>
+                <li><strong>Risk Management:</strong> Proactive identification of high-risk carriers</li>
+                <li><strong>Compliance Assurance:</strong> DOT and FMCSA regulatory compliance built-in</li>
+            </ul>
+        </div>
+
+        <div class="workflow-section">
+            <h3>📈 System Performance Metrics</h3>
+            <div class="carrier-card">
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">Total Carriers Processed:</span>
+                        <span class="info-value">3</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Valid Carriers:</span>
+                        <span class="info-value status-badge valid">1 (33%)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Monitoring Enabled:</span>
+                        <span class="info-value status-badge monitoring">1</span>
+                    </div>
+                </div>
+                <div class="carrier-info">
+                    <div class="info-row">
+                        <span class="info-label">Validation Success Rate:</span>
+                        <span class="info-value">100%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">FMCSA API Response:</span>
+                        <span class="info-value status-badge valid">ONLINE</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">BrokerSnapshot Status:</span>
+                        <span class="info-value status-badge monitoring">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-controls">
+            <p style="color: #667eea; font-size: 1.1em; margin-bottom: 20px;">
+                <strong>🚛 FleetFlow Carrier Validation & Monitoring System</strong><br>
+                Ensuring carrier compliance and safety through automated FMCSA validation and BrokerSnapshot monitoring
+            </p>
+        </div>
+    </div>
+</body>
+</html>

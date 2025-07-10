@@ -10,19 +10,34 @@ import {
   routeOptimizer 
 } from '../services/route-optimization'
 import GoogleMapsEmbed from './GoogleMaps'
+import QuantumOptimizationControls from './QuantumOptimizationControls'
+import QuantumResultsDisplay from './QuantumResultsDisplay'
 
 interface RouteOptimizerProps {
   onOptimizationComplete?: (routes: OptimizedRoute[]) => void
+}
+
+interface QuantumParameters {
+  quantumIterations: number
+  annealingTemperature: number
+  useQuantumOptimization: boolean
 }
 
 export default function RouteOptimizerDashboard({ onOptimizationComplete }: RouteOptimizerProps) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [stops, setStops] = useState<Stop[]>([])
   const [optimizedRoutes, setOptimizedRoutes] = useState<OptimizedRoute[]>([])
+  const [optimizationResults, setOptimizationResults] = useState<any>(null)
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [showAddVehicle, setShowAddVehicle] = useState(false)
   const [showAddStop, setShowAddStop] = useState(false)
   const [selectedRoute, setSelectedRoute] = useState<OptimizedRoute | null>(null)
+  const [quantumEnabled, setQuantumEnabled] = useState(false)
+  const [quantumParameters, setQuantumParameters] = useState<QuantumParameters>({
+    quantumIterations: 50,
+    annealingTemperature: 100,
+    useQuantumOptimization: false
+  })
 
   // Initialize with sample data
   useEffect(() => {
@@ -92,22 +107,44 @@ export default function RouteOptimizerDashboard({ onOptimizationComplete }: Rout
     setIsOptimizing(true)
     
     try {
-      const request: RouteOptimizationRequest = {
+      const request = {
         vehicles,
         stops,
         constraints: {
           maxRouteTime: 10,
           prioritizeTime: true,
           avoidTolls: false,
-          allowOvertimeDrivers: false
+          allowOvertimeDrivers: false,
+          ...quantumParameters
         }
       }
 
-      const routes = await routeOptimizer.optimizeRoutes(request)
-      setOptimizedRoutes(routes)
-      onOptimizationComplete?.(routes)
+      console.log('🚀 Starting optimization...', quantumEnabled ? 'Quantum Mode' : 'Classical Mode')
+
+      // Use new API endpoint with quantum support
+      const response = await fetch('/api/routes/optimize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Quantum-Optimization': quantumEnabled.toString()
+        },
+        body: JSON.stringify(request)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Optimization failed: ${response.statusText}`)
+      }
+
+      const result = await response.json()
       
-      // Show success notification
+      if (!result.success) {
+        throw new Error(result.error || 'Optimization failed')
+      }
+
+      setOptimizedRoutes(result.routes)
+      setOptimizationResults(result)
+      onOptimizationComplete?.(result.routes)
+      
       console.log('✅ Route optimization completed successfully!')
       
     } catch (error) {
@@ -116,6 +153,16 @@ export default function RouteOptimizerDashboard({ onOptimizationComplete }: Rout
     } finally {
       setIsOptimizing(false)
     }
+  }
+
+  const handleQuantumToggle = (enabled: boolean) => {
+    setQuantumEnabled(enabled)
+    console.log('🔬 Quantum optimization:', enabled ? 'enabled' : 'disabled')
+  }
+
+  const handleQuantumParametersChange = (params: QuantumParameters) => {
+    setQuantumParameters(params)
+    console.log('⚙️ Quantum parameters updated:', params)
   }
 
   const addVehicle = (vehicle: Omit<Vehicle, 'id'>) => {
@@ -692,6 +739,25 @@ export default function RouteOptimizerDashboard({ onOptimizationComplete }: Rout
           onSubmit={addStop}
           onCancel={() => setShowAddStop(false)}
         />
+      )}
+
+      {/* Quantum Optimization Controls */}
+      <div style={{ marginTop: '40px' }}>
+        <QuantumOptimizationControls 
+          onQuantumToggle={handleQuantumToggle}
+          onParametersChange={handleQuantumParametersChange}
+          isOptimizing={isOptimizing}
+        />
+      </div>
+
+      {/* Quantum Optimization Results */}
+      {optimizationResults && (
+        <div style={{ marginTop: '40px' }}>
+          <QuantumResultsDisplay 
+            results={optimizationResults} 
+            isQuantumMode={quantumEnabled}
+          />
+        </div>
       )}
     </div>
   )

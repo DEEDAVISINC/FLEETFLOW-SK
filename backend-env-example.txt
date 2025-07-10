@@ -1,0 +1,148 @@
+# FleetFlow Backend Environment Configuration
+# Copy this to .env and fill in your actual values
+
+# Server Configuration
+PORT=8000
+NODE_ENV=development
+API_VERSION=v1
+
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/fleetflow
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=fleetflow
+DB_USER=fleetflow_user
+DB_PASSWORD=your_secure_password
+
+# Redis Configuration (for caching and sessions)
+REDIS_URL=redis://localhost:6379
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
+JWT_EXPIRES_IN=7d
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+REFRESH_TOKEN_EXPIRES_IN=30d
+
+# File Storage Configuration (AWS S3)
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=fleetflow-files
+AWS_S3_BUCKET_PHOTOS=fleetflow-photos
+AWS_S3_BUCKET_DOCUMENTS=fleetflow-documents
+
+# Alternative: Google Cloud Storage
+# GCS_PROJECT_ID=your_project_id
+# GCS_KEY_FILE=path/to/service-account.json
+# GCS_BUCKET=fleetflow-files
+
+# SMS Service Configuration (Twilio)
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+1234567890
+TWILIO_WEBHOOK_URL=https://yourdomain.com/api/webhooks/twilio
+
+# Alternative SMS Services
+# AWS_SNS_ACCESS_KEY=your_sns_key
+# AWS_SNS_SECRET_KEY=your_sns_secret
+# MESSAGEBIRD_ACCESS_KEY=your_messagebird_key
+
+# Email Configuration (Nodemailer)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_FROM=FleetFlow System <noreply@fleetflow.com>
+
+# External APIs
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+MAPBOX_ACCESS_TOKEN=your_mapbox_token
+
+# DOT/FMCSA API Configuration
+FMCSA_API_KEY=your_fmcsa_api_key
+DOT_API_ENDPOINT=https://mobile.fmcsa.dot.gov/qc/services/carriers
+
+# Real-time Features
+ENABLE_WEBSOCKETS=true
+WEBSOCKET_PORT=8001
+SOCKET_IO_CORS_ORIGIN=http://localhost:3000
+
+# Security Configuration
+CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+BCRYPT_SALT_ROUNDS=12
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_FILE_PATH=./logs/fleetflow.log
+ENABLE_REQUEST_LOGGING=true
+
+# Payment Processing & Billing
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret
+STRIPE_PUBLISHABLE_KEY=pk_live_51RUEeSLPOMQGHsf1hk7VuJi83rFKTOf1atNmSBIulpIzlEyIfH5ePmZtpa58L79DPCH2qMa4lbDOSTa7tE8pDRIC00tty8jPdU
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+# Bill.com API Configuration (Enterprise Billing)
+BILLCOM_API_KEY=your_billcom_api_key
+BILLCOM_USERNAME=your_billcom_username
+BILLCOM_PASSWORD=your_billcom_password
+BILLCOM_ENVIRONMENT=sandbox
+BILLCOM_ORG_ID=your_org_id
+
+# Backup Configuration
+BACKUP_SCHEDULE=0 2 * * *
+BACKUP_RETENTION_DAYS=30
+BACKUP_S3_BUCKET=fleetflow-backups
+
+# Monitoring and Analytics
+SENTRY_DSN=your_sentry_dsn
+NEW_RELIC_LICENSE_KEY=your_newrelic_key
+ANALYTICS_TRACKING_ID=your_analytics_id
+
+# Development/Testing
+ENABLE_API_DOCS=true
+ENABLE_TEST_ROUTES=false
+MOCK_SMS_ENABLED=true
+MOCK_EMAIL_ENABLED=true
+
+# Production Security (set these in production)
+HTTPS_ENABLED=false
+SSL_CERT_PATH=
+SSL_KEY_PATH=
+HELMET_ENABLED=true
+COMPRESSION_ENABLED=true
+
+# Feature Flags
+ENABLE_PHOTO_UPLOAD=true
+ENABLE_SIGNATURE_CAPTURE=true
+ENABLE_REAL_TIME_TRACKING=true
+ENABLE_DOCUMENT_GENERATION=true
+ENABLE_SMS_NOTIFICATIONS=true
+ENABLE_EMAIL_NOTIFICATIONS=true
+ENABLE_AUDIT_LOGGING=true
+
+# Cache Configuration
+CACHE_TTL_LOADS=300
+CACHE_TTL_DRIVERS=600
+CACHE_TTL_NOTIFICATIONS=60
+
+# File Upload Limits
+MAX_FILE_SIZE_MB=10
+MAX_FILES_PER_UPLOAD=5
+ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp,application/pdf
+
+# Session Configuration
+SESSION_SECRET=your_session_secret
+SESSION_MAX_AGE=86400000
+
+# Webhook URLs (for external integrations)
+DISPATCH_WEBHOOK_URL=https://yourdomain.com/api/webhooks/dispatch
+BROKER_WEBHOOK_URL=https://yourdomain.com/api/webhooks/broker
+
+# Development URLs
+FRONTEND_URL=http://localhost:3000
+ADMIN_URL=http://localhost:3001

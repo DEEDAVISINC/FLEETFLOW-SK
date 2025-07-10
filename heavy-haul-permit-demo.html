@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow Heavy Haul Permit System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #FF6B6B;
+            color: #FF6B6B;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #FF6B6B;
+        }
+
+        .form-section h3 {
+            color: #343a40;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #FF6B6B;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .permit-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #17a2b8;
+        }
+
+        .permit-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .permit-state {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        .permit-cost {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-draft { background: #ffc107; color: #212529; }
+        .status-submitted { background: #17a2b8; color: white; }
+        .status-approved { background: #28a745; color: white; }
+        .status-pending { background: #fd7e14; color: white; }
+
+        .requirements {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .requirements ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .requirements li {
+            padding: 5px 0;
+            color: #6c757d;
+        }
+
+        .requirements li::before {
+            content: "⚠️ ";
+            margin-right: 8px;
+        }
+
+        .timeline {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .cost-summary {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .cost-summary h4 {
+            color: #0c5460;
+            margin-bottom: 15px;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #bee5eb;
+        }
+
+        .cost-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-top: 2px solid #0c5460;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .demo-data {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .demo-data h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .demo-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Heavy Haul Permit System</h1>
+            <p>Automated permit management for oversized and overweight loads</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('load-analyzer')">Load Analyzer</button>
+            <button class="tab" onclick="showTab('permit-tracker')">Permit Tracker</button>
+            <button class="tab" onclick="showTab('cost-calculator')">Cost Calculator</button>
+            <button class="tab" onclick="showTab('demo-data')">Demo Data</button>
+        </div>
+
+        <div class="content">
+            <!-- Load Analyzer Tab -->
+            <div id="load-analyzer" class="tab-content active">
+                <div class="form-section">
+                    <h3>📏 Load Dimensions</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="length">Length (feet)</label>
+                            <input type="number" id="length" value="85" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="width">Width (feet)</label>
+                            <input type="number" id="width" value="12" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="height">Height (feet)</label>
+                            <input type="number" id="height" value="13" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (pounds)</label>
+                            <input type="number" id="weight" value="75000" step="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🗺️ Route Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="origin">Origin State</label>
+                            <select id="origin">
+                                <option value="TX">Texas (TX)</option>
+                                <option value="CA">California (CA)</option>
+                                <option value="FL">Florida (FL)</option>
+                                <option value="GA">Georgia (GA)</option>
+                                <option value="PA">Pennsylvania (PA)</option>
+                                <option value="IL">Illinois (IL)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Destination State</label>
+                            <select id="destination">
+                                <option value="GA">Georgia (GA)</option>
+                                <option value="TX">Texas (TX)</option>
+                                <option value="CA">California (CA)</option>
+                                <option value="FL">Florida (FL)</option>
+                                <option value="PA">Pennsylvania (PA)</option>
+                                <option value="IL">Illinois (IL)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cargo-type">Cargo Type</label>
+                            <select id="cargo-type">
+                                <option value="construction">Construction Equipment</option>
+                                <option value="machinery">Industrial Machinery</option>
+                                <option value="steel">Steel Products</option>
+                                <option value="prefab">Prefab Buildings</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="travel-date">Travel Date</label>
+                            <input type="date" id="travel-date" value="2025-07-15">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-buttons">
+                    <button class="btn" onclick="analyzeLoad()">🔍 Analyze Load</button>
+                    <button class="btn btn-secondary" onclick="loadDemoData('oversize')">Demo: Oversize Load</button>
+                    <button class="btn btn-secondary" onclick="loadDemoData('overweight')">Demo: Overweight Load</button>
+                    <button class="btn btn-secondary" onclick="loadDemoData('both')">Demo: Super Load</button>
+                </div>
+
+                <div id="analysis-results" class="results hidden">
+                    <h3>📊 Load Analysis Results</h3>
+                    <div id="analysis-content"></div>
+                </div>
+            </div>
+
+            <!-- Permit Tracker Tab -->
+            <div id="permit-tracker" class="tab-content">
+                <div class="form-section">
+                    <h3>📋 Active Permit Applications</h3>
+                    <p>Track the status of your heavy haul permit applications across all states.</p>
+                </div>
+
+                <div id="permit-applications">
+                    <!-- Permit applications will be populated here -->
+                </div>
+
+                <button class="btn" onclick="refreshPermitStatus()">🔄 Refresh Status</button>
+            </div>
+
+            <!-- Cost Calculator Tab -->
+            <div id="cost-calculator" class="tab-content">
+                <div class="form-section">
+                    <h3>💰 Permit Cost Calculator</h3>
+                    <p>Calculate estimated permit costs for your heavy haul routes.</p>
+                </div>
+
+                <div class="cost-summary">
+                    <h4>Cost Breakdown</h4>
+                    <div id="cost-breakdown">
+                        <p>Enter load details in the Load Analyzer tab to see cost estimates.</p>
+                    </div>
+                </div>
+
+                <div class="cost-summary">
+                    <h4>💡 Cost Savings Analysis</h4>
+                    <div class="cost-item">
+                        <span>Traditional Manual Process:</span>
+                        <span>$625 - $2,235 per load</span>
+                    </div>
+                    <div class="cost-item">
+                        <span>FleetFlow Automated System:</span>
+                        <span>$25 - $85 per load (permit fees only)</span>
+                    </div>
+                    <div class="cost-item cost-total">
+                        <span>Potential Savings:</span>
+                        <span>70-90% cost reduction</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Data Tab -->
+            <div id="demo-data" class="tab-content">
+                <div class="demo-data">
+                    <h4>🚛 Demo Load Examples</h4>
+                    <p>Use these sample loads to test the permit system:</p>
+                    
+                    <div style="margin: 20px 0;">
+                        <strong>Oversize Construction Equipment:</strong><br>
+                        85' × 12' × 13', 75,000 lbs<br>
+                        Route: Houston, TX → Atlanta, GA<br>
+                        <em>Requires oversize permits in TX, LA, AL, GA</em>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <strong>Overweight Steel Shipment:</strong><br>
+                        70' × 8' × 12', 95,000 lbs<br>
+                        Route: Pittsburgh, PA → Detroit, MI<br>
+                        <em>Requires overweight permits in PA, MI</em>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <strong>Super Load (Both Oversize & Overweight):</strong><br>
+                        95' × 14' × 15', 120,000 lbs<br>
+                        Route: Los Angeles, CA → Phoenix, AZ<br>
+                        <em>Requires special permits, escorts, and pilot cars</em>
+                    </div>
+                </div>
+
+                <div class="demo-data">
+                    <h4>📊 System Features</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0;">✅ Automatic oversize/overweight detection</li>
+                        <li style="padding: 8px 0;">✅ Multi-state permit coordination</li>
+                        <li style="padding: 8px 0;">✅ Real-time cost calculations</li>
+                        <li style="padding: 8px 0;">✅ Automated state portal integration</li>
+                        <li style="padding: 8px 0;">✅ Compliance tracking and renewals</li>
+                        <li style="padding: 8px 0;">✅ Route optimization for permit requirements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State permit costs and limits
+        const permitCosts = {
+            'TX': { oversize: 40, overweight: 50, both: 75 },
+            'GA': { oversize: 20, overweight: 25, both: 40 },
+            'LA': { oversize: 30, overweight: 35, both: 55 },
+            'AL': { oversize: 25, overweight: 30, both: 45 },
+            'PA': { oversize: 35, overweight: 45, both: 70 },
+            'MI': { oversize: 30, overweight: 35, both: 55 },
+            'CA': { oversize: 45, overweight: 60, both: 85 },
+            'AZ': { oversize: 30, overweight: 35, both: 55 },
+            'FL': { oversize: 35, overweight: 40, both: 65 },
+            'IL': { oversize: 25, overweight: 30, both: 50 }
+        };
+
+        const legalLimits = {
+            maxWidth: 8.5,
+            maxHeight: 13.5,
+            maxLength: 75,
+            maxWeight: 80000
+        };
+
+        let currentApplications = [];
+
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function loadDemoData(type) {
+            const demoData = {
+                oversize: {
+                    length: 85, width: 12, height: 13, weight: 75000,
+                    origin: 'TX', destination: 'GA', cargoType: 'construction'
+                },
+                overweight: {
+                    length: 70, width: 8, height: 12, weight: 95000,
+                    origin: 'PA', destination: 'MI', cargoType: 'steel'
+                },
+                both: {
+                    length: 95, width: 14, height: 15, weight: 120000,
+                    origin: 'CA', destination: 'AZ', cargoType: 'machinery'
+                }
+            };
+
+            const data = demoData[type];
+            document.getElementById('length').value = data.length;
+            document.getElementById('width').value = data.width;
+            document.getElementById('height').value = data.height;
+            document.getElementById('weight').value = data.weight;
+            document.getElementById('origin').value = data.origin;
+            document.getElementById('destination').value = data.destination;
+            document.getElementById('cargo-type').value = data.cargoType;
+
+            // Auto-analyze after loading demo data
+            setTimeout(() => analyzeLoad(), 500);
+        }
+
+        function analyzeLoad() {
+            const length = parseFloat(document.getElementById('length').value);
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const cargoType = document.getElementById('cargo-type').value;
+
+            // Determine if permits are required
+            const isOversize = width > legalLimits.maxWidth || 
+                              height > legalLimits.maxHeight || 
+                              length > legalLimits.maxLength;
+            const isOverweight = weight > legalLimits.maxWeight;
+
+            const permitType = isOversize && isOverweight ? 'both' : 
+                              isOversize ? 'oversize' : 
+                              isOverweight ? 'overweight' : 'none';
+
+            // Get affected states (simplified)
+            const affectedStates = [origin, destination];
+            
+            // Calculate costs
+            let totalCost = 0;
+            const statePermits = [];
+
+            if (permitType !== 'none') {
+                affectedStates.forEach(state => {
+                    const cost = permitCosts[state]?.[permitType] || 50;
+                    totalCost += cost;
+                    statePermits.push({
+                        state,
+                        cost,
+                        type: permitType,
+                        status: 'draft'
+                    });
+                });
+            }
+
+            displayResults(permitType, affectedStates, totalCost, statePermits, {
+                length, width, height, weight, cargoType
+            });
+        }
+
+        function displayResults(permitType, states, totalCost, statePermits, loadDetails) {
+            const resultsDiv = document.getElementById('analysis-results');
+            const contentDiv = document.getElementById('analysis-content');
+
+            if (permitType === 'none') {
+                contentDiv.innerHTML = `
+                    <div class="permit-card">
+                        <h4>✅ No Permits Required</h4>
+                        <p>This load is within legal limits and can proceed without special permits.</p>
+                        <div class="requirements">
+                            <strong>Load Details:</strong>
+                            <ul>
+                                <li>Dimensions: ${loadDetails.length}' × ${loadDetails.width}' × ${loadDetails.height}'</li>
+                                <li>Weight: ${loadDetails.weight.toLocaleString()} lbs</li>
+                                <li>Cargo: ${loadDetails.cargoType}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let html = `
+                    <div class="timeline">
+                        <h4>📋 Permit Requirements Summary</h4>
+                        <p><strong>Permit Type:</strong> ${permitType.toUpperCase()}</p>
+                        <p><strong>States Affected:</strong> ${states.join(', ')}</p>
+                        <p><strong>Total Estimated Cost:</strong> $${totalCost}</p>
+                        <p><strong>Processing Time:</strong> 3-5 business days</p>
+                    </div>
+                `;
+
+                statePermits.forEach(permit => {
+                    const requirements = getStateRequirements(permit.state, permit.type);
+                    html += `
+                        <div class="permit-card">
+                            <div class="permit-header">
+                                <span class="permit-state">${permit.state}</span>
+                                <span class="permit-cost">$${permit.cost}</span>
+                            </div>
+                            <div>
+                                <span class="status-badge status-${permit.status}">${permit.status}</span>
+                                <span style="margin-left: 15px;">Processing: 2-5 business days</span>
+                            </div>
+                            <div class="requirements">
+                                <strong>Requirements:</strong>
+                                <ul>
+                                    ${requirements.map(req => `<li>${req}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Store applications for tracking
+                currentApplications = statePermits.map(permit => ({
+                    ...permit,
+                    id: `permit-${permit.state}-${Date.now()}`,
+                    applicationDate: new Date(),
+                    loadId: 'LOAD-' + Date.now()
+                }));
+            }
+
+            contentDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
+
+            // Update cost calculator
+            updateCostCalculator(statePermits, totalCost);
+        }
+
+        function getStateRequirements(state, permitType) {
+            const baseRequirements = [
+                'Valid driver\'s license and insurance',
+                'Route must use designated truck routes'
+            ];
+
+            if (permitType === 'oversize' || permitType === 'both') {
+                baseRequirements.push('Escort vehicle required for loads over 12\' wide');
+                baseRequirements.push('No travel during peak hours (7-9 AM, 4-6 PM)');
+            }
+
+            if (permitType === 'overweight' || permitType === 'both') {
+                baseRequirements.push('Additional axles may be required');
+                baseRequirements.push('Bridge weight restrictions apply');
+            }
+
+            if (permitType === 'both') {
+                baseRequirements.push('Pilot car required for super loads');
+                baseRequirements.push('Advanced route coordination required');
+            }
+
+            return baseRequirements;
+        }
+
+        function updateCostCalculator(statePermits, totalCost) {
+            const costDiv = document.getElementById('cost-breakdown');
+            
+            if (statePermits.length === 0) {
+                costDiv.innerHTML = '<p>No permits required - $0 total cost</p>';
+                return;
+            }
+
+            let html = '';
+            statePermits.forEach(permit => {
+                html += `
+                    <div class="cost-item">
+                        <span>${permit.state} ${permit.type} permit:</span>
+                        <span>$${permit.cost}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="cost-item cost-total">
+                    <span>Total Permit Cost:</span>
+                    <span>$${totalCost}</span>
+                </div>
+            `;
+
+            costDiv.innerHTML = html;
+        }
+
+        function refreshPermitStatus() {
+            const trackerDiv = document.getElementById('permit-applications');
+            
+            if (currentApplications.length === 0) {
+                trackerDiv.innerHTML = `
+                    <div class="permit-card">
+                        <h4>No Active Applications</h4>
+                        <p>Use the Load Analyzer to create permit applications.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Simulate status updates
+            currentApplications.forEach(app => {
+                const daysSince = Math.floor((Date.now() - app.applicationDate.getTime()) / (1000 * 60 * 60 * 24));
+                if (daysSince >= 1 && app.status === 'draft') {
+                    app.status = 'submitted';
+                    app.confirmationNumber = `${app.state}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+                }
+                if (daysSince >= 3 && app.status === 'submitted') {
+                    app.status = 'approved';
+                    app.permitNumber = `${app.state}-${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
+                }
+            });
+
+            let html = '';
+            currentApplications.forEach(app => {
+                html += `
+                    <div class="permit-card">
+                        <div class="permit-header">
+                            <span class="permit-state">${app.state} Permit</span>
+                            <span class="permit-cost">$${app.cost}</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <span class="status-badge status-${app.status}">${app.status}</span>
+                            ${app.confirmationNumber ? `<span style="margin-left: 15px;">Confirmation: ${app.confirmationNumber}</span>` : ''}
+                        </div>
+                        ${app.permitNumber ? `<p><strong>Permit Number:</strong> ${app.permitNumber}</p>` : ''}
+                        <p><strong>Application Date:</strong> ${app.applicationDate.toDateString()}</p>
+                        <p><strong>Load ID:</strong> ${app.loadId}</p>
+                    </div>
+                `;
+            });
+
+            trackerDiv.innerHTML = html;
+        }
+
+        // Initialize permit tracker
+        refreshPermitStatus();
+
+        console.log('Heavy Haul Permit System loaded successfully!');
+    </script>
+</body>
+</html>

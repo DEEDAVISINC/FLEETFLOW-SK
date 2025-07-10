@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import QuantumRouteOptimizer, { QuantumOptimizationRequest } from '../../../services/QuantumRouteOptimizer'
 
 // Configure this route for dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -31,6 +32,9 @@ interface OptimizationRequest {
     allowOvertimeDrivers?: boolean
     prioritizeTime?: boolean
     avoidTolls?: boolean
+    quantumIterations?: number
+    annealingTemperature?: number
+    useQuantumOptimization?: boolean
   }
 }
 
@@ -50,32 +54,56 @@ export async function POST(request: NextRequest) {
     console.log(`- ${body.vehicles.length} vehicles`)
     console.log(`- ${body.stops.length} stops`)
 
+    // Check for quantum optimization preference
+    const useQuantumOptimization = request.headers.get('X-Quantum-Optimization') === 'true' ||
+                                  body.constraints?.quantumIterations !== undefined ||
+                                  body.constraints?.useQuantumOptimization === true
+
     // Check if we have a real Google Maps API key
     const hasRealAPI = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && 
                       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY !== 'demo-key'
 
-    let optimizedRoutes
+    let optimizedResult
 
-    if (hasRealAPI) {
+    if (useQuantumOptimization) {
+      // Use quantum-inspired optimization
+      console.log('🔬 Using quantum-inspired optimization...')
+      const quantumOptimizer = new QuantumRouteOptimizer()
+      optimizedResult = await quantumOptimizer.optimizeRoutes(body as QuantumOptimizationRequest)
+      
+      return NextResponse.json({
+        success: true,
+        routes: optimizedResult.routes,
+        metrics: optimizedResult.metrics,
+        quantumAnalysis: optimizedResult.quantumAnalysis,
+        apiUsed: 'quantum-inspired',
+        timestamp: new Date().toISOString()
+      })
+    } else if (hasRealAPI) {
       // Use real Google Maps optimization
-      optimizedRoutes = await optimizeWithGoogleMaps(body)
+      const optimizedRoutes = await optimizeWithGoogleMaps(body)
+      const metrics = calculateOptimizationMetrics(optimizedRoutes)
+      
+      return NextResponse.json({
+        success: true,
+        routes: optimizedRoutes,
+        metrics,
+        apiUsed: 'google-maps',
+        timestamp: new Date().toISOString()
+      })
     } else {
       // Use advanced mock optimization
-      optimizedRoutes = await optimizeWithMockData(body)
+      const optimizedRoutes = await optimizeWithMockData(body)
+      const metrics = calculateOptimizationMetrics(optimizedRoutes)
+      
+      return NextResponse.json({
+        success: true,
+        routes: optimizedRoutes,
+        metrics,
+        apiUsed: 'mock-advanced',
+        timestamp: new Date().toISOString()
+      })
     }
-
-    // Calculate performance metrics
-    const metrics = calculateOptimizationMetrics(optimizedRoutes)
-
-    console.log('✅ Route optimization completed successfully')
-
-    return NextResponse.json({
-      success: true,
-      routes: optimizedRoutes,
-      metrics,
-      apiUsed: hasRealAPI ? 'google-maps' : 'mock-advanced',
-      timestamp: new Date().toISOString()
-    })
 
   } catch (error) {
     console.error('❌ Route optimization failed:', error)

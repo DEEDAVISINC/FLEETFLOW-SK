@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FleetFlow Demo Index</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .header { 
+            background: #1f2937; 
+            color: white; 
+            padding: 20px; 
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .demo-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px;
+        }
+        .demo-card { 
+            background: white; 
+            border: 1px solid #ccc; 
+            padding: 20px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .demo-card h3 { 
+            color: #1f2937; 
+            margin-top: 0;
+        }
+        .demo-link { 
+            display: inline-block; 
+            background: #2563eb; 
+            color: white; 
+            padding: 10px 20px; 
+            text-decoration: none; 
+            border-radius: 4px;
+            margin: 5px 5px 5px 0;
+        }
+        .demo-link:hover { 
+            background: #1d4ed8; 
+        }
+        .carrier-link { background: #059669; }
+        .carrier-link:hover { background: #047857; }
+        .route-link { background: #dc2626; }
+        .route-link:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚛 FleetFlow Demo Center</h1>
+        <p>Interactive Demonstrations of FleetFlow Features</p>
+    </div>
+
+    <div class="demo-grid">
+        <div class="demo-card">
+            <h3>🏢 Dispatch Central</h3>
+            <p>Main dispatch interface for managing loads, carriers, and operations.</p>
+            <a href="dispatch-central-ultra-simple.html" class="demo-link">Ultra Simple</a>
+            <a href="dispatch-central.html" class="demo-link">Full Featured</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>🚚 Carrier Portal</h3>
+            <p>Interface for managing carriers, validation, and BrokerSnapshot monitoring.</p>
+            <a href="carrier-portal-ultra-simple.html" class="demo-link carrier-link">Ultra Simple</a>
+            <a href="carrier-portal-simple.html" class="demo-link carrier-link">Simple</a>
+            <a href="carrier-portal.html" class="demo-link carrier-link">Full Featured</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>✅ Carrier Validation</h3>
+            <p>FMCSA validation and BrokerSnapshot monitoring demonstrations.</p>
+            <a href="carrier-validation-simple.html" class="demo-link carrier-link">Simple Demo</a>
+            <a href="carrier-validation-demo.html" class="demo-link carrier-link">Full Demo</a>
+            <a href="carrier-demo-working.html" class="demo-link carrier-link">Working Demo</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>� Heavy Haul Permits</h3>
+            <p>Automated permit management for oversized and overweight loads with state integrations.</p>
+            <a href="heavy-haul-permit-demo.html" class="demo-link">Heavy Haul System</a>
+            <a href="demo-heavy-haul-permits-working.js" class="demo-link">Terminal Demo</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>�🗺️ Route Automation</h3>
+            <p>Route planning and optimization demonstrations.</p>
+            <a href="route-demo-minimal.html" class="demo-link route-link">Minimal</a>
+            <a href="route-demo-basic.html" class="demo-link route-link">Basic</a>
+            <a href="route-demo-simple.html" class="demo-link route-link">Simple</a>
+            <a href="route-automation-demo.html" class="demo-link route-link">Full Demo</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>🔧 Testing & Troubleshooting</h3>
+            <p>Basic tests and minimal examples for troubleshooting.</p>
+            <a href="minimal-test.html" class="demo-link">Minimal Test</a>
+            <a href="test-basic.html" class="demo-link">Basic Test</a>
+            <a href="file-test.html" class="demo-link">File Test</a>
+        </div>
+
+        <div class="demo-card">
+            <h3>📋 Quick Access</h3>
+            <p>Most commonly used interfaces for daily operations.</p>
+            <a href="dispatch-central-ultra-simple.html" class="demo-link">Quick Dispatch</a>
+            <a href="carrier-portal-ultra-simple.html" class="demo-link carrier-link">Quick Carrier Portal</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('FleetFlow Demo Index loaded successfully');
+        
+        // Test if JavaScript is working
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, JavaScript is working');
+        });
+    </script>
+</body>
+</html>

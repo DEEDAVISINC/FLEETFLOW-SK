@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import StickyNote from '../components/StickyNote'
+import StickyNote from '../components/StickyNote-Enhanced'
 
 interface MaintenanceRecord {
   id: string

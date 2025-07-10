@@ -125,6 +125,18 @@
   animation: statusIndicatorPulse 2s ease-in-out infinite;
 }
 
+/* Enhanced Navigation Dropdown Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* 2D Visual Enhancement Styles */
 
 /* Enhanced Card Styles with Depth */
@@ -271,6 +283,38 @@
   box-shadow: 
     0 4px 15px rgba(59, 130, 246, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Navigation Dropdown Styles */
+.dropdown:hover .dropdown-content {
+  display: block !important;
+}
+
+.dropdown button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.dropdown-content a:hover {
+  background-color: #f8fafc !important;
+  transform: translateX(5px);
+  transition: all 0.2s ease;
+}
+
+/* BULLETPROOF RESOURCES DROPDOWN CSS */
+.resources-dropdown:hover .resources-dropdown-menu {
+  display: block !important;
+}
+
+.resources-dropdown-menu a:hover {
+  background-color: #f8f9fa !important;
+  transform: translateX(3px);
+  transition: all 0.2s ease;
+}
+
+.resources-dropdown button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(247, 115, 22, 0.25) !important;
 }
 
 /* Enhanced Tables */
@@ -961,6 +1005,47 @@
   color: #166534;
 }
 
+/* Dispatch Page Dynamic Tab Colors */
+.dispatch-tab-blue { @apply bg-blue-600 text-white shadow-lg; }
+.dispatch-tab-green { @apply bg-green-600 text-white shadow-lg; }
+.dispatch-tab-purple { @apply bg-purple-600 text-white shadow-lg; }
+.dispatch-tab-emerald { @apply bg-emerald-600 text-white shadow-lg; }
+.dispatch-tab-cyan { @apply bg-cyan-600 text-white shadow-lg; }
+.dispatch-tab-gray { @apply bg-gray-600 text-white shadow-lg; }
+
+/* Enhanced glassmorphism for dispatch central */
+.dispatch-glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dispatch-card-hover {
+  transition: all 0.3s ease;
+}
+
+.dispatch-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Status badge improvements */
+.status-badge {
+  @apply px-3 py-1 text-xs font-bold rounded-full shadow-sm;
+}
+
+/* Action button improvements */
+.action-btn {
+  @apply px-3 py-1 rounded-md transition-all duration-200 text-xs font-semibold shadow-sm hover:shadow-md;
+}
+
+.action-btn-blue { @apply bg-blue-600 text-white hover:bg-blue-700; }
+.action-btn-green { @apply bg-green-600 text-white hover:bg-green-700; }
+.action-btn-purple { @apply bg-purple-600 text-white hover:bg-purple-700; }
+.action-btn-emerald { @apply bg-emerald-600 text-white hover:bg-emerald-700; }
+.action-btn-cyan { @apply bg-cyan-600 text-white hover:bg-cyan-700; }
+.action-btn-gray { @apply bg-gray-600 text-white hover:bg-gray-700; }
+
 /* Global styles */
 * {
   box-sizing: border-box;
@@ -975,7 +1060,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  background-color: #f8fafc;
   color: #1e293b;
 }
 
@@ -1154,58 +1238,37 @@ a {
   color: white;
 }
 
-/* Dropdown Styles */
-.relative {
-  position: relative;
+/* Navigation Dropdown Styles */
+.dropdown:hover .dropdown-content {
+  display: block !important;
 }
 
-.absolute {
-  position: absolute;
+.dropdown button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-.z-50 {
-  z-index: 50;
+.dropdown-content a:hover {
+  background-color: #f8fafc !important;
+  transform: translateX(5px);
+  transition: all 0.2s ease;
 }
 
-.min-w-48 {
-  min-width: 12rem;
+/* BULLETPROOF RESOURCES DROPDOWN CSS */
+.resources-dropdown:hover .resources-dropdown-menu {
+  display: block !important;
 }
 
-/* Utility Classes */
-.gap-1 { gap: 0.25rem; }
-.gap-3 { gap: 0.75rem; }
-.gap-4 { gap: 1rem; }
-
-.mt-1 { margin-top: 0.25rem; }
-
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-
-.text-lg { font-size: 1.125rem; }
-
-.transition-transform { transition-property: transform; }
-.transition-colors { transition-property: color, background-color, border-color; }
-
-.rotate-180 { transform: rotate(180deg); }
-
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-t-lg { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
-.rounded-b-lg { border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
-
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+.resources-dropdown-menu a:hover {
+  background-color: #f8f9fa !important;
+  transform: translateX(3px);
+  transition: all 0.2s ease;
 }
 
-.border { border: 1px solid #e5e7eb; }
-.border-gray-200 { border-color: #e5e7eb; }
-
-.bg-white { background-color: white; }
-.hover\:bg-gray-50:hover { background-color: #f9fafb; }
-
-.text-gray-700 { color: #374151; }
-
-.first\:rounded-t-lg:first-child { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
-.last\:rounded-b-lg:last-child { border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
+.resources-dropdown button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(247, 115, 22, 0.25) !important;
+}
 
 /* Tables */
 .table {
@@ -1306,6 +1369,11 @@ a {
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: all 0.2s ease-in-out;
 }
 
 /* Responsive */

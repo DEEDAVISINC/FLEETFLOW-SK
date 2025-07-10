@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import FleetFlowFooter from './FleetFlowFooter'
 
 interface DOTComplianceProfile {
   carrierId: string
@@ -107,12 +108,24 @@ export default function DOTComplianceDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            DOT Compliance Management
-          </h1>
-          <p className="text-gray-600">
-            Comprehensive FMCSA/DOT compliance automation and monitoring
-          </p>
+          <div className="flex items-center gap-4 mb-4">
+            <img 
+              src="/images/new fleetflow logo.png" 
+              alt="FleetFlow Logo" 
+              className="w-8 h-8 object-contain"
+              onError={(e) => {
+                e.currentTarget.src = "/images/fleet-flow-logo.png";
+              }}
+            />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                DOT Compliance Management
+              </h1>
+              <p className="text-gray-600">
+                Comprehensive FMCSA/DOT compliance automation and monitoring
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* DOT Number Input */}
@@ -611,6 +624,8 @@ export default function DOTComplianceDashboard() {
             </div>
           </div>
         )}
+        
+        <FleetFlowFooter variant="light" />
       </div>
     </div>
   )

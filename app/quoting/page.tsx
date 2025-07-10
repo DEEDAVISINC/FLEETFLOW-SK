@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 interface QuoteData {
   type: 'LTL' | 'FTL' | 'Specialized';
@@ -303,47 +304,87 @@ export default function QuotingPage() {
   };
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #9C27B0 0%, #673AB7 100%)',
-      minHeight: '100vh',
-      color: 'white'
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      padding: '80px 20px 20px 20px'
     }}>
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <header style={{
+      {/* Back Button */}
+      <div style={{ padding: '0 0 24px 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <Link href="/" style={{ display: 'inline-block', textDecoration: 'none' }}>
+          <button style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}>
+            ← Back to Dashboard
+          </button>
+        </Link>
+      </div>
+
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{
           background: 'rgba(255, 255, 255, 0.1)',
-          padding: '30px',
-          borderRadius: '15px',
           backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          marginBottom: '30px',
-          textAlign: 'center'
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)'
         }}>
           <h1 style={{
-            fontSize: '2.5rem',
+            fontSize: '36px',
             fontWeight: 'bold',
-            margin: '0 0 10px 0',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-          }}>💰 Freight Quoting Engine</h1>
-          <p style={{
-            fontSize: '1.1rem',
-            margin: 0,
-            opacity: 0.9
-          }}>Generate instant quotes for LTL, FTL, and Specialized shipments.</p>
-        </header>
+            color: 'white',
+            marginBottom: '12px',
+            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+          }}>
+            💰 FREIGHT QUOTING ENGINE
+          </h1>
+          <p style={{ fontSize: '20px', color: 'rgba(255,255,255,0.9)', margin: 0 }}>
+            Generate instant quotes for LTL, FTL, and Specialized shipments
+          </p>
+        </div>
 
         {/* Quick Quote Section */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '15px',
-          padding: '25px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          marginBottom: '30px'
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '32px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
         }}>
-          <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
+          <h2 style={{
+            fontSize: '20px',
+            fontWeight: 'bold',
+            color: '#111827',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
             <span>⚡</span>
             <span>Quick Quote - Popular Routes</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px'
+          }}>
             {[
               { route: 'LA ↔ Chicago', desc: 'West Coast to Midwest', price: '$2,450' },
               { route: 'NYC ↔ Miami', desc: 'East Coast Corridor', price: '$1,850' },
@@ -356,87 +397,208 @@ export default function QuotingPage() {
                   setLtlForm(prev => ({ ...prev, origin, destination, weight: '1000', pallets: '2', freightClass: '70' }));
                   setActiveTab('ltl');
                 }}
-                className="bg-gray-800/70 hover:bg-gray-700/70 p-4 rounded-lg border border-gray-600 hover:border-blue-500 transition-all group"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(10px)',
+                  padding: '16px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  textAlign: 'left'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
+                }}
               >
-                <div className="text-left">
-                  <div className="font-bold text-blue-400 group-hover:text-blue-300">{quick.route}</div>
-                  <div className="text-sm text-gray-400 mt-1">{quick.desc}</div>
-                  <div className="text-lg font-bold text-green-400 mt-2">Est. {quick.price}</div>
+                <div>
+                  <div style={{ fontWeight: 'bold', color: '#2563eb', marginBottom: '4px' }}>
+                    {quick.route}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                    {quick.desc}
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
+                    Est. {quick.price}
+                  </div>
                 </div>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-3 text-center">
+          <p style={{
+            fontSize: '12px',
+            color: '#6b7280',
+            marginTop: '12px',
+            textAlign: 'center',
+            margin: '12px 0 0 0'
+          }}>
             💡 Click any route to auto-fill the form with sample data
           </p>
         </div>
 
-        <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <main style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: '32px'
+        }}>
           {/* Quoting Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-6">
+          <div>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '24px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}>
               {/* Tabs */}
-              <nav className="flex border-b border-gray-700 mb-6">
+              <nav style={{
+                display: 'flex',
+                borderBottom: '1px solid #e5e7eb',
+                marginBottom: '24px'
+              }}>
                 <button
                   onClick={() => setActiveTab('ltl')}
-                  className={getTabButtonClass('ltl')}
+                  style={{
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    border: 'none',
+                    background: activeTab === 'ltl' ? '#3b82f6' : 'transparent',
+                    color: activeTab === 'ltl' ? 'white' : '#6b7280',
+                    borderRadius: '8px 8px 0 0',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    marginRight: '4px'
+                  }}
                 >
                   LTL
                 </button>
                 <button
                   onClick={() => setActiveTab('ftl')}
-                  className={getTabButtonClass('ftl')}
+                  style={{
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    border: 'none',
+                    background: activeTab === 'ftl' ? '#3b82f6' : 'transparent',
+                    color: activeTab === 'ftl' ? 'white' : '#6b7280',
+                    borderRadius: '8px 8px 0 0',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    marginRight: '4px'
+                  }}
                 >
                   FTL
                 </button>
                 <button
                   onClick={() => setActiveTab('specialized')}
-                  className={getTabButtonClass('specialized')}
+                  style={{
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    border: 'none',
+                    background: activeTab === 'specialized' ? '#3b82f6' : 'transparent',
+                    color: activeTab === 'specialized' ? 'white' : '#6b7280',
+                    borderRadius: '8px 8px 0 0',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
                 >
                   Specialized
                 </button>
               </nav>
 
               {/* Form Panels */}
-              <div className="space-y-4">
+              <div>
                 {/* LTL Form */}
                 {activeTab === 'ltl' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '16px'
+                    }}>
                       <input
                         type="text"
                         placeholder="Origin ZIP"
                         value={ltlForm.origin}
                         onChange={(e) => setLtlForm({...ltlForm, origin: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                       <input
                         type="text"
                         placeholder="Destination ZIP"
                         value={ltlForm.destination}
                         onChange={(e) => setLtlForm({...ltlForm, destination: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '16px'
+                    }}>
                       <input
                         type="number"
                         placeholder="Total Weight (lbs)"
                         value={ltlForm.weight}
                         onChange={(e) => setLtlForm({...ltlForm, weight: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                       <input
                         type="number"
                         placeholder="# of Pallets"
                         value={ltlForm.pallets}
                         onChange={(e) => setLtlForm({...ltlForm, pallets: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                       <select
                         value={ltlForm.freightClass}
                         onChange={(e) => setLtlForm({...ltlForm, freightClass: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       >
                         <option value="">Freight Class</option>
                         {[50, 55, 60, 65, 70, 77.5, 85, 92.5, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500].map(cls => (
@@ -444,22 +606,38 @@ export default function QuotingPage() {
                         ))}
                       </select>
                     </div>
-                    <div className="flex items-center space-x-4 pt-2">
-                      <label className="flex items-center space-x-2 text-gray-300">
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px'
+                    }}>
+                      <label style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        color: '#374151',
+                        fontSize: '14px'
+                      }}>
                         <input
                           type="checkbox"
                           checked={ltlForm.liftgate}
                           onChange={(e) => setLtlForm({...ltlForm, liftgate: e.target.checked})}
-                          className="h-4 w-4 rounded bg-gray-600 border-gray-500 text-blue-500 focus:ring-blue-500"
+                          style={{ width: '16px', height: '16px' }}
                         />
                         <span>Liftgate</span>
                       </label>
-                      <label className="flex items-center space-x-2 text-gray-300">
+                      <label style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        color: '#374151',
+                        fontSize: '14px'
+                      }}>
                         <input
                           type="checkbox"
                           checked={ltlForm.residential}
                           onChange={(e) => setLtlForm({...ltlForm, residential: e.target.checked})}
-                          className="h-4 w-4 rounded bg-gray-600 border-gray-500 text-blue-500 focus:ring-blue-500"
+                          style={{ width: '16px', height: '16px' }}
                         />
                         <span>Residential Delivery</span>
                       </label>
@@ -469,27 +647,53 @@ export default function QuotingPage() {
 
                 {/* FTL Form */}
                 {activeTab === 'ftl' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '16px'
+                    }}>
                       <input
                         type="text"
                         placeholder="Origin City, State"
                         value={ftlForm.origin}
                         onChange={(e) => setFtlForm({...ftlForm, origin: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                       <input
                         type="text"
                         placeholder="Destination City, State"
                         value={ftlForm.destination}
                         onChange={(e) => setFtlForm({...ftlForm, destination: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                     </div>
                     <select
                       value={ftlForm.equipment}
                       onChange={(e) => setFtlForm({...ftlForm, equipment: e.target.value})}
-                      className="bg-gray-700 border border-gray-600 rounded-md p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      style={{
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        background: 'white',
+                        width: '100%'
+                      }}
                     >
                       <option value="">Equipment Type</option>
                       <option value="Dry Van">53' Dry Van</option>
@@ -508,35 +712,95 @@ export default function QuotingPage() {
 
                 {/* Specialized Form */}
                 {activeTab === 'specialized' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '16px'
+                    }}>
                       <input
                         type="text"
                         placeholder="Origin City, State"
                         value={specializedForm.origin}
                         onChange={(e) => setSpecializedForm({...specializedForm, origin: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                       <input
                         type="text"
                         placeholder="Destination City, State"
                         value={specializedForm.destination}
                         onChange={(e) => setSpecializedForm({...specializedForm, destination: e.target.value})}
-                        className="bg-gray-700 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white'
+                        }}
                       />
                     </div>
-                    <div className="pt-2">
-                      <h3 className="text-lg font-medium text-gray-300 mb-2">Specialized Services</h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div style={{ paddingTop: '8px' }}>
+                      <h3 style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        marginBottom: '12px'
+                      }}>
+                        Specialized Services
+                      </h3>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                        gap: '12px'
+                      }}>
                         {['Hazmat', 'Refrigerated', 'Oversized', 'Flatbed', 'Team Drivers'].map((service) => (
-                          <label key={service} className="flex items-center space-x-2 p-3 bg-gray-700 rounded-md">
+                          <label 
+                            key={service} 
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              padding: '12px',
+                              background: 'rgba(255, 255, 255, 0.8)',
+                              borderRadius: '8px',
+                              border: '1px solid #e5e7eb',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                              e.currentTarget.style.borderColor = '#9C27B0';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
+                              e.currentTarget.style.borderColor = '#e5e7eb';
+                            }}
+                          >
                             <input
                               type="checkbox"
                               checked={specializedForm.services.includes(service)}
                               onChange={(e) => handleSpecializedServiceChange(service, e.target.checked)}
-                              className="h-4 w-4 rounded bg-gray-600 border-gray-500 text-blue-500 focus:ring-blue-500"
+                              style={{ 
+                                width: '16px', 
+                                height: '16px',
+                                accentColor: '#9C27B0'
+                              }}
                             />
-                            <span>{service}</span>
+                            <span style={{
+                              color: '#374151',
+                              fontSize: '14px',
+                              fontWeight: '500'
+                            }}>
+                              {service}
+                            </span>
                           </label>
                         ))}
                       </div>
@@ -545,64 +809,152 @@ export default function QuotingPage() {
                 )}
               </div>
               
-              <div className="mt-6">
+              <div style={{ marginTop: '24px' }}>
                 <button
                   onClick={handleGetQuote}
                   disabled={isLoading}
-                  className={`w-full relative overflow-hidden font-bold py-4 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-lg transform hover:scale-[1.02] hover:shadow-xl ${
-                    isLoading 
-                      ? 'bg-gray-500 cursor-not-allowed shimmer-background'
+                  style={{
+                    width: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    fontWeight: 'bold',
+                    padding: '20px 24px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    background: isLoading 
+                      ? 'linear-gradient(45deg, #6b7280, #9ca3af)'
                       : quoteStatus === 'success'
-                      ? 'bg-green-600 hover:bg-green-700 animate-success-pulse'
+                      ? 'linear-gradient(45deg, #10b981, #059669)'
                       : quoteStatus === 'error'
-                      ? 'bg-red-600 hover:bg-red-700 animate-error-shake'
-                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 quote-button-shine'
-                  } text-white`}
+                      ? 'linear-gradient(45deg, #ef4444, #dc2626)'
+                      : 'linear-gradient(45deg, #f59e0b, #d97706, #ea580c, #dc2626)',
+                    backgroundSize: '300% 300%',
+                    animation: isLoading || quoteStatus === 'idle' ? 'gradientShift 3s ease infinite' : 'none',
+                    color: 'white',
+                    fontSize: '16px',
+                    boxShadow: isLoading 
+                      ? '0 4px 15px rgba(107, 114, 128, 0.4)'
+                      : quoteStatus === 'success'
+                      ? '0 4px 20px rgba(16, 185, 129, 0.4)'
+                      : quoteStatus === 'error'
+                      ? '0 4px 20px rgba(239, 68, 68, 0.4)'
+                      : '0 8px 25px rgba(156, 39, 176, 0.4)',
+                    transform: quoteStatus === 'success' ? 'scale(1.02)' : 'scale(1)'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 12px 35px rgba(156, 39, 176, 0.6)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(156, 39, 176, 0.4)';
+                    }
+                  }}
                 >
-                  {/* Animated background overlay for loading */}
-                  {isLoading && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 animate-pulse"></div>
-                  )}
-                  
-                  {/* Shine effect for normal state */}
+                  {/* Shimmer effect overlay */}
                   {!isLoading && quoteStatus === 'idle' && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-30 transform -skew-x-12 transition-opacity duration-500"></div>
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                      animation: 'shimmer 2s infinite'
+                    }} />
                   )}
                   
                   {/* Button content */}
-                  <div className="relative flex items-center justify-center space-x-2">
+                  <div style={{
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px'
+                  }}>
                     {isLoading ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          border: '2px solid rgba(255,255,255,0.3)',
+                          borderTop: '2px solid white',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite'
+                        }} />
                         <span>Calculating Quote...</span>
-                        <div className="animate-bounce text-xl">💫</div>
+                        <span style={{ fontSize: '20px', animation: 'bounce 1s infinite' }}>💫</span>
                       </>
                     ) : quoteStatus === 'success' ? (
                       <>
-                        <span className="text-xl animate-bounce">✅</span>
+                        <span style={{ fontSize: '20px', animation: 'bounce 1s infinite' }}>✅</span>
                         <span>Quote Generated!</span>
-                        <span className="text-xl animate-bounce">🎉</span>
+                        <span style={{ fontSize: '20px', animation: 'bounce 1s infinite' }}>🎉</span>
                       </>
                     ) : quoteStatus === 'error' ? (
                       <>
-                        <span className="text-xl">❌</span>
+                        <span style={{ fontSize: '20px' }}>❌</span>
                         <span>Try Again</span>
-                        <span className="text-xl">🔄</span>
+                        <span style={{ fontSize: '20px' }}>🔄</span>
                       </>
                     ) : (
                       <>
-                        <span className="text-xl animate-pulse">💰</span>
-                        <span>Get Instant Quote</span>
-                        <span className="text-xl animate-pulse">⚡</span>
+                        <span style={{ fontSize: '24px', animation: 'pulse 2s infinite' }}>💰</span>
+                        <span style={{ fontSize: '18px', letterSpacing: '0.5px' }}>GET INSTANT QUOTE</span>
+                        <span style={{ fontSize: '24px', animation: 'pulse 2s infinite' }}>⚡</span>
                       </>
                     )}
                   </div>
                   
-                  {/* Success pulse animation ring */}
+                  {/* Success ring animation */}
                   {quoteStatus === 'success' && (
-                    <div className="absolute inset-0 rounded-lg border-2 border-green-300 animate-ping opacity-75"></div>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '16px',
+                      border: '3px solid rgba(16, 185, 129, 0.6)',
+                      animation: 'ping 1s infinite'
+                    }} />
                   )}
                 </button>
+                
+                <style jsx>{`
+                  @keyframes gradientShift {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                  }
+                  
+                  @keyframes shimmer {
+                    0% { left: -100%; }
+                    100% { left: 100%; }
+                  }
+                  
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                  
+                  @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                    40% { transform: translateY(-10px); }
+                    60% { transform: translateY(-5px); }
+                  }
+                  
+                  @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.7; }
+                  }
+                  
+                  @keyframes ping {
+                    75%, 100% { transform: scale(1.1); opacity: 0; }
+                  }
+                `}</style>
                 
                 {/* Quote processing tips with dynamic content */}
                 <div className="mt-3 text-center">
@@ -668,44 +1020,133 @@ export default function QuotingPage() {
           </div>
 
           {/* Quote History Section */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-6 h-full">
-              <h2 className="text-2xl font-bold mb-4">Quote History</h2>
-              <div className="space-y-4 overflow-y-auto max-h-[600px] pr-2">
+          <div>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '24px',
+              height: 'fit-content',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#111827',
+                marginBottom: '16px'
+              }}>
+                Quote History
+              </h2>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                overflowY: 'auto',
+                maxHeight: '600px'
+              }}>
                 {quoteHistory.length === 0 ? (
-                  <p className="text-gray-400">No past quotes found.</p>
+                  <p style={{ color: '#6b7280', textAlign: 'center', padding: '32px 0' }}>
+                    No past quotes found.
+                  </p>
                 ) : (
                   quoteHistory.map((quote, index) => (
-                    <div key={index} className="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                      <div className="flex justify-between items-center">
+                    <div 
+                      key={index} 
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
                         <div>
-                          <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${getQuoteTypeColor(quote.type)}`}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            borderRadius: '12px',
+                            background: quote.type === 'LTL' ? '#dbeafe' :
+                                       quote.type === 'FTL' ? '#dcfce7' : '#fef3c7',
+                            color: quote.type === 'LTL' ? '#1e40af' :
+                                   quote.type === 'FTL' ? '#166534' : '#a16207'
+                          }}>
                             {quote.type}
                           </span>
-                          <p className="font-semibold mt-1">{quote.origin} to {quote.destination}</p>
+                          <p style={{
+                            fontWeight: '600',
+                            marginTop: '4px',
+                            color: '#111827',
+                            margin: '4px 0 0 0'
+                          }}>
+                            {quote.origin} to {quote.destination}
+                          </p>
                         </div>
-                        <p className="font-bold text-lg text-green-400">${quote.quote.total}</p>
+                        <p style={{
+                          fontWeight: 'bold',
+                          fontSize: '18px',
+                          color: '#10b981',
+                          margin: 0
+                        }}>
+                          ${quote.quote.total}
+                        </p>
                       </div>
-                      <div className="mt-2">
+                      <div style={{ marginTop: '8px' }}>
                         {quote.type === 'LTL' && (
-                          <p className="text-xs text-gray-400">{quote.details.weight}, {quote.details.class}, {quote.details.pallets}</p>
+                          <p style={{
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            margin: 0
+                          }}>
+                            {quote.details.weight}, {quote.details.class}, {quote.details.pallets}
+                          </p>
                         )}
                         {quote.type === 'FTL' && (
-                          <p className="text-xs text-gray-400">{quote.details.equipment}</p>
+                          <p style={{
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            margin: 0
+                          }}>
+                            {quote.details.equipment}
+                          </p>
                         )}
                         {quote.type === 'Specialized' && (
-                          <p className="text-xs text-gray-400 truncate">{quote.details.services}</p>
+                          <p style={{
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            margin: 0,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {quote.details.services}
+                          </p>
                         )}
                       </div>
                     </div>
-                  ))
+                  )                )
                 )}
               </div>
             </div>
           </div>
         </main>
       </div>
-      
+
       {/* High Value Quote Confirmation Modal */}
       {showConfirmation && pendingQuote && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">

@@ -1,219 +1,838 @@
 'use client'
 
-import { useState } from 'react'
-import StickyNote from '../components/StickyNote'
+import { useState, useEffect } from 'react'
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard'
+import GoogleMapsEmbed from '../components/GoogleMaps'
 import Link from 'next/link'
 
 export default function RoutesPage() {
-  const [activeTab, setActiveTab] = useState<'routes' | 'optimizer'>('optimizer')
+  const [activeView, setActiveView] = useState<'dashboard' | 'optimizer' | 'analytics'>('dashboard')
+  const [routeStats, setRouteStats] = useState({
+    activeRoutes: 12,
+    totalMiles: 2847,
+    avgEfficiency: 89,
+    costSavings: 1250
+  })
+  const [recentOptimizations, setRecentOptimizations] = useState([
+    { id: 'R001', driver: 'John Smith', efficiency: 94, savings: '$187', status: 'Completed' },
+    { id: 'R002', driver: 'Sarah Wilson', efficiency: 91, savings: '$145', status: 'In Progress' },
+    { id: 'R003', driver: 'Mike Johnson', efficiency: 87, savings: '$98', status: 'Optimizing' }
+  ])
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       minHeight: '100vh',
-      fontFamily: 'Arial, sans-serif'
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      paddingTop: '80px'
     }}>
-      <div style={{
-        padding: '20px',
-        color: 'white'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto'
-        }}>
-          {/* Back Navigation */}
-          <div style={{ marginBottom: '20px' }}>
-            <Link href="/" style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              textDecoration: 'none',
-              fontSize: '1rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(10px)',
-              transition: 'all 0.3s ease'
-            }}>
-              ← Back to Dashboard
-            </Link>
-          </div>
-
-          {/* Main Container */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '30px',
-            borderRadius: '20px',
+      {/* Back Button */}
+      <div style={{ padding: '24px' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <button style={{
+            background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
-            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
-            border: '1px solid rgba(255, 255, 255, 0.18)'
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '16px'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
           }}>
-            {/* Header */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '30px'
-            }}>
+            <span style={{ marginRight: '8px' }}>←</span>
+            Back to Dashboard
+          </button>
+        </Link>
+      </div>
+
+      {/* Main Container */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 24px 32px'
+      }}>
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px'
+              }}>
+                <span style={{ fontSize: '32px' }}>🗺️</span>
+              </div>
               <div>
                 <h1 style={{
-                  fontSize: '3rem',
-                  margin: '0 0 10px 0',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
                 }}>
-                  🗺️ Route Management
+                  Route Optimization Center
                 </h1>
                 <p style={{
-                  fontSize: '1.2rem',
-                  margin: 0,
-                  opacity: 0.9
+                  fontSize: '18px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0 0 8px 0'
                 }}>
-                  AI-powered route planning with Google Maps integration
+                  AI-powered intelligent route planning & real-time optimization
                 </p>
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: 'white',
-                  padding: '12px 20px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
-                }}>
-                  + Create Route
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      background: '#4ade80',
+                      borderRadius: '50%',
+                      animation: 'pulse 2s infinite'
+                    }}></div>
+                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                      Live Optimization Active
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Last updated: {new Date().toLocaleTimeString()}
+                  </span>
+                </div>
               </div>
             </div>
-
-            {/* Tab Navigation */}
-            <div style={{ marginBottom: '30px' }}>
-              <nav style={{ display: 'flex', gap: '20px' }}>
-                <button
-                  onClick={() => setActiveTab('routes')}
-                  style={{
-                    background: activeTab === 'routes' 
-                      ? 'rgba(255, 255, 255, 0.2)' 
-                      : 'transparent',
-                    border: activeTab === 'routes'
-                      ? '1px solid rgba(255, 255, 255, 0.4)'
-                      : '1px solid rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: '500',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  📋 Current Routes
-                </button>
-                <button
-                  onClick={() => setActiveTab('optimizer')}
-                  style={{
-                    background: activeTab === 'optimizer' 
-                      ? 'rgba(255, 255, 255, 0.2)' 
-                      : 'transparent',
-                    border: activeTab === 'optimizer'
-                      ? '1px solid rgba(255, 255, 255, 0.4)'
-                      : '1px solid rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: '500',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  ⚡ Route Optimizer
-                </button>
-              </nav>
-            </div>
-
-            {/* Tab Content */}
-            {activeTab === 'routes' && (
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                padding: '40px',
-                borderRadius: '15px',
-                textAlign: 'center',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚛</div>
-                <h3 style={{
-                  fontSize: '1.8rem',
-                  fontWeight: '600',
-                  margin: '0 0 15px 0',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
-                }}>
-                  Current Routes Dashboard
-                </h3>
-                <p style={{
-                  fontSize: '1.1rem',
-                  margin: '0 0 30px 0',
-                  opacity: 0.9,
-                  lineHeight: '1.6'
-                }}>
-                  This section shows your existing routes and active deliveries.
-                  <br />
-                  Click "Route Optimizer" to experience the new AI-powered optimization features!
-                </p>
-                <button
-                  onClick={() => setActiveTab('optimizer')}
-                  style={{
-                    background: 'rgba(76, 175, 80, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    color: 'white',
-                    padding: '15px 30px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Try Route Optimizer →
-                </button>
-              </div>
-            )}
-
-            {activeTab === 'optimizer' && (
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                padding: '20px',
-                borderRadius: '15px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <RouteOptimizerDashboard />
-              </div>
-            )}
-
-            {/* Sticky Notes Section */}
-            <div style={{
-              marginTop: '30px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              padding: '20px',
-              borderRadius: '15px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
+            <button style={{
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white',
+              padding: '12px 24px',
+              borderRadius: '12px',
+              border: 'none',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '16px',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}>
-              <StickyNote section="routes" entityId="route-optimization" />
-            </div>
+              + New Route
+            </button>
           </div>
         </div>
+
+        {/* Navigation Tabs */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {[
+              { id: 'dashboard', label: '📊 Overview', icon: '📊' },
+              { id: 'optimizer', label: '⚡ AI Optimizer', icon: '⚡' },
+              { id: 'analytics', label: '📈 Analytics', icon: '📈' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveView(tab.id as any)}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  background: activeView === tab.id 
+                    ? 'rgba(255, 255, 255, 0.9)' 
+                    : 'rgba(255, 255, 255, 0.2)',
+                  color: activeView === tab.id ? '#4c1d95' : 'white',
+                  transform: activeView === tab.id ? 'translateY(-2px)' : 'translateY(0)',
+                  boxShadow: activeView === tab.id ? '0 8px 25px rgba(0, 0, 0, 0.15)' : 'none'
+                }}
+                onMouseOver={(e) => {
+                  if (activeView !== tab.id) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (activeView !== tab.id) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                  }
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dashboard View */}
+        {activeView === 'dashboard' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Stats Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '24px'
+            }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Active Routes
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {routeStats.activeRoutes}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      +3 from yesterday
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '24px' }}>🚛</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Total Miles
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {routeStats.totalMiles.toLocaleString()}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      This week
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '24px' }}>📍</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Avg Efficiency
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {routeStats.avgEfficiency}%
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      +2.3% improvement
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '24px' }}>⚡</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Cost Savings
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      ${routeStats.costSavings}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      This month
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '12px',
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '24px' }}>💰</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Optimizations */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
+                  Recent Route Optimizations
+                </h2>
+                <button style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}>
+                  View All
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {recentOptimizations.map((route) => (
+                  <div key={route.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '18px'
+                      }}>
+                        {route.id.slice(-1)}
+                      </div>
+                      <div>
+                        <h3 style={{ fontWeight: '600', color: 'white', margin: '0 0 4px 0', fontSize: '16px' }}>
+                          {route.driver}
+                        </h3>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0, fontSize: '14px' }}>
+                          Route {route.id}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: '0 0 4px 0' }}>
+                          {route.efficiency}%
+                        </p>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0, fontSize: '12px' }}>
+                          Efficiency
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                          {route.savings}
+                        </p>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0, fontSize: '12px' }}>
+                          Savings
+                        </p>
+                      </div>
+                      <div style={{
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        background: route.status === 'Completed' ? 'rgba(74, 222, 128, 0.2)' :
+                                   route.status === 'In Progress' ? 'rgba(59, 130, 246, 0.2)' :
+                                   'rgba(251, 191, 36, 0.2)',
+                        color: route.status === 'Completed' ? '#4ade80' :
+                               route.status === 'In Progress' ? '#3b82f6' :
+                               '#fbbf24',
+                        border: `1px solid ${route.status === 'Completed' ? '#4ade80' :
+                                            route.status === 'In Progress' ? '#3b82f6' :
+                                            '#fbbf24'}`
+                      }}>
+                        {route.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 24px 0' }}>
+                Quick Actions
+              </h2>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '24px'
+              }}>
+                <button 
+                  onClick={() => setActiveView('optimizer')}
+                  style={{
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    borderRadius: '12px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'left'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>⚡</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 8px 0' }}>
+                    AI Route Optimizer
+                  </h3>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0, fontSize: '14px' }}>
+                    Optimize routes with advanced AI algorithms
+                  </p>
+                </button>
+                
+                <button style={{
+                  padding: '24px',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  textAlign: 'left'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}>
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>📍</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 8px 0' }}>
+                    Live Tracking
+                  </h3>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0, fontSize: '14px' }}>
+                    Monitor all routes in real-time
+                  </p>
+                </button>
+                
+                <button 
+                  onClick={() => setActiveView('analytics')}
+                  style={{
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                    color: 'white',
+                    borderRadius: '12px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'left'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>📈</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 8px 0' }}>
+                    Analytics
+                  </h3>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0, fontSize: '14px' }}>
+                    Deep insights and performance metrics
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI Optimizer View */}
+        {activeView === 'optimizer' && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{
+              padding: '24px',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: 'white'
+            }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 8px 0' }}>
+                🤖 AI Route Optimizer
+              </h2>
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+                Advanced machine learning algorithms for optimal route planning
+              </p>
+            </div>
+            <div style={{ padding: '24px' }}>
+              <RouteOptimizerDashboard />
+            </div>
+          </div>
+        )}
+
+        {/* Analytics View */}
+        {activeView === 'analytics' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div>
+                  <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 8px 0' }}>
+                    📊 Route Performance Analytics
+                  </h2>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>
+                    Deep insights into your fleet's optimization performance
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button style={{
+                    background: '#3b82f6',
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}>
+                    Export Report
+                  </button>
+                  <button style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}>
+                    Date Range
+                  </button>
+                </div>
+              </div>
+              
+              {/* Performance Charts */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                gap: '32px',
+                marginBottom: '32px'
+              }}>
+                <div style={{
+                  padding: '24px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)'
+                }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '18px', color: 'white', marginBottom: '16px' }}>
+                    📈 Efficiency Trends
+                  </h3>
+                  <div style={{
+                    height: '200px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid rgba(59, 130, 246, 0.2)'
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>📈</div>
+                      <p style={{ color: 'white', margin: '0 0 8px 0' }}>Efficiency trending upward</p>
+                      <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#4ade80', margin: '0 0 4px 0' }}>+12.5%</p>
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0, fontSize: '14px' }}>vs last month</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  padding: '24px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)'
+                }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '18px', color: 'white', marginBottom: '16px' }}>
+                    💰 Cost Optimization
+                  </h3>
+                  <div style={{
+                    height: '200px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid rgba(16, 185, 129, 0.2)'
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>💰</div>
+                      <p style={{ color: 'white', margin: '0 0 8px 0' }}>Monthly savings</p>
+                      <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#10b981', margin: '0 0 4px 0' }}>$4,250</p>
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0, fontSize: '14px' }}>Total saved</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Metrics Grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px'
+              }}>
+                <div style={{
+                  textAlign: 'center',
+                  padding: '32px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)'
+                }}>
+                  <div style={{ fontSize: '40px', marginBottom: '16px' }}>🚛</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '20px', color: 'white', margin: '0 0 8px 0' }}>
+                    Routes Optimized
+                  </h3>
+                  <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#3b82f6', margin: '0 0 4px 0' }}>247</p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>This month</p>
+                </div>
+                
+                <div style={{
+                  textAlign: 'center',
+                  padding: '32px',
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(34, 197, 94, 0.2)'
+                }}>
+                  <div style={{ fontSize: '40px', marginBottom: '16px' }}>⏱️</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '20px', color: 'white', margin: '0 0 8px 0' }}>
+                    Time Saved
+                  </h3>
+                  <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#22c55e', margin: '0 0 4px 0' }}>156h</p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>Driver hours</p>
+                </div>
+                
+                <div style={{
+                  textAlign: 'center',
+                  padding: '32px',
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(139, 92, 246, 0.2)'
+                }}>
+                  <div style={{ fontSize: '40px', marginBottom: '16px' }}>⛽</div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '20px', color: 'white', margin: '0 0 8px 0' }}>
+                    Fuel Saved
+                  </h3>
+                  <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#8b5cf6', margin: '0 0 4px 0' }}>892</p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>Gallons</p>
+                </div>
+              </div>
+
+              {/* Performance Insights */}
+              <div style={{
+                padding: '24px',
+                background: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '12px',
+                border: '1px solid rgba(99, 102, 241, 0.2)'
+              }}>
+                <h3 style={{ fontWeight: 'bold', fontSize: '18px', color: 'white', marginBottom: '16px' }}>
+                  🎯 AI Insights & Recommendations
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      background: '#4ade80',
+                      borderRadius: '50%',
+                      marginTop: '8px',
+                      flexShrink: 0
+                    }}></div>
+                    <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
+                      <strong>High Performance:</strong> Route efficiency has improved by 12.5% this month due to AI optimization.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      background: '#fbbf24',
+                      borderRadius: '50%',
+                      marginTop: '8px',
+                      flexShrink: 0
+                    }}></div>
+                    <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
+                      <strong>Opportunity:</strong> Consider optimizing morning departure times to avoid peak traffic.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      background: '#3b82f6',
+                      borderRadius: '50%',
+                      marginTop: '8px',
+                      flexShrink: 0
+                    }}></div>
+                    <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
+                      <strong>Trend:</strong> Fuel costs decreased by 8% through better route planning and traffic avoidance.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

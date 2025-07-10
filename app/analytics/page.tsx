@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import { checkPermission, ACCESS_MESSAGES } from '../config/access';
 
 // Register Chart.js components
 ChartJS.register(
@@ -16,28 +16,6 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement
-);
-
-// Access Control Component
-const AccessRestricted = () => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
-      <div className="text-6xl mb-4">🔒</div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">{ACCESS_MESSAGES.analytics.title}</h1>
-      <p className="text-gray-600 mb-4">
-        {ACCESS_MESSAGES.analytics.message}
-      </p>
-      <p className="text-sm text-gray-500 mb-6">
-        {ACCESS_MESSAGES.analytics.requirement}
-      </p>
-      <button 
-        onClick={() => window.history.back()} 
-        className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Go Back
-      </button>
-    </div>
-  </div>
 );
 
 interface AnalyticsData {
@@ -66,11 +44,6 @@ interface AnalyticsData {
 
 export default function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
-  
-  // Check access permission using centralized system
-  if (!checkPermission('hasAnalyticsAccess')) {
-    return <AccessRestricted />;
-  }
   const [selectedMetric, setSelectedMetric] = useState<'revenue' | 'loads' | 'efficiency' | 'costs'>('revenue');
 
   // Mock analytics data
@@ -256,556 +229,451 @@ export default function AnalyticsPage() {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
       minHeight: '100vh',
-      color: 'white'
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      paddingTop: '80px'
     }}>
-      <div className="container mx-auto px-3 py-4">
-      <div className="space-y-4">
+      {/* Back Button */}
+      <div style={{ padding: '24px' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <button style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '16px'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}>
+            <span style={{ marginRight: '8px' }}>←</span>
+            Back to Dashboard
+          </button>
+        </Link>
+      </div>
+
+      {/* Main Container */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 24px 32px'
+      }}>
+        {/* Header */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          padding: '20px',
-          borderRadius: '15px',
+          background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
-          <div className="flex items-center space-x-3">
-            <span className="text-2xl">📊</span>
-            <div>
-              <h1 style={{
-                fontSize: '1.8rem',
-                fontWeight: 'bold',
-                margin: 0,
-                textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-              }}>Fleet Analytics Dashboard</h1>
-              <p style={{
-                fontSize: '0.9rem',
-                margin: 0,
-                opacity: 0.9
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px'
               }}>
-                Comprehensive performance insights and business intelligence
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Period Selector */}
-        <div className="flex space-x-2 mb-4">
-          {(['week', 'month', 'quarter', 'year'] as const).map((period) => (
-            <button
-              key={period}
-              onClick={() => setSelectedPeriod(period)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                background: selectedPeriod === period ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              className={`transition-all ${
-                selectedPeriod === period
-                  ? 'bg-gradient-to-r from-purple-500 to-violet-600 text-white shadow-lg transform scale-105'
-                  : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md'
-              }`}
-            >
-              📅 {period.charAt(0).toUpperCase() + period.slice(1)}
-            </button>
-          ))}
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm">💰</span>
-                </div>
+                <span style={{ fontSize: '32px' }}>📊</span>
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
-                  <dd className="text-lg font-medium text-gray-900">${kpis.totalRevenue.toLocaleString()}</dd>
-                </dl>
+              <div>
+                <h1 style={{
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                }}>
+                  Analytics Dashboard
+                </h1>
+                <p style={{
+                  fontSize: '18px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0 0 8px 0'
+                }}>
+                  Fleet performance insights and business intelligence
+                </p>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm">📦</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Loads</dt>
-                  <dd className="text-lg font-medium text-gray-900">{kpis.totalLoads}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm">📈</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Avg Revenue/Load</dt>
-                  <dd className="text-lg font-medium text-gray-900">${kpis.avgRevenuePerLoad.toFixed(0)}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm">💵</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Profit Margin</dt>
-                  <dd className="text-lg font-medium text-gray-900">{kpis.profitMargin.toFixed(1)}%</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-red-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-sm">🚛</span>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Fleet Utilization</dt>
-                  <dd className="text-lg font-medium text-gray-900">{kpis.avgUtilization.toFixed(1)}%</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Invoice Analytics KPI Cards */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6">
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-            <span className="text-2xl mr-3">📄</span>
-            Invoice & Payment Analytics
-          </h3>
-          <p className="text-sm text-gray-600 mt-1">Dispatch fee invoicing and payment collection metrics</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">💸</span>
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Total Dispatch Fees</dt>
-                    <dd className="text-lg font-medium text-gray-900">${kpis.totalDispatchFees.toLocaleString()}</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">✅</span>
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Collection Rate</dt>
-                    <dd className="text-lg font-medium text-gray-900">{kpis.collectionRate.toFixed(1)}%</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">⏰</span>
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Avg Payment Days</dt>
-                    <dd className="text-lg font-medium text-gray-900">{kpis.avgPaymentDays.toFixed(1)} days</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-red-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">⚠️</span>
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Overdue Amount</dt>
-                    <dd className="text-lg font-medium text-gray-900">${analyticsData.invoiceMetrics.overdueAmount.toLocaleString()}</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue vs Costs Chart */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Revenue vs Fuel Costs</h3>
-          <div className="h-64">
-            <Line 
-              data={revenueChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'top' as const,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: function(value) {
-                        return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Loads Completed Chart */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Monthly Loads Completed</h3>
-          <div className="h-64">
-            <Bar 
-              data={loadsChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'top' as const,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                  }
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Vehicle Utilization */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Vehicle Utilization</h3>
-          <div className="h-64">
-            <Doughnut 
-              data={utilizationChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom' as const,
-                  },
-                },
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Driver Performance */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Top Driver Performance</h3>
-          <div className="space-y-3">
-            {analyticsData.driverPerformance.map((driver, index) => (
-              <div key={driver.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                    {index + 1}
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">{driver.name}</div>
-                    <div className="text-sm text-gray-500">{driver.loads} loads • {driver.onTime}% on-time</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-semibold text-green-600">{driver.score}/100</div>
-                  <div className="text-xs text-gray-500">Performance Score</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Invoice Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Invoice Revenue Trends */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Invoice Revenue vs Payments</h3>
-          <div className="h-64">
-            <Line 
-              data={invoiceRevenueChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'top' as const,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: function(value) {
-                        return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Payment Status Distribution */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Status Distribution</h3>
-          <div className="h-64">
-            <Doughnut 
-              data={paymentStatusChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom' as const,
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: function(context) {
-                        const label = context.label || '';
-                        const value = context.parsed;
-                        return `${label}: $${value.toLocaleString()}`;
-                      }
-                    }
-                  }
-                },
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Monthly Dispatch Fees */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Monthly Dispatch Fees</h3>
-          <div className="h-64">
-            <Bar 
-              data={dispatchFeeChartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'top' as const,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: function(value) {
-                        return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Top Carriers by Dispatch Fees */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Top Carriers by Dispatch Fees</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Carrier Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Dispatch Fees
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Invoice Count
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Avg Fee per Invoice
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fee Contribution
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {analyticsData.dispatchFeeSummary.topCarriers.map((carrier) => (
-                <tr key={carrier.name} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {carrier.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className="font-semibold text-green-600">${carrier.totalFees.toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {carrier.invoiceCount} invoices
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className="font-medium">${(carrier.totalFees / carrier.invoiceCount).toFixed(0)}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-16 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-purple-500 h-2 rounded-full" 
-                          style={{ width: `${(carrier.totalFees / analyticsData.dispatchFeeSummary.totalFees) * 100}%` }}
-                        ></div>
-                      </div>
-                      <span className="ml-2 text-sm text-gray-600">
-                        {((carrier.totalFees / analyticsData.dispatchFeeSummary.totalFees) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {(['week', 'month', 'quarter', 'year'] as const).map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setSelectedPeriod(period)}
+                  style={{
+                    padding: '12px 20px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: selectedPeriod === period 
+                      ? 'rgba(255, 255, 255, 0.25)' 
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  {period.charAt(0).toUpperCase() + period.slice(1)}
+                </button>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Route Efficiency Table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Most Profitable Routes</h3>
+        {/* KPI Cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '24px',
+          marginBottom: '32px'
+        }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              Total Revenue
+            </h3>
+            <div style={{ color: '#4ade80', fontSize: '32px', fontWeight: 'bold' }}>
+              ${kpis.totalRevenue.toLocaleString()}
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '8px' }}>
+              +12.5% from last period
+            </p>
+          </div>
+
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              Total Loads
+            </h3>
+            <div style={{ color: '#60a5fa', fontSize: '32px', fontWeight: 'bold' }}>
+              {kpis.totalLoads}
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '8px' }}>
+              +8.3% from last period
+            </p>
+          </div>
+
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              Avg Revenue/Load
+            </h3>
+            <div style={{ color: '#a78bfa', fontSize: '32px', fontWeight: 'bold' }}>
+              ${Math.round(kpis.avgRevenuePerLoad).toLocaleString()}
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '8px' }}>
+              +5.2% from last period
+            </p>
+          </div>
+
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              Profit Margin
+            </h3>
+            <div style={{ color: '#34d399', fontSize: '32px', fontWeight: 'bold' }}>
+              {kpis.profitMargin.toFixed(1)}%
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '8px' }}>
+              +2.1% from last period
+            </p>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Route
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Avg Profit per Load
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Frequency (Monthly)
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Monthly Profit
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Efficiency Rating
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {analyticsData.routeEfficiency.map((route) => (
-                <tr key={route.route} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {route.route}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className="font-semibold text-green-600">${route.profit.toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {route.frequency} loads
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className="font-semibold">${(route.profit * route.frequency).toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-16 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-green-500 h-2 rounded-full" 
-                          style={{ width: `${Math.min((route.profit / 3500) * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className="ml-2 text-sm text-gray-600">
-                        {Math.min(Math.round((route.profit / 3500) * 100), 100)}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {/* Charts Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: '24px',
+          marginBottom: '32px'
+        }}>
+          {/* Revenue & Fuel Costs Chart */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Revenue vs Fuel Costs
+            </h3>
+            <div style={{ height: '300px' }}>
+              <Line 
+                data={revenueChartData} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: 'white' }
+                    }
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    y: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Completed Loads Chart */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Monthly Loads Completed
+            </h3>
+            <div style={{ height: '300px' }}>
+              <Bar 
+                data={loadsChartData} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: 'white' }
+                    }
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    y: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Vehicle Utilization Chart */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Vehicle Utilization
+            </h3>
+            <div style={{ height: '300px' }}>
+              <Doughnut 
+                data={utilizationChartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: 'white' }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Invoice Analytics Chart */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Invoice & Payment Trends
+            </h3>
+            <div style={{ height: '300px' }}>
+              <Line 
+                data={invoiceRevenueChartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: 'white' }
+                    }
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    y: {
+                      ticks: { color: 'rgba(255,255,255,0.7)' },
+                      grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
+
+        {/* Performance Tables */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
+          gap: '24px'
+        }}>
+          {/* Driver Performance Table */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Driver Performance
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Driver
+                    </th>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Score
+                    </th>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Loads
+                    </th>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      On-Time %
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analyticsData.driverPerformance.map((driver, index) => (
+                    <tr key={index}>
+                      <td style={{ color: 'white', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        {driver.name}
+                      </td>
+                      <td style={{ color: '#4ade80', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontWeight: '600' }}>
+                        {driver.score}
+                      </td>
+                      <td style={{ color: 'rgba(255, 255, 255, 0.8)', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        {driver.loads}
+                      </td>
+                      <td style={{ color: '#60a5fa', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontWeight: '600' }}>
+                        {driver.onTime}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Route Efficiency Table */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>
+              Top Routes by Profit
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Route
+                    </th>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Profit
+                    </th>
+                    <th style={{ color: 'rgba(255, 255, 255, 0.9)', padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      Frequency
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analyticsData.routeEfficiency.map((route, index) => (
+                    <tr key={index}>
+                      <td style={{ color: 'white', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        {route.route}
+                      </td>
+                      <td style={{ color: '#4ade80', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', fontWeight: '600' }}>
+                        ${route.profit.toLocaleString()}
+                      </td>
+                      <td style={{ color: 'rgba(255, 255, 255, 0.8)', padding: '12px 8px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                        {route.frequency}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
-      </div>
-    </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useShipper } from '../contexts/ShipperContext'
 import { getCurrentUser } from '../config/access'
+import StickyNote from '../components/StickyNote-Enhanced'
 import AddShipperForm from '../components/AddShipperForm'
 import Link from 'next/link'
 import { Shipper } from '../types/shipper'
@@ -18,14 +19,14 @@ export default function ShippersPage() {
 
   // Filter shippers based on user role
   const userFilteredShippers = useMemo(() => {
-    if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+    if (currentUser.user.role === 'admin' || currentUser.user.role === 'manager') {
       return shippers
-    } else if (currentUser.role === 'broker' && currentUser.brokerId) {
-      return shippers.filter(shipper => shipper.assignedBrokerId === currentUser.brokerId)
+    } else if (currentUser.user.role === 'broker' && currentUser.user.brokerId) {
+      return shippers.filter(shipper => shipper.assignedBrokerId === currentUser.user.brokerId)
     } else {
       return []
     }
-  }, [shippers, currentUser.role, currentUser.brokerId])
+  }, [shippers, currentUser.user.role, currentUser.user.brokerId])
 
   // Filter and sort shippers based on search and user permissions
   const filteredAndSortedShippers = useMemo(() => {
@@ -62,7 +63,7 @@ export default function ShippersPage() {
   }, [userFilteredShippers, searchTerm, sortBy, sortDirection])
 
   // Check if user can add shippers
-  const canAddShippers = currentUser.role === 'admin' || currentUser.role === 'manager' || currentUser.role === 'broker'
+  const canAddShippers = currentUser.user.role === 'admin' || currentUser.user.role === 'manager' || currentUser.user.role === 'broker'
 
   // CSV Export function
   const exportToCSV = () => {
@@ -117,10 +118,16 @@ export default function ShippersPage() {
     }
   }
 
-  // Handle shipper selection for documents
+  // Handle shipper selection for load posting
   const handleSelectShipper = (shipper: Shipper) => {
     setSelectedShipper(shipper)
-    window.location.href = '/documents'
+    if (currentUser.user.role === 'broker') {
+      // Broker workflow: go to load posting
+      window.location.href = '/loadboard?from_shipper=' + shipper.id
+    } else {
+      // Admin workflow: go to documents
+      window.location.href = '/documents'
+    }
   }
 
   // Toggle checkbox selection
@@ -196,24 +203,56 @@ export default function ShippersPage() {
             fontWeight: 'bold',
             margin: '0 0 10px 0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-          }}>🏢 Shipper Database</h1>
+          }}>🏢 Shipper Portfolio</h1>
           <p style={{
             margin: 0,
             opacity: 0.9,
             fontSize: '1.1rem'
-          }}>Streamlined Excel-like interface for shipper management</p>
-          
-          {/* Debug Info */}
-          <div style={{ 
-            marginTop: '10px', 
-            fontSize: '12px', 
-            opacity: 0.7,
-            padding: '10px',
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: '5px'
           }}>
-            Sample Contact Data: {shippers[0] ? `${shippers[0].contacts[0]?.name} | ${shippers[0].contacts[0]?.email} | ${shippers[0].contacts[0]?.phone}` : 'No data'}
-          </div>
+            {currentUser.user.role === 'broker' 
+              ? `Your assigned shippers and load posting portal - ${currentUser.user.name}`
+              : currentUser.user.role === 'admin'
+              ? 'Master shipper database with broker assignments and load management'
+              : 'Shipper database management and load coordination'
+            }
+          </p>
+          
+          {/* Role-specific Info */}
+          {(currentUser.user.role === 'broker' || currentUser.user.role === 'admin') && (
+            <div style={{ 
+              marginTop: '15px', 
+              fontSize: '14px', 
+              opacity: 0.8,
+              padding: '15px',
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '10px',
+              border: '1px solid rgba(255,255,255,0.2)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <span style={{ fontSize: '16px' }}>
+                  {currentUser.user.role === 'broker' ? '🏷️' : '🛠️'}
+                </span>
+                <strong>
+                  {currentUser.user.role === 'broker' ? 'Broker Portal Access' : 'Admin Database Control'}
+                </strong>
+              </div>
+              <div style={{ fontSize: '12px', opacity: 0.9, lineHeight: '1.4' }}>
+                {currentUser.user.role === 'broker' ? (
+                  <>
+                    • Manage your assigned shippers and their contact information<br/>
+                    • Create and post loads to the loadboard from your shipper network<br/>
+                    • Track load history and maintain shipper relationships
+                  </>
+                ) : (
+                  <>
+                    • View all shippers across all brokers with assignment tracking<br/>
+                    • Manage broker-shipper relationships and reassign as needed<br/>
+                    • Monitor load flow from shippers through broker portals to loadboard
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Controls */}
@@ -248,7 +287,8 @@ export default function ShippersPage() {
             />
             <span style={{ fontSize: '14px', color: '#666' }}>
               {filteredAndSortedShippers.length} of {userFilteredShippers.length} shippers
-              {currentUser.role === 'broker' && ' (assigned to you)'}
+              {currentUser.user.role === 'broker' && ' in your portfolio'}
+              {currentUser.user.role === 'admin' && ' (system-wide view)'}
             </span>
           </div>
           
@@ -270,8 +310,31 @@ export default function ShippersPage() {
                 onMouseOver={(e) => e.currentTarget.style.background = '#45a049'}
                 onMouseOut={(e) => e.currentTarget.style.background = '#4CAF50'}
               >
-                ➕ Add Shipper
+                ➕ Add New Shipper
               </button>
+            )}
+            
+            {/* Post Load Button for Brokers */}
+            {currentUser.user.role === 'broker' && selectedShippers.length > 0 && (
+              <Link href="/loadboard" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    background: '#FF9800',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#F57C00'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#FF9800'}
+                >
+                  📋 Post Load from Selected Shippers
+                </button>
+              </Link>
             )}
             
             <button
@@ -335,7 +398,9 @@ export default function ShippersPage() {
           {/* Table Header */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '40px 180px 140px 180px 130px 140px 100px 80px 120px 120px',
+            gridTemplateColumns: currentUser.user.role === 'admin' 
+              ? '40px 160px 120px 160px 110px 120px 120px 80px 80px 100px 120px' 
+              : '40px 180px 140px 180px 130px 140px 100px 80px 120px 120px',
             background: '#f5f5f5',
             borderBottom: '2px solid #e0e0e0',
             fontSize: '14px',
@@ -365,6 +430,11 @@ export default function ShippersPage() {
             <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0' }}>
               Location
             </div>
+            {currentUser.user.role === 'admin' && (
+              <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('assignedBrokerName')}>
+                Broker <SortIcon field="assignedBrokerName" />
+              </div>
+            )}
             <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('creditRating')}>
               Credit <SortIcon field="creditRating" />
             </div>
@@ -386,7 +456,9 @@ export default function ShippersPage() {
                 key={shipper.id}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '40px 180px 140px 180px 130px 140px 100px 80px 120px 120px',
+                  gridTemplateColumns: currentUser.user.role === 'admin' 
+                    ? '40px 160px 120px 160px 110px 120px 120px 80px 80px 100px 120px' 
+                    : '40px 180px 140px 180px 130px 140px 100px 80px 120px 120px',
                   borderBottom: '1px solid #e0e0e0',
                   backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9f9f9',
                   fontSize: '13px',
@@ -433,6 +505,27 @@ export default function ShippersPage() {
                 <div style={{ padding: '12px 15px', borderRight: '1px solid #e0e0e0' }}>
                   {shipper.locations[0]?.city}, {shipper.locations[0]?.state}
                 </div>
+                {currentUser.user.role === 'admin' && (
+                  <div style={{ 
+                    padding: '12px 15px', 
+                    borderRight: '1px solid #e0e0e0',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}
+                  title={shipper.assignedBrokerName || 'Unassigned'}>
+                    <span style={{
+                      padding: '2px 6px',
+                      borderRadius: '3px',
+                      fontSize: '11px',
+                      fontWeight: '500',
+                      backgroundColor: shipper.assignedBrokerName ? '#e3f2fd' : '#f5f5f5',
+                      color: shipper.assignedBrokerName ? '#1976d2' : '#757575'
+                    }}>
+                      {shipper.assignedBrokerName || 'Unassigned'}
+                    </span>
+                  </div>
+                )}
                 <div style={{ padding: '12px 15px', borderRight: '1px solid #e0e0e0' }}>
                   <span style={{
                     padding: '2px 8px',
@@ -469,7 +562,7 @@ export default function ShippersPage() {
                     onMouseOver={(e) => e.currentTarget.style.background = '#1976D2'}
                     onMouseOut={(e) => e.currentTarget.style.background = '#2196F3'}
                   >
-                    Select
+                    {currentUser.user.role === 'broker' ? 'Post Load' : 'Manage'}
                   </button>
                 </div>
               </div>
@@ -489,10 +582,10 @@ export default function ShippersPage() {
                 {userFilteredShippers.length === 0 ? 'No shippers assigned' : 'No shippers found'}
               </h3>
               <p style={{ margin: 0 }}>
-                {userFilteredShippers.length === 0 && currentUser.role === 'broker' ? 
-                  'No shippers have been assigned to you yet. Contact your manager to get shippers assigned or add new ones.' :
+                {userFilteredShippers.length === 0 && currentUser.user.role === 'broker' ? 
+                  'No shippers in your portfolio yet. Contact your dispatcher or add new shipper relationships to start posting loads.' :
                   searchTerm ? `No shippers match "${searchTerm}"` : 
-                  currentUser.role === 'broker' ? 'You have no shippers assigned. Add your first shipper to get started.' :
+                  currentUser.user.role === 'broker' ? 'Build your shipper portfolio to start posting loads to the board.' :
                   'No shippers in database'
                 }
               </p>
@@ -532,8 +625,8 @@ export default function ShippersPage() {
         }}>
           <div>
             Displaying {filteredAndSortedShippers.length} of {userFilteredShippers.length} shippers
-            {currentUser.role === 'broker' && ' (assigned to you)'}
-            {currentUser.role === 'admin' && ' (all shippers)'}
+            {currentUser.user.role === 'broker' && ' in your portfolio'}
+            {currentUser.user.role === 'admin' && ' (all brokers\' shippers)'}
           </div>
           <div>
             {selectedShippers.length > 0 && `${selectedShippers.length} selected`}
@@ -566,6 +659,19 @@ export default function ShippersPage() {
             </div>
           </div>
         )}
+
+        {/* Shipper Notes & Communication Hub */}
+        <div style={{ marginBottom: '20px' }}>
+          <StickyNote 
+            section="shippers" 
+            entityId="shipper-portfolio" 
+            entityName="Shipper Portfolio" 
+            entityType="shipper"
+            isNotificationHub={true}
+          />
+        </div>
+
+        {/* Controls section */}
       </div>
     </div>
   )

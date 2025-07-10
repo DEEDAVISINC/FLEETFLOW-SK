@@ -1,0 +1,830 @@
+'use client'
+
+import { useState } from 'react'
+import { CertificateGenerator, CertificateData } from './CertificateGenerator'
+import { generateCertificateId, getInstructorForModule, type InstructorInfo } from '../utils/instructorUtils'
+import { extractModuleIdFromTitle } from '../utils/moduleColors'
+
+interface QuizQuestion {
+  id: string
+  question: string
+  options: string[]
+  correctAnswer: number
+  explanation: string
+}
+
+interface CertificationProps {
+  moduleId: string
+  moduleTitle: string
+  questions: QuizQuestion[]
+  passingScore: number
+  onCertificationEarned: (certificate: Certificate) => void
+}
+
+interface Certificate {
+  id: string
+  moduleTitle: string
+  recipientName: string
+  recipientRole: string
+  dateEarned: string
+  score: number
+  validUntil: string
+  certificateId?: string
+  instructor?: InstructorInfo | null
+}
+
+export default function CertificationSystem({ 
+  moduleId, 
+  moduleTitle, 
+  questions, 
+  passingScore, 
+  onCertificationEarned 
+}: CertificationProps) {
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [answers, setAnswers] = useState<number[]>([])
+  const [showResults, setShowResults] = useState(false)
+  const [quizStarted, setQuizStarted] = useState(false)
+  const [certificate, setCertificate] = useState<Certificate | null>(null)
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    role: 'Transportation Professional'
+  })
+  const [showUserForm, setShowUserForm] = useState(false)
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [isSendingEmail, setIsSendingEmail] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+
+  const handleAnswerSelect = (answerIndex: number) => {
+    const newAnswers = [...answers]
+    newAnswers[currentQuestion] = answerIndex
+    setAnswers(newAnswers)
+  }
+
+  const handleNextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1)
+    } else {
+      finishQuiz()
+    }
+  }
+
+  const finishQuiz = () => {
+    const correctAnswers = answers.filter((answer, index) => 
+      answer === questions[index].correctAnswer
+    ).length
+    
+    const score = Math.round((correctAnswers / questions.length) * 100)
+    
+    if (score >= passingScore) {
+      setShowUserForm(true)
+    } else {
+      setShowResults(true)
+    }
+  }
+
+  const handleUserInfoSubmit = () => {
+    if (!userInfo.name || !userInfo.email) {
+      alert('Please fill in all required fields')
+      return
+    }
+
+    const correctAnswers = answers.filter((answer, index) => 
+      answer === questions[index].correctAnswer
+    ).length
+    
+    const score = Math.round((correctAnswers / questions.length) * 100)
+    
+    const newCertificate: Certificate = {
+      id: `cert_${moduleId}_${Date.now()}`,
+      moduleTitle,
+      recipientName: userInfo.name,
+      recipientRole: userInfo.role,
+      dateEarned: new Date().toLocaleDateString(),
+      score,
+      validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString() // 1 year
+    }
+    
+    setCertificate(newCertificate)
+    onCertificationEarned(newCertificate)
+    setShowUserForm(false)
+    setShowResults(true)
+  }
+
+  const handleDownloadCertificate = async () => {
+    if (!certificate) return
+    
+    setIsGeneratingPDF(true)
+    try {
+      const certificateData: CertificateData = {
+        id: certificate.id,
+        moduleTitle: certificate.moduleTitle,
+        recipientName: certificate.recipientName,
+        recipientEmail: userInfo.email,
+        recipientRole: certificate.recipientRole,
+        dateEarned: certificate.dateEarned,
+        score: certificate.score,
+        validUntil: certificate.validUntil
+      }
+      
+      const pdfBlob = await CertificateGenerator.generateCertificatePDF(certificateData)
+      const filename = `FleetFlow_Certificate_${certificate.id}.pdf`
+      CertificateGenerator.downloadCertificate(pdfBlob, filename)
+    } catch (error) {
+      console.error('Error generating certificate:', error)
+      alert('Error generating certificate. Please try again.')
+    } finally {
+      setIsGeneratingPDF(false)
+    }
+  }
+
+  const handleEmailCertificate = async () => {
+    if (!certificate) return
+    
+    setIsSendingEmail(true)
+    try {
+      const certificateData: CertificateData = {
+        id: certificate.id,
+        moduleTitle: certificate.moduleTitle,
+        recipientName: certificate.recipientName,
+        recipientEmail: userInfo.email,
+        recipientRole: certificate.recipientRole,
+        dateEarned: certificate.dateEarned,
+        score: certificate.score,
+        validUntil: certificate.validUntil
+      }
+      
+      // Generate PDF
+      const pdfBlob = await CertificateGenerator.generateCertificatePDF(certificateData)
+      const pdfBuffer = await pdfBlob.arrayBuffer()
+      
+      // Send email
+      const response = await fetch('/api/certificates/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          recipientEmail: userInfo.email,
+          recipientName: certificate.recipientName,
+          moduleTitle: certificate.moduleTitle,
+          certificateId: certificate.id,
+          score: certificate.score,
+          dateEarned: certificate.dateEarned,
+          pdfBuffer: Array.from(new Uint8Array(pdfBuffer))
+        })
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        setEmailSent(true)
+        console.log('Email sent successfully:', result)
+        if (result.previewUrl) {
+          console.log('Preview URL:', result.previewUrl)
+        }
+      } else {
+        throw new Error('Failed to send email')
+      }
+    } catch (error) {
+      console.error('Error sending certificate email:', error)
+      alert('Error sending certificate email. Please try again.')
+    } finally {
+      setIsSendingEmail(false)
+    }
+  }
+
+  const resetQuiz = () => {
+    setCurrentQuestion(0)
+    setAnswers([])
+    setShowResults(false)
+    setQuizStarted(false)
+    setCertificate(null)
+    setShowUserForm(false)
+    setEmailSent(false)
+    setUserInfo({ name: '', email: '', role: 'Transportation Professional' })
+  }
+
+  // User Information Form for Certificate Generation
+  if (showUserForm) {
+    return (
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '20px',
+        padding: '40px',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        maxWidth: '500px',
+        margin: '0 auto'
+      }}>
+        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🎓</div>
+        <h2 style={{
+          fontSize: '1.8rem',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          marginBottom: '16px'
+        }}>
+          Congratulations! You Passed!
+        </h2>
+        <p style={{
+          fontSize: '1.1rem',
+          color: '#6b7280',
+          marginBottom: '30px',
+          lineHeight: '1.6'
+        }}>
+          Please provide your information to generate your official certificate of completion.
+        </p>
+
+        <div style={{ textAlign: 'left', marginBottom: '30px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '1rem',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '8px'
+            }}>
+              Full Name *
+            </label>
+            <input
+              type="text"
+              value={userInfo.name}
+              onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+              placeholder="Enter your full name"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'border-color 0.3s ease'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '1rem',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '8px'
+            }}>
+              Email Address *
+            </label>
+            <input
+              type="email"
+              value={userInfo.email}
+              onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+              placeholder="Enter your email address"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'border-color 0.3s ease'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '1rem',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '8px'
+            }}>
+              Job Role/Title
+            </label>
+            <select
+              value={userInfo.role}
+              onChange={(e) => setUserInfo({ ...userInfo, role: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                outline: 'none',
+                backgroundColor: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="Transportation Professional">Transportation Professional</option>
+              <option value="Dispatcher">Dispatcher</option>
+              <option value="Driver">Driver</option>
+              <option value="Broker">Freight Broker</option>
+              <option value="Fleet Manager">Fleet Manager</option>
+              <option value="Operations Manager">Operations Manager</option>
+              <option value="Safety Manager">Safety Manager</option>
+              <option value="Compliance Officer">Compliance Officer</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{
+          background: 'rgba(59, 130, 246, 0.1)',
+          border: '1px solid rgba(59, 130, 246, 0.2)',
+          borderRadius: '12px',
+          padding: '15px',
+          marginBottom: '25px',
+          fontSize: '0.9rem',
+          color: '#374151'
+        }}>
+          📧 Your certificate will be available for download and will also be emailed to you at the provided address.
+        </div>
+
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <button
+            onClick={resetQuiz}
+            style={{
+              flex: 1,
+              background: 'rgba(107, 114, 128, 0.1)',
+              color: '#374151',
+              border: '2px solid rgba(107, 114, 128, 0.2)',
+              padding: '14px',
+              borderRadius: '12px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleUserInfoSubmit}
+            disabled={!userInfo.name || !userInfo.email}
+            style={{
+              flex: 2,
+              background: userInfo.name && userInfo.email 
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : 'rgba(107, 114, 128, 0.3)',
+              color: 'white',
+              border: 'none',
+              padding: '14px',
+              borderRadius: '12px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: userInfo.name && userInfo.email ? 'pointer' : 'not-allowed',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Generate Certificate
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!quizStarted) {
+    return (
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '20px',
+        padding: '40px',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🏆</div>
+        <h2 style={{
+          fontSize: '1.8rem',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          marginBottom: '16px'
+        }}>
+          Certification Quiz
+        </h2>
+        <h3 style={{
+          fontSize: '1.3rem',
+          color: '#374151',
+          marginBottom: '24px'
+        }}>
+          {moduleTitle}
+        </h3>
+        
+        <div style={{
+          background: 'rgba(59, 130, 246, 0.1)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px',
+          textAlign: 'left'
+        }}>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>
+            📋 Quiz Information
+          </h4>
+          <ul style={{ color: '#374151', lineHeight: '1.6', paddingLeft: '20px' }}>
+            <li>Total Questions: {questions.length}</li>
+            <li>Passing Score: {passingScore}%</li>
+            <li>Time Limit: None (take your time)</li>
+            <li>Attempts: Unlimited</li>
+            <li>Certificate Valid: 1 Year</li>
+          </ul>
+        </div>
+
+        <button
+          onClick={() => setQuizStarted(true)}
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            color: 'white',
+            border: 'none',
+            padding: '16px 32px',
+            borderRadius: '12px',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)'
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.25)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+        >
+          🚀 Start Certification Quiz
+        </button>
+      </div>
+    )
+  }
+
+  if (showResults) {
+    const correctAnswers = answers.filter((answer, index) => 
+      answer === questions[index].correctAnswer
+    ).length
+    const score = Math.round((correctAnswers / questions.length) * 100)
+    const passed = score >= passingScore
+
+    return (
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '20px',
+        padding: '40px',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center'
+      }}>
+        <div style={{ 
+          fontSize: '4rem', 
+          marginBottom: '20px' 
+        }}>
+          {passed ? '🎉' : '📚'}
+        </div>
+        
+        <h2 style={{
+          fontSize: '2rem',
+          fontWeight: 'bold',
+          color: passed ? '#10B981' : '#EF4444',
+          marginBottom: '16px'
+        }}>
+          {passed ? 'Congratulations!' : 'Keep Learning!'}
+        </h2>
+
+        <div style={{
+          background: passed 
+            ? 'rgba(16, 185, 129, 0.1)' 
+            : 'rgba(239, 68, 68, 0.1)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '16px',
+            fontSize: '1rem'
+          }}>
+            <div>
+              <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>📊</div>
+              <div style={{ fontWeight: '600', color: '#374151' }}>{score}%</div>
+              <div style={{ color: '#6b7280' }}>Score</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>✅</div>
+              <div style={{ fontWeight: '600', color: '#374151' }}>{correctAnswers}/{questions.length}</div>
+              <div style={{ color: '#6b7280' }}>Correct</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🎯</div>
+              <div style={{ fontWeight: '600', color: '#374151' }}>{passingScore}%</div>
+              <div style={{ color: '#6b7280' }}>Required</div>
+            </div>
+          </div>
+        </div>
+
+        {passed && certificate && (
+          <div style={{
+            background: 'linear-gradient(135deg, #10B981, #059669)',
+            color: 'white',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '600', marginBottom: '16px' }}>
+              🏆 Certificate Earned!
+            </h3>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '16px',
+              textAlign: 'left',
+              marginBottom: '20px'
+            }}>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Recipient:</strong> {certificate.recipientName}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Module:</strong> {certificate.moduleTitle}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Date Earned:</strong> {certificate.dateEarned}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Score:</strong> {certificate.score}%
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Valid Until:</strong> {certificate.validUntil}
+              </div>
+              <div>
+                <strong>Certificate ID:</strong> {certificate.id}
+              </div>
+            </div>
+
+            {/* Certificate Actions */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button
+                onClick={handleDownloadCertificate}
+                disabled={isGeneratingPDF}
+                style={{
+                  flex: 1,
+                  minWidth: '140px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  fontSize: '0.95rem',
+                  fontWeight: '600',
+                  cursor: isGeneratingPDF ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  opacity: isGeneratingPDF ? 0.7 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!isGeneratingPDF) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isGeneratingPDF) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                  }
+                }}
+              >
+                {isGeneratingPDF ? '⏳ Generating...' : '📄 Download PDF'}
+              </button>
+
+              <button
+                onClick={handleEmailCertificate}
+                disabled={isSendingEmail || emailSent}
+                style={{
+                  flex: 1,
+                  minWidth: '140px',
+                  background: emailSent 
+                    ? 'rgba(34, 197, 94, 0.3)' 
+                    : 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: emailSent 
+                    ? '2px solid rgba(34, 197, 94, 0.5)' 
+                    : '2px solid rgba(255, 255, 255, 0.3)',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  fontSize: '0.95rem',
+                  fontWeight: '600',
+                  cursor: (isSendingEmail || emailSent) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  opacity: (isSendingEmail || emailSent) ? 0.7 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSendingEmail && !emailSent) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSendingEmail && !emailSent) {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                  }
+                }}
+              >
+                {isSendingEmail ? '📧 Sending...' : emailSent ? '✅ Email Sent!' : '📧 Email Certificate'}
+              </button>
+            </div>
+
+            {emailSent && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginTop: '15px',
+                fontSize: '0.9rem'
+              }}>
+                ✅ Certificate has been sent to <strong>{userInfo.email}</strong>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={resetQuiz}
+            style={{
+              background: 'rgba(107, 114, 128, 0.1)',
+              color: '#374151',
+              border: '1px solid rgba(107, 114, 128, 0.3)',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            🔄 Retake Quiz
+          </button>
+          
+          {!passed && (
+            <div style={{
+              background: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              fontSize: '0.9rem',
+              color: '#1d4ed8'
+            }}>
+              💡 Study the material and try again to earn your certificate!
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100
+  const currentQ = questions[currentQuestion]
+
+  return (
+    <div style={{
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '20px',
+      padding: '40px',
+      border: '1px solid rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+    }}>
+      {/* Progress Bar */}
+      <div style={{
+        background: 'rgba(107, 114, 128, 0.1)',
+        borderRadius: '10px',
+        height: '8px',
+        marginBottom: '24px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+          height: '100%',
+          width: `${progress}%`,
+          transition: 'width 0.3s ease'
+        }} />
+      </div>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '24px'
+      }}>
+        <span style={{ color: '#6b7280', fontSize: '0.9rem' }}>
+          Question {currentQuestion + 1} of {questions.length}
+        </span>
+        <span style={{ color: '#6b7280', fontSize: '0.9rem' }}>
+          {Math.round(progress)}% Complete
+        </span>
+      </div>
+
+      <h3 style={{
+        fontSize: '1.3rem',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '24px',
+        lineHeight: '1.6'
+      }}>
+        {currentQ.question}
+      </h3>
+
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        marginBottom: '32px'
+      }}>
+        {currentQ.options.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => handleAnswerSelect(index)}
+            style={{
+              background: answers[currentQuestion] === index 
+                ? 'rgba(59, 130, 246, 0.1)' 
+                : 'rgba(249, 250, 251, 0.8)',
+              border: answers[currentQuestion] === index 
+                ? '2px solid #3b82f6' 
+                : '1px solid rgba(0, 0, 0, 0.1)',
+              borderRadius: '12px',
+              padding: '16px 20px',
+              textAlign: 'left',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontSize: '1rem',
+              color: '#374151'
+            }}
+            onMouseEnter={(e) => {
+              if (answers[currentQuestion] !== index) {
+                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.05)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (answers[currentQuestion] !== index) {
+                e.currentTarget.style.background = 'rgba(249, 250, 251, 0.8)'
+              }
+            }}
+          >
+            <span style={{ fontWeight: '600', marginRight: '8px' }}>
+              {String.fromCharCode(65 + index)}.
+            </span>
+            {option}
+          </button>
+        ))}
+      </div>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <button
+          onClick={() => currentQuestion > 0 && setCurrentQuestion(currentQuestion - 1)}
+          disabled={currentQuestion === 0}
+          style={{
+            background: currentQuestion === 0 
+              ? 'rgba(107, 114, 128, 0.1)' 
+              : 'rgba(107, 114, 128, 0.2)',
+            color: currentQuestion === 0 ? '#9CA3AF' : '#374151',
+            border: 'none',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: currentQuestion === 0 ? 'not-allowed' : 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          ← Previous
+        </button>
+
+        <button
+          onClick={handleNextQuestion}
+          disabled={answers[currentQuestion] === undefined}
+          style={{
+            background: answers[currentQuestion] !== undefined
+              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+              : 'rgba(107, 114, 128, 0.1)',
+            color: answers[currentQuestion] !== undefined ? 'white' : '#9CA3AF',
+            border: 'none',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: answers[currentQuestion] !== undefined ? 'pointer' : 'not-allowed',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          {currentQuestion === questions.length - 1 ? 'Finish Quiz' : 'Next →'}
+        </button>
+      </div>
+    </div>
+  )
+}

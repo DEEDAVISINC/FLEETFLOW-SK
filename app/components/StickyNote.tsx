@@ -1,32 +1,68 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from './AuthProvider'
 
 interface StickyNote {
   id: string
   content: string
   section: string
   entityId: string // carrier ID, driver ID, etc.
+  entityType: 'driver' | 'carrier' | 'shipper' | 'load' | 'vehicle' | 'broker' | 'dispatcher' | 'general'
   createdBy: string
   createdAt: string
   isShared: boolean
-  priority: 'low' | 'medium' | 'high'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  isNotification: boolean
+  isRead: boolean
+  assignedTo?: string[] // For targeted notifications
+  dueDate?: string // For follow-up tasks
+  category: 'note' | 'task' | 'notification' | 'communication' | 'alert'
 }
 
 interface StickyNoteProps {
   section: string
   entityId: string
   entityName?: string
+  entityType?: 'driver' | 'carrier' | 'shipper' | 'load' | 'vehicle' | 'broker' | 'dispatcher' | 'general'
+  showUnreadCount?: boolean
+  isNotificationHub?: boolean
 }
 
-export default function StickyNote({ section, entityId, entityName }: StickyNoteProps) {
-  const { user } = useAuth()
+export default function StickyNote({ 
+  section, 
+  entityId, 
+  entityName, 
+  entityType = 'general',
+  showUnreadCount = true,
+  isNotificationHub = false 
+}: StickyNoteProps) {
+  // Use a default user when auth is not available
+  const user = {
+    id: 'guest',
+    name: 'Guest User',
+    email: 'guest@fleetflow.com',
+    role: 'Viewer' as const
+  }
+  
   const [notes, setNotes] = useState<StickyNote[]>([])
   const [newNote, setNewNote] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
-  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium')
   const [isShared, setIsShared] = useState(true)
+  const [category, setCategory] = useState<'note' | 'task' | 'notification' | 'communication' | 'alert'>('note')
+  const [assignedTo, setAssignedTo] = useState<string[]>([])
+  const [dueDate, setDueDate] = useState('')
+  const [filter, setFilter] = useState<'all' | 'unread' | 'tasks' | 'urgent'>('all')
+  
+  // Available team members for assignment
+  const teamMembers = [
+    'dispatch@fleetflow.com',
+    'operations@fleetflow.com', 
+    'admin@fleetflow.com',
+    'john.smith@fleetflow.com',
+    'sarah.wilson@fleetflow.com',
+    'mike.johnson@fleetflow.com'
+  ]
 
   // Load notes from localStorage (in production, this would be from your backend)
   useEffect(() => {
@@ -49,15 +85,28 @@ export default function StickyNote({ section, entityId, entityName }: StickyNote
       content: newNote.trim(),
       section,
       entityId,
+      entityType,
       createdBy: user.name,
       createdAt: new Date().toISOString(),
       isShared,
-      priority
+      priority,
+      isNotification: category === 'notification' || category === 'alert',
+      isRead: false,
+      assignedTo: isShared ? assignedTo : [],
+      dueDate: dueDate || undefined,
+      category
     }
 
     const updatedNotes = [note, ...notes]
     saveNotes(updatedNotes)
     setNewNote('')
+    setDueDate('')
+    setAssignedTo([])
+    
+    // Reset form
+    setPriority('medium')
+    setCategory('note')
+    setIsShared(true)
   }
 
   const deleteNote = (noteId: string) => {

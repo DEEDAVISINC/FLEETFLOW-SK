@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FleetFlow Route Automation Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f8ff;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .demo-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .route-doc {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status-item {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 FleetFlow Route Automation System</h1>
+            <p>Live Demo - See Your Route Generation in Action</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>🤖 Automation Status - ACTIVE</h2>
+            <div class="status-item">✅ Route Document Generation: Running daily at 5:00 AM</div>
+            <div class="status-item">✅ Driver Brief Generation: Running daily at 7:00 AM</div>
+            <div class="status-item">✅ Route Optimization: Every 4 hours (8AM-6PM)</div>
+            <div class="status-item">✅ Smart Monitoring: Every 30 minutes</div>
+        </div>
+
+        <div class="grid">
+            <div class="demo-section">
+                <h2>📋 Manufacturing Plant Route</h2>
+                <div class="route-doc"># Route 1: Manufacturing Plant Delivery
+
+## 🚚 DELIVERY COMPANY INFORMATION
+FleetFlow Logistics
+MC# MC-123456
+
+## 💰 RATE CONFIRMATION
+Rate: $450.00
+Total Miles: 177 miles
+Rate per Mile: $2.54
+Total Amount: $450.00
+
+## 📋 DETROIT STEEL PLANT #3 PICKUP INSTRUCTIONS
+
+### 1. Pickup from Detroit Steel Plant #3
+- CRITICAL: Items loaded must EXACTLY match order confirmation
+- Confirmation #: DS-789012
+- Pickup Requirements: HAZMAT certification, steel handling equipment
+- Loading Area: Bay 7 - Steel Loading Dock
+- Contact: Mike Johnson, Plant Supervisor (555) 234-5678
+- Special Instructions: Use Gate 3, report to security first
+
+### 2. Safety Requirements
+- Access Requirements: TWIC card, DOT medical certificate
+- Timing: 6:00 AM - 7:00 AM CRITICAL - No late arrivals
+- Documentation: Steel certification, weight tickets required
+- Safety: Hard hat, safety vest, steel-toe boots mandatory
+
+## 🏭 PICKUP LOCATION DETAILS
+- Address: 1234 Industrial Blvd, Detroit, MI 48201
+- Hours: Mon-Fri: 5:00 AM - 3:00 PM
+- Location Type: Manufacturing Plant
+
+## 🗺️ DELIVERY STOPS
+
+### Stop 1: Construction Site Alpha
+- Address: 567 Construction Ave, Warren, MI 48089
+- Delivery Time: 9:00 AM - 10:00 AM
+- Items: 10 tons structural steel beams
+- Contact: Sarah Wilson, Site Foreman (555) 345-6789
+
+---
+Document Generated: 7/5/2025
+Driver: John Smith
+Vehicle: T-001</div>
+            </div>
+
+            <div class="demo-section">
+                <h2>🏪 Sam's Club Route</h2>
+                <div class="route-doc"># Route 2: Sam's Club Express
+
+## 🚚 DELIVERY COMPANY INFORMATION
+FleetFlow Logistics
+MC# MC-123456
+
+## 💰 RATE CONFIRMATION
+Rate: $425.00
+Total Miles: 203 miles
+Rate per Mile: $2.09
+Additional Charges: Fuel surcharge: $25.00
+Total Amount: $450.00
+
+## 📋 SAM'S CLUB #4567 PICKUP INSTRUCTIONS
+
+### 1. Pickup from Sam's Club #4567
+- CRITICAL: Items must EXACTLY match order confirmation
+- Confirmation #: SC-445566
+- Pickup Requirements: NO SUBSTITUTIONS - Return incorrect items
+- Loading Area: Dock D-12
+- Contact: Lisa Martinez (555) 777-8888
+- Special Instructions: Use member services entrance
+
+### 2. Sam's Club Specific Requirements
+- Access: Commercial delivery credentials + membership verification
+- Timing: 7:00 AM - 8:00 AM - NO EARLY/LATE ARRIVALS
+- Documentation: Sam's Club receipt must accompany all deliveries
+- Safety: Follow Sam's Club safety protocols
+
+## 🏪 PICKUP LOCATION DETAILS
+- Address: 2000 Sam's Club Drive, Southfield, MI 48075
+- Hours: Mon-Fri: 6:00 AM - 8:00 PM
+- Location Type: Retail Warehouse
+
+---
+Document Generated: 7/5/2025
+Driver: Sarah Wilson
+Vehicle: T-002</div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>👨‍💼 Driver Brief Example</h2>
+            <div class="route-doc"># Driver Brief: 2 Routes
+Date: 7/5/2025
+Driver: John Smith
+Vehicle: T-001
+
+## ⚡ CRITICAL INFORMATION
+- Total Stops: 2
+- Estimated Time: 8 hours
+- Total Miles: 322
+- Fuel Budget: $113
+
+## 📋 PRE-DEPARTURE CHECKLIST
+- [ ] Vehicle inspection completed
+- [ ] Route downloaded to GPS
+- [ ] Customer contact numbers saved
+- [ ] Delivery documentation printed
+- [ ] Emergency contacts verified
+
+## 🚨 EMERGENCY PROCEDURES
+1. Vehicle Breakdown: Call (555) TOW-HELP
+2. Delivery Issues: Contact (555) 123-4567
+3. Customer Problems: Escalate to (555) 987-6543
+
+## 📞 TODAY'S CONTACTS
+- Dispatch: (555) 123-4567
+- Supervisor: (555) 987-6543
+- Customer Service: (555) 111-2222
+
+---
+Generated by FleetFlow AI Automation</div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📧 Notification Examples</h2>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                <strong>📧 Email to Driver:</strong><br>
+                To: driver001@fleetflow.com<br>
+                Subject: Route Document: Manufacturing Plant Delivery<br><br>
+                Your route document is ready! Check attachment for full details.<br>
+                Route: Manufacturing Plant Delivery | Miles: 177 | Rate: $450
+            </div>
+            <div style="background: #1f2937; color: white; padding: 10px; border-radius: 15px; display: inline-block;">
+                <strong>📱 SMS to Driver:</strong><br>
+                📋 Your route brief is ready! Total stops: 2, Est. time: 8 hours. Full details sent via email.
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📊 Automation Statistics</h2>
+            <div class="grid">
+                <div style="text-align: center; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                    <div style="font-size: 2em; color: #2563eb; font-weight: bold;">24</div>
+                    <div>Routes Generated Today</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                    <div style="font-size: 2em; color: #2563eb; font-weight: bold;">100%</div>
+                    <div>Success Rate</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                    <div style="font-size: 2em; color: #2563eb; font-weight: bold;">2.8hrs</div>
+                    <div>Time Saved Daily</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                    <div style="font-size: 2em; color: #2563eb; font-weight: bold;">48</div>
+                    <div>Notifications Sent</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>🎛️ Automation Control</h2>
+            <p><strong style="color: #10b981;">Status: ACTIVE</strong> - All route generation automation is running</p>
+            
+            <button class="button" onclick="alert('🔄 Route generation simulation:\\n\\n✅ Manufacturing route generated\\n✅ Sam\\'s Club route generated\\n✅ Driver briefs created\\n✅ Notifications sent\\n\\nAll tasks completed successfully!')">
+                🔄 Simulate Generation
+            </button>
+            
+            <button class="button" onclick="document.getElementById('schedule').style.display = document.getElementById('schedule').style.display === 'none' ? 'block' : 'none'">
+                📅 View Schedule
+            </button>
+
+            <div id="schedule" style="display: none; margin-top: 15px; background: #f0f9ff; padding: 15px; border-radius: 5px;">
+                <h3>📅 Automation Schedule</h3>
+                <ul>
+                    <li><strong>5:00 AM Daily</strong> - Route Document Generation</li>
+                    <li><strong>7:00 AM Daily</strong> - Driver Brief Generation</li>
+                    <li><strong>Every 4 hours (8AM-6PM)</strong> - Route Optimization</li>
+                    <li><strong>Every 30 minutes</strong> - Smart Monitoring</li>
+                    <li><strong>6:00 AM Daily</strong> - Predictive Maintenance</li>
+                    <li><strong>9:00 AM Monday</strong> - Driver Performance Analysis</li>
+                    <li><strong>10:00 AM 1st of month</strong> - Cost Optimization</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section" style="text-align: center; background: #f0f9ff;">
+            <h2>🚀 Integration Complete!</h2>
+            <p>Your FleetFlow system now automatically generates professional route documents for ANY pickup location type with Claude AI-style formatting and intelligent template selection.</p>
+            
+            <div style="margin-top: 15px;">
+                <strong>✅ Template Engine:</strong> Operational<br>
+                <strong>✅ Location Detection:</strong> Auto-detecting pickup types<br>
+                <strong>✅ Document Generation:</strong> All templates active<br>
+                <strong>✅ Notification System:</strong> Email & SMS ready<br>
+                <strong>✅ Automation Engine:</strong> Running 7 scheduled tasks
+            </div>
+        </div>
+    </div>
+</body>
+</html>
