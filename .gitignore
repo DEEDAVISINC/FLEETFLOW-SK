@@ -66,3 +66,10 @@ node_modules/
 .env.local.backup
 backend-env-example.txt
 remove-secrets.py
+
+# Firebase - COMPLETELY REMOVED FROM PROJECT
+.firebase/
+.firebaserc
+firebase.json
+firebase-debug.log
+firebase-debug.*.log
