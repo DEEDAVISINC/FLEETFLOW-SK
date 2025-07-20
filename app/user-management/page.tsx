@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-// Mock user data - simplified for compact view
+// Mock user data - with specific system access for each user
 const mockUsers = [
   {
     id: 'FM-MGR-2023005',
@@ -14,6 +14,12 @@ const mockUsers = [
     role: 'Fleet Operations Manager',
     status: 'active',
     lastActive: '2024-01-15T10:30:00Z',
+    systemAccess: {
+      level: 'Full Control',
+      accessCode: 'ACC-FM-MGR',
+      securityLevel: 'Level 4 - Management',
+      allowedSystems: ['All FleetFlow Systems', 'Admin Portal', 'Analytics Dashboard', 'User Management']
+    },
     permissions: {
       canViewDashboard: true,
       canManageUsers: true,
@@ -30,6 +36,12 @@ const mockUsers = [
     role: 'Senior Dispatcher',
     status: 'active',
     lastActive: '2024-01-15T09:15:00Z',
+    systemAccess: {
+      level: 'Load & Driver Management',
+      accessCode: 'ACC-SJ-DC',
+      securityLevel: 'Level 3 - Operations',
+      allowedSystems: ['Dispatch Central', 'Driver Management', 'Load Tracking', 'Route Planning']
+    },
     permissions: {
       canViewDashboard: true,
       canManageLoads: true,
@@ -46,6 +58,12 @@ const mockUsers = [
     role: 'Freight Broker',
     status: 'active',
     lastActive: '2024-01-14T16:45:00Z',
+    systemAccess: {
+      level: 'Customer & Rate Management',
+      accessCode: 'ACC-MJ-BB',
+      securityLevel: 'Level 3 - Sales',
+      allowedSystems: ['FreightFlow RFx', 'Customer Portal', 'Rate Management', 'Load Board']
+    },
     permissions: {
       canViewDashboard: true,
       canManageCustomers: true,
@@ -62,6 +80,12 @@ const mockUsers = [
     role: 'Senior Driver',
     status: 'active',
     lastActive: '2024-01-15T08:30:00Z',
+    systemAccess: {
+      level: 'Fleet Operations Only',
+      accessCode: 'ACC-TD-DM',
+      securityLevel: 'Level 2 - Driver',
+      allowedSystems: ['Driver Portal', 'Load Status Updates', 'Document Upload', 'Route Navigation']
+    },
     permissions: {
       canViewDashboard: true,
       canUpdateStatus: true,
@@ -133,7 +157,7 @@ export default function CompactUserManagement() {
       </div>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 16px 24px' }}>
-        {/* Compact Header */}
+        {/* Compact Header with Search */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
@@ -146,18 +170,36 @@ export default function CompactUserManagement() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '8px' }}>
-                <span style={{ fontSize: '18px' }}>��</span>
+                <span style={{ fontSize: '18px' }}>👥</span>
               </div>
               <div>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
                   User Management
                 </h1>
                 <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', margin: '0' }}>
-                  Compact user & permission management
+                  Compact user & permission management • {filteredUsers.length} users found
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {/* Search Users */}
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  fontSize: '12px',
+                  outline: 'none',
+                  width: '200px',
+                  backdropFilter: 'blur(10px)'
+                }}
+              />
               <button 
                 onClick={refreshData}
                 style={{
@@ -255,7 +297,7 @@ export default function CompactUserManagement() {
               background: 'rgba(255, 255, 255, 0.1)',
               borderRadius: '12px',
               padding: '24px',
-              minHeight: '320px'
+              minHeight: '420px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
                 <div style={{
@@ -298,10 +340,10 @@ export default function CompactUserManagement() {
                 </div>
               </div>
 
-              {/* Compact User Details */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              {/* Compact User Details - 3 Column Layout */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '20px' }}>
                 <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', padding: '16px' }}>
-                  <h3 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>Account Details</h3>
+                  <h3 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>Contact Info</h3>
                   <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '6px' }}>
                     <strong>ID:</strong> {currentUser?.id}
                   </div>
@@ -312,6 +354,27 @@ export default function CompactUserManagement() {
                     <strong>Status:</strong> {currentUser?.status}
                   </div>
                 </div>
+                
+                <div style={{ 
+                  background: `${getDepartmentColor(currentUser?.departmentCode)}20`,
+                  borderRadius: '10px', 
+                  padding: '16px',
+                  border: `1px solid ${getDepartmentColor(currentUser?.departmentCode)}66`
+                }}>
+                  <h3 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>
+                    🔐 System Access
+                  </h3>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '6px' }}>
+                    <strong>Level:</strong> {currentUser?.systemAccess?.level}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '6px' }}>
+                    <strong>Security:</strong> {currentUser?.systemAccess?.securityLevel}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                    <strong>Code:</strong> {currentUser?.systemAccess?.accessCode}
+                  </div>
+                </div>
+
                 <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', padding: '16px' }}>
                   <h3 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>Active Permissions</h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -331,6 +394,29 @@ export default function CompactUserManagement() {
                   <div style={{ marginTop: '8px', fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)' }}>
                     {Object.values(currentUser?.permissions || {}).filter(Boolean).length} active permissions
                   </div>
+                </div>
+              </div>
+
+              {/* User's Allowed Systems */}
+              <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
+                <h3 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>
+                  🏢 Allowed Systems & Applications
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                  {currentUser?.systemAccess?.allowedSystems?.map((system, index) => (
+                    <div key={index} style={{
+                      background: `${getDepartmentColor(currentUser?.departmentCode)}30`,
+                      color: getDepartmentColor(currentUser?.departmentCode),
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      border: `1px solid ${getDepartmentColor(currentUser?.departmentCode)}40`
+                    }}>
+                      {system}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -388,55 +474,6 @@ export default function CompactUserManagement() {
           {/* RIGHT SIDE: Compact Feature Panels */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
-            {/* System Access Quick Links - Compact */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '12px',
-              padding: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
-            }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', margin: '0 0 12px 0' }}>
-                System Access
-              </h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '8px'
-              }}>
-                {[
-                  { title: 'Management', code: 'MGR', color: '#8b5cf6', icon: '👑', access: 'Full Control' },
-                  { title: 'Dispatch', code: 'DC', color: '#3b82f6', icon: '🚛', access: 'Load & Driver Mgmt' },
-                  { title: 'Broker', code: 'BB', color: '#f59e0b', icon: '��', access: 'Customer & Rates' },
-                  { title: 'Driver', code: 'DM', color: '#eab308', icon: '👨‍💼', access: 'Fleet Operations' }
-                ].map((dept, index) => (
-                  <div key={index} style={{
-                    background: `linear-gradient(135deg, ${dept.color}, ${dept.color}dd)`,
-                    borderRadius: '8px',
-                    padding: '12px',
-                    color: 'white',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}>
-                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>{dept.icon}</div>
-                    <div style={{ fontSize: '12px', fontWeight: '600', marginBottom: '2px' }}>{dept.title}</div>
-                    <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '4px' }}>{dept.code}</div>
-                    <div style={{ fontSize: '8px', opacity: 0.7 }}>{dept.access}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Compact Permission Categories */}
             <div style={{
               background: 'rgba(255, 255, 255, 0.15)',
@@ -523,40 +560,6 @@ export default function CompactUserManagement() {
                   <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#8b5cf6' }}>107</div>
                   <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '10px' }}>Permissions</div>
                 </div>
-              </div>
-            </div>
-
-            {/* Search Box - Compact */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '12px',
-              padding: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
-            }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', margin: '0 0 12px 0' }}>
-                Search Users
-              </h2>
-              <input
-                type="text"
-                placeholder="Search by name, email, or department..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-              />
-              <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)', marginTop: '6px' }}>
-                {filteredUsers.length} users found
               </div>
             </div>
 
