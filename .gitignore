@@ -61,3 +61,8 @@ node_modules/
 .next
 .next
 .env.local
+# Environment and secrets
+.env.local
+.env.local.backup
+backend-env-example.txt
+remove-secrets.py
