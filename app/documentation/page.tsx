@@ -104,39 +104,67 @@ export default function DocumentationPage() {
       category: 'Training'
     },
     {
+      id: 'business-plan',
+      title: '💼 Comprehensive Business Plan',
+      description: 'Complete business strategy, market analysis, financial projections, and investment roadmap',
+      file: 'COMPREHENSIVE_BUSINESS_PLAN.md',
+      category: 'Business'
+    },
+    {
       id: 'executive-summary',
       title: '📊 Executive Summary',
-      description: 'Business overview and investment opportunity',
+      description: 'Business overview and investment opportunity summary',
       file: 'EXECUTIVE_SUMMARY.md',
       category: 'Business'
     },
     {
-      id: 'quick-reference',
-      title: '📋 Quick Reference Cards',
-      description: 'Quick start guides for different roles',
-      file: 'QUICK_REFERENCE_CARDS.md',
-      category: 'Reference'
-    },
-    {
       id: 'ai-guide',
       title: '🤖 AI Implementation Guide',
-      description: 'AI features and automation documentation',
+      description: 'AI features, automation documentation, and machine learning capabilities',
       file: 'AI_IMPLEMENTATION_GUIDE.md',
       category: 'Technical'
     },
     {
-      id: 'business-plan',
-      title: '💼 Business Plan',
-      description: 'Complete business documentation',
-      file: 'BUSINESS_PLAN.md',
-      category: 'Business'
+      id: 'quick-reference',
+      title: '📋 Quick Reference Cards',
+      description: 'Quick start guides and checklists for different roles',
+      file: 'QUICK_REFERENCE_CARDS.md',
+      category: 'Reference'
     },
     {
       id: 'training-checklists',
       title: '✅ Training Checklists',
-      description: 'Training materials and checklists',
+      description: 'Training materials, certification requirements, and progress tracking',
       file: 'TRAINING_CHECKLISTS.md',
       category: 'Training'
+    },
+    {
+      id: 'technical-architecture',
+      title: '🏗️ Technical Architecture',
+      description: 'System architecture, API documentation, and technical specifications',
+      file: 'TECHNICAL_ARCHITECTURE.md',
+      category: 'Technical'
+    },
+    {
+      id: 'compliance-guide',
+      title: '⚖️ DOT Compliance Guide',
+      description: 'Complete DOT compliance procedures, forms, and regulatory requirements',
+      file: 'DOT_COMPLIANCE_GUIDE.md',
+      category: 'Reference'
+    },
+    {
+      id: 'implementation-guide',
+      title: '🚀 Implementation Guide',
+      description: 'Step-by-step implementation process and best practices',
+      file: 'IMPLEMENTATION_GUIDE.md',
+      category: 'Technical'
+    },
+    {
+      id: 'marketing-strategy',
+      title: '📈 Marketing Strategy',
+      description: 'Comprehensive marketing plan, customer acquisition, and growth strategy',
+      file: 'MARKETING_PLAN.md',
+      category: 'Business'
     }
   ]
 

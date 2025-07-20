@@ -2,6 +2,7 @@ import * as cron from 'node-cron';
 import { fleetAI } from './ai';
 import { smsService } from './sms';
 import { sendInvoiceEmail } from './email';
+import { samGovMonitor } from './SAMGovOpportunityMonitor';
 // Add route generation template integration
 import { 
   generateUniversalPickupDocument, 
@@ -63,6 +64,11 @@ export class AIAutomationEngine {
     // NEW: Schedule driver brief generation (daily at 7 AM)
     this.scheduleTask('driver-brief-generation', '0 7 * * *', () => {
       this.runDriverBriefGeneration();
+    });
+
+    // NEW: Schedule SAM.gov opportunity monitoring (every 30 minutes)
+    this.scheduleTask('sam-gov-monitoring', '*/30 * * * *', () => {
+      this.runSAMGovMonitoring();
     });
 
     console.log('✅ All AI automation tasks scheduled');
@@ -242,6 +248,31 @@ export class AIAutomationEngine {
       console.log('✅ Driver brief generation completed');
     } catch (error) {
       console.error('❌ Driver brief generation failed:', error);
+    }
+  }
+
+  // NEW: Run SAM.gov opportunity monitoring
+  private async runSAMGovMonitoring() {
+    console.log('🏛️ Running SAM.gov Opportunity Monitoring...');
+    
+    try {
+      const result = await samGovMonitor.checkForNewOpportunities();
+      
+      if (result.newOpportunities.length > 0) {
+        console.log(`✅ Found ${result.newOpportunities.length} new government contract opportunities`);
+        console.log(`📱 Sent ${result.notificationsSent} notifications to stakeholders`);
+        
+        // Log opportunity details
+        result.newOpportunities.forEach(opp => {
+          console.log(`📋 New Opportunity: ${opp.title} - ${opp.agency} (Due: ${opp.responseDeadline})`);
+        });
+      } else {
+        console.log('ℹ️ No new government contract opportunities found');
+      }
+      
+      console.log(`📊 Total opportunities tracked: ${result.totalOpportunities}`);
+    } catch (error) {
+      console.error('❌ SAM.gov opportunity monitoring failed:', error);
     }
   }
 

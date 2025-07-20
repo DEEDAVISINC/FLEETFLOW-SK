@@ -33,6 +33,8 @@ interface WorkflowStatus {
   requiresOverride: boolean;
 }
 
+
+
 interface LoadWithWorkflow extends Load {
   workflowStatus?: WorkflowStatus;
 }
@@ -652,7 +654,7 @@ export default function DispatchCentral() {
                       <button
                         onClick={handleBulkBroadcast}
                         style={{
-                          background: '#8b5cf6',
+                          background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                           color: 'white',
                           border: 'none',
                           padding: '10px 16px',
@@ -667,7 +669,7 @@ export default function DispatchCentral() {
                       <button
                         onClick={handleBulkAssign}
                         style={{
-                          background: '#10b981',
+                          background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                           color: 'white',
                           border: 'none',
                           padding: '10px 16px',
@@ -836,7 +838,7 @@ export default function DispatchCentral() {
                                     <button
                                       onClick={() => handleAssignDriver(load.id)}
                                       style={{
-                                        background: '#3b82f6',
+                                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                                         color: 'white',
                                         border: 'none',
                                         padding: '4px 8px',
@@ -851,7 +853,7 @@ export default function DispatchCentral() {
                                     <button
                                       onClick={() => handleBroadcastLoad(load.id)}
                                       style={{
-                                        background: '#8b5cf6',
+                                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                                         color: 'white',
                                         border: 'none',
                                         padding: '4px 8px',

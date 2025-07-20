@@ -81,9 +81,9 @@ LOG_LEVEL=info
 LOG_FILE_PATH=./logs/fleetflow.log
 ENABLE_REQUEST_LOGGING=true
 
-# Payment Processing & Billing
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret
-STRIPE_PUBLISHABLE_KEY=pk_live_51RUEeSLPOMQGHsf1hk7VuJi83rFKTOf1atNmSBIulpIzlEyIfH5ePmZtpa58L79DPCH2qMa4lbDOSTa7tE8pDRIC00tty8jPdU
+# Payment Processing & Billing (Updated with new Stripe account)
+STRIPE_SECRET_KEY=sk_test_51RlBWsCGvnOllJH7e70lLiqa6f8wU7LEvqToZ5xNoWufvC3mhBrMbWy4Nw1bPZPweSvmcrR83EkXvHoerBOOEEnM00H6BPlKpM
+STRIPE_PUBLISHABLE_KEY=pk_test_51RlBWsCGvnOllJH7WIIcKyCwOZOTKrenahd4UmVCQuWi8CXmeVvAfGHK8PKqG5E7G3GQ76ekflwu5o6EN4Arkelr00i0Usmjkz
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 
 # Bill.com API Configuration (Enterprise Billing)

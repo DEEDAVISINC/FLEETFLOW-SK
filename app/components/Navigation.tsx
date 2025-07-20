@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
+import GlobalNotificationBell from './GlobalNotificationBell'
+import { FeatureTooltip } from './InfoTooltip'
 
 // Professional Navigation Component with Working Dropdowns
 export default function ProfessionalNavigation() {
@@ -60,7 +62,7 @@ export default function ProfessionalNavigation() {
         <Link href="/" style={{
           fontSize: '1.8rem',
           fontWeight: 'bold',
-          background: 'linear-gradient(45deg, #f59e0b, #d97706)',
+          background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
           backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
@@ -76,30 +78,34 @@ export default function ProfessionalNavigation() {
         }}>
           {/* OPERATIONS Dropdown */}
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <button 
-              onClick={() => handleDropdownToggle('operations')}
-              onMouseDown={() => console.log('Operations button mousedown')}
-              onMouseUp={() => console.log('Operations button mouseup')}
-              style={{
-                background: activeDropdown === 'operations' 
-                  ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
-                  : 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                color: 'white',
-                padding: '8px 14px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                transform: activeDropdown === 'operations' ? 'scale(1.05)' : 'scale(1)'
-              }}
+            <FeatureTooltip 
+              feature="Operations Management" 
+              description="Access dispatch central, broker box, and FreightFlow RFx platform for comprehensive operations management"
+              position="bottom"
             >
-              🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
-            </button>
+              <button 
+                onClick={() => handleDropdownToggle('operations')}
+                onMouseDown={() => console.log('Operations button mousedown')}
+                onMouseUp={() => console.log('Operations button mouseup')}
+                style={{
+                  background: activeDropdown === 'operations' 
+                    ? 'linear-gradient(135deg, #1d4ed8, #1e40af)' 
+                    : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  padding: '8px 14px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
+              </button>
+            </FeatureTooltip>
             {activeDropdown === 'operations' && (
               <div style={{
                 position: 'absolute',
@@ -113,14 +119,14 @@ export default function ProfessionalNavigation() {
                 border: '2px solid #3b82f6',
                 zIndex: 1001
               }}>
-                <div style={{ padding: '8px 20px', background: '#f0f9ff', fontWeight: 'bold', color: '#1e40af', fontSize: '0.8rem' }}>
-                  🚛 OPERATIONS MENU
-                </div>
-                <Link href="/dispatch" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500', transition: 'background 0.2s' }}>
+                <Link href="/dispatch" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                   🚛 Dispatch Central
                 </Link>
-                <Link href="/broker" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500', transition: 'background 0.2s' }}>
+                <Link href="/broker" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                   🏢 Broker Box
+                </Link>
+                <Link href="/freightflow-rfx" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  📋 FreightFlow RFx
                 </Link>
               </div>
             )}
@@ -128,25 +134,30 @@ export default function ProfessionalNavigation() {
 
           {/* DRIVER MANAGEMENT Dropdown */}
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <button 
-              onClick={() => handleDropdownToggle('drivers')}
-              style={{
-                background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
-                color: '#2d3748',
-                padding: '8px 14px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
+            <FeatureTooltip 
+              feature="Driver Management" 
+              description="Comprehensive driver management, carrier onboarding, and contractor portal access"
+              position="bottom"
             >
-              🚛 DRIVER MANAGEMENT ▼
-            </button>
+              <button 
+                onClick={() => handleDropdownToggle('drivers')}
+                style={{
+                  background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
+                  color: '#2d3748',
+                  padding: '8px 14px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                🚛 DRIVER MANAGEMENT ▼
+              </button>
+            </FeatureTooltip>
             {activeDropdown === 'drivers' && (
               <div style={{
                 position: 'absolute',
@@ -164,7 +175,7 @@ export default function ProfessionalNavigation() {
                   🚛 Driver Management
                 </Link>
                 <Link href="/drivers/enhanced-portal" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
-                  👥 Enhanced Driver Portal
+                  👥 Enhanced Driver Management Portal
                 </Link>
                 <Link href="/onboarding/carrier-onboarding" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                   🚛 Carrier Onboarding
@@ -172,34 +183,36 @@ export default function ProfessionalNavigation() {
                 <Link href="/carriers/enhanced-portal" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                   🏢 Enhanced Carrier Portal
                 </Link>
-                <Link href="/drivers#live-tracking" onClick={handleDropdownClose} style={{ display: 'block', padding: '8px 20px', color: '#f4a832', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
-                  �️ Live Load Tracking
-                </Link>
               </div>
             )}
           </div>
 
           {/* FLEETFLOW Dropdown */}
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <button 
-              onClick={() => handleDropdownToggle('fleet')}
-              style={{
-                background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-                color: 'white',
-                padding: '8px 14px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
+            <FeatureTooltip 
+              feature="FleetFlow Platform" 
+              description="Route optimization, freight quoting, fleet management, live tracking, and maintenance management"
+              position="bottom"
             >
-              🚛 FLEETFLOW ▼
-            </button>
+              <button 
+                onClick={() => handleDropdownToggle('fleet')}
+                style={{
+                  background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                  color: 'white',
+                  padding: '8px 14px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                🚛 FLEETFLOW ▼
+              </button>
+            </FeatureTooltip>
             {activeDropdown === 'fleet' && (
               <div style={{
                 position: 'absolute',
@@ -222,49 +235,65 @@ export default function ProfessionalNavigation() {
                 <Link href="/vehicles" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                   🚚 Fleet Management
                 </Link>
+                <Link href="/tracking" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🗺️ Live Load Tracking
+                </Link>
+                <Link href="/maintenance" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🔧 Maintenance Management Center
+                </Link>
               </div>
             )}
           </div>
 
           {/* ANALYTICS - Single Button */}
-          <Link href="/analytics" style={{ textDecoration: 'none' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-              color: 'white',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
-              📊 ANALYTICS
-            </button>
-          </Link>
+          <FeatureTooltip 
+            feature="Analytics Dashboard" 
+            description="Comprehensive analytics, performance metrics, and business intelligence for data-driven decisions"
+            position="bottom"
+          >
+            <Link href="/analytics" style={{ textDecoration: 'none' }}>
+              <button style={{
+                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                📊 ANALYTICS
+              </button>
+            </Link>
+          </FeatureTooltip>
 
           {/* COMPLIANCE - Single Button */}
-          <Link href="/compliance" style={{ textDecoration: 'none' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-              color: 'white',
-              padding: '8px 14px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
-              ✅ COMPLIANCE
-            </button>
-          </Link>
+          <FeatureTooltip 
+            feature="Compliance Management" 
+            description="DOT compliance, safety regulations, document management, and regulatory compliance tracking"
+            position="bottom"
+          >
+            <Link href="/compliance" style={{ textDecoration: 'none' }}>
+              <button style={{
+                background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                ✅ COMPLIANCE
+              </button>
+            </Link>
+          </FeatureTooltip>
 
           {/* RESOURCES Dropdown */}
           <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -279,7 +308,6 @@ export default function ProfessionalNavigation() {
                 cursor: 'pointer',
                 fontSize: '0.85rem',
                 fontWeight: '600',
-                transition: 'all 0.3s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px'
@@ -318,6 +346,59 @@ export default function ProfessionalNavigation() {
               </div>
             )}
           </div>
+
+          {/* Management Dropdown */}
+          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownToggle('management')}
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
+                color: 'white',
+                padding: '10px 18px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+            >
+              ⚙️ {activeDropdown === 'management' ? '▲' : '▼'}
+            </button>
+            {activeDropdown === 'management' && (
+              <div style={{
+                position: 'absolute',
+                background: 'white',
+                minWidth: '200px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                borderRadius: '12px',
+                padding: '12px 0',
+                top: '100%',
+                right: 0,
+                border: '1px solid rgba(0,0,0,0.1)',
+                zIndex: 1001
+              }}>
+                <Link href="/settings" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  ⚙️ System Settings
+                </Link>
+                <Link href="/analytics" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  📊 Analytics
+                </Link>
+                <Link href="/training/admin" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+                  🎓 Training Admin
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Notification Bell */}
+          <GlobalNotificationBell 
+            department="admin" 
+            position="navigation"
+            className="nav-notification-bell"
+          />
 
           {/* User Profile Icon */}
           <div style={{

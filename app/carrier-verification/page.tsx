@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Navigation from '../components/Navigation'
 import { CarrierInfo, DriverInfo } from '../../lib/brokersnapshot-service'
+import { Tooltip, InfoTooltip } from '../components/ui/tooltip';
+import { getTooltipContent } from '../utils/tooltipContent';
 
 export default function CarrierVerificationPage() {
   const [savedCarriers, setSavedCarriers] = useState<CarrierInfo[]>([])

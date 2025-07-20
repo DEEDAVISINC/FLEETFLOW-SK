@@ -1,0 +1,910 @@
+/**
+ * FreightQuotingDashboard - Modern UI with comprehensive quote management
+ * AI-powered freight quoting with market intelligence and competitive analysis
+ */
+
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { 
+  Calculator, 
+  TrendingUp, 
+  Target, 
+  Brain, 
+  BarChart3,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Users,
+  Globe,
+  Zap,
+  Shield,
+  Activity
+} from 'lucide-react'
+
+interface QuoteRequest {
+  type: 'LTL' | 'FTL' | 'Specialized'
+  origin: string
+  destination: string
+  weight?: number
+  pallets?: number
+  freightClass?: number
+  equipmentType?: string
+  serviceType?: string
+  distance: number
+  pickupDate: string
+  deliveryDate: string
+  urgency: 'standard' | 'expedited' | 'emergency'
+  customerTier: 'bronze' | 'silver' | 'gold' | 'platinum'
+  specialRequirements?: string[]
+  hazmat?: boolean
+  temperature?: 'ambient' | 'refrigerated' | 'frozen'
+}
+
+interface AIQuoteResponse {
+  quoteId: string
+  baseRate: number
+  fuelSurcharge: number
+  accessorialCharges: number
+  totalQuote: number
+  winProbability: number
+  competitiveScore: number
+  marketPosition: 'below' | 'at' | 'above'
+  priceConfidence: number
+  recommendedActions: string[]
+  marketIntelligence: {
+    averageMarketRate: number
+    competitorRates: Array<{
+      carrier: string
+      rate: number
+      confidence: number
+    }>
+    demandLevel: 'low' | 'medium' | 'high' | 'critical'
+    capacityTightness: number
+    seasonalFactor: number
+  }
+  riskFactors: Array<{
+    factor: string
+    impact: 'low' | 'medium' | 'high'
+    mitigation: string
+  }>
+  profitMargin: number
+  breakEvenPoint: number
+  timestamp: string
+}
+
+export default function FreightQuotingDashboard() {
+  const [activeTab, setActiveTab] = useState('quote')
+  const [loading, setLoading] = useState(false)
+  const [quote, setQuote] = useState<AIQuoteResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [marketData, setMarketData] = useState<any>(null)
+  const [quoteHistory, setQuoteHistory] = useState<AIQuoteResponse[]>([])
+
+  // Quote form state
+  const [quoteForm, setQuoteForm] = useState<QuoteRequest>({
+    type: 'FTL',
+    origin: '',
+    destination: '',
+    distance: 0,
+    pickupDate: '',
+    deliveryDate: '',
+    urgency: 'standard',
+    customerTier: 'bronze',
+    specialRequirements: [],
+    hazmat: false,
+    temperature: 'ambient'
+  })
+
+  // Load quote history on component mount
+  useEffect(() => {
+    loadQuoteHistory()
+  }, [])
+
+  const loadQuoteHistory = async () => {
+    try {
+      const response = await fetch('/api/freight-quoting?action=quote_history')
+      if (response.ok) {
+        const data = await response.json()
+        setQuoteHistory(data.data || [])
+      }
+    } catch (error) {
+      console.error('Failed to load quote history:', error)
+    }
+  }
+
+  const generateQuote = async () => {
+    if (!quoteForm.origin || !quoteForm.destination || !quoteForm.distance) {
+      setError('Please fill in all required fields')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/freight-quoting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate_quote',
+          data: quoteForm
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate quote')
+      }
+
+      const result = await response.json()
+      if (result.success) {
+        setQuote(result.data)
+        setActiveTab('results')
+        loadQuoteHistory() // Refresh history
+      } else {
+        setError(result.error || 'Failed to generate quote')
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to generate quote')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadMarketIntelligence = async () => {
+    if (!quoteForm.origin || !quoteForm.destination) {
+      setError('Please specify origin and destination')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const response = await fetch('/api/freight-quoting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'get_market_intelligence',
+          data: {
+            origin: quoteForm.origin,
+            destination: quoteForm.destination,
+            equipmentType: quoteForm.equipmentType || 'Dry Van'
+          }
+        })
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setMarketData(result.data)
+          setActiveTab('intelligence')
+        }
+      }
+    } catch (error) {
+      setError('Failed to load market intelligence')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
+
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 0.8) return 'text-green-600'
+    if (confidence >= 0.6) return 'text-yellow-600'
+    return 'text-red-600'
+  }
+
+  const getWinProbabilityColor = (probability: number) => {
+    if (probability >= 0.7) return 'bg-green-500'
+    if (probability >= 0.5) return 'bg-yellow-500'
+    return 'bg-red-500'
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">AI-Powered Freight Quoting</h1>
+          <p className="text-gray-600">Advanced pricing with market intelligence and competitive analysis</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Brain className="w-3 h-3 mr-1" />
+            AI-Powered
+          </Badge>
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <Activity className="w-3 h-3 mr-1" />
+            Live Data
+          </Badge>
+        </div>
+      </div>
+
+      {/* Error Alert */}
+      {error && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Main Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="quote">
+            <Calculator className="w-4 h-4 mr-2" />
+            Quote Generator
+          </TabsTrigger>
+          <TabsTrigger value="results">
+            <Target className="w-4 h-4 mr-2" />
+            Results
+          </TabsTrigger>
+          <TabsTrigger value="intelligence">
+            <Brain className="w-4 h-4 mr-2" />
+            Market Intelligence
+          </TabsTrigger>
+          <TabsTrigger value="analytics">
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Analytics
+          </TabsTrigger>
+          <TabsTrigger value="history">
+            <Clock className="w-4 h-4 mr-2" />
+            History
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Quote Generator Tab */}
+        <TabsContent value="quote" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Calculator className="w-5 h-5 mr-2" />
+                Generate AI-Powered Quote
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Shipment Type */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Shipment Type</label>
+                  <Select value={quoteForm.type} onValueChange={(value: any) => setQuoteForm({...quoteForm, type: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="LTL">LTL (Less Than Truckload)</SelectItem>
+                      <SelectItem value="FTL">FTL (Full Truckload)</SelectItem>
+                      <SelectItem value="Specialized">Specialized Services</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Urgency</label>
+                  <Select value={quoteForm.urgency} onValueChange={(value: any) => setQuoteForm({...quoteForm, urgency: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="standard">Standard</SelectItem>
+                      <SelectItem value="expedited">Expedited</SelectItem>
+                      <SelectItem value="emergency">Emergency</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Customer Tier</label>
+                  <Select value={quoteForm.customerTier} onValueChange={(value: any) => setQuoteForm({...quoteForm, customerTier: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bronze">Bronze</SelectItem>
+                      <SelectItem value="silver">Silver</SelectItem>
+                      <SelectItem value="gold">Gold</SelectItem>
+                      <SelectItem value="platinum">Platinum</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Origin and Destination */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Origin</label>
+                  <Input
+                    value={quoteForm.origin}
+                    onChange={(e) => setQuoteForm({...quoteForm, origin: e.target.value})}
+                    placeholder="City, State"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Destination</label>
+                  <Input
+                    value={quoteForm.destination}
+                    onChange={(e) => setQuoteForm({...quoteForm, destination: e.target.value})}
+                    placeholder="City, State"
+                  />
+                </div>
+              </div>
+
+              {/* Distance and Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Distance (miles)</label>
+                  <Input
+                    type="number"
+                    value={quoteForm.distance.toString()}
+                    onChange={(e) => setQuoteForm({...quoteForm, distance: parseInt(e.target.value) || 0})}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Pickup Date</label>
+                  <Input
+                    type="date"
+                    value={quoteForm.pickupDate}
+                    onChange={(e) => setQuoteForm({...quoteForm, pickupDate: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Delivery Date</label>
+                  <Input
+                    type="date"
+                    value={quoteForm.deliveryDate}
+                    onChange={(e) => setQuoteForm({...quoteForm, deliveryDate: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {/* Type-specific fields */}
+              {quoteForm.type === 'LTL' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Weight (lbs)</label>
+                    <Input
+                      type="number"
+                      value={quoteForm.weight?.toString() || ''}
+                      onChange={(e) => setQuoteForm({...quoteForm, weight: parseInt(e.target.value) || undefined})}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Pallets</label>
+                    <Input
+                      type="number"
+                      value={quoteForm.pallets?.toString() || ''}
+                      onChange={(e) => setQuoteForm({...quoteForm, pallets: parseInt(e.target.value) || undefined})}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Freight Class</label>
+                    <Select value={quoteForm.freightClass?.toString() || ''} onValueChange={(value) => setQuoteForm({...quoteForm, freightClass: parseInt(value) || undefined})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[50, 55, 60, 65, 70, 77.5, 85, 92.5, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500].map(fc => (
+                          <SelectItem key={fc} value={fc.toString()}>Class {fc}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {quoteForm.type === 'FTL' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Equipment Type</label>
+                  <Select value={quoteForm.equipmentType || ''} onValueChange={(value) => setQuoteForm({...quoteForm, equipmentType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select equipment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Dry Van', 'Reefer', 'Flatbed', 'Step Deck', 'Lowboy', 'Tanker', 'Auto Carrier', 'Conestoga'].map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {quoteForm.type === 'Specialized' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Service Type</label>
+                  <Select value={quoteForm.serviceType || ''} onValueChange={(value) => setQuoteForm({...quoteForm, serviceType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Hazmat', 'Refrigerated', 'Oversized', 'Team Drivers', 'Flatbed', 'White Glove', 'Expedited'].map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Special Requirements / Accessorial Charges */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Special Requirements & Accessorial Charges</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {[
+                      { value: 'liftgate', label: 'Liftgate ($75)', price: 75 },
+                      { value: 'residential', label: 'Residential ($120)', price: 120 },
+                      { value: 'inside_delivery', label: 'Inside Delivery ($150)', price: 150 },
+                      { value: 'lumper', label: 'Lumper Fee ($200)', price: 200 },
+                      { value: 'detention', label: 'Detention ($75/hr)', price: 75 },
+                      { value: 'tonu', label: 'TONU Fee ($250)', price: 250 },
+                      { value: 'layover', label: 'Layover ($150)', price: 150 },
+                      { value: 'redelivery', label: 'Redelivery ($100)', price: 100 },
+                      { value: 'sort_segregate', label: 'Sort & Segregate ($125)', price: 125 },
+                      { value: 'appointment', label: 'Appointment ($50)', price: 50 },
+                      { value: 'blind_shipment', label: 'Blind Shipment ($75)', price: 75 },
+                      { value: 'cross_dock', label: 'Cross Dock ($100)', price: 100 },
+                      { value: 'freeze_protection', label: 'Freeze Protection ($200)', price: 200 },
+                      { value: 'heated_service', label: 'Heated Service ($175)', price: 175 },
+                      { value: 'oversize_permit', label: 'Oversize Permit ($300)', price: 300 },
+                      { value: 'escort_vehicle', label: 'Escort Vehicle ($500)', price: 500 }
+                    ].map(req => (
+                      <label key={req.value} className="flex items-center space-x-2 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={quoteForm.specialRequirements?.includes(req.value) || false}
+                          onChange={(e) => {
+                            const current = quoteForm.specialRequirements || []
+                            if (e.target.checked) {
+                              setQuoteForm({...quoteForm, specialRequirements: [...current, req.value]})
+                            } else {
+                              setQuoteForm({...quoteForm, specialRequirements: current.filter(r => r !== req.value)})
+                            }
+                          }}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm font-medium">{req.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hazmat and Temperature Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={quoteForm.hazmat || false}
+                        onChange={(e) => setQuoteForm({...quoteForm, hazmat: e.target.checked})}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm font-medium">Hazmat (+$200)</span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Temperature Control</label>
+                    <Select value={quoteForm.temperature || 'ambient'} onValueChange={(value: any) => setQuoteForm({...quoteForm, temperature: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ambient">Ambient (No charge)</SelectItem>
+                        <SelectItem value="refrigerated">Refrigerated (+$300)</SelectItem>
+                        <SelectItem value="frozen">Frozen (+$450)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-4">
+                <Button 
+                  onClick={generateQuote} 
+                  disabled={loading}
+                  className="flex-1"
+                >
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Generating Quote...
+                    </>
+                  ) : (
+                    <>
+                      <Brain className="w-4 h-4 mr-2" />
+                      Generate AI Quote
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={loadMarketIntelligence}
+                  disabled={loading}
+                >
+                  <Globe className="w-4 h-4 mr-2" />
+                  Market Intelligence
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Results Tab */}
+        <TabsContent value="results" className="space-y-6">
+          {quote ? (
+            <>
+              {/* Quote Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Target className="w-5 h-5 mr-2" />
+                      Quote Results
+                    </span>
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                      {quote.quoteId}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600">{formatCurrency(quote.totalQuote)}</div>
+                      <div className="text-sm text-gray-600">Total Quote</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{(quote.winProbability * 100).toFixed(1)}%</div>
+                      <div className="text-sm text-gray-600">Win Probability</div>
+                      <div className={`w-full bg-gray-200 rounded-full h-2 mt-2`}>
+                        <div 
+                          className={`h-2 rounded-full ${getWinProbabilityColor(quote.winProbability)}`}
+                          style={{ width: `${quote.winProbability * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{quote.competitiveScore}</div>
+                      <div className="text-sm text-gray-600">Competitive Score</div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-2xl font-bold ${getConfidenceColor(quote.priceConfidence)}`}>
+                        {(quote.priceConfidence * 100).toFixed(1)}%
+                      </div>
+                      <div className="text-sm text-gray-600">Price Confidence</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quote Breakdown */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quote Breakdown</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span>Base Rate</span>
+                      <span className="font-semibold">{formatCurrency(quote.baseRate)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Fuel Surcharge</span>
+                      <span className="font-semibold">{formatCurrency(quote.fuelSurcharge)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Accessorial Charges</span>
+                      <span className="font-semibold">{formatCurrency(quote.accessorialCharges)}</span>
+                    </div>
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center text-lg font-bold">
+                        <span>Total Quote</span>
+                        <span className="text-green-600">{formatCurrency(quote.totalQuote)}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>Profit Margin</span>
+                      <span>{(quote.profitMargin * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>Break-even Point</span>
+                      <span>{formatCurrency(quote.breakEvenPoint)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Market Intelligence */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Intelligence</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-3">Market Position</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span>Market Average</span>
+                          <span>{formatCurrency(quote.marketIntelligence.averageMarketRate)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Our Position</span>
+                          <Badge variant={quote.marketPosition === 'at' ? 'default' : quote.marketPosition === 'below' ? 'destructive' : 'secondary'}>
+                            {quote.marketPosition} market
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Demand Level</span>
+                          <Badge variant={quote.marketIntelligence.demandLevel === 'high' ? 'destructive' : 'default'}>
+                            {quote.marketIntelligence.demandLevel}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-3">Competitors</h4>
+                      <div className="space-y-2">
+                        {quote.marketIntelligence.competitorRates.slice(0, 3).map((comp, index) => (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span>{comp.carrier}</span>
+                            <span>{formatCurrency(comp.rate)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recommendations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>AI Recommendations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {quote.recommendedActions.map((action, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{action}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Risk Factors */}
+              {quote.riskFactors.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Shield className="w-5 h-5 mr-2" />
+                      Risk Assessment
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {quote.riskFactors.map((risk, index) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">{risk.factor}</span>
+                            <Badge variant={risk.impact === 'high' ? 'destructive' : risk.impact === 'medium' ? 'secondary' : 'default'}>
+                              {risk.impact} impact
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600">{risk.mitigation}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-12">
+                <Calculator className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Quote Generated</h3>
+                <p className="text-gray-600">Generate a quote to see detailed results and analysis</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Market Intelligence Tab */}
+        <TabsContent value="intelligence" className="space-y-6">
+          {marketData ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Brain className="w-5 h-5 mr-2" />
+                    Market Intelligence Report
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{formatCurrency(marketData.summary.currentRate)}</div>
+                      <div className="text-sm text-gray-600">Current Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{marketData.summary.competitorCount}</div>
+                      <div className="text-sm text-gray-600">Competitors</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{marketData.summary.marketPosition}</div>
+                      <div className="text-sm text-gray-600">Market Position</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Market Trends */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Trends</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span>Trend Direction</span>
+                      <Badge variant={marketData.trends.direction === 'increasing' ? 'destructive' : 'default'}>
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        {marketData.trends.direction}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Magnitude</span>
+                      <span className="font-semibold">{(marketData.trends.magnitude * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Confidence</span>
+                      <span className={`font-semibold ${getConfidenceColor(marketData.trends.confidence)}`}>
+                        {(marketData.trends.confidence * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recommendations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Recommendations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {marketData.recommendations.map((rec: string, index: number) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <Zap className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{rec}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-12">
+                <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Market Data</h3>
+                <p className="text-gray-600">Load market intelligence to see detailed analysis</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="w-5 h-5 mr-2" />
+                Quote Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{quoteHistory.length}</div>
+                  <div className="text-sm text-gray-600">Total Quotes</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {quoteHistory.length > 0 ? formatCurrency(quoteHistory.reduce((sum, q) => sum + q.totalQuote, 0) / quoteHistory.length) : '$0'}
+                  </div>
+                  <div className="text-sm text-gray-600">Average Quote</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {quoteHistory.length > 0 ? (quoteHistory.reduce((sum, q) => sum + q.winProbability, 0) / quoteHistory.length * 100).toFixed(1) : '0'}%
+                  </div>
+                  <div className="text-sm text-gray-600">Avg Win Rate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {quoteHistory.length > 0 ? (quoteHistory.reduce((sum, q) => sum + q.profitMargin, 0) / quoteHistory.length * 100).toFixed(1) : '0'}%
+                  </div>
+                  <div className="text-sm text-gray-600">Avg Profit Margin</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* History Tab */}
+        <TabsContent value="history" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Clock className="w-5 h-5 mr-2" />
+                Quote History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {quoteHistory.length > 0 ? (
+                <div className="space-y-4">
+                  {quoteHistory.slice(0, 10).map((quote, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-3">
+                          <Badge variant="outline">{quote.quoteId}</Badge>
+                          <span className="text-sm text-gray-600">
+                            {new Date(quote.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold">{formatCurrency(quote.totalQuote)}</div>
+                          <div className="text-sm text-gray-600">{(quote.winProbability * 100).toFixed(1)}% win rate</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Market Position:</span>
+                          <Badge variant="outline" className="ml-2">
+                            {quote.marketPosition}
+                          </Badge>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Profit Margin:</span>
+                          <span className="ml-2 font-medium">{(quote.profitMargin * 100).toFixed(1)}%</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Competitive Score:</span>
+                          <span className="ml-2 font-medium">{quote.competitiveScore}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Clock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Quote History</h3>
+                  <p className="text-gray-600">Generate quotes to build your history</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+} 

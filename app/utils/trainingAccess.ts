@@ -25,15 +25,16 @@ export const TRAINING_MODULES = {
   TECHNOLOGY: 'technology',
   CUSTOMER: 'customer',
   WORKFLOW: 'workflow',
-  SMS_WORKFLOW: 'sms-workflow'
+  SMS_WORKFLOW: 'sms-workflow',
+  AI_FLOW: 'ai-flow'
 } as const;
 
 // Role-based default training access (fallback when no specific assignments)
 const DEFAULT_ROLE_TRAINING_ACCESS: Record<string, string[]> = {
   'admin': Object.values(TRAINING_MODULES),
-  'manager': ['dispatch', 'broker', 'compliance', 'safety', 'technology', 'customer', 'workflow'],
-  'dispatcher': ['dispatch', 'compliance', 'safety', 'technology', 'workflow', 'customer'],
-  'broker': ['broker', 'compliance', 'customer', 'workflow'],
+  'manager': ['dispatch', 'broker', 'compliance', 'safety', 'technology', 'customer', 'workflow', 'ai-flow'],
+  'dispatcher': ['dispatch', 'compliance', 'safety', 'technology', 'workflow', 'customer', 'ai-flow'],
+  'broker': ['broker', 'compliance', 'customer', 'workflow', 'ai-flow'],
   'driver': ['safety', 'compliance', 'technology'],
   'instructor': Object.values(TRAINING_MODULES),
   'viewer': []

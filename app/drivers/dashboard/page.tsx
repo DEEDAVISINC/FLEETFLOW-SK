@@ -2,783 +2,1192 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { smsService } from '../../services/sms';
-import RealTimeTrackingDashboard from '../../components/RealTimeTrackingDashboard';
-import { photoUploadService } from '../../../lib/photoUploadService';
-import PhotoUploadComponent from '../../../components/PhotoUploadComponent';
-import SignaturePad from '../../../components/SignaturePad';
-import DocumentViewer from '../../../components/DocumentViewer';
+import { AuthService } from '../../services/auth';
+import { DriverWorkflowService } from '../../services/driver-workflow';
+import { GPSTrackingService } from '../../services/gps-tracking';
+import { ELDIntegrationService } from '../../services/eld-integration';
+import { CommunicationService } from '../../services/communication';
+import { PerformanceAnalyticsService } from '../../services/performance-analytics';
+import { PushNotificationService } from '../../services/push-notification';
+import { DocumentManagementService } from '../../services/document-management';
+import { OfflineModeService } from '../../services/offline-mode';
+import { LiveGPSMap } from '../../components/LiveGPSMap';
 
-// TODO: Integrate with Carrier Setup Page
-// - Carrier name, MC#, DOT# should come from FMCSA API integration
-// - BrokerSnapshot integration for real-time carrier verification
-// - Driver assignment and vehicle data from carrier management system
+// Workflow Step Modal Component
+const WorkflowStepModal = ({ step, onClose, onComplete, driver }: { step: any, onClose: () => void, onComplete: () => void, driver: any }) => {
+  const [loading, setLoading] = useState(false);
+  const [photosUploaded, setPhotosUploaded] = useState(false);
+  const [signature, setSignature] = useState('');
+  const [notes, setNotes] = useState('');
 
-export default function DriverDashboardPage() {
-  const [selectedLoadDocs, setSelectedLoadDocs] = useState<any>(null);
-  const [smsLoading, setSmsLoading] = useState<string | null>(null);
-  const [selectedLoadTracking, setSelectedLoadTracking] = useState<any>(null);
-  const [selectedLoadPhotos, setSelectedLoadPhotos] = useState<any>(null);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
-  const [driverLocation, setDriverLocation] = useState({
-    lat: 33.7490, // Atlanta coordinates
-    lng: -84.3880,
-    lastUpdated: new Date().toISOString(),
-    speed: 0,
-    heading: 0
-  });
-
-  // Simulate real-time location updates
-  useEffect(() => {
-    const updateLocation = () => {
-      setDriverLocation(prev => ({
-        lat: prev.lat + (Math.random() - 0.5) * 0.01,
-        lng: prev.lng + (Math.random() - 0.5) * 0.01,
-        lastUpdated: new Date().toISOString(),
-        speed: Math.floor(Math.random() * 70 + 5), // 5-75 mph
-        heading: Math.floor(Math.random() * 360)
-      }));
-    };
-
-    const interval = setInterval(updateLocation, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  // SMS notification function
-  const sendSMSNotification = async (loadId: string, message: string, type: 'pickup' | 'delivery' | 'status' | 'emergency') => {
-    setSmsLoading(loadId);
+  const handleComplete = async () => {
+    setLoading(true);
     try {
-      const load = currentLoads.find(l => l.id === loadId);
-      if (!load) return;
-
-      // SMS to dispatch
-      const dispatchRecipients = [{
-        id: 'dispatch-001',
-        name: 'Dispatch Center',
-        phone: '+15551234567', // This would come from company settings
-        type: 'broker' as const
-      }];
-
-      const loadData = {
-        id: load.id,
-        origin: load.pickup,
-        destination: load.delivery,
-        rate: '$2,450', // This would come from load data
-        pickupDate: load.dueDate,
-        equipment: 'Dry Van'
-      };
-
-      await smsService.sendCustomMessage(
-        loadData,
-        dispatchRecipients,
-        `${driverInfo.name} (${driverInfo.id}): ${message} - Load ${loadId}`,
-        type === 'emergency' ? 'urgent' : 'normal'
-      );
-
-      console.log('SMS notification sent successfully');
-    } catch (error) {
-      console.error('Failed to send SMS notification:', error);
-    } finally {
-      setSmsLoading(null);
-    }
-  };
-
-  // Photo upload function
-  const uploadLoadPhoto = async (file: File, loadId: string, category: 'pickup' | 'delivery' | 'confirmation' | 'inspection') => {
-    try {
-      const result = await photoUploadService.uploadFile(file, {
-        category,
-        driverId: driverInfo.id,
-        loadId,
-        onProgress: (progress) => {
-          setUploadProgress(prev => ({
-            ...prev,
-            [`${loadId}_${file.name}`]: progress.percentage
-          }));
-        }
+      await DriverWorkflowService.completeStep(driver.id, step.id, {
+        photos: photosUploaded,
+        signature,
+        notes,
+        timestamp: new Date().toISOString()
       });
-      
-      console.log('Photo uploaded successfully:', result);
-      return result;
+      onComplete();
     } catch (error) {
-      console.error('Failed to upload photo:', error);
-      throw error;
+      console.error('Error completing step:', error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  // Mock driver data - TODO: This should flow from carrier setup page connected to FMCSA/BrokerSnapshot
-  const driverInfo = {
-    name: "John Smith",
-    id: "D001",
-    vehicle: "Truck #247",
-    status: "Available",
-    carrier: "ROAD RIDERS INC",
-    mcNumber: "MC-123456",
-    dotNumber: "DOT-987654"
-  };
-
-  const currentLoads = [
-    { 
-      id: "L001", 
-      pickup: "Chicago, IL", 
-      delivery: "Detroit, MI", 
-      origin: "Chicago, IL",
-      destination: "Detroit, MI",
-      status: "In Transit", 
-      dueDate: "Jul 5, 2025",
-      trackingEnabled: true,
-      equipment: "Dry Van",
-      deliveryDate: "2025-07-05T14:00:00Z",
-      pickupDate: "2025-07-04T08:00:00Z",
-      documents: {
-        rateConfirmation: "RC-L001-2025.pdf",
-        billOfLading: "BOL-L001-2025.pdf",
-        loadSheet: "LS-L001-2025.pdf"
-      }
-    },
-    { 
-      id: "L002", 
-      pickup: "Detroit, MI", 
-      delivery: "Cleveland, OH", 
-      origin: "Detroit, MI",
-      destination: "Cleveland, OH",
-      status: "Assigned", 
-      dueDate: "Jul 6, 2025",
-      trackingEnabled: true,
-      equipment: "Reefer",
-      deliveryDate: "2025-07-06T16:00:00Z",
-      pickupDate: "2025-07-06T08:00:00Z",
-      documents: {
-        rateConfirmation: "RC-L002-2025.pdf",
-        billOfLading: "BOL-L002-2025.pdf",
-        loadSheet: "LS-L002-2025.pdf"
-      }
-    }
-  ];
 
   return (
     <div style={{
-      minHeight: '100vh',
-      background: `
-        linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.7)),
-        linear-gradient(135deg, #f7c52d 0%, #f4a832 100%)
-      `,
-      paddingTop: '80px',
-      position: 'relative'
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+      backdropFilter: 'blur(10px)'
     }}>
-      {/* Black Road Lines */}
       <div style={{
-        position: 'absolute',
-        top: '40%',
-        left: '0',
-        right: '0',
-        height: '4px',
-        background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
-        opacity: 0.1,
-        zIndex: 1
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        top: '60%',
-        left: '0',
-        right: '0',
-        height: '4px',
-        background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
-        opacity: 0.1,
-        zIndex: 1
-      }}></div>
-
-      <main style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 24px 32px'
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '24px',
+        padding: '32px',
+        maxWidth: '600px',
+        width: '90%',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)'
       }}>
-        {/* Header */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '32px',
-          background: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          padding: '24px',
-          position: 'relative',
-          zIndex: 2
-        }}>
-          <h1 style={{
-            fontSize: '36px',
-            fontWeight: 'bold',
-            color: '#2d3748',
-            margin: '0 0 8px 0',
-            textShadow: '2px 2px 4px rgba(255,255,255,0.5)'
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ 
+            color: 'white', 
+            fontSize: '24px', 
+            fontWeight: '700',
+            margin: 0,
+            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
           }}>
-            Welcome back to {driverInfo.carrier}! 🚛
-          </h1>
-          <p style={{
-            fontSize: '20px',
+            {step.title}
+          </h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: 'none',
+              color: 'white',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <div style={{ color: 'rgba(255, 255, 255, 0.9)', marginBottom: '24px', lineHeight: '1.6' }}>
+          {step.description}
+        </div>
+
+        {step.requiresPhotos && (
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ 
+              display: 'block', 
+              color: 'white', 
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              📸 Upload Photos
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={() => setPhotosUploaded(true)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+        )}
+
+        {step.requiresSignature && (
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ 
+              display: 'block', 
+              color: 'white', 
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              ✍️ Digital Signature
+            </label>
+            <input
+              type="text"
+              placeholder="Type your full name to sign"
+              value={signature}
+              onChange={(e) => setSignature(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+        )}
+
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ 
+            display: 'block', 
+            color: 'white', 
             fontWeight: '600',
-            color: '#4a5568',
-            margin: '0 0 8px 0'
+            marginBottom: '8px'
           }}>
-            Driver: {driverInfo.name}
-          </p>
-          <p style={{
-            fontSize: '16px',
-            fontWeight: '500',
-            color: '#6b7280',
-            margin: '0 0 16px 0'
-          }}>
-            {driverInfo.mcNumber} • {driverInfo.dotNumber} • DOT Authorized Carrier
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap', marginTop: '16px' }}>
-            <div><strong>Driver ID:</strong> {driverInfo.id}</div>
-            <div><strong>Vehicle:</strong> {driverInfo.vehicle}</div>
-            <div><strong>Status:</strong> <span style={{ color: '#22c55e', fontWeight: 'bold' }}>{driverInfo.status}</span></div>
-          </div>
+            📝 Notes (Optional)
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Add any additional notes or observations..."
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              fontSize: '14px',
+              minHeight: '80px',
+              resize: 'vertical'
+            }}
+          />
         </div>
 
-        {/* Main Content - Driver Loads */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.7)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.8)',
-          padding: '32px',
-          minHeight: '500px',
-          position: 'relative',
-          zIndex: 2
-        }}>
-          <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: '0 0 24px 0' }}>
-              My Assigned Loads
-            </h2>
-            <p style={{ color: '#4a5568', fontSize: '16px', marginBottom: '24px' }}>
-              View and manage your assigned loads, track live location, send notifications, and access documents.
-            </p>
-            
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {currentLoads.map((load) => (
-                <div key={load.id} style={{
-                  background: 'rgba(255, 255, 255, 0.4)',
-                  borderRadius: '16px',
-                  padding: '24px'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
-                    <div>
-                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#2d3748', margin: '0 0 8px 0' }}>
-                        Load {load.id}
-                      </h3>
-                      <div style={{ fontSize: '16px', color: '#4a5568', marginBottom: '8px' }}>
-                        <strong>Route:</strong> {load.pickup} → {load.delivery}
-                      </div>
-                      <div style={{ fontSize: '14px', color: '#4a5568' }}>
-                        <strong>Due Date:</strong> {load.dueDate}
-                      </div>
-                    </div>
-                    <div style={{ 
-                      background: load.status === 'In Transit' ? '#22c55e' : '#f59e0b',
-                      color: 'white',
-                      padding: '8px 16px',
-                      borderRadius: '20px',
-                      fontSize: '14px',
-                      fontWeight: 'bold'
-                    }}>
-                      {load.status}
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <button 
-                      onClick={() => setSelectedLoadTracking(load)}
-                      style={{
-                        background: '#10b981',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      📍 Live Tracking
-                    </button>
-                    <button 
-                      onClick={() => setSelectedLoadPhotos(load)}
-                      style={{
-                        background: '#8b5cf6',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      📸 Upload Photos
-                    </button>
-                    <button 
-                      onClick={() => sendSMSNotification(load.id, `Arrived at pickup location for ${load.pickup}`, 'pickup')}
-                      disabled={smsLoading === load.id}
-                      style={{
-                        background: '#22c55e',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        opacity: smsLoading === load.id ? 0.7 : 1
-                      }}
-                    >
-                      {smsLoading === load.id ? '⏳ Sending...' : '📱 Notify Pickup'}
-                    </button>
-                    <button 
-                      onClick={() => sendSMSNotification(load.id, `Delivered load at ${load.delivery}`, 'delivery')}
-                      disabled={smsLoading === load.id}
-                      style={{
-                        background: '#f59e0b',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        opacity: smsLoading === load.id ? 0.7 : 1
-                      }}
-                    >
-                      {smsLoading === load.id ? '⏳ Sending...' : '🚚 Notify Delivery'}
-                    </button>
-                    <button 
-                      onClick={() => setSelectedLoadDocs(load)}
-                      style={{
-                        background: '#6366f1',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      📄 Documents
-                    </button>
-                    <button 
-                      onClick={() => sendSMSNotification(load.id, `Emergency: Need immediate assistance with load ${load.id}`, 'emergency')}
-                      disabled={smsLoading === load.id}
-                      style={{
-                        background: '#dc2626',
-                        color: 'white',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        opacity: smsLoading === load.id ? 0.7 : 1
-                      }}
-                    >
-                      {smsLoading === load.id ? '⏳ Sending...' : '🚨 Emergency'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Documents Modal */}
-        {selectedLoadDocs && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.8)',
-              padding: '32px',
-              maxWidth: '600px',
-              width: '90%',
-              maxHeight: '80vh',
-              overflow: 'auto'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: 0 }}>
-                  Documents for Load {selectedLoadDocs.id}
-                </h3>
-                <button 
-                  onClick={() => setSelectedLoadDocs(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: '#6b7280'
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <div style={{ marginBottom: '16px', color: '#4a5568' }}>
-                <strong>Route:</strong> {selectedLoadDocs.pickup} → {selectedLoadDocs.delivery}
-              </div>
-              
-              <div style={{ display: 'grid', gap: '16px' }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.6)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#2d3748', marginBottom: '4px' }}>
-                      📄 Rate Confirmation
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                      {selectedLoadDocs.documents.rateConfirmation}
-                    </div>
-                  </div>
-                  <button style={{
-                    background: '#3b82f6',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}>
-                    Download
-                  </button>
-                </div>
-                
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.6)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#2d3748', marginBottom: '4px' }}>
-                      📋 Bill of Lading
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                      {selectedLoadDocs.documents.billOfLading}
-                    </div>
-                  </div>
-                  <button style={{
-                    background: '#22c55e',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}>
-                    Download
-                  </button>
-                </div>
-                
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.6)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#2d3748', marginBottom: '4px' }}>
-                      📊 Load Sheet
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                      {selectedLoadDocs.documents.loadSheet}
-                    </div>
-                  </div>
-                  <button style={{
-                    background: '#f59e0b',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}>
-                    Download
-                  </button>
-                </div>
-              </div>
-              
-              <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                <button 
-                  onClick={() => setSelectedLoadDocs(null)}
-                  style={{
-                    background: '#6b7280',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Live Tracking Modal */}
-        {selectedLoadTracking && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px'
-          }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              maxWidth: '95vw',
-              width: '1200px',
-              maxHeight: '90vh',
-              overflow: 'auto',
-              position: 'relative'
-            }}>
-              <RealTimeTrackingDashboard 
-                load={selectedLoadTracking}
-                isModal={true}
-                onClose={() => setSelectedLoadTracking(null)}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Photo Upload Modal */}
-        {selectedLoadPhotos && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px'
-          }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              maxWidth: '90vw',
-              width: '800px',
-              maxHeight: '90vh',
-              overflow: 'auto',
-              position: 'relative',
-              padding: '32px'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: 0 }}>
-                  📸 Upload Photos for Load {selectedLoadPhotos.id}
-                </h3>
-                <button 
-                  onClick={() => setSelectedLoadPhotos(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: '#6b7280'
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <div style={{ marginBottom: '16px', color: '#4a5568' }}>
-                <strong>Route:</strong> {selectedLoadPhotos.pickup} → {selectedLoadPhotos.delivery}
-              </div>
-
-              {/* Photo Categories */}
-              <div style={{ display: 'grid', gap: '24px' }}>
-                {/* Pickup Photos */}
-                <div style={{
-                  background: 'rgba(34, 197, 94, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(34, 197, 94, 0.3)'
-                }}>
-                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#15803d', marginBottom: '12px' }}>
-                    📦 Pickup Photos
-                  </h4>
-                  <p style={{ fontSize: '14px', color: '#4a5568', marginBottom: '16px' }}>
-                    Upload photos of cargo being loaded, BOL, seal numbers, etc.
-                  </p>
-                  <PhotoUploadComponent
-                    category="pickup"
-                    driverId={driverInfo.id}
-                    loadId={selectedLoadPhotos.id}
-                    maxFiles={10}
-                    title="Upload Pickup Photos"
-                    description="Take photos during pickup"
-                    onUploadComplete={(urls) => {
-                      console.log('Pickup photos uploaded:', urls);
-                      // You can update load data here
-                    }}
-                  />
-                </div>
-
-                {/* Delivery Photos */}
-                <div style={{
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(59, 130, 246, 0.3)'
-                }}>
-                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1d4ed8', marginBottom: '12px' }}>
-                    🚚 Delivery Photos
-                  </h4>
-                  <p style={{ fontSize: '14px', color: '#4a5568', marginBottom: '16px' }}>
-                    Upload photos of delivery completion, unloading, receiver signature, etc.
-                  </p>
-                  <PhotoUploadComponent
-                    category="delivery"
-                    driverId={driverInfo.id}
-                    loadId={selectedLoadPhotos.id}
-                    maxFiles={10}
-                    title="Upload Delivery Photos"
-                    description="Take photos during delivery"
-                    onUploadComplete={(urls) => {
-                      console.log('Delivery photos uploaded:', urls);
-                      // You can update load data here
-                    }}
-                  />
-                </div>
-
-                {/* Inspection Photos */}
-                <div style={{
-                  background: 'rgba(245, 158, 11, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(245, 158, 11, 0.3)'
-                }}>
-                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#d97706', marginBottom: '12px' }}>
-                    🔍 Inspection Photos
-                  </h4>
-                  <p style={{ fontSize: '14px', color: '#4a5568', marginBottom: '16px' }}>
-                    Upload photos of vehicle inspection, damage reports, etc.
-                  </p>
-                  <PhotoUploadComponent
-                    category="inspection"
-                    driverId={driverInfo.id}
-                    loadId={selectedLoadPhotos.id}
-                    maxFiles={10}
-                    title="Upload Inspection Photos"
-                    description="Document vehicle and cargo inspection"
-                    onUploadComplete={(urls) => {
-                      console.log('Inspection photos uploaded:', urls);
-                      // You can update load data here
-                    }}
-                  />
-                </div>
-
-                {/* Digital Signature */}
-                <div style={{
-                  background: 'rgba(139, 92, 246, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(139, 92, 246, 0.3)'
-                }}>
-                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#7c3aed', marginBottom: '12px' }}>
-                    ✍️ Digital Signature
-                  </h4>
-                  <p style={{ fontSize: '14px', color: '#4a5568', marginBottom: '16px' }}>
-                    Capture receiver signature for delivery confirmation
-                  </p>
-                  <SignaturePad
-                    onSignatureChange={(signature) => {
-                      console.log('Signature captured:', signature);
-                      // You can save signature here
-                    }}
-                    placeholder="Receiver signature"
-                    width={350}
-                    height={120}
-                  />
-                </div>
-              </div>
-              
-              <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                <button 
-                  onClick={() => setSelectedLoadPhotos(null)}
-                  style={{
-                    background: '#6b7280',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Logout Button */}
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <Link href="/drivers/portal" style={{ textDecoration: 'none' }}>
-            <button style={{
-              background: 'rgba(220, 38, 38, 0.8)',
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '12px',
               border: 'none',
-              fontSize: '16px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(220, 38, 38, 1)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(220, 38, 38, 0.8)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              Logout
-            </button>
-          </Link>
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleComplete}
+            disabled={loading}
+            style={{
+              background: loading ? 'rgba(255, 255, 255, 0.3)' : 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white',
+              padding: '12px 24px',
+              borderRadius: '12px',
+              border: 'none',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              opacity: loading ? 0.6 : 1
+            }}
+            onMouseOver={(e) => {
+              if (!loading) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!loading) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            {loading ? 'Processing...' : 'Complete Step'}
+          </button>
         </div>
-      </main>
+      </div>
+    </div>
+  );
+};
+
+export default function DriverDashboard() {
+  const [activeView, setActiveView] = useState<'dashboard' | 'tracking' | 'communication' | 'performance'>('dashboard');
+  const [driver, setDriver] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentLoad, setCurrentLoad] = useState<any>(null);
+  const [workflowSteps, setWorkflowSteps] = useState<any[]>([]);
+  const [gpsLocation, setGpsLocation] = useState<any>(null);
+  const [eldData, setEldData] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [performanceMetrics, setPerformanceMetrics] = useState<any>(null);
+  const [selectedStep, setSelectedStep] = useState<any>(null);
+  const [showWorkflowModal, setShowWorkflowModal] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [realTimeLocation, setRealTimeLocation] = useState<any>(null);
+
+  useEffect(() => {
+    let currentDriverId: any = null;
+
+    const initializeDashboard = async () => {
+      try {
+        // Get current driver session
+        const currentDriver = await AuthService.getCurrentDriver();
+        if (!currentDriver) {
+          window.location.href = '/drivers/login';
+          return;
+        }
+
+        setDriver(currentDriver);
+        currentDriverId = currentDriver.id;
+        
+        // Initialize all services
+        await Promise.all([
+          loadCurrentLoad(currentDriver.id),
+          loadWorkflowSteps(currentDriver.id),
+          loadGPSLocation(currentDriver.id),
+          loadELDData(currentDriver.id),
+          loadMessages(currentDriver.id),
+          loadPerformanceMetrics(currentDriver.id),
+          loadNotifications(currentDriver.id)
+        ]);
+
+        // Start real-time GPS tracking
+        await GPSTrackingService.startTracking(currentDriver.id);
+
+        // Start real-time updates
+        startRealTimeUpdates(currentDriver.id);
+
+      } catch (error) {
+        console.error('Error initializing dashboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Real-time location update handler
+    const handleLocationUpdate = (event: any) => {
+      const { driverId, location } = event.detail;
+      if (driverId === currentDriverId) {
+        setRealTimeLocation(location);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('locationUpdate', handleLocationUpdate);
+
+    // Initialize dashboard
+    initializeDashboard();
+
+    // Cleanup function
+    return () => {
+      // Remove event listeners
+      window.removeEventListener('locationUpdate', handleLocationUpdate);
+      
+      // Stop GPS tracking
+      if (currentDriverId) {
+        GPSTrackingService.stopTracking(currentDriverId);
+      }
+    };
+  }, []);
+
+  const loadCurrentLoad = async (driverId: any) => {
+    try {
+      const load = await DriverWorkflowService.getCurrentLoad(driverId);
+      setCurrentLoad(load);
+    } catch (error) {
+      console.error('Error loading current load:', error);
+    }
+  };
+
+  const loadWorkflowSteps = async (driverId: any) => {
+    try {
+      const steps = await DriverWorkflowService.getWorkflowSteps(driverId);
+      setWorkflowSteps(steps);
+    } catch (error) {
+      console.error('Error loading workflow steps:', error);
+    }
+  };
+
+  const loadGPSLocation = async (driverId: any) => {
+    try {
+      const location = await GPSTrackingService.getCurrentLocation(driverId);
+      setGpsLocation(location);
+    } catch (error) {
+      console.error('Error loading GPS location:', error);
+    }
+  };
+
+  const loadELDData = async (driverId: any) => {
+    try {
+      const data = await ELDIntegrationService.getHoursOfService(driverId);
+      setEldData(data);
+    } catch (error) {
+      console.error('Error loading ELD data:', error);
+    }
+  };
+
+  const loadMessages = async (driverId: any) => {
+    try {
+      const msgs = await CommunicationService.getMessages(driverId);
+      setMessages(msgs);
+    } catch (error) {
+      console.error('Error loading messages:', error);
+    }
+  };
+
+  const loadPerformanceMetrics = async (driverId: any) => {
+    try {
+      const metrics = await PerformanceAnalyticsService.getMetrics(driverId);
+      setPerformanceMetrics(metrics);
+    } catch (error) {
+      console.error('Error loading performance metrics:', error);
+    }
+  };
+
+  const loadNotifications = async (driverId: any) => {
+    try {
+      const notifs = await PushNotificationService.getNotifications(driverId);
+      setNotifications(notifs);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  };
+
+  const startRealTimeUpdates = (driverId: any) => {
+    const interval = setInterval(async () => {
+      try {
+        const location = await GPSTrackingService.getCurrentLocation(driverId);
+        setGpsLocation(location);
+      } catch (error) {
+        console.error('Error updating GPS location:', error);
+      }
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  };
+
+  const handleWorkflowStepClick = (step: any) => {
+    setSelectedStep(step);
+    setShowWorkflowModal(true);
+  };
+
+  const handleWorkflowStepComplete = async () => {
+    setShowWorkflowModal(false);
+    if (driver) {
+      await loadWorkflowSteps(driver.id);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AuthService.logout();
+    window.location.href = '/drivers/login';
+  };
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: `
+          linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #334155 75%, #1e293b 100%),
+          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+          radial-gradient(circle at 40% 60%, rgba(34, 197, 94, 0.04) 0%, transparent 50%)
+        `,
+        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+        backgroundAttachment: 'fixed',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid rgba(255, 255, 255, 0.3)',
+            borderTop: '4px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <div style={{ color: 'white', fontSize: '18px', fontWeight: '600' }}>
+            Loading Driver Dashboard...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: `
+        linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #334155 75%, #1e293b 100%),
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(34, 197, 94, 0.04) 0%, transparent 50%)
+      `,
+      backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+      backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+      backgroundAttachment: 'fixed',
+      paddingTop: '80px',
+      position: 'relative'
+    }}>
+      {/* Navigation Bar */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+        padding: '16px 24px'
+      }}>
+      <div style={{
+          maxWidth: '1400px',
+        margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+      }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+              padding: '8px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px'
+            }}>
+              <span style={{ fontSize: '24px' }}>🚛</span>
+            </div>
+            <div>
+              <div style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '700',
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              }}>
+                Driver Management Portal
+          </div>
+        <div style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '14px'
+              }}>
+                Welcome back, {driver?.name || 'Driver'}
+                      </div>
+                      </div>
+                    </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ 
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+                      color: 'white',
+              fontSize: '14px'
+                    }}>
+              ID: {driver?.id || 'N/A'}
+                    </div>
+                    <button 
+              onClick={handleLogout}
+                      style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              Logout
+                    </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 24px 32px'
+      }}>
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px'
+              }}>
+                <span style={{ fontSize: '32px' }}>🚛</span>
+              </div>
+              <div>
+                <h1 style={{
+                  fontSize: '36px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                }}>
+                  Driver Dashboard
+                </h1>
+                <p style={{
+                  fontSize: '18px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0 0 8px 0'
+                }}>
+                  Real-time tracking, workflow management & performance analytics
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      background: '#4ade80',
+                      borderRadius: '50%',
+                      animation: 'pulse 2s infinite'
+                    }}></div>
+                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                      GPS Tracking Active
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Last updated: {new Date().toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '16px' }}>
+                    <button 
+                onClick={() => setActiveView('tracking')}
+                      style={{
+                  background: activeView === 'tracking' 
+                    ? 'linear-gradient(135deg, #10b981, #059669)' 
+                    : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                        border: 'none',
+                  fontWeight: '600',
+                        cursor: 'pointer',
+                  fontSize: '16px',
+                  transition: 'all 0.3s ease',
+                  boxShadow: activeView === 'tracking' ? '0 8px 25px rgba(16, 185, 129, 0.4)' : 'none'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
+                  e.currentTarget.style.boxShadow = activeView === 'tracking' 
+                    ? '0 12px 40px rgba(16, 185, 129, 0.5)' 
+                    : '0 8px 25px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = activeView === 'tracking' 
+                    ? '0 8px 25px rgba(16, 185, 129, 0.4)' 
+                    : 'none';
+                }}
+              >
+                📍 Live Tracking {activeView === 'tracking' && '• Active'}
+                    </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '16px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {[
+              { id: 'dashboard', label: '📊 Overview', icon: '📊', color: 'rgba(59, 130, 246, 0.2)' },
+              { id: 'tracking', label: '🗺️ Tracking', icon: '🗺️', color: 'rgba(34, 197, 94, 0.2)' },
+              { id: 'communication', label: '💬 Messages', icon: '💬', color: 'rgba(245, 158, 11, 0.2)' },
+              { id: 'performance', label: '📈 Performance', icon: '📈', color: 'rgba(168, 85, 247, 0.2)' }
+            ].map((tab) => (
+                    <button 
+                key={tab.id}
+                onClick={() => setActiveView(tab.id as any)}
+                      style={{
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                        border: 'none',
+                        cursor: 'pointer',
+                  fontSize: '16px',
+                  background: activeView === tab.id 
+                    ? tab.color.replace('0.2)', '0.4)')
+                    : tab.color,
+                  color: 'white',
+                  transform: activeView === tab.id ? 'translateY(-2px)' : 'translateY(0)',
+                  boxShadow: activeView === tab.id ? '0 8px 25px rgba(0, 0, 0, 0.15)' : 'none'
+                }}
+                onMouseOver={(e) => {
+                  if (activeView !== tab.id) {
+                    e.currentTarget.style.background = tab.color.replace('0.2)', '0.5)');
+                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
+                    e.currentTarget.style.boxShadow = `0 12px 40px ${tab.color.replace('0.2)', '0.4)')}, 0 8px 20px rgba(0, 0, 0, 0.3)`;
+                    e.currentTarget.style.filter = 'brightness(1.1)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (activeView !== tab.id) {
+                    e.currentTarget.style.background = tab.color;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.filter = 'brightness(1)';
+                  }
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+                {tab.label}
+                    </button>
+            ))}
+                  </div>
+                </div>
+
+        {/* Dashboard View */}
+        {activeView === 'dashboard' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Stats Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '16px'
+            }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Current Load
+                    </p>
+                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {currentLoad?.id || 'No Active Load'}
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#4ade80', margin: 0 }}>
+                      {currentLoad?.status || 'Available'}
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '16px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '28px' }}>📦</span>
+            </div>
+          </div>
+        </div>
+
+          <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Hours of Service
+                    </p>
+                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {eldData?.remainingHours || '11'} hrs
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#4ade80', margin: 0 }}>
+                      {eldData?.status || 'Available'}
+                    </p>
+                  </div>
+            <div style={{
+                    padding: '16px',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '28px' }}>⏰</span>
+              </div>
+                </div>
+              </div>
+              
+                <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Current Location
+                    </p>
+                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {gpsLocation?.city || 'Unknown'}
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#4ade80', margin: 0 }}>
+                      {gpsLocation?.accuracy || 'GPS Active'}
+                    </p>
+                    </div>
+                  <div style={{
+                    padding: '16px',
+                    background: 'rgba(168, 85, 247, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '28px' }}>📍</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Unread Messages
+                    </p>
+                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {messages?.filter(m => !m.read).length || 0}
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#4ade80', margin: 0 }}>
+                      New messages
+                    </p>
+                    </div>
+                  <div style={{
+                    padding: '16px',
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    borderRadius: '12px'
+                  }}>
+                    <span style={{ fontSize: '28px' }}>💬</span>
+                    </div>
+                  </div>
+              </div>
+                </div>
+                
+            {/* Workflow Steps */}
+                <div style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 24px 0' }}>
+                🔄 Current Workflow
+              </h2>
+              
+              <div style={{ display: 'grid', gap: '16px' }}>
+                {workflowSteps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    onClick={() => !step.completed && handleWorkflowStepClick(step)}
+                    style={{
+                      background: step.completed 
+                        ? 'rgba(34, 197, 94, 0.2)' 
+                        : step.current 
+                        ? 'rgba(59, 130, 246, 0.2)' 
+                        : 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                      border: `2px solid ${step.completed 
+                        ? 'rgba(34, 197, 94, 0.4)' 
+                        : step.current 
+                        ? 'rgba(59, 130, 246, 0.4)' 
+                        : 'rgba(255, 255, 255, 0.2)'}`,
+                      cursor: step.completed ? 'default' : 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      if (!step.completed) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (!step.completed) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
+                    <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                        <h3 style={{
+                    color: 'white',
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          margin: '0 0 8px 0'
+                        }}>
+                          {step.title}
+                        </h3>
+                        <p style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                          margin: '0 0 8px 0'
+                        }}>
+                          {step.description}
+                        </p>
+                        <div style={{
+                          display: 'flex',
+                          gap: '12px',
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)'
+                        }}>
+                          <span>Step {index + 1} of {workflowSteps.length}</span>
+                          {step.estimatedTime && <span>Est. {step.estimatedTime}</span>}
+                </div>
+              </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}>
+                        {step.completed ? (
+                          <span style={{
+                            background: 'rgba(34, 197, 94, 0.3)',
+                            color: '#22c55e',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600'
+                          }}>
+                            ✅ COMPLETED
+                          </span>
+                        ) : step.current ? (
+                          <span style={{
+                            background: 'rgba(59, 130, 246, 0.3)',
+                            color: '#3b82f6',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600'
+                          }}>
+                            ⚡ CURRENT
+                          </span>
+                        ) : (
+                          <span style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600'
+                          }}>
+                            ⏳ PENDING
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tracking View */}
+        {activeView === 'tracking' && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <LiveGPSMap 
+              driverId={driver?.id || 'DRV-001'} 
+              height="500px" 
+              autoStartTracking={true}
+            />
+          </div>
+        )}
+
+        {/* Communication View */}
+        {activeView === 'communication' && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 24px 0' }}>
+              💬 Messages & Communication
+            </h2>
+            
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  style={{
+                    background: message.read 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: `1px solid ${message.read 
+                      ? 'rgba(255, 255, 255, 0.2)' 
+                      : 'rgba(59, 130, 246, 0.4)'}`,
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <div style={{
+            display: 'flex',
+                    justifyContent: 'space-between',
+            alignItems: 'center',
+                    marginBottom: '8px'
+          }}>
+            <div style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}>
+                      {message.from}
+              </div>
+                    <div style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px'
+                    }}>
+                      {message.timestamp}
+              </div>
+                  </div>
+                  <p style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '14px',
+                    margin: 0,
+                    lineHeight: '1.5'
+                  }}>
+                    {message.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Performance View */}
+        {activeView === 'performance' && (
+                <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: '0 0 24px 0' }}>
+              📈 Performance Analytics
+            </h2>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+              marginBottom: '24px'
+            }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '32px', marginBottom: '8px' }}>🏆</div>
+                <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+                  {performanceMetrics?.score || 95}%
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                  Overall Score
+                </div>
+                </div>
+
+                <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '32px', marginBottom: '8px' }}>📦</div>
+                <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+                  {performanceMetrics?.completedLoads || 127}
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                  Completed Loads
+                </div>
+                </div>
+
+                <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '32px', marginBottom: '8px' }}>⏱️</div>
+                <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+                  {performanceMetrics?.onTimeDelivery || 98}%
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                  On-Time Delivery
+                </div>
+                </div>
+
+                <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '32px', marginBottom: '8px' }}>⭐</div>
+                <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+                  {performanceMetrics?.rating || 4.8}
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                  Average Rating
+              </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Workflow Modal */}
+      {showWorkflowModal && selectedStep && (
+        <WorkflowStepModal
+          step={selectedStep}
+          onClose={() => setShowWorkflowModal(false)}
+          onComplete={handleWorkflowStepComplete}
+          driver={driver}
+        />
+      )}
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -439,6 +439,11 @@ export default function BrokerBoxPage() {
                             className="icon-only-btn bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-300"
                             title="Load Information"
                             onClick={() => handleShowLoadInfo(load)}
+                            style={{
+                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              color: 'white',
+                              border: 'none'
+                            }}
                           >
                             ℹ️
                           </button>
@@ -446,6 +451,11 @@ export default function BrokerBoxPage() {
                             className="icon-only-btn bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
                             title="Broker Agent Info"
                             onClick={() => handleShowBrokerInfo(load)}
+                            style={{
+                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              color: 'white',
+                              border: 'none'
+                            }}
                           >
                             👤
                           </button>
@@ -453,6 +463,11 @@ export default function BrokerBoxPage() {
                             className="icon-only-btn bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-300"
                             title="Place Bid"
                             onClick={() => handlePlaceBid(load)}
+                            style={{
+                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              color: 'white',
+                              border: 'none'
+                            }}
                           >
                             💰
                           </button>
@@ -460,6 +475,11 @@ export default function BrokerBoxPage() {
                             className="icon-only-btn bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-300"
                             title="Contact"
                             onClick={() => handleContact(load)}
+                            style={{
+                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              color: 'white',
+                              border: 'none'
+                            }}
                           >
                             📞
                           </button>

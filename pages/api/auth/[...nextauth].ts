@@ -1,51 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { FirestoreAdapter } from '@next-auth/firebase-adapter';
-import { cert } from 'firebase-admin/app';
-
-// Helper function to safely get Firebase credentials
-const getFirebaseCredentials = () => {
-  try {
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-    // Check if credentials exist and are not placeholder values
-    if (!projectId || !clientEmail || !privateKey ||
-        projectId.includes('your_') || projectId.includes('fleetflow-b2exy') ||
-        clientEmail.includes('xxxxx') || clientEmail.includes('your_') ||
-        privateKey.includes('your_private_key_here') || privateKey.length < 100) {
-      console.warn('Firebase credentials not properly configured - using demo auth only');
-      return null;
-    }
-
-    // Validate that the private key has the correct format
-    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----') || !privateKey.includes('-----END PRIVATE KEY-----')) {
-      console.warn('Firebase private key format is invalid - using demo auth only');
-      return null;
-    }
-
-    return {
-      projectId,
-      clientEmail,
-      privateKey,
-    };
-  } catch (error) {
-    console.warn('Error parsing Firebase credentials - using demo auth only:', error);
-    return null;
-  }
-};
-
-const firebaseCredentials = getFirebaseCredentials();
 
 export const authOptions = {
-  // Only use FirestoreAdapter if credentials are available
-  ...(firebaseCredentials && {
-    adapter: FirestoreAdapter({
-      credential: cert(firebaseCredentials)
-    })
-  }),
   providers: [
     // Only include GoogleProvider if credentials are available
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
@@ -61,7 +18,7 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        // For demo purposes - in production, verify against your database
+        // For demo purposes - in production, verify against your Supabase database
         if (credentials?.email === 'admin@fleetflow.com' && credentials?.password === 'admin123') {
           return {
             id: '1',
@@ -76,6 +33,22 @@ export const authOptions = {
             email: 'dispatch@fleetflow.com',
             name: 'Dispatch Manager',
             role: 'dispatcher'
+          };
+        }
+        if (credentials?.email === 'driver@fleetflow.com' && credentials?.password === 'driver123') {
+          return {
+            id: '3',
+            email: 'driver@fleetflow.com',
+            name: 'John Smith',
+            role: 'driver'
+          };
+        }
+        if (credentials?.email === 'broker@fleetflow.com' && credentials?.password === 'broker123') {
+          return {
+            id: '4',
+            email: 'broker@fleetflow.com',
+            name: 'Sarah Wilson',
+            role: 'broker'
           };
         }
         return null;

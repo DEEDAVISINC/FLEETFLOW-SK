@@ -1,10 +1,10 @@
-// FleetFlow Route Generator - Core Generation Functions
+// FleetFlow Order Confirmation Generator - Core Generation Functions
 import { 
-  ROUTE_TEMPLATES, 
+  ORDER_CONFIRMATION_TEMPLATES, 
   DELIVERY_STOP_TEMPLATE, 
   PLACEHOLDERS, 
   LOCATION_TYPES,
-  DEFAULT_ROUTE_DATA 
+  DEFAULT_ORDER_DATA 
 } from './template-constants.js';
 import { validateRouteData, generateGoogleMapsLink, calculateRatePerMile } from './utils/validation.js';
 
@@ -36,7 +36,7 @@ export function generateUniversalPickupDocument(routeData) {
     processedData.deliveryStops = generateDeliveryStopsMarkdown(processedData.stops || []);
 
     // Replace template placeholders
-    const template = ROUTE_TEMPLATES.UNIVERSAL_PICKUP;
+    const template = ORDER_CONFIRMATION_TEMPLATES.UNIVERSAL_PICKUP;
     return replaceTemplatePlaceholders(template, processedData);
 
   } catch (error) {
@@ -52,7 +52,7 @@ export function generateUniversalPickupDocument(routeData) {
  */
 export function generateSamsClubDeliveryDocument(routeData) {
   const processedData = {
-    ...DEFAULT_ROUTE_DATA,
+    ...DEFAULT_ORDER_DATA,
     ...routeData,
     locationType: 'Retail Distribution Center',
     storeOpenTime: routeData.storeOpenTime || '6:00 AM',
@@ -62,7 +62,7 @@ export function generateSamsClubDeliveryDocument(routeData) {
   applyLocationDefaults(processedData);
   processedData.deliveryStops = generateDeliveryStopsMarkdown(processedData.stops || []);
 
-  const template = ROUTE_TEMPLATES.SAM_CLUB_TEMPLATE;
+  const template = ORDER_CONFIRMATION_TEMPLATES.SAM_CLUB_TEMPLATE;
   return replaceTemplatePlaceholders(template, processedData);
 }
 
@@ -73,7 +73,7 @@ export function generateSamsClubDeliveryDocument(routeData) {
  */
 export function generateManufacturingRouteDocument(routeData) {
   const processedData = {
-    ...DEFAULT_ROUTE_DATA,
+    ...DEFAULT_ORDER_DATA,
     ...routeData,
     locationType: 'Manufacturing Plant'
   };
@@ -81,7 +81,7 @@ export function generateManufacturingRouteDocument(routeData) {
   applyLocationDefaults(processedData);
   processedData.deliveryStops = generateDeliveryStopsMarkdown(processedData.stops || []);
 
-  const template = ROUTE_TEMPLATES.MANUFACTURING_TEMPLATE;
+  const template = ORDER_CONFIRMATION_TEMPLATES.MANUFACTURING_TEMPLATE;
   return replaceTemplatePlaceholders(template, processedData);
 }
 
@@ -92,7 +92,7 @@ export function generateManufacturingRouteDocument(routeData) {
  */
 export function generateAgriculturalRouteDocument(routeData) {
   const processedData = {
-    ...DEFAULT_ROUTE_DATA,
+    ...DEFAULT_ORDER_DATA,
     ...routeData,
     locationType: 'Agricultural Facility'
   };
@@ -100,7 +100,7 @@ export function generateAgriculturalRouteDocument(routeData) {
   applyLocationDefaults(processedData);
   processedData.deliveryStops = generateDeliveryStopsMarkdown(processedData.stops || []);
 
-  const template = ROUTE_TEMPLATES.AGRICULTURAL_TEMPLATE;
+  const template = ORDER_CONFIRMATION_TEMPLATES.AGRICULTURAL_TEMPLATE;
   return replaceTemplatePlaceholders(template, processedData);
 }
 
@@ -120,7 +120,7 @@ export function generateClaudeStyleRouteDocument(routeData) {
  */
 function processRouteData(routeData) {
   const processed = {
-    ...DEFAULT_ROUTE_DATA,
+    ...DEFAULT_ORDER_DATA,
     ...routeData
   };
 

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { ClaudeAIService } from '../../../../lib/claude-ai-service';
 
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-}) : null;
+const claude = process.env.ANTHROPIC_API_KEY ? new ClaudeAIService() : null;
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,9 +16,9 @@ export async function POST(request: NextRequest) {
 
     let recommendation;
 
-    if (openai) {
-      // Use AI for intelligent matching
-      recommendation = await getAIRecommendation(load, carriers);
+    if (claude) {
+      // Use Claude AI for intelligent matching
+      recommendation = await getClaudeAIRecommendation(load, carriers);
     } else {
       // Fallback to rule-based matching
       recommendation = getFallbackRecommendation(load, carriers);
@@ -46,79 +44,53 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function getAIRecommendation(load: any, carriers: any[]) {
+async function getClaudeAIRecommendation(load: any, carriers: any[]) {
   const prompt = `
-As an expert AI dispatcher for a freight company, analyze the following load and available carriers to make the best dispatch recommendation.
-
-LOAD DETAILS:
-${JSON.stringify(load, null, 2)}
-
-AVAILABLE CARRIERS:
-${JSON.stringify(carriers, null, 2)}
-
-ANALYSIS CRITERIA:
-1. Capacity match (weight, dimensions, equipment type)
-2. Location proximity and route efficiency
-3. Carrier reliability and performance history
-4. Cost effectiveness and rate competitiveness
-5. Specialization match (hazmat, refrigerated, oversized, etc.)
-6. Safety ratings and compliance
-7. Availability and timing
-8. Customer satisfaction history
-
-Please provide a detailed recommendation in the following JSON format:
-{
-  "primaryRecommendation": {
-    "carrierId": "string",
-    "matchScore": number (0-100),
-    "reasoning": "detailed explanation"
-  },
-  "alternatives": [
+    You are an expert AI dispatcher with deep knowledge of freight logistics, carrier performance, and dispatch optimization. 
+    
+    LOAD DETAILS:
+    ${JSON.stringify(load, null, 2)}
+    
+    AVAILABLE CARRIERS:
+    ${JSON.stringify(carriers, null, 2)}
+    
+    ANALYSIS REQUIREMENTS:
+    1. Evaluate each carrier against the load requirements
+    2. Consider capacity, location, performance history, and specializations
+    3. Assess risk factors and potential issues
+    4. Calculate compatibility scores (0-100)
+    5. Provide clear recommendations with reasoning
+    
+    RESPONSE FORMAT (JSON):
     {
-      "carrierId": "string",
-      "matchScore": number (0-100),
-      "reasoning": "brief explanation"
-    }
-  ],
-  "rateRecommendation": {
-    "suggestedRate": number,
-    "rateJustification": "explanation",
-    "competitivenessScore": number (0-100)
-  },
-  "riskFactors": ["array of potential risks"],
-  "confidenceScore": number (0-100),
-  "expectedOutcome": {
-    "onTimeDeliveryProbability": number (0-100),
-    "costEfficiency": number (0-100),
-    "customerSatisfactionPrediction": number (1-5)
-  }
-}
-
-Focus on making data-driven recommendations that balance cost, reliability, and service quality.
-`;
-
-  const completion = await openai!.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "You are an expert AI dispatcher with deep knowledge of freight logistics, carrier performance, and dispatch optimization. Provide precise, actionable recommendations based on data analysis."
-      },
-      {
-        role: "user", 
-        content: prompt
+      "topRecommendations": [
+        {
+          "carrierId": "string",
+          "carrierName": "string",
+          "compatibilityScore": number,
+          "reasoning": "string",
+          "riskLevel": "low|medium|high",
+          "estimatedCost": number,
+          "advantages": ["string"],
+          "concerns": ["string"]
+        }
+      ],
+      "overallAnalysis": {
+        "marketConditions": "string",
+        "recommendedStrategy": "string",
+        "urgencyLevel": "low|medium|high"
       }
-    ],
-    temperature: 0.3,
-    max_tokens: 2000
-  });
+    }
+    
+    Provide precise, actionable recommendations based on data analysis.
+  `;
 
   try {
-    const response = completion.choices[0].message.content;
-    const recommendation = JSON.parse(response!);
+    const result = await claude!.generateDocument(prompt, 'dispatch_recommendation');
+    const recommendation = JSON.parse(result);
     return recommendation;
   } catch (parseError) {
-    console.error('Failed to parse AI response:', parseError);
+    console.error('Failed to parse Claude AI response:', parseError);
     return getFallbackRecommendation(load, carriers);
   }
 }

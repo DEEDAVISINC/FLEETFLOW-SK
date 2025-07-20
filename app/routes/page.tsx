@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard'
 import GoogleMapsEmbed from '../components/GoogleMaps'
+import RouteSharing from '../components/RouteSharing'
 import Link from 'next/link'
+import { OptimizedRoute } from '../services/route-optimization'
 
 export default function RoutesPage() {
   const [activeView, setActiveView] = useState<'dashboard' | 'optimizer' | 'analytics'>('dashboard')
@@ -18,12 +20,106 @@ export default function RoutesPage() {
     { id: 'R002', driver: 'Sarah Wilson', efficiency: 91, savings: '$145', status: 'In Progress' },
     { id: 'R003', driver: 'Mike Johnson', efficiency: 87, savings: '$98', status: 'Optimizing' }
   ])
+  const [showRouteSharing, setShowRouteSharing] = useState(false)
+  const [selectedRouteForSharing, setSelectedRouteForSharing] = useState<OptimizedRoute | null>(null)
+
+  // Sample route data for sharing functionality
+  const sampleRoutes: OptimizedRoute[] = [
+    {
+      id: 'R001',
+      vehicleId: 'V001',
+      stops: [
+        {
+          id: 'S001',
+          address: '1600 Amphitheatre Pkwy, Mountain View, CA',
+          type: 'pickup',
+          timeWindow: { start: '09:00', end: '11:00' },
+          serviceTime: 30,
+          weight: 5000,
+          priority: 'high'
+        },
+        {
+          id: 'S002',
+          address: '410 Terry Ave N, Seattle, WA',
+          type: 'delivery',
+          timeWindow: { start: '14:00', end: '16:00' },
+          serviceTime: 20,
+          weight: 3000,
+          priority: 'urgent'
+        }
+      ],
+      totalDistance: 850.5,
+      totalTime: 12.5,
+      efficiency: 94,
+      fuelCost: 145.50,
+      estimatedArrival: '2024-01-15T16:30:00Z'
+    },
+    {
+      id: 'R002',
+      vehicleId: 'V002',
+      stops: [
+        {
+          id: 'S003',
+          address: '1 Microsoft Way, Redmond, WA',
+          type: 'pickup',
+          serviceTime: 25,
+          weight: 8000,
+          priority: 'medium'
+        },
+        {
+          id: 'S004',
+          address: '350 Fifth Avenue, New York, NY',
+          type: 'delivery',
+          timeWindow: { start: '10:00', end: '12:00' },
+          serviceTime: 30,
+          weight: 8000,
+          priority: 'high'
+        }
+      ],
+      totalDistance: 2847.0,
+      totalTime: 38.5,
+      efficiency: 91,
+      fuelCost: 285.75,
+      estimatedArrival: '2024-01-16T12:30:00Z'
+    }
+  ]
+
+  const handleRouteShare = (routeId: string) => {
+    const route = sampleRoutes.find(r => r.id === routeId)
+    if (route) {
+      setSelectedRouteForSharing(route)
+      setShowRouteSharing(true)
+    }
+  }
+
+  const handleShareComplete = (shareData: any) => {
+    console.log('Route shared:', shareData)
+    // Here you would typically send the sharing data to your backend
+    // For now, we'll just show a success message
+    alert(`Route ${shareData.route.id} shared successfully with ${shareData.recipients.length} recipients!`)
+    setShowRouteSharing(false)
+    setSelectedRouteForSharing(null)
+  }
+
+  const handleShareCancel = () => {
+    setShowRouteSharing(false)
+    setSelectedRouteForSharing(null)
+  }
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      paddingTop: '80px'
+      background: `
+        linear-gradient(135deg, #022c22 0%, #032e2a 25%, #044e46 50%, #042f2e 75%, #0a1612 100%),
+        radial-gradient(circle at 20% 20%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.03) 0%, transparent 50%)
+      `,
+      backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+      backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+      backgroundAttachment: 'fixed',
+      paddingTop: '80px',
+      position: 'relative'
     }}>
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
@@ -146,16 +242,16 @@ export default function RoutesPage() {
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
-          padding: '24px',
+          padding: '16px',
           marginBottom: '32px',
           border: '1px solid rgba(255, 255, 255, 0.2)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
           <div style={{ display: 'flex', gap: '8px' }}>
             {[
-              { id: 'dashboard', label: '📊 Overview', icon: '📊' },
-              { id: 'optimizer', label: '⚡ AI Optimizer', icon: '⚡' },
-              { id: 'analytics', label: '📈 Analytics', icon: '📈' }
+              { id: 'dashboard', label: 'Overview', icon: '📊' },
+              { id: 'optimizer', label: 'AI Optimizer', icon: '⚡' },
+              { id: 'analytics', label: 'Analytics', icon: '📈' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -199,14 +295,14 @@ export default function RoutesPage() {
             {/* Stats Grid */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '24px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '16px'
             }}>
               <div style={{
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
-                padding: '24px',
+                padding: '16px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease'
@@ -245,7 +341,7 @@ export default function RoutesPage() {
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
-                padding: '24px',
+                padding: '16px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease'
@@ -284,7 +380,7 @@ export default function RoutesPage() {
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
-                padding: '24px',
+                padding: '16px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease'
@@ -323,7 +419,7 @@ export default function RoutesPage() {
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
-                padding: '24px',
+                padding: '16px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease'
@@ -469,6 +565,35 @@ export default function RoutesPage() {
                       }}>
                         {route.status}
                       </div>
+                      {/* Share Button */}
+                      <button
+                        onClick={() => handleRouteShare(route.id)}
+                        style={{
+                          background: 'linear-gradient(135deg, #10b981, #059669)',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      >
+                        <span>🔗</span>
+                        Share
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -495,7 +620,7 @@ export default function RoutesPage() {
                 <button 
                   onClick={() => setActiveView('optimizer')}
                   style={{
-                    padding: '24px',
+                    padding: '16px',
                     background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                     color: 'white',
                     borderRadius: '12px',
@@ -523,7 +648,7 @@ export default function RoutesPage() {
                 </button>
                 
                 <button style={{
-                  padding: '24px',
+                  padding: '16px',
                   background: 'linear-gradient(135deg, #10b981, #059669)',
                   color: 'white',
                   borderRadius: '12px',
@@ -552,7 +677,7 @@ export default function RoutesPage() {
                 <button 
                   onClick={() => setActiveView('analytics')}
                   style={{
-                    padding: '24px',
+                    padding: '16px',
                     background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                     color: 'white',
                     borderRadius: '12px',
@@ -594,7 +719,7 @@ export default function RoutesPage() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <div style={{
-              padding: '24px',
+              padding: '16px',
               background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
               color: 'white'
             }}>
@@ -671,7 +796,7 @@ export default function RoutesPage() {
                 marginBottom: '32px'
               }}>
                 <div style={{
-                  padding: '24px',
+                  padding: '16px',
                   background: 'rgba(59, 130, 246, 0.1)',
                   borderRadius: '12px',
                   border: '1px solid rgba(59, 130, 246, 0.2)'
@@ -698,7 +823,7 @@ export default function RoutesPage() {
                 </div>
                 
                 <div style={{
-                  padding: '24px',
+                  padding: '16px',
                   background: 'rgba(16, 185, 129, 0.1)',
                   borderRadius: '12px',
                   border: '1px solid rgba(16, 185, 129, 0.2)'
@@ -780,7 +905,7 @@ export default function RoutesPage() {
 
               {/* Performance Insights */}
               <div style={{
-                padding: '24px',
+                padding: '16px',
                 background: 'rgba(99, 102, 241, 0.1)',
                 borderRadius: '12px',
                 border: '1px solid rgba(99, 102, 241, 0.2)'
@@ -834,6 +959,15 @@ export default function RoutesPage() {
           </div>
         )}
       </div>
+
+      {/* Route Sharing Modal */}
+      {showRouteSharing && selectedRouteForSharing && (
+        <RouteSharing
+          route={selectedRouteForSharing}
+          onShare={handleShareComplete}
+          onClose={handleShareCancel}
+        />
+      )}
     </div>
   )
 }

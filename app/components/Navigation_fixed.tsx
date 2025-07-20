@@ -89,7 +89,7 @@ export default function ProfessionalNavigation() {
                 👤 Driver Management
               </Link>
               <div style={{ borderLeft: '3px solid #2196F3', paddingLeft: '17px', margin: '5px 0' }}>
-                <Link href="/drivers#live-tracking" style={{ display: 'block', padding: '8px 20px', color: '#1565C0', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
+                <Link href="/tracking" style={{ display: 'block', padding: '8px 20px', color: '#1565C0', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
                   🗺️ Live Load Tracking
                 </Link>
               </div>
@@ -199,10 +199,10 @@ export default function ProfessionalNavigation() {
             onMouseEnter={(e) => {
               e.currentTarget.style.display = 'block';
             }}>
-              <Link href="/admin/users" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/user-management" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 👥 User Management
               </Link>
-              <Link href="/admin/settings" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/settings" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 ⚙️ System Settings
               </Link>
               <Link href="/admin/logs" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>

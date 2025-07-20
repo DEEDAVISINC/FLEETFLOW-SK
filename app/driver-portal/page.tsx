@@ -8,6 +8,9 @@ import { photoUploadService } from '../../lib/photoUploadService';
 import SignaturePad from '../../components/SignaturePad';
 import BOLComponent from '../../components/BOLComponent';
 import BillOfLading from '../../components/BillOfLading';
+import GlobalNotificationBell from '../components/GlobalNotificationBell';
+import InfoTooltip from '../components/InfoTooltip';
+import NotableItem from '../components/NotableItem';
 
 interface DriverProfile {
   id: string;
@@ -420,9 +423,16 @@ export default function DriverPortal() {
             </button>
           </Link>
           
-          <div style={{ color: 'white', textAlign: 'right' }}>
-            <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Welcome, {driver.name}</div>
-            <div style={{ fontSize: '14px', opacity: 0.8 }}>Driver ID: {driver.id}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <GlobalNotificationBell 
+              department="driver" 
+              position="driver-portal"
+              className="driver-notification-bell"
+            />
+            <div style={{ color: 'white', textAlign: 'right' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Welcome, {driver.name}</div>
+              <div style={{ fontSize: '14px', opacity: 0.8 }}>Driver ID: {driver.id}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -445,7 +455,7 @@ export default function DriverPortal() {
             margin: '0 0 12px 0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
           }}>
-            🚛 DRIVER PORTAL
+            🚛 DRIVER MANAGEMENT PORTAL
           </h1>
           <p style={{
             fontSize: '20px',
@@ -464,46 +474,48 @@ export default function DriverPortal() {
           marginBottom: '32px'
         }}>
           {[
-            { label: 'Assigned Loads', value: assignedLoads.length, color: 'linear-gradient(135deg, #3b82f6, #2563eb)', icon: '📋' },
-            { label: 'Hours Remaining', value: `${driver.hoursRemaining}h`, color: 'linear-gradient(135deg, #10b981, #059669)', icon: '⏰' },
-            { label: 'Current Location', value: driver.currentLocation, color: 'linear-gradient(135deg, #f97316, #ea580c)', icon: '📍' },
-            { label: 'ELD Status', value: driver.eldStatus, color: driver.eldStatus === 'Connected' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)', icon: '📡' },
-            { label: 'Unread Messages', value: notifications.filter(n => !n.read).length, color: 'linear-gradient(135deg, #a855f7, #9333ea)', icon: '💬' }
-          ].map((stat, index) => (
-            <div key={index} style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '20px',
-              textAlign: 'center',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-            }}>
-              <div style={{
-                background: stat.color,
-                color: 'white',
-                fontSize: '20px',
-                fontWeight: 'bold',
-                borderRadius: '12px',
-                padding: '12px',
-                marginBottom: '12px',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)'
-              }}>
-                <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>{stat.icon}</div>
-                <div style={{ fontSize: '16px' }}>{stat.value}</div>
-              </div>
-              <div style={{ color: '#374151', fontSize: '12px', fontWeight: '600' }}>{stat.label}</div>
-            </div>
-          ))}
+            { label: 'Assigned Loads', value: assignedLoads.length, color: 'linear-gradient(135deg, #3b82f6, #2563eb)', icon: '📋', tooltip: 'Number of loads currently assigned to you' },
+            { label: 'Hours Remaining', value: `${driver.hoursRemaining}h`, color: 'linear-gradient(135deg, #10b981, #059669)', icon: '⏰', tooltip: 'Hours remaining in your current duty cycle' },
+            { label: 'Current Location', value: driver.currentLocation, color: 'linear-gradient(135deg, #f97316, #ea580c)', icon: '📍', tooltip: 'Your current reported location' },
+            { label: 'ELD Status', value: driver.eldStatus, color: driver.eldStatus === 'Connected' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)', icon: '📡', tooltip: 'Electronic Logging Device connection status' },
+            { label: 'Unread Messages', value: notifications.filter(n => !n.read).length, color: 'linear-gradient(135deg, #a855f7, #9333ea)', icon: '💬', tooltip: 'Number of unread SMS notifications and messages' }
+                      ].map((stat, index) => (
+              <InfoTooltip key={index} text={stat.tooltip} position="top">
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+                }}>
+                  <div style={{
+                    background: stat.color,
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    borderRadius: '12px',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)'
+                  }}>
+                    <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>{stat.icon}</div>
+                    <div style={{ fontSize: '16px' }}>{stat.value}</div>
+                  </div>
+                  <div style={{ color: '#374151', fontSize: '12px', fontWeight: '600' }}>{stat.label}</div>
+                </div>
+              </InfoTooltip>
+            ))}
         </div>
 
         {/* Tab Navigation */}
@@ -915,27 +927,34 @@ export default function DriverPortal() {
                   </thead>
                   <tbody>
                     {availableLoads.map((load, index) => (
-                      <tr key={load.id} style={{
-                        borderTop: index > 0 ? '1px solid #e5e7eb' : 'none',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
-                      }}>
-                        <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 'bold' }}>{load.id}</td>
-                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>
-                          <div>{load.origin}</div>
-                          <div style={{ fontSize: '12px', color: '#6b7280' }}>{load.destination}</div>
-                        </td>
-                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>{load.equipment}</td>
-                        <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 'bold', color: '#059669' }}>
-                          ${load.rate.toLocaleString()}
-                        </td>
-                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>
-                          {new Date(load.pickupDate).toLocaleDateString()}
+                      <NotableItem
+                        key={load.id}
+                        subjectId={load.id}
+                        subjectType="load"
+                        subjectLabel={`Load ${load.id} - ${load.origin} → ${load.destination}`}
+                        department="driver"
+                      >
+                        <tr style={{
+                          borderTop: index > 0 ? '1px solid #e5e7eb' : 'none',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.backgroundColor = 'white';
+                        }}>
+                          <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 'bold' }}>{load.id}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                            <div>{load.origin}</div>
+                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{load.destination}</div>
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>{load.equipment}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 'bold', color: '#059669' }}>
+                            ${load.rate.toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                            {new Date(load.pickupDate).toLocaleDateString()}
                         </td>
                         <td style={{ padding: '12px 16px' }}>
                           <button style={{
@@ -952,7 +971,8 @@ export default function DriverPortal() {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    </NotableItem>
+                  ))}
                   </tbody>
                 </table>
               </div>

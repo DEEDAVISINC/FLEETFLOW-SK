@@ -136,24 +136,44 @@ export default function BrokerPage() {
                       <button 
                         className="w-8 h-8 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded border text-xs flex items-center justify-center"
                         title="Load Information"
+                        style={{
+                          background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                          color: 'white',
+                          border: 'none'
+                        }}
                       >
                         ℹ️
                       </button>
                       <button 
                         className="w-8 h-8 bg-green-100 text-green-700 hover:bg-green-200 rounded border text-xs flex items-center justify-center"
                         title="Broker Agent Info"
+                        style={{
+                          background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                          color: 'white',
+                          border: 'none'
+                        }}
                       >
                         👤
                       </button>
                       <button 
                         className="w-8 h-8 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded border text-xs flex items-center justify-center"
                         title="Place Bid"
+                        style={{
+                          background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                          color: 'white',
+                          border: 'none'
+                        }}
                       >
                         💰
                       </button>
                       <button 
                         className="w-8 h-8 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded border text-xs flex items-center justify-center"
                         title="Contact"
+                        style={{
+                          background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                          color: 'white',
+                          border: 'none'
+                        }}
                       >
                         📞
                       </button>

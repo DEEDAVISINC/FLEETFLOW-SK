@@ -4,16 +4,11 @@ Use this checklist to ensure your FleetFlow application is properly configured f
 
 ## ☁️ Pre-Deployment Setup
 
-### 🔥 Firebase Setup
-- [ ] Firebase project created
 - [ ] Firestore database enabled
-- [ ] Firebase Hosting enabled
-- [ ] Firebase Authentication enabled
 - [ ] Security rules configured
 
 ### 🔑 Environment Variables
 - [ ] `.env.local` file created from `.env.example`
-- [ ] All Firebase config variables set
 - [ ] NextAuth secret generated (32+ characters)
 - [ ] Google Maps API key added
 - [ ] Twilio credentials added (optional)
@@ -37,7 +32,6 @@ Use this checklist to ensure your FleetFlow application is properly configured f
 - [ ] Development server starts (`npm run dev`)
 - [ ] All pages load without errors
 - [ ] Authentication works (sign in/out)
-- [ ] Database operations work (if Firebase configured)
 - [ ] External APIs respond (Maps, FMCSA, etc.)
 
 ### 🏗️ Production Build
@@ -47,11 +41,6 @@ Use this checklist to ensure your FleetFlow application is properly configured f
 
 ## 🌐 Deployment
 
-### Option A: Firebase Hosting
-- [ ] Firebase CLI installed (`npm install -g firebase-tools`)
-- [ ] Logged into Firebase (`firebase login`)
-- [ ] Project initialized (`firebase init`)
-- [ ] Build deployed (`firebase deploy`)
 - [ ] Custom domain configured (optional)
 
 ### Option B: Vercel
@@ -114,7 +103,6 @@ Use this checklist to ensure your FleetFlow application is properly configured f
 
 ### 📈 Analytics Setup
 - [ ] Google Analytics configured (optional)
-- [ ] Firebase Analytics enabled
 - [ ] Error tracking setup (Sentry, etc.)
 - [ ] Performance monitoring enabled
 
@@ -189,7 +177,6 @@ When all items are checked:
 ## 🆘 Emergency Contacts
 
 - **Technical Lead**: [Your Name] - [Email] - [Phone]
-- **Firebase Support**: [Firebase Console](https://console.firebase.google.com/)
 - **Hosting Provider**: [Provider Support]
 - **Domain Registrar**: [Registrar Support]
 
@@ -202,7 +189,6 @@ When all items are checked:
 4. Notify users of temporary issues
 
 ### Critical Issues
-1. Check Firebase Console for outages
 2. Review error logs in hosting platform
 3. Verify all environment variables
 4. Test database connectivity

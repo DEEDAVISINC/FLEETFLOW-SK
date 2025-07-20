@@ -1,25 +1,24 @@
-import OpenAI from 'openai';
+import { ClaudeAIService } from '../../lib/claude-ai-service';
 
-// AI Service for FleetFlow Automation
+// AI Service for FleetFlow Automation (Now using Claude AI)
 export class FleetFlowAI {
-  private openai?: OpenAI;
+  private claude: ClaudeAIService;
   private isEnabled: boolean;
 
   constructor() {
-    this.isEnabled = !!process.env.OPENAI_API_KEY;
+    this.isEnabled = !!process.env.ANTHROPIC_API_KEY;
+    this.claude = new ClaudeAIService();
     
     if (this.isEnabled) {
-      this.openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
+      console.log('🤖 AI Service running with Claude AI - Production Ready');
     } else {
-      console.log('AI Service running in mock mode - set OPENAI_API_KEY for production');
+      console.log('🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production');
     }
   }
 
-  // Route Optimization using AI
+  // Route Optimization using Claude AI
   async optimizeRoute(vehicles: any[], destinations: string[]): Promise<any> {
-    if (!this.isEnabled || !this.openai) {
+    if (!this.isEnabled) {
       return this.mockRouteOptimization(vehicles, destinations);
     }
 
@@ -31,36 +30,33 @@ export class FleetFlowAI {
         Destinations: ${JSON.stringify(destinations, null, 2)}
         
         Consider:
-        - Vehicle fuel levels
-        - Driver availability 
-        - Vehicle capacity
-        - Distance efficiency
-        - Maintenance schedules
+        - Vehicle fuel levels and efficiency
+        - Driver availability and HOS compliance
+        - Vehicle capacity and load requirements
+        - Distance efficiency and traffic patterns
+        - Maintenance schedules and vehicle condition
+        - Cost optimization and fuel savings
         
         Return a JSON response with optimized assignments including:
-        - vehicle assignments
-        - estimated fuel consumption
-        - time estimates
-        - cost analysis
+        - vehicle assignments with reasoning
+        - estimated fuel consumption and costs
+        - time estimates and delivery windows
+        - cost analysis and savings opportunities
         - efficiency score (1-100)
+        - risk assessment and mitigation
       `;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-      });
-
-      return JSON.parse(completion.choices[0].message.content || '{}');
+      const result = await this.claude.generateDocument(prompt, 'route_optimization');
+      return JSON.parse(result);
     } catch (error) {
-      console.error('AI Route Optimization Error:', error);
+      console.error('Claude AI Route Optimization Error:', error);
       return this.mockRouteOptimization(vehicles, destinations);
     }
   }
 
-  // Predictive Maintenance AI
+  // Predictive Maintenance using Claude AI
   async predictMaintenance(vehicle: any): Promise<any> {
-    if (!this.isEnabled || !this.openai) {
+    if (!this.isEnabled) {
       return this.mockMaintenancePrediction(vehicle);
     }
 
@@ -71,115 +67,114 @@ export class FleetFlowAI {
         Vehicle Data: ${JSON.stringify(vehicle, null, 2)}
         
         Consider:
-        - Current mileage vs last maintenance
-        - Fuel efficiency patterns
-        - Usage patterns
-        - Vehicle age and type
+        - Current mileage vs last maintenance interval
+        - Fuel efficiency patterns and degradation
+        - Usage patterns and stress factors
+        - Vehicle age, type, and manufacturer specs
+        - Seasonal factors and operating conditions
+        - Historical maintenance patterns
         
         Provide maintenance predictions with:
-        - Risk level (low/medium/high)
-        - Recommended actions
-        - Timeline for next service
-        - Cost estimates
-        - Priority components to check
+        - Risk level (low/medium/high/critical)
+        - Specific recommended actions with priorities
+        - Timeline for next service with urgency
+        - Cost estimates for different scenarios
+        - Priority components to inspect immediately
+        - Preventive measures to extend life
+        
+        Format as JSON with structured recommendations.
       `;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.2,
-      });
-
-      return JSON.parse(completion.choices[0].message.content || '{}');
+      const result = await this.claude.generateDocument(prompt, 'maintenance_prediction');
+      return JSON.parse(result);
     } catch (error) {
-      console.error('AI Maintenance Prediction Error:', error);
+      console.error('Claude AI Maintenance Prediction Error:', error);
       return this.mockMaintenancePrediction(vehicle);
     }
   }
 
-  // Driver Performance Analysis
+  // Driver Performance Analysis using Claude AI
   async analyzeDriverPerformance(driverData: any): Promise<any> {
-    if (!this.isEnabled || !this.openai) {
+    if (!this.isEnabled) {
       return this.mockDriverAnalysis(driverData);
     }
 
     try {
       const prompt = `
-        Analyze driver performance data:
+        Analyze driver performance data comprehensively:
         
         Driver Data: ${JSON.stringify(driverData, null, 2)}
         
         Evaluate:
-        - Fuel efficiency
-        - On-time delivery rates
-        - Safety record
-        - Route adherence
-        - Customer feedback
+        - Fuel efficiency trends and patterns
+        - On-time delivery rates and consistency
+        - Safety record and incident history
+        - Route adherence and optimization
+        - Customer feedback and satisfaction
+        - HOS compliance and violations
+        - Vehicle handling and maintenance impact
         
         Provide analysis with:
-        - Performance score (1-100)
-        - Strengths and areas for improvement
-        - Training recommendations
-        - Safety insights
-        - Efficiency tips
+        - Overall performance score (1-100)
+        - Specific strengths and areas for improvement
+        - Targeted training recommendations
+        - Safety insights and risk assessment
+        - Efficiency tips and best practices
+        - Career development suggestions
+        
+        Format as JSON with actionable insights.
       `;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-      });
-
-      return JSON.parse(completion.choices[0].message.content || '{}');
+      const result = await this.claude.generateDocument(prompt, 'driver_analysis');
+      return JSON.parse(result);
     } catch (error) {
-      console.error('AI Driver Analysis Error:', error);
+      console.error('Claude AI Driver Analysis Error:', error);
       return this.mockDriverAnalysis(driverData);
     }
   }
 
-  // Cost Optimization AI
+  // Cost Optimization using Claude AI
   async optimizeCosts(fleetData: any): Promise<any> {
-    if (!this.isEnabled || !this.openai) {
+    if (!this.isEnabled) {
       return this.mockCostOptimization(fleetData);
     }
 
     try {
       const prompt = `
-        Analyze fleet data for cost optimization opportunities:
+        Analyze fleet data for comprehensive cost optimization:
         
         Fleet Data: ${JSON.stringify(fleetData, null, 2)}
         
         Analyze:
-        - Fuel consumption patterns
-        - Maintenance costs
-        - Route efficiency
-        - Vehicle utilization
-        - Driver productivity
+        - Fuel consumption patterns and inefficiencies
+        - Maintenance costs and prevention opportunities
+        - Route efficiency and optimization potential
+        - Vehicle utilization and capacity optimization
+        - Driver productivity and performance impact
+        - Insurance and operational cost factors
         
         Provide recommendations for:
-        - Immediate cost savings
-        - Long-term optimizations
-        - ROI calculations
-        - Implementation priorities
-        - Expected savings percentages
+        - Immediate cost savings (0-30 days)
+        - Medium-term optimizations (1-6 months)
+        - Long-term strategic improvements (6+ months)
+        - ROI calculations for each recommendation
+        - Implementation priorities and timelines
+        - Expected savings percentages with confidence levels
+        
+        Format as JSON with structured cost optimization plan.
       `;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-      });
-
-      return JSON.parse(completion.choices[0].message.content || '{}');
+      const result = await this.claude.generateDocument(prompt, 'cost_optimization');
+      return JSON.parse(result);
     } catch (error) {
-      console.error('AI Cost Optimization Error:', error);
+      console.error('Claude AI Cost Optimization Error:', error);
       return this.mockCostOptimization(fleetData);
     }
   }
 
-  // Smart Notifications AI
+  // Smart Notifications using Claude AI
   async generateSmartNotification(context: any): Promise<any> {
-    if (!this.isEnabled || !this.openai) {
+    if (!this.isEnabled) {
       return this.mockSmartNotification(context);
     }
 
@@ -191,21 +186,19 @@ export class FleetFlowAI {
         
         Create appropriate notification with:
         - Priority level (low/medium/high/critical)
-        - Message content (clear and actionable)
-        - Recommended actions
-        - Recipient suggestions
-        - Follow-up requirements
+        - Clear and actionable message content
+        - Specific recommended actions with timelines
+        - Appropriate recipient suggestions
+        - Follow-up requirements and escalation
+        - Related system integrations needed
+        
+        Format as JSON with complete notification structure.
       `;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.4,
-      });
-
-      return JSON.parse(completion.choices[0].message.content || '{}');
+      const result = await this.claude.generateDocument(prompt, 'smart_notification');
+      return JSON.parse(result);
     } catch (error) {
-      console.error('AI Smart Notification Error:', error);
+      console.error('Claude AI Smart Notification Error:', error);
       return this.mockSmartNotification(context);
     }
   }

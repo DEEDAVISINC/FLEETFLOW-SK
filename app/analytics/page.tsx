@@ -4,6 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import FinancialDashboard from '../components/FinancialDashboard';
+import GovernmentContractIntelligence from '../components/GovernmentContractIntelligence';
+import BTSIndustryBenchmarking from '../components/BTSIndustryBenchmarking';
+import BLSWorkforceAnalytics from '../components/BLSWorkforceAnalytics';
+import EPASustainabilityAnalytics from '../components/EPASustainabilityAnalytics';
+import PortAuthorityIntelligence from '../components/PortAuthorityIntelligence';
 
 // Register Chart.js components
 ChartJS.register(
@@ -94,6 +100,93 @@ export default function AnalyticsPage() {
       ]
     }
   };
+
+  // Advanced Analytics Data
+  const [selectedTimeRange, setSelectedTimeRange] = useState<'today' | 'week'>('today')
+  
+  // Revenue Trending Data
+  const revenueData: {
+    today: { hour: string; revenue: number; loads: number }[]
+    week: { day: string; revenue: number; loads: number }[]
+  } = {
+    today: [
+      { hour: '6AM', revenue: 12000, loads: 8 },
+      { hour: '8AM', revenue: 28000, loads: 15 },
+      { hour: '10AM', revenue: 45000, loads: 24 },
+      { hour: '12PM', revenue: 67000, loads: 32 },
+      { hour: '2PM', revenue: 89000, loads: 41 },
+      { hour: '4PM', revenue: 112000, loads: 48 },
+      { hour: '6PM', revenue: 128000, loads: 52 },
+      { hour: '8PM', revenue: 135000, loads: 54 }
+    ],
+    week: [
+      { day: 'Mon', revenue: 145000, loads: 58 },
+      { day: 'Tue', revenue: 167000, loads: 62 },
+      { day: 'Wed', revenue: 189000, loads: 71 },
+      { day: 'Thu', revenue: 156000, loads: 59 },
+      { day: 'Fri', revenue: 198000, loads: 76 },
+      { day: 'Sat', revenue: 123000, loads: 45 },
+      { day: 'Sun', revenue: 87000, loads: 32 }
+    ]
+  }
+
+  // Performance Heatmap Data
+  const performanceRegions = [
+    { region: 'West Coast', performance: 92, color: '#10b981', loads: 156, avgDelay: 2.3 },
+    { region: 'Southwest', performance: 88, color: '#22c55e', loads: 134, avgDelay: 3.1 },
+    { region: 'Midwest', performance: 85, color: '#f59e0b', loads: 198, avgDelay: 4.2 },
+    { region: 'Southeast', performance: 79, color: '#f97316', loads: 167, avgDelay: 5.8 },
+    { region: 'Northeast', performance: 94, color: '#059669', loads: 143, avgDelay: 1.9 },
+    { region: 'Mountain', performance: 87, color: '#84cc16', loads: 98, avgDelay: 3.7 }
+  ]
+
+  // Predictive Analytics Data
+  const predictiveData = {
+    delayPredictions: [
+      { route: 'LA → Phoenix', risk: 'Low', probability: 15, eta: '2h 30m' },
+      { route: 'NYC → Boston', risk: 'High', probability: 78, eta: '4h 15m' },
+      { route: 'Chicago → Detroit', risk: 'Medium', probability: 45, eta: '5h 45m' },
+      { route: 'Miami → Atlanta', risk: 'Low', probability: 22, eta: '8h 30m' }
+    ],
+    maintenanceAlerts: [
+      { vehicle: 'Truck #T-456', maintenance: 'Oil Change', dueIn: '3 days', priority: 'Medium' },
+      { vehicle: 'Truck #T-789', maintenance: 'Brake Inspection', dueIn: '1 day', priority: 'High' },
+      { vehicle: 'Truck #T-123', maintenance: 'Tire Rotation', dueIn: '7 days', priority: 'Low' }
+    ],
+    demandForecast: [
+      { route: 'West Coast', demand: 'High', trend: 'up', change: '+12%' },
+      { route: 'Southeast', demand: 'Medium', trend: 'stable', change: '+2%' },
+      { route: 'Northeast', demand: 'High', trend: 'up', change: '+8%' },
+      { route: 'Midwest', demand: 'Low', trend: 'down', change: '-5%' }
+    ]
+  }
+
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case 'High': return '#ef4444'
+      case 'Medium': return '#f59e0b'
+      case 'Low': return '#22c55e'
+      default: return '#6b7280'
+    }
+  }
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up': return '📈'
+      case 'down': return '📉'
+      case 'stable': return '➡️'
+      default: return '📊'
+    }
+  }
+
+  const formatRevenue = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value)
+  }
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -237,9 +330,8 @@ export default function AnalyticsPage() {
       <div style={{ padding: '24px' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <button style={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+            border: 'none',
             color: 'white',
             padding: '12px 24px',
             borderRadius: '12px',
@@ -249,12 +341,10 @@ export default function AnalyticsPage() {
             fontSize: '16px'
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
             e.currentTarget.style.transform = 'translateY(-2px)';
             e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
           }}>
@@ -670,6 +760,632 @@ export default function AnalyticsPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        {/* Advanced Analytics Widgets */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          marginBottom: '30px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
+            <h2 style={{ 
+              fontSize: '24px', 
+              color: '#ffffff',
+              fontWeight: '700',
+              margin: 0
+            }}>
+              🚀 Advanced Analytics & Predictive Insights
+            </h2>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setSelectedTimeRange('today')}
+                style={{
+                  background: selectedTimeRange === 'today' ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Today
+              </button>
+              <button
+                onClick={() => setSelectedTimeRange('week')}
+                style={{
+                  background: selectedTimeRange === 'week' ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Week
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(600px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+            {/* Revenue Trending Chart */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '18px', 
+                fontWeight: '600', 
+                margin: '0 0 20px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                📈 Revenue Trending
+                <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                  ({selectedTimeRange === 'today' ? 'Hour by Hour' : 'Day by Day'})
+                </span>
+              </h3>
+              
+              <div style={{ height: '200px', position: 'relative' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'end', 
+                  justifyContent: 'space-between',
+                  height: '100%',
+                  gap: '4px'
+                }}>
+                  {revenueData[selectedTimeRange].map((item, index) => {
+                    const maxRevenue = Math.max(...revenueData[selectedTimeRange].map(d => d.revenue))
+                    const height = (item.revenue / maxRevenue) * 160
+                    return (
+                      <div key={index} style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        flex: 1,
+                        gap: '8px'
+                      }}>
+                        <div style={{ 
+                          fontSize: '10px', 
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontWeight: '500'
+                        }}>
+                          {formatRevenue(item.revenue)}
+                        </div>
+                        <div style={{
+                          background: `linear-gradient(to top, #3b82f6, #60a5fa)`,
+                          width: '100%',
+                          height: `${height}px`,
+                          borderRadius: '4px 4px 0 0',
+                          position: 'relative',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scaleY(1.05)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scaleY(1)'
+                        }}
+                        />
+                        <div style={{ 
+                          fontSize: '11px', 
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontWeight: '500'
+                        }}>
+                          {selectedTimeRange === 'today' ? (item as any).hour : (item as any).day}
+                        </div>
+                        <div style={{ 
+                          fontSize: '9px', 
+                          color: 'rgba(255, 255, 255, 0.6)'
+                        }}>
+                          {item.loads} loads
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Heatmap */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '18px', 
+                fontWeight: '600', 
+                margin: '0 0 20px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🗺️ Regional Performance
+                <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                  (Live Performance Score)
+                </span>
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {performanceRegions.map((region, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    border: `1px solid ${region.color}30`,
+                    borderLeft: `4px solid ${region.color}`,
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.currentTarget.style.transform = 'translateX(4px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                    e.currentTarget.style.transform = 'translateX(0)'
+                  }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: region.color,
+                        borderRadius: '50%'
+                      }} />
+                      <div>
+                        <div style={{ 
+                          color: 'white', 
+                          fontSize: '14px', 
+                          fontWeight: '600'
+                        }}>
+                          {region.region}
+                        </div>
+                        <div style={{ 
+                          color: 'rgba(255, 255, 255, 0.7)', 
+                          fontSize: '12px'
+                        }}>
+                          {region.loads} loads • {region.avgDelay}h avg delay
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ 
+                        color: region.color, 
+                        fontSize: '18px', 
+                        fontWeight: 'bold'
+                      }}>
+                        {region.performance}%
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '11px'
+                      }}>
+                        Performance
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Predictive Analytics Dashboard */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+            {/* Delay Predictions */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🤖 AI Delay Predictions
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {predictiveData.delayPredictions.map((prediction, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '6px',
+                    border: `1px solid ${getRiskColor(prediction.risk)}30`
+                  }}>
+                    <div>
+                      <div style={{ 
+                        color: 'white', 
+                        fontSize: '13px', 
+                        fontWeight: '600'
+                      }}>
+                        {prediction.route}
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '11px'
+                      }}>
+                        ETA: {prediction.eta}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ 
+                        color: getRiskColor(prediction.risk), 
+                        fontSize: '12px', 
+                        fontWeight: 'bold'
+                      }}>
+                        {prediction.risk} Risk
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '10px'
+                      }}>
+                        {prediction.probability}% chance
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Maintenance Alerts */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🔧 Predictive Maintenance
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {predictiveData.maintenanceAlerts.map((alert, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '6px',
+                    border: `1px solid ${getRiskColor(alert.priority)}30`
+                  }}>
+                    <div>
+                      <div style={{ 
+                        color: 'white', 
+                        fontSize: '13px', 
+                        fontWeight: '600'
+                      }}>
+                        {alert.vehicle}
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '11px'
+                      }}>
+                        {alert.maintenance}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ 
+                        color: getRiskColor(alert.priority), 
+                        fontSize: '12px', 
+                        fontWeight: 'bold'
+                      }}>
+                        {alert.priority}
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '10px'
+                      }}>
+                        Due in {alert.dueIn}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Demand Forecast */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                📊 Demand Forecast
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {predictiveData.demandForecast.map((forecast, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ fontSize: '16px' }}>
+                        {getTrendIcon(forecast.trend)}
+                      </div>
+                      <div>
+                        <div style={{ 
+                          color: 'white', 
+                          fontSize: '13px', 
+                          fontWeight: '600'
+                        }}>
+                          {forecast.route}
+                        </div>
+                        <div style={{ 
+                          color: 'rgba(255, 255, 255, 0.7)', 
+                          fontSize: '11px'
+                        }}>
+                          {forecast.demand} Demand
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ 
+                        color: forecast.trend === 'up' ? '#22c55e' : forecast.trend === 'down' ? '#ef4444' : '#f59e0b', 
+                        fontSize: '12px', 
+                        fontWeight: 'bold'
+                      }}>
+                        {forecast.change}
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.6)', 
+                        fontSize: '10px'
+                      }}>
+                        vs last week
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Financial Markets Intelligence Section */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '32px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{
+                padding: '12px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px'
+              }}>
+                <span style={{ fontSize: '24px' }}>💹</span>
+              </div>
+              <div>
+                <h2 style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                }}>
+                  Financial Markets Intelligence
+                </h2>
+                <p style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0'
+                }}>
+                  Real-time market data and government intelligence • $8-14M Value Add
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <a 
+                href="https://fred.stlouisfed.org/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                📊 FRED
+              </a>
+              <a 
+                href="https://www.usaspending.gov/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                ��️ USAspending
+              </a>
+              <a 
+                href="https://www.bts.gov/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                📊 BTS
+              </a>
+              <a 
+                href="https://www.bls.gov/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                👥 BLS
+              </a>
+              <a 
+                href="https://www.epa.gov/smartway" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                🌿 EPA
+              </a>
+              <a 
+                href="https://www.marad.dot.gov/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                🚢 MARAD
+              </a>
+              <a 
+                href="https://www.portoflosangeles.org/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  textDecoration: 'none',
+                  fontWeight: '600'
+                }}
+              >
+                ⚓ Port Authority
+              </a>
+            </div>
+          </div>
+
+          {/* Financial Markets Components */}
+          <div style={{ marginBottom: '32px' }}>
+            <FinancialDashboard />
+          </div>
+          
+          <div style={{ marginBottom: '32px' }}>
+            <GovernmentContractIntelligence />
+          </div>
+          
+          <div style={{ marginBottom: '32px' }}>
+            <BTSIndustryBenchmarking />
+          </div>
+          
+          <div style={{ marginBottom: '32px' }}>
+            <BLSWorkforceAnalytics />
+          </div>
+          
+          <div style={{ marginBottom: '32px' }}>
+            <EPASustainabilityAnalytics />
+          </div>
+          
+          <div style={{ marginBottom: '32px' }}>
+            <PortAuthorityIntelligence />
           </div>
         </div>
 

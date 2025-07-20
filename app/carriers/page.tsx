@@ -2,28 +2,70 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getLoadsForUser, Load } from '../services/loadService';
+// import { getLoadsForCarrierPortal, Load } from '../services/loadService';
+
+// Define the Load type inline for now
+interface Load {
+  id: string;
+  brokerId: string;
+  brokerName: string;
+  origin: string;
+  destination: string;
+  rate: number;
+  distance: string;
+  weight: string;
+  equipment: string;
+  status: string;
+  pickupDate: string;
+  deliveryDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function CarrierPortal() {
   const [loads, setLoads] = useState<Load[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load available loads for carriers
-    const availableLoads = getLoadsForUser().filter(load => 
-      load.status === 'Available' || load.status === 'Draft'
-    );
-    setLoads(availableLoads);
+    const fetchLoads = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/carrier-loads');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!Array.isArray(data)) {
+          throw new Error('API did not return an array');
+        }
+        
+        setLoads(data);
+        setError(null);
+      } catch (err) {
+        setLoads([]);
+        setError('Failed to load carrier loads. Please try again later.');
+        console.error('Carrier portal fetch error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLoads();
   }, []);
 
   // Filter loads based on search
   const filteredLoads = loads.filter(load => {
     return !searchTerm || 
-      load.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      load.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      load.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      load.brokerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      load.equipment.toLowerCase().includes(searchTerm.toLowerCase());
+      load.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      load.origin?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      load.destination?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      load.brokerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      load.equipment?.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const handleBidOnLoad = (load: Load) => {
@@ -46,6 +88,12 @@ export default function CarrierPortal() {
       background: 'linear-gradient(135deg, #059669, #047857, #0f766e)',
       padding: '80px 20px 20px 20px'
     }}>
+      {/* Error Banner */}
+      {error && (
+        <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '16px', borderRadius: '8px', marginBottom: '24px', textAlign: 'center', fontWeight: 600 }}>
+          {error}
+        </div>
+      )}
       {/* Back Button */}
       <div style={{ padding: '0 0 24px 0', maxWidth: '1200px', margin: '0 auto' }}>
         <Link href="/" style={{ display: 'inline-block', textDecoration: 'none' }}>
@@ -212,107 +260,151 @@ export default function CarrierPortal() {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.2)'
         }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead style={{ background: 'linear-gradient(135deg, #f9fafb, #f3f4f6)' }}>
-                <tr>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Load ID</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Route</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Equipment</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Broker</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rate</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pickup Date</th>
-                  <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody style={{ background: 'white' }}>
-                {filteredLoads.map((load, index) => (
-                  <tr key={load.id} style={{
-                    borderTop: index > 0 ? '1px solid #E5E7EB' : 'none',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f0fdf4';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }}>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', fontWeight: 'bold', color: '#111827' }}>
-                      {load.id}
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
-                      <div style={{ fontWeight: '600' }}>{load.origin}</div>
-                      <div style={{ fontSize: '12px', color: '#6B7280' }}>{load.destination}</div>
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
-                      <span style={{
-                        background: '#dbeafe',
-                        color: '#1e40af',
-                        padding: '4px 12px',
-                        borderRadius: '9999px',
-                        fontSize: '12px',
-                        fontWeight: '500'
-                      }}>
-                        {load.equipment}
-                      </span>
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
-                      {load.brokerName}
-                    </td>
-                    <td style={{ padding: '16px 24px' }}>
-                      <span style={{
-                        background: getStatusColor(load.status).bg,
-                        color: getStatusColor(load.status).text,
-                        padding: '4px 12px',
-                        borderRadius: '9999px',
-                        fontSize: '12px',
-                        fontWeight: '500'
-                      }}>
-                        {load.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
-                      <div style={{ fontWeight: 'bold', color: '#059669', fontSize: '18px' }}>
-                        ${load.rate.toLocaleString()}
-                      </div>
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
-                      {new Date(load.pickupDate).toLocaleDateString()}
-                    </td>
-                    <td style={{ padding: '16px 24px', fontSize: '14px' }}>
-                      <button
-                        onClick={() => handleBidOnLoad(load)}
-                        style={{
-                          background: 'linear-gradient(135deg, #10b981, #059669)',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '64px 0' }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: '8px', 
+                marginBottom: '16px' 
+              }}>
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      background: '#059669',
+                      borderRadius: '50%',
+                      animation: `bounce 1.4s ease-in-out infinite both`,
+                      animationDelay: `${i * 0.16}s`
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ color: '#6B7280', fontSize: '16px' }}>
+                Loading available loads...
+              </div>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead style={{ background: 'linear-gradient(135deg, #f9fafb, #f3f4f6)' }}>
+                  <tr>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Load ID</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Route</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Equipment</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Broker</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left' }}>
+                      Status
+                    </th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rate</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pickup Date</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 'bold', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody style={{ background: 'white' }}>
+                  {(() => {
+                    try {
+                      return filteredLoads.map((load, index) => (
+                        <tr key={load.id} style={{
+                          borderTop: index > 0 ? '1px solid #E5E7EB' : 'none',
+                          transition: 'background-color 0.2s ease'
                         }}
                         onMouseOver={(e) => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #059669, #047857)';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.backgroundColor = '#f0fdf4';
                         }}
                         onMouseOut={(e) => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                      >
-                        Book Load
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                          e.currentTarget.style.backgroundColor = 'white';
+                        }}>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', fontWeight: 'bold', color: '#111827' }}>
+                            {load.id}
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
+                            <div style={{ fontWeight: '600' }}>{load.origin}</div>
+                            <div style={{ fontSize: '12px', color: '#6B7280' }}>{load.destination}</div>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
+                            <span style={{
+                              background: '#dbeafe',
+                              color: '#1e40af',
+                              padding: '4px 12px',
+                              borderRadius: '9999px',
+                              fontSize: '12px',
+                              fontWeight: '500'
+                            }}>
+                              {load.equipment}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
+                            {load.brokerName}
+                          </td>
+                          <td style={{ padding: '16px 24px' }}>
+                            <span style={{
+                              background: getStatusColor(load.status).bg,
+                              color: getStatusColor(load.status).text,
+                              padding: '4px 12px',
+                              borderRadius: '9999px',
+                              fontSize: '12px',
+                              fontWeight: '500'
+                            }}>
+                              {load.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
+                            <div style={{ fontWeight: 'bold', color: '#059669', fontSize: '18px' }}>
+                              ${load.rate?.toLocaleString?.() ?? load.rate}
+                            </div>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px', color: '#111827' }}>
+                            {load.pickupDate ? new Date(load.pickupDate).toLocaleDateString() : ''}
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: '14px' }}>
+                            <button
+                              onClick={() => handleBidOnLoad(load)}
+                              style={{
+                                background: 'linear-gradient(135deg, #10b981, #059669)',
+                                color: 'white',
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #059669, #047857)';
+                                e.currentTarget.style.transform = 'translateY(-1px)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                              }}
+                            >
+                              Book Load
+                            </button>
+                          </td>
+                        </tr>
+                      ));
+                    } catch (err) {
+                      setError('A rendering error occurred. Please contact support.');
+                      console.error('Carrier portal render error:', err);
+                      return (
+                        <tr>
+                          <td colSpan={8} style={{ color: '#b91c1c', textAlign: 'center', padding: '24px' }}>
+                            A rendering error occurred. Please contact support.
+                          </td>
+                        </tr>
+                      );
+                    }
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          )}
           
-          {filteredLoads.length === 0 && (
+          {!isLoading && filteredLoads.length === 0 && !error && (
             <div style={{ textAlign: 'center', padding: '64px 0' }}>
               <div style={{ color: '#6B7280', fontSize: '18px', marginBottom: '8px' }}>📭 No loads available</div>
               <div style={{ color: '#9CA3AF', fontSize: '14px' }}>
@@ -322,6 +414,17 @@ export default function CarrierPortal() {
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes bounce {
+          0%, 80%, 100% {
+            transform: scale(0);
+          }
+          40% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }

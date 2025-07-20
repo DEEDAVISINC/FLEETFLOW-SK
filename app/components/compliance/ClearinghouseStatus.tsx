@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { CheckCircle, AlertTriangle, Calendar, Shield, User, RefreshCw, ExternalLink } from 'lucide-react';
 
 interface ClearinghouseRecord {
   recordId: string;
@@ -96,15 +97,7 @@ export default function ClearinghouseStatus({
     }
   }, [driverId, licenseNumber]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'clear': return 'bg-green-100 text-green-800';
-      case 'prohibited': return 'bg-red-100 text-red-800';
-      case 'pending_info': return 'bg-yellow-100 text-yellow-800';
-      case 'not_enrolled': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -115,15 +108,7 @@ export default function ClearinghouseStatus({
     }
   };
 
-  const getConsentStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'expired': return 'bg-red-100 text-red-800';
-      case 'revoked': return 'bg-red-100 text-red-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   const getRecordTypeIcon = (type: string) => {
     switch (type) {
@@ -150,135 +135,345 @@ export default function ClearinghouseStatus({
 
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <User className="w-4 h-4" />
-            DOT Clearinghouse Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-          </div>
-        </CardContent>
-      </Card>
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.2)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0 0 16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5" />
+          DOT Clearinghouse Status
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '75%' }}></div>
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '50%' }}></div>
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '65%' }}></div>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card className="w-full border-red-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-600" />
+      <div style={{
+        background: 'rgba(239, 68, 68, 0.1)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(239, 68, 68, 0.3)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          marginBottom: '16px'
+        }}>
+          <h3 style={{ 
+            color: 'white', 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            margin: '0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <AlertTriangle className="w-5 h-5" style={{ color: '#ef4444' }} />
             DOT Clearinghouse Status
-          </CardTitle>
-          <Button variant="outline" size="sm" onClick={handleRefresh}>
+          </h3>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
             <RefreshCw className="w-4 h-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="text-red-600 text-sm">{error}</div>
-          <Button variant="outline" size="sm" className="mt-2" onClick={handleRefresh}>
-            Retry
-          </Button>
-        </CardContent>
-      </Card>
+          </button>
+        </div>
+        <div style={{ color: '#fee2e2', fontSize: '14px', marginBottom: '12px' }}>
+          {error}
+        </div>
+        <button
+          onClick={handleRefresh}
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 
   if (!data) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <User className="w-4 h-4" />
-            DOT Clearinghouse Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-gray-500 text-sm">Select a driver to view Clearinghouse status</div>
-        </CardContent>
-      </Card>
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.2)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0 0 16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5" />
+          DOT Clearinghouse Status
+        </h3>
+        <div style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
+          Select a driver to view Clearinghouse status
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <User className="w-4 h-4" />
+    <div style={{
+      background: 'rgba(0, 0, 0, 0.2)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.15)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+      backdropFilter: 'blur(10px)'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        marginBottom: '20px'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5" />
           DOT Clearinghouse Status
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleRefresh}>
+        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
             <RefreshCw className="w-4 h-4" />
-          </Button>
-          <Button variant="outline" size="sm" asChild>
+          </button>
+          <button
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
             <a 
               href="https://clearinghouse.fmcsa.dot.gov/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1"
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '4px',
+                color: 'white',
+                textDecoration: 'none'
+              }}
             >
               <ExternalLink className="w-3 h-3" />
               Portal
             </a>
-          </Button>
+          </button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Driver Info */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'white' }}>
               {data.firstName} {data.lastName}
             </span>
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {getStatusIcon(data.clearinghouseStatus)}
-              <Badge className={getStatusColor(data.clearinghouseStatus)}>
+              <span style={{
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '500',
+                background: data.clearinghouseStatus === 'clear' ? 'rgba(34, 197, 94, 0.2)' : 
+                          data.clearinghouseStatus === 'prohibited' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.clearinghouseStatus === 'pending_info' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                color: data.clearinghouseStatus === 'clear' ? '#22c55e' : 
+                      data.clearinghouseStatus === 'prohibited' ? '#ef4444' : 
+                      data.clearinghouseStatus === 'pending_info' ? '#f59e0b' : '#9ca3af',
+                border: `1px solid ${data.clearinghouseStatus === 'clear' ? '#22c55e40' : 
+                        data.clearinghouseStatus === 'prohibited' ? '#ef444440' : 
+                        data.clearinghouseStatus === 'pending_info' ? '#f59e0b40' : '#9ca3af40'}`
+              }}>
                 {data.clearinghouseStatus.replace('_', ' ').toUpperCase()}
-              </Badge>
+              </span>
             </div>
           </div>
-          <div className="text-xs text-gray-600">
+          <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
             CDL: {data.licenseNumber} | ID: {data.driverId}
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded">
-          <div className="text-center">
-            <div className="text-lg font-bold text-red-600">{data.prohibitionsActive}</div>
-            <div className="text-xs text-gray-600">Active Prohibitions</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.2)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#ef4444', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.prohibitionsActive}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Active Prohibitions
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-green-600">{data.violationsResolved}</div>
-            <div className="text-xs text-gray-600">Resolved Cases</div>
+          <div style={{
+            background: 'rgba(34, 197, 94, 0.2)',
+            border: '1px solid rgba(34, 197, 94, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#22c55e', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.violationsResolved}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Resolved Cases
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-blue-600">{data.records.length}</div>
-            <div className="text-xs text-gray-600">Total Records</div>
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.2)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#3b82f6', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.records.length}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Total Records
+            </div>
           </div>
         </div>
 
         {/* Consent Status */}
-        <div className="space-y-2">
-          <div className="font-medium text-gray-700 text-sm">Consent Status</div>
-          <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-            <div className="flex items-center gap-2">
-              <Badge className={getConsentStatusColor(data.consentStatus)}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontWeight: '500', color: 'white', fontSize: '14px' }}>Consent Status</div>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            padding: '12px', 
+            background: 'rgba(0, 0, 0, 0.1)', 
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '500',
+                background: data.consentStatus === 'active' ? 'rgba(34, 197, 94, 0.2)' : 
+                          data.consentStatus === 'expired' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.consentStatus === 'revoked' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.consentStatus === 'pending' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                color: data.consentStatus === 'active' ? '#22c55e' : 
+                      data.consentStatus === 'expired' ? '#ef4444' : 
+                      data.consentStatus === 'revoked' ? '#ef4444' : 
+                      data.consentStatus === 'pending' ? '#f59e0b' : '#9ca3af',
+                border: `1px solid ${data.consentStatus === 'active' ? '#22c55e40' : 
+                        data.consentStatus === 'expired' ? '#ef444440' : 
+                        data.consentStatus === 'revoked' ? '#ef444440' : 
+                        data.consentStatus === 'pending' ? '#f59e0b40' : '#9ca3af40'}`
+              }}>
                 {data.consentStatus.toUpperCase()}
-              </Badge>
+              </span>
               {data.consentExpiryDate && (
-                <span className={`text-xs ${
-                  isConsentExpiringSoon(data.consentExpiryDate) 
-                    ? 'text-red-600 font-medium' 
-                    : 'text-gray-600'
-                }`}>
+                <span style={{
+                  fontSize: '12px',
+                  color: isConsentExpiringSoon(data.consentExpiryDate) ? '#ef4444' : 'rgba(255, 255, 255, 0.85)',
+                  fontWeight: isConsentExpiringSoon(data.consentExpiryDate) ? '500' : '400'
+                }}>
                   Expires: {new Date(data.consentExpiryDate).toLocaleDateString()}
                   {isConsentExpiringSoon(data.consentExpiryDate) && ' ⚠️'}
                 </span>
@@ -288,10 +483,10 @@ export default function ClearinghouseStatus({
         </div>
 
         {/* Enrollment Info */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '14px' }}>
           <div>
-            <div className="font-medium text-gray-700">Enrollment Date</div>
-            <div>
+            <div style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Enrollment Date</div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
               {data.enrollmentDate 
                 ? new Date(data.enrollmentDate).toLocaleDateString()
                 : 'Not enrolled'
@@ -299,39 +494,53 @@ export default function ClearinghouseStatus({
             </div>
           </div>
           <div>
-            <div className="font-medium text-gray-700">Last Query</div>
-            <div>{new Date(data.lastQueryDate).toLocaleDateString()}</div>
+            <div style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Last Query</div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>{new Date(data.lastQueryDate).toLocaleDateString()}</div>
           </div>
         </div>
 
         {/* Records */}
         {data.records.length > 0 && (
-          <div className="space-y-2">
-            <div className="font-medium text-gray-700 text-sm">Recent Records</div>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ fontWeight: '500', color: 'white', fontSize: '14px' }}>Recent Records</div>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '8px', 
+              maxHeight: '240px', 
+              overflowY: 'auto'
+            }}>
               {data.records.map((record) => (
-                <div key={record.recordId} className="p-3 border rounded text-xs">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{getRecordTypeIcon(record.type)}</span>
-                      <span className="font-medium capitalize">
+                <div key={record.recordId} style={{ 
+                  padding: '12px', 
+                  border: '1px solid rgba(255, 255, 255, 0.2)', 
+                  borderRadius: '8px', 
+                  fontSize: '12px',
+                  background: 'rgba(0, 0, 0, 0.1)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '16px' }}>{getRecordTypeIcon(record.type)}</span>
+                      <span style={{ fontWeight: '500', color: 'white', textTransform: 'capitalize' }}>
                         {record.type.replace('_', ' ')}
                       </span>
                     </div>
-                    <Badge 
-                      variant="outline"
-                      className={
-                        record.status === 'resolved' 
-                          ? 'border-green-200 text-green-700' 
-                          : record.status === 'active'
-                          ? 'border-red-200 text-red-700'
-                          : 'border-yellow-200 text-yellow-700'
-                      }
-                    >
+                    <span style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      background: record.status === 'resolved' ? 'rgba(34, 197, 94, 0.2)' : 
+                                record.status === 'active' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                      color: record.status === 'resolved' ? '#22c55e' : 
+                            record.status === 'active' ? '#ef4444' : '#f59e0b',
+                      border: `1px solid ${record.status === 'resolved' ? '#22c55e40' : 
+                              record.status === 'active' ? '#ef444440' : '#f59e0b40'}`
+                    }}>
                       {record.status}
-                    </Badge>
+                    </span>
                   </div>
-                  <div className="space-y-1 text-gray-600">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
                     <div><strong>Test:</strong> {record.testType} - {record.substanceType}</div>
                     <div><strong>Date:</strong> {new Date(record.date).toLocaleDateString()}</div>
                     <div><strong>Employer:</strong> {record.employer}</div>
@@ -347,34 +556,65 @@ export default function ClearinghouseStatus({
 
         {/* Compliance Actions */}
         {data.clearinghouseStatus === 'prohibited' && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded">
-            <div className="flex items-center gap-2 text-red-800 font-medium text-sm mb-1">
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            border: '1px solid rgba(239, 68, 68, 0.3)', 
+            borderRadius: '8px'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              color: '#fee2e2', 
+              fontWeight: '500', 
+              fontSize: '14px', 
+              marginBottom: '4px'
+            }}>
               <AlertTriangle className="w-4 h-4" />
               Action Required
             </div>
-            <div className="text-red-700 text-xs">
+            <div style={{ color: '#fecaca', fontSize: '12px' }}>
               Driver is currently prohibited from operating CMVs. Complete SAP program and return-to-duty process required.
             </div>
           </div>
         )}
 
         {isConsentExpiringSoon(data.consentExpiryDate) && (
-          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <div className="flex items-center gap-2 text-yellow-800 font-medium text-sm mb-1">
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(245, 158, 11, 0.1)', 
+            border: '1px solid rgba(245, 158, 11, 0.3)', 
+            borderRadius: '8px'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              color: '#fef3c7', 
+              fontWeight: '500', 
+              fontSize: '14px', 
+              marginBottom: '4px'
+            }}>
               <Calendar className="w-4 h-4" />
               Consent Expiring Soon
             </div>
-            <div className="text-yellow-700 text-xs">
+            <div style={{ color: '#fde68a', fontSize: '12px' }}>
               Driver consent expires in less than 30 days. Renewal required to continue queries.
             </div>
           </div>
         )}
 
         {/* Last Updated */}
-        <div className="text-xs text-gray-500 pt-2 border-t">
+        <div style={{ 
+          fontSize: '12px', 
+          color: 'rgba(255, 255, 255, 0.75)', 
+          paddingTop: '12px', 
+          borderTop: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
           Last queried: {new Date(data.lastQueryDate).toLocaleString()}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

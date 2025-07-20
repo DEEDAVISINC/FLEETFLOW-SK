@@ -41,6 +41,7 @@ export type WorkflowStepId =
   | 'pickup_arrival'
   | 'pickup_completion'
   | 'transit_start'
+  | 'transit_tracking'
   | 'delivery_arrival'
   | 'delivery_completion'
   | 'pod_submission';
@@ -137,6 +138,20 @@ class WorkflowManager {
           required: true,
           completed: false,
           allowOverride: false
+        },
+        {
+          id: 'transit_tracking',
+          name: 'Transit Tracking',
+          description: 'Real-time location tracking and status updates during transit',
+          required: true,
+          completed: false,
+          allowOverride: false,
+          data: {
+            requiresLocationUpdates: true,
+            updateInterval: 300, // 5 minutes
+            requiresStatusUpdates: true,
+            trackingEnabled: true
+          }
         },
         {
           id: 'delivery_arrival',
@@ -428,6 +443,11 @@ class WorkflowManager {
         // EDI: Generate EDI 214 (Shipment Status) - In transit
         await this.triggerEDINotification(loadId, stepId, 'in_transit');
       },
+      'transit_tracking': async () => {
+        this.notifyDispatcher(workflow.dispatcherId, 'Real-time tracking enabled for transit', loadId);
+        // EDI: Generate EDI 214 (Shipment Status) - Tracking active
+        await this.triggerEDINotification(loadId, stepId, 'tracking_active');
+      },
       'delivery_arrival': async () => {
         this.notifyDispatcher(workflow.dispatcherId, 'Driver arrived at delivery location', loadId);
         // EDI: Generate EDI 214 (Shipment Status) - Arrived at delivery
@@ -680,6 +700,13 @@ class WorkflowManager {
       'transit_start': (data: any) => {
         const errors = [];
         if (!data.departureTime) errors.push('Departure time required');
+        return { valid: errors.length === 0, errors };
+      },
+      'transit_tracking': (data: any) => {
+        const errors = [];
+        if (!data.trackingEnabled) errors.push('Tracking must be enabled');
+        if (!data.locationUpdateInterval) errors.push('Location update interval required');
+        if (!data.statusUpdateEnabled) errors.push('Status update must be enabled');
         return { valid: errors.length === 0, errors };
       },
       'delivery_arrival': (data: any) => {

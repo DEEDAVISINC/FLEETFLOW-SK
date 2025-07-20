@@ -248,7 +248,6 @@ npm run build
 npx vercel --prod
 ```
 
-### **Firebase Hosting**
 ```bash
 npm run build
 npm run deploy

@@ -1,290 +1,144 @@
--- 🗄️ FleetFlow Database Schema for Supabase
--- Copy this entire script and run it in Supabase SQL Editor
+-- FleetFlow TMS Database Schema
+-- Run this in your Supabase SQL Editor
 
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create sequences for auto-incrementing IDs
-CREATE SEQUENCE IF NOT EXISTS driver_seq START 1001;
-CREATE SEQUENCE IF NOT EXISTS load_seq START 1001;
-CREATE SEQUENCE IF NOT EXISTS confirmation_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS delivery_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS file_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS notification_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS workflow_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS workflow_step_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS workflow_action_seq START 1;
+-- Create tables
 
--- Drivers table
-CREATE TABLE IF NOT EXISTS drivers (
-    id TEXT PRIMARY KEY DEFAULT 'DRV-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('driver_seq')::TEXT, 4, '0'),
-    name TEXT NOT NULL,
-    email TEXT UNIQUE,
-    phone TEXT UNIQUE NOT NULL,
-    license_number TEXT NOT NULL,
-    assigned_truck_id TEXT,
-    dispatcher_id TEXT DEFAULT 'DSP-001',
-    dispatcher_name TEXT DEFAULT 'Sarah Johnson',
-    dispatcher_phone TEXT DEFAULT '+15559876543',
-    dispatcher_email TEXT DEFAULT 'sarah.johnson@fleetflow.com',
-    current_location TEXT DEFAULT 'Dallas, TX',
-    eld_status TEXT DEFAULT 'Connected',
-    hours_remaining DECIMAL(4,2) DEFAULT 8.5,
-    auth_uid UUID REFERENCES auth.users(id), -- Link to Supabase auth
+-- Loads table
+CREATE TABLE loads (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    load_id VARCHAR(50) UNIQUE NOT NULL,
+    origin VARCHAR(255) NOT NULL,
+    destination VARCHAR(255) NOT NULL,
+    weight VARCHAR(50) NOT NULL,
+    rate VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'Available',
+    driver VARCHAR(255) DEFAULT 'Unassigned',
+    pickup_date DATE NOT NULL,
+    delivery_date DATE NOT NULL,
+    customer VARCHAR(255) NOT NULL,
+    miles VARCHAR(50) NOT NULL,
+    profit VARCHAR(50) NOT NULL,
+    broker_name VARCHAR(255),
+    dispatcher_id VARCHAR(255),
+    equipment VARCHAR(100),
+    special_instructions TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Loads table
-CREATE TABLE IF NOT EXISTS loads (
-    id TEXT PRIMARY KEY DEFAULT 'LD-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('load_seq')::TEXT, 4, '0'),
-    broker_name TEXT NOT NULL,
-    dispatcher_id TEXT DEFAULT 'DSP-001',
-    assigned_driver_id TEXT REFERENCES drivers(id),
-    origin TEXT NOT NULL,
-    destination TEXT NOT NULL,
-    rate DECIMAL(10,2) NOT NULL,
-    distance TEXT,
-    weight TEXT,
-    equipment TEXT NOT NULL,
-    status TEXT DEFAULT 'Available',
-    pickup_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    delivery_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    special_instructions TEXT,
-    hazmat BOOLEAN DEFAULT FALSE,
+-- Drivers table
+CREATE TABLE drivers (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(50) NOT NULL,
+    license_number VARCHAR(50) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'Active',
+    assigned_truck_id VARCHAR(255),
+    dispatcher_id VARCHAR(255),
+    dispatcher_name VARCHAR(255),
+    dispatcher_phone VARCHAR(50),
+    dispatcher_email VARCHAR(255),
+    current_location VARCHAR(255),
+    eld_status VARCHAR(50),
+    hours_remaining INTEGER,
+    auth_uid UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Vehicles table
+CREATE TABLE vehicles (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    vehicle_id VARCHAR(50) UNIQUE NOT NULL,
+    make VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    year VARCHAR(4) NOT NULL,
+    vin VARCHAR(17) UNIQUE NOT NULL,
+    license_plate VARCHAR(20) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'Active',
+    driver_id UUID REFERENCES drivers(id),
+    maintenance_due_date DATE,
+    fuel_card_number VARCHAR(50),
+    insurance_expiry DATE,
+    registration_expiry DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Load confirmations table
-CREATE TABLE IF NOT EXISTS load_confirmations (
-    id TEXT PRIMARY KEY DEFAULT 'LC-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('confirmation_seq')::TEXT, 4, '0'),
-    load_id TEXT NOT NULL REFERENCES loads(id),
-    driver_id TEXT NOT NULL REFERENCES drivers(id),
+CREATE TABLE load_confirmations (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    load_id UUID REFERENCES loads(id) ON DELETE CASCADE,
+    driver_id UUID REFERENCES drivers(id),
     confirmed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    signature_url TEXT,
-    photo_urls TEXT[], -- Array of photo URLs
+    driver_signature TEXT,
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Deliveries table
-CREATE TABLE IF NOT EXISTS deliveries (
-    id TEXT PRIMARY KEY DEFAULT 'DEL-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('delivery_seq')::TEXT, 4, '0'),
-    load_id TEXT NOT NULL REFERENCES loads(id),
-    driver_id TEXT NOT NULL REFERENCES drivers(id),
-    pickup_completed_at TIMESTAMP WITH TIME ZONE,
-    pickup_signature_url TEXT,
-    pickup_photo_urls TEXT[], -- Array of pickup photo URLs
-    delivery_completed_at TIMESTAMP WITH TIME ZONE,
-    delivery_signature_url TEXT,
-    delivery_photo_urls TEXT[], -- Array of delivery photo URLs
-    receiver_name TEXT,
-    delivery_notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE deliveries (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    load_id UUID REFERENCES loads(id) ON DELETE CASCADE,
+    driver_id UUID REFERENCES drivers(id),
+    receiver_name VARCHAR(255),
+    receiver_signature TEXT,
+    delivery_time TIMESTAMP WITH TIME ZONE,
+    notes TEXT,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Files table (for tracking all uploads)
-CREATE TABLE IF NOT EXISTS files (
-    id TEXT PRIMARY KEY DEFAULT 'FILE-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('file_seq')::TEXT, 4, '0'),
-    driver_id TEXT REFERENCES drivers(id),
-    load_id TEXT REFERENCES loads(id),
-    file_type TEXT NOT NULL, -- 'photo', 'signature', 'document'
-    file_category TEXT, -- 'pickup', 'delivery', 'confirmation'
-    original_name TEXT,
+-- File records table (for photos and documents)
+CREATE TABLE file_records (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    load_id UUID REFERENCES loads(id) ON DELETE CASCADE,
+    driver_id UUID REFERENCES drivers(id),
+    confirmation_id UUID REFERENCES load_confirmations(id) ON DELETE CASCADE,
+    delivery_id UUID REFERENCES deliveries(id) ON DELETE CASCADE,
+    file_type VARCHAR(50) NOT NULL,
     file_url TEXT NOT NULL,
-    cloudinary_public_id TEXT,
+    cloudinary_id VARCHAR(255),
     file_size INTEGER,
-    mime_type TEXT,
+    metadata JSONB,
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Notifications table
-CREATE TABLE IF NOT EXISTS notifications (
-    id TEXT PRIMARY KEY DEFAULT 'NOT-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('notification_seq')::TEXT, 4, '0'),
-    driver_id TEXT REFERENCES drivers(id),
-    type TEXT NOT NULL, -- 'load_assigned', 'pickup_reminder', 'delivery_reminder', 'system'
-    title TEXT NOT NULL,
+CREATE TABLE notifications (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    driver_id UUID REFERENCES drivers(id),
     message TEXT NOT NULL,
-    read BOOLEAN DEFAULT FALSE,
-    sms_sent BOOLEAN DEFAULT FALSE,
-    sms_sent_at TIMESTAMP WITH TIME ZONE,
+    type VARCHAR(50) NOT NULL,
+    read_at TIMESTAMP WITH TIME ZONE,
+    metadata JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Workflow management tables for systematic step-by-step processes
-CREATE TABLE IF NOT EXISTS load_workflows (
-    id TEXT PRIMARY KEY DEFAULT 'WF-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('workflow_seq')::TEXT, 4, '0'),
-    load_id TEXT NOT NULL REFERENCES loads(id),
-    driver_id TEXT NOT NULL REFERENCES drivers(id),
-    dispatcher_id TEXT NOT NULL,
-    current_step INTEGER DEFAULT 0,
-    status TEXT DEFAULT 'pending', -- 'pending', 'in_progress', 'completed', 'override_required'
+-- Users table (for authentication)
+CREATE TABLE users (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+    role VARCHAR(50) DEFAULT 'driver',
+    auth_uid UUID UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS workflow_steps (
-    id TEXT PRIMARY KEY DEFAULT 'WS-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('workflow_step_seq')::TEXT, 4, '0'),
-    workflow_id TEXT NOT NULL REFERENCES load_workflows(id),
-    step_id TEXT NOT NULL, -- 'load_assignment_confirmation', 'rate_confirmation_review', etc.
-    step_name TEXT NOT NULL,
-    step_description TEXT,
-    step_order INTEGER NOT NULL,
-    required BOOLEAN DEFAULT TRUE,
-    completed BOOLEAN DEFAULT FALSE,
-    completed_at TIMESTAMP WITH TIME ZONE,
-    completed_by TEXT,
-    allow_override BOOLEAN DEFAULT FALSE,
-    override_reason TEXT,
-    override_by TEXT,
-    override_at TIMESTAMP WITH TIME ZONE,
-    step_data JSONB, -- Store any additional step-specific data
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create indexes for better performance
+CREATE INDEX idx_loads_status ON loads(status);
+CREATE INDEX idx_loads_driver ON loads(driver);
+CREATE INDEX idx_drivers_status ON drivers(status);
+CREATE INDEX idx_vehicles_driver_id ON vehicles(driver_id);
+CREATE INDEX idx_file_records_load_id ON file_records(load_id);
+CREATE INDEX idx_notifications_driver_id ON notifications(driver_id);
 
-CREATE TABLE IF NOT EXISTS workflow_actions (
-    id TEXT PRIMARY KEY DEFAULT 'WA-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('workflow_action_seq')::TEXT, 4, '0'),
-    workflow_id TEXT NOT NULL REFERENCES load_workflows(id),
-    step_id TEXT,
-    action_type TEXT NOT NULL, -- 'step_completed', 'override_requested', 'override_approved', 'photo_uploaded', 'signature_captured'
-    action_description TEXT,
-    performed_by TEXT NOT NULL,
-    performed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    action_data JSONB, -- Store action-specific data (file URLs, signatures, etc.)
-    metadata JSONB -- Additional metadata for audit trail
-);
-
--- Insert sample data
-INSERT INTO drivers (name, email, phone, license_number, assigned_truck_id) VALUES
-('Mike Johnson', 'mike.johnson@example.com', '+15551234567', 'CDL-123456789', 'TRK-001'),
-('Sarah Williams', 'sarah.williams@example.com', '+15551234568', 'CDL-987654321', 'TRK-002'),
-('David Chen', 'david.chen@example.com', '+15551234569', 'CDL-456789123', 'TRK-003')
-ON CONFLICT (email) DO NOTHING;
-
-INSERT INTO loads (broker_name, origin, destination, rate, distance, weight, equipment, pickup_date, delivery_date, special_instructions) VALUES
-('Swift Logistics', 'Dallas, TX', 'Houston, TX', 1250.00, '240 miles', '32,000 lbs', 'Dry Van', NOW() + INTERVAL '1 day', NOW() + INTERVAL '2 days', 'Handle with care - fragile electronics'),
-('Prime Transport', 'Austin, TX', 'San Antonio, TX', 850.00, '80 miles', '28,500 lbs', 'Refrigerated', NOW() + INTERVAL '2 days', NOW() + INTERVAL '3 days', 'Temperature controlled - keep at 35°F'),
-('Global Freight', 'Fort Worth, TX', 'El Paso, TX', 1800.00, '350 miles', '45,000 lbs', 'Flatbed', NOW() + INTERVAL '3 days', NOW() + INTERVAL '5 days', 'Oversized load - permits required')
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO workflows (name, description) VALUES
-('Standard Operating Procedure', 'This is the standard operating procedure for all drivers.'),
-('Emergency Protocol', 'Steps to follow in case of an emergency.'),
-('Maintenance Schedule', 'Regular maintenance tasks and checks for the truck.')
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO workflow_steps (workflow_id, step_order, action_type, status) VALUES
-('WF-2023-0001', 1, 'manual', 'pending'),
-('WF-2023-0001', 2, 'automatic', 'pending'),
-('WF-2023-0002', 1, 'manual', 'pending'),
-('WF-2023-0002', 2, 'notification', 'pending'),
-('WF-2023-0003', 1, 'task', 'pending'),
-('WF-2023-0003', 2, 'task', 'pending')
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO workflow_actions (workflow_step_id, action_type, action_details) VALUES
-('WS-2023-0001', 'email', '{"to": "driver@example.com", "subject": "New Load Assigned", "body": "You have been assigned a new load. Please check the app for details."}'),
-('WS-2023-0001', 'sms', '{"to": "+15551234567", "message": "New load assigned. Check your email for details."}'),
-('WS-2023-0002', 'notification', '{"title": "Load Reminder", "message": "Reminder: You have a load scheduled for tomorrow."}'),
-('WS-2023-0003', 'task', '{"task": "Pre-trip inspection", "due_date": "2023-10-01T08:00:00Z"}'),
-('WS-2023-0003', 'task', '{"task": "Submit paperwork", "due_date": "2023-10-02T17:00:00Z"}')
-ON CONFLICT (id) DO NOTHING;
-
--- Create RLS (Row Level Security) policies
-ALTER TABLE drivers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE loads ENABLE ROW LEVEL SECURITY;
-ALTER TABLE load_confirmations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE files ENABLE ROW LEVEL SECURITY;
-ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE load_workflows ENABLE ROW LEVEL SECURITY;
-ALTER TABLE workflow_steps ENABLE ROW LEVEL SECURITY;
-ALTER TABLE workflow_actions ENABLE ROW LEVEL SECURITY;
-
--- Policies for drivers (drivers can only see their own data)
-CREATE POLICY "Drivers can view own data" ON drivers
-    FOR SELECT USING (auth.uid() = auth_uid OR auth_uid IS NULL);
-
-CREATE POLICY "Drivers can update own data" ON drivers
-    FOR UPDATE USING (auth.uid() = auth_uid);
-
--- Policies for loads (drivers can see assigned loads + available loads)
-CREATE POLICY "Drivers can view loads" ON loads
-    FOR SELECT USING (
-        assigned_driver_id IS NULL OR 
-        assigned_driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
--- Policies for confirmations (drivers can only see/create their own)
-CREATE POLICY "Drivers can manage own confirmations" ON load_confirmations
-    FOR ALL USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
--- Policies for deliveries (drivers can only see/create their own)
-CREATE POLICY "Drivers can manage own deliveries" ON deliveries
-    FOR ALL USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
--- Policies for files (drivers can only see/create their own)
-CREATE POLICY "Drivers can manage own files" ON files
-    FOR ALL USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
--- Policies for notifications (drivers can only see their own)
-CREATE POLICY "Drivers can view own notifications" ON notifications
-    FOR SELECT USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
--- Policies for workflow management (drivers can only see/update their assigned workflows)
-CREATE POLICY "Drivers can view own workflows" ON load_workflows
-    FOR SELECT USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
-CREATE POLICY "Drivers can update own workflows" ON load_workflows
-    FOR UPDATE USING (
-        driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-    );
-
-CREATE POLICY "Drivers can view own workflow steps" ON workflow_steps
-    FOR SELECT USING (
-        workflow_id IN (
-            SELECT id FROM load_workflows 
-            WHERE driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-        )
-    );
-
-CREATE POLICY "Drivers can update own workflow steps" ON workflow_steps
-    FOR UPDATE USING (
-        workflow_id IN (
-            SELECT id FROM load_workflows 
-            WHERE driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-        )
-    );
-
-CREATE POLICY "Drivers can view own workflow actions" ON workflow_actions
-    FOR SELECT USING (
-        workflow_id IN (
-            SELECT id FROM load_workflows 
-            WHERE driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-        )
-    );
-
-CREATE POLICY "Drivers can create workflow actions" ON workflow_actions
-    FOR INSERT WITH CHECK (
-        workflow_id IN (
-            SELECT id FROM load_workflows 
-            WHERE driver_id = (SELECT id FROM drivers WHERE auth_uid = auth.uid())
-        )
-    );
-
--- Create updated_at triggers
+-- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -293,48 +147,53 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON drivers
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Add updated_at triggers to all tables
+CREATE TRIGGER update_loads_updated_at BEFORE UPDATE ON loads FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON drivers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_vehicles_updated_at BEFORE UPDATE ON vehicles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_loads_updated_at BEFORE UPDATE ON loads
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Insert sample data
+INSERT INTO loads (load_id, origin, destination, weight, rate, status, driver, pickup_date, delivery_date, customer, miles, profit, broker_name, equipment) VALUES
+('LD001', 'Los Angeles, CA', 'Phoenix, AZ', '42,000 lbs', '$2,850', 'In Transit', 'Mike Johnson', '2025-07-15', '2025-07-16', 'Walmart Distribution', '372', '$1,420', 'ABC Logistics', 'Dry Van'),
+('LD002', 'Dallas, TX', 'Atlanta, GA', '38,500 lbs', '$3,200', 'At Pickup', 'Sarah Williams', '2025-07-13', '2025-07-15', 'Home Depot Supply', '781', '$1,850', 'XYZ Transport', 'Reefer'),
+('LD003', 'Chicago, IL', 'Denver, CO', '45,000 lbs', '$2,950', 'Available', 'Unassigned', '2025-07-10', '2025-07-12', 'Amazon Logistics', '920', '$1,680', 'Fast Freight', 'Flatbed'),
+('LD004', 'Miami, FL', 'New York, NY', '35,000 lbs', '$4,100', 'At Delivery', 'David Chen', '2025-07-08', '2025-07-10', 'CVS Health', '1,380', '$2,200', 'Premium Carriers', 'Dry Van'),
+('LD005', 'Detroit, MI', 'Jacksonville, FL', '40,000 lbs', '$3,500', 'Available', 'Unassigned', '2025-07-12', '2025-07-14', 'Ford Motor Co', '1,100', '$1,900', 'Motor City Logistics', 'Power Only'),
+('LD006', 'Portland, OR', 'Phoenix, AZ', '36,000 lbs', '$3,800', 'In Transit', 'Lisa Rodriguez', '2025-07-11', '2025-07-13', 'Nike Distribution', '1,450', '$2,100', 'Pacific Transport', 'Dry Van');
 
-CREATE TRIGGER update_deliveries_updated_at BEFORE UPDATE ON deliveries
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+INSERT INTO drivers (name, email, phone, license_number, status, dispatcher_name, dispatcher_phone, current_location) VALUES
+('Mike Johnson', 'mike.johnson@fleetflow.com', '(555) 123-4567', 'DL123456789', 'Active', 'John Smith', '(555) 987-6543', 'Phoenix, AZ'),
+('Sarah Williams', 'sarah.williams@fleetflow.com', '(555) 234-5678', 'DL234567890', 'Active', 'John Smith', '(555) 987-6543', 'Dallas, TX'),
+('David Chen', 'david.chen@fleetflow.com', '(555) 345-6789', 'DL345678901', 'Active', 'Jane Doe', '(555) 876-5432', 'New York, NY'),
+('Lisa Rodriguez', 'lisa.rodriguez@fleetflow.com', '(555) 456-7890', 'DL456789012', 'Active', 'Jane Doe', '(555) 876-5432', 'Portland, OR'),
+('Robert Wilson', 'robert.wilson@fleetflow.com', '(555) 567-8901', 'DL567890123', 'Active', 'John Smith', '(555) 987-6543', 'Chicago, IL'),
+('Maria Garcia', 'maria.garcia@fleetflow.com', '(555) 678-9012', 'DL678901234', 'Active', 'Jane Doe', '(555) 876-5432', 'Miami, FL');
 
-CREATE TRIGGER update_workflows_updated_at BEFORE UPDATE ON load_workflows
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+INSERT INTO vehicles (vehicle_id, make, model, year, vin, license_plate, status) VALUES
+('TRK001', 'Freightliner', 'Cascadia', '2023', '1FUJA6CV83L123456', 'ABC123', 'Active'),
+('TRK002', 'Peterbilt', '579', '2022', '1XPBD49X7MD123456', 'XYZ789', 'Active'),
+('TRK003', 'Kenworth', 'T680', '2023', '1XKWD49X7JD123456', 'DEF456', 'Active'),
+('TRK004', 'Volvo', 'VNL', '2022', '4V4NC9TJ7XN123456', 'GHI789', 'Active'),
+('TRK005', 'International', 'LT', '2023', '1HTMMAAL0XN123456', 'JKL012', 'Active'),
+('TRK006', 'Mack', 'Anthem', '2022', '1M2AA18Y5WM123456', 'MNO345', 'Active');
 
-CREATE TRIGGER update_workflow_steps_updated_at BEFORE UPDATE ON workflow_steps
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Set up Row Level Security (RLS)
+ALTER TABLE loads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE drivers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE load_confirmations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE file_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
-CREATE TRIGGER update_workflow_actions_updated_at BEFORE UPDATE ON workflow_actions
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_load_workflows_updated_at BEFORE UPDATE ON load_workflows
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_drivers_auth_uid ON drivers(auth_uid);
-CREATE INDEX IF NOT EXISTS idx_loads_assigned_driver ON loads(assigned_driver_id);
-CREATE INDEX IF NOT EXISTS idx_loads_status ON loads(status);
-CREATE INDEX IF NOT EXISTS idx_confirmations_load_id ON load_confirmations(load_id);
-CREATE INDEX IF NOT EXISTS idx_confirmations_driver_id ON load_confirmations(driver_id);
-CREATE INDEX IF NOT EXISTS idx_deliveries_load_id ON deliveries(load_id);
-CREATE INDEX IF NOT EXISTS idx_deliveries_driver_id ON deliveries(driver_id);
-CREATE INDEX IF NOT EXISTS idx_files_driver_id ON files(driver_id);
-CREATE INDEX IF NOT EXISTS idx_files_load_id ON files(load_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_driver_id ON notifications(driver_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(read);
-CREATE INDEX IF NOT EXISTS idx_workflows_load_id ON load_workflows(load_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_driver_id ON load_workflows(driver_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_status ON load_workflows(status);
-CREATE INDEX IF NOT EXISTS idx_workflow_steps_workflow_id ON workflow_steps(workflow_id);
-CREATE INDEX IF NOT EXISTS idx_workflow_steps_step_id ON workflow_steps(step_id);
-CREATE INDEX IF NOT EXISTS idx_workflow_steps_completed ON workflow_steps(completed);
-CREATE INDEX IF NOT EXISTS idx_workflow_actions_workflow_id ON workflow_actions(workflow_id);
-CREATE INDEX IF NOT EXISTS idx_workflow_actions_action_type ON workflow_actions(action_type);
-CREATE INDEX IF NOT EXISTS idx_workflow_actions_performed_at ON workflow_actions(performed_at);
-
--- Success message
-SELECT 'FleetFlow database schema created successfully! 🎉' as message;
+-- Create policies (basic - you can customize these)
+CREATE POLICY "Allow all operations for authenticated users" ON loads FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON drivers FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON vehicles FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON load_confirmations FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON deliveries FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON file_records FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON notifications FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON users FOR ALL USING (auth.role() = 'authenticated');

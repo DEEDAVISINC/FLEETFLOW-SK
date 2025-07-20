@@ -1,5 +1,6 @@
 // Load Management Service - Centralized load operations
 import { getCurrentUser, getAvailableDispatchers, User } from '../config/access'
+import { LoadIdentificationService } from './LoadIdentificationService'
 
 export interface ShipperInfo {
   id: string
@@ -278,11 +279,43 @@ let LOADS_DB: Load[] = [
   }
 ]
 
-// Generate unique load ID
-export const generateLoadId = (): string => {
+// Generate unique load ID using comprehensive identification system
+export const generateLoadId = (loadData?: Partial<Load>): string => {
+  if (!loadData) {
+    // Fallback to simple ID if no data provided
   const year = new Date().getFullYear()
   const count = LOADS_DB.length + 1
   return `FL-${year}-${count.toString().padStart(3, '0')}`
+  }
+  
+  // Use comprehensive identification system
+  const identificationData = {
+    origin: loadData.origin || 'Unknown',
+    destination: loadData.destination || 'Unknown',
+    pickupDate: loadData.pickupDate || new Date().toISOString(),
+    equipment: loadData.equipment || 'Dry Van',
+    loadType: 'FTL' as const,
+    brokerId: loadData.brokerId,
+    brokerName: loadData.brokerName,
+    shipperId: loadData.shipperId,
+    commodity: loadData.commodity,
+    weight: loadData.weight,
+    rate: loadData.rate,
+    distance: loadData.distance,
+    isHazmat: loadData.isHazmat || false,
+    isExpedited: loadData.isExpedited || false,
+    isRefrigerated: loadData.equipment?.toLowerCase().includes('reefer') || loadData.equipment?.toLowerCase().includes('refrigerated') || false,
+    isOversized: loadData.isOversized || false
+  };
+  
+  const identifiers = LoadIdentificationService.generateLoadIdentifiers(identificationData);
+  
+  // Store all identifiers in the load data for future reference
+  if (loadData) {
+    (loadData as any).identifiers = identifiers;
+  }
+  
+  return identifiers.loadId;
 }
 
 // Create new load with enhanced tracking capabilities
@@ -293,7 +326,7 @@ export const createLoad = (loadData: Omit<Load, 'id' | 'createdAt' | 'updatedAt'
   
   const newLoad: Load = {
     ...loadData,
-    id: generateLoadId(),
+    id: generateLoadId(loadData), // Pass loadData to generate comprehensive ID
     brokerName: user.name,
     dispatcherName: selectedDispatcher?.name,
     createdAt: new Date().toISOString(),
@@ -398,7 +431,63 @@ export const getLoadsForUser = (): Load[] => {
     return LOADS_DB.filter(load => load.brokerId === user.brokerId)
   }
   
-  return []
+  // Default: return all loads for demo purposes
+  return LOADS_DB
+}
+
+// Get loads for carrier portal (shows available loads to carriers)
+export const getLoadsForCarrierPortal = (): Load[] => {
+  // Always return demo loads for carrier portal
+  return [
+    {
+      id: 'FL-2025-DEMO-001',
+      brokerId: 'broker-001',
+      brokerName: 'Global Freight Solutions',
+      origin: 'Atlanta, GA',
+      destination: 'Miami, FL',
+      rate: 2450,
+      distance: '647 mi',
+      weight: '45,000 lbs',
+      equipment: 'Dry Van',
+      status: 'Available' as const,
+      pickupDate: '2025-01-02',
+      deliveryDate: '2025-01-03',
+      createdAt: '2024-12-30T10:00:00Z',
+      updatedAt: '2024-12-30T10:00:00Z'
+    },
+    {
+      id: 'FL-2025-DEMO-002',
+      brokerId: 'broker-002',
+      brokerName: 'Swift Freight',
+      origin: 'Chicago, IL',
+      destination: 'Houston, TX',
+      rate: 3200,
+      distance: '925 mi',
+      weight: '38,500 lbs',
+      equipment: 'Reefer',
+      status: 'Available' as const,
+      pickupDate: '2025-01-03',
+      deliveryDate: '2025-01-05',
+      createdAt: '2024-12-30T09:15:00Z',
+      updatedAt: '2024-12-30T14:30:00Z'
+    },
+    {
+      id: 'FL-2025-DEMO-003',
+      brokerId: 'broker-003',
+      brokerName: 'Express Cargo',
+      origin: 'Los Angeles, CA',
+      destination: 'Seattle, WA',
+      rate: 2800,
+      distance: '1,135 mi',
+      weight: '42,000 lbs',
+      equipment: 'Dry Van',
+      status: 'Available' as const,
+      pickupDate: '2025-01-04',
+      deliveryDate: '2025-01-06',
+      createdAt: '2024-12-31T08:00:00Z',
+      updatedAt: '2024-12-31T08:00:00Z'
+    }
+  ];
 }
 
 // Get loads by dispatcher

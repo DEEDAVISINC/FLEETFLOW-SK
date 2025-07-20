@@ -72,6 +72,14 @@ export const MODULE_COLOR_SCHEMES: Record<string, ModuleColorScheme> = {
     accent: '#4ade80',
     light: 'rgba(34, 197, 94, 0.15)',
     border: 'rgba(34, 197, 94, 0.3)'
+  },
+  'ai-flow': {
+    primary: '#3b82f6',
+    secondary: '#2563eb',
+    gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #8b5cf6 100%)',
+    accent: '#60a5fa',
+    light: 'rgba(59, 130, 246, 0.15)',
+    border: 'rgba(59, 130, 246, 0.3)'
   }
 }
 
@@ -99,7 +107,8 @@ export function extractModuleIdFromTitle(moduleTitle: string): string {
     'Technology Systems': 'technology',
     'Customer Service': 'customer',
     'Workflow Ecosystem': 'workflow',
-    'SMS Notification System': 'sms-workflow'
+    'SMS Notification System': 'sms-workflow',
+    'AI Flow Training': 'ai-flow'
   }
   
   // Find matching module
@@ -109,6 +118,6 @@ export function extractModuleIdFromTitle(moduleTitle: string): string {
     }
   }
   
-  // Default fallback
-  return 'dispatch'
+  // Return default if no match found
+  return 'default'
 }

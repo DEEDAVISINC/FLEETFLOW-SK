@@ -5,6 +5,8 @@
  * Integrates with existing FMCSA SAFER API for carrier risk assessment
  */
 
+import EDIWorkflowService from './EDIWorkflowService';
+
 export interface RFxRequest {
   id: string;
   type: 'RFB' | 'RFQ' | 'RFP' | 'RFI';
@@ -284,7 +286,25 @@ export class RFxResponseService {
         comprehensiveResponse: comprehensiveResponse.comprehensiveContent
       };
 
-      return response;
+      // Internally enrich the response with EDI identifiers and validation
+      // This ensures RFx responses are ready for EDI transactions (990 Response to Load Tender)
+      // without exposing EDI complexity to users
+      const ediResult = await EDIWorkflowService.processWorkflow({
+        type: 'rfx_response',
+        data: {
+          ...response,
+          loadType: rfxRequest.type,
+          origin: { city: rfxRequest.origin.split(',')[0], state: rfxRequest.origin.split(',')[1]?.trim() },
+          destination: { city: rfxRequest.destination.split(',')[0], state: rfxRequest.destination.split(',')[1]?.trim() },
+          rate: strategy.recommendedRate,
+          weight: rfxRequest.weight,
+          equipment: rfxRequest.equipment,
+          commodity: rfxRequest.commodity
+        },
+        timestamp: new Date()
+      });
+
+      return { ...response, ...ediResult.enrichedData };
     } catch (error) {
       console.error('Error generating RFx response:', error);
       throw error;
@@ -611,26 +631,52 @@ export class RFxResponseService {
         return this.getMockGovernmentContracts(searchParams);
       }
 
-      const response = await fetch(`https://api.sam.gov/opportunities/v2/search`, {
-        method: 'POST',
+      // Format dates as mm/dd/yyyy (SAM.gov requirement)
+      const formatDate = (date: Date) => {
+        const d = new Date(date);
+        return `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}/${d.getFullYear()}`;
+      };
+
+      // Calculate date range (last 30 days)
+      const fromDate = formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+      const toDate = formatDate(new Date());
+
+      // Build query parameters according to SAM.gov API documentation
+      const queryParams = new URLSearchParams({
+        // Required parameters
+        api_key: process.env.SAM_GOV_API_KEY,
+        limit: '50',
+        offset: '0',
+        
+        // Optional search parameters
+        title: searchParams.keywords || 'transportation freight',
+        postedFrom: fromDate,
+        postedTo: toDate,
+        
+        // Location filters
+        ...(searchParams.location && { state: searchParams.location }),
+        
+        // NAICS codes for transportation services
+        ncode: '484,485,486,487,488,492,493,541614', // Transportation industry codes + Logistics Consulting
+        
+        // Procurement type - typically "o" for contracting opportunities
+        ptype: 'o'
+      });
+
+      // Make GET request with query parameters (CORRECTED!)
+      const response = await fetch(`https://api.sam.gov/opportunities/v2/search?${queryParams}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'X-Api-Key': process.env.SAM_GOV_API_KEY
-        },
-        body: JSON.stringify({
-          keyword: `${searchParams.keywords || 'transportation'} ${searchParams.equipment || 'freight'}`,
-          postedFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          postedTo: new Date().toISOString(),
-          limit: 50
-        })
+          'Accept': 'application/json'
+        }
       });
 
       if (!response.ok) {
-        throw new Error('SAM.gov API error');
+        throw new Error(`SAM.gov API error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      return this.transformGovernmentContractsToRFx(data.opportunities || []);
+      return this.transformGovernmentContractsToRFx(data.opportunitiesData || []);
     } catch (error) {
       console.warn('Using mock government contracts:', error);
       return this.getMockGovernmentContracts(searchParams);
@@ -1170,7 +1216,7 @@ export class RFxResponseService {
   private generateInformationalServiceDescription(rfxRequest: RFxRequest): string {
     return `Informational overview of our transportation capabilities for ${rfxRequest.commodity} freight. 
     We specialize in ${rfxRequest.equipment} transportation with extensive experience in the ${rfxRequest.origin} to ${rfxRequest.destination} corridor. 
-    Our company maintains modern equipment, experienced drivers, and comprehensive logistics support systems. 
+    Our company maintains modern equipment, experienced drivers, and advanced logistics support systems. 
     We are committed to providing transparent information about our services, capabilities, and operational processes to support your transportation planning and decision-making needs.`;
   }
 

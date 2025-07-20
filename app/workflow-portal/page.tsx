@@ -106,11 +106,12 @@ export default function WorkflowDriverPortal() {
         'pickup_arrival': '📍',
         'pickup_completion': '📦',
         'transit_start': '🚛',
+        'transit_tracking': '📱',
         'delivery_arrival': '🏁',
         'delivery_completion': '📸',
         'pod_submission': '📤'
-      };
-      return icons[stepId as keyof typeof icons] || '⏳';
+      } as { [key: string]: string };
+      return icons[stepId] || '⏳';
     };
 
     const getStepColor = (step: any) => {
@@ -288,11 +289,12 @@ export default function WorkflowDriverPortal() {
       'pickup_arrival': 'Confirm Arrival',
       'pickup_completion': 'Complete Pickup',
       'transit_start': 'Start Transit',
+      'transit_tracking': 'Enable Tracking',
       'delivery_arrival': 'Confirm Arrival',
       'delivery_completion': 'Complete Delivery',
       'pod_submission': 'Submit POD'
-    };
-    return texts[stepId as keyof typeof texts] || 'Complete Step';
+    } as { [key: string]: string };
+    return texts[stepId] || 'Complete Step';
   };
 
   return (
@@ -340,7 +342,7 @@ export default function WorkflowDriverPortal() {
             margin: '0 0 12px 0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
           }}>
-            🔄 WORKFLOW DRIVER PORTAL
+            🔄 WORKFLOW DRIVER MANAGEMENT PORTAL
           </h1>
           <p style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>
             Step-by-step workflow with validation and flow control
@@ -376,7 +378,7 @@ export default function WorkflowDriverPortal() {
         {activeModal && selectedLoad && (
           <WorkflowStepModal
             load={selectedLoad}
-            stepId={activeModal as WorkflowStepId}
+            stepId={activeModal}
             onClose={() => {
               setActiveModal(null);
               setSelectedLoad(null);
@@ -397,7 +399,7 @@ function WorkflowStepModal({
   driverId 
 }: { 
   load: Load; 
-  stepId: WorkflowStepId; 
+  stepId: string; 
   onClose: () => void; 
   driverId: string; 
 }) {
@@ -412,7 +414,7 @@ function WorkflowStepModal({
 
     try {
       // Validate step data
-      const validation = validateStepData(stepId, stepData);
+      const validation = validateStepData(stepId as WorkflowStepId, stepData);
       if (!validation.valid) {
         setError(validation.errors?.join(', ') || 'Validation failed');
         setLoading(false);
@@ -420,7 +422,7 @@ function WorkflowStepModal({
       }
 
       // Complete the step
-      const result = await completeStep(stepId, stepData, driverId);
+      const result = await completeStep(stepId as WorkflowStepId, stepData, driverId);
       
       if (result.success) {
         onClose();
@@ -448,6 +450,8 @@ function WorkflowStepModal({
         return <BOLVerification load={load} stepData={stepData} setStepData={setStepData} />;
       case 'pickup_completion':
         return <PickupCompletion load={load} stepData={stepData} setStepData={setStepData} />;
+      case 'transit_tracking':
+        return <TransitTracking load={load} stepData={stepData} setStepData={setStepData} />;
       case 'delivery_completion':
         return <DeliveryCompletion load={load} stepData={stepData} setStepData={setStepData} />;
       default:
@@ -555,22 +559,37 @@ function WorkflowStepModal({
   );
 }
 
-function getStepTitle(stepId: WorkflowStepId): string {
-  const titles = {
-    'load_assignment_confirmation': '✅ Confirm Load Assignment',
-    'rate_confirmation_review': '📄 Review Rate Confirmation',
-    'rate_confirmation_verification': '✔️ Verify Rate Confirmation',
-    'bol_receipt_confirmation': '📋 Confirm BOL Receipt',
-    'bol_verification': '✔️ Verify Bill of Lading',
-    'pickup_authorization': '🟢 Pickup Authorization',
-    'pickup_arrival': '📍 Pickup Arrival',
-    'pickup_completion': '📦 Complete Pickup',
-    'transit_start': '🚛 Start Transit',
-    'delivery_arrival': '🏁 Delivery Arrival',
-    'delivery_completion': '📸 Complete Delivery',
-    'pod_submission': '📤 Submit Proof of Delivery'
-  };
-  return titles[stepId] || 'Complete Step';
+function getStepTitle(stepId: string): string {
+  switch (stepId) {
+    case 'load_assignment_confirmation':
+      return 'Load Assignment Confirmation';
+    case 'rate_confirmation_review':
+      return 'Rate Confirmation Review';
+    case 'rate_confirmation_verification':
+      return 'Rate Confirmation Verification';
+    case 'bol_receipt_confirmation':
+      return 'BOL Receipt Confirmation';
+    case 'bol_verification':
+      return 'BOL Verification';
+    case 'pickup_authorization':
+      return 'Pickup Authorization';
+    case 'pickup_arrival':
+      return 'Pickup Arrival';
+    case 'pickup_completion':
+      return 'Pickup Completion';
+    case 'transit_start':
+      return 'Transit Start';
+    case 'transit_tracking':
+      return 'Transit Tracking';
+    case 'delivery_arrival':
+      return 'Delivery Arrival';
+    case 'delivery_completion':
+      return 'Delivery Completion';
+    case 'pod_submission':
+      return 'Proof of Delivery Submission';
+    default:
+      return 'Workflow Step';
+  }
 }
 
 // Step Content Components (simplified - will be expanded)
@@ -838,6 +857,96 @@ function DeliveryCompletion({ load, stepData, setStepData }: any) {
       {stepData.deliveryTimestamp && (
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#059669' }}>
           ✅ Delivery completed at: {new Date(stepData.deliveryTimestamp).toLocaleString()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TransitTracking({ load, stepData, setStepData }: any) {
+  return (
+    <div>
+      <p>Enable real-time tracking and location updates during transit:</p>
+      
+      <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #3b82f6' }}>
+        <h4>📱 Real-Time Tracking Setup</h4>
+        <p><strong>Load:</strong> {load.id}</p>
+        <p><strong>Route:</strong> {load.origin} → {load.destination}</p>
+        <p><strong>Status:</strong> Ready for tracking activation</p>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <input 
+            type="checkbox" 
+            checked={stepData.trackingEnabled || false}
+            onChange={(e) => setStepData({ 
+              ...stepData, 
+              trackingEnabled: e.target.checked,
+              trackingStartTime: e.target.checked ? new Date().toISOString() : undefined
+            })}
+          />
+          <strong>Enable Real-Time Location Tracking</strong>
+        </label>
+        <p style={{ fontSize: '12px', color: '#6b7280', marginLeft: '24px' }}>
+          Allow FleetFlow to track your location during transit for safety and delivery updates
+        </p>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+          📍 Location Update Interval:
+        </label>
+        <select 
+          value={stepData.locationUpdateInterval || '300'}
+          onChange={(e) => setStepData({ ...stepData, locationUpdateInterval: e.target.value })}
+          style={{
+            width: '100%',
+            padding: '8px',
+            borderRadius: '6px',
+            border: '1px solid #d1d5db'
+          }}
+        >
+          <option value="60">Every 1 minute</option>
+          <option value="300">Every 5 minutes</option>
+          <option value="600">Every 10 minutes</option>
+          <option value="900">Every 15 minutes</option>
+        </select>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <input 
+            type="checkbox" 
+            checked={stepData.statusUpdateEnabled || false}
+            onChange={(e) => setStepData({ 
+              ...stepData, 
+              statusUpdateEnabled: e.target.checked
+            })}
+          />
+          <strong>Enable Status Updates</strong>
+        </label>
+        <p style={{ fontSize: '12px', color: '#6b7280', marginLeft: '24px' }}>
+          Send automatic status updates to dispatcher and customer
+        </p>
+      </div>
+
+      <div style={{ background: '#fef3c7', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #f59e0b' }}>
+        <h5 style={{ margin: '0 0 8px 0', color: '#92400e' }}>🔒 Privacy & Security</h5>
+        <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '12px', color: '#92400e' }}>
+          <li>Location data is encrypted and secure</li>
+          <li>Only authorized personnel can access tracking data</li>
+          <li>Tracking automatically stops when load is delivered</li>
+          <li>You can disable tracking at any time</li>
+        </ul>
+      </div>
+
+      {stepData.trackingEnabled && (
+        <div style={{ background: '#dcfce7', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #10b981' }}>
+          <h5 style={{ margin: '0 0 8px 0', color: '#065f46' }}>✅ Tracking Active</h5>
+          <p style={{ margin: 0, fontSize: '12px', color: '#065f46' }}>
+            Real-time tracking enabled at: {stepData.trackingStartTime ? new Date(stepData.trackingStartTime).toLocaleString() : 'Now'}
+          </p>
         </div>
       )}
     </div>

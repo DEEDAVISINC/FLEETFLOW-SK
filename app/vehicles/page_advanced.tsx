@@ -264,7 +264,12 @@ export default function VehiclesPage() {
                   </div>
                   <div className="text-gray-300">Total Vehicles</div>
                 </div>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 border border-white/20 hover:border-white/40">
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 border border-white/20 hover:border-white/40"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                    border: 'none'
+                  }}
+                >
                   + Add Vehicle
                 </button>
               </div>
@@ -385,7 +390,11 @@ export default function VehiclesPage() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Quick Actions</label>
-                <button className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                <button className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #14b8a6, #0d9488)'
+                  }}
+                >
                   📊 Export Fleet Data
                 </button>
               </div>
@@ -500,10 +509,17 @@ export default function VehiclesPage() {
                     <button 
                       onClick={() => setSelectedVehicle(vehicle)}
                       className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #14b8a6, #0d9488)'
+                      }}
                     >
                       🔍 Details
                     </button>
-                    <button className="flex-1 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300">
+                    <button className="flex-1 bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #14b8a6, #0d9488)'
+                      }}
+                    >
                       📍 Track
                     </button>
                   </div>

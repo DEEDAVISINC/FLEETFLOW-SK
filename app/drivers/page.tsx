@@ -5,6 +5,8 @@ import Link from 'next/link';
 import StickyNote from '../components/StickyNote-Enhanced';
 import { getCurrentUser } from '../config/access';
 import DriverScheduleIntegration from '../components/DriverScheduleIntegration';
+import { Tooltip, InfoTooltip } from '../components/ui/tooltip';
+import { getTooltipContent } from '../utils/tooltipContent';
 
 interface Driver {
   id: string;
@@ -12,6 +14,7 @@ interface Driver {
   email: string;
   phone: string;
   licenseNumber: string;
+  carrierMC: string;
   status: 'Available' | 'On Duty' | 'Off Duty' | 'Driving' | 'Inactive';
   totalMiles: number;
   rating: number;
@@ -29,6 +32,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'john.smith@fleetflow.com',
     phone: '+1 (555) 123-4567',
     licenseNumber: 'CDL-TX-123456',
+    carrierMC: 'MC-123456',
     status: 'Driving',
     totalMiles: 125000,
     rating: 4.8,
@@ -44,6 +48,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'sarah.wilson@fleetflow.com',
     phone: '+1 (555) 234-5678',
     licenseNumber: 'CDL-CA-234567',
+    carrierMC: 'MC-234567',
     status: 'Available',
     totalMiles: 89000,
     rating: 4.9,
@@ -59,6 +64,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'mike.johnson@fleetflow.com',
     phone: '+1 (555) 345-6789',
     licenseNumber: 'CDL-FL-345678',
+    carrierMC: 'MC-345678',
     status: 'Off Duty',
     totalMiles: 156000,
     rating: 4.6,
@@ -74,6 +80,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'emily.davis@fleetflow.com',
     phone: '+1 (555) 456-7890',
     licenseNumber: 'CDL-NY-456789',
+    carrierMC: 'MC-456789',
     status: 'On Duty',
     totalMiles: 78000,
     rating: 4.7,
@@ -89,6 +96,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'david.brown@fleetflow.com',
     phone: '+1 (555) 567-8901',
     licenseNumber: 'CDL-IL-567890',
+    carrierMC: 'MC-567890',
     status: 'Inactive',
     totalMiles: 203000,
     rating: 4.5,
@@ -103,6 +111,7 @@ const MOCK_DRIVERS: Driver[] = [
     email: 'lisa.garcia@fleetflow.com',
     phone: '+1 (555) 678-9012',
     licenseNumber: 'CDL-AZ-678901',
+    carrierMC: 'MC-678901',
     status: 'Driving',
     totalMiles: 142000,
     rating: 4.9,
@@ -131,15 +140,11 @@ export default function DriverManagement() {
   const { user } = getCurrentUser();
 
   useEffect(() => {
-    // Simulate API loading
-    setTimeout(() => {
-      setDrivers(MOCK_DRIVERS);
-      setLoading(false);
-    }, 500);
-  }, []);
-
-  useEffect(() => {
+    // Load driver data immediately
     setDrivers(MOCK_DRIVERS);
+    setLoading(false);
+    
+    // Calculate stats
     const stats = {
       total: MOCK_DRIVERS.length,
       available: MOCK_DRIVERS.filter(d => d.status === 'Available').length,
@@ -189,10 +194,11 @@ export default function DriverManagement() {
       default: return { bg: '#f3f4f6', text: '#374151' };
     }
   };
+
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #2563eb, #1d4ed8, #1e40af)',
+      background: 'linear-gradient(135deg, #1e3a8a, #1e40af, #3730a3)',
       padding: '80px 20px 20px 20px'
     }}>
       {/* Back Button */}
@@ -228,30 +234,31 @@ export default function DriverManagement() {
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
-          padding: '32px',
-          marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
+          padding: '24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
         }}>
           <h1 style={{
-            fontSize: '36px',
+            fontSize: '28px',
             fontWeight: 'bold',
             color: 'white',
-            marginBottom: '12px',
-            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+            marginBottom: '8px',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
           }}>
             👥 DRIVER MANAGEMENT
           </h1>
-          <p style={{ fontSize: '20px', color: 'rgba(255,255,255,0.9)', margin: 0 }}>
+          <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
             Driver Fleet Operations & Performance Monitoring - {user.name}
           </p>
         </div>
 
-        {/* Stats Dashboard */}
+        {/* Stats Dashboard - Reduced Size */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '16px',
-          marginBottom: '32px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+          gap: '12px',
+          marginBottom: '24px'
         }}>
           {[
             { label: 'Total Drivers', value: stats.total, color: '#3b82f6', icon: '👥' },
@@ -262,37 +269,38 @@ export default function DriverManagement() {
             { label: 'Inactive', value: stats.inactive, color: '#6b7280', icon: '⚫' }
           ].map((stat, index) => (
             <div key={index} style={{
-              background: 'rgba(255, 255, 255, 0.9)',
+              background: 'white',
               borderRadius: '12px',
               padding: '16px',
               textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              transition: 'all 0.3s ease'
+              boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+              transition: 'all 0.3s ease',
+              border: '1px solid #e5e7eb'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
             }}>
               <div style={{
                 background: stat.color,
                 color: 'white',
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 'bold',
-                borderRadius: '8px',
-                padding: '12px',
-                marginBottom: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                borderRadius: '6px',
+                padding: '8px',
+                marginBottom: '8px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
               }}>
-                <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '4px' }}>
+                <div style={{ fontSize: '10px', opacity: 0.9, marginBottom: '2px' }}>
                   {stat.icon}
                 </div>
                 <div>{stat.value}</div>
               </div>
-              <div style={{ color: '#374151', fontSize: '14px', fontWeight: '600' }}>
+              <div style={{ color: '#374151', fontSize: '12px', fontWeight: '600' }}>
                 {stat.label}
               </div>
             </div>
@@ -300,7 +308,7 @@ export default function DriverManagement() {
         </div>
 
         {/* Driver Notes & Communication Hub */}
-        <div style={{ marginBottom: '32px' }}>
+        <div style={{ marginBottom: '24px' }}>
           <StickyNote 
             section="drivers" 
             entityId="driver-management" 
@@ -312,11 +320,12 @@ export default function DriverManagement() {
 
         {/* Search and Filters */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '12px',
+          background: 'white',
+          borderRadius: '16px',
           padding: '24px',
-          marginBottom: '32px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          marginBottom: '24px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+          border: '1px solid #e5e7eb'
         }}>
           <div style={{ position: 'relative' }}>
             <input
@@ -357,11 +366,12 @@ export default function DriverManagement() {
 
         {/* Navigation Bar for Integrated Features */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '12px',
-          padding: '16px 24px',
-          marginBottom: '32px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          background: 'white',
+          borderRadius: '16px',
+          padding: '20px 24px',
+          marginBottom: '24px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+          border: '1px solid #e5e7eb',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -371,7 +381,7 @@ export default function DriverManagement() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <h2 style={{ 
               margin: 0,
-              fontSize: '20px',
+              fontSize: '18px',
               fontWeight: 'bold',
               color: '#111827',
               display: 'flex',
@@ -382,21 +392,11 @@ export default function DriverManagement() {
             </h2>
             <div style={{ display: 'flex', gap: '12px' }}>
               <span style={{
-                background: '#dbeafe',
-                color: '#1e40af',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '12px',
-                fontWeight: '600'
-              }}>
-                {filteredDrivers.length} Active Drivers
-              </span>
-              <span style={{
                 background: '#dcfce7',
                 color: '#166534',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '12px',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '11px',
                 fontWeight: '600'
               }}>
                 ✅ Scheduling Integrated
@@ -410,9 +410,9 @@ export default function DriverManagement() {
                 background: '#3b82f6',
                 color: 'white',
                 border: 'none',
-                padding: '10px 20px',
-                borderRadius: '8px',
-                fontSize: '14px',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '12px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
@@ -446,9 +446,9 @@ export default function DriverManagement() {
                 background: expandedDrivers.size > 0 ? '#f59e0b' : '#10b981',
                 color: 'white',
                 border: 'none',
-                padding: '10px 20px',
-                borderRadius: '8px',
-                fontSize: '14px',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '12px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
@@ -468,163 +468,254 @@ export default function DriverManagement() {
           </div>
         </div>
 
-        {/* Driver Table */}
+        {/* Driver Table - Clean Style */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '20px',
+          marginBottom: '30px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
         }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: 'linear-gradient(90deg, #f9fafb, #f3f4f6)' }}>
-                  {['Driver ID', 'Name & Contact', 'License', 'Status', 'Location', 'Truck', 'ELD', 'Miles & Rating', 'Last Activity', 'Actions'].map((header) => (
-                    <th key={header} style={{
-                      padding: '16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      color: '#374151',
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            {[
+              { id: 'all', label: 'All Drivers', icon: '👥' },
+              { id: 'available', label: 'Available', icon: '✅' },
+              { id: 'driving', label: 'Driving', icon: '🚛' },
+              { id: 'off-duty', label: 'Off Duty', icon: '⏸️' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                style={{
+                  background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
+                  color: '#2d3748',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Driver Table Header */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '70px 1.2fr 100px 80px 90px 80px 80px 80px 90px 80px',
+            gap: '8px',
+            padding: '10px 12px',
+            background: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            marginBottom: '10px',
+            fontWeight: '700',
+            fontSize: '10px',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      borderBottom: '1px solid #e5e7eb'
+            color: 'rgba(255, 255, 255, 0.95)'
                     }}>
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
+            <div>ID</div>
+            <div>Driver</div>
+            <div>License</div>
+            <div>MC #</div>
+            <div>Status</div>
+            <div>Location</div>
+            <div>Truck</div>
+            <div>ELD</div>
+            <div>Miles</div>
+            <div>Actions</div>
+          </div>
+
+          {/* Driver Rows */}
                 {filteredDrivers.map((driver, index) => (
                   <React.Fragment key={driver.id}>
-                    <tr style={{
-                      borderBottom: '1px solid #e5e7eb',
-                      transition: 'background-color 0.2s ease',
-                      backgroundColor: expandedDrivers.has(driver.id) ? '#eff6ff' : 'transparent'
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '70px 1.2fr 100px 80px 90px 80px 80px 80px 90px 80px',
+                gap: '8px',
+                padding: '10px 12px',
+                background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                marginBottom: '8px',
+                fontSize: '11px',
+                transition: 'all 0.3s ease',
+                color: 'white'
                     }}
-                    onMouseOver={(e) => {
-                      if (!expandedDrivers.has(driver.id)) {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                      }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)'
                     }}
-                    onMouseOut={(e) => {
-                      if (!expandedDrivers.has(driver.id)) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }
-                    }}>
-                      <td style={{ padding: '16px', fontSize: '14px', fontWeight: 'bold', color: '#111827' }}>
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 255, 255, 0.15)'
+              }}
+              >
+                <div style={{ 
+                  fontWeight: '700', 
+                  color: '#60a5fa',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                }}>
                         {driver.id}
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: '600', color: '#111827', marginBottom: '2px' }}>{driver.name}</div>
-                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{driver.email}</div>
-                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{driver.phone}</div>
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', fontWeight: '600', color: '#111827' }}>
+                </div>
+                <div style={{ lineHeight: '1.3' }}>
+                  <div style={{ fontWeight: '600', marginBottom: '2px', fontSize: '11px' }}>{driver.name}</div>
+                  <a 
+                    href={`mailto:${driver.email}`}
+                    style={{ 
+                      fontSize: '10px', 
+                      opacity: 1, 
+                      color: '#93c5fd',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s ease',
+                      fontWeight: '500'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.textDecoration = 'underline';
+                      e.currentTarget.style.color = '#dbeafe';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.textDecoration = 'none';
+                      e.currentTarget.style.color = '#93c5fd';
+                    }}
+                  >
+                    {driver.email}
+                  </a>
+                </div>
+                <div style={{ 
+                  fontSize: '10px',
+                  textAlign: 'center'
+                }}>
                         {driver.licenseNumber}
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          padding: '4px 12px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          borderRadius: '20px',
-                          backgroundColor: getStatusColor(driver.status).bg,
-                          color: getStatusColor(driver.status).text
-                        }}>
-                          {driver.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', fontWeight: '600', color: '#111827' }}>
+                </div>
+                <div style={{ 
+                  fontSize: '10px',
+                  textAlign: 'center',
+                  color: '#fbbf24'
+                }}>
+                  {driver.carrierMC}
+                </div>
+                <div>
+                  <Tooltip 
+                    content={getTooltipContent('driver', 'status', driver.status)}
+                    theme="driver"
+                    position="top"
+                  >
+                    <span style={{
+                      padding: '3px 6px',
+                      borderRadius: '6px',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                      background: 
+                        driver.status === 'Available' ? 'rgba(16, 185, 129, 0.2)' :
+                        driver.status === 'On Duty' ? 'rgba(59, 130, 246, 0.2)' :
+                        driver.status === 'Driving' ? 'rgba(245, 158, 11, 0.2)' :
+                        driver.status === 'Off Duty' ? 'rgba(234, 179, 8, 0.2)' :
+                        'rgba(255, 255, 255, 0.1)',
+                      color: 
+                        driver.status === 'Available' ? '#10b981' :
+                        driver.status === 'On Duty' ? '#3b82f6' :
+                        driver.status === 'Driving' ? '#f59e0b' :
+                        driver.status === 'Off Duty' ? '#eab308' :
+                        'rgba(255, 255, 255, 0.8)',
+                      textTransform: 'uppercase',
+                      cursor: 'help'
+                    }}>
+                      {driver.status}
+                    </span>
+                  </Tooltip>
+                </div>
+                <div style={{ 
+                  fontSize: '10px',
+                  textAlign: 'center'
+                }}>
                         {driver.currentLocation || 'Unknown'}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', fontWeight: '600', color: '#111827' }}>
+                </div>
+                <div style={{ 
+                  fontSize: '10px',
+                  textAlign: 'center'
+                }}>
                         {driver.assignedTruck || 'Unassigned'}
-                      </td>
-                      <td style={{ padding: '16px' }}>
+                </div>
+                <div>
                         <span style={{
-                          display: 'inline-flex',
-                          padding: '4px 12px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          borderRadius: '20px',
-                          backgroundColor: getEldStatusColor(driver.eldStatus).bg,
-                          color: getEldStatusColor(driver.eldStatus).text
+                    padding: '3px 6px',
+                    borderRadius: '6px',
+                    fontSize: '9px',
+                    fontWeight: '700',
+                    background: 
+                      driver.eldStatus === 'Connected' ? 'rgba(16, 185, 129, 0.2)' :
+                      driver.eldStatus === 'Disconnected' ? 'rgba(239, 68, 68, 0.2)' :
+                      'rgba(245, 158, 11, 0.2)',
+                    color: 
+                      driver.eldStatus === 'Connected' ? '#10b981' :
+                      driver.eldStatus === 'Disconnected' ? '#ef4444' :
+                      '#f59e0b',
+                    textTransform: 'uppercase'
                         }}>
                           {driver.eldStatus}
                         </span>
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: '600', color: '#111827' }}>{driver.totalMiles.toLocaleString()} mi</div>
-                        <div style={{ fontSize: '12px', color: '#6b7280' }}>⭐ {driver.rating}/5.0</div>
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: '600', color: '#111827' }}>{new Date(driver.lastActivity).toLocaleDateString()}</div>
-                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{new Date(driver.lastActivity).toLocaleTimeString()}</div>
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                </div>
+                <div style={{ 
+                  fontWeight: '700', 
+                  color: '#10b981',
+                  fontSize: '11px',
+                  textAlign: 'center'
+                }}>
+                  {driver.totalMiles.toLocaleString()}
+                </div>
+                <div style={{ display: 'flex', gap: '4px' }}>
                           <button
                             onClick={() => toggleDriverExpansion(driver.id)}
                             style={{
-                              background: expandedDrivers.has(driver.id) ? '#3b82f6' : '#f3f4f6',
-                              color: expandedDrivers.has(driver.id) ? 'white' : '#374151',
+                      padding: '3px 6px',
+                      background: expandedDrivers.has(driver.id) ? 'linear-gradient(135deg, #f7c52d, #f4a832)' : 'rgba(255, 255, 255, 0.1)',
+                      color: expandedDrivers.has(driver.id) ? '#2d3748' : 'white',
                               border: 'none',
-                              padding: '6px 12px',
-                              borderRadius: '6px',
-                              fontSize: '12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '9px',
                               fontWeight: '600',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseOver={(e) => {
-                              if (!expandedDrivers.has(driver.id)) {
-                                e.currentTarget.style.backgroundColor = '#e5e7eb';
-                              }
-                            }}
-                            onMouseOut={(e) => {
-                              if (!expandedDrivers.has(driver.id)) {
-                                e.currentTarget.style.backgroundColor = '#f3f4f6';
-                              }
+                      transition: 'all 0.3s ease'
                             }}
                           >
-                            {expandedDrivers.has(driver.id) ? '📅 Hide Schedule' : '📅 View Schedule'}
+                    {expandedDrivers.has(driver.id) ? '📅' : '📅'}
                           </button>
                           <Link href="/scheduling" style={{ textDecoration: 'none' }}>
                             <button
                               style={{
-                                background: '#10b981',
-                                color: 'white',
+                        padding: '3px 6px',
+                        background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
+                                color: '#2d3748',
                                 border: 'none',
-                                padding: '6px 12px',
-                                borderRadius: '6px',
-                                fontSize: '12px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '9px',
                                 fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease'
-                              }}
-                              onMouseOver={(e) => {
-                                e.currentTarget.style.backgroundColor = '#059669';
-                              }}
-                              onMouseOut={(e) => {
-                                e.currentTarget.style.backgroundColor = '#10b981';
+                        transition: 'all 0.3s ease'
                               }}
                             >
-                              📊 Full Scheduling
+                      📊
                             </button>
                           </Link>
                         </div>
-                      </td>
-                    </tr>
+              </div>
                     
                     {/* Expanded Schedule Row */}
                     {expandedDrivers.has(driver.id) && (
-                      <tr>
-                        <td colSpan={10} style={{ padding: '0', backgroundColor: '#f8fafc' }}>
-                          <div style={{ padding: '20px', margin: '0 20px' }}>
+                <div style={{
+                  gridColumn: '1 / -1',
+                  background: '#f8fafc',
+                  borderRadius: '8px',
+                  marginTop: '8px',
+                  padding: '20px',
+                  border: '1px solid #e2e8f0'
+                }}>
                             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '20px' }}>
                               <div>
                                 <DriverScheduleIntegration
@@ -651,14 +742,9 @@ export default function DriverManagement() {
                               </div>
                             </div>
                           </div>
-                        </td>
-                      </tr>
                     )}
                   </React.Fragment>
                 ))}
-              </tbody>
-            </table>
-          </div>
 
           {/* No drivers message */}
           {filteredDrivers.length === 0 && (
@@ -697,6 +783,147 @@ export default function DriverManagement() {
             </div>
           )}
         </div>
+
+        {/* Driver Communication & Alerts (Enterprise Upgrade) */}
+        <div style={{
+          marginBottom: '24px',
+          background: 'linear-gradient(90deg, #e0e7ff 0%, #f1f5f9 100%)',
+          borderRadius: '18px',
+          boxShadow: '0 8px 32px rgba(30,64,175,0.10)',
+          border: '1.5px solid #c7d2fe',
+          padding: '0',
+          overflow: 'hidden',
+        }}>
+          {/* Header */}
+          <div style={{
+            background: 'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
+            padding: '24px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 28, color: '#fff' }}>📢</span>
+              <span style={{ fontWeight: 800, fontSize: 22, color: '#fff', letterSpacing: 0.5 }}>Driver Communication & Alerts Hub</span>
+            </div>
+            {/* Metrics summary */}
+            <div style={{ display: 'flex', gap: 18 }}>
+              <div style={{ color: '#fff', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 18 }}>📨</span> 3 Unread
+              </div>
+              <div style={{ color: '#fbbf24', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 18 }}>⚠️</span> 1 Urgent
+              </div>
+              <div style={{ color: '#a5b4fc', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 18 }}>📋</span> 8 Total
+              </div>
+            </div>
+          </div>
+          {/* Alerts/Comms List */}
+          <div style={{
+            padding: '24px 32px',
+            maxHeight: 220,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 18,
+            background: 'transparent',
+          }}>
+            {/* Example alert 1 - Urgent */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'linear-gradient(90deg, #fef3c7 0%, #fde68a 100%)',
+              border: '1.5px solid #fbbf24',
+              borderRadius: 12,
+              padding: '16px 20px',
+              gap: 16,
+              boxShadow: '0 2px 8px rgba(251,191,36,0.08)',
+            }}>
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid #fbbf24' }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: '#b45309', fontSize: 15 }}>HOS Violation Alert <span style={{ fontWeight: 500, color: '#f59e0b', fontSize: 13, marginLeft: 8 }}>Urgent</span></div>
+                <div style={{ color: '#92400e', fontSize: 14 }}>Driver John Smith exceeded daily limit</div>
+                <div style={{ color: '#b45309', fontSize: 12, marginTop: 2 }}>2 min ago</div>
+              </div>
+              <button style={{
+                background: '#fbbf24',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+                boxShadow: '0 1px 4px rgba(251,191,36,0.10)',
+                transition: 'background 0.2s',
+              }}>Acknowledge</button>
+            </div>
+            {/* Example alert 2 - Inspection Passed */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'linear-gradient(90deg, #d1fae5 0%, #a7f3d0 100%)',
+              border: '1.5px solid #10b981',
+              borderRadius: 12,
+              padding: '16px 20px',
+              gap: 16,
+              boxShadow: '0 2px 8px rgba(16,185,129,0.08)',
+            }}>
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="avatar" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid #10b981' }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: '#047857', fontSize: 15 }}>Inspection Passed</div>
+                <div style={{ color: '#047857', fontSize: 14 }}>Driver Sarah Wilson passed DOT inspection</div>
+                <div style={{ color: '#047857', fontSize: 12, marginTop: 2 }}>12 min ago</div>
+              </div>
+              <button style={{
+                background: '#10b981',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+                boxShadow: '0 1px 4px rgba(16,185,129,0.10)',
+                transition: 'background 0.2s',
+              }}>View</button>
+            </div>
+            {/* Example alert 3 - New Message */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'linear-gradient(90deg, #dbeafe 0%, #f1f5f9 100%)',
+              border: '1.5px solid #3b82f6',
+              borderRadius: 12,
+              padding: '16px 20px',
+              gap: 16,
+              boxShadow: '0 2px 8px rgba(59,130,246,0.08)',
+            }}>
+              <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="avatar" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid #3b82f6' }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: '#1d4ed8', fontSize: 15 }}>New Message</div>
+                <div style={{ color: '#1e40af', fontSize: 14 }}>Message from dispatcher: "Check your route update"</div>
+                <div style={{ color: '#1e40af', fontSize: 12, marginTop: 2 }}>30 min ago</div>
+              </div>
+              <button style={{
+                background: '#3b82f6',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+                boxShadow: '0 1px 4px rgba(59,130,246,0.10)',
+                transition: 'background 0.2s',
+              }}>Reply</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Expand All Schedules Section */}
+        {/* REMOVE the global DriverScheduleIntegration summary here. Only use per-driver expansion below. */}
       </div>
     </div>
   );

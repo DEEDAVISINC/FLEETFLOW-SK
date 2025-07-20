@@ -30,15 +30,18 @@ export interface Stop {
 }
 
 export interface OptimizedRoute {
+  id: string
   vehicleId: string
   stops: Stop[]
   totalDistance: number // miles
   totalDuration: number // minutes
+  totalTime: number // hours (for compatibility)
   estimatedCost: number
   fuelCost: number
   tollCost: number
   efficiency: number // 0-100 score
   warnings: string[]
+  estimatedArrival?: string
 }
 
 export interface RouteOptimizationRequest {
@@ -145,10 +148,12 @@ export class RouteOptimizationService {
     constraints: any
   ): Promise<OptimizedRoute> {
     const route: OptimizedRoute = {
+      id: `route-${vehicle.id}-${Date.now()}`,
       vehicleId: vehicle.id,
       stops: [],
       totalDistance: 0,
       totalDuration: 0,
+      totalTime: 0,
       estimatedCost: 0,
       fuelCost: 0,
       tollCost: 0,
@@ -299,7 +304,7 @@ export class RouteOptimizationService {
   }
 
   private isRealApiKey(): boolean {
-    return this.apiKey && this.apiKey !== 'demo-key' && this.apiKey.length > 10
+    return !!(this.apiKey && this.apiKey !== 'demo-key' && this.apiKey.length > 10)
   }
 
   // Mock optimization for development/demo
@@ -310,11 +315,14 @@ export class RouteOptimizationService {
     vehicles.forEach((vehicle, index) => {
       const vehicleStops = stops.slice(index * 3, (index + 1) * 3) // Distribute stops
 
+      const totalDuration = 240 + Math.random() * 180
       const route: OptimizedRoute = {
+        id: `route-${vehicle.id}-${Date.now()}-${index}`,
         vehicleId: vehicle.id,
         stops: vehicleStops,
         totalDistance: 150 + Math.random() * 200,
-        totalDuration: 240 + Math.random() * 180,
+        totalDuration: totalDuration,
+        totalTime: totalDuration / 60, // Convert minutes to hours
         estimatedCost: 180 + Math.random() * 120,
         fuelCost: 80 + Math.random() * 40,
         tollCost: 15 + Math.random() * 25,

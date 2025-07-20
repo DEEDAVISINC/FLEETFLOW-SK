@@ -180,7 +180,7 @@ export default function StickyNote({
           className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
           style={{
             background: 'linear-gradient(135deg, #fef3c7, #fbbf24)',
-            padding: '8px 16px',
+            padding: '6px 12px',
             borderRadius: '8px',
             border: '1px solid #f59e0b',
             color: '#92400e',
@@ -193,17 +193,17 @@ export default function StickyNote({
           {/* Notification Badges */}
           <div className="flex items-center gap-1">
             {showUnreadCount && unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+              <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
                 {unreadCount}
               </span>
             )}
             {urgentCount > 0 && (
-              <span className="bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+              <span className="bg-red-600 text-white text-xs px-1 py-0.5 rounded-full">
                 ⚠️ {urgentCount}
               </span>
             )}
             {notes.length > 0 && (
-              <span className="bg-yellow-200 text-yellow-800 text-xs px-2 py-1 rounded-full">
+              <span className="bg-yellow-200 text-yellow-800 text-xs px-1.5 py-0.5 rounded-full">
                 {notes.length}
               </span>
             )}
@@ -222,7 +222,7 @@ export default function StickyNote({
 
       {isExpanded && (
         <div 
-          className="border rounded-lg p-4 space-y-4"
+          className="border rounded-lg p-3 space-y-3"
           style={{
             background: 'linear-gradient(135deg, #fef3c7, #fef3c7)',
             borderColor: '#f59e0b',
@@ -231,7 +231,7 @@ export default function StickyNote({
         >
           {/* Filter Tabs */}
           {isNotificationHub && (
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-3">
               {[
                 { key: 'all', label: 'All', icon: '📋' },
                 { key: 'unread', label: 'Unread', icon: '🔔', count: unreadCount },
@@ -241,7 +241,7 @@ export default function StickyNote({
                 <button
                   key={tab.key}
                   onClick={() => setFilter(tab.key as any)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1 ${
                     filter === tab.key 
                       ? 'bg-yellow-600 text-white shadow-sm' 
                       : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
@@ -260,8 +260,8 @@ export default function StickyNote({
           )}
 
           {/* Add New Note/Notification */}
-          <div className="space-y-3 p-3 bg-white rounded-lg border border-yellow-300">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="space-y-2 p-2 bg-white rounded-lg border border-yellow-300">
+            <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-semibold text-gray-700">
                 {isNotificationHub ? '📢 Create Notification/Note' : '📝 Add Note'}
               </span>
@@ -271,19 +271,19 @@ export default function StickyNote({
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               placeholder={`Add a ${category} about ${entityName || 'this item'}...`}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-              rows={3}
+              className="w-full p-2 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              rows={2}
             />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {/* Left Column */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as any)}
-                    className="w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:ring-1 focus:ring-yellow-500"
+                    className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-yellow-500"
                   >
                     <option value="note">📝 Note</option>
                     <option value="task">✅ Task</option>
@@ -298,7 +298,7 @@ export default function StickyNote({
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as any)}
-                    className="w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:ring-1 focus:ring-yellow-500"
+                    className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-yellow-500"
                   >
                     <option value="low">🟢 Low Priority</option>
                     <option value="medium">🟡 Medium Priority</option>
@@ -309,7 +309,7 @@ export default function StickyNote({
               </div>
               
               {/* Right Column */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {category === 'task' && (
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
@@ -317,12 +317,12 @@ export default function StickyNote({
                       type="datetime-local"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:ring-1 focus:ring-yellow-500"
+                      className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-yellow-500"
                     />
                   </div>
                 )}
                 
-                <div className="flex items-center gap-2 pt-2">
+                <div className="flex items-center gap-2 pt-1">
                   <label className="flex items-center gap-1 text-xs text-gray-600">
                     <input
                       type="checkbox"
@@ -340,7 +340,7 @@ export default function StickyNote({
               </div>
             </div>
             
-            <div className="flex justify-between items-center pt-2">
+            <div className="flex justify-between items-center pt-1">
               <div className="text-xs text-gray-600">
                 {isNotificationHub 
                   ? `Creating ${category} for ${entityType}: ${entityName || entityId}`
@@ -351,7 +351,7 @@ export default function StickyNote({
               <button
                 onClick={addNote}
                 disabled={!newNote.trim()}
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {category === 'notification' ? '📢 Send' : '➕ Add'} {category}
               </button>
@@ -359,10 +359,10 @@ export default function StickyNote({
           </div>
 
           {/* Display Notes */}
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="space-y-3 max-h-48 overflow-y-auto">
             {filteredNotes.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <div className="text-4xl mb-2">📝</div>
+              <div className="text-center py-4 text-gray-500">
+                <div className="text-2xl mb-1">📝</div>
                 <p className="text-sm">
                   {filter === 'all' ? 'No notes yet. Create one above!' : `No ${filter} items found.`}
                 </p>
@@ -371,28 +371,28 @@ export default function StickyNote({
               filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className={`p-3 rounded-lg border-l-4 transition-all hover:shadow-md ${
+                  className={`p-2 rounded-lg border-l-4 transition-all hover:shadow-md ${
                     note.isRead ? 'bg-white' : 'bg-yellow-50'
                   } ${getPriorityColor(note.priority)}`}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm">{getCategoryIcon(note.category)}</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(note.category)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(note.category)}`}>
                           {note.category}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(note.priority)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(note.priority)}`}>
                           {note.priority}
                         </span>
                         {!note.isRead && (
-                          <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                          <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
                             NEW
                           </span>
                         )}
                       </div>
                       
-                      <p className="text-sm text-gray-800 mb-2 leading-relaxed">{note.content}</p>
+                      <p className="text-sm text-gray-800 mb-1 leading-relaxed">{note.content}</p>
                       
                       <div className="flex items-center gap-2 text-xs text-gray-600 flex-wrap">
                         <span className="font-medium">{note.createdBy}</span>
@@ -422,7 +422,7 @@ export default function StickyNote({
                           className="text-green-600 hover:text-green-800 p-1 rounded"
                           title="Mark as read"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         </button>
@@ -432,7 +432,7 @@ export default function StickyNote({
                         className="text-red-500 hover:text-red-700 p-1 rounded"
                         title="Delete note"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </button>
@@ -444,7 +444,7 @@ export default function StickyNote({
           </div>
           
           {isNotificationHub && filteredNotes.length > 0 && (
-            <div className="flex justify-between items-center pt-3 border-t border-yellow-300">
+            <div className="flex justify-between items-center pt-2 border-t border-yellow-300">
               <div className="text-xs text-gray-600">
                 Showing {filteredNotes.length} of {notes.length} items
               </div>

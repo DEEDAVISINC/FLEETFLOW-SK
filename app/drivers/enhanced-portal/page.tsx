@@ -39,7 +39,7 @@ const AccessRestricted = () => (
         marginBottom: '16px',
         lineHeight: '1.6'
       }}>
-        You need driver portal permissions to access this system.
+        You need driver management portal permissions to access this system.
       </p>
       <button 
         onClick={() => window.history.back()}

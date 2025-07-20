@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { DocumentVerificationService } from '../../../services/document-verification-service';
+import { W9Form } from './W9Form';
 
 interface DocumentInfo {
   id: string;
@@ -11,27 +13,31 @@ interface DocumentInfo {
   fileName?: string;
   uploadDate?: string;
   expirationDate?: string;
-  status: 'pending' | 'uploaded' | 'approved' | 'rejected' | 'expired';
+  status: 'pending' | 'uploaded' | 'approved' | 'rejected' | 'expired' | 'processing' | 'needs_attention';
   description: string;
+  verificationResult?: any;
+  issues?: string[];
+  extractedData?: any;
 }
 
 interface DocumentUploadProps {
   onDocumentUploaded: (document: DocumentInfo) => void;
   onNext: () => void;
   onBack: () => void;
+  carrierData?: any;
 }
 
-export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUploaded, onNext, onBack }) => {
+export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUploaded, onNext, onBack, carrierData }) => {
   const [documents, setDocuments] = useState<DocumentInfo[]>([
     // Legal/Regulatory Documents
     {
-      id: 'op_authority',
-      type: 'Operating Authority Letter',
+      id: 'mc_authority',
+      type: 'MC Authority Letter',
       category: 'Legal/Regulatory',
       required: true,
       uploaded: false,
       status: 'pending',
-      description: 'Certificate showing motor carrier operating authority'
+      description: 'Motor Carrier Operating Authority certificate from FMCSA'
     },
     {
       id: 'dot_registration',
@@ -42,15 +48,6 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       status: 'pending',
       description: 'Department of Transportation registration certificate'
     },
-    {
-      id: 'state_registration',
-      type: 'State Registration',
-      category: 'Legal/Regulatory',
-      required: true,
-      uploaded: false,
-      status: 'pending',
-      description: 'State business registration documents'
-    },
 
     // Insurance Documents
     {
@@ -60,7 +57,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       required: true,
       uploaded: false,
       status: 'pending',
-      description: 'Primary certificate of insurance'
+      description: 'Primary certificate showing auto liability ($1M) and cargo ($100K) coverage'
     },
     {
       id: 'auto_liability',
@@ -69,7 +66,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       required: true,
       uploaded: false,
       status: 'pending',
-      description: 'Auto liability insurance certificate ($1M minimum)'
+      description: 'Auto liability insurance certificate ($1M minimum, additional insured required)'
     },
     {
       id: 'cargo_insurance',
@@ -78,16 +75,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       required: true,
       uploaded: false,
       status: 'pending',
-      description: 'Cargo insurance certificate ($100K minimum)'
-    },
-    {
-      id: 'workers_comp',
-      type: 'Workers Compensation',
-      category: 'Insurance',
-      required: true,
-      uploaded: false,
-      status: 'pending',
-      description: 'Workers compensation insurance or exemption'
+      description: 'Cargo insurance certificate ($100K minimum coverage)'
     },
 
     // Financial Documents
@@ -98,6 +86,59 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       required: true,
       uploaded: false,
       status: 'pending',
+      description: 'Completed and signed W-9 tax form for 1099 reporting'
+    },
+    {
+      id: 'voided_check',
+      type: 'Voided Check',
+      category: 'Financial',
+      required: true,
+      uploaded: false,
+      status: 'pending',
+      description: 'Voided check for ACH payment setup (or bank letter)'
+    },
+    
+    // Factoring (Conditional)
+    {
+      id: 'notice_assignment',
+      type: 'Notice of Assignment (Factoring)',
+      category: 'Financial',
+      required: false, // Will be set to true if carrier has factoring
+      uploaded: false,
+      status: 'pending',
+      description: 'Notice of Assignment from factoring company (required if using factoring)'
+    },
+
+    // ELD/Technology
+    {
+      id: 'eld_compliance',
+      type: 'ELD Compliance Certificate',
+      category: 'Safety/Technology',
+      required: true,
+      uploaded: false,
+      status: 'pending',
+      description: 'Electronic Logging Device compliance certificate and registration'
+    },
+
+    // Safety Documents (Optional but Recommended)
+    {
+      id: 'safety_training',
+      type: 'Safety Training Certificates',
+      category: 'Safety',
+      required: false,
+      uploaded: false,
+      status: 'pending',
+      description: 'Driver safety training certificates and compliance records'
+    }
+  ]);
+
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [showW9Form, setShowW9Form] = useState(false);
+  const [factoringRequired, setFactoringRequired] = useState(false);
+  const [notificationLog, setNotificationLog] = useState<any[]>([]);
+
+  const categories = ['All', 'Legal/Regulatory', 'Insurance', 'Financial', 'Safety/Technology', 'Safety'];
       description: 'Completed and signed W-9 tax form'
     },
     {
@@ -140,18 +181,86 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
     setUploadingId(documentId);
     
     try {
-      // Simulate file upload
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      // Update status to processing
+      setDocuments(prevDocs => 
+        prevDocs.map(doc => 
+          doc.id === documentId 
+            ? { ...doc, status: 'processing' as const, fileName: file.name, uploadDate: new Date().toISOString().split('T')[0] }
+            : doc
+        )
+      );
+
+      // Send initial notification
+      await DocumentVerificationService.sendNotification(
+        'documentReceived',
+        { 
+          carrierName: carrierData?.legalName || 'Carrier',
+          email: carrierData?.email || 'carrier@example.com',
+          phone: carrierData?.phone
+        },
+        { 
+          documentName: documents.find(d => d.id === documentId)?.type,
+          uploadDate: new Date().toLocaleDateString()
+        }
+      );
+
+      // Simulate document verification
+      const verificationResult = await DocumentVerificationService.verifyDocument(
+        file, 
+        documentId, 
+        carrierData
+      );
+
+      // Update document with verification results
       const updatedDocuments = documents.map(doc => {
         if (doc.id === documentId) {
+          const newStatus = verificationResult.verified 
+            ? 'approved' 
+            : verificationResult.requiresManualReview 
+              ? 'needs_attention'
+              : 'rejected';
+
           const updatedDoc = {
             ...doc,
             uploaded: true,
             fileName: file.name,
             uploadDate: new Date().toISOString().split('T')[0],
-            status: 'uploaded' as const
+            status: newStatus as const,
+            verificationResult,
+            issues: verificationResult.issues,
+            extractedData: verificationResult.extractedData,
+            expirationDate: verificationResult.extractedData?.expirationDate
           };
+
+          // Send appropriate notification
+          if (verificationResult.verified) {
+            DocumentVerificationService.sendNotification(
+              'documentApproved',
+              { 
+                carrierName: carrierData?.legalName || 'Carrier',
+                email: carrierData?.email || 'carrier@example.com'
+              },
+              { 
+                documentName: doc.type,
+                approvalDate: new Date().toLocaleDateString(),
+                expirationDate: verificationResult.extractedData?.expirationDate || 'N/A'
+              }
+            );
+          } else {
+            DocumentVerificationService.sendNotification(
+              'documentRejected',
+              { 
+                carrierName: carrierData?.legalName || 'Carrier',
+                email: carrierData?.email || 'carrier@example.com'
+              },
+              { 
+                documentName: doc.type,
+                uploadDate: new Date().toLocaleDateString(),
+                issues: verificationResult.issues
+              }
+            );
+          }
+
           onDocumentUploaded(updatedDoc);
           return updatedDoc;
         }
@@ -159,11 +268,84 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       });
       
       setDocuments(updatedDocuments);
+
+      // Check if all required documents are now complete
+      const completionCheck = DocumentVerificationService.checkOnboardingCompletion(
+        updatedDocuments.filter(doc => doc.uploaded && doc.status === 'approved')
+      );
+
+      if (completionCheck.complete) {
+        await DocumentVerificationService.sendNotification(
+          'allDocumentsComplete',
+          { 
+            carrierName: carrierData?.legalName || 'Carrier',
+            email: carrierData?.email || 'carrier@example.com'
+          },
+          { 
+            approvedDocuments: completionCheck.approvedDocuments
+          }
+        );
+      }
+
     } catch (error) {
       console.error('Upload failed:', error);
+      
+      // Update status to rejected on error
+      setDocuments(prevDocs => 
+        prevDocs.map(doc => 
+          doc.id === documentId 
+            ? { ...doc, status: 'rejected' as const, issues: ['Upload failed. Please try again.'] }
+            : doc
+        )
+      );
     } finally {
       setUploadingId(null);
     }
+  };
+
+  const handleW9FormComplete = async (formData: any) => {
+    setShowW9Form(false);
+    
+    // Create a mock W-9 document with the form data
+    const w9Document = {
+      id: 'w9_form',
+      type: 'W-9 Tax Form',
+      category: 'Financial',
+      required: true,
+      uploaded: true,
+      fileName: 'W9_Form_Completed.pdf',
+      uploadDate: new Date().toISOString().split('T')[0],
+      status: 'approved' as const,
+      description: 'Completed and signed W-9 tax form',
+      extractedData: formData,
+      verificationResult: {
+        verified: true,
+        confidence: 1.0,
+        issues: [],
+        requiresManualReview: false
+      }
+    };
+
+    // Update documents
+    const updatedDocuments = documents.map(doc => 
+      doc.id === 'w9_form' ? w9Document : doc
+    );
+    setDocuments(updatedDocuments);
+    onDocumentUploaded(w9Document);
+
+    // Send approval notification
+    await DocumentVerificationService.sendNotification(
+      'documentApproved',
+      { 
+        carrierName: carrierData?.legalName || 'Carrier',
+        email: carrierData?.email || 'carrier@example.com'
+      },
+      { 
+        documentName: 'W-9 Tax Form',
+        approvalDate: new Date().toLocaleDateString(),
+        expirationDate: 'N/A'
+      }
+    );
   };
 
   const getStatusIcon = (status: string) => {

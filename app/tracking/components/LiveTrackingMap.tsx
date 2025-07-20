@@ -21,7 +21,7 @@ const useDebounce = (value: any, delay: number) => {
 
 interface Shipment {
   id: string
-  status: 'in-transit' | 'delivered' | 'delayed'
+  status: 'in-transit' | 'delivered' | 'delayed' | 'loading' | 'unloading'
   origin: string
   destination: string
   carrier: string
@@ -34,14 +34,42 @@ interface Shipment {
   driverName?: string
   driverPhone?: string
   vehicleInfo?: string
+  temperature?: number
+  humidity?: number
+  fuelLevel?: number
+  lastUpdate?: string
+  alerts?: string[]
+  priority: 'high' | 'medium' | 'low'
+  value: number
+  weight: number
+  commodity: string
+  // Enhanced fields
+  createdDate?: string
+  pickupDate?: string
+  deliveryDate?: string
+  customerName?: string
+  miles?: number
+  // Clustering support
+  isCluster?: boolean
+  shipments?: Shipment[]
+  position?: [number, number]
+}
+
+interface MapFeatures {
+  showTraffic: boolean
+  showWeather: boolean
+  showSatellite: boolean
+  showClustering: boolean
+  mapType: 'roadmap' | 'satellite' | 'hybrid' | 'terrain'
 }
 
 interface LiveTrackingMapProps {
   shipments: Shipment[]
   selectedShipment: string | null
-  onSelectShipment: (id: string) => void
+  onSelectShipment: (shipmentId: string | null) => void
   autoTracking: boolean
   showRoutes: boolean
+  mapFeatures: MapFeatures
 }
 
 export default React.memo(function LiveTrackingMap({
@@ -49,135 +77,184 @@ export default React.memo(function LiveTrackingMap({
   selectedShipment,
   onSelectShipment,
   autoTracking,
-  showRoutes
+  showRoutes,
+  mapFeatures
 }: LiveTrackingMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<any>(null)
-  const markersRef = useRef<{ [key: string]: any }>({})
-  const routesRef = useRef<{ [key: string]: any }>({})
-  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const debouncedShipments = useDebounce(shipments, 300)
 
-  // Debounce shipments updates to reduce map re-renders
-  const debouncedShipments = useDebounce(shipments, 100)
+  // Create a simple interactive map visualization
+  const mapHTML = useMemo(() => {
+    const mapCenter = selectedShipment && shipments.find(s => s.id === selectedShipment)
+      ? shipments.find(s => s.id === selectedShipment)!.currentLocation
+      : [39.8283, -98.5795] // Center of US
 
-  // Memoize status color function
-  const getStatusColor = useCallback((status: string) => {
-    switch (status) {
-      case 'in-transit': return '#2563eb'
-      case 'delivered': return '#10b981'
-      case 'delayed': return '#ef4444'
-      default: return '#6b7280'
-    }
-  }, [])
+    const clusteredShipments = shipments.filter(s => !s.isCluster)
+    const clusterMarkers = shipments.filter(s => s.isCluster)
 
-  // Memoize shipments array to prevent unnecessary re-renders
-  const memoizedShipments = useMemo(() => debouncedShipments, [debouncedShipments])
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>FleetFlow Live Tracking Map</title>
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+          <style>
+            body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            #map { height: 100vh; width: 100vw; }
+            .custom-marker {
+              background: none !important;
+              border: none !important;
+            }
+            .shipment-popup {
+              min-width: 250px;
+              font-family: system-ui;
+            }
+            .popup-header {
+              font-weight: bold;
+              margin-bottom: 8px;
+              font-size: 1.1rem;
+            }
+            .popup-row {
+              margin-bottom: 4px;
+            }
+            .popup-button {
+              background: #3b82f6;
+              color: white;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 0.875rem;
+              margin-top: 8px;
+            }
+            .popup-button:hover {
+              background: #2563eb;
+            }
+            .cluster-marker {
+              background: #3b82f6;
+              color: white;
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 12px;
+              border: 2px solid white;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            @keyframes pulse {
+              0% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.1); opacity: 0.7; }
+              100% { transform: scale(1); opacity: 1; }
+            }
+            .pulse-marker {
+              animation: pulse 2s infinite;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="map"></div>
+          <script>
+            let map;
+            let markers = [];
+            let routes = [];
 
-  // Optimized map update function
-  const updateMapMarkers = useCallback((L: any) => {
-    if (!mapInstanceRef.current) return
+            // Status colors
+            const statusColors = {
+              'in-transit': '#3b82f6',
+              'delivered': '#10b981',
+              'delayed': '#ef4444',
+              'loading': '#f59e0b',
+              'unloading': '#8b5cf6'
+            };
 
-    // Clear existing markers and routes efficiently
-    Object.values(markersRef.current).forEach((marker: any) => {
-      try {
-        marker.remove()
-      } catch (e) {
-        // Ignore errors if marker already removed
-      }
-    })
-    Object.values(routesRef.current).forEach((route: any) => {
-      try {
-        route.remove()
-      } catch (e) {
-        // Ignore errors if route already removed
-      }
-    })
-    markersRef.current = {}
-    routesRef.current = {}
+            // Status emojis
+            const statusEmojis = {
+              'in-transit': '🚛',
+              'delivered': '✅',
+              'delayed': '⚠️',
+              'loading': '📦',
+              'unloading': '📤'
+            };
 
-    // Add shipments to map
-    memoizedShipments.forEach((shipment: Shipment) => {
-      addShipmentToMap(shipment, L)
-    })
-  }, [memoizedShipments, showRoutes, getStatusColor])
+            function initMap() {
+              // Initialize map
+              map = L.map('map').setView([${mapCenter[0]}, ${mapCenter[1]}], 5);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && mapRef.current) {
-      // Import Leaflet dynamically
-      import('leaflet').then((L) => {
-        // Initialize map
-        if (!mapInstanceRef.current) {
-          mapInstanceRef.current = L.map(mapRef.current!).setView([39.8283, -98.5795], 4)
+              // Add tile layer based on map type
+              let tileLayer;
+              switch('${mapFeatures.mapType}') {
+                case 'satellite':
+                  tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri',
+                    maxZoom: 19
+                  });
+                  break;
+                case 'terrain':
+                  tileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenTopoMap',
+                    maxZoom: 17
+                  });
+                  break;
+                default:
+                  tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                  });
+              }
+              tileLayer.addTo(map);
 
-          // Add tile layer with performance options
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19,
-            updateWhenZooming: false,
-            updateWhenIdle: true
-          }).addTo(mapInstanceRef.current)
-        }
+              // Add shipment markers
+              ${clusteredShipments.map(shipment => `
+                addShipmentMarker(${JSON.stringify(shipment)});
+              `).join('')}
 
-        // Debounce map updates
-        if (updateTimeoutRef.current) {
-          clearTimeout(updateTimeoutRef.current)
-        }
+              // Add cluster markers
+              ${clusterMarkers.map(cluster => `
+                addClusterMarker(${JSON.stringify(cluster)});
+              `).join('')}
 
-        updateTimeoutRef.current = setTimeout(() => {
-          updateMapMarkers(L)
-        }, 50)
-      })
-    }
+              // Auto-tracking simulation
+              if (${autoTracking}) {
+                setInterval(() => {
+                  // Simulate small movements for in-transit shipments
+                  markers.forEach(marker => {
+                    if (marker.shipmentData && marker.shipmentData.status === 'in-transit') {
+                      const currentPos = marker.getLatLng();
+                      const newLat = currentPos.lat + (Math.random() - 0.5) * 0.01;
+                      const newLng = currentPos.lng + (Math.random() - 0.5) * 0.01;
+                      marker.setLatLng([newLat, newLng]);
+                    }
+                  });
+                }, 5000);
+              }
 
-    return () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current)
-      }
-    }
-  }, [updateMapMarkers])
+              // Handle center map messages
+              window.addEventListener('message', (event) => {
+                if (event.data.type === 'centerMap' && event.data.location) {
+                  const [lat, lng] = event.data.location;
+                  map.setView([lat, lng], 10);
+                }
+              });
+            }
 
-  // Auto-tracking effect
-  useEffect(() => {
-    if (autoTracking && selectedShipment && mapInstanceRef.current) {
-      const shipment = memoizedShipments.find((s: Shipment) => s.id === selectedShipment)
-      if (shipment) {
-        mapInstanceRef.current.panTo(shipment.currentLocation)
-      }
-    }
-  }, [autoTracking, selectedShipment, memoizedShipments])
-
-  // Focus on selected shipment
-  useEffect(() => {
-    if (selectedShipment && mapInstanceRef.current) {
-      const shipment = memoizedShipments.find((s: Shipment) => s.id === selectedShipment)
-      if (shipment && markersRef.current[selectedShipment]) {
-        mapInstanceRef.current.setView(shipment.currentLocation, 8)
-        markersRef.current[selectedShipment].openPopup()
-      }
-    }
-  }, [selectedShipment, memoizedShipments])
-
-  const addShipmentToMap = useCallback((shipment: Shipment, L: any) => {
-    if (!mapInstanceRef.current) return
-
-    // Get status color
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case 'in-transit': return '#2563eb'
-        case 'delivered': return '#10b981'
-        case 'delayed': return '#ef4444'
-        default: return '#6b7280'
-      }
-    }
+            function addShipmentMarker(shipment) {
+              const color = statusColors[shipment.status] || '#6b7280';
+              const emoji = statusEmojis[shipment.status] || '🚚';
 
     // Create custom icon
-    const iconHtml = `
+              const iconHtml = \`
       <div style="
-        background: ${getStatusColor(shipment.status)};
+                  background: \${color};
         color: white;
         border-radius: 50%;
-        width: 30px;
-        height: 30px;
+                  width: 32px;
+                  height: 32px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -185,114 +262,153 @@ export default React.memo(function LiveTrackingMap({
         box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         border: 2px solid white;
         position: relative;
-      ">
-        🚚
-        ${shipment.status === 'in-transit' ? `
-          <div style="
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            border: 1px solid white;
-            animation: pulse 2s infinite;
-          "></div>
-        ` : ''}
+                " class="\${shipment.status === 'in-transit' ? 'pulse-marker' : ''}">
+                  \${emoji}
       </div>
-    `
+              \`;
 
-    const customIcon = L.divIcon({
+              const icon = L.divIcon({
       html: iconHtml,
-      iconSize: [30, 30],
+                iconSize: [32, 32],
       className: 'custom-marker'
-    })
+              });
+
+              // Create marker
+              const marker = L.marker([shipment.currentLocation[0], shipment.currentLocation[1]], { icon })
+                .addTo(map);
+
+              // Store shipment data
+              marker.shipmentData = shipment;
 
     // Create popup content
-    const popupContent = `
-      <div style="min-width: 250px; font-family: system-ui;">
-        <div style="font-weight: bold; margin-bottom: 8px; color: ${getStatusColor(shipment.status)}; font-size: 1.1rem;">
-          ${shipment.id}
+              const popupContent = \`
+                <div class="shipment-popup">
+                  <div class="popup-header" style="color: \${color};">
+                    \${shipment.id}
         </div>
-        <div style="margin-bottom: 4px;"><strong>Status:</strong> ${shipment.status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</div>
-        <div style="margin-bottom: 4px;"><strong>Driver:</strong> ${shipment.driverName || 'N/A'}</div>
-        <div style="margin-bottom: 4px;"><strong>Phone:</strong> ${shipment.driverPhone || 'N/A'}</div>
-        <div style="margin-bottom: 4px;"><strong>Vehicle:</strong> ${shipment.vehicleInfo || 'N/A'}</div>
-        <div style="margin-bottom: 4px;"><strong>Carrier:</strong> ${shipment.carrier}</div>
-        <div style="margin-bottom: 4px;"><strong>Route:</strong> ${shipment.origin} → ${shipment.destination}</div>
-        <div style="margin-bottom: 4px;"><strong>Progress:</strong> ${shipment.progress}%</div>
-        <div style="margin-bottom: 4px;"><strong>Speed:</strong> ${shipment.speed} mph</div>
-        <div style="margin-bottom: 4px;"><strong>ETA:</strong> ${shipment.eta}</div>
-        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-          <button onclick="window.parent.postMessage({type: 'selectShipment', id: '${shipment.id}'}, '*')" 
-                  style="background: ${getStatusColor(shipment.status)}; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
+                  <div class="popup-row"><strong>Status:</strong> \${shipment.status.replace('-', ' ').replace(/\\b\\w/g, l => l.toUpperCase())}</div>
+                  <div class="popup-row"><strong>Driver:</strong> \${shipment.driverName || 'N/A'}</div>
+                  <div class="popup-row"><strong>Phone:</strong> \${shipment.driverPhone || 'N/A'}</div>
+                  <div class="popup-row"><strong>Carrier:</strong> \${shipment.carrier}</div>
+                  <div class="popup-row"><strong>Route:</strong> \${shipment.origin} → \${shipment.destination}</div>
+                  <div class="popup-row"><strong>Progress:</strong> \${shipment.progress}%</div>
+                  <div class="popup-row"><strong>Speed:</strong> \${shipment.speed} mph</div>
+                  <div class="popup-row"><strong>ETA:</strong> \${shipment.eta}</div>
+                  \${shipment.temperature ? '<div class="popup-row"><strong>Temperature:</strong> ' + shipment.temperature + '°F</div>' : ''}
+                  <button class="popup-button" onclick="selectShipment('\${shipment.id}')">
             Track This Load
           </button>
         </div>
-      </div>
-    `
+              \`;
 
-    // Add marker
-    const marker = L.marker(shipment.currentLocation, { icon: customIcon })
-      .addTo(mapInstanceRef.current)
-      .bindPopup(popupContent)
-      .on('click', () => onSelectShipment(shipment.id))
-
-    markersRef.current[shipment.id] = marker
+              marker.bindPopup(popupContent);
+              markers.push(marker);
 
     // Add route if enabled
-    if (showRoutes) {
+              if (${showRoutes} && shipment.originCoords && shipment.destCoords) {
       const route = L.polyline([
         shipment.originCoords,
         shipment.currentLocation,
         shipment.destCoords
       ], {
-        color: getStatusColor(shipment.status),
+                  color: color,
         weight: 3,
         opacity: 0.6,
         dashArray: shipment.status === 'in-transit' ? '10, 10' : null
-      }).addTo(mapInstanceRef.current)
+                }).addTo(map);
+                routes.push(route);
 
-      routesRef.current[shipment.id] = route
-    }
-
-    // Add origin marker
+                // Add origin and destination markers
     L.circleMarker(shipment.originCoords, {
-      radius: 8,
+                  radius: 6,
       fillColor: '#10b981',
       color: 'white',
       weight: 2,
       fillOpacity: 1
-    }).addTo(mapInstanceRef.current)
-      .bindPopup(`<div style="font-weight: bold;">Origin</div><div>${shipment.origin}</div>`)
+                }).addTo(map).bindPopup(\`<strong>Origin:</strong> \${shipment.origin}\`);
 
-    // Add destination marker
     L.circleMarker(shipment.destCoords, {
-      radius: 8,
+                  radius: 6,
       fillColor: '#ef4444',
       color: 'white',
       weight: 2,
       fillOpacity: 1
-    }).addTo(mapInstanceRef.current)
-      .bindPopup(`<div style="font-weight: bold;">Destination</div><div>${shipment.destination}</div>`)
-  }, [getStatusColor, onSelectShipment])
+                }).addTo(map).bindPopup(\`<strong>Destination:</strong> \${shipment.destination}\`);
+              }
+            }
 
-  // Handle center map
+            function addClusterMarker(cluster) {
+              const iconHtml = \`
+                <div class="cluster-marker">
+                  \${cluster.shipments.length}
+                </div>
+              \`;
+
+              const icon = L.divIcon({
+                html: iconHtml,
+                iconSize: [40, 40],
+                className: 'custom-marker'
+              });
+
+              const marker = L.marker([cluster.position[0], cluster.position[1]], { icon })
+                .addTo(map);
+
+              const popupContent = \`
+                <div class="shipment-popup">
+                  <div class="popup-header">Shipment Cluster</div>
+                  <div class="popup-row"><strong>Shipments:</strong> \${cluster.shipments.length}</div>
+                  <div style="max-height: 200px; overflow-y: auto; margin-top: 8px;">
+                    \${cluster.shipments.map(s => \`
+                      <div style="border-bottom: 1px solid #eee; padding: 4px 0;">
+                        <strong>\${s.id}</strong> - \${s.status}<br>
+                        <small>\${s.origin} → \${s.destination}</small>
+                      </div>
+                    \`).join('')}
+                  </div>
+                </div>
+              \`;
+
+              marker.bindPopup(popupContent);
+              markers.push(marker);
+            }
+
+            function selectShipment(shipmentId) {
+              window.parent.postMessage({
+                type: 'shipmentSelected',
+                shipmentId: shipmentId
+              }, '*');
+            }
+
+            // Initialize map when DOM is ready
+            document.addEventListener('DOMContentLoaded', initMap);
+          </script>
+        </body>
+      </html>
+    `;
+  }, [shipments, selectedShipment, autoTracking, showRoutes, mapFeatures]);
+
+  // Center map function
   const centerMap = useCallback(() => {
-    if (mapInstanceRef.current && memoizedShipments.length > 0) {
-      import('leaflet').then((L) => {
-        const bounds = L.latLngBounds(memoizedShipments.map((s: Shipment) => s.currentLocation))
-        mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] })
-      })
+    if (mapRef.current && selectedShipment) {
+      const shipment = debouncedShipments.find((s: Shipment) => s.id === selectedShipment)
+      if (shipment) {
+        // Send message to iframe to center map
+        const iframe = mapRef.current.querySelector('iframe') as HTMLIFrameElement
+        if (iframe?.contentWindow) {
+          iframe.contentWindow.postMessage({
+            type: 'centerMap',
+            location: shipment.currentLocation
+          }, '*')
+        }
+      }
     }
-  }, [memoizedShipments])
+  }, [debouncedShipments, selectedShipment])
 
-  // Listen for messages from popup
+  // Handle messages from iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === 'selectShipment') {
-        onSelectShipment(event.data.id)
+      if (event.data.type === 'shipmentSelected') {
+        onSelectShipment(event.data.shipmentId)
       }
     }
 
@@ -309,7 +425,17 @@ export default React.memo(function LiveTrackingMap({
           height: '100%',
           position: 'relative'
         }} 
-      />
+      >
+        <iframe
+          style={{ 
+            width: '100%', 
+            height: '100%',
+            border: 'none'
+          }}
+          srcDoc={mapHTML}
+          title="Live Tracking Map"
+        />
+      </div>
       
       {/* Center Map Button */}
       <button

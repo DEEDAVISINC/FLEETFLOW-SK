@@ -1,4 +1,5 @@
 import './globals.css'
+import 'leaflet/dist/leaflet.css'
 import Navigation from './components/Navigation'
 import { LoadProvider } from './contexts/LoadContext'
 import { ShipperProvider } from './contexts/ShipperContext'

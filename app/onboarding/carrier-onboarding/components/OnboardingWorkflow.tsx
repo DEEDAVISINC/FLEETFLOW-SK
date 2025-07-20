@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FMCSAVerification } from './FMCSAVerification';
-import { DocumentUpload } from './DocumentUpload';
+import { DocumentUploadEnhanced } from './DocumentUploadEnhanced';
 import { FactoringSetup } from './FactoringSetup';
 import { AgreementSigning } from './AgreementSigning';
 import { PortalSetup } from './PortalSetup';
@@ -53,8 +53,8 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
     },
     {
       id: 'documents',
-      title: 'Document Upload',
-      description: 'Upload required insurance and legal documents',
+      title: 'Document Upload & Verification',
+      description: 'Automated upload, verification, and processing of required documents',
       completed: false,
       current: false,
       icon: '📄'
@@ -78,7 +78,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
     {
       id: 'portal',
       title: 'Portal Access',
-      description: 'Setup driver portal access and permissions',
+      description: 'Setup driver management portal access and permissions',
       completed: false,
       current: false,
       icon: '👤'
@@ -173,7 +173,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
         );
       case 1:
         return (
-          <DocumentUpload
+          <DocumentUploadEnhanced
             onDocumentUploaded={(doc: any) => {
               // Update workflow data with document info
               const currentDocs = workflowData.documents || [];
@@ -184,6 +184,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
             }}
             onNext={handleNext}
             onBack={handleBack}
+            carrierData={workflowData.verification}
           />
         );
       case 2:

@@ -207,6 +207,119 @@ const mockShippers: Shipper[] = [
     totalRevenue: 1340000,
     averageRate: 20000,
     notes: 'High-value loads require additional insurance'
+  },
+  {
+    id: 'shipper-004',
+    companyName: 'Automotive Parts Express',
+    taxId: '33-4567890',
+    contacts: [
+      {
+        id: 'contact-004',
+        name: 'Lisa Thompson',
+        email: 'lisa.t@autopartsexpress.com',
+        phone: '(555) 654-3210',
+        title: 'Logistics Coordinator',
+        isPrimary: true
+      }
+    ],
+    locations: [
+      {
+        id: 'loc-004',
+        name: 'Main Warehouse',
+        address: '321 Auto Parts Blvd',
+        city: 'Detroit',
+        state: 'MI',
+        zip: '48201',
+        contactName: 'Lisa Thompson',
+        contactPhone: '(555) 654-3210',
+        operatingHours: 'Mon-Fri 6AM-8PM, Sat 8AM-4PM',
+        specialInstructions: 'Heavy equipment available for loading, dock 3-7'
+      }
+    ],
+    commodities: [
+      {
+        name: 'Automotive Parts',
+        freightClass: '70',
+        description: 'Engine parts, transmissions, and automotive components',
+        hazmat: false,
+        temperature: 'ambient'
+      },
+      {
+        name: 'Heavy Machinery',
+        freightClass: '150',
+        description: 'Large automotive assembly equipment',
+        hazmat: false,
+        temperature: 'ambient',
+        specialHandling: ['oversized', 'heavy_lift']
+      }
+    ],
+    paymentTerms: 'Net 30',
+    creditLimit: 400000,
+    creditRating: 'A',
+    preferredLanes: ['Detroit-Chicago', 'Detroit-Atlanta', 'Detroit-Dallas'],
+    loadRequests: [],
+    assignedBrokerId: 'broker-js001',
+    assignedBrokerName: 'John Smith',
+    status: 'active',
+    joinDate: '2023-09-15',
+    lastActivity: '2024-12-26',
+    totalLoads: 112,
+    totalRevenue: 1680000,
+    averageRate: 15000,
+    notes: 'Regular weekly shipments, prefers flatbed equipment'
+  },
+  {
+    id: 'shipper-005',
+    companyName: 'Pharmaceutical Supply Co',
+    taxId: '77-1234567',
+    contacts: [
+      {
+        id: 'contact-005',
+        name: 'Dr. Robert Chen',
+        email: 'robert.chen@pharmasupply.com',
+        phone: '(555) 789-0123',
+        title: 'Supply Chain Director',
+        isPrimary: true
+      }
+    ],
+    locations: [
+      {
+        id: 'loc-005',
+        name: 'Pharmaceutical Distribution Center',
+        address: '555 Medical Center Drive',
+        city: 'Boston',
+        state: 'MA',
+        zip: '02101',
+        contactName: 'Dr. Robert Chen',
+        contactPhone: '(555) 789-0123',
+        operatingHours: 'Mon-Fri 8AM-6PM',
+        specialInstructions: 'Temperature-controlled environment required, security clearance needed'
+      }
+    ],
+    commodities: [
+      {
+        name: 'Pharmaceutical Products',
+        freightClass: '60',
+        description: 'Prescription medications and medical supplies',
+        hazmat: false,
+        temperature: 'refrigerated',
+        specialHandling: ['temperature_controlled', 'time_sensitive', 'high_security']
+      }
+    ],
+    paymentTerms: 'Net 15',
+    creditLimit: 1000000,
+    creditRating: 'A',
+    preferredLanes: ['Boston-New York', 'Boston-Washington DC', 'Boston-Miami'],
+    loadRequests: [],
+    assignedBrokerId: 'broker-js001',
+    assignedBrokerName: 'John Smith',
+    status: 'active',
+    joinDate: '2023-07-22',
+    lastActivity: '2024-12-27',
+    totalLoads: 78,
+    totalRevenue: 2340000,
+    averageRate: 30000,
+    notes: 'Critical medical supplies - highest priority shipping required'
   }
 ];
 

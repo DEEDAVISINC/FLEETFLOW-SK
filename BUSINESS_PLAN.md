@@ -438,6 +438,9 @@ FleetFlow's unique advantage lies in its comprehensive integration of core TMS f
 - **Role-Based Access**: Appropriate information for each user type
 - **Customizable Dashboards**: Personalized views for different roles
 - **Comprehensive Reporting**: Professional documentation for audits
+- **Enhanced Carrier Portal**: Modern 3D glass morphism design with improved visibility and professional presentation
+- **Visual Design Innovation**: Multi-layered gradients, color-coded KPIs, and floating accent elements
+- **Advanced Search Capabilities**: Enhanced search functionality with real-time filtering and improved readability
 
 ### **Market Positioning**
 

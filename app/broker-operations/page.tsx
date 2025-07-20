@@ -5,6 +5,9 @@ import { rfxResponseService } from '../services/RFxResponseService';
 import RFxResponseDashboard from '../components/RFxResponseDashboard';
 import LiveMarketIntelligence from '../components/LiveMarketIntelligence';
 import { FreightClassCalculator } from '../components/FreightClassCalculator';
+import EDIWorkflowService from '../services/EDIWorkflowService';
+import { Tooltip, InfoTooltip } from '../components/ui/tooltip';
+import { getTooltipContent } from '../utils/tooltipContent';
 
 interface LoadPosting {
   id: string;
@@ -241,13 +244,13 @@ const BrokerOperationsPage: React.FC = () => {
     return icons[type as keyof typeof icons] || '📄';
   };
 
-  const createLoad = () => {
+  const createLoad = async () => {
     if (!newLoad.origin || !newLoad.destination || !newLoad.pickupDate || !newLoad.rate) {
       alert('Please fill in all required fields');
       return;
     }
 
-    const load: LoadPosting = {
+    const loadData: LoadPosting = {
       id: `LD${String(loads.length + 1).padStart(3, '0')}`,
       type: newLoad.type || 'FTL',
       origin: newLoad.origin,
@@ -272,7 +275,16 @@ const BrokerOperationsPage: React.FC = () => {
       }
     };
 
-    setLoads([load, ...loads]);
+    // Automatically enrich load with EDI identifiers and validation
+    // This happens internally - users don't see EDI complexity
+    const ediResult = await EDIWorkflowService.processWorkflow({
+      type: 'load_posting',
+      data: loadData,
+      userId: user.name,
+      timestamp: new Date()
+    });
+    
+    setLoads([ediResult.enrichedData, ...loads]);
     setNewLoad({
       type: 'FTL',
       status: 'posted',
@@ -394,9 +406,9 @@ const BrokerOperationsPage: React.FC = () => {
               onClick={() => setActiveTab(tab.key as any)}
               style={{
                 background: activeTab === tab.key
-                  ? 'rgba(255, 255, 255, 0.25)'
+                  ? 'linear-gradient(135deg, #f97316, #ea580c)'
                   : 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
+                color: activeTab === tab.key ? 'white' : 'rgba(255, 255, 255, 0.8)',
                 border: activeTab === tab.key
                   ? '2px solid rgba(255, 255, 255, 0.4)'
                   : '1px solid rgba(255, 255, 255, 0.2)',
@@ -544,7 +556,7 @@ const BrokerOperationsPage: React.FC = () => {
                 <button 
                   onClick={() => setActiveTab('rfx')}
                   style={{
-                    background: 'linear-gradient(135deg, #e11d48, #be185d)',
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '12px',
@@ -561,7 +573,7 @@ const BrokerOperationsPage: React.FC = () => {
                 <button 
                   onClick={() => setActiveTab('shippers')}
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '12px',
@@ -578,7 +590,7 @@ const BrokerOperationsPage: React.FC = () => {
                 <button 
                   onClick={() => setActiveTab('analytics')}
                   style={{
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '12px',
@@ -794,14 +806,15 @@ const BrokerOperationsPage: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Loadboard Header */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(255, 255, 255, 0.25)',
+              backdropFilter: 'blur(15px)',
               borderRadius: '16px',
               padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <div>
                 <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'white', margin: 0 }}>
@@ -815,7 +828,7 @@ const BrokerOperationsPage: React.FC = () => {
                 onClick={() => setShowLoadForm(!showLoadForm)}
                 style={{
                   padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
@@ -831,18 +844,19 @@ const BrokerOperationsPage: React.FC = () => {
             {/* Load Posting Form */}
             {showLoadForm && (
               <div style={{
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(15px)',
                 borderRadius: '16px',
                 padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
               }}>
-                <h3 style={{ color: 'white', marginBottom: '20px', fontSize: '18px' }}>📝 Post New Load</h3>
+                <h3 style={{ color: '#1f2937', marginBottom: '20px', fontSize: '18px', fontWeight: '600' }}>📝 Post New Load</h3>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '20px' }}>
                   {/* Load Type */}
                   <div>
-                    <label style={{ color: 'white', display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '600' }}>
+                    <label style={{ color: '#1f2937', display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '600' }}>
                       Load Type *
                     </label>
                     <select
@@ -1191,13 +1205,14 @@ const BrokerOperationsPage: React.FC = () => {
 
             {/* Active Loads Display */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(255, 255, 255, 0.25)',
+              backdropFilter: 'blur(15px)',
               borderRadius: '16px',
               padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ color: 'white', marginBottom: '20px', fontSize: '18px' }}>
+              <h3 style={{ color: '#1f2937', marginBottom: '20px', fontSize: '18px', fontWeight: '600' }}>
                 📋 Active Loads ({loads.length})
               </h3>
 
@@ -1210,15 +1225,17 @@ const BrokerOperationsPage: React.FC = () => {
                 <div style={{ display: 'grid', gap: '16px' }}>
                   {loads.map((load) => (
                     <div key={load.id} style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.9)',
                       borderRadius: '12px',
                       padding: '20px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                      border: '1px solid rgba(255, 255, 255, 0.4)',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+                      backdropFilter: 'blur(10px)'
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                            <h4 style={{ color: 'white', margin: 0, fontSize: '16px', fontWeight: '600' }}>
+                            <h4 style={{ color: '#1f2937', margin: 0, fontSize: '16px', fontWeight: '600' }}>
                               {load.id} - {load.type}
                             </h4>
                             <div style={{
@@ -1232,35 +1249,35 @@ const BrokerOperationsPage: React.FC = () => {
                               {load.status.toUpperCase()}
                             </div>
                           </div>
-                          <div style={{ color: 'rgba(255, 255, 255, 0.9)', marginBottom: '8px', fontSize: '14px' }}>
+                          <div style={{ color: '#374151', marginBottom: '8px', fontSize: '14px' }}>
                             🏁 {load.origin.city}, {load.origin.state} → {load.destination.city}, {load.destination.state}
                           </div>
-                          <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px', marginBottom: '8px' }}>
+                          <div style={{ color: '#6b7280', fontSize: '13px', marginBottom: '8px' }}>
                             📅 Pickup: {load.pickupDate} | Delivery: {load.deliveryDate}
                           </div>
                           {load.weight && (
-                            <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px' }}>
+                            <div style={{ color: '#6b7280', fontSize: '13px' }}>
                               ⚖️ {load.weight} lbs
                               {load.pallets && ` | 📦 ${load.pallets} pallets`}
                               {load.freightClass && ` | Class ${load.freightClass}`}
                             </div>
                           )}
                           {load.equipment && (
-                            <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px' }}>
+                            <div style={{ color: '#6b7280', fontSize: '13px' }}>
                               🚛 {load.equipment}
                             </div>
                           )}
                           {load.specialInstructions && (
-                            <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px', marginTop: '4px' }}>
+                            <div style={{ color: '#dc2626', fontSize: '13px', marginTop: '4px', fontWeight: '500' }}>
                               ⚠️ {load.specialInstructions}
                             </div>
                           )}
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ color: '#10b981', fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
+                          <div style={{ color: '#059669', fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
                             {formatCurrency(load.rate)}
                           </div>
-                          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                          <div style={{ color: '#6b7280', fontSize: '12px' }}>
                             Posted by {load.postedBy}
                           </div>
                         </div>
@@ -1269,35 +1286,47 @@ const BrokerOperationsPage: React.FC = () => {
                       {/* Dispatcher Assignment */}
                       {load.status === 'posted' && (
                         <div style={{
-                          background: 'rgba(255, 255, 255, 0.1)',
+                          background: 'rgba(255, 255, 255, 0.7)',
                           borderRadius: '8px',
                           padding: '16px',
-                          marginTop: '16px'
+                          marginTop: '16px',
+                          border: '1px solid rgba(0, 0, 0, 0.1)'
                         }}>
-                          <h5 style={{ color: 'white', margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600' }}>
+                          <h5 style={{ color: '#1f2937', margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600' }}>
                             👥 Assign Dispatcher
                           </h5>
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                             {dispatchers.map((dispatcher) => (
                               <div key={dispatcher.id} style={{
-                                background: 'rgba(255, 255, 255, 0.1)',
+                                background: 'rgba(255, 255, 255, 0.8)',
                                 borderRadius: '6px',
                                 padding: '12px',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                cursor: 'pointer'
+                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
                               }}
                               onClick={() => assignDispatcher(load.id, dispatcher.id)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = 'none';
+                              }}
                               >
-                                <div style={{ color: 'white', fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>
+                                <div style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>
                                   {dispatcher.name}
                                 </div>
-                                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', marginBottom: '4px' }}>
+                                <div style={{ color: '#374151', fontSize: '12px', marginBottom: '4px' }}>
                                   {dispatcher.region} | ⭐ {dispatcher.rating}
                                 </div>
-                                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '11px' }}>
+                                <div style={{ color: '#6b7280', fontSize: '11px' }}>
                                   {dispatcher.activeLoads} active loads
                                 </div>
-                                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '11px' }}>
+                                <div style={{ color: '#6b7280', fontSize: '11px' }}>
                                   Specialties: {dispatcher.specialties.join(', ')}
                                 </div>
                               </div>
@@ -1309,17 +1338,17 @@ const BrokerOperationsPage: React.FC = () => {
                       {/* Assigned Dispatcher Info */}
                       {load.assignedDispatcher && (
                         <div style={{
-                          background: 'rgba(16, 185, 129, 0.2)',
+                          background: 'rgba(16, 185, 129, 0.15)',
                           border: '1px solid #10b981',
                           borderRadius: '8px',
                           padding: '12px',
                           marginTop: '16px'
                         }}>
-                          <div style={{ color: '#10b981', fontWeight: '600', fontSize: '14px' }}>
+                          <div style={{ color: '#065f46', fontWeight: '600', fontSize: '14px' }}>
                             ✅ Assigned to: {load.assignedDispatcher}
                           </div>
                           {load.assignedCarrier && (
-                            <div style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '13px', marginTop: '4px' }}>
+                            <div style={{ color: '#374151', fontSize: '13px', marginTop: '4px' }}>
                               🚛 Carrier: {load.assignedCarrier}
                             </div>
                           )}

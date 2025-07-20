@@ -1,5 +1,6 @@
 'use client'
-    { href: '/notes', bg: 'linear-gradient(135deg, #fef3c7, #fbbf24)', emoji: '🔔', title: 'Notification Hub', color: '#2d3748' },import Link from 'next/link'
+
+import Link from 'next/link'
 
 export default function HomePage() {
   const quickLinks = [
@@ -10,7 +11,7 @@ export default function HomePage() {
     { href: '/routes', bg: 'linear-gradient(135deg, #14b8a6, #0d9488)', emoji: '🗺️', title: 'Route Optimization', color: 'white' },
     { href: '/analytics', bg: 'linear-gradient(135deg, #6366f1, #4f46e5)', emoji: '📊', title: 'Analytics', color: 'white' },
     { href: '/accounting', bg: 'linear-gradient(135deg, #059669, #047857)', emoji: '💰', title: 'Accounting', color: 'white' },
-    { href: '/notes', bg: 'linear-gradient(135deg, #fef3c7, #fbbf24)', emoji: '�', title: 'Notification Hub', color: '#2d3748' },
+    { href: '/notes', bg: 'linear-gradient(135deg, #fef3c7, #fbbf24)', emoji: '🔔', title: 'Notification Hub', color: '#2d3748' },
     { href: '/quoting', bg: 'linear-gradient(135deg, #10b981, #059669)', emoji: '💰', title: 'Freight Quoting', color: 'white' },
     { href: '/compliance', bg: 'linear-gradient(135deg, #dc2626, #b91c1c)', emoji: '✅', title: 'Compliance', color: 'white' },
     { href: '/shippers', bg: 'linear-gradient(135deg, #667eea, #764ba2)', emoji: '🏢', title: 'Shipper Portfolio', color: 'white' },
@@ -30,11 +31,8 @@ export default function HomePage() {
       minHeight: '100vh',
       padding: '80px 20px 20px 20px'
     }}>
-      
-      <main style={{
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
+      <main style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        
         {/* Welcome Header */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.15)',
@@ -99,37 +97,27 @@ export default function HomePage() {
           }}>
             {quickLinks.map((link, index) => (
               <Link key={index} href={link.href} style={{ textDecoration: 'none' }}>
-                <div 
-                  style={{
-                    background: link.bg,
-                    borderRadius: '10px',
-                    padding: '16px 14px',
-                    color: link.color,
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    height: '80px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    backdropFilter: 'blur(5px)'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)'
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.25)'
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <div style={{ fontSize: '28px', textAlign: 'center' }}>{link.emoji}</div>
+                <div style={{
+                  background: link.bg,
+                  borderRadius: '10px',
+                  padding: '16px 14px',
+                  color: link.color,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  height: '80px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  backdropFilter: 'blur(5px)',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '28px' }}>{link.emoji}</div>
                   <h3 style={{ 
                     fontSize: '14px', 
                     fontWeight: '600', 
-                    margin: 0, 
-                    textAlign: 'center',
+                    margin: 0,
                     textShadow: link.color === 'white' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
                   }}>
                     {link.title}
@@ -140,7 +128,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* General Load Board */}
+        {/* Load Board */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
@@ -160,7 +148,6 @@ export default function HomePage() {
             📋 Available Loads - General Load Board
           </h2>
           
-          {/* Load Board Header */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: '1fr 2fr 2fr 1fr 1fr 1fr 120px',
@@ -182,14 +169,10 @@ export default function HomePage() {
             <div>Status</div>
           </div>
 
-          {/* Load Board Rows */}
           {[
             { id: 'LD-2024-001', origin: 'Los Angeles, CA', dest: 'Chicago, IL', rate: '$3,450', miles: '2,015', pickup: 'Jan 15', status: 'Available', statusColor: '#22c55e' },
             { id: 'LD-2024-002', origin: 'Houston, TX', dest: 'Atlanta, GA', rate: '$2,180', miles: '789', pickup: 'Jan 16', status: 'Assigned', statusColor: '#3b82f6' },
-            { id: 'LD-2024-003', origin: 'Phoenix, AZ', dest: 'Denver, CO', rate: '$1,950', miles: '602', pickup: 'Jan 17', status: 'Available', statusColor: '#22c55e' },
-            { id: 'LD-2024-004', origin: 'Miami, FL', dest: 'New York, NY', rate: '$2,890', miles: '1,095', pickup: 'Jan 18', status: 'In Transit', statusColor: '#f59e0b' },
-            { id: 'LD-2024-005', origin: 'Seattle, WA', dest: 'Portland, OR', rate: '$750', miles: '173', pickup: 'Jan 19', status: 'Available', statusColor: '#22c55e' },
-            { id: 'LD-2024-006', origin: 'Dallas, TX', dest: 'Kansas City, MO', rate: '$1,450', miles: '460', pickup: 'Jan 20', status: 'Pending', statusColor: '#8b5cf6' }
+            { id: 'LD-2024-003', origin: 'Phoenix, AZ', dest: 'Denver, CO', rate: '$1,950', miles: '602', pickup: 'Jan 17', status: 'Available', statusColor: '#22c55e' }
           ].map((load, index) => (
             <div key={index} style={{
               display: 'grid',
@@ -201,20 +184,8 @@ export default function HomePage() {
               marginBottom: '8px',
               fontSize: '14px',
               color: '#1f2937',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 1)'
-              e.currentTarget.style.transform = 'translateY(-2px)'
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)'
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = 'none'
-            }}
-            >
+              cursor: 'pointer'
+            }}>
               <div style={{ fontWeight: '600', color: '#3b82f6' }}>{load.id}</div>
               <div>📍 {load.origin}</div>
               <div>🎯 {load.dest}</div>
@@ -236,7 +207,6 @@ export default function HomePage() {
             </div>
           ))}
 
-          {/* Load Board Footer */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -247,7 +217,7 @@ export default function HomePage() {
             borderRadius: '8px'
           }}>
             <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-              📊 Showing 6 of 24 available loads
+              📊 Showing 3 of 24 available loads
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <Link href="/dispatch" style={{ textDecoration: 'none' }}>
@@ -259,8 +229,7 @@ export default function HomePage() {
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  cursor: 'pointer'
                 }}>
                   📋 View All Loads
                 </button>
@@ -274,8 +243,7 @@ export default function HomePage() {
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  cursor: 'pointer'
                 }}>
                   🚛 Find Drivers
                 </button>
@@ -284,7 +252,157 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Quick Stats Dashboard */}
+        {/* Quick Brief Section - Fleet Resources */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '32px',
+          marginBottom: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            color: 'white',
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            ⚡ Quick Brief - Fleet Resources
+          </h2>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px'
+          }}>
+            {/* Available Vehicles */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#14b8a6',
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🚚 Available Vehicles (8)
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { id: 'TRK-001', type: 'Freightliner Cascadia', location: 'Atlanta, GA' },
+                  { id: 'TRK-005', type: 'Kenworth T680', location: 'Houston, TX' },
+                  { id: 'TRK-012', type: 'Volvo VNL', location: 'Phoenix, AZ' }
+                ].map((vehicle, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    background: 'rgba(20, 184, 166, 0.1)',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}>
+                    <span style={{ fontWeight: '600', color: '#0f766e' }}>{vehicle.id}</span>
+                    <span style={{ color: '#374151', fontSize: '12px' }}>{vehicle.location}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Available Drivers */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#f59e0b',
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                👨‍💼 Available Drivers (5)
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { name: 'John Martinez', cdl: 'Class A', hours: '8h available' },
+                  { name: 'Sarah Johnson', cdl: 'Class A', hours: '10h available' },
+                  { name: 'Mike Thompson', cdl: 'Class A', hours: '7h available' }
+                ].map((driver, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}>
+                    <span style={{ fontWeight: '600', color: '#d97706' }}>{driver.name}</span>
+                    <span style={{ color: '#374151', fontSize: '12px' }}>{driver.hours}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Equipment Status */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#8b5cf6',
+                margin: '0 0 16px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🔧 Equipment Status
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { type: 'Dry Van Trailers', available: '12', total: '15' },
+                  { type: 'Refrigerated Units', available: '4', total: '6' },
+                  { type: 'Flatbed Trailers', available: '3', total: '4' }
+                ].map((equipment, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}>
+                    <span style={{ fontWeight: '600', color: '#7c3aed' }}>{equipment.type}</span>
+                    <span style={{ color: '#374151', fontSize: '12px' }}>{equipment.available}/{equipment.total}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Dashboard Stats */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
@@ -318,18 +436,7 @@ export default function HomePage() {
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)'
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 1)'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)'
-              }}
-              >
+              }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <p style={{ 
@@ -363,7 +470,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Footer Info */}
+        {/* Footer */}
         <div style={{
           textAlign: 'center',
           marginTop: '32px',

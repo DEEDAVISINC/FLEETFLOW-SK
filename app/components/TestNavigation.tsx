@@ -181,7 +181,7 @@ export default function TestNavigation() {
                 fontSize: '0.9rem', 
                 fontWeight: '500' 
               }}>
-                👥 Enhanced Driver Portal
+                👥 Enhanced Driver Management Portal
               </Link>
               <Link href="/onboarding/carrier-onboarding" onClick={handleDropdownClose} style={{ 
                 display: 'block', 

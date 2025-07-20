@@ -64,9 +64,14 @@ export default function BrokerManagementPage() {
                 onClick={() => setSelectedTab(tab.id as any)}
                 className={`flex items-center space-x-2 px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                   selectedTab === tab.id
-                    ? 'bg-white text-orange-600 shadow-lg'
+                    ? 'text-white shadow-lg'
                     : 'text-white hover:bg-white/20'
                 }`}
+                style={{
+                  background: selectedTab === tab.id 
+                    ? 'linear-gradient(135deg, #f97316, #ea580c)' 
+                    : 'transparent'
+                }}
               >
                 <span className="text-lg">{tab.icon}</span>
                 <span>{tab.label}</span>

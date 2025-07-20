@@ -109,13 +109,17 @@ interface DriverPortalProfile {
 
 ### Enhanced Carrier Portal
 - **Location**: `/carriers/enhanced-portal`
+- **Visual Design**: Modern 3D glass morphism interface with darker green gradient background, enhanced visibility, and professional styling
 - **Features**:
-  - View all onboarded carriers
-  - Search and filter capabilities
-  - Carrier details modal
-  - Performance metrics
-  - Status management
-  - Portal access tracking
+  - View all onboarded carriers with enhanced visual presentation
+  - Advanced search and filter capabilities with improved readability
+  - Carrier details modal with comprehensive information display
+  - Performance metrics with color-coded KPI cards and accent borders
+  - Status management with visual status indicators
+  - Portal access tracking with workflow progress visualization
+  - Onboarding pipeline progress with enhanced carrier information cards
+  - Multi-layered background with subtle textures and floating accent elements
+  - Responsive design optimized for professional use
 
 ### Enhanced Driver Portal
 - **Location**: `/drivers/enhanced-portal`

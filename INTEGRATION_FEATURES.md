@@ -158,7 +158,6 @@ const TWILIO_PHONE_NUMBER = 'your_twilio_number'
 
 #### In-App Notifications:
 1. Implement WebSocket connection for real-time updates
-2. Configure push notification service (Firebase, OneSignal)
 3. Update notification handlers in the app
 
 ## 🔧 Backend Integration Requirements
@@ -240,7 +239,6 @@ REDIS_URL=your_redis_connection
 - [ ] Google Maps JavaScript API (enabled and configured)
 - [ ] FMCSA Web Services account
 - [ ] SMS provider (Twilio/AWS SNS)
-- [ ] Push notification service (Firebase/OneSignal)  
 - [ ] Database (PostgreSQL recommended)
 - [ ] Redis (for caching and real-time features)
 - [ ] WebSocket server (for real-time notifications)

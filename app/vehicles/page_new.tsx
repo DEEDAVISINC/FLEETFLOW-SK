@@ -128,7 +128,12 @@ export default function VehiclesPage() {
                   <p className="text-green-100 text-lg">Monitor and manage your entire fleet</p>
                 </div>
               </div>
-              <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 border border-white/20 hover:border-white/40">
+              <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 border border-white/20 hover:border-white/40"
+                style={{ 
+                  background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                  border: 'none'
+                }}
+              >
                 + Add Vehicle
               </button>
             </div>
@@ -312,10 +317,20 @@ export default function VehiclesPage() {
                   </div>
                   
                   <div className="flex space-x-3 mt-6">
-                    <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 transform hover:-translate-y-0.5">
+                    <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-all duration-300 transform hover:-translate-y-0.5"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                        color: 'white'
+                      }}
+                    >
                       View Details
                     </button>
-                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-all duration-300">
+                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-all duration-300"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                        color: 'white'
+                      }}
+                    >
                       Edit
                     </button>
                   </div>

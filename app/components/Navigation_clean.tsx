@@ -37,6 +37,7 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
     { id: 'broker', label: 'Broker Box', href: '/broker' },
     { id: 'quoting', label: 'Freight Quoting', href: '/quoting' },
     { id: 'carriers', label: 'Carrier Portal', href: '/carriers' },
+    { id: 'user-management', label: '👥 Digital Rolodex', href: '/user-management' },
   ]
 
   const fleetItems = [
@@ -48,6 +49,7 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
   ]
 
   const managementItems = [
+    { id: 'user-management', label: 'User Management', href: '/user-management', icon: '👥' },
     { id: 'financials', label: 'Financials', href: '/financials', icon: '💰' },
     { id: 'ai', label: 'AI Dashboard', href: '/ai', icon: '🤖' },
     { id: 'broker-management', label: 'Broker Management', href: '/broker-management', icon: '🏢' },
@@ -78,16 +80,8 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
           <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('dashboard')}>
               {showLogo && (
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300 overflow-hidden">
-                  <img 
-                    src="/images/new fleetflow logo.png" 
-                    alt="FleetFlow Logo" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      // Fallback to old logo if new one fails
-                      e.currentTarget.src = "/images/fleet-flow-logo.png";
-                    }}
-                  />
+                <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300 text-white text-2xl">
+                  🚛
                 </div>
               )}
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent group-hover:from-purple-600 group-hover:via-blue-600 group-hover:to-indigo-700 transition-all duration-300">
@@ -299,61 +293,71 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
               )}
             </div>
 
-            {/* Management Dashboard Dropdown - Restricted Access */}
-            {hasManagementAccess && (
-              <div className="relative">
-                <button
-                  className={`nav-item-2d flex items-center gap-2 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 text-red-700 hover:from-red-100 hover:to-orange-100 ${
-                    ['financials', 'ai', 'settings'].includes(activeTab) ? 'active' : ''
-                  }`}
-                  onClick={() => setIsManagementDropdownOpen(!isManagementDropdownOpen)}
-                  onBlur={() => setTimeout(() => setIsManagementDropdownOpen(false), 150)}
-                  title="Management Dashboard - Restricted Access"
+            {/* Management Dashboard Dropdown - Always Visible */}
+            <div className="relative">
+              <button
+                className={`nav-item-2d flex items-center gap-2 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 text-red-700 hover:from-red-100 hover:to-orange-100 ${
+                  ['user-management', 'financials', 'ai', 'settings'].includes(activeTab) ? 'active' : ''
+                }`}
+                onClick={() => {
+                  setIsManagementDropdownOpen(!isManagementDropdownOpen)
+                  // Close other dropdowns
+                  setIsFleetDropdownOpen(false)
+                  setIsResourcesDropdownOpen(false)
+                  setIsReportsDropdownOpen(false)
+                }}
+                onBlur={(e) => {
+                  setTimeout(() => {
+                    if (!e.currentTarget.parentElement?.contains(document.activeElement)) {
+                      setIsManagementDropdownOpen(false)
+                    }
+                  }, 150)
+                }}
+                title="Management Dashboard"
+              >
+                🔒 Management
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-300 ${isManagementDropdownOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
                 >
-                  🔒 Management
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-300 ${isManagementDropdownOpen ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                
-                {isManagementDropdownOpen && (
-                  <div 
-                    className="modal-2d absolute top-full left-0 mt-2 min-w-64 animate-fadeInUp border-red-200"
-                    style={{ 
-                      backgroundColor: 'white',
-                      border: '1px solid #fca5a5',
-                      boxShadow: '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                      zIndex: 999999
-                    }}
-                  >
-                    <div className="px-6 py-3 bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-200 rounded-t-xl">
-                      <span className="text-sm text-red-700 font-semibold flex items-center gap-2">
-                        🔒 RESTRICTED ACCESS
-                      </span>
-                    </div>
-                    {managementItems.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-50 last:rounded-b-lg transition-colors"
-                        onClick={() => {
-                          setActiveTab(item.id)
-                          setIsManagementDropdownOpen(false)
-                        }}
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        {item.label}
-                      </Link>
-                    ))}
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isManagementDropdownOpen && (
+                <div 
+                  className="modal-2d absolute top-full left-0 mt-2 min-w-64 animate-fadeInUp border-red-200"
+                  style={{ 
+                    backgroundColor: 'white',
+                    border: '1px solid #fca5a5',
+                    boxShadow: '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    zIndex: 999999
+                  }}
+                >
+                  <div className="px-6 py-3 bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-200 rounded-t-xl">
+                    <span className="text-sm text-red-700 font-semibold flex items-center gap-2">
+                      🔒 MANAGEMENT ACCESS
+                    </span>
                   </div>
-                )}
-              </div>
-            )}
+                  {managementItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-50 last:rounded-b-lg transition-colors"
+                      onClick={() => {
+                        setActiveTab(item.id)
+                        setIsManagementDropdownOpen(false)
+                      }}
+                    >
+                      <span className="text-lg">{item.icon}</span>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
             </div> {/* Close navigation items div */}
           </div> {/* Close right side container */}
 

@@ -1,0 +1,12 @@
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+
+# Existing API Keys (if you have them)
+NEXT_PUBLIC_FRED_API_KEY=your_fred_api_key_here
+NEXT_PUBLIC_ALPHA_VANTAGE_KEY=your_alpha_vantage_key_here
+NEXT_PUBLIC_EXCHANGE_RATE_API_KEY=your_exchange_rate_api_key_here
+
+# Other Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000 

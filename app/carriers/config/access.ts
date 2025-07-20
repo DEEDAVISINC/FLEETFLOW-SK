@@ -27,7 +27,7 @@ const mockUsers: User[] = [
     name: 'Broker User',
     email: 'broker@fleetflow.com',
     role: 'broker',
-    permissions: ['view_carriers', 'manage_carriers', 'view_onboarding', 'manage_onboarding']
+    permissions: ['view_carriers', 'manage_carriers', 'view_onboarding', 'manage_onboarding', 'canManageCarrierPortal']
   },
   {
     id: 'user_003',

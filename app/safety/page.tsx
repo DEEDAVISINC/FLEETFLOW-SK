@@ -121,7 +121,7 @@ export default function SafetyResourcesPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+      background: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
       paddingTop: '80px'
     }}>
       {/* Back Button */}
@@ -528,7 +528,7 @@ export default function SafetyResourcesPage() {
                     fontWeight: '700',
                     margin: '0 0 8px 0'
                   }}>
-                    🚛 Driver Portal Access
+                    🚛 Driver Management Portal
                   </h3>
                   <p style={{
                     color: 'rgba(255, 255, 255, 0.9)',
@@ -549,7 +549,7 @@ export default function SafetyResourcesPage() {
                       border: 'none',
                       transition: 'all 0.3s ease'
                     }}>
-                      Driver Portal
+                      Driver Management Portal
                     </button>
                   </Link>
                 </div>
@@ -699,8 +699,8 @@ export default function SafetyResourcesPage() {
                 <div>
                   <Link href="/maintenance" style={{ textDecoration: 'none' }}>
                     <button style={{
-                      background: 'white',
-                      color: '#d97706',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
                       padding: '12px 24px',
                       borderRadius: '12px',
                       fontWeight: '600',

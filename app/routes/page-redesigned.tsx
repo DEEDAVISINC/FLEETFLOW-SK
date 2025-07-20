@@ -68,9 +68,9 @@ export default function RoutesPageRedesigned() {
         {/* Navigation Tabs */}
         <div className="flex space-x-2 mb-8">
           {[
-            { id: 'dashboard', label: '📊 Overview', icon: '📊' },
-            { id: 'optimizer', label: '⚡ AI Optimizer', icon: '⚡' },
-            { id: 'analytics', label: '📈 Analytics', icon: '📈' }
+            { id: 'dashboard', label: 'Overview', icon: '📊' },
+            { id: 'optimizer', label: 'AI Optimizer', icon: '⚡' },
+            { id: 'analytics', label: 'Analytics', icon: '📈' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -236,11 +236,11 @@ export default function RoutesPageRedesigned() {
                   <p className="text-blue-100 text-sm">Optimize routes with advanced AI algorithms</p>
                 </button>
                 
-                <button className="p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <Link href="/tracking" className="p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1 block">
                   <div className="text-3xl mb-3">📍</div>
                   <h3 className="font-bold text-lg mb-2">Live Tracking</h3>
                   <p className="text-emerald-100 text-sm">Monitor all routes in real-time</p>
-                </button>
+                </Link>
                 
                 <button 
                   onClick={() => setActiveView('analytics')}

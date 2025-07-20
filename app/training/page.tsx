@@ -8,6 +8,8 @@ import CertificationSystem from '../components/CertificationSystem'
 import { dispatchQuizQuestions, brokerQuizQuestions, complianceQuizQuestions, smsWorkflowQuizQuestions } from '../data/quizQuestions'
 import { progressManager } from '../utils/trainingProgress'
 import { quizGenerator } from '../utils/quizGenerator'
+import { Tooltip, InfoTooltip } from '../components/ui/tooltip';
+import { getTooltipContent } from '../utils/tooltipContent';
 
 // User roles definition
 const USER_ROLES = {
@@ -27,7 +29,8 @@ const TRAINING_MODULES = {
   TECHNOLOGY: 'technology',
   CUSTOMER: 'customer',
   WORKFLOW: 'workflow',
-  SMS_WORKFLOW: 'sms-workflow'
+  SMS_WORKFLOW: 'sms-workflow',
+  AI_FLOW: 'ai-flow'
 } as const;
 
 export default function TrainingPage() {
@@ -290,13 +293,33 @@ export default function TrainingPage() {
         { type: 'demo', title: 'SMS Workflow Ecosystem Demo', url: '/sms-workflow', icon: '📱' },
         { type: 'interactive', title: 'Message Tracking & Logs', url: '/notes', icon: '📋' },
         { type: 'presentation', title: 'SMS Integration Architecture', url: '/sms-training', icon: '🏗️' },
-        { type: 'guide', title: 'Templates & Best Practices', url: '/sms-training', icon: '�' },
+        { type: 'guide', title: 'Templates & Best Practices', url: '/sms-training', icon: '📝' },
         { type: 'quiz', title: 'SMS System Knowledge Test', url: '#', icon: '🧠' }
+      ]
+    },
+    {
+      id: 'ai-flow',
+      title: '⚡ AI Flow Training',
+      category: 'AI Technology',
+      description: 'Master the Ultimate AI Freight Brokerage Platform with 8 AI agents and 14 free APIs',
+      duration: '3-4 hours',
+      level: 'Advanced',
+      color: 'rgba(59, 130, 246, 0.15)',
+      borderColor: 'rgba(59, 130, 246, 0.3)',
+      resources: [
+        { type: 'training', title: 'Complete AI Flow Training', url: '/training/ai-flow-training', icon: '🎓' },
+        { type: 'demo', title: 'AI Flow Dashboard Demo', url: '/ai-flow', icon: '🖥️' },
+        { type: 'interactive', title: 'AI Agent Management', url: '/ai-flow', icon: '🤖' },
+        { type: 'presentation', title: 'Free API Integration Guide', url: '/training/ai-flow-training', icon: '🔗' },
+        { type: 'guide', title: 'Voice Infrastructure Setup', url: '/training/ai-flow-training', icon: '📞' },
+        { type: 'document', title: 'Business Plan & ROI Analysis', url: '#', icon: '📊' },
+        { type: 'video', title: 'AI Flow Success Stories', url: '/training/ai-flow-training', icon: '🎥' },
+        { type: 'certification', title: 'AI Flow Certification Exam', url: '/training/ai-flow-training', icon: '🏆' }
       ]
     }
   ]
 
-  const categories = ['All', 'Operations', 'Compliance', 'Safety', 'Technology', 'Customer Relations', 'Communications']
+  const categories = ['All', 'Operations', 'Compliance', 'Safety', 'Technology', 'Customer Relations', 'Communications', 'AI Technology']
 
   // Filter modules based on user access and category
   const accessibleModules = trainingModules.filter(module => 
@@ -767,7 +790,7 @@ export default function TrainingPage() {
                   onClick={() => handleStartLesson(module.id, `lesson_${Date.now()}`)}
                   style={{
                     flex: 1,
-                    background: `linear-gradient(135deg, ${module.borderColor.replace('0.3', '0.8')}, ${module.borderColor.replace('0.3', '1')})`,
+                    background: 'linear-gradient(135deg, #a16207, #92400e)',
                     color: 'white',
                     border: 'none',
                     padding: '14px',

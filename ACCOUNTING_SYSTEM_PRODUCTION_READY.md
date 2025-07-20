@@ -115,7 +115,6 @@ The accounting system is now live and accessible at:
 ## 🎯 Next Steps (Optional Enhancements)
 
 ### Database Integration
-- Replace mock data with Supabase or Firebase
 - Add data persistence
 - Implement real-time synchronization
 

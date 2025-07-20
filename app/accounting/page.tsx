@@ -1385,11 +1385,11 @@ export default function AccountingPage() {
             <button
               onClick={() => setCurrentViewRole(currentViewRole === 'broker' ? 'dispatcher' : 'broker')}
               style={{
-                background: 'rgba(255, 255, 255, 0.2)',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+                border: 'none',
                 fontSize: '0.8rem',
                 fontWeight: 'bold',
                 cursor: 'pointer',
@@ -1397,12 +1397,12 @@ export default function AccountingPage() {
                 backdropFilter: 'blur(10px)'
               }}
               onMouseOver={(e) => {
-                (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.3)';
                 (e.target as HTMLElement).style.transform = 'translateY(-1px)';
+                (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
               }}
               onMouseOut={(e) => {
-                (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.2)';
                 (e.target as HTMLElement).style.transform = 'translateY(0)';
+                (e.target as HTMLElement).style.boxShadow = 'none';
               }}
             >
               🔄 Switch to {userRole === 'broker' ? 'Dispatcher' : 'Broker'} View
@@ -1445,7 +1445,7 @@ export default function AccountingPage() {
               onClick={() => setCurrentSection(section.id as any)}
               style={{
                 background: currentSection === section.id 
-                  ? 'rgba(255, 255, 255, 0.3)' 
+                  ? 'linear-gradient(135deg, #10b981, #059669)' 
                   : 'rgba(255, 255, 255, 0.1)',
                 color: 'white',
                 padding: '12px 20px',
@@ -1471,9 +1471,7 @@ export default function AccountingPage() {
               }}
             >
               <div>{section.label}</div>
-              <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-                {section.desc}
-              </div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>{section.desc}</div>
             </button>
           ))}
         </div>
@@ -1614,31 +1612,31 @@ export default function AccountingPage() {
             gap: '16px'
           }}>
             {[
-              { label: '📊 Generate Financial Report', color: '#3b82f6' },
-              { label: '💳 Process Settlements', color: '#059669' },
-              { label: '📋 Export Data', color: '#8b5cf6' },
-              { label: '⚙️ Accounting Settings', color: '#f59e0b' }
+              { label: '📊 Generate Financial Report', color: '#10b981' },
+              { label: '💳 Process Settlements', color: '#10b981' },
+              { label: '📋 Export Data', color: '#10b981' },
+              { label: '⚙️ Accounting Settings', color: '#10b981' }
             ].map((action, index) => (
               <button
                 key={index}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
                   color: 'white',
                   padding: '16px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  border: 'none',
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   fontSize: '1rem'
                 }}
                 onMouseOver={(e) => {
-                  (e.target as HTMLElement).style.background = action.color;
                   (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+                  (e.target as HTMLElement).style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
                 }}
                 onMouseOut={(e) => {
-                  (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.2)';
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
+                  (e.target as HTMLElement).style.boxShadow = 'none';
                 }}
               >
                 {action.label}

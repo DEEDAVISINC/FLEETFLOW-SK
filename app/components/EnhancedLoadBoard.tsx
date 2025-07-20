@@ -7,37 +7,47 @@ import { getLoadsForUser, getLoadStats, Load } from '../services/loadService'
 export default function EnhancedLoadBoard() {
   const [loads, setLoads] = useState<Load[]>([])
   const [filteredLoads, setFilteredLoads] = useState<Load[]>([])
-  const [selectedTab, setSelectedTab] = useState<'all' | 'available' | 'assigned'>('all')
+  const [selectedTab, setSelectedTab] = useState<'all' | 'available' | 'assigned' | 'in-transit' | 'delivered'>('all')
   const [searchTerm, setSearchTerm] = useState('')
-  const [stats, setStats] = useState({
-    total: 0,
-    available: 0,
-    assigned: 0,
-    inTransit: 0,
-    delivered: 0,
-    unassigned: 0
-  })
+  const [sortBy, setSortBy] = useState<'rate' | 'distance' | 'pickupDate' | 'status'>('rate')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [selectedEquipment, setSelectedEquipment] = useState<string>('all')
+  const [stats, setStats] = useState<any>({})
 
-  const { user, permissions } = getCurrentUser()
-
-  // Load data from service
   useEffect(() => {
-    const loadData = getLoadsForUser()
+    const loadData = async () => {
+      try {
+        const userLoads = getLoadsForUser()
+        setLoads(userLoads)
+        setFilteredLoads(userLoads)
+        
     const loadStats = getLoadStats()
+        setStats(loadStats)
+      } catch (error) {
+        console.error('Error loading loads:', error)
+      }
+    }
     
-    setLoads(loadData)
-    setFilteredLoads(loadData)
-    setStats(loadStats)
+    loadData()
   }, [])
 
   useEffect(() => {
-    let filtered = loads
+    let filtered = [...loads]
 
     // Filter by tab
-    if (selectedTab === 'available') {
-      filtered = filtered.filter(load => load.status === 'Available')
-    } else if (selectedTab === 'assigned') {
-      filtered = filtered.filter(load => ['Assigned', 'In Transit'].includes(load.status))
+    if (selectedTab !== 'all') {
+      filtered = filtered.filter(load => load.status.toLowerCase() === selectedTab)
+    }
+
+    // Filter by status
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(load => load.status === selectedStatus)
+    }
+
+    // Filter by equipment
+    if (selectedEquipment !== 'all') {
+      filtered = filtered.filter(load => load.equipment === selectedEquipment)
     }
 
     // Filter by search term
@@ -46,192 +56,363 @@ export default function EnhancedLoadBoard() {
         load.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         load.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
         load.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        load.brokerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        load.brokerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        load.equipment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (load.dispatcherName && load.dispatcherName.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     }
 
-    setFilteredLoads(filtered)
-  }, [loads, selectedTab, searchTerm])
+    // Sort loads
+    filtered.sort((a, b) => {
+      let aValue: any, bValue: any
+      
+      switch (sortBy) {
+        case 'rate':
+          aValue = a.rate || 0
+          bValue = b.rate || 0
+          break
+        case 'distance':
+          aValue = parseFloat(a.distance?.replace(/[mi,]/g, '') || '0')
+          bValue = parseFloat(b.distance?.replace(/[mi,]/g, '') || '0')
+          break
+        case 'pickupDate':
+          aValue = new Date(a.pickupDate || '').getTime()
+          bValue = new Date(b.pickupDate || '').getTime()
+          break
+        case 'status':
+          aValue = a.status
+          bValue = b.status
+          break
+        default:
+          return 0
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1
+      } else {
+        return aValue < bValue ? 1 : -1
+      }
+    })
 
-  const refreshLoads = () => {
-    const loadData = getLoadsForUser()
-    const loadStats = getLoadStats()
-    
-    setLoads(loadData)
-    setStats(loadStats)
-  }
+    setFilteredLoads(filtered)
+  }, [loads, selectedTab, searchTerm, sortBy, sortOrder, selectedStatus, selectedEquipment])
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Available':
-        return 'bg-green-100 text-green-800 border-green-200'
-      case 'Assigned':
-        return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'In Transit':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'Delivered':
-        return 'bg-gray-100 text-gray-800 border-gray-200'
+    switch (status.toLowerCase()) {
+      case 'available':
+        return '#10b981'
+      case 'assigned':
+        return '#3b82f6'
+      case 'in transit':
+        return '#f59e0b'
+      case 'delivered':
+        return '#22c55e'
+      case 'pending':
+        return '#6b7280'
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200'
+        return '#6b7280'
     }
   }
 
+  const uniqueStatuses = Array.from(new Set(loads.map(load => load.status)))
+  const uniqueEquipment = Array.from(new Set(loads.map(load => load.equipment).filter(Boolean)))
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-            <span className="mr-2">📋</span>
-            Load Board
-          </h2>
-          <div className="text-sm text-gray-600 mt-1">
-            {user.role === 'dispatcher' && (
-              <span>🔍 Viewing all loads from all brokers</span>
-            )}
-            {user.role === 'broker' && (
-              <span>🏢 Viewing your loads only</span>
-            )}
-            {['manager', 'admin'].includes(user.role) && (
-              <span>👑 Viewing all loads (management view)</span>
-            )}
+    <div style={{ 
+      padding: '40px', 
+      paddingTop: '100px',
+      background: 'linear-gradient(135deg, #22223a, #1e2748)', 
+      minHeight: '100vh',
+      color: 'white' 
+    }}>
+      <h1 style={{ fontSize: '2rem', textAlign: 'center', marginBottom: '30px' }}>
+        Loads - John Smith (ID: broker-js001)
+      </h1>
+
+      {/* Header Stats */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '20px',
+        marginBottom: '30px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '20px'
+        }}>
+          {[
+            { label: 'Total Loads', value: stats.totalLoads || loads.length, color: '#10b981', icon: '📋' },
+            { label: 'Available', value: stats.availableLoads || loads.filter(l => l.status === 'Available').length, color: '#3b82f6', icon: '🚛' },
+            { label: 'Assigned', value: stats.assignedLoads || loads.filter(l => l.status === 'Assigned').length, color: '#f59e0b', icon: '📦' },
+            { label: 'In Transit', value: stats.inTransitLoads || loads.filter(l => l.status === 'In Transit').length, color: '#22c55e', icon: '🚚' }
+          ].map((stat, index) => (
+            <div key={index} style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '10px',
+              padding: '15px',
+              textAlign: 'center',
+              border: `1px solid ${stat.color}40`
+            }}>
+              <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{stat.icon}</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: '700', color: stat.color }}>{stat.value}</div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>{stat.label}</div>
+            </div>
+          ))}
           </div>
         </div>
         
-        <div className="mt-4 md:mt-0">
+      {/* Filters and Search */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '20px',
+        marginBottom: '30px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+          marginBottom: '20px'
+        }}>
+          {/* Search */}
+          <div>
           <input
             type="text"
-            placeholder="Search loads..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search by ID, route, broker, equipment..."
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
           />
         </div>
+
+          {/* Status Filter */}
+          <div>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
+            >
+              <option value="all">All Statuses</option>
+              {uniqueStatuses.map(status => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Equipment Filter */}
+          <div>
+            <select
+              value={selectedEquipment}
+              onChange={(e) => setSelectedEquipment(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
+            >
+              <option value="all">All Equipment</option>
+              {uniqueEquipment.map(equipment => (
+                <option key={equipment} value={equipment}>{equipment}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort */}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              style={{
+                flex: 1,
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px'
+              }}
+            >
+              <option value="rate">Sort by Rate</option>
+              <option value="distance">Sort by Distance</option>
+              <option value="pickupDate">Sort by Pickup Date</option>
+              <option value="status">Sort by Status</option>
+            </select>
+            
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              style={{
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
+            </button>
+          </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6">
+        <div style={{ display: 'flex', gap: '10px' }}>
         {[
-          { id: 'all', label: 'All Loads', count: loads.length },
-          { id: 'available', label: 'Available', count: loads.filter(l => l.status === 'Available').length },
-          { id: 'assigned', label: 'Assigned/Transit', count: loads.filter(l => ['Assigned', 'In Transit'].includes(l.status)).length }
-        ].map((tab) => (
+            { key: 'all', label: 'All Loads', count: loads.length },
+            { key: 'available', label: 'Available', count: loads.filter(l => l.status === 'Available').length },
+            { key: 'assigned', label: 'Assigned', count: loads.filter(l => l.status === 'Assigned').length },
+            { key: 'in-transit', label: 'In Transit', count: loads.filter(l => l.status === 'In Transit').length },
+            { key: 'delivered', label: 'Delivered', count: loads.filter(l => l.status === 'Delivered').length }
+          ].map(tab => (
           <button
-            key={tab.id}
-            onClick={() => setSelectedTab(tab.id as any)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedTab === tab.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              key={tab.key}
+              onClick={() => setSelectedTab(tab.key as any)}
+              style={{
+                background: selectedTab === tab.key 
+                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)' 
+                  : 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                transition: 'all 0.3s ease'
+              }}
           >
             {tab.label} ({tab.count})
           </button>
         ))}
+        </div>
       </div>
 
-      {/* Load List */}
-      <div className="space-y-4">
+      {/* Load Board */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '20px'
+      }}>
         {filteredLoads.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            {loads.length === 0 ? 'No loads available' : 'No loads match your search criteria'}
+          <div style={{
+            padding: '50px',
+            textAlign: 'center',
+            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: '18px'
+          }}>
+            🚛 No loads found matching your criteria
           </div>
         ) : (
-          filteredLoads.map((load) => (
-            <div key={load.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between">
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Load Info */}
-                  <div>
-                    <div className="font-semibold text-lg text-gray-900">{load.id}</div>
-                    {permissions.canViewAllLoads && (
-                      <div className="text-sm text-blue-600">📊 {load.brokerName}</div>
-                    )}
-                    <div className="text-sm text-gray-600">{load.equipment}</div>
+          <>
+            {/* Load Board Header */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '70px 1.2fr 1fr 100px 80px 90px 80px 90px',
+              gap: '8px',
+              padding: '10px 12px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              marginBottom: '10px',
+              fontWeight: '700',
+              fontSize: '10px',
+              textTransform: 'uppercase'
+            }}>
+              <div>ID</div>
+              <div>Route</div>
+              <div>Broker</div>
+              <div>Rate</div>
+              <div>Status</div>
+              <div>Equipment</div>
+              <div>Distance</div>
+              <div>Actions</div>
                   </div>
 
-                  {/* Route */}
+            {/* Load Board Rows */}
+            {filteredLoads.map((load, index) => (
+              <div key={load.id} style={{
+                display: 'grid',
+                gridTemplateColumns: '70px 1.2fr 1fr 100px 80px 90px 80px 90px',
+                gap: '8px',
+                padding: '10px 12px',
+                background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.02)',
+                borderRadius: '8px',
+                marginBottom: '8px',
+                fontSize: '11px',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = index % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.02)'
+              }}
+              >
+                <div style={{ fontWeight: '600', color: '#60a5fa' }}>{load.id}</div>
                   <div>
-                    <div className="font-medium text-gray-900">{load.origin}</div>
-                    <div className="text-gray-500 flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                      {load.destination}
+                  <div style={{ fontWeight: '600' }}>{load.origin}</div>
+                  <div style={{ fontSize: '10px', opacity: 0.7 }}>→ {load.destination}</div>
                     </div>
-                    <div className="text-sm text-gray-500">{load.distance}</div>
-                  </div>
-
-                  {/* Details */}
+                <div style={{ fontSize: '11px' }}>{load.brokerName}</div>
+                <div style={{ fontWeight: '700', color: '#22c55e' }}>${load.rate?.toLocaleString()}</div>
                   <div>
-                    <div className="font-semibold text-green-600 text-lg">${load.rate.toLocaleString()}</div>
-                    <div className="text-sm text-gray-600">{load.weight}</div>
-                    <div className="text-xs text-gray-500">
-                      Pick: {new Date(load.pickupDate).toLocaleDateString()}
-                    </div>
-                  </div>
-
-                  {/* Status & Dispatcher */}
-                  <div className="flex flex-col space-y-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(load.status)}`}>
+                  <span style={{
+                    background: getStatusColor(load.status),
+                    color: 'white',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    fontSize: '9px',
+                    fontWeight: '600'
+                  }}>
                       {load.status}
                     </span>
-                    {load.dispatcherName && (
-                      <div className="text-xs text-gray-600">
-                        📋 {load.dispatcherName}
-                      </div>
-                    )}
-                    {!load.dispatcherName && load.status === 'Available' && (
-                      <div className="text-xs text-orange-600">
-                        ⚠️ Needs Dispatcher
-                      </div>
-                    )}
-                  </div>
                 </div>
-
-                {/* Actions */}
-                <div className="mt-4 lg:mt-0 lg:ml-4 flex space-x-2">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
-                    View Details
+                <div style={{ fontSize: '10px', opacity: 0.8 }}>{load.equipment || 'N/A'}</div>
+                <div style={{ fontSize: '10px' }}>{load.distance}</div>
+                <div>
+                  <button style={{
+                    padding: '4px 8px',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '9px',
+                    fontWeight: '600'
+                  }}>
+                    View
                   </button>
-                  {user.role === 'broker' && load.brokerId === user.brokerId && (
-                    <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
-                      Edit Load
-                    </button>
-                  )}
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </>
         )}
-      </div>
-
-      {/* Summary Stats */}
-      <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-          <div className="text-green-600 font-semibold">Available</div>
-          <div className="text-2xl font-bold text-green-800">
-            {stats.available}
-          </div>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-          <div className="text-blue-600 font-semibold">Assigned</div>
-          <div className="text-2xl font-bold text-blue-800">
-            {stats.assigned}
-          </div>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-          <div className="text-yellow-600 font-semibold">In Transit</div>
-          <div className="text-2xl font-bold text-yellow-800">
-            {stats.inTransit}
-          </div>
-        </div>
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-          <div className="text-gray-600 font-semibold">Total</div>
-          <div className="text-2xl font-bold text-gray-800">
-            {stats.total}
-          </div>
-        </div>
       </div>
     </div>
   )

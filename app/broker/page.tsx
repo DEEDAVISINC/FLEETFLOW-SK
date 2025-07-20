@@ -21,6 +21,22 @@ export default function BrokerLoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const router = useRouter();
 
+  // Auto-login with demo credentials
+  React.useEffect(() => {
+    const demoSession = {
+      id: 'broker-js001',
+      brokerCode: 'JS001',
+      brokerName: 'John Smith',
+      companyName: 'Global Freight Solutions',
+      email: 'john.smith@globalfreight.com',
+      role: 'broker',
+      loginTime: new Date().toISOString()
+    };
+    
+    localStorage.setItem('brokerSession', JSON.stringify(demoSession));
+    router.push('/broker/dashboard');
+  }, [router]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData(prev => ({

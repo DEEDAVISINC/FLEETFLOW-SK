@@ -7,12 +7,39 @@ import Link from 'next/link';
 interface User {
   id: string;
   name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: 'Admin' | 'Manager' | 'Dispatcher' | 'Driver' | 'Viewer';
+  phone?: string;
+  location?: string;
+  department: 'DC' | 'BB' | 'DM' | 'MGR';
+  role: 'Admin' | 'Manager' | 'Dispatcher' | 'Broker' | 'Driver' | 'Viewer';
   status: 'Active' | 'Inactive';
   lastLogin: string;
   permissions: string[];
   createdDate: string;
+  compliance: {
+    dotPhysical: {
+      required: boolean;
+      status: 'Valid' | 'Expired' | 'Required';
+      expiration?: string;
+    };
+    drugTest: {
+      required: boolean;
+      status: 'Passed' | 'Failed' | 'Required';
+      date?: string;
+    };
+    backgroundCheck: {
+      required: boolean;
+      status: 'Cleared' | 'Pending' | 'Required';
+      date?: string;
+    };
+    fingerprints: {
+      required: boolean;
+      status: 'Processed' | 'Pending' | 'Required';
+      date?: string;
+    };
+  };
 }
 
 interface Permission {
@@ -26,17 +53,32 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'users' | 'permissions' | 'general'>('users');
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [currentUserIndex, setCurrentUserIndex] = useState(0);
+  const [searchEnabled, setSearchEnabled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [complianceExpanded, setComplianceExpanded] = useState(false);
 
   // Current user context
   const [currentUser] = useState<User>({
-    id: 'U001',
+    id: 'FM-MGR-2023005',
     name: 'Fleet Manager',
+    firstName: 'Fleet',
+    lastName: 'Manager',
     email: 'manager@fleetflow.com',
+    phone: '(555) 123-4567',
+    location: 'Main Office',
+    department: 'MGR',
     role: 'Admin',
     status: 'Active',
     lastLogin: 'Current session',
     permissions: ['all'],
-    createdDate: '2024-01-01'
+    createdDate: '2024-01-01',
+    compliance: {
+      dotPhysical: { required: false, status: 'Valid' },
+      drugTest: { required: false, status: 'Passed' },
+      backgroundCheck: { required: true, status: 'Cleared', date: '2024-01-01' },
+      fingerprints: { required: true, status: 'Processed', date: '2024-01-01' }
+    }
   });
 
   // Available permissions
@@ -62,85 +104,203 @@ export default function SettingsPage() {
     { id: 'audit_logs', name: 'Audit Logs', description: 'View system audit and activity logs', category: 'Admin' }
   ]);
 
-  // Mock users data
+  // Comprehensive users data for System Settings Hub
   const [users, setUsers] = useState<User[]>([
     {
-      id: 'U001',
+      id: 'FM-MGR-2023005',
       name: 'Fleet Manager',
+      firstName: 'Fleet',
+      lastName: 'Manager',
       email: 'manager@fleetflow.com',
+      phone: '(555) 123-4567',
+      location: 'Main Office',
+      department: 'MGR',
       role: 'Admin',
       status: 'Active',
       lastLogin: 'Current session',
       permissions: ['all'],
-      createdDate: '2024-01-01'
+      createdDate: '2024-01-01',
+      compliance: {
+        dotPhysical: { required: false, status: 'Valid' },
+        drugTest: { required: false, status: 'Passed' },
+        backgroundCheck: { required: true, status: 'Cleared', date: '2024-01-01' },
+        fingerprints: { required: true, status: 'Processed', date: '2024-01-01' }
+      }
     },
     {
-      id: 'U002',
+      id: 'SJ-DC-2024014',
       name: 'Sarah Johnson',
+      firstName: 'Sarah',
+      lastName: 'Johnson',
       email: 'sarah.j@fleetflow.com',
+      phone: '(555) 234-5678',
+      location: 'Dispatch Center',
+      department: 'DC',
       role: 'Dispatcher',
       status: 'Active',
       lastLogin: '2024-12-18 14:30',
       permissions: ['dashboard_view', 'dispatch_access', 'routes_manage', 'drivers_manage', 'invoices_view'],
-      createdDate: '2024-01-15'
+      createdDate: '2024-01-15',
+      compliance: {
+        dotPhysical: { required: false, status: 'Valid' },
+        drugTest: { required: true, status: 'Passed', date: '2024-01-15' },
+        backgroundCheck: { required: true, status: 'Cleared', date: '2024-01-10' },
+        fingerprints: { required: true, status: 'Processed', date: '2024-01-12' }
+      }
     },
     {
-      id: 'U003',
+      id: 'JS-DM-2024032',
       name: 'John Smith',
+      firstName: 'John',
+      lastName: 'Smith',
       email: 'j.smith@fleetflow.com',
+      phone: '(555) 345-6789',
+      location: 'Field',
+      department: 'DM',
       role: 'Driver',
       status: 'Active',
       lastLogin: '2024-12-18 09:15',
       permissions: ['dashboard_view', 'routes_manage'],
-      createdDate: '2024-02-01'
+      createdDate: '2024-02-01',
+      compliance: {
+        dotPhysical: { required: true, status: 'Valid', expiration: '2025-12-01' },
+        drugTest: { required: true, status: 'Passed', date: '2024-02-01' },
+        backgroundCheck: { required: true, status: 'Cleared', date: '2024-01-28' },
+        fingerprints: { required: true, status: 'Processed', date: '2024-01-30' }
+      }
     },
     {
-      id: 'U004',
+      id: 'MW-BB-2024061',
       name: 'Mike Wilson',
+      firstName: 'Mike',
+      lastName: 'Wilson',
       email: 'mike.wilson@fleetflow.com',
-      role: 'Manager',
+      phone: '(555) 456-7890',
+      location: 'Sales Office',
+      department: 'BB',
+      role: 'Broker',
       status: 'Active',
       lastLogin: '2024-12-19 12:15',
-      permissions: ['dashboard_view', 'vehicles_manage', 'drivers_manage', 'reports_view', 'invoices_view'],
-      createdDate: '2024-01-20'
+      permissions: ['dashboard_view', 'broker_access', 'customer_management', 'reports_view', 'invoices_view'],
+      createdDate: '2024-01-20',
+      compliance: {
+        dotPhysical: { required: false, status: 'Valid' },
+        drugTest: { required: true, status: 'Passed', date: '2024-01-20' },
+        backgroundCheck: { required: true, status: 'Cleared', date: '2024-01-18' },
+        fingerprints: { required: true, status: 'Processed', date: '2024-01-19' }
+      }
     }
   ]);
 
-  // New user form state
+  // Enhanced user form state for comprehensive creation
   const [newUser, setNewUser] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
+    phone: '',
+    location: '',
+    department: 'DC' as User['department'],
     role: 'Viewer' as User['role'],
-    permissions: [] as string[]
+    permissions: [] as string[],
+    compliance: {
+      dotPhysical: { required: false, status: 'Required' as const },
+      drugTest: { required: false, status: 'Required' as const },
+      backgroundCheck: { required: false, status: 'Required' as const },
+      fingerprints: { required: false, status: 'Required' as const }
+    }
   });
+
+  // Filtered users for search
+  const filteredUsers = users.filter(user => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      user.name.toLowerCase().includes(term) ||
+      user.email.toLowerCase().includes(term) ||
+      user.role.toLowerCase().includes(term) ||
+      user.id.toLowerCase().includes(term) ||
+      user.department.toLowerCase().includes(term)
+    );
+  });
+
+  // Department colors and labels
+  const getDepartmentConfig = (dept: string) => {
+    const config = {
+      'DC': { color: '#3b82f6', bg: '#dbeafe', label: 'Dispatcher', name: 'Dispatch' },
+      'BB': { color: '#f59e0b', bg: '#fef3c7', label: 'Broker Agent', name: 'Brokerage' },
+      'DM': { color: '#eab308', bg: '#fef3c7', label: 'Driver', name: 'Driver Management' },
+      'MGR': { color: '#8b5cf6', bg: '#e0e7ff', label: 'Management', name: 'Management' }
+    };
+    return config[dept as keyof typeof config] || config.DC;
+  };
+
+  // Navigation helpers
+  const goToNextUser = () => {
+    setCurrentUserIndex((prev) => (prev + 1) % filteredUsers.length);
+  };
+
+  const goToPrevUser = () => {
+    setCurrentUserIndex((prev) => (prev - 1 + filteredUsers.length) % filteredUsers.length);
+  };
+
+  const goToUser = (index: number) => {
+    setCurrentUserIndex(index);
+  };
 
   const rolePermissions: Record<User['role'], string[]> = {
     'Admin': ['all'],
     'Manager': ['dashboard_view', 'vehicles_manage', 'drivers_manage', 'routes_manage', 'maintenance_manage', 'reports_view', 'invoices_view', 'financial_reports'],
     'Dispatcher': ['dashboard_view', 'dispatch_access', 'routes_manage', 'drivers_manage', 'invoices_view'],
+    'Broker': ['dashboard_view', 'broker_access', 'customer_management', 'reports_view', 'invoices_view'],
     'Driver': ['dashboard_view', 'routes_manage'],
     'Viewer': ['dashboard_view', 'reports_view']
   };
 
   const createUser = () => {
-    if (!newUser.name || !newUser.email) {
+    if (!newUser.firstName || !newUser.lastName || !newUser.email) {
       alert('Please fill in all required fields');
       return;
     }
 
+    const deptCode = newUser.department;
+    const initials = `${newUser.firstName[0]}${newUser.lastName[0]}`;
+    const year = new Date().getFullYear();
+    const dayOfYear = Math.floor((Date.now() - new Date(year, 0, 0).getTime()) / 1000 / 60 / 60 / 24);
+    
     const user: User = {
-      id: `U${(users.length + 1).toString().padStart(3, '0')}`,
-      name: newUser.name,
+      id: `${initials}-${deptCode}-${year}${dayOfYear.toString().padStart(3, '0')}`,
+      name: `${newUser.firstName} ${newUser.lastName}`,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: newUser.email,
+      phone: newUser.phone,
+      location: newUser.location,
+      department: newUser.department,
       role: newUser.role,
       status: 'Active',
       lastLogin: 'Never',
       permissions: newUser.role === 'Admin' ? ['all'] : rolePermissions[newUser.role],
-      createdDate: new Date().toISOString().split('T')[0]
+      createdDate: new Date().toISOString().split('T')[0],
+      compliance: newUser.compliance
     };
 
     setUsers([...users, user]);
-    setNewUser({ name: '', email: '', role: 'Viewer', permissions: [] });
+    setNewUser({ 
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      location: '',
+      department: 'DC',
+      role: 'Viewer',
+      permissions: [],
+      compliance: {
+        dotPhysical: { required: false, status: 'Required' },
+        drugTest: { required: false, status: 'Required' },
+        backgroundCheck: { required: false, status: 'Required' },
+        fingerprints: { required: false, status: 'Required' }
+      }
+    });
     setShowCreateUser(false);
   };
 
@@ -168,7 +328,6 @@ export default function SettingsPage() {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       paddingTop: '80px'
     }}>
-      {/* Back Button */}
       <div style={{ padding: '24px' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <button style={{
@@ -182,16 +341,6 @@ export default function SettingsPage() {
             cursor: 'pointer',
             transition: 'all 0.3s ease',
             fontSize: '16px'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
           }}>
             ← Back to Dashboard
           </button>
@@ -203,7 +352,6 @@ export default function SettingsPage() {
         margin: '0 auto',
         padding: '0 24px 32px'
       }}>
-        {/* Header */}
         <div style={{
           textAlign: 'center',
           marginBottom: '32px',
@@ -220,291 +368,597 @@ export default function SettingsPage() {
             margin: '0 0 12px 0',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
           }}>
-            ⚙️ System Settings
+            🏢 System Settings Hub
           </h1>
           <p style={{
             fontSize: '18px',
             color: 'rgba(255, 255, 255, 0.9)',
             margin: 0
           }}>
-            Manage users, permissions, and system configuration
+            Comprehensive user management and administration center
           </p>
         </div>
 
-        {/* Tabs */}
+        {/* Hub Control Panel */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '16px 16px 0 0',
+          borderRadius: '16px',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '0 24px'
+          padding: '24px',
+          marginBottom: '24px'
         }}>
-          <nav style={{ display: 'flex', gap: '32px', borderBottom: '1px solid rgba(255, 255, 255, 0.2)' }}>
-            {[
-              { id: 'users', label: 'User Management', count: users.length },
-              { id: 'permissions', label: 'Permissions', count: permissions.length },
-              { id: 'general', label: 'General Settings', count: 0 }
-            ].map((tab) => (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <span style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                User {currentUserIndex + 1} of {filteredUsers.length}
+              </span>
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setSearchEnabled(!searchEnabled)}
                 style={{
-                  padding: '16px 0',
-                  borderBottom: activeTab === tab.id ? '2px solid white' : '2px solid transparent',
-                  fontWeight: '600',
+                  background: searchEnabled ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
                   fontSize: '14px',
-                  color: activeTab === tab.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  background: 'none',
+                  fontWeight: '600',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease'
                 }}
-                onMouseOver={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                  }
+              >
+                🔍 {searchEnabled ? 'Hide Search' : 'Search Users'}
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={goToPrevUser}
+                disabled={filteredUsers.length === 0}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                {tab.label}
-                {tab.count > 0 && (
-                  <span style={{
-                    marginLeft: '8px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: '12px',
-                    fontSize: '12px'
-                  }}>
-                    {tab.count}
-                  </span>
-                )}
+                ← Previous
               </button>
-            ))}
-          </nav>
+              <button
+                onClick={goToNextUser}
+                disabled={filteredUsers.length === 0}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Next →
+              </button>
+              <button
+                onClick={() => setShowCreateUser(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ➕ Create New User
+              </button>
+            </div>
+          </div>
+
+          {searchEnabled && (
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginTop: '16px'
+            }}>
+              <input
+                type="text"
+                placeholder="Search by name, email, role, ID, or department..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '16px',
+                  outline: 'none'
+                }}
+              />
+              {searchTerm && (
+                <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {filteredUsers.slice(0, 10).map((user, index) => {
+                    const config = getDepartmentConfig(user.department);
+                    return (
+                      <button
+                        key={user.id}
+                        onClick={() => {
+                          goToUser(index);
+                          setSearchTerm('');
+                          setSearchEnabled(false);
+                        }}
+                        style={{
+                          background: config.bg,
+                          color: config.color,
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontWeight: '600'
+                        }}
+                      >
+                        {user.name} ({user.department})
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* User Navigation Tabs */}
+          <div style={{
+            display: 'flex',
+            gap: '4px',
+            flexWrap: 'wrap',
+            marginTop: '16px'
+          }}>
+            {filteredUsers.map((user, index) => {
+              const config = getDepartmentConfig(user.department);
+              return (
+                <button
+                  key={user.id}
+                  onClick={() => goToUser(index)}
+                  style={{
+                    background: index === currentUserIndex ? config.color : 'rgba(255, 255, 255, 0.1)',
+                    color: index === currentUserIndex ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    border: index === currentUserIndex ? `2px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.2)',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {user.firstName[0]}{user.lastName[0]}-{user.department}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Tab Content Container */}
+        {/* Book-Style User Profile Display */}
+
         <div style={{
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '0 0 16px 16px',
+          borderRadius: '16px',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '24px',
-          minHeight: '400px'
+          padding: '32px',
+          minHeight: '600px'
         }}>
-          {/* User Management Tab */}
-          {activeTab === 'users' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#1f2937', margin: 0 }}>User Accounts</h2>
-                <button
-                  onClick={() => setShowCreateUser(true)}
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.3)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  + Add New User
-                </button>
-              </div>
-
-              {/* User Table Container */}
-              <div style={{
-                background: 'white',
-                borderRadius: '12px',
-                border: '1px solid #e5e7eb',
-                overflow: 'hidden',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-              }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                      <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>User</th>
-                      <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Role</th>
-                      <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Status</th>
-                      <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Last Login</th>
-                      <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map((user, index) => (
-                      <tr key={user.id} style={{ 
-                        borderBottom: index < users.length - 1 ? '1px solid #e5e7eb' : 'none',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}>
-                        <td style={{ padding: '16px' }}>
-                          <div>
-                            <div style={{ fontWeight: '600', color: '#1f2937' }}>{user.name}</div>
-                            <div style={{ fontSize: '14px', color: '#6b7280' }}>{user.email}</div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <span style={{
-                            background: user.role === 'Admin' ? '#dcfce7' : user.role === 'Manager' ? '#dbeafe' : '#f3f4f6',
-                            color: user.role === 'Admin' ? '#166534' : user.role === 'Manager' ? '#1e40af' : '#374151',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: '600'
-                          }}>
-                            {user.role}
-                          </span>
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <span style={{
-                            background: user.status === 'Active' ? '#dcfce7' : '#fee2e2',
-                            color: user.status === 'Active' ? '#166534' : '#dc2626',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: '600'
-                          }}>
-                            {user.status}
-                          </span>
-                        </td>
-                        <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>{user.lastLogin}</td>
-                        <td style={{ padding: '16px' }}>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button
-                              onClick={() => setSelectedUser(user)}
-                              style={{
-                                color: '#3b82f6',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                textDecoration: 'underline'
-                              }}
-                              onMouseOver={(e) => {
-                                e.currentTarget.style.color = '#1d4ed8';
-                              }}
-                              onMouseOut={(e) => {
-                                e.currentTarget.style.color = '#3b82f6';
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => toggleUserStatus(user.id)}
-                              style={{
-                                color: user.status === 'Active' ? '#dc2626' : '#16a34a',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                textDecoration: 'underline'
-                              }}
-                              onMouseOver={(e) => {
-                                e.currentTarget.style.opacity = '0.8';
-                              }}
-                              onMouseOut={(e) => {
-                                e.currentTarget.style.opacity = '1';
-                              }}
-                            >
-                              {user.status === 'Active' ? 'Deactivate' : 'Activate'}
-                            </button>
-                            {user.id !== currentUser.id && (
-                              <button
-                                onClick={() => deleteUser(user.id)}
-                                style={{
-                                  color: '#dc2626',
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  fontSize: '14px',
-                                  textDecoration: 'underline'
-                                }}
-                                onMouseOver={(e) => {
-                                  e.currentTarget.style.color = '#991b1b';
-                                }}
-                                onMouseOut={(e) => {
-                                  e.currentTarget.style.color = '#dc2626';
-                                }}
-                              >
-                                Delete
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Permissions Tab */}
-          {activeTab === 'permissions' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#1f2937', margin: 0 }}>System Permissions</h2>
+          {filteredUsers.length > 0 ? (
+            (() => {
+              const currentUser = filteredUsers[currentUserIndex];
+              const config = getDepartmentConfig(currentUser.department);
               
-              {['Core', 'Financial', 'Reports', 'Admin'].map((category) => (
-                <div key={category} style={{
-                  background: 'white',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  borderRadius: '12px',
-                  padding: '24px'
-                }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>{category} Permissions</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-                    {getPermissionsByCategory(category).map((permission) => (
-                      <div key={permission.id} style={{
-                        padding: '16px',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        background: '#f9fafb'
-                      }}>
-                        <div style={{ fontWeight: '600', color: '#1f2937', marginBottom: '4px' }}>{permission.name}</div>
-                        <div style={{ fontSize: '14px', color: '#6b7280' }}>{permission.description}</div>
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                  {/* User Profile Header */}
+                  <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    border: `3px solid ${config.color}`
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <h2 style={{
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          color: '#1f2937',
+                          margin: '0 0 8px 0'
+                        }}>
+                          {currentUser.name}
+                        </h2>
+                        <div style={{
+                          background: config.bg,
+                          color: config.color,
+                          padding: '8px 16px',
+                          borderRadius: '20px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          display: 'inline-block',
+                          marginBottom: '16px'
+                        }}>
+                          {config.label} ({currentUser.department})
+                        </div>
+                        <div style={{ fontSize: '18px', color: '#6b7280', marginBottom: '8px' }}>
+                          📧 {currentUser.email}
+                        </div>
+                        {currentUser.phone && (
+                          <div style={{ fontSize: '18px', color: '#6b7280', marginBottom: '8px' }}>
+                            📱 {currentUser.phone}
+                          </div>
+                        )}
+                        {currentUser.location && (
+                          <div style={{ fontSize: '18px', color: '#6b7280', marginBottom: '8px' }}>
+                            📍 {currentUser.location}
+                          </div>
+                        )}
+                        <div style={{ fontSize: '16px', color: '#6b7280' }}>
+                          🆔 User ID: <span style={{ fontFamily: 'monospace', fontWeight: '600' }}>{currentUser.id}</span>
+                        </div>
                       </div>
-                    ))}
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button
+                          onClick={() => setSelectedUser(currentUser)}
+                          style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          ✏️ Edit Profile
+                        </button>
+                        <button
+                          style={{
+                            background: '#16a34a',
+                            color: 'white',
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          💬 Send Message
+                        </button>
+                        <button
+                          style={{
+                            background: '#f59e0b',
+                            color: 'white',
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          📊 View Reports
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Compliance Management Section */}
+                  <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '20px',
+                      paddingBottom: '12px',
+                      borderBottom: '2px solid #f3f4f6'
+                    }}>
+                      <h3 style={{ fontSize: '24px', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        🔧 Compliance Management
+                      </h3>
+                      <button
+                        onClick={() => setComplianceExpanded(!complianceExpanded)}
+                        style={{
+                          background: complianceExpanded ? '#ef4444' : '#16a34a',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          border: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {complianceExpanded ? '▲ Collapse' : '▼ Expand'}
+                      </button>
+                    </div>
+
+                    {complianceExpanded && (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                        {/* DOT Physical */}
+                        <div style={{
+                          background: '#f8fafc',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          border: '2px solid #e2e8f0'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <span style={{ fontSize: '24px' }}>🏥</span>
+                            <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>DOT Physical</h4>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', color: '#374151' }}>
+                              <input
+                                type="checkbox"
+                                checked={currentUser.compliance.dotPhysical.required}
+                                style={{ transform: 'scale(1.2)' }}
+                                readOnly
+                              />
+                              Required
+                            </label>
+                          </div>
+                          <div style={{
+                            background: currentUser.compliance.dotPhysical.status === 'Valid' ? '#dcfce7' : 
+                                       currentUser.compliance.dotPhysical.status === 'Expired' ? '#fee2e2' : '#fef3c7',
+                            color: currentUser.compliance.dotPhysical.status === 'Valid' ? '#166534' : 
+                                   currentUser.compliance.dotPhysical.status === 'Expired' ? '#dc2626' : '#92400e',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '12px'
+                          }}>
+                            Status: {currentUser.compliance.dotPhysical.status}
+                          </div>
+                          {currentUser.compliance.dotPhysical.expiration && (
+                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                              Expires: {currentUser.compliance.dotPhysical.expiration}
+                            </div>
+                          )}
+                          <button style={{
+                            background: '#16a34a',
+                            color: 'white',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginTop: '8px'
+                          }}>
+                            🔧 Setup
+                          </button>
+                        </div>
+
+                        {/* Drug Test */}
+                        <div style={{
+                          background: '#f8fafc',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          border: '2px solid #e2e8f0'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <span style={{ fontSize: '24px' }}>🧪</span>
+                            <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Drug Test</h4>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', color: '#374151' }}>
+                              <input
+                                type="checkbox"
+                                checked={currentUser.compliance.drugTest.required}
+                                style={{ transform: 'scale(1.2)' }}
+                                readOnly
+                              />
+                              Required
+                            </label>
+                          </div>
+                          <div style={{
+                            background: currentUser.compliance.drugTest.status === 'Passed' ? '#dcfce7' : 
+                                       currentUser.compliance.drugTest.status === 'Failed' ? '#fee2e2' : '#fef3c7',
+                            color: currentUser.compliance.drugTest.status === 'Passed' ? '#166534' : 
+                                   currentUser.compliance.drugTest.status === 'Failed' ? '#dc2626' : '#92400e',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '12px'
+                          }}>
+                            Status: {currentUser.compliance.drugTest.status}
+                          </div>
+                          {currentUser.compliance.drugTest.date && (
+                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                              Date: {currentUser.compliance.drugTest.date}
+                            </div>
+                          )}
+                          <button style={{
+                            background: '#16a34a',
+                            color: 'white',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginTop: '8px'
+                          }}>
+                            🔧 Setup
+                          </button>
+                        </div>
+
+                        {/* Background Check */}
+                        <div style={{
+                          background: '#f8fafc',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          border: '2px solid #e2e8f0'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <span style={{ fontSize: '24px' }}>🔍</span>
+                            <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Background Check</h4>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', color: '#374151' }}>
+                              <input
+                                type="checkbox"
+                                checked={currentUser.compliance.backgroundCheck.required}
+                                style={{ transform: 'scale(1.2)' }}
+                                readOnly
+                              />
+                              Required
+                            </label>
+                          </div>
+                          <div style={{
+                            background: currentUser.compliance.backgroundCheck.status === 'Cleared' ? '#dcfce7' : 
+                                       currentUser.compliance.backgroundCheck.status === 'Pending' ? '#fef3c7' : '#fee2e2',
+                            color: currentUser.compliance.backgroundCheck.status === 'Cleared' ? '#166534' : 
+                                   currentUser.compliance.backgroundCheck.status === 'Pending' ? '#92400e' : '#dc2626',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '12px'
+                          }}>
+                            Status: {currentUser.compliance.backgroundCheck.status}
+                          </div>
+                          {currentUser.compliance.backgroundCheck.date && (
+                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                              Date: {currentUser.compliance.backgroundCheck.date}
+                            </div>
+                          )}
+                          <button style={{
+                            background: '#16a34a',
+                            color: 'white',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginTop: '8px'
+                          }}>
+                            🔧 Setup
+                          </button>
+                        </div>
+
+                        {/* Fingerprints */}
+                        <div style={{
+                          background: '#f8fafc',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          border: '2px solid #e2e8f0'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <span style={{ fontSize: '24px' }}>👆</span>
+                            <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Fingerprints</h4>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', color: '#374151' }}>
+                              <input
+                                type="checkbox"
+                                checked={currentUser.compliance.fingerprints.required}
+                                style={{ transform: 'scale(1.2)' }}
+                                readOnly
+                              />
+                              Required
+                            </label>
+                          </div>
+                          <div style={{
+                            background: currentUser.compliance.fingerprints.status === 'Processed' ? '#dcfce7' : 
+                                       currentUser.compliance.fingerprints.status === 'Pending' ? '#fef3c7' : '#fee2e2',
+                            color: currentUser.compliance.fingerprints.status === 'Processed' ? '#166534' : 
+                                   currentUser.compliance.fingerprints.status === 'Pending' ? '#92400e' : '#dc2626',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '12px'
+                          }}>
+                            Status: {currentUser.compliance.fingerprints.status}
+                          </div>
+                          {currentUser.compliance.fingerprints.date && (
+                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                              Date: {currentUser.compliance.fingerprints.date}
+                            </div>
+                          )}
+                          <button style={{
+                            background: '#16a34a',
+                            color: 'white',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginTop: '8px'
+                          }}>
+                            🔧 Setup
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Grant Access Button */}
+                    <div style={{ textAlign: 'center', marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
+                      <button style={{
+                        background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                        color: 'white',
+                        padding: '16px 32px',
+                        borderRadius: '12px',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 16px rgba(22, 163, 74, 0.3)'
+                      }}>
+                        ✅ Grant Full System Access
+                      </button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* General Settings Tab */}
-          {activeTab === 'general' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#1f2937', margin: 0 }}>General Settings</h2>
-              <div style={{
-                background: 'white',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                borderRadius: '12px',
-                padding: '24px'
-              }}>
-                <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>
-                  General system settings will be available in a future update.
-                </p>
-              </div>
+              );
+            })()
+          ) : (
+            <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+              <h3 style={{ fontSize: '24px', color: '#6b7280', margin: '0 0 16px 0' }}>No Users Found</h3>
+              <p style={{ fontSize: '16px', color: '#9ca3af', marginBottom: '24px' }}>
+                {searchTerm ? 'No users match your search criteria.' : 'No users have been created yet.'}
+              </p>
+              <button
+                onClick={() => setShowCreateUser(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                ➕ Create First User
+              </button>
             </div>
           )}
         </div>
@@ -538,11 +992,11 @@ export default function SettingsPage() {
             <div style={{ padding: '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Full Name</label>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>First Name</label>
                   <input
                     type="text"
-                    value={newUser.name}
-                    onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                    value={newUser.firstName}
+                    onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
                     style={{
                       width: '100%',
                       border: '1px solid #d1d5db',
@@ -552,15 +1006,25 @@ export default function SettingsPage() {
                       outline: 'none',
                       transition: 'border-color 0.2s ease'
                     }}
-                    placeholder="Enter full name"
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    placeholder="Enter first name"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Last Name</label>
+                  <input
+                    type="text"
+                    value={newUser.lastName}
+                    onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s ease'
                     }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
+                    placeholder="Enter last name"
                   />
                 </div>
                 <div>
@@ -579,21 +1043,14 @@ export default function SettingsPage() {
                       transition: 'border-color 0.2s ease'
                     }}
                     placeholder="Enter email address"
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Role</label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) => setNewUser({...newUser, role: e.target.value as User['role']})}
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Phone Number</label>
+                  <input
+                    type="tel"
+                    value={newUser.phone}
+                    onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
                     style={{
                       width: '100%',
                       border: '1px solid #d1d5db',
@@ -603,21 +1060,82 @@ export default function SettingsPage() {
                       outline: 'none',
                       transition: 'border-color 0.2s ease'
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Location</label>
+                  <input
+                    type="text"
+                    value={newUser.location}
+                    onChange={(e) => setNewUser({...newUser, location: e.target.value})}
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s ease'
                     }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.boxShadow = 'none';
+                    placeholder="Work location or office"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Department</label>
+                  <select
+                    value={newUser.department}
+                    onChange={(e) => {
+                      const dept = e.target.value as User['department'];
+                      const roleMap = {
+                        'DC': 'Dispatcher' as User['role'],
+                        'BB': 'Broker' as User['role'], 
+                        'DM': 'Driver' as User['role'],
+                        'MGR': 'Manager' as User['role']
+                      };
+                      setNewUser({...newUser, department: dept, role: roleMap[dept]});
+                    }}
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s ease'
                     }}
                   >
-                    <option value="Viewer">Viewer</option>
-                    <option value="Driver">Driver</option>
-                    <option value="Dispatcher">Dispatcher</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Admin">Admin</option>
+                    <option value="DC">🚛 Dispatcher (DC) - Dispatch Operations</option>
+                    <option value="BB">🤝 Broker Agent (BB) - Freight Brokerage</option>
+                    <option value="DM">👨‍💼 Driver (DM) - Fleet Drivers</option>
+                    <option value="MGR">👔 Management (MGR) - Administrative Roles</option>
                   </select>
+                  <p style={{
+                    fontSize: '12px',
+                    color: '#6b7280',
+                    marginTop: '4px',
+                    margin: '4px 0 0 0'
+                  }}>
+                    Role will be auto-selected based on department
+                  </p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>Role</label>
+                  <input
+                    type="text"
+                    value={newUser.role}
+                    readOnly
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      outline: 'none',
+                      backgroundColor: '#f9fafb',
+                      color: '#6b7280'
+                    }}
+                  />
                   <p style={{
                     fontSize: '12px',
                     color: '#6b7280',
@@ -642,12 +1160,6 @@ export default function SettingsPage() {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s ease'
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#e5e7eb';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = '#f3f4f6';
-                  }}
                 >
                   Cancel
                 </button>
@@ -663,12 +1175,6 @@ export default function SettingsPage() {
                     borderRadius: '6px',
                     cursor: 'pointer',
                     transition: 'background-color 0.2s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#2563eb';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = '#3b82f6';
                   }}
                 >
                   Create User
@@ -747,12 +1253,6 @@ export default function SettingsPage() {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s ease'
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#e5e7eb';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = '#f3f4f6';
-                  }}
                 >
                   Close
                 </button>
@@ -763,4 +1263,4 @@ export default function SettingsPage() {
       )}
     </div>
   );
-}
+} 

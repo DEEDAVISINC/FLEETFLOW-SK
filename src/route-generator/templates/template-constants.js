@@ -1,9 +1,9 @@
-// FleetFlow Route Generator - Template Constants
-// Professional route documentation templates for all pickup location types
+// FleetFlow Order Confirmation Generator - Template Constants
+// Professional order confirmation templates for all pickup location types
 
-export const ROUTE_TEMPLATES = {
+export const ORDER_CONFIRMATION_TEMPLATES = {
   // Universal pickup location template - works with ANY facility type
-  UNIVERSAL_PICKUP: `# Route {routeNumber}: {routeName}
+  UNIVERSAL_PICKUP: `# Order Confirmation {routeNumber}: {routeName}
 
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
@@ -58,10 +58,10 @@ export const ROUTE_TEMPLATES = {
 
 ---
 
-*Generated: {generatedDate} | FleetFlow Route System*`,
+*Generated: {generatedDate} | FleetFlow Order Confirmation System*`,
 
   // Specialized templates for different location types
-  SAM_CLUB_TEMPLATE: `# Route {routeNumber}: Sam's Club Deliveries
+  SAM_CLUB_TEMPLATE: `# Order Confirmation {routeNumber}: Sam's Club Deliveries
 
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
@@ -101,9 +101,9 @@ export const ROUTE_TEMPLATES = {
 
 ---
 
-*Generated: {generatedDate} | FleetFlow - Sam's Club Route System*`,
+*Generated: {generatedDate} | FleetFlow - Sam's Club Order Confirmation System*`,
 
-  MANUFACTURING_TEMPLATE: `# Route {routeNumber}: Industrial Manufacturing Route
+  MANUFACTURING_TEMPLATE: `# Order Confirmation {routeNumber}: Industrial Manufacturing Order
 
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
@@ -143,9 +143,9 @@ export const ROUTE_TEMPLATES = {
 
 ---
 
-*Generated: {generatedDate} | FleetFlow - Industrial Route System*`,
+*Generated: {generatedDate} | FleetFlow - Industrial Order Confirmation System*`,
 
-  AGRICULTURAL_TEMPLATE: `# Route {routeNumber}: Agricultural Delivery Route
+  AGRICULTURAL_TEMPLATE: `# Order Confirmation {routeNumber}: Agricultural Delivery Order
 
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
@@ -185,7 +185,7 @@ export const ROUTE_TEMPLATES = {
 
 ---
 
-*Generated: {generatedDate} | FleetFlow - Agricultural Route System*`
+*Generated: {generatedDate} | FleetFlow - Agricultural Order Confirmation System*`
 };
 
 export const DELIVERY_STOP_TEMPLATE = `### {stopNumber}. 📍 **{stopName}**
@@ -204,13 +204,13 @@ export const PLACEHOLDERS = {
   '{contactPhone}': 'Main company phone',
   '{dispatchPhone}': 'Dispatch phone number',
   
-  // Route Information
-  '{routeNumber}': 'Route number/ID',
-  '{routeName}': 'Route description',
-  '{totalMiles}': 'Total route miles',
-  '{totalAmount}': 'Total rate amount',
+  // Order Information
+  '{routeNumber}': 'Order number/ID',
+  '{routeName}': 'Order description',
+  '{totalMiles}': 'Total order miles',
+  '{totalAmount}': 'Total order amount',
   '{ratePerMile}': 'Rate per mile calculation',
-  '{routeDate}': 'Route execution date',
+  '{routeDate}': 'Order execution date',
   '{generatedDate}': 'Document generation date',
   
   // Universal Pickup Location (works for ANY facility type)
@@ -222,7 +222,7 @@ export const PLACEHOLDERS = {
   '{pickupManager}': 'Facility manager name',
   '{pickupPhone}': 'Pickup location phone',
   '{locationType}': 'Type of pickup facility',
-  '{confirmationNumber}': 'Pickup confirmation/reference number',
+  '{confirmationNumber}': 'Order confirmation/reference number',
   
   // Flexible Requirements (adapt to any facility type)
   '{pickupRequirements}': 'General pickup requirements',
@@ -335,13 +335,13 @@ export const TEMPLATE_STYLES = {
   DETAILED: 'detailed'
 };
 
-export const DEFAULT_ROUTE_DATA = {
+export const DEFAULT_ORDER_DATA = {
   companyName: 'FleetFlow Logistics',
   mcNumber: 'MC-000000',
   contactPhone: '(555) 123-4567',
   dispatchPhone: '(555) 123-4567',
   routeNumber: '1',
-  routeName: 'Standard Delivery Route',
+  routeName: 'Standard Delivery Order',
   totalMiles: 100,
   totalAmount: 500.00,
   ratePerMile: 5.00,

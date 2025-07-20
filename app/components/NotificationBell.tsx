@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
-import { collection, query, orderBy, onSnapshot, updateDoc, doc, where } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { createClient } from '@supabase/supabase-js';
 import { FaBell } from 'react-icons/fa';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export interface Notification {
   id: string;
   message: string;
   type: string;
   read: boolean;
-  timestamp: any;
+  timestamp: string;
   link?: string;
+  user_id: string;
 }
 
 export default function NotificationBell({ userId }: { userId: string }) {
@@ -18,27 +23,73 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (!userId) return;
-    const q = query(
-      collection(db, 'notifications'),
-      where('userId', '==', userId),
-      orderBy('timestamp', 'desc')
-    );
-    const unsub = onSnapshot(q, (snapshot) => {
-      setNotifications(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Notification))
-      );
-    });
-    return () => unsub();
+
+    // Fetch initial notifications
+    const fetchNotifications = async () => {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching notifications:', error);
+        return;
+      }
+
+      setNotifications(data || []);
+    };
+
+    fetchNotifications();
+
+    // Set up real-time subscription
+    const subscription = supabase
+      .channel('notifications')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`
+        }, 
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setNotifications(prev => [payload.new as Notification, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setNotifications(prev => 
+              prev.map(n => n.id === payload.new.id ? payload.new as Notification : n)
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [userId]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAllRead = async () => {
-    notifications.forEach(async (n) => {
-      if (!n.read) {
-        await updateDoc(doc(db, 'notifications', n.id), { read: true });
+    const unreadNotifications = notifications.filter(n => !n.read);
+    
+    for (const notification of unreadNotifications) {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', notification.id);
+
+      if (error) {
+        console.error('Error marking notification as read:', error);
       }
-    });
+    }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString();
   };
 
   return (
@@ -78,7 +129,9 @@ export default function NotificationBell({ userId }: { userId: string }) {
                 {n.link ? (
                   <a href={n.link} style={{ color: '#1976d2', textDecoration: 'underline' }}>{n.message}</a>
                 ) : n.message}
-                <span style={{ float: 'right', fontSize: '0.8em', color: '#888' }}>{new Date(n.timestamp?.toDate?.() || n.timestamp).toLocaleString()}</span>
+                <span style={{ float: 'right', fontSize: '0.8em', color: '#888' }}>
+                  {formatTimestamp(n.timestamp)}
+                </span>
               </li>
             ))}
           </ul>

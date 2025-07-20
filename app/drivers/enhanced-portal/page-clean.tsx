@@ -394,9 +394,9 @@ export default function EnhancedDriverPortal() {
                   flex: 1,
                   padding: '20px',
                   border: 'none',
-                  background: activeTab === tab.id ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  borderBottom: activeTab === tab.id ? '3px solid #3b82f6' : '3px solid transparent',
-                  color: activeTab === tab.id ? '#3b82f6' : 'rgba(45, 55, 72, 0.7)',
+                  background: activeTab === tab.id ? 'linear-gradient(135deg, #f7c52d, #f4a832)' : 'transparent',
+                  borderBottom: activeTab === tab.id ? '3px solid #f7c52d' : '3px solid transparent',
+                  color: activeTab === tab.id ? '#2d3748' : 'rgba(45, 55, 72, 0.7)',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   textAlign: 'center'

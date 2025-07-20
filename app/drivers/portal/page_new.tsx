@@ -104,45 +104,41 @@ export default function DriversPortalPage() {
 
         {/* Tabs */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.2)',
+          background: 'rgba(255, 255, 255, 0.3)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '20px 20px 0 0',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          padding: '0 24px',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.4)',
+          marginBottom: '24px',
           position: 'relative',
           zIndex: 2
         }}>
-          <nav style={{ display: 'flex', gap: '32px', borderBottom: '1px solid rgba(255, 255, 255, 0.3)', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+            overflowX: 'auto'
+          }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  padding: '16px 0',
-                  borderBottom: activeTab === tab.id ? '3px solid #2d3748' : '3px solid transparent',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  color: activeTab === tab.id ? '#2d3748' : 'rgba(45, 55, 72, 0.7)',
-                  background: 'none',
+                  flex: 1,
+                  padding: '16px 24px',
                   border: 'none',
+                  background: activeTab === tab.id ? 'linear-gradient(135deg, #f7c52d, #f4a832)' : 'transparent',
+                  color: activeTab === tab.id ? '#2d3748' : 'rgba(45, 55, 72, 0.7)',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseOver={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.currentTarget.style.color = '#2d3748';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.currentTarget.style.color = 'rgba(45, 55, 72, 0.7)';
-                  }
+                  transition: 'all 0.2s ease',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  borderBottom: activeTab === tab.id ? '3px solid #f7c52d' : '3px solid transparent',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {tab.label}
               </button>
             ))}
-          </nav>
+          </div>
         </div>
 
         {/* Content */}

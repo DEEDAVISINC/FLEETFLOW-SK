@@ -132,7 +132,6 @@
 - **Features:** Social login, MFA, compliance
 - **Best for:** Security-focused apps
 
-#### **3. Firebase Auth**
 - **Why:** Google's solution, easy setup
 - **Cost:** Free, pay for usage
 - **Features:** Phone auth, social login

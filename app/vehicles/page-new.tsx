@@ -187,7 +187,7 @@ export default function VehiclesPage() {
               </div>
             </div>
             <button style={{
-              background: 'linear-gradient(135deg, #10b981, #059669)',
+              background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '12px',

@@ -26,18 +26,19 @@
 2. [Dashboard Overview](#dashboard-overview)
 3. [Industry Data Consortium](#industry-data-consortium) ⭐ **NEW!**
 4. [Billing & Subscriptions](#billing--subscriptions) ⭐ **NEW!**
-5. [Driver Management & Compliance](#driver-management--compliance)
-6. [DOT Compliance Center](#dot-compliance-center)
-7. [FMCSA Forms Management](#fmcsa-forms-management)
-8. [Shipper Management](#shipper-management)
-9. [Dispatch Operations](#dispatch-operations)
-10. [Live Load Tracking](#live-load-tracking)
-11. [Broker Functions](#broker-functions)
-12. [Document Generation](#document-generation)
-13. [Analytics & Reporting](#analytics--reporting)
-14. [AI Automation](#ai-automation)
-15. [Settings & Administration](#settings--administration)
-16. [Workflow Examples](#workflow-examples)
+5. [Enhanced Carrier Portal](#enhanced-carrier-portal) ⭐ **NEW!**
+6. [Driver Management & Compliance](#driver-management--compliance)
+7. [DOT Compliance Center](#dot-compliance-center)
+8. [FMCSA Forms Management](#fmcsa-forms-management)
+9. [Shipper Management](#shipper-management)
+10. [Dispatch Operations](#dispatch-operations)
+11. [Live Load Tracking](#live-load-tracking)
+12. [Broker Functions](#broker-functions)
+13. [Document Generation](#document-generation)
+14. [Analytics & Reporting](#analytics--reporting)
+15. [AI Automation](#ai-automation)
+16. [Settings & Administration](#settings--administration)
+17. [Workflow Examples](#workflow-examples)
 
 ---
 
@@ -498,6 +499,99 @@ Financial performance insights:
 - **Technical Issues**: Integration and technical support
 
 **💳 The FleetFlow billing system enables seamless monetization of the industry's most comprehensive TMS platform, turning a $26.4B+ market opportunity into recurring revenue through automated, enterprise-grade financial operations!**
+
+---
+
+## 🏢 Enhanced Carrier Portal ⭐ **NEW VISUAL DESIGN**
+
+### **Overview**
+The Enhanced Carrier Portal features a completely redesigned interface with modern 3D glass morphism styling, improved visibility, and professional presentation. The portal provides comprehensive carrier management with advanced visual elements and enhanced user experience.
+
+### **Visual Design Features**
+- **Modern Glass Morphism**: 3D glass effects with enhanced depth and shadows
+- **Darker Green Gradient**: Professional dark green background with multi-layered gradients
+- **Enhanced Visibility**: Improved contrast and readability throughout the interface
+- **Color-Coded KPIs**: Individual accent colors for each performance metric
+- **Floating Elements**: Subtle animated background elements for visual interest
+- **Professional Typography**: Enhanced text rendering with shadows and gradients
+
+### **Accessing the Enhanced Carrier Portal**
+1. **From Navigation**: Click "Driver Management" → "🏢 Enhanced Carrier Portal"
+2. **Direct URL**: `/carriers/enhanced-portal`
+3. **Required Permissions**: Admin, Manager, or Dispatcher role
+
+### **Key Features**
+
+#### **Performance Dashboard**
+- **Total Carriers**: Overview of all registered carriers
+- **Active Carriers**: Currently operational carriers
+- **Completion Rate**: Onboarding completion percentage
+- **Compliance Rate**: DOT compliance status
+- **Portal Adoption**: Portal usage statistics
+- **Factoring Integration**: Payment processing status
+
+#### **Advanced Search & Filtering**
+- **Enhanced Search Bar**: Improved visibility with lighter background
+- **Multi-Field Search**: Search by company name, MC number, or DOT number
+- **Status Filtering**: Filter by carrier status (Active, Pending, Suspended, etc.)
+- **Real-Time Results**: Instant search results as you type
+
+#### **Carrier Management**
+- **Carrier Cards**: Visual carrier information cards with status indicators
+- **Detailed Profiles**: Comprehensive carrier information and history
+- **Status Management**: Update carrier status and permissions
+- **Document Tracking**: Monitor document completion and compliance
+- **Performance Metrics**: Track carrier performance and reliability
+
+#### **Onboarding Pipeline Progress**
+- **Visual Workflow**: Step-by-step onboarding progress visualization
+- **Enhanced Carrier Cards**: Improved visibility for carrier information
+- **Progress Tracking**: Real-time status updates for each onboarding step
+- **Estimated Completion**: Timeline tracking for onboarding completion
+- **Automated Notifications**: System-generated status updates
+
+### **User Interface Enhancements**
+
+#### **Background System**
+- **Multi-Layered Gradients**: Five-color gradient system with depth
+- **Radial Accents**: Subtle color overlays for visual interest
+- **Texture Patterns**: Diagonal texture overlay for professional appearance
+- **Animated Elements**: Floating blur elements with smooth animations
+
+#### **Component Styling**
+- **Glass Morphism Cards**: Translucent cards with blur effects and shadows
+- **Accent Borders**: Color-coded top borders for visual organization
+- **Enhanced Buttons**: Gradient buttons with hover animations
+- **Improved Typography**: Better contrast and readability
+
+#### **Responsive Design**
+- **Mobile Optimized**: Fully responsive design for all devices
+- **Touch-Friendly**: Optimized for touch interactions
+- **Scalable Interface**: Adapts to different screen sizes
+- **Professional Presentation**: Consistent styling across all components
+
+### **Navigation & Workflow**
+
+#### **Quick Actions**
+- **Add New Carrier**: Start new carrier onboarding process
+- **Bulk Operations**: Manage multiple carriers simultaneously
+- **Export Data**: Generate reports and data exports
+- **System Integration**: Connect with accounting and billing systems
+
+#### **Integration Features**
+- **Real-Time Updates**: Live data synchronization
+- **Notification System**: Automated alerts and updates
+- **Document Management**: Integrated document storage and retrieval
+- **Compliance Tracking**: Automated compliance monitoring
+
+### **Best Practices**
+1. **Regular Monitoring**: Check carrier status and progress regularly
+2. **Proactive Communication**: Use automated notifications effectively
+3. **Document Management**: Keep all carrier documents up to date
+4. **Performance Tracking**: Monitor carrier performance metrics
+5. **Compliance Maintenance**: Ensure ongoing DOT compliance
+
+**🏢 The Enhanced Carrier Portal represents the future of carrier management with its sophisticated visual design, comprehensive functionality, and professional presentation - setting new standards for TMS interfaces!**
 
 ---
 

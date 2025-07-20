@@ -13,7 +13,7 @@ export interface CarrierPortalProfile {
     state: string;
     zipCode: string;
   };
-  status: 'active' | 'inactive' | 'pending';
+  status: 'active' | 'inactive' | 'pending' | 'suspended' | 'under_review';
   onboardingStatus: 'complete' | 'in-progress' | 'not-started';
   documentsUploaded: boolean;
   insuranceVerified: boolean;
@@ -156,6 +156,63 @@ class OnboardingIntegration {
     };
 
     this.carrierProfiles.set('carrier_001', mockProfile);
+
+    // Add more mock carriers
+    const mockCarriers: CarrierPortalProfile[] = [
+      {
+        id: 'carrier_002',
+        companyName: 'Premium Freight Solutions',
+        mcNumber: 'MC-654321',
+        dotNumber: 'DOT-210987',
+        contactName: 'Sarah Johnson',
+        contactEmail: 'sarah@premiumfreight.com',
+        contactPhone: '555-0456',
+        address: {
+          street: '456 Oak Ave',
+          city: 'Atlanta',
+          state: 'GA',
+          zipCode: '30301'
+        },
+        status: 'pending',
+        onboardingStatus: 'in-progress',
+        documentsUploaded: false,
+        insuranceVerified: false,
+        factoringApproved: false,
+        agreementSigned: false,
+        portalAccess: false,
+        createdAt: new Date('2024-01-18'),
+        updatedAt: new Date('2024-01-18')
+      },
+      {
+        id: 'carrier_003',
+        companyName: 'Reliable Logistics Corp',
+        mcNumber: 'MC-987654',
+        dotNumber: 'DOT-456789',
+        contactName: 'Mike Davis',
+        contactEmail: 'mike@reliablelogistics.com',
+        contactPhone: '555-0789',
+        address: {
+          street: '789 Pine Rd',
+          city: 'Phoenix',
+          state: 'AZ',
+          zipCode: '85001'
+        },
+        status: 'inactive',
+        onboardingStatus: 'complete',
+        documentsUploaded: true,
+        insuranceVerified: true,
+        factoringApproved: true,
+        agreementSigned: true,
+        portalAccess: false,
+        createdAt: new Date('2024-01-10'),
+        updatedAt: new Date('2024-01-22')
+      }
+    ];
+
+    // Add carriers to the map
+    mockCarriers.forEach(carrier => {
+      this.carrierProfiles.set(carrier.id, carrier);
+    });
   }
 
   // Get carrier profile by ID
@@ -166,6 +223,11 @@ class OnboardingIntegration {
   // Get all carrier profiles
   getAllCarrierProfiles(): CarrierPortalProfile[] {
     return Array.from(this.carrierProfiles.values());
+  }
+
+  // Get all carriers (alias for getAllCarrierProfiles for compatibility)
+  getAllCarriers(): CarrierPortalProfile[] {
+    return this.getAllCarrierProfiles();
   }
 
   // Get onboarding data by carrier ID

@@ -6,7 +6,7 @@ import { checkPermission, getCurrentUser } from '../../config/access';
 // Access Control Component
 const AccessRestricted = () => (
   <div style={{
-    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
@@ -32,7 +32,7 @@ const AccessRestricted = () => (
         marginBottom: '16px' 
       }}>Access Restricted</h1>
       <p style={{ 
-        color: 'rgba(255, 255, 255, 0.9)', 
+        color: 'rgba(255, 255, 255, 0.8)', 
         marginBottom: '16px',
         lineHeight: '1.6'
       }}>
@@ -41,11 +41,11 @@ const AccessRestricted = () => (
       <button 
         onClick={() => window.history.back()}
         style={{
-          background: 'linear-gradient(135deg, #059669, #047857)',
+          background: 'rgba(255, 255, 255, 0.2)',
           color: 'white',
           padding: '12px 24px',
           borderRadius: '8px',
-          border: 'none',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
           fontWeight: 'bold',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
@@ -99,9 +99,9 @@ interface FactoringCompany {
   contactName: string;
   phone: string;
   email: string;
-  advancePercentage: number;
-  factorRate: number;
-  services: string[];
+  address: string;
+  isActive: boolean;
+  website: string;
 }
 
 // Progress Card Component
@@ -116,11 +116,11 @@ const ProgressCard = ({ title, completed, total, icon, color }: {
   
   return (
     <div style={{
-      background: 'rgba(255, 255, 255, 0.15)',
+      background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       borderRadius: '12px',
       padding: '20px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
+      border: '1px solid rgba(0, 0, 0, 0.1)',
       boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
       transition: 'all 0.2s ease',
       cursor: 'pointer'
@@ -129,7 +129,7 @@ const ProgressCard = ({ title, completed, total, icon, color }: {
     onMouseOut={(e) => (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 'bold', margin: 0 }}>
+        <h3 style={{ color: '#1f2937', fontSize: '1.1rem', fontWeight: 'bold', margin: 0 }}>
           {icon} {title}
         </h3>
         <span style={{ 
@@ -144,7 +144,7 @@ const ProgressCard = ({ title, completed, total, icon, color }: {
         </span>
       </div>
       <div style={{
-        background: 'rgba(255, 255, 255, 0.2)',
+        background: 'rgba(0, 0, 0, 0.1)',
         borderRadius: '8px',
         height: '8px',
         overflow: 'hidden'
@@ -156,7 +156,7 @@ const ProgressCard = ({ title, completed, total, icon, color }: {
           transition: 'width 0.3s ease'
         }} />
       </div>
-      <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', marginTop: '8px' }}>
+      <div style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: '8px' }}>
         {percentage}% Complete
       </div>
     </div>
@@ -327,56 +327,93 @@ export default function CarrierOnboardingPage() {
     },
     {
       id: 'carrier-003',
-      dotNumber: '4567890',
+      dotNumber: '1234567',
       mcNumber: 'MC-765432',
-      legalName: 'Mountain View Transport',
-      physicalAddress: '789 Highway Blvd, Denver, CO 80202',
+      legalName: 'Express Freight Lines',
+      physicalAddress: '789 Logistics Dr, Chicago, IL 60601',
       phone: '(555) 456-7890',
-      email: 'contact@mountainview.com',
+      email: 'ops@expressfreight.com',
       onboardingStatus: 'pending',
       safetyRating: 'Satisfactory',
-      equipmentTypes: ['Dry Van'],
+      equipmentTypes: ['Dry Van', 'Flatbed'],
+      factorCompany: 'RTS Financial',
       documentsComplete: false,
       agreementsSigned: false,
       portalSetup: false,
-      dateStarted: '2024-12-22'
+      dateStarted: '2024-12-22',
+      estimatedCompletion: '2025-01-05'
     }
   ];
 
-  // Mock data - Factoring Companies
+  // Mock data - Onboarding tasks
+  const onboardingTasks: OnboardingTask[] = [
+    {
+      id: 'task-001',
+      carrierId: 'carrier-001',
+      taskType: 'document_upload',
+      taskDescription: 'Upload Certificate of Insurance',
+      required: true,
+      completed: false,
+      dueDate: '2024-12-28',
+      priority: 'high'
+    },
+    {
+      id: 'task-002',
+      carrierId: 'carrier-001',
+      taskType: 'agreement_signing',
+      taskDescription: 'Sign Carrier Agreement',
+      required: true,
+      completed: false,
+      dueDate: '2024-12-30',
+      priority: 'medium'
+    },
+    {
+      id: 'task-003',
+      carrierId: 'carrier-003',
+      taskType: 'fmcsa_verification',
+      taskDescription: 'Complete FMCSA Verification',
+      required: true,
+      completed: false,
+      dueDate: '2024-12-25',
+      priority: 'high'
+    }
+  ];
+
+  // Mock data - Factoring companies
   const factoringCompanies: FactoringCompany[] = [
     {
       id: 'factor-001',
-      companyName: 'TBS Factoring Service',
+      companyName: 'TBS Factoring',
       contactName: 'Sarah Johnson',
-      phone: '(800) 207-7661',
-      email: 'verification@tbsfactoring.com',
-      advancePercentage: 90,
-      factorRate: 3.5,
-      services: ['Fuel Cards', 'Load Board Access', 'Credit Checks']
+      phone: '(800) 555-0123',
+      email: 'sarah@tbsfactoring.com',
+      address: '123 Finance St, New York, NY 10001',
+      isActive: true,
+      website: 'www.tbsfactoring.com'
     },
     {
       id: 'factor-002',
-      companyName: 'Apex Capital Corp',
-      contactName: 'Mike Rodriguez',
-      phone: '(800) 262-APEX',
-      email: 'noa@apexcapitalcorp.com',
-      advancePercentage: 95,
-      factorRate: 2.8,
-      services: ['Same Day Funding', 'Fuel Cards', 'Collections']
+      companyName: 'Apex Capital',
+      contactName: 'Mike Davis',
+      phone: '(800) 555-0234',
+      email: 'mike@apexcapital.com',
+      address: '456 Capital Ave, Fort Worth, TX 76102',
+      isActive: true,
+      website: 'www.apexcapital.com'
     },
     {
       id: 'factor-003',
-      companyName: 'eCapital Commercial Finance',
+      companyName: 'RTS Financial',
       contactName: 'Lisa Chen',
-      phone: '(800) 738-3003',
-      email: 'operations@ecapital.com',
-      advancePercentage: 92,
-      factorRate: 3.2,
-      services: ['Technology Platform', 'Fuel Cards', 'Credit Protection']
+      phone: '(800) 555-0345',
+      email: 'lisa@rtsfinancial.com',
+      address: '789 Funding Blvd, Atlanta, GA 30309',
+      isActive: true,
+      website: 'www.rtsfinancial.com'
     }
   ];
 
+  // Calculate stats
   const totalCarriers = carriers.length;
   const completedCarriers = carriers.filter(c => c.onboardingStatus === 'completed').length;
   const inProgressCarriers = carriers.filter(c => c.onboardingStatus === 'in_progress').length;
@@ -384,7 +421,7 @@ export default function CarrierOnboardingPage() {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+      background: 'radial-gradient(circle at 20% 50%, #667eea 0%, transparent 50%), radial-gradient(circle at 80% 20%, #764ba2 0%, transparent 50%), radial-gradient(circle at 40% 80%, #667eea 0%, transparent 50%), linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       minHeight: '100vh',
       padding: '80px 20px 20px 20px'
     }}>
@@ -420,15 +457,42 @@ export default function CarrierOnboardingPage() {
             Streamlined carrier verification, documentation, and onboarding workflow
           </p>
           <div style={{
-            display: 'inline-block',
-            background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            fontSize: '0.9rem',
-            fontWeight: 'bold'
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '16px',
+            flexWrap: 'wrap'
           }}>
-            👤 {user.name} • {user.role}
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              border: '1px solid rgba(255, 255, 255, 0.3)'
+            }}>
+              👤 {user.name} • {user.role}
+            </div>
+            <button
+              onClick={() => window.open('/university/carrier-onboard-workflow', '_blank')}
+              style={{
+                background: 'rgba(16, 185, 129, 0.8)',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => (e.target as HTMLElement).style.background = 'rgba(16, 185, 129, 1)'}
+              onMouseOut={(e) => (e.target as HTMLElement).style.background = 'rgba(16, 185, 129, 0.8)'}
+            >
+              🎓 Training Available
+            </button>
           </div>
         </div>
 
@@ -482,111 +546,367 @@ export default function CarrierOnboardingPage() {
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <>
-            {/* Progress Overview */}
+            {/* Stats Grid */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '20px',
               marginBottom: '32px'
             }}>
-              <ProgressCard 
-                title="Total Carriers"
-                completed={completedCarriers}
-                total={totalCarriers}
-                icon="🚛"
-                color="#10b981"
-              />
-              <ProgressCard 
-                title="In Progress"
-                completed={inProgressCarriers}
-                total={totalCarriers}
-                icon="🔄"
-                color="#f59e0b"
-              />
-              <ProgressCard 
-                title="Pending Review"
-                completed={pendingCarriers}
-                total={totalCarriers}
-                icon="⏳"
-                color="#6b7280"
-              />
-              <ProgressCard 
-                title="Factor Companies"
-                completed={factoringCompanies.length}
-                total={factoringCompanies.length}
-                icon="🏦"
-                color="#3b82f6"
-              />
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Total Carriers
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {totalCarriers}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      All registered
+                    </p>
+                  </div>
+                  <div style={{ fontSize: '40px', opacity: 0.7 }}>🚛</div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Completed
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {completedCarriers}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#4ade80', margin: 0 }}>
+                      Ready for operations
+                    </p>
+                  </div>
+                  <div style={{ fontSize: '40px', opacity: 0.7 }}>✅</div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      In Progress
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {inProgressCarriers}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#fbbf24', margin: 0 }}>
+                      Active onboarding
+                    </p>
+                  </div>
+                  <div style={{ fontSize: '40px', opacity: 0.7 }}>⏳</div>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      Pending
+                    </p>
+                    <p style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', margin: '0 0 4px 0' }}>
+                      {pendingCarriers}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#f87171', margin: 0 }}>
+                      Awaiting start
+                    </p>
+                  </div>
+                  <div style={{ fontSize: '40px', opacity: 0.7 }}>📋</div>
+                </div>
+              </div>
             </div>
 
             {/* Quick Actions */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
+              background: 'rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              padding: '32px',
+              padding: '24px',
               marginBottom: '32px',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: 'white',
-                marginBottom: '24px',
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '1.5rem', 
+                fontWeight: 'bold', 
+                marginBottom: '20px',
                 textAlign: 'center'
-              }}>🚀 Quick Actions</h3>
-              
+              }}>
+                🚀 Quick Actions
+              </h3>
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
                 gap: '16px'
               }}>
                 {[
                   { 
                     label: '➕ Start New Onboarding', 
-                    color: '#10b981', 
+                    color: 'linear-gradient(135deg, #14b8a6, #0d9488)', 
                     desc: 'Begin comprehensive carrier verification workflow',
+                    action: 'navigate',
                     href: '/onboarding/carrier-onboarding/new'
                   },
-                  { label: '📊 FMCSA Lookup', color: '#3b82f6', desc: 'Verify DOT information' },
-                  { label: '🏦 Add Factor Company', color: '#8b5cf6', desc: 'Register new factoring partner' },
-                  { label: '📄 Bulk Document Review', color: '#f59e0b', desc: 'Review pending documents' },
-                  { label: '📝 Generate Agreements', color: '#ef4444', desc: 'Create carrier contracts' },
-                  { label: '👤 Setup Driver Portal', color: '#059669', desc: 'Configure portal access' }
+                  { 
+                    label: '📊 FMCSA Lookup', 
+                    color: 'linear-gradient(135deg, #dc2626, #b91c1c)', 
+                    desc: 'Verify DOT information',
+                    action: 'fmcsa_lookup'
+                  },
+                  { 
+                    label: '🏦 Add Factor Company', 
+                    color: 'linear-gradient(135deg, #059669, #047857)', 
+                    desc: 'Register new factoring partner',
+                    action: 'add_factor'
+                  },
+                  { 
+                    label: '📄 Bulk Document Review', 
+                    color: 'linear-gradient(135deg, #f97316, #ea580c)', 
+                    desc: 'Review pending documents',
+                    action: 'document_review'
+                  },
+                  { 
+                    label: '📝 Generate Agreements', 
+                    color: 'linear-gradient(135deg, #6366f1, #4f46e5)', 
+                    desc: 'Create carrier contracts',
+                    action: 'generate_agreements'
+                  },
+                  { 
+                    label: '👤 Setup Driver Portal', 
+                    color: 'linear-gradient(135deg, #f7c52d, #f4a832)', 
+                    desc: 'Configure portal access',
+                    action: 'setup_portal'
+                  }
                 ].map((action, index) => (
-                  <button
+                  <div
                     key={index}
                     onClick={() => {
-                      if (action.href) {
-                        window.location.href = action.href;
+                      if (action.action === 'navigate' && action.href) {
+                        window.open(action.href, '_blank');
+                      } else {
+                        alert(`${action.label} functionality coming soon...`);
                       }
                     }}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
                       borderRadius: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      fontWeight: 'bold',
+                      padding: '20px',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      fontSize: '0.9rem',
-                      textAlign: 'left'
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textAlign: 'center'
                     }}
                     onMouseOver={(e) => {
-                      (e.target as HTMLElement).style.background = action.color;
-                      (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.2)';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
                     }}
                     onMouseOut={(e) => {
-                      (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.2)';
-                      (e.target as HTMLElement).style.transform = 'translateY(0)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
                     }}
                   >
-                    <div style={{ fontSize: '1rem', marginBottom: '4px' }}>{action.label}</div>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>{action.desc}</div>
-                  </button>
+                    <div style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      background: action.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px',
+                      margin: '0 auto 12px',
+                      color: 'white'
+                    }}>
+                      {action.label.charAt(0)}
+                    </div>
+                    <h4 style={{ 
+                      color: 'white', 
+                      fontSize: '1.1rem', 
+                      fontWeight: 'bold', 
+                      marginBottom: '8px' 
+                    }}>
+                      {action.label}
+                    </h4>
+                    <p style={{ 
+                      color: 'rgba(255, 255, 255, 0.7)', 
+                      fontSize: '0.9rem', 
+                      margin: 0,
+                      lineHeight: '1.4'
+                    }}>
+                      {action.desc}
+                    </p>
+                  </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: 'white', 
+                fontSize: '1.5rem', 
+                fontWeight: 'bold', 
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                📈 Recent Activity
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '16px'
+              }}>
+                {onboardingTasks.slice(0, 6).map((task) => {
+                  const carrier = carriers.find(c => c.id === task.carrierId);
+                  const priorityColor = task.priority === 'high' ? '#ef4444' : 
+                                       task.priority === 'medium' ? '#f59e0b' : '#10b981';
+                  
+                  return (
+                    <div 
+                      key={task.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.15)';
+                      }}
+                      onMouseOut={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px'
+                      }}>
+                        <div>
+                          <h4 style={{ 
+                            color: 'white', 
+                            fontSize: '1rem', 
+                            fontWeight: 'bold', 
+                            margin: '0 0 4px 0' 
+                          }}>
+                            {carrier?.legalName || 'Unknown Carrier'}
+                          </h4>
+                          <p style={{ 
+                            color: 'rgba(255, 255, 255, 0.7)', 
+                            fontSize: '0.8rem', 
+                            margin: 0 
+                          }}>
+                            {task.taskDescription}
+                          </p>
+                        </div>
+                        <div style={{
+                          background: priorityColor,
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '12px',
+                          fontSize: '0.7rem',
+                          fontWeight: 'bold'
+                        }}>
+                          {task.priority.toUpperCase()}
+                        </div>
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: '0.8rem',
+                        color: 'rgba(255, 255, 255, 0.6)'
+                      }}>
+                        <span>Due: {task.dueDate}</span>
+                        <span style={{
+                          color: task.completed ? '#10b981' : '#f59e0b'
+                        }}>
+                          {task.completed ? '✅ Complete' : '⏳ Pending'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </>
@@ -595,13 +915,211 @@ export default function CarrierOnboardingPage() {
         {/* Carriers Tab */}
         {activeTab === 'carriers' && (
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-            gap: '20px'
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
-            {carriers.map((carrier) => (
-              <CarrierCard key={carrier.id} carrier={carrier} />
-            ))}
+            <h3 style={{ 
+              color: 'white', 
+              fontSize: '1.5rem', 
+              fontWeight: 'bold', 
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              🚛 Active Carrier Onboarding
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+              gap: '20px'
+            }}>
+              {carriers.map((carrier) => {
+                const statusColor = carrier.onboardingStatus === 'completed' ? '#10b981' : 
+                                   carrier.onboardingStatus === 'in_progress' ? '#f59e0b' : '#ef4444';
+                const statusIcon = carrier.onboardingStatus === 'completed' ? '✅' : 
+                                  carrier.onboardingStatus === 'in_progress' ? '⏳' : '📋';
+                
+                return (
+                  <div 
+                    key={carrier.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+                    }}
+                  >
+                    {/* Header */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px'
+                    }}>
+                      <div>
+                        <h4 style={{ 
+                          color: 'white', 
+                          fontSize: '1.2rem', 
+                          fontWeight: 'bold', 
+                          margin: '0 0 4px 0' 
+                        }}>
+                          {carrier.legalName}
+                        </h4>
+                        <p style={{ 
+                          color: 'rgba(255, 255, 255, 0.7)', 
+                          fontSize: '0.9rem', 
+                          margin: '0 0 8px 0' 
+                        }}>
+                          {carrier.mcNumber} • {carrier.dotNumber}
+                        </p>
+                      </div>
+                      <div style={{
+                        background: statusColor,
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        {statusIcon} {carrier.onboardingStatus.replace('_', ' ').toUpperCase()}
+                      </div>
+                    </div>
+
+                    {/* Progress Indicators */}
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(2, 1fr)', 
+                      gap: '8px', 
+                      fontSize: '0.8rem', 
+                      marginBottom: '16px' 
+                    }}>
+                      <div style={{ 
+                        background: carrier.documentsComplete ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        color: carrier.documentsComplete ? '#10b981' : '#ef4444',
+                        textAlign: 'center',
+                        border: `1px solid ${carrier.documentsComplete ? '#10b981' : '#ef4444'}33`
+                      }}>
+                        {carrier.documentsComplete ? '✅' : '❌'} Documents
+                      </div>
+                      <div style={{ 
+                        background: carrier.agreementsSigned ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        color: carrier.agreementsSigned ? '#10b981' : '#ef4444',
+                        textAlign: 'center',
+                        border: `1px solid ${carrier.agreementsSigned ? '#10b981' : '#ef4444'}33`
+                      }}>
+                        {carrier.agreementsSigned ? '✅' : '❌'} Agreements
+                      </div>
+                    </div>
+
+                    {/* Details */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '0.8rem',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      paddingTop: '16px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}>
+                      <span>Started: {carrier.dateStarted}</span>
+                      <span>Safety: {carrier.safetyRating}</span>
+                    </div>
+
+                    {/* Equipment Types */}
+                    <div style={{ marginTop: '12px' }}>
+                      <div style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '4px'
+                      }}>
+                        {carrier.equipmentTypes.map((equipment, index) => (
+                          <span 
+                            key={index}
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.2)',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '0.7rem',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {equipment}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '8px', 
+                      marginTop: '16px' 
+                    }}>
+                      <button
+                        style={{
+                          background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontSize: '0.8rem',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          flex: 1
+                        }}
+                        onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                        onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                        onClick={() => alert(`Viewing details for ${carrier.legalName}`)}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        style={{
+                          background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontSize: '0.8rem',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          flex: 1
+                        }}
+                        onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                        onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                        onClick={() => alert(`Managing ${carrier.legalName}`)}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -610,68 +1128,135 @@ export default function CarrierOnboardingPage() {
           <div style={{
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
-            borderRadius: '12px',
+            borderRadius: '16px',
             padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px'
+            <h3 style={{ 
+              color: 'white', 
+              fontSize: '1.5rem', 
+              fontWeight: 'bold', 
+              marginBottom: '20px',
+              textAlign: 'center'
             }}>
-              <h3 style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
-                🏦 Factoring Companies
-              </h3>
-              <button style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                color: 'white',
-                padding: '10px 20px',
-                borderRadius: '8px',
-                border: 'none',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}>
-                + Add Factor Company
-              </button>
-            </div>
-
+              🏦 Factoring Company Management
+            </h3>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
               gap: '20px'
             }}>
               {factoringCompanies.map((company) => (
-                <div key={company.id} style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                  <h4 style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '12px' }}>
-                    {company.companyName}
-                  </h4>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', marginBottom: '12px' }}>
-                    <div>📞 {company.phone}</div>
-                    <div>✉️ {company.email}</div>
-                    <div>👤 {company.contactName}</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-                    <div style={{ color: 'white', textAlign: 'center' }}>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#10b981' }}>
-                        {company.advancePercentage}%
-                      </div>
-                      <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Advance</div>
+                <div 
+                  key={company.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '16px'
+                  }}>
+                    <div>
+                      <h4 style={{ 
+                        color: 'white', 
+                        fontSize: '1.2rem', 
+                        fontWeight: 'bold', 
+                        margin: '0 0 4px 0' 
+                      }}>
+                        {company.companyName}
+                      </h4>
+                      <p style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '0.9rem', 
+                        margin: '0 0 8px 0' 
+                      }}>
+                        Contact: {company.contactName}
+                      </p>
                     </div>
-                    <div style={{ color: 'white', textAlign: 'center' }}>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#3b82f6' }}>
-                        {company.factorRate}%
-                      </div>
-                      <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Rate</div>
+                    <div style={{
+                      background: company.isActive ? '#10b981' : '#ef4444',
+                      color: 'white',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold'
+                    }}>
+                      {company.isActive ? '✅ Active' : '❌ Inactive'}
                     </div>
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Services: {company.services.join(', ')}
+
+                  <div style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                    marginBottom: '16px'
+                  }}>
+                    <p style={{ margin: '0 0 4px 0' }}>📞 {company.phone}</p>
+                    <p style={{ margin: '0 0 4px 0' }}>✉️ {company.email}</p>
+                    <p style={{ margin: '0 0 4px 0' }}>🌐 {company.website}</p>
+                    <p style={{ margin: '0 0 4px 0' }}>📍 {company.address}</p>
+                  </div>
+
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '8px' 
+                  }}>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        flex: 1
+                      }}
+                      onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                      onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                      onClick={() => alert(`Editing ${company.companyName}`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        flex: 1
+                      }}
+                      onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                      onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                      onClick={() => alert(`Viewing details for ${company.companyName}`)}
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
               ))}
@@ -684,31 +1269,405 @@ export default function CarrierOnboardingPage() {
           <div style={{
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
-            borderRadius: '12px',
+            borderRadius: '16px',
             padding: '24px',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            textAlign: 'center'
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
-            <h3 style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '16px' }}>
-              📄 Document Management Center
-            </h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '24px' }}>
-              Centralized document review and management system
-            </p>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              padding: '40px',
-              fontSize: '4rem'
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '32px'
             }}>
-              🚧
+              <div>
+                <h3 style={{ 
+                  color: 'white', 
+                  fontSize: '1.5rem', 
+                  fontWeight: 'bold', 
+                  marginBottom: '8px' 
+                }}>
+                  📄 Document Management Center
+                </h3>
+                <p style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)', 
+                  fontSize: '1rem',
+                  margin: 0 
+                }}>
+                  Centralized document review, approval, and management system
+                </p>
+              </div>
+              <div style={{
+                display: 'flex',
+                gap: '12px'
+              }}>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                  onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                  onClick={() => alert('📤 Document upload functionality would open here')}
+                >
+                  📤 Upload Document
+                </button>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                  onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                  onClick={() => alert('📊 Document analytics would open here')}
+                >
+                  📊 Analytics
+                </button>
+              </div>
             </div>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginTop: '16px' }}>
-              Document management system coming soon...
-            </p>
+
+            {/* Document Statistics */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '16px',
+              marginBottom: '32px'
+            }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📁</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>247</div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Total Documents</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⏳</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f59e0b' }}>23</div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Pending Review</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>✅</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>201</div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Approved</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>❌</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>23</div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Rejected</div>
+              </div>
+            </div>
+
+            {/* Document Categories */}
+            <div style={{
+              marginBottom: '32px'
+            }}>
+              <h4 style={{
+                color: 'white',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                marginBottom: '16px'
+              }}>
+                📂 Document Categories
+              </h4>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px'
+              }}>
+                {[
+                  { name: 'Insurance Documents', count: 45, icon: '🛡️', color: '#3b82f6' },
+                  { name: 'Tax Forms', count: 38, icon: '📋', color: '#10b981' },
+                  { name: 'Operating Authority', count: 32, icon: '📜', color: '#f59e0b' },
+                  { name: 'Driver Licenses', count: 67, icon: '🆔', color: '#8b5cf6' },
+                  { name: 'Equipment Photos', count: 54, icon: '📸', color: '#ef4444' },
+                  { name: 'Maintenance Records', count: 11, icon: '🔧', color: '#059669' }
+                ].map((category, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      padding: '16px',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.15)';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseOut={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                    }}
+                    onClick={() => alert(`📂 Opening ${category.name} category with ${category.count} documents`)}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}>
+                        <div style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: category.color,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '1.2rem'
+                        }}>
+                          {category.icon}
+                        </div>
+                        <div>
+                          <div style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: 'bold'
+                          }}>
+                            {category.name}
+                          </div>
+                          <div style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem'
+                          }}>
+                            {category.count} documents
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        fontSize: '1.2rem'
+                      }}>
+                        →
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recent Documents */}
+            <div style={{
+              marginBottom: '32px'
+            }}>
+              <h4 style={{
+                color: 'white',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                marginBottom: '16px'
+              }}>
+                📋 Recent Documents
+              </h4>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                overflow: 'hidden'
+              }}>
+                {[
+                  { 
+                    name: 'Certificate of Insurance - Prime Logistics LLC', 
+                    type: 'Insurance', 
+                    status: 'Approved', 
+                    date: '2024-12-20', 
+                    size: '2.4 MB',
+                    statusColor: '#10b981'
+                  },
+                  { 
+                    name: 'W9 Tax Form - Swift Cargo Solutions', 
+                    type: 'Tax', 
+                    status: 'Pending Review', 
+                    date: '2024-12-19', 
+                    size: '1.8 MB',
+                    statusColor: '#f59e0b'
+                  },
+                  { 
+                    name: 'MC Authority Letter - Express Freight Lines', 
+                    type: 'Authority', 
+                    status: 'Approved', 
+                    date: '2024-12-18', 
+                    size: '1.2 MB',
+                    statusColor: '#10b981'
+                  },
+                  { 
+                    name: 'Driver License - John Smith', 
+                    type: 'License', 
+                    status: 'Rejected', 
+                    date: '2024-12-17', 
+                    size: '3.1 MB',
+                    statusColor: '#ef4444'
+                  },
+                  { 
+                    name: 'Equipment Photo - Truck #4567', 
+                    type: 'Equipment', 
+                    status: 'Approved', 
+                    date: '2024-12-16', 
+                    size: '5.7 MB',
+                    statusColor: '#10b981'
+                  }
+                ].map((doc, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '16px 20px',
+                      borderBottom: index < 4 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseOver={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                    onMouseOut={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    }}
+                    onClick={() => alert(`📄 Opening document: ${doc.name}`)}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px'
+                    }}>
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.2rem'
+                      }}>
+                        📄
+                      </div>
+                      <div>
+                        <div style={{
+                          color: 'white',
+                          fontSize: '1rem',
+                          fontWeight: 'bold',
+                          marginBottom: '4px'
+                        }}>
+                          {doc.name}
+                        </div>
+                        <div style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem'
+                        }}>
+                          {doc.type} • {doc.date} • {doc.size}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px'
+                    }}>
+                      <div style={{
+                        background: doc.statusColor,
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold'
+                      }}>
+                        {doc.status}
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        gap: '8px'
+                      }}>
+                        <button
+                          style={{
+                            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert(`📥 Downloading: ${doc.name}`);
+                          }}
+                        >
+                          📥 Download
+                        </button>
+                        <button
+                          style={{
+                            background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+                          onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert(`👁️ Viewing: ${doc.name}`);
+                          }}
+                        >
+                          👁️ View
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
-
       </main>
     </div>
   );

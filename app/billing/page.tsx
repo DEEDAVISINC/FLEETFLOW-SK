@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { StripeService, FLEETFLOW_PRICING_PLANS, type SubscriptionPlan } from '../services/stripe/StripeService';
+import { Tooltip, InfoTooltip } from '../components/ui/tooltip';
+import { getTooltipContent } from '../utils/tooltipContent';
 
 interface BillingData {
   currentPlan: {
@@ -24,6 +27,197 @@ interface BillingData {
     downloadUrl?: string;
   }>;
 }
+
+interface UsageMeterProps {
+  title: string;
+  current: number;
+  limit: number | 'unlimited';
+  unit: string;
+}
+
+const UsageMeter: React.FC<UsageMeterProps> = ({ title, current, limit, unit }) => {
+  const percentage = limit === 'unlimited' ? 0 : (current / (limit as number)) * 100;
+  const isOverLimit = percentage > 100;
+
+  return (
+    <div style={{
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+      transition: 'all 0.3s ease'
+    }}>
+      <h3 style={{
+        fontSize: '16px',
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: '16px'
+      }}>
+        {title}
+      </h3>
+      <div style={{ marginBottom: '12px' }}>
+        <span style={{
+          fontSize: '24px',
+          fontWeight: 'bold',
+          color: isOverLimit ? '#ef4444' : '#1f2937'
+        }}>
+          {current.toLocaleString()} {unit}
+        </span>
+        <span style={{
+          fontSize: '14px',
+          color: '#6b7280',
+          display: 'block',
+          marginTop: '4px'
+        }}>
+          {limit === 'unlimited' ? 'Unlimited' : `${(limit as number).toLocaleString()} limit`}
+        </span>
+      </div>
+      {limit !== 'unlimited' && (
+        <div style={{
+          width: '100%',
+          height: '8px',
+          backgroundColor: '#e5e7eb',
+          borderRadius: '4px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${Math.min(percentage, 100)}%`,
+            backgroundColor: isOverLimit ? '#ef4444' : percentage > 80 ? '#f59e0b' : '#10b981',
+            borderRadius: '4px',
+            transition: 'all 0.3s ease'
+          }} />
+        </div>
+      )}
+      {isOverLimit && (
+        <p style={{
+          color: '#ef4444',
+          fontSize: '12px',
+          marginTop: '8px',
+          margin: 0
+        }}>
+          Over limit - additional charges may apply
+        </p>
+      )}
+    </div>
+  );
+};
+
+interface PlanCardProps {
+  plan: SubscriptionPlan;
+  onSelect: () => void;
+  isSelected: boolean;
+  highlight?: boolean;
+}
+
+const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isSelected, highlight = false }) => {
+  return (
+    <div 
+      style={{
+        background: highlight ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        border: highlight ? '2px solid #3b82f6' : isSelected ? '2px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.3)',
+        borderRadius: '12px',
+        padding: '24px',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+      }}
+      onClick={onSelect}
+      onMouseOver={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)'
+        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)'
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'
+      }}
+    >
+      {highlight && (
+        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+          <span style={{
+            background: '#3b82f6',
+            color: 'white',
+            padding: '6px 16px',
+            borderRadius: '20px',
+            fontSize: '12px',
+            fontWeight: '600',
+            textTransform: 'uppercase'
+          }}>
+            MOST POPULAR
+          </span>
+        </div>
+      )}
+      
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h3 style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          marginBottom: '8px'
+        }}>
+          {plan.name}
+        </h3>
+        <div style={{
+          fontSize: '32px',
+          fontWeight: 'bold',
+          color: '#1f2937'
+        }}>
+          ${plan.price}
+          <span style={{
+            fontSize: '16px',
+            fontWeight: '500',
+            color: '#6b7280'
+          }}>
+            /{plan.interval}
+          </span>
+        </div>
+      </div>
+
+      <ul style={{ marginBottom: '24px', padding: 0, listStyle: 'none' }}>
+        {plan.features.map((feature, index) => (
+          <li key={index} style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            marginBottom: '12px'
+          }}>
+            <span style={{
+              color: '#10b981',
+              marginRight: '12px',
+              marginTop: '2px',
+              fontSize: '16px'
+            }}>
+              ✓
+            </span>
+            <span style={{
+              fontSize: '14px',
+              color: '#6b7280'
+            }}>
+              {feature}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <button style={{
+        width: '100%',
+        padding: '12px 16px',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: '600',
+        border: 'none',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        background: highlight ? '#3b82f6' : '#1f2937',
+        color: 'white'
+      }}>
+        {isSelected ? 'Current Plan' : 'Select Plan'}
+      </button>
+    </div>
+  );
+};
 
 const BillingDashboard: React.FC = () => {
   const [billingData, setBillingData] = useState<BillingData | null>(null);
@@ -111,312 +305,399 @@ const BillingDashboard: React.FC = () => {
 
   if (loading || !billingData) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '80px 20px 20px 20px'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '4px solid rgba(255, 255, 255, 0.3)',
+            borderTop: '4px solid white',
+            borderRadius: '50%',
+            margin: '0 auto 16px',
+            animation: 'spin 1s linear infinite'
+          }} />
+          <p style={{ color: 'white', fontSize: '16px', margin: 0 }}>Loading billing information...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Billing & Subscriptions</h1>
-        <p className="text-gray-600">Manage your FleetFlow subscription, billing, and usage</p>
-      </div>
-
-      {/* Current Plan Overview */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg text-white p-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">{billingData.currentPlan.name}</h2>
-            <p className="text-xl opacity-90">${billingData.currentPlan.price}/month</p>
-            <p className="opacity-75 mt-2">Next billing: {billingData.currentPlan.nextBilling}</p>
-          </div>
-          <div className="text-right">
-            <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-              billingData.currentPlan.status === 'active' ? 'bg-green-500' :
-              billingData.currentPlan.status === 'past_due' ? 'bg-yellow-500' : 'bg-red-500'
-            }`}>
-              {billingData.currentPlan.status.replace('_', ' ').toUpperCase()}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Usage Meters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <UsageMeter
-          title="Drivers"
-          current={billingData.usage.drivers.current}
-          limit={billingData.usage.drivers.limit}
-          unit="drivers"
-        />
-        <UsageMeter
-          title="API Calls"
-          current={billingData.usage.apiCalls.current}
-          limit={billingData.usage.apiCalls.limit}
-          unit="calls"
-        />
-        <UsageMeter
-          title="Data Exports"
-          current={billingData.usage.dataExports.current}
-          limit={billingData.usage.dataExports.limit}
-          unit="exports"
-        />
-        <UsageMeter
-          title="SMS Messages"
-          current={billingData.usage.smsMessages.current}
-          limit={billingData.usage.smsMessages.limit}
-          unit="messages"
-        />
-      </div>
-
-      {/* Available Plans */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Plans</h2>
-        
-        {/* TMS Plans */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">TMS Platform</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.values(FLEETFLOW_PRICING_PLANS)
-              .filter(plan => plan.category === 'TMS')
-              .map(plan => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onSelect={() => handlePlanChange(plan.id)}
-                  isSelected={selectedPlan === plan.id}
-                />
-              ))}
-          </div>
-        </div>
-
-        {/* Data Consortium Plans */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            🌐 Data Consortium <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-2">REVOLUTIONARY</span>
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.values(FLEETFLOW_PRICING_PLANS)
-              .filter(plan => plan.category === 'CONSORTIUM')
-              .map(plan => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onSelect={() => handlePlanChange(plan.id)}
-                  isSelected={selectedPlan === plan.id}
-                  highlight={plan.id === 'consortium_professional'}
-                />
-              ))}
-          </div>
-        </div>
-
-        {/* Compliance Plans */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">DOT Compliance Services</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.values(FLEETFLOW_PRICING_PLANS)
-              .filter(plan => plan.category === 'COMPLIANCE')
-              .map(plan => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onSelect={() => handlePlanChange(plan.id)}
-                  isSelected={selectedPlan === plan.id}
-                />
-              ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Billing History */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Billing History</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Invoice
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {billingData.invoices.map((invoice) => (
-                <tr key={invoice.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {invoice.id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(invoice.date).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${invoice.amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                      invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {invoice.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {invoice.downloadUrl && (
-                      <a
-                        href={invoice.downloadUrl}
-                        className="text-blue-600 hover:text-blue-900 font-medium"
-                      >
-                        Download
-                      </a>
-                    )}
-                    {invoice.status === 'pending' && (
-                      <button className="text-green-600 hover:text-green-900 font-medium ml-4">
-                        Pay Now
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Payment Methods */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment Methods</h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">
-                VISA
-              </div>
-              <div>
-                <p className="font-medium">•••• •••• •••• 4242</p>
-                <p className="text-sm text-gray-500">Expires 12/2027</p>
-              </div>
-            </div>
-            <div className="flex space-x-2">
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                Edit
-              </button>
-              <button className="text-red-600 hover:text-red-800 text-sm font-medium">
-                Remove
-              </button>
-            </div>
-          </div>
-          <button className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors">
-            + Add Payment Method
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      padding: '80px 20px 20px 20px'
+    }}>
+      {/* Back Button */}
+      <div style={{ padding: '0 0 24px 0' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <button style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '16px'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}>
+            <span style={{ marginRight: '8px' }}>←</span>
+            Back to Dashboard
           </button>
-        </div>
+        </Link>
       </div>
-    </div>
-  );
-};
 
-interface UsageMeterProps {
-  title: string;
-  current: number;
-  limit: number | 'unlimited';
-  unit: string;
-}
-
-const UsageMeter: React.FC<UsageMeterProps> = ({ title, current, limit, unit }) => {
-  const percentage = limit === 'unlimited' ? 0 : (current / (limit as number)) * 100;
-  const isOverLimit = limit !== 'unlimited' && current > (limit as number);
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">
-            {current.toLocaleString()} {unit}
-          </span>
-          <span className="text-gray-600">
-            {limit === 'unlimited' ? 'Unlimited' : `${(limit as number).toLocaleString()} limit`}
-          </span>
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h1 style={{
+            fontSize: '36px',
+            fontWeight: 'bold',
+            color: 'white',
+            margin: '0 0 8px 0',
+            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
+          }}>
+            💳 Billing & Subscriptions
+          </h1>
+          <p style={{
+            fontSize: '18px',
+            color: 'rgba(255, 255, 255, 0.9)',
+            margin: 0
+          }}>
+            Manage your FleetFlow subscription, billing, and usage
+          </p>
         </div>
-        {limit !== 'unlimited' && (
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className={`h-2 rounded-full transition-all duration-300 ${
-                isOverLimit ? 'bg-red-500' : percentage > 80 ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
-              style={{ width: `${Math.min(percentage, 100)}%` }}
-            />
+
+        {/* Current Plan Overview */}
+        <div style={{
+          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+          borderRadius: '16px',
+          padding: '32px',
+          marginBottom: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          color: 'white'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+            <div>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '8px'
+              }}>
+                {billingData.currentPlan.name}
+              </h2>
+              <p style={{
+                fontSize: '20px',
+                opacity: 0.9,
+                margin: '0 0 8px 0'
+              }}>
+                ${billingData.currentPlan.price}/month
+              </p>
+              <p style={{
+                opacity: 0.75,
+                margin: 0
+              }}>
+                Next billing: {billingData.currentPlan.nextBilling}
+              </p>
+            </div>
+            <div>
+              <span style={{
+                background: billingData.currentPlan.status === 'active' ? '#10b981' :
+                          billingData.currentPlan.status === 'past_due' ? '#f59e0b' : '#ef4444',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '12px',
+                fontWeight: '600',
+                textTransform: 'uppercase'
+              }}>
+                {billingData.currentPlan.status.replace('_', ' ')}
+              </span>
+            </div>
           </div>
-        )}
-        {isOverLimit && (
-          <p className="text-red-600 text-xs">Over limit - additional charges may apply</p>
-        )}
-      </div>
-    </div>
-  );
-};
-
-interface PlanCardProps {
-  plan: SubscriptionPlan;
-  onSelect: () => void;
-  isSelected: boolean;
-  highlight?: boolean;
-}
-
-const PlanCard: React.FC<PlanCardProps> = ({ plan, onSelect, isSelected, highlight = false }) => {
-  return (
-    <div className={`border rounded-lg p-6 transition-all duration-200 cursor-pointer ${
-      highlight ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'
-    } ${isSelected ? 'ring-2 ring-blue-500' : ''}`} onClick={onSelect}>
-      {highlight && (
-        <div className="text-center mb-4">
-          <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-            MOST POPULAR
-          </span>
         </div>
-      )}
-      
-      <div className="text-center mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-        <div className="text-3xl font-bold text-gray-900">
-          ${plan.price}
-          <span className="text-lg font-normal text-gray-600">/{plan.interval}</span>
+
+        {/* Usage Meters */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          marginBottom: '32px'
+        }}>
+          <UsageMeter
+            title="Drivers"
+            current={billingData.usage.drivers.current}
+            limit={billingData.usage.drivers.limit}
+            unit="drivers"
+          />
+          <UsageMeter
+            title="API Calls"
+            current={billingData.usage.apiCalls.current}
+            limit={billingData.usage.apiCalls.limit}
+            unit="calls"
+          />
+          <UsageMeter
+            title="Data Exports"
+            current={billingData.usage.dataExports.current}
+            limit={billingData.usage.dataExports.limit}
+            unit="exports"
+          />
+          <UsageMeter
+            title="SMS Messages"
+            current={billingData.usage.smsMessages.current}
+            limit={billingData.usage.smsMessages.limit}
+            unit="messages"
+          />
+        </div>
+
+        {/* Available Plans */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '32px',
+          marginBottom: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: '32px'
+          }}>
+            📋 Available Plans
+          </h2>
+          
+          {/* TMS Plans */}
+          <div style={{ marginBottom: '32px' }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '20px'
+            }}>
+              TMS Platform
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px'
+            }}>
+              {Object.values(FLEETFLOW_PRICING_PLANS)
+                .filter(plan => plan.category === 'TMS')
+                .map(plan => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onSelect={() => handlePlanChange(plan.id)}
+                    isSelected={selectedPlan === plan.id}
+                  />
+                ))}
+            </div>
+          </div>
+
+          {/* Data Consortium Plans */}
+          <div style={{ marginBottom: '32px' }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '8px'
+            }}>
+              🌐 Data Consortium 
+              <span style={{
+                fontSize: '12px',
+                background: '#fbbf24',
+                color: '#1f2937',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                marginLeft: '12px',
+                fontWeight: '600'
+              }}>
+                REVOLUTIONARY
+              </span>
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px'
+            }}>
+              {Object.values(FLEETFLOW_PRICING_PLANS)
+                .filter(plan => plan.category === 'CONSORTIUM')
+                .map(plan => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onSelect={() => handlePlanChange(plan.id)}
+                    isSelected={selectedPlan === plan.id}
+                    highlight={plan.id === 'consortium_professional'}
+                  />
+                ))}
+            </div>
+          </div>
+
+          {/* Compliance Plans */}
+          <div>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '20px'
+            }}>
+              DOT Compliance Services
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px'
+            }}>
+              {Object.values(FLEETFLOW_PRICING_PLANS)
+                .filter(plan => plan.category === 'COMPLIANCE')
+                .map(plan => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onSelect={() => handlePlanChange(plan.id)}
+                    isSelected={selectedPlan === plan.id}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Billing History */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: '24px'
+          }}>
+            📄 Billing History
+          </h2>
+          <div style={{ overflowX: 'auto' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '12px',
+              padding: '24px'
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Invoice</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Date</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Amount</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Status</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {billingData.invoices.map((invoice, index) => (
+                    <tr key={index} style={{
+                      borderBottom: '1px solid #f3f4f6',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = '#f9fafb'
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                    }}
+                    >
+                      <td style={{ padding: '16px', fontWeight: '600', color: '#3b82f6' }}>{invoice.id}</td>
+                      <td style={{ padding: '16px', color: '#1f2937' }}>{invoice.date}</td>
+                      <td style={{ padding: '16px', color: '#1f2937', fontWeight: '600' }}>${invoice.amount}</td>
+                      <td style={{ padding: '16px' }}>
+                        <span style={{
+                          background: invoice.status === 'paid' ? '#10b981' :
+                                    invoice.status === 'pending' ? '#f59e0b' : '#ef4444',
+                          color: 'white',
+                          padding: '4px 12px',
+                          borderRadius: '16px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase'
+                        }}>
+                          {invoice.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px' }}>
+                        {invoice.downloadUrl && (
+                          <button style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }}>
+                            Download
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
-      <ul className="space-y-3 mb-6">
-        {plan.features.map((feature, index) => (
-          <li key={index} className="flex items-start">
-            <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            <span className="text-sm text-gray-600">{feature}</span>
-          </li>
-        ))}
-      </ul>
-
-      <button className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-        highlight
-          ? 'bg-blue-600 text-white hover:bg-blue-700'
-          : 'bg-gray-900 text-white hover:bg-gray-800'
-      }`}>
-        {isSelected ? 'Current Plan' : 'Select Plan'}
-      </button>
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
