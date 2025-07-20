@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import UserIdentificationService, { UserIdentificationData, UserIdentifiers } from '../services/UserIdentificationService'
+import { getAllAvailablePermissions, hasGranularPermission, UserWithGranularPermissions, PermissionOption, getUserPagePermissions } from '../config/granularAccess'
 
 interface User {
   id: string
@@ -53,33 +54,139 @@ interface NewUserFormData {
 }
 
 export default function UserManagementPage() {
-  const [activeView, setActiveView] = useState<'rolodex' | 'create'>('rolodex')
-  const [users, setUsers] = useState<User[]>([])
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterRole, setFilterRole] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
-  const [filterDepartment, setFilterDepartment] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [activeView, setActiveView] = useState('rolodex')
+  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [users, setUsers] = useState<any[]>([])
   const [currentUserIndex, setCurrentUserIndex] = useState(0)
-  const usersPerPage = 12
-
-  const [newUserData, setNewUserData] = useState<NewUserFormData>({
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [newUserData, setNewUserData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    role: '',
-    department: '',
+    role: 'Driver',
+    department: 'DM',
     hiredDate: '',
-    phoneNumber: '',
     location: '',
+    phoneNumber: '',
+    status: 'Pending' as 'Active' | 'Inactive' | 'Pending',
     brokerInitials: '',
-    status: 'Pending',
     emergencyContactName: '',
     emergencyContactPhone: '',
     emergencyContactRelationship: '',
     notes: ''
   })
+
+  // Navigation-style permission system state variables
+  const [expandedPermissionCategory, setExpandedPermissionCategory] = useState<string>('')
+  const [expandedSubCategory, setExpandedSubCategory] = useState<string>('')
+  const [userPermissions, setUserPermissions] = useState<Record<string, boolean>>({})
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterRole, setFilterRole] = useState<string>('all')
+  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [filterDepartment, setFilterDepartment] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [usersPerPage, setUsersPerPage] = useState(12)
+
+  // Comprehensive Permission Management State
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
+  const [permissionSearchTerm, setPermissionSearchTerm] = useState('')
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Dashboard']))
+  const [permissionFilter, setPermissionFilter] = useState<string>('all')
+  const [bulkSelectMode, setBulkSelectMode] = useState(false)
+  const [availablePermissions, setAvailablePermissions] = useState<PermissionOption[]>([])
+
+  // Load all available permissions
+  useEffect(() => {
+    setAvailablePermissions(getAllAvailablePermissions())
+  }, [])
+
+  // Permission Management Functions
+  const togglePermission = (permissionId: string) => {
+    setSelectedPermissions(prev => 
+      prev.includes(permissionId) 
+        ? prev.filter(id => id !== permissionId)
+        : [...prev, permissionId]
+    )
+  }
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(category)) {
+        newSet.delete(category)
+      } else {
+        newSet.add(category)
+      }
+      return newSet
+    })
+  }
+
+  const selectAllInCategory = (category: string) => {
+    const categoryPermissions = availablePermissions
+      .filter(p => p.category === category)
+      .map(p => p.id)
+    
+    setSelectedPermissions(prev => Array.from(new Set([...prev, ...categoryPermissions])))
+  }
+
+  const deselectAllInCategory = (category: string) => {
+    const categoryPermissions = availablePermissions
+      .filter(p => p.category === category)
+      .map(p => p.id)
+    
+    setSelectedPermissions(prev => prev.filter(id => !categoryPermissions.includes(id)))
+  }
+
+  const applyRoleTemplate = (role: string) => {
+    // Apply predefined permission sets based on role
+    let templatePermissions: string[] = []
+    
+    switch(role) {
+      case 'Admin':
+        templatePermissions = availablePermissions.map(p => p.id)
+        break
+      case 'Manager':
+        templatePermissions = availablePermissions.filter(p => 
+          !p.id.includes('delete') && !p.id.includes('system_config')
+        ).map(p => p.id)
+        break
+      case 'Dispatcher':
+        templatePermissions = availablePermissions.filter(p => 
+          p.category === 'Dispatch Central' || p.category === 'Fleet Management' || p.category === 'Routes' 
+        ).map(p => p.id)
+        break
+      case 'Broker':
+        templatePermissions = availablePermissions.filter(p => 
+          p.category === 'Broker Box' || p.category === 'FreightFlow RFx' || p.category === 'Freight Quoting' || p.category === 'Shipper Portfolio'
+        ).map(p => p.id)
+        break
+    }
+    
+    setSelectedPermissions(templatePermissions)
+  }
+
+  // Filter permissions based on search and category
+  const filteredPermissions = availablePermissions.filter(permission => {
+    const matchesSearch = permission.name.toLowerCase().includes(permissionSearchTerm.toLowerCase()) ||
+                         permission.description.toLowerCase().includes(permissionSearchTerm.toLowerCase())
+    const matchesFilter = permissionFilter === 'all' || permission.category === permissionFilter
+    return matchesSearch && matchesFilter
+  })
+
+  // Group permissions by category
+  const permissionsByCategory = filteredPermissions.reduce((acc, permission) => {
+    if (!acc[permission.category]) {
+      acc[permission.category] = []
+    }
+    acc[permission.category].push(permission)
+    return acc
+  }, {} as Record<string, PermissionOption[]>)
+
+  // Get unique categories for filter dropdown
+  const categories = Array.from(new Set(availablePermissions.map(p => p.category)))
 
   // Generate mock users for demonstration
   useEffect(() => {
@@ -612,7 +719,29 @@ export default function UserManagementPage() {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <button
+                onClick={() => window.location.reload()}
+                style={{
+                  background: 'rgba(139, 92, 246, 0.2)',
+                  color: '#8b5cf6',
+                  border: '1px solid #8b5cf6',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="Refresh page data"
+              >
+                🔄 Refresh
+              </button>
+              <div style={{ height: '20px', width: '1px', background: 'rgba(255, 255, 255, 0.2)' }}></div>
               <button
                 onClick={() => setActiveView('rolodex')}
                 style={{
@@ -1000,7 +1129,8 @@ export default function UserManagementPage() {
                         background: 'rgba(255, 255, 255, 0.08)',
                         borderRadius: '10px',
                         padding: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        display: 'none'
                       }}>
                         <h3 style={{ color: 'white', marginBottom: '12px', fontSize: '15px', fontWeight: '600' }}>
                           🔧 System IDs
@@ -1044,7 +1174,8 @@ export default function UserManagementPage() {
                         background: 'rgba(255, 255, 255, 0.08)',
                         borderRadius: '10px',
                         padding: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        display: 'none'
                       }}>
                         <h3 style={{ color: 'white', marginBottom: '12px', fontSize: '15px', fontWeight: '600' }}>
                           📋 Additional Identifiers
@@ -1077,107 +1208,673 @@ export default function UserManagementPage() {
                         </div>
                       </div>
 
-                      {/* Access Conditions */}
-                      <div style={{
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        borderRadius: '10px',
-                        padding: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                      }}>
-                        <h3 style={{ color: 'white', marginBottom: '12px', fontSize: '15px', fontWeight: '600' }}>
-                          🔐 Access Permissions
-                        </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
-                          {Object.entries(currentUser.accessConditions).map(([key, value]) => (
-                            <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
-                                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                              </span>
-                              <span style={{
-                                color: value ? '#22c55e' : '#ef4444',
-                                fontWeight: '600',
-                                fontSize: '12px'
-                              }}>
-                                {value ? '✓ Granted' : '✗ Denied'}
-                              </span>
+                      {/* COMPACT NAVIGATION-STYLE PERMISSION DROPDOWNS */}
+                      <div style={{ maxHeight: '300px', overflowY: 'auto', fontSize: '10px' }}>
+                        {/* 🚛 Operations */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'Operations' ? '' : 'Operations')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'Operations' ? '▼' : '▶'} 🚛 Operations
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>3 Sub-categories</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'Operations' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* Dispatch Central */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'DispatchCentral' ? '' : 'DispatchCentral')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(59, 130, 246, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'DispatchCentral' ? '▼' : '▶'} Dispatch Central
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'DispatchCentral' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View All Loads', 'Create New Load', 'Assign Drivers', 'Edit Load Status',
+                                      'View Driver Status', 'Dispatch Loads', 'View Workflow Status', 'Override Workflow',
+                                      'AI Route Optimization'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`dispatch_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`dispatch_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Broker Box */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'BrokerBox' ? '' : 'BrokerBox')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(245, 158, 11, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#f59e0b', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'BrokerBox' ? '▼' : '▶'} Broker Box
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'BrokerBox' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View All Customers', 'Create New Customer', 'Manage Customers', 'Generate Quotes',
+                                      'View RFx Responses', 'Process Payments', 'Commission Tracking', 'Market Intelligence'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`broker_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`broker_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Freight Quoting */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'FreightQuoting' ? '' : 'FreightQuoting')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(16, 185, 129, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#10b981', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'FreightQuoting' ? '▼' : '▶'} Freight Quoting
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'FreightQuoting' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Create Quotes', 'Edit Quotes', 'Quote Analytics', 'Pricing Management',
+                                      'Customer Quotes', 'Rate Calculation', 'Market Pricing', 'Quote Approval'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`quoting_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`quoting_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          ))}
+                          )}
+                        </div>
+
+                        {/* 👨‍💼 Driver Management */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'DriverManagement' ? '' : 'DriverManagement')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #eab308, #ca8a04)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'DriverManagement' ? '▼' : '▶'} 👨‍💼 Driver Management
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>1 Sub-category</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'DriverManagement' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* Driver Portal */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'DriverPortal' ? '' : 'DriverPortal')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(234, 179, 8, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#eab308', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'DriverPortal' ? '▼' : '▶'} Driver Portal
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'DriverPortal' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View Driver Profiles', 'Add New Driver', 'Edit Driver Info', 'Track Performance',
+                                      'Manage Schedules', 'Driver Communication', 'License Tracking', 'Training Records',
+                                      'Payroll Integration', 'Safety Compliance'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`driver_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`driver_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 🚛 FleetFlow */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'FleetFlow' ? '' : 'FleetFlow')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'FleetFlow' ? '▼' : '▶'} 🚛 FleetFlow
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>3 Sub-categories</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'FleetFlow' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* Fleet Management */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'FleetManagement' ? '' : 'FleetManagement')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(139, 92, 246, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#8b5cf6', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'FleetManagement' ? '▼' : '▶'} Fleet Management
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'FleetManagement' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View Vehicles', 'Add Vehicle', 'Edit Vehicle Info', 'Track Location',
+                                      'Fuel Management', 'Insurance Tracking', 'Registration', 'Vehicle Analytics'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`fleet_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`fleet_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Route Optimization */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'RouteOptimization' ? '' : 'RouteOptimization')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(139, 92, 246, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#8b5cf6', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'RouteOptimization' ? '▼' : '▶'} Route Optimization
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'RouteOptimization' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Plan Routes', 'Optimize Routes', 'View Route Analytics', 'Edit Routes',
+                                      'Real-time Tracking', 'Fuel Optimization', 'Time Management', 'Traffic Analysis'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`route_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`route_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Maintenance */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'Maintenance' ? '' : 'Maintenance')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(139, 92, 246, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#8b5cf6', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'Maintenance' ? '▼' : '▶'} Maintenance
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'Maintenance' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Schedule Service', 'Track Repairs', 'Vendor Management', 'Cost Tracking',
+                                      'Predictive Alerts', 'Inspection Records', 'Parts Inventory', 'Service History'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`maintenance_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`maintenance_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 📊 Analytics */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'Analytics' ? '' : 'Analytics')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'Analytics' ? '▼' : '▶'} 📊 Analytics
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>2 Sub-categories</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'Analytics' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* Performance Analytics */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'PerformanceAnalytics' ? '' : 'PerformanceAnalytics')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(6, 182, 212, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#06b6d4', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'PerformanceAnalytics' ? '▼' : '▶'} Performance Analytics
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'PerformanceAnalytics' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Driver Performance', 'Vehicle Efficiency', 'Route Performance', 'Load Analytics',
+                                      'Time Tracking', 'Fuel Analytics', 'Safety Metrics', 'Revenue Analytics'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`performance_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`performance_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Financial Analytics */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'FinancialAnalytics' ? '' : 'FinancialAnalytics')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(6, 182, 212, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#06b6d4', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'FinancialAnalytics' ? '▼' : '▶'} Financial Analytics
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'FinancialAnalytics' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Revenue Reports', 'Cost Analysis', 'Profit Margins', 'Budget Tracking',
+                                      'Financial Forecasting', 'Invoice Analytics', 'Expense Management', 'ROI Analysis'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`financial_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`financial_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* ✅ Compliance */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'Compliance' ? '' : 'Compliance')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #10b981, #059669)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'Compliance' ? '▼' : '▶'} ✅ Compliance
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>1 Sub-category</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'Compliance' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* DOT Compliance */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'DOTCompliance' ? '' : 'DOTCompliance')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(16, 185, 129, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#10b981', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'DOTCompliance' ? '▼' : '▶'} DOT Compliance
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'DOTCompliance' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'Hours of Service', 'Driver Logs', 'Vehicle Inspections', 'Safety Records',
+                                      'Drug Testing', 'Medical Certificates', 'License Verification', 'Audit Reports',
+                                      'Violation Tracking', 'Compliance Alerts'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`compliance_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`compliance_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 📚 Resources */}
+                        <div style={{ marginBottom: '6px' }}>
+                          <div 
+                            onClick={() => setExpandedPermissionCategory(expandedPermissionCategory === 'Resources' ? '' : 'Resources')}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              marginBottom: '3px'
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600', fontSize: '11px' }}>
+                              {expandedPermissionCategory === 'Resources' ? '▼' : '▶'} 📚 Resources
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '9px' }}>2 Sub-categories</span>
+                          </div>
+                          
+                          {expandedPermissionCategory === 'Resources' && (
+                            <div style={{ marginLeft: '8px', marginBottom: '4px' }}>
+                              {/* FleetFlow University */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'FleetFlowUniversity' ? '' : 'FleetFlowUniversity')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(245, 158, 11, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#f59e0b', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'FleetFlowUniversity' ? '▼' : '▶'} FleetFlow University
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'FleetFlowUniversity' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View Courses', 'Create Courses', 'Assign Training', 'Track Progress',
+                                      'Certifications', 'Training Records', 'Course Materials', 'Assessment Tools'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`university_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`university_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Documentation */}
+                              <div style={{ marginBottom: '4px' }}>
+                                <div 
+                                  onClick={() => setExpandedSubCategory(expandedSubCategory === 'Documentation' ? '' : 'Documentation')}
+                                  style={{
+                                    padding: '4px 6px',
+                                    background: 'rgba(245, 158, 11, 0.2)',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                  }}
+                                >
+                                  <span style={{ color: '#f59e0b', fontWeight: '500', fontSize: '10px' }}>
+                                    {expandedSubCategory === 'Documentation' ? '▼' : '▶'} Documentation
+                                  </span>
+                                </div>
+                                {expandedSubCategory === 'Documentation' && (
+                                  <div style={{ marginLeft: '6px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+                                    {[
+                                      'View Docs', 'Create Docs', 'Edit Docs', 'Document Management',
+                                      'Version Control', 'Access Control', 'Search Docs', 'Document Analytics'
+                                    ].map(permission => (
+                                      <label key={permission} style={{ display: 'flex', alignItems: 'center', padding: '2px', cursor: 'pointer' }}>
+                                        <input
+                                          type="checkbox"
+                                          checked={userPermissions[`docs_${permission.toLowerCase().replace(/ /g, '_')}`] || false}
+                                          onChange={(e) => setUserPermissions(prev => ({
+                                            ...prev,
+                                            [`docs_${permission.toLowerCase().replace(/ /g, '_')}`]: e.target.checked
+                                          }))}
+                                          style={{ marginRight: '3px', transform: 'scale(0.8)' }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '9px' }}>{permission}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
 
-                    {/* User Notes Section */}
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      marginBottom: '16px'
-                    }}>
-                      <h3 style={{ color: 'white', marginBottom: '12px', fontSize: '15px', fontWeight: '600' }}>
-                        📝 Notes & Comments
-                      </h3>
-                      <div style={{ 
-                        color: 'rgba(255, 255, 255, 0.9)', 
-                        fontSize: '13px', 
-                        lineHeight: '1.5',
-                        minHeight: '40px',
-                        padding: '12px',
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '6px',
-                        fontStyle: currentUser.notes ? 'normal' : 'italic'
-                      }}>
-                        {currentUser.notes || 'No notes available for this user...'}
+                      {/* COMPACT PERMISSION CONTROLS */}
+                      <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>
+                          Selected: {Object.values(userPermissions).filter(Boolean).length} permissions
+                        </div>
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <button
+                            style={{
+                              background: 'linear-gradient(135deg, #10b981, #059669)',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '3px',
+                              fontSize: '9px',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            💾 Save Changes
+                          </button>
+                          <button
+                            onClick={() => setUserPermissions({})}
+                            style={{
+                              background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '3px',
+                              fontSize: '9px',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            🗑️ Clear All
+                          </button>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-                      <button
-                        style={{
-                          background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        ✏️ Edit Profile
-                      </button>
-                      <button
-                        style={{
-                          background: 'linear-gradient(135deg, #16a34a, #15803d)',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        💬 Send Message
-                      </button>
-                      <button
-                        style={{
-                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        📊 View Reports
-                      </button>
                     </div>
                   </div>
                 );
@@ -1897,6 +2594,123 @@ export default function UserManagementPage() {
                   <div style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>
                     {selectedUser.emergencyContact.relationship}
                   </div>
+                </div>
+              </div>
+
+              {/* PERMISSION MANAGEMENT CONTROLS */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: '10px',
+                padding: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ color: 'white', fontSize: '15px', fontWeight: '600', margin: 0 }}>
+                    🔐 Permission Management
+                  </h3>
+                  <button style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    border: 'none',
+                    borderRadius: '6px',
+                    color: 'white',
+                    padding: '4px 8px',
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}>
+                    Bulk Assign
+                  </button>
+                </div>
+                
+                {/* Permission Categories */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                  {/* Dashboard Permissions */}
+                  <div style={{ background: 'rgba(59, 130, 246, 0.1)', borderRadius: '6px', padding: '8px' }}>
+                    <div style={{ color: '#3b82f6', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>Dashboard</div>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} defaultChecked />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>View Dashboard</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>Create Loads</span>
+                    </label>
+                  </div>
+
+                  {/* Dispatch Permissions */}
+                  <div style={{ background: 'rgba(34, 197, 94, 0.1)', borderRadius: '6px', padding: '8px' }}>
+                    <div style={{ color: '#22c55e', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>Dispatch</div>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} defaultChecked />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>View Loads</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>Assign Drivers</span>
+                    </label>
+                  </div>
+
+                  {/* Financial Permissions */}
+                  <div style={{ background: 'rgba(251, 191, 36, 0.1)', borderRadius: '6px', padding: '8px' }}>
+                    <div style={{ color: '#fbbf24', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>Financial</div>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>View Invoices</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>Process Payments</span>
+                    </label>
+                  </div>
+
+                  {/* Settings Permissions */}
+                  <div style={{ background: 'rgba(168, 85, 247, 0.1)', borderRadius: '6px', padding: '8px' }}>
+                    <div style={{ color: '#a855f7', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>Settings</div>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>Create Users</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', marginBottom: '2px', cursor: 'pointer' }}>
+                      <input type="checkbox" style={{ marginRight: '4px' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '10px' }}>Manage Permissions</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  <button style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '1px solid #22c55e',
+                    borderRadius: '4px',
+                    color: '#22c55e',
+                    padding: '2px 6px',
+                    fontSize: '9px',
+                    cursor: 'pointer'
+                  }}>
+                    Grant All
+                  </button>
+                  <button style={{
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    border: '1px solid #ef4444',
+                    borderRadius: '4px',
+                    color: '#ef4444',
+                    padding: '2px 6px',
+                    fontSize: '9px',
+                    cursor: 'pointer'
+                  }}>
+                    Revoke All
+                  </button>
+                  <button style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '4px',
+                    color: '#3b82f6',
+                    padding: '2px 6px',
+                    fontSize: '9px',
+                    cursor: 'pointer'
+                  }}>
+                    Apply Template
+                  </button>
                 </div>
               </div>
             </div>
