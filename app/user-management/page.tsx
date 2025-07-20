@@ -191,6 +191,7 @@ export default function EnhancedUserManagement() {
   const [expandedPermissionCategory, setExpandedPermissionCategory] = useState<string>('');
   const [expandedSubCategory, setExpandedSubCategory] = useState<string>('');
   const [userPermissions, setUserPermissions] = useState<Record<string, boolean>>({});
+  const [selectedUserIndex, setSelectedUserIndex] = useState(0);
 
   const filteredUsers = mockUsers.filter(user => 
     !searchTerm || 
@@ -416,7 +417,7 @@ export default function EnhancedUserManagement() {
           </div>
         </div>
 
-        {/* Users View */}
+        {/* Users View - BOOK FLIPPING SINGLE USER */}
         {activeView === 'users' && (
           <div>
             {/* Search and Filters */}
@@ -462,7 +463,7 @@ export default function EnhancedUserManagement() {
                 {[
                   { label: 'Total Users', value: mockUsers.length, color: '#3b82f6', icon: '👥' },
                   { label: 'Active Users', value: mockUsers.filter(u => u.status === 'active').length, color: '#10b981', icon: '✅' },
-                  { label: 'Departments', value: [...new Set(mockUsers.map(u => u.department))].length, color: '#f59e0b', icon: '🏢' },
+                  { label: 'Departments', value: Array.from(new Set(mockUsers.map(u => u.department))).length, color: '#f59e0b', icon: '🏢' },
                   { label: 'Avg Permissions', value: Math.round(mockUsers.reduce((acc, u) => acc + Object.values(u.permissions).filter(Boolean).length, 0) / mockUsers.length), color: '#8b5cf6', icon: '🔐' }
                 ].map((stat, index) => (
                   <div key={index} style={{
@@ -483,20 +484,332 @@ export default function EnhancedUserManagement() {
               </div>
             </div>
 
-            {/* Users Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-              gap: '24px'
-            }}>
-              {filteredUsers.map((user) => (
-                <UserCard
-                  key={user.id}
-                  user={user}
-                  onClick={() => handleUserClick(user)}
-                />
-              ))}
-            </div>
+            {/* SINGLE USER BOOK VIEW */}
+            {filteredUsers.length > 0 && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                position: 'relative'
+              }}>
+                {/* Navigation Header */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: '32px',
+                  padding: '0 20px'
+                }}>
+                  <button
+                    onClick={() => setSelectedUserIndex(prev => prev > 0 ? prev - 1 : filteredUsers.length - 1)}
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    ◀ Previous
+                  </button>
+
+                  <div style={{ 
+                    color: 'white', 
+                    fontSize: '18px', 
+                    fontWeight: '600',
+                    textAlign: 'center'
+                  }}>
+                    User {selectedUserIndex + 1} of {filteredUsers.length}
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedUserIndex(prev => prev < filteredUsers.length - 1 ? prev + 1 : 0)}
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    Next ▶
+                  </button>
+                </div>
+
+                {/* Single User Display */}
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  padding: '40px',
+                  transition: 'all 0.5s ease',
+                  minHeight: '400px'
+                }}>
+                  {(() => {
+                    const currentUser = filteredUsers[selectedUserIndex];
+                    const getDepartmentColor = (deptCode: string) => {
+                      switch (deptCode) {
+                        case 'MGR': return '#8b5cf6';
+                        case 'DC': return '#3b82f6';
+                        case 'BB': return '#f59e0b';
+                        case 'DM': return '#eab308';
+                        default: return '#6b7280';
+                      }
+                    };
+
+                    const getStatusIcon = (status: string) => {
+                      switch (status) {
+                        case 'active': return '🟢';
+                        case 'inactive': return '🔴';
+                        case 'pending': return '🟡';
+                        default: return '⚪';
+                      }
+                    };
+
+                    return (
+                      <div>
+                        {/* User Header */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px' }}>
+                          <div style={{
+                            width: '80px',
+                            height: '80px',
+                            background: `linear-gradient(135deg, ${getDepartmentColor(currentUser.departmentCode)}, ${getDepartmentColor(currentUser.departmentCode)}dd)`,
+                            borderRadius: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '28px',
+                            fontWeight: 'bold'
+                          }}>
+                            {currentUser.name.split(' ').map((n: string) => n[0]).join('')}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <h2 style={{ 
+                              color: 'white', 
+                              margin: '0 0 8px 0', 
+                              fontSize: '32px', 
+                              fontWeight: '700' 
+                            }}>
+                              {currentUser.name}
+                            </h2>
+                            <p style={{ 
+                              color: 'rgba(255, 255, 255, 0.8)', 
+                              margin: '0 0 8px 0', 
+                              fontSize: '18px',
+                              fontWeight: '500'
+                            }}>
+                              {currentUser.role}
+                            </p>
+                            <p style={{ 
+                              color: 'rgba(255, 255, 255, 0.7)', 
+                              margin: '0', 
+                              fontSize: '14px' 
+                            }}>
+                              {currentUser.email}
+                            </p>
+                          </div>
+                          <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px',
+                            background: currentUser.status === 'active' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                            padding: '12px 20px',
+                            borderRadius: '12px',
+                            color: currentUser.status === 'active' ? '#10b981' : '#ef4444'
+                          }}>
+                            <span style={{ fontSize: '20px' }}>{getStatusIcon(currentUser.status)}</span>
+                            <span style={{ fontSize: '16px', fontWeight: '600' }}>
+                              {currentUser.status.charAt(0).toUpperCase() + currentUser.status.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* User Details Grid */}
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '24px',
+                          marginBottom: '32px'
+                        }}>
+                          <div style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px'
+                          }}>
+                            <h3 style={{ color: 'white', margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
+                              Account Details
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div>
+                                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px', marginBottom: '4px' }}>User ID</div>
+                                <div style={{ color: 'white', fontWeight: '600', fontSize: '14px' }}>{currentUser.id}</div>
+                              </div>
+                              <div>
+                                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px', marginBottom: '4px' }}>Department</div>
+                                <div style={{ color: 'white', fontWeight: '600', fontSize: '14px' }}>{currentUser.department}</div>
+                              </div>
+                              <div>
+                                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px', marginBottom: '4px' }}>Last Active</div>
+                                <div style={{ color: 'white', fontWeight: '600', fontSize: '14px' }}>
+                                  {new Date(currentUser.lastActive).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px'
+                          }}>
+                            <h3 style={{ color: 'white', margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
+                              Permissions
+                            </h3>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                              {Object.entries(currentUser.permissions)
+                                .filter(([_, value]) => value)
+                                .map(([key, _]) => (
+                                  <span key={key} style={{
+                                    background: 'rgba(16, 185, 129, 0.2)',
+                                    color: '#10b981',
+                                    padding: '6px 12px',
+                                    borderRadius: '8px',
+                                    fontSize: '12px',
+                                    fontWeight: '500'
+                                  }}>
+                                    {key.replace('can', '').replace(/([A-Z])/g, ' $1').trim()}
+                                  </span>
+                                ))
+                              }
+                            </div>
+                            <div style={{ 
+                              marginTop: '16px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '14px'
+                            }}>
+                              Total: {Object.values(currentUser.permissions).filter(Boolean).length} permissions
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'center', 
+                          gap: '16px',
+                          marginTop: '32px'
+                        }}>
+                          <button
+                            onClick={() => handleUserClick(currentUser)}
+                            style={{
+                              background: 'linear-gradient(135deg, #10b981, #059669)',
+                              color: 'white',
+                              padding: '12px 24px',
+                              borderRadius: '12px',
+                              border: 'none',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              fontSize: '16px',
+                              transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-2px)';
+                              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                          >
+                            ✏️ Edit User
+                          </button>
+                          <button
+                            style={{
+                              background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              color: 'white',
+                              padding: '12px 24px',
+                              borderRadius: '12px',
+                              border: 'none',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              fontSize: '16px',
+                              transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-2px)';
+                              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                          >
+                            🔐 Manage Permissions
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Page Indicators */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  gap: '8px', 
+                  marginTop: '24px' 
+                }}>
+                  {filteredUsers.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedUserIndex(index)}
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: index === selectedUserIndex ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
