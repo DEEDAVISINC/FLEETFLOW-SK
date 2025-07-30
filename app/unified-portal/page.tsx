@@ -697,8 +697,8 @@ export default function UnifiedPortal() {
             alert.alertType === 'urgent_load' ? 'rgba(220, 38, 38, 0.2)' : 'rgba(59, 130, 246, 0.2)'
           }, rgba(255, 255, 255, 0.1))`,
           backdropFilter: 'blur(15px)',
-          borderRadius: '16px',
-          padding: '20px',
+          borderRadius: '12px',
+          padding: '12px',
           border: `2px solid ${
             alert.alertType === 'urgent_load' ? '#dc2626' : '#3b82f6'
           }`,
@@ -747,91 +747,42 @@ export default function UnifiedPortal() {
           </div>
         </div>
 
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '8px' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              marginBottom: '8px',
+              justifyContent: 'space-between',
+              marginBottom: '4px',
             }}
           >
+            <span style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+              📍 {alert.load.origin} → 🏁 {alert.load.destination}
+            </span>
             <span style={{ color: '#22c55e', fontSize: '16px', fontWeight: 'bold' }}>
-              📍 {alert.load.origin}
-            </span>
-            <span style={{ color: 'white', fontSize: '16px' }}>→</span>
-            <span style={{ color: '#f59e0b', fontSize: '16px', fontWeight: 'bold' }}>
-              🏁 {alert.load.destination}
+              ${alert.load.rate?.toLocaleString()}
             </span>
           </div>
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '12px',
-              marginBottom: '12px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '12px',
+              color: 'rgba(255, 255, 255, 0.7)',
             }}
           >
-            <div>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                Rate
-              </span>
-              <div style={{ color: '#22c55e', fontSize: '18px', fontWeight: 'bold' }}>
-                ${alert.load.rate?.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                Distance
-              </span>
-              <div style={{ color: 'white', fontSize: '16px', fontWeight: '600' }}>
-                {alert.load.distance}
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '12px',
-              marginBottom: '12px',
-            }}
-          >
-            <div>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                Equipment
-              </span>
-              <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
-                {alert.load.equipment}
-              </div>
-            </div>
-            <div>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                Weight
-              </span>
-              <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
-                {alert.load.weight}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-              Dispatcher
-            </span>
-            <div style={{ color: '#60a5fa', fontSize: '14px', fontWeight: '600' }}>
-              {alert.dispatcherName}
-            </div>
+            <span>{alert.load.distance} | {alert.load.equipment} | {alert.load.weight}</span>
+            <span style={{ color: '#60a5fa' }}>Dispatcher: {alert.dispatcherName}</span>
           </div>
         </div>
 
         <div
           style={{
             display: 'flex',
-            gap: '12px',
-            marginTop: '16px',
+            gap: '8px',
+            marginTop: '8px',
           }}
         >
           <button
@@ -842,7 +793,7 @@ export default function UnifiedPortal() {
               color: 'white',
               border: 'none',
               borderRadius: '12px',
-              padding: '12px 16px',
+              padding: '8px 12px',
               fontSize: '16px',
               fontWeight: 'bold',
               cursor: 'pointer',
@@ -871,7 +822,7 @@ export default function UnifiedPortal() {
               color: 'white',
               border: 'none',
               borderRadius: '12px',
-              padding: '12px 16px',
+              padding: '8px 12px',
               fontSize: '16px',
               fontWeight: 'bold',
               cursor: 'pointer',
@@ -1778,15 +1729,15 @@ export default function UnifiedPortal() {
           </div>
         ) : (
           <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
           >
             {acceptedLoads.map((load) => (
               <div
                 key={load.id}
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '24px',
+                  borderRadius: '8px',
+                  padding: '12px',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -1964,15 +1915,15 @@ export default function UnifiedPortal() {
           </div>
         ) : (
           <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
           >
             {availableLoads.slice(0, 10).map((load) => (
               <div
                 key={load.id}
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '24px',
+                  borderRadius: '8px',
+                  padding: '12px',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -2055,7 +2006,7 @@ export default function UnifiedPortal() {
                   <div
                     style={{
                       background: 'linear-gradient(135deg, #14b8a6, #059669)',
-                      padding: '12px 16px',
+                      padding: '8px 12px',
                       borderRadius: '8px',
                       textAlign: 'center',
                     }}
@@ -2605,7 +2556,7 @@ export default function UnifiedPortal() {
                     background: 'linear-gradient(135deg, #14b8a6, #059669)',
                     color: 'white',
                     border: 'none',
-                    padding: '12px 16px',
+                    padding: '8px 12px',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontSize: '14px',
@@ -2652,7 +2603,7 @@ export default function UnifiedPortal() {
                         ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
                         : 'rgba(255, 255, 255, 0.2)',
                     color: 'white',
-                    padding: '12px 16px',
+                    padding: '8px 12px',
                     borderRadius: '12px',
                     maxWidth: '70%',
                   }}
@@ -3342,7 +3293,7 @@ export default function UnifiedPortal() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '24px',
-                    padding: '12px 16px',
+                    padding: '8px 12px',
                     background: 'linear-gradient(135deg, #fef3c7, #fbbf24)',
                     borderRadius: '10px',
                     border: '1px solid rgba(251, 191, 36, 0.3)',
