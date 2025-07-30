@@ -669,8 +669,8 @@ export default function UnifiedPortal() {
     console.log(`❌ Load alert declined: ${alertId}`);
   };
 
-  // 🚨 LOAD ALERT CARD COMPONENT with Countdown Timer
-  const LoadAlertCard: React.FC<{ alert: LoadAlert }> = ({ alert }) => {
+  // 🚨 LOAD ALERT ROW COMPONENT - Linear Grid Loadboard Style
+  const LoadAlertRow: React.FC<{ alert: LoadAlert }> = ({ alert }) => {
     const [timeRemaining, setTimeRemaining] = useState(alert.timeToExpire);
 
     useEffect(() => {
@@ -690,169 +690,168 @@ export default function UnifiedPortal() {
       return '#22c55e'; // Green - Safe
     };
 
+    const getRowBackground = (): string => {
+      if (alert.alertType === 'urgent_load') return 'rgba(220, 38, 38, 0.1)';
+      if (timeRemaining <= 60) return 'rgba(245, 158, 11, 0.1)';
+      return 'rgba(255, 255, 255, 0.05)';
+    };
+
     return (
       <div
         style={{
-          background: `linear-gradient(135deg, ${
-            alert.alertType === 'urgent_load' ? 'rgba(220, 38, 38, 0.2)' : 'rgba(59, 130, 246, 0.2)'
-          }, rgba(255, 255, 255, 0.1))`,
-          backdropFilter: 'blur(15px)',
-          borderRadius: '12px',
-          padding: '12px',
-          border: `2px solid ${
-            alert.alertType === 'urgent_load' ? '#dc2626' : '#3b82f6'
-          }`,
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+          display: 'grid',
+          gridTemplateColumns: '100px 2fr 2fr 1fr 1fr 1fr 140px',
+          gap: '12px',
+          padding: '12px 20px',
+          background: getRowBackground(),
+          borderRadius: '8px',
+          marginBottom: '6px',
+          color: 'white',
+          fontSize: '14px',
+          transition: 'all 0.3s ease',
+          border: `1px solid ${alert.priority === 'high' ? '#dc2626' : 'rgba(255, 255, 255, 0.1)'}`,
           position: 'relative',
           overflow: 'hidden',
         }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.background = alert.alertType === 'urgent_load' 
+            ? 'rgba(220, 38, 38, 0.15)' 
+            : 'rgba(255, 255, 255, 0.1)';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.background = getRowBackground();
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
       >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '16px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '20px' }}>
-              {alert.alertType === 'urgent_load' ? '🚨' : alert.alertType === 'new_load' ? '📦' : '🔄'}
-            </span>
-            <span
-              style={{
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                textTransform: 'capitalize',
-              }}
-            >
-              {alert.alertType.replace('_', ' ')}
-            </span>
-          </div>
-          <div
-            style={{
-              background: getTimeColor(),
-              color: 'white',
-              borderRadius: '12px',
-              padding: '8px 12px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              fontFamily: 'monospace',
-              border: timeRemaining <= 30 ? '2px solid #fef2f2' : 'none',
-              boxShadow: timeRemaining <= 30 ? '0 0 20px rgba(220, 38, 38, 0.5)' : 'none',
-            }}
-          >
-            ⏰ {formatTime(timeRemaining)}
-          </div>
+        {/* Time Left Column */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          background: getTimeColor(),
+          color: 'white',
+          borderRadius: '6px',
+          padding: '4px 8px',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          fontFamily: 'monospace',
+          textAlign: 'center',
+        }}>
+          {formatTime(timeRemaining)}
         </div>
 
-        <div style={{ marginBottom: '8px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '4px',
-            }}
-          >
-            <span style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-              📍 {alert.load.origin} → 🏁 {alert.load.destination}
-            </span>
-            <span style={{ color: '#22c55e', fontSize: '16px', fontWeight: 'bold' }}>
-              ${alert.load.rate?.toLocaleString()}
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.7)',
-            }}
-          >
-            <span>{alert.load.distance} | {alert.load.equipment} | {alert.load.weight}</span>
-            <span style={{ color: '#60a5fa' }}>Dispatcher: {alert.dispatcherName}</span>
-          </div>
+        {/* Origin Column */}
+        <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+          {alert.load.origin}
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            marginTop: '8px',
-          }}
-        >
+        {/* Destination Column */}
+        <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+          {alert.load.destination}
+        </div>
+
+        {/* Rate Column */}
+        <div style={{ 
+          fontWeight: '700', 
+          color: '#22c55e', 
+          display: 'flex', 
+          alignItems: 'center' 
+        }}>
+          ${alert.load.rate?.toLocaleString()}
+        </div>
+
+        {/* Details Column */}
+        <div style={{ 
+          fontSize: '12px', 
+          color: 'rgba(255, 255, 255, 0.8)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          lineHeight: '1.3'
+        }}>
+          <div>{alert.load.distance}</div>
+          <div>{alert.load.equipment}</div>
+        </div>
+
+        {/* Dispatcher Column */}
+        <div style={{ 
+          color: '#60a5fa', 
+          fontWeight: '600',
+          display: 'flex', 
+          alignItems: 'center',
+          fontSize: '13px'
+        }}>
+          {alert.dispatcherName}
+        </div>
+
+        {/* Action Column */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '4px',
+          alignItems: 'center'
+        }}>
           <button
             onClick={() => acceptLoadAlert(alert.id)}
             style={{
-              flex: 1,
               background: 'linear-gradient(135deg, #22c55e, #16a34a)',
               color: 'white',
               border: 'none',
-              borderRadius: '12px',
-              padding: '8px 12px',
-              fontSize: '16px',
-              fontWeight: 'bold',
+              borderRadius: '6px',
+              padding: '6px 10px',
+              fontSize: '11px',
+              fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
+              flex: 1,
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(34, 197, 94, 0.3)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.3)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.transform = 'scale(1)';
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            ✅ Accept Load
+            ✅ Accept
           </button>
           <button
             onClick={() => declineLoadAlert(alert.id)}
             style={{
-              flex: 1,
               background: 'linear-gradient(135deg, #6b7280, #4b5563)',
               color: 'white',
               border: 'none',
-              borderRadius: '12px',
-              padding: '8px 12px',
-              fontSize: '16px',
-              fontWeight: 'bold',
+              borderRadius: '6px',
+              padding: '6px 10px',
+              fontSize: '11px',
+              fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
+              flex: 1,
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(107, 114, 128, 0.3)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(107, 114, 128, 0.3)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.transform = 'scale(1)';
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            ⏰ Let Expire
+            ⏰ Decline
           </button>
         </div>
 
+        {/* Progress bar at bottom */}
         <div
           style={{
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
-            height: '4px',
-            background: 'rgba(255, 255, 255, 0.2)',
+            height: '2px',
+            background: 'rgba(255, 255, 255, 0.1)',
           }}
         >
           <div
@@ -945,13 +944,30 @@ export default function UnifiedPortal() {
             </div>
           </div>
 
-          <div
-            style={{
+          <div>
+            {/* Load Alert Board Header */}
+            <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-              gap: '16px',
-            }}
-          >
+              gridTemplateColumns: '100px 2fr 2fr 1fr 1fr 1fr 140px',
+              gap: '12px',
+              padding: '12px 20px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: 'white',
+              fontSize: '14px'
+            }}>
+              <div>⏰ Time Left</div>
+              <div>📍 Origin</div>
+              <div>🏁 Destination</div>
+              <div>💰 Rate</div>
+              <div>📦 Details</div>
+              <div>👤 Dispatcher</div>
+              <div>🎯 Action</div>
+            </div>
+
+            {/* Load Alert Board Rows */}
             {loadAlerts
               .filter(alert => alert.status === 'active')
               .sort((a, b) => {
@@ -961,7 +977,7 @@ export default function UnifiedPortal() {
                 return a.timeToExpire - b.timeToExpire;
               })
               .map(alert => (
-                <LoadAlertCard key={alert.id} alert={alert} />
+                <LoadAlertRow key={alert.id} alert={alert} />
               ))}
           </div>
         </div>
