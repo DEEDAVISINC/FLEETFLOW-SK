@@ -17,6 +17,35 @@ interface LoadPhotoConfig {
   photoTypes?: string[];
 }
 
+// 🚨 LOAD ALERT SYSTEM INTERFACES
+interface LoadAlert {
+  id: string;
+  load: Load;
+  alertType: 'new_load' | 'urgent_load' | 'replacement_load';
+  timeToExpire: number; // seconds remaining
+  originalDuration: number; // original alert duration in seconds
+  priority: 'high' | 'medium' | 'low';
+  dispatcherName: string;
+  dispatcherId: string;
+  createdAt: Date;
+  status: 'active' | 'accepted' | 'expired' | 'declined';
+  soundAlert: boolean;
+  vibrationAlert: boolean;
+  visualAlert: 'flash' | 'pulse' | 'glow';
+  message?: string; // Custom message from dispatcher
+  acceptedBy?: string; // Driver ID who accepted (if any)
+  acceptedAt?: Date;
+}
+
+interface AlertQueueManager {
+  activeAlerts: LoadAlert[];
+  alertHistory: LoadAlert[];
+  totalAlertsToday: number;
+  acceptedAlertsToday: number;
+  acceptanceRate: number;
+  averageResponseTime: number; // seconds
+}
+
 // User role and portal configuration interfaces
 interface UserRole {
   type: 'owner_operator' | 'company_driver' | 'fleet_manager' | 'dispatcher';
@@ -145,6 +174,19 @@ export default function UnifiedPortal() {
   >([]);
   const [acceptedLoads, setAcceptedLoads] = useState<Load[]>([]);
 
+  // 🚨 LOAD ALERT SYSTEM STATE MANAGEMENT
+  const [loadAlerts, setLoadAlerts] = useState<LoadAlert[]>([]);
+  const [alertQueue, setAlertQueue] = useState<AlertQueueManager>({
+    activeAlerts: [],
+    alertHistory: [],
+    totalAlertsToday: 0,
+    acceptedAlertsToday: 0,
+    acceptanceRate: 0,
+    averageResponseTime: 0,
+  });
+  const [alertSoundsEnabled, setAlertSoundsEnabled] = useState(true);
+  const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
+
   // Load data on component mount
   useEffect(() => {
     const loadData = async () => {
@@ -253,6 +295,88 @@ export default function UnifiedPortal() {
 
     loadData();
   }, [currentUser]);
+
+  // 🚨 COUNTDOWN TIMER MANAGEMENT
+  useEffect(() => {
+    const alertTimer = setInterval(() => {
+      setLoadAlerts(prev => {
+        const updatedAlerts = prev.map(alert => {
+          if (alert.status === 'active' && alert.timeToExpire > 0) {
+            const newTimeToExpire = alert.timeToExpire - 1;
+            
+            // Warning sounds at specific intervals
+            if (newTimeToExpire === 60 || newTimeToExpire === 30 || newTimeToExpire === 10) {
+              playAlertSound('urgent_load');
+              triggerVibration([100, 50, 100, 50, 100]);
+            }
+            
+            return { ...alert, timeToExpire: newTimeToExpire };
+          }
+          
+          // Expire alert if time runs out
+          if (alert.status === 'active' && alert.timeToExpire <= 0) {
+            return { ...alert, status: 'expired' as const };
+          }
+          
+          return alert;
+        });
+
+        // Move expired alerts to history
+        const expiredAlerts = updatedAlerts.filter(a => a.status === 'expired');
+        if (expiredAlerts.length > 0) {
+          setAlertQueue(prev => ({
+            ...prev,
+            alertHistory: [...prev.alertHistory, ...expiredAlerts],
+          }));
+        }
+
+        // Keep only active alerts
+        return updatedAlerts.filter(a => a.status === 'active');
+      });
+    }, 1000); // Update every second
+
+    return () => clearInterval(alertTimer);
+  }, [alertSoundsEnabled]);
+
+  // 🚨 SIMULATE INCOMING LOAD ALERTS (Demo Data)
+  useEffect(() => {
+    // Create first demo alert after 10 seconds
+    const firstAlert = setTimeout(() => {
+      const demoAlert = createLoadAlert({
+        id: `FL-2025-DEMO-${Date.now()}`,
+        status: 'Available',
+        origin: 'Atlanta, GA',
+        destination: 'Miami, FL',
+        rate: 2850,
+        weight: '42,000 lbs',
+        equipment: 'Dry Van',
+        pickupDate: new Date().toISOString().split('T')[0],
+        deliveryDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+        brokerName: 'Express Logistics',
+        distance: '647 mi',
+        brokerId: 'broker_express',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        flowStage: 'broker_board',
+        dispatcherId: 'dispatcher-001',
+        dispatcherName: 'Sarah Martinez',
+      }, 'new_load', 15);
+
+      setLoadAlerts(prev => [...prev, demoAlert]);
+      setAlertQueue(prev => ({
+        ...prev,
+        totalAlertsToday: prev.totalAlertsToday + 1,
+        activeAlerts: [...prev.activeAlerts, demoAlert],
+      }));
+
+      playAlertSound(demoAlert.alertType);
+      triggerVibration([200, 100, 200, 100, 200]);
+      
+      console.log(`🚨 Demo load alert created: ${demoAlert.alertType}`);
+    }, 10000);
+
+    return () => clearTimeout(firstAlert);
+  }, []);
 
   // Check if user has permission for a specific action
   const hasPermission = (permission: string): boolean => {
@@ -449,9 +573,514 @@ export default function UnifiedPortal() {
     return <span style={{ fontSize: size }}>👨‍💼</span>;
   };
 
+  // 🚨 LOAD ALERT MANAGEMENT FUNCTIONS
+  const playAlertSound = (alertType: 'new_load' | 'urgent_load' | 'replacement_load') => {
+    if (!alertSoundsEnabled) return;
+    try {
+      const frequency = alertType === 'urgent_load' ? 800 : alertType === 'new_load' ? 600 : 500;
+      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      gainNode.gain.setValueAtTime(0.3, context.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 1);
+      oscillator.start(context.currentTime);
+      oscillator.stop(context.currentTime + 1);
+    } catch (error) {
+      console.log('Audio not supported');
+    }
+  };
+
+  const triggerVibration = (pattern: number[] = [200, 100, 200]) => {
+    if (!alertVibrationEnabled || !navigator.vibrate) return;
+    navigator.vibrate(pattern);
+  };
+
+  const createLoadAlert = (load: Load, alertType: 'new_load' | 'urgent_load' | 'replacement_load', durationMinutes: number = 15): LoadAlert => {
+    const durationSeconds = durationMinutes * 60;
+    return {
+      id: `alert-${load.id}-${Date.now()}`,
+      load,
+      alertType,
+      timeToExpire: durationSeconds,
+      originalDuration: durationSeconds,
+      priority: alertType === 'urgent_load' ? 'high' : 'medium',
+      dispatcherName: load.dispatcherName || 'Dispatch Central',
+      dispatcherId: load.dispatcherId || 'dispatcher-001',
+      createdAt: new Date(),
+      status: 'active',
+      soundAlert: true,
+      vibrationAlert: true,
+      visualAlert: alertType === 'urgent_load' ? 'flash' : 'pulse',
+      message: `New ${alertType.replace('_', ' ')} available: ${load.origin} → ${load.destination}`,
+    };
+  };
+
+  const acceptLoadAlert = async (alertId: string) => {
+    const alert = loadAlerts.find(a => a.id === alertId);
+    if (!alert || alert.status !== 'active') return;
+    try {
+      setLoadAlerts(prev => prev.map(a => 
+        a.id === alertId 
+          ? { ...a, status: 'accepted', acceptedBy: currentUser.id, acceptedAt: new Date() }
+          : a
+      ));
+      setAcceptedLoads(prev => [...prev, alert.load]);
+      setAlertQueue(prev => ({
+        ...prev,
+        acceptedAlertsToday: prev.acceptedAlertsToday + 1,
+        acceptanceRate: prev.totalAlertsToday > 0 ? ((prev.acceptedAlertsToday + 1) / prev.totalAlertsToday) * 100 : 0,
+        alertHistory: [...prev.alertHistory, { ...alert, status: 'accepted' }],
+      }));
+      const workflow = workflowManager.initializeLoadWorkflow(
+        alert.load.id,
+        currentUser.id,
+        alert.dispatcherId,
+        alert.load.photoConfig || {
+          pickupPhotosRequired: false,
+          deliveryPhotosRequired: false,
+          minimumPhotos: 0,
+          canSkipPhotos: true,
+        }
+      );
+      setActiveWorkflow(workflow);
+      playAlertSound('new_load');
+      console.log(`✅ Load alert accepted: ${alert.load.id}`);
+    } catch (error) {
+      console.error('Error accepting load alert:', error);
+    }
+  };
+
+  const declineLoadAlert = (alertId: string) => {
+    const alert = loadAlerts.find(a => a.id === alertId);
+    if (!alert) return;
+    setLoadAlerts(prev => prev.map(a => 
+      a.id === alertId 
+        ? { ...a, status: 'declined' }
+        : a
+    ));
+    setAlertQueue(prev => ({
+      ...prev,
+      alertHistory: [...prev.alertHistory, { ...alert, status: 'declined' }],
+    }));
+    console.log(`❌ Load alert declined: ${alertId}`);
+  };
+
+  // 🚨 LOAD ALERT CARD COMPONENT with Countdown Timer
+  const LoadAlertCard: React.FC<{ alert: LoadAlert }> = ({ alert }) => {
+    const [timeRemaining, setTimeRemaining] = useState(alert.timeToExpire);
+
+    useEffect(() => {
+      setTimeRemaining(alert.timeToExpire);
+    }, [alert.timeToExpire]);
+
+    const formatTime = (seconds: number): string => {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const getTimeColor = (): string => {
+      if (timeRemaining <= 30) return '#dc2626'; // Red - Very urgent
+      if (timeRemaining <= 60) return '#f59e0b'; // Amber - Urgent  
+      if (timeRemaining <= 180) return '#eab308'; // Yellow - Warning
+      return '#22c55e'; // Green - Safe
+    };
+
+    return (
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${
+            alert.alertType === 'urgent_load' ? 'rgba(220, 38, 38, 0.2)' : 'rgba(59, 130, 246, 0.2)'
+          }, rgba(255, 255, 255, 0.1))`,
+          backdropFilter: 'blur(15px)',
+          borderRadius: '16px',
+          padding: '20px',
+          border: `2px solid ${
+            alert.alertType === 'urgent_load' ? '#dc2626' : '#3b82f6'
+          }`,
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '20px' }}>
+              {alert.alertType === 'urgent_load' ? '🚨' : alert.alertType === 'new_load' ? '📦' : '🔄'}
+            </span>
+            <span
+              style={{
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                textTransform: 'capitalize',
+              }}
+            >
+              {alert.alertType.replace('_', ' ')}
+            </span>
+          </div>
+          <div
+            style={{
+              background: getTimeColor(),
+              color: 'white',
+              borderRadius: '12px',
+              padding: '8px 12px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              fontFamily: 'monospace',
+              border: timeRemaining <= 30 ? '2px solid #fef2f2' : 'none',
+              boxShadow: timeRemaining <= 30 ? '0 0 20px rgba(220, 38, 38, 0.5)' : 'none',
+            }}
+          >
+            ⏰ {formatTime(timeRemaining)}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '8px',
+            }}
+          >
+            <span style={{ color: '#22c55e', fontSize: '16px', fontWeight: 'bold' }}>
+              📍 {alert.load.origin}
+            </span>
+            <span style={{ color: 'white', fontSize: '16px' }}>→</span>
+            <span style={{ color: '#f59e0b', fontSize: '16px', fontWeight: 'bold' }}>
+              🏁 {alert.load.destination}
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px',
+              marginBottom: '12px',
+            }}
+          >
+            <div>
+              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Rate
+              </span>
+              <div style={{ color: '#22c55e', fontSize: '18px', fontWeight: 'bold' }}>
+                ${alert.load.rate?.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Distance
+              </span>
+              <div style={{ color: 'white', fontSize: '16px', fontWeight: '600' }}>
+                {alert.load.distance}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px',
+              marginBottom: '12px',
+            }}
+          >
+            <div>
+              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Equipment
+              </span>
+              <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                {alert.load.equipment}
+              </div>
+            </div>
+            <div>
+              <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Weight
+              </span>
+              <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                {alert.load.weight}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+              Dispatcher
+            </span>
+            <div style={{ color: '#60a5fa', fontSize: '14px', fontWeight: '600' }}>
+              {alert.dispatcherName}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            marginTop: '16px',
+          }}
+        >
+          <button
+            onClick={() => acceptLoadAlert(alert.id)}
+            style={{
+              flex: 1,
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(34, 197, 94, 0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            ✅ Accept Load
+          </button>
+          <button
+            onClick={() => declineLoadAlert(alert.id)}
+            style={{
+              flex: 1,
+              background: 'linear-gradient(135deg, #6b7280, #4b5563)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(107, 114, 128, 0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            ⏰ Let Expire
+          </button>
+        </div>
+
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              background: getTimeColor(),
+              width: `${(timeRemaining / alert.originalDuration) * 100}%`,
+              transition: 'all 1s ease',
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
   // Dashboard Component
   const DashboardSection = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* 🚨 TIME-RESTRICTED LOAD ALERTS - Priority Section */}
+      {loadAlerts.length > 0 && (
+        <div style={{ marginBottom: '24px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              🚨 New Load Alerts
+              <span
+                style={{
+                  background: '#dc2626',
+                  color: 'white',
+                  borderRadius: '50%',
+                  padding: '4px 8px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {loadAlerts.length}
+              </span>
+            </h2>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <button
+                onClick={() => setAlertSoundsEnabled(!alertSoundsEnabled)}
+                style={{
+                  background: alertSoundsEnabled ? '#22c55e' : '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                {alertSoundsEnabled ? '🔊' : '🔇'} Sound
+              </button>
+              <button
+                onClick={() => setAlertVibrationEnabled(!alertVibrationEnabled)}
+                style={{
+                  background: alertVibrationEnabled ? '#22c55e' : '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                📱 Vibrate
+              </button>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {loadAlerts
+              .filter(alert => alert.status === 'active')
+              .sort((a, b) => {
+                if (a.priority !== b.priority) {
+                  return a.priority === 'high' ? -1 : 1;
+                }
+                return a.timeToExpire - b.timeToExpire;
+              })
+              .map(alert => (
+                <LoadAlertCard key={alert.id} alert={alert} />
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Alert Queue Stats */}
+      {alertQueue.totalAlertsToday > 0 && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            marginBottom: '24px',
+          }}
+        >
+          <h3
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              margin: '0 0 16px 0',
+            }}
+          >
+            📊 Today's Alert Performance
+          </h3>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: '#60a5fa', fontSize: '24px', fontWeight: 'bold' }}>
+                {alertQueue.totalAlertsToday}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Total Alerts
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: '#22c55e', fontSize: '24px', fontWeight: 'bold' }}>
+                {alertQueue.acceptedAlertsToday}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Accepted
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: '#f59e0b', fontSize: '24px', fontWeight: 'bold' }}>
+                {alertQueue.acceptanceRate.toFixed(1)}%
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Acceptance Rate
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: '#8b5cf6', fontSize: '24px', fontWeight: 'bold' }}>
+                {loadAlerts.filter(a => a.status === 'active').length}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                Active Now
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div
         style={{
