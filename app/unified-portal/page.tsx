@@ -1392,109 +1392,149 @@ export default function UnifiedPortal() {
                 </p>
               </div>
 
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
+              <div>
+                {/* Loads Waiting for Acceptance - Loadboard Header */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '120px 2fr 2fr 1fr 1fr 1fr 120px',
                   gap: '12px',
-                }}
-              >
+                  padding: '12px 20px',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  marginBottom: '8px',
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '14px'
+                }}>
+                  <div>📋 Load ID</div>
+                  <div>📍 Origin</div>
+                  <div>🏁 Destination</div>
+                  <div>💰 Rate</div>
+                  <div>📦 Details</div>
+                  <div>👤 Dispatcher</div>
+                  <div>🎯 Action</div>
+                </div>
+
+                {/* Loads Waiting for Acceptance - Loadboard Rows */}
                 {loadsWaitingForAcceptance.map((load) => (
                   <div
                     key={load.id}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      padding: '20px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                      display: 'grid',
+                      gridTemplateColumns: '120px 2fr 2fr 1fr 1fr 1fr 120px',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      marginBottom: '6px',
+                      color: 'white',
+                      fontSize: '14px',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            background: '#dc2626',
-                            color: 'white',
-                            padding: '6px 10px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {load.id}
-                        </div>
-                        <div
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            fontSize: '13px',
-                          }}
-                        >
-                          Assigned by {load.dispatcherName}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '15px',
-                          fontWeight: '600',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        {load.origin} → {load.destination}
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '16px',
-                          fontSize: '13px',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        <span>${load.rate.toLocaleString()}</span>
-                        <span>{load.distance}</span>
-                        <span>{load.equipment}</span>
-                        {load.photoConfig?.pickupPhotosRequired && (
-                          <span style={{ color: '#fbbf24' }}>
-                            📸 Photos Required
-                          </span>
-                        )}
-                      </div>
+                    {/* Load ID Column */}
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      background: '#dc2626',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      justifyContent: 'center',
+                    }}>
+                      {load.id}
                     </div>
-                    <button
-                      onClick={() => acceptLoad(load)}
-                      style={{
-                        background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '12px 20px',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '14px',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 6px 20px rgba(34, 197, 94, 0.4)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      ✅ Accept Load
-                    </button>
+
+                    {/* Origin Column */}
+                    <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+                      {load.origin}
+                    </div>
+
+                    {/* Destination Column */}
+                    <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+                      {load.destination}
+                    </div>
+
+                    {/* Rate Column */}
+                    <div style={{ 
+                      fontWeight: '700', 
+                      color: '#22c55e', 
+                      display: 'flex', 
+                      alignItems: 'center' 
+                    }}>
+                      ${load.rate?.toLocaleString()}
+                    </div>
+
+                    {/* Details Column */}
+                    <div style={{ 
+                      fontSize: '12px', 
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      lineHeight: '1.3'
+                    }}>
+                      <div>{load.distance}</div>
+                      <div>{load.equipment}</div>
+                      {load.photoConfig?.pickupPhotosRequired && (
+                        <div style={{ color: '#fbbf24', fontSize: '11px' }}>📸 Photos Req</div>
+                      )}
+                    </div>
+
+                    {/* Dispatcher Column */}
+                    <div style={{ 
+                      color: '#60a5fa', 
+                      fontWeight: '600',
+                      display: 'flex', 
+                      alignItems: 'center',
+                      fontSize: '13px'
+                    }}>
+                      {load.dispatcherName}
+                    </div>
+
+                    {/* Action Column */}
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <button
+                        onClick={() => acceptLoad(load)}
+                        style={{
+                          background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '8px 12px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          width: '100%',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.3)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      >
+                        ✅ Accept
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
