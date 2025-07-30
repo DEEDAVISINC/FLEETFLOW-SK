@@ -1354,6 +1354,10 @@ export default function UnifiedPortal() {
         )}
 
         {/* Loads Waiting for Acceptance */}
+        {(() => {
+          console.log('🔍 Debug - Permission:', hasPermission('my_loads_workflow'), 'Data Length:', loadsWaitingForAcceptance.length, 'Data:', loadsWaitingForAcceptance);
+          return null;
+        })()}
         {hasPermission('my_loads_workflow') &&
           loadsWaitingForAcceptance.length > 0 && (
             <div
@@ -1473,7 +1477,7 @@ export default function UnifiedPortal() {
                       display: 'flex', 
                       alignItems: 'center' 
                     }}>
-                      ${load.rate?.toLocaleString()}
+                      ${load.rate ? load.rate.toLocaleString() : 'N/A'}
                     </div>
 
                     {/* Details Column */}
@@ -1540,6 +1544,59 @@ export default function UnifiedPortal() {
               </div>
             </div>
           )}
+
+        {/* Debug: Show fallback if conditions not met */}
+        {(!hasPermission('my_loads_workflow') || loadsWaitingForAcceptance.length === 0) && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <div style={{ marginBottom: '20px' }}>
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  margin: '0 0 8px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                🔔 Loads Waiting for Acceptance (Debug)
+              </h3>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '14px',
+                  margin: 0,
+                }}
+              >
+                Permission: {hasPermission('my_loads_workflow') ? '✅ Yes' : '❌ No'} | 
+                Data Length: {loadsWaitingForAcceptance.length} | 
+                {loadsWaitingForAcceptance.length === 0 ? 'No data loaded' : 'Data exists but not showing'}
+              </p>
+            </div>
+
+            {loadsWaitingForAcceptance.length > 0 && (
+              <div>
+                <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>Available Data:</h4>
+                {loadsWaitingForAcceptance.map((load, index) => (
+                  <div key={index} style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', marginBottom: '5px' }}>
+                    {load.id}: {load.origin} → {load.destination} (${load.rate ? load.rate.toLocaleString() : 'No rate'})
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Quick Actions */}
