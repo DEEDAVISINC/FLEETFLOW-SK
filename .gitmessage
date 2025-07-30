@@ -1,0 +1,23 @@
+# FleetFlow - [Component/Feature]: Brief description
+#
+# Why:
+# -
+#
+# What changed:
+# -
+#
+# Type: feat|fix|docs|style|refactor|test|chore|perf|ci|build
+# Scope: auth|db|ui|api|deploy|docs|types|hooks|utils|components
+#
+# Examples:
+# feat(auth): add Supabase RLS policies for user management
+# fix(db): resolve type generation for staging environment
+# docs(setup): update Cursor configuration guide
+# refactor(components): optimize LoadCard rendering performance
+# chore(deps): update Supabase client to latest version
+#
+# Breaking changes (if any):
+# BREAKING CHANGE:
+#
+# Closes: #issue-number
+# Co-authored-by: Name <email@example.com>

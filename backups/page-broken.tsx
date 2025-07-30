@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { smsService } from '../../services/sms';
+import React, { useState } from 'react';
 import RealTimeTrackingDashboard from '../../components/RealTimeTrackingDashboard';
+import { smsService } from '../../services/sms';
 
 // TODO: Integrate with Carrier Setup Page
 // - Carrier name, MC#, DOT# should come from FMCSA API integration
@@ -22,21 +22,21 @@ export default function DriverDashboardPage() {
     heading: 0
   });
 
-  // Simulate real-time location updates
-  useEffect(() => {
-    const updateLocation = () => {
-      setDriverLocation(prev => ({
-        lat: prev.lat + (Math.random() - 0.5) * 0.01,
-        lng: prev.lng + (Math.random() - 0.5) * 0.01,
-        lastUpdated: new Date().toISOString(),
-        speed: Math.floor(Math.random() * 70 + 5), // 5-75 mph
-        heading: Math.floor(Math.random() * 360)
-      }));
-    };
+  // Simulate real-time location updates - TEMPORARILY DISABLED TO FIX INFINITE RENDER
+  // useEffect(() => {
+  //   const updateLocation = () => {
+  //     setDriverLocation(prev => ({
+  //       lat: prev.lat + (Math.random() - 0.5) * 0.01,
+  //       lng: prev.lng + (Math.random() - 0.5) * 0.01,
+  //       lastUpdated: new Date().toISOString(),
+  //       speed: Math.floor(Math.random() * 70 + 5), // 5-75 mph
+  //       heading: Math.floor(Math.random() * 360)
+  //     }));
+  //   };
 
-    const interval = setInterval(updateLocation, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
+  //   const interval = setInterval(updateLocation, 30000); // Update every 30 seconds
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // SMS notification function
   const sendSMSNotification = async (loadId: string, message: string, type: 'pickup' | 'delivery' | 'status' | 'emergency') => {
@@ -89,13 +89,13 @@ export default function DriverDashboardPage() {
   };
 
   const currentLoads = [
-    { 
-      id: "L001", 
-      pickup: "Chicago, IL", 
-      delivery: "Detroit, MI", 
+    {
+      id: "L001",
+      pickup: "Chicago, IL",
+      delivery: "Detroit, MI",
       origin: "Chicago, IL",
       destination: "Detroit, MI",
-      status: "In Transit", 
+      status: "In Transit",
       dueDate: "Jul 5, 2025",
       trackingEnabled: true,
       equipment: "Dry Van",
@@ -107,13 +107,13 @@ export default function DriverDashboardPage() {
         loadSheet: "LS-L001-2025.pdf"
       }
     },
-    { 
-      id: "L002", 
-      pickup: "Detroit, MI", 
-      delivery: "Cleveland, OH", 
+    {
+      id: "L002",
+      pickup: "Detroit, MI",
+      delivery: "Cleveland, OH",
       origin: "Detroit, MI",
       destination: "Cleveland, OH",
-      status: "Assigned", 
+      status: "Assigned",
       dueDate: "Jul 6, 2025",
       trackingEnabled: true,
       equipment: "Reefer",
@@ -226,7 +226,7 @@ export default function DriverDashboardPage() {
               <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: '0 0 24px 0' }}>
                 Dashboard Overview
               </h2>
-              
+
               {/* Quick Stats */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
                 <div style={{
@@ -299,7 +299,7 @@ export default function DriverDashboardPage() {
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ 
+                      <div style={{
                         background: load.status === 'In Transit' ? '#22c55e' : '#f59e0b',
                         color: 'white',
                         padding: '4px 12px',
@@ -324,7 +324,7 @@ export default function DriverDashboardPage() {
               <p style={{ color: '#4a5568', fontSize: '16px', marginBottom: '24px' }}>
                 View and manage your assigned loads, update delivery status, and track progress.
               </p>
-              
+
               <div style={{ display: 'grid', gap: '16px' }}>
                 {currentLoads.map((load) => (
                   <div key={load.id} style={{
@@ -344,7 +344,7 @@ export default function DriverDashboardPage() {
                           <strong>Due Date:</strong> {load.dueDate}
                         </div>
                       </div>
-                      <div style={{ 
+                      <div style={{
                         background: load.status === 'In Transit' ? '#22c55e' : '#f59e0b',
                         color: 'white',
                         padding: '8px 16px',
@@ -355,7 +355,7 @@ export default function DriverDashboardPage() {
                         {load.status}
                       </div>
                     </div>
-                    
+
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                       <button style={{
                         background: '#3b82f6',
@@ -368,7 +368,7 @@ export default function DriverDashboardPage() {
                       }}>
                         View Details
                       </button>
-                      <button 
+                      <button
                         onClick={() => setSelectedLoadTracking(load)}
                         style={{
                           background: '#10b981',
@@ -382,7 +382,7 @@ export default function DriverDashboardPage() {
                       >
                         📍 Live Tracking
                       </button>
-                      <button 
+                      <button
                         onClick={() => sendSMSNotification(load.id, `Arrived at pickup location for ${load.pickup}`, 'pickup')}
                         disabled={smsLoading === load.id}
                         style={{
@@ -398,7 +398,7 @@ export default function DriverDashboardPage() {
                       >
                         {smsLoading === load.id ? '📱 Sending...' : '📱 Notify Pickup'}
                       </button>
-                      <button 
+                      <button
                         onClick={() => sendSMSNotification(load.id, `Load ${load.id} delivered successfully to ${load.delivery}`, 'delivery')}
                         disabled={smsLoading === load.id}
                         style={{
@@ -425,7 +425,7 @@ export default function DriverDashboardPage() {
                       }}>
                         Navigation
                       </button>
-                      <button 
+                      <button
                         onClick={() => setSelectedLoadDocs(load)}
                         style={{
                           background: '#f59e0b',
@@ -499,7 +499,7 @@ export default function DriverDashboardPage() {
                     <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#2d3748', margin: '0 0 8px 0' }}>
                       {doc.name}
                     </h3>
-                    <div style={{ 
+                    <div style={{
                       color: doc.status === 'Expires Soon' ? '#f59e0b' : '#22c55e',
                       fontSize: '14px',
                       fontWeight: '600',
@@ -587,7 +587,7 @@ export default function DriverDashboardPage() {
                 <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: 0 }}>
                   Messages & SMS
                 </h2>
-                <button 
+                <button
                   onClick={() => sendSMSNotification('EMERGENCY', 'EMERGENCY: Driver needs immediate assistance!', 'emergency')}
                   disabled={smsLoading === 'EMERGENCY'}
                   style={{
@@ -617,7 +617,7 @@ export default function DriverDashboardPage() {
                   Quick SMS Notifications
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                  <button 
+                  <button
                     onClick={() => sendSMSNotification('STATUS', 'Driver started shift and is available for dispatch', 'status')}
                     disabled={!!smsLoading}
                     style={{
@@ -633,7 +633,7 @@ export default function DriverDashboardPage() {
                   >
                     📱 Start Shift
                   </button>
-                  <button 
+                  <button
                     onClick={() => sendSMSNotification('STATUS', 'Driver taking mandatory break - will resume in 30 minutes', 'status')}
                     disabled={!!smsLoading}
                     style={{
@@ -649,7 +649,7 @@ export default function DriverDashboardPage() {
                   >
                     ⏸️ Break Time
                   </button>
-                  <button 
+                  <button
                     onClick={() => sendSMSNotification('STATUS', 'Driver shift completed - going off duty', 'status')}
                     disabled={!!smsLoading}
                     style={{
@@ -665,7 +665,7 @@ export default function DriverDashboardPage() {
                   >
                     🏁 End Shift
                   </button>
-                  <button 
+                  <button
                     onClick={() => sendSMSNotification('STATUS', 'Experiencing delays - ETA updated', 'status')}
                     disabled={!!smsLoading}
                     style={{
@@ -704,7 +704,7 @@ export default function DriverDashboardPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontWeight: '600', color: '#2d3748' }}>{msg.from}</span>
-                        <span style={{ 
+                        <span style={{
                           background: msg.type === 'SMS' ? '#22c55e' : msg.type === 'Email' ? '#3b82f6' : '#6b7280',
                           color: 'white',
                           padding: '2px 8px',
@@ -821,7 +821,7 @@ export default function DriverDashboardPage() {
                 <h3 style={{ fontSize: '24px', fontWeight: '600', color: '#2d3748', margin: 0 }}>
                   Documents for Load {selectedLoadDocs.id}
                 </h3>
-                <button 
+                <button
                   onClick={() => setSelectedLoadDocs(null)}
                   style={{
                     background: 'none',
@@ -834,11 +834,11 @@ export default function DriverDashboardPage() {
                   ✕
                 </button>
               </div>
-              
+
               <div style={{ marginBottom: '16px', color: '#4a5568' }}>
                 <strong>Route:</strong> {selectedLoadDocs.pickup} → {selectedLoadDocs.delivery}
               </div>
-              
+
               <div style={{ display: 'grid', gap: '16px' }}>
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.6)',
@@ -868,7 +868,7 @@ export default function DriverDashboardPage() {
                     Download
                   </button>
                 </div>
-                
+
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.6)',
                   borderRadius: '12px',
@@ -897,7 +897,7 @@ export default function DriverDashboardPage() {
                     Download
                   </button>
                 </div>
-                
+
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.6)',
                   borderRadius: '12px',
@@ -927,9 +927,9 @@ export default function DriverDashboardPage() {
                   </button>
                 </div>
               </div>
-              
+
               <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                <button 
+                <button
                   onClick={() => setSelectedLoadDocs(null)}
                   style={{
                     background: '#6b7280',
@@ -973,7 +973,7 @@ export default function DriverDashboardPage() {
               overflow: 'auto',
               position: 'relative'
             }}>
-              <RealTimeTrackingDashboard 
+              <RealTimeTrackingDashboard
                 load={selectedLoadTracking}
                 isModal={true}
                 onClose={() => setSelectedLoadTracking(null)}

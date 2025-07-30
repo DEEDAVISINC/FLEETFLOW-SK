@@ -1,0 +1,68 @@
+{
+  "recommendations": [
+    // Supabase Development
+    "supabase.supabase",
+
+    // Core Development Tools
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+
+    // React/Next.js Development
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json",
+
+    // Database & SQL
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "ms-ossdata.vscode-postgresql",
+
+    // Git & Version Control
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "github.copilot",
+    "github.copilot-chat",
+
+    // File Management
+    "christian-kohler.npm-intellisense",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-vscode.vscode-markdown",
+
+    // Debugging & Testing
+    "ms-vscode.vscode-json",
+    "hbenl.vscode-test-explorer",
+    "orta.vscode-jest",
+
+    // Productivity
+    "streetsidesoftware.code-spell-checker",
+    "wayou.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+    "aaron-bond.better-comments",
+
+    // Theme & UI
+    "pkief.material-icon-theme",
+    "github.github-vscode-theme",
+
+    // API Development
+    "humao.rest-client",
+    "ms-vscode.vscode-json",
+
+    // Environment & Configuration
+    "mikestead.dotenv",
+    "ms-vscode.vscode-json",
+
+    // Code Quality
+    "usernamehw.errorlens",
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-json",
+    "hookyqr.beautify",
+    "esbenp.prettier-vscode"
+  ]
+}

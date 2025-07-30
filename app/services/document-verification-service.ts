@@ -1,5 +1,7 @@
 'use client';
 
+import { VinVerificationService } from './vin-verification-service';
+
 interface DocumentVerificationResult {
   verified: boolean;
   confidence: number;
@@ -50,15 +52,16 @@ export class DocumentVerificationService {
           type: 'regex',
           pattern: '^MC-?\\d{6,7}$',
           required: true,
-          errorMessage: 'Valid MC number required (format: MC-123456 or MC123456)'
+          errorMessage:
+            'Valid MC number required (format: MC-123456 or MC123456)',
         },
         {
           field: 'issuedBy',
           type: 'text',
           required: true,
-          errorMessage: 'Issuing authority must be specified'
-        }
-      ]
+          errorMessage: 'Issuing authority must be specified',
+        },
+      ],
     },
     {
       id: 'certificate_insurance',
@@ -71,23 +74,37 @@ export class DocumentVerificationService {
           field: 'expirationDate',
           type: 'date',
           required: true,
-          errorMessage: 'Insurance expiration date required'
+          errorMessage: 'Insurance expiration date required',
         },
         {
           field: 'autoLiabilityCoverage',
           type: 'currency',
           minValue: 1000000,
           required: true,
-          errorMessage: 'Auto liability coverage must be at least $1,000,000'
+          errorMessage: 'Auto Liability coverage must be at least $1,000,000',
         },
         {
           field: 'cargoCoverage',
           type: 'currency',
           minValue: 100000,
           required: true,
-          errorMessage: 'Cargo coverage must be at least $100,000'
-        }
-      ]
+          errorMessage: 'Cargo coverage must be at least $100,000',
+        },
+        {
+          field: 'generalLiabilityCoverage',
+          type: 'currency',
+          minValue: 1000000,
+          required: true,
+          errorMessage:
+            'General Liability coverage must be at least $1,000,000',
+        },
+        {
+          field: 'workersCompensation.hasValidCoverage',
+          type: 'text',
+          required: true,
+          errorMessage: 'Workers Compensation coverage is required by law',
+        },
+      ],
     },
     {
       id: 'w9_form',
@@ -100,22 +117,23 @@ export class DocumentVerificationService {
           field: 'tinType',
           type: 'text',
           required: true,
-          errorMessage: 'Tax identification type required (SSN or EIN)'
+          errorMessage: 'Tax identification type required (SSN or EIN)',
         },
         {
           field: 'taxId',
           type: 'regex',
           pattern: '^(\\d{3}-\\d{2}-\\d{4}|\\d{2}-\\d{7})$',
           required: true,
-          errorMessage: 'Valid tax ID required (SSN: XXX-XX-XXXX or EIN: XX-XXXXXXX)'
+          errorMessage:
+            'Valid tax ID required (SSN: XXX-XX-XXXX or EIN: XX-XXXXXXX)',
         },
         {
           field: 'signature',
           type: 'text',
           required: true,
-          errorMessage: 'W-9 form must be signed'
-        }
-      ]
+          errorMessage: 'W-9 form must be signed',
+        },
+      ],
     },
     {
       id: 'notice_assignment',
@@ -128,21 +146,21 @@ export class DocumentVerificationService {
           field: 'factoringCompany',
           type: 'text',
           required: true,
-          errorMessage: 'Factoring company name required'
+          errorMessage: 'Factoring company name required',
         },
         {
           field: 'effectiveDate',
           type: 'date',
           required: true,
-          errorMessage: 'Effective date required'
+          errorMessage: 'Effective date required',
         },
         {
           field: 'expirationDate',
           type: 'date',
           required: true,
-          errorMessage: 'Assignment expiration date required'
-        }
-      ]
+          errorMessage: 'Assignment expiration date required',
+        },
+      ],
     },
     {
       id: 'eld_compliance',
@@ -155,22 +173,22 @@ export class DocumentVerificationService {
           field: 'eldProvider',
           type: 'text',
           required: true,
-          errorMessage: 'ELD provider/manufacturer required'
+          errorMessage: 'ELD provider/manufacturer required',
         },
         {
           field: 'registrationId',
           type: 'text',
           required: true,
-          errorMessage: 'ELD registration ID required'
+          errorMessage: 'ELD registration ID required',
         },
         {
           field: 'complianceCertified',
           type: 'text',
           required: true,
-          errorMessage: 'ELD FMCSA compliance certification required'
-        }
-      ]
-    }
+          errorMessage: 'ELD FMCSA compliance certification required',
+        },
+      ],
+    },
   ];
 
   private static notificationTemplates: Record<string, NotificationTemplate> = {
@@ -187,7 +205,7 @@ export class DocumentVerificationService {
         <p>You will receive another notification once the review is complete.</p>
         <p>Thank you for your prompt submission.</p>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
-      `
+      `,
     },
     documentApproved: {
       type: 'success',
@@ -201,7 +219,7 @@ export class DocumentVerificationService {
         <p><strong>Valid Until:</strong> {{expirationDate}}</p>
         <p>This document now meets all FleetFlow requirements and is active in our system.</p>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
-      `
+      `,
     },
     documentRejected: {
       type: 'error',
@@ -224,7 +242,7 @@ export class DocumentVerificationService {
         </ol>
         <p><strong>Need Help?</strong> Contact our support team at (555) 123-4567 or support@fleetflow.com</p>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
-      `
+      `,
     },
     documentExpiring: {
       type: 'warning',
@@ -245,7 +263,8 @@ export class DocumentVerificationService {
         </ol>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
       `,
-      smsTemplate: 'FleetFlow Alert: Your {{documentName}} expires in {{daysRemaining}} days ({{expirationDate}}). Please renew promptly to avoid service interruption.'
+      smsTemplate:
+        'FleetFlow Alert: Your {{documentName}} expires in {{daysRemaining}} days ({{expirationDate}}). Please renew promptly to avoid service interruption.',
     },
     allDocumentsComplete: {
       type: 'success',
@@ -273,40 +292,118 @@ export class DocumentVerificationService {
         </ol>
         <p>Thank you for choosing FleetFlow. We look forward to a successful partnership!</p>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
-      `
-    }
+      `,
+    },
   };
 
   /**
    * Verify uploaded document using OCR and validation rules
    */
   static async verifyDocument(
-    file: File, 
-    documentType: string, 
+    file: File,
+    documentType: string,
     carrierData: any
   ): Promise<DocumentVerificationResult> {
-    const requirement = this.documentRequirements.find(req => req.id === documentType);
+    const requirement = this.documentRequirements.find(
+      (req) => req.id === documentType
+    );
     if (!requirement) {
       return {
         verified: false,
         confidence: 0,
         issues: ['Unknown document type'],
-        requiresManualReview: true
+        requiresManualReview: true,
       };
     }
 
     try {
       // Simulate OCR processing
-      const extractedData = await this.simulateOCRExtraction(file, documentType);
-      
+      const extractedData = await this.simulateOCRExtraction(
+        file,
+        documentType
+      );
+
       // Validate extracted data against rules
-      const validationResult = this.validateExtractedData(extractedData, requirement);
-      
+      const validationResult = this.validateExtractedData(
+        extractedData,
+        requirement
+      );
+
       // Check for expiration if required
       if (requirement.expirationRequired && extractedData.expirationDate) {
-        const expirationCheck = this.checkExpiration(extractedData.expirationDate);
+        const expirationCheck = this.checkExpiration(
+          extractedData.expirationDate
+        );
         if (!expirationCheck.valid) {
           validationResult.issues.push(expirationCheck.message);
+        }
+      }
+
+      // 🚛 CRITICAL: VIN Verification for Vehicle Documents
+      if (documentType.includes('vehicle_') && extractedData.vin) {
+        console.log(
+          `🔍 Vehicle document detected: ${documentType} - Starting VIN verification`
+        );
+
+        try {
+          // Get insurance certificate for cross-referencing
+          const insuranceDoc = this.getInsuranceCertificateData(carrierData);
+
+          // Comprehensive VIN verification with NHTSA
+          const vinVerification =
+            await VinVerificationService.comprehensiveVehicleVerification(
+              extractedData.vin,
+              extractedData.licensePlate || '',
+              extractedData.state || '',
+              insuranceDoc,
+              carrierData.fmcsaData || {}
+            );
+
+          // Add verification results to extracted data
+          extractedData.vinVerification = vinVerification;
+          extractedData.nhtsa_data = vinVerification.vinData;
+          extractedData.recalls = vinVerification.recalls;
+
+          // CRITICAL CHECK: Vehicle must be on insurance
+          if (!vinVerification.approved) {
+            validationResult.issues.push(...vinVerification.issues);
+            validationResult.confidence = 0; // CRITICAL FAILURE
+
+            // Add specific insurance-related issues
+            if (!vinVerification.insuranceVerification?.onInsurance) {
+              validationResult.issues.unshift(
+                '🚫 VEHICLE REJECTED - NOT ON INSURANCE CERTIFICATE'
+              );
+
+              // Send immediate notification
+              await this.sendVehicleRejectionNotification(
+                carrierData,
+                extractedData,
+                vinVerification
+              );
+            }
+          } else {
+            console.log(
+              '✅ Vehicle verification passed - vehicle is properly insured'
+            );
+
+            // Add positive verification data
+            if (vinVerification.vinData?.valid) {
+              extractedData.vehicleValidated = true;
+              extractedData.make = vinVerification.vinData.make;
+              extractedData.model = vinVerification.vinData.model;
+              extractedData.year = vinVerification.vinData.year;
+            }
+          }
+        } catch (vinError) {
+          console.error('VIN verification failed:', vinError);
+          validationResult.issues.push(
+            `VIN verification failed: ${vinError.message}`
+          );
+          validationResult.confidence = Math.min(
+            validationResult.confidence,
+            0.3
+          );
         }
       }
 
@@ -315,15 +412,18 @@ export class DocumentVerificationService {
         confidence: validationResult.confidence,
         issues: validationResult.issues,
         extractedData,
-        requiresManualReview: validationResult.confidence < 0.8 || validationResult.issues.length > 0
+        requiresManualReview:
+          validationResult.confidence < 0.8 ||
+          validationResult.issues.length > 0,
       };
-
     } catch (error) {
       return {
         verified: false,
         confidence: 0,
-        issues: ['Document processing failed. Please ensure the document is clear and readable.'],
-        requiresManualReview: true
+        issues: [
+          'Document processing failed. Please ensure the document is clear and readable.',
+        ],
+        requiresManualReview: true,
       };
     }
   }
@@ -331,9 +431,12 @@ export class DocumentVerificationService {
   /**
    * Simulate OCR data extraction based on document type
    */
-  private static async simulateOCRExtraction(file: File, documentType: string): Promise<Record<string, any>> {
+  private static async simulateOCRExtraction(
+    file: File,
+    documentType: string
+  ): Promise<Record<string, any>> {
     // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Return simulated extracted data based on document type
     switch (documentType) {
@@ -343,7 +446,7 @@ export class DocumentVerificationService {
           issuedBy: 'Federal Motor Carrier Safety Administration',
           carrierName: 'Sample Transport LLC',
           issueDate: '2024-01-15',
-          operatingStatus: 'Active'
+          operatingStatus: 'Active',
         };
 
       case 'certificate_insurance':
@@ -352,10 +455,19 @@ export class DocumentVerificationService {
           policyNumber: 'INS-789456123',
           effectiveDate: '2024-01-01',
           expirationDate: '2025-01-01',
-          autoLiabilityCoverage: 1000000,
-          cargoCoverage: 100000,
+          autoLiabilityCoverage: 1000000, // $1,000,000 Auto Liability
+          cargoCoverage: 100000, // $100,000 Cargo
+          generalLiabilityCoverage: 1000000, // $1,000,000 General Liability
+          workersCompensation: {
+            // Workers Compensation (As required by law)
+            hasValidCoverage: true,
+            policyNumber: 'WC-456789123',
+            carrierName: 'State Comp Insurance',
+            effectiveDate: '2024-01-01',
+            expirationDate: '2025-01-01',
+          },
           insuranceCompany: 'Progressive Commercial',
-          additionalInsured: 'FleetFlow Logistics LLC'
+          additionalInsured: 'FleetFlow Logistics LLC',
         };
 
       case 'w9_form':
@@ -365,7 +477,7 @@ export class DocumentVerificationService {
           taxId: '12-3456789',
           address: '123 Main St, City, State 12345',
           signature: 'John Smith',
-          signatureDate: '2024-01-10'
+          signatureDate: '2024-01-10',
         };
 
       case 'notice_assignment':
@@ -376,7 +488,7 @@ export class DocumentVerificationService {
           expirationDate: '2025-01-01',
           assignmentType: 'Accounts Receivable',
           contactPerson: 'Jane Factoring',
-          contactPhone: '(555) 123-4567'
+          contactPhone: '(555) 123-4567',
         };
 
       case 'eld_compliance':
@@ -386,7 +498,44 @@ export class DocumentVerificationService {
           registrationId: 'ELD-SM-789456',
           complianceCertified: true,
           certificationDate: '2024-01-01',
-          softwareVersion: '2024.1.1'
+          softwareVersion: '2024.1.1',
+        };
+
+      // Vehicle Information Documents
+      case 'vehicle_registration':
+        return {
+          vin: '1HGBH41JXMN109186',
+          licensePlate: 'ABC1234',
+          state: 'TX',
+          make: 'Honda',
+          model: 'Civic',
+          year: 2021,
+          registeredOwner: 'Sample Transport LLC',
+          registrationDate: '2024-01-01',
+          expirationDate: '2025-01-01',
+        };
+
+      case 'vehicle_inspection':
+        return {
+          vin: '1HGBH41JXMN109186',
+          inspectionDate: '2024-01-15',
+          expirationDate: '2025-01-15',
+          inspectionStation: 'State Inspection Station #123',
+          result: 'PASS',
+          mileage: 45000,
+          nextInspectionDue: '2025-01-15',
+        };
+
+      case 'vehicle_title':
+        return {
+          vin: '1HGBH41JXMN109186',
+          titleNumber: 'TX-123456789',
+          make: 'Honda',
+          model: 'Civic',
+          year: 2021,
+          owner: 'Sample Transport LLC',
+          issueDate: '2021-03-15',
+          lienHolder: 'None',
         };
 
       default:
@@ -394,7 +543,7 @@ export class DocumentVerificationService {
           documentType,
           fileName: file.name,
           fileSize: file.size,
-          uploadDate: new Date().toISOString()
+          uploadDate: new Date().toISOString(),
         };
     }
   }
@@ -403,7 +552,7 @@ export class DocumentVerificationService {
    * Validate extracted data against document requirements
    */
   private static validateExtractedData(
-    extractedData: Record<string, any>, 
+    extractedData: Record<string, any>,
     requirement: DocumentRequirement
   ): { issues: string[]; confidence: number } {
     const issues: string[] = [];
@@ -422,7 +571,10 @@ export class DocumentVerificationService {
 
       switch (rule.type) {
         case 'regex':
-          if (rule.pattern && !new RegExp(rule.pattern).test(value.toString())) {
+          if (
+            rule.pattern &&
+            !new RegExp(rule.pattern).test(value.toString())
+          ) {
             issues.push(rule.errorMessage);
             confidence -= 0.15;
           }
@@ -430,7 +582,10 @@ export class DocumentVerificationService {
 
         case 'number':
         case 'currency':
-          const numValue = typeof value === 'number' ? value : parseFloat(value.toString().replace(/[$,]/g, ''));
+          const numValue =
+            typeof value === 'number'
+              ? value
+              : parseFloat(value.toString().replace(/[$,]/g, ''));
           if (isNaN(numValue)) {
             issues.push(`${rule.field} must be a valid number`);
             confidence -= 0.1;
@@ -462,17 +617,23 @@ export class DocumentVerificationService {
   /**
    * Check document expiration
    */
-  private static checkExpiration(expirationDate: string): { valid: boolean; message: string; daysRemaining: number } {
+  private static checkExpiration(expirationDate: string): {
+    valid: boolean;
+    message: string;
+    daysRemaining: number;
+  } {
     const expDate = new Date(expirationDate);
     const today = new Date();
     const msPerDay = 24 * 60 * 60 * 1000;
-    const daysRemaining = Math.ceil((expDate.getTime() - today.getTime()) / msPerDay);
+    const daysRemaining = Math.ceil(
+      (expDate.getTime() - today.getTime()) / msPerDay
+    );
 
     if (daysRemaining < 0) {
       return {
         valid: false,
         message: 'Document has expired and must be renewed',
-        daysRemaining
+        daysRemaining,
       };
     }
 
@@ -480,14 +641,14 @@ export class DocumentVerificationService {
       return {
         valid: true,
         message: `Document expires in ${daysRemaining} days - renewal recommended`,
-        daysRemaining
+        daysRemaining,
       };
     }
 
     return {
       valid: true,
       message: 'Document expiration is acceptable',
-      daysRemaining
+      daysRemaining,
     };
   }
 
@@ -502,7 +663,11 @@ export class DocumentVerificationService {
   ): Promise<{ emailSent: boolean; smsSent: boolean; message: string }> {
     const template = this.notificationTemplates[notificationType];
     if (!template) {
-      return { emailSent: false, smsSent: false, message: 'Unknown notification template' };
+      return {
+        emailSent: false,
+        smsSent: false,
+        message: 'Unknown notification template',
+      };
     }
 
     try {
@@ -510,12 +675,14 @@ export class DocumentVerificationService {
       const emailContent = this.populateTemplate(template.emailTemplate, {
         ...carrierData,
         ...documentData,
-        ...additionalData
+        ...additionalData,
       });
 
       console.log(`📧 Email Notification Sent:`);
       console.log(`To: ${carrierData.email}`);
-      console.log(`Subject: ${this.populateTemplate(template.subject, documentData)}`);
+      console.log(
+        `Subject: ${this.populateTemplate(template.subject, documentData)}`
+      );
       console.log(`Content: ${emailContent}`);
 
       // Simulate SMS if template exists
@@ -524,7 +691,7 @@ export class DocumentVerificationService {
         const smsContent = this.populateTemplate(template.smsTemplate, {
           ...carrierData,
           ...documentData,
-          ...additionalData
+          ...additionalData,
         });
 
         console.log(`📱 SMS Notification Sent:`);
@@ -536,15 +703,14 @@ export class DocumentVerificationService {
       return {
         emailSent: true,
         smsSent,
-        message: 'Notification sent successfully'
+        message: 'Notification sent successfully',
       };
-
     } catch (error) {
       console.error('Notification failed:', error);
       return {
         emailSent: false,
         smsSent: false,
-        message: 'Failed to send notification'
+        message: 'Failed to send notification',
       };
     }
   }
@@ -552,24 +718,38 @@ export class DocumentVerificationService {
   /**
    * Populate template with data
    */
-  private static populateTemplate(template: string, data: Record<string, any>): string {
+  private static populateTemplate(
+    template: string,
+    data: Record<string, any>
+  ): string {
     let result = template;
-    
+
     // Replace simple placeholders
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       const placeholder = `{{${key}}}`;
       result = result.replace(new RegExp(placeholder, 'g'), data[key] || '');
     });
 
     // Handle array iterations (simple implementation)
     if (data.issues && Array.isArray(data.issues)) {
-      const issuesList = data.issues.map(issue => `<li style="color: #dc3545; margin: 8px 0;">${issue}</li>`).join('');
+      const issuesList = data.issues
+        .map(
+          (issue) => `<li style="color: #dc3545; margin: 8px 0;">${issue}</li>`
+        )
+        .join('');
       result = result.replace(/{{#each issues}}.*?{{\/each}}/s, issuesList);
     }
 
     if (data.approvedDocuments && Array.isArray(data.approvedDocuments)) {
-      const docsList = data.approvedDocuments.map(doc => `<li style="color: #28a745; margin: 8px 0;">✅ ${doc}</li>`).join('');
-      result = result.replace(/{{#each approvedDocuments}}.*?{{\/each}}/s, docsList);
+      const docsList = data.approvedDocuments
+        .map(
+          (doc) => `<li style="color: #28a745; margin: 8px 0;">✅ ${doc}</li>`
+        )
+        .join('');
+      result = result.replace(
+        /{{#each approvedDocuments}}.*?{{\/each}}/s,
+        docsList
+      );
     }
 
     return result;
@@ -590,18 +770,105 @@ export class DocumentVerificationService {
     requiredRemaining: string[];
     approvedDocuments: string[];
   } {
-    const requiredDocs = this.documentRequirements.filter(req => req.required);
-    const approvedDocs = uploadedDocuments.filter(doc => doc.status === 'approved');
-    
-    const approvedDocIds = approvedDocs.map(doc => doc.id);
+    const requiredDocs = this.documentRequirements.filter(
+      (req) => req.required
+    );
+    const approvedDocs = uploadedDocuments.filter(
+      (doc) => doc.status === 'approved'
+    );
+
+    const approvedDocIds = approvedDocs.map((doc) => doc.id);
     const requiredRemaining = requiredDocs
-      .filter(req => !approvedDocIds.includes(req.id))
-      .map(req => req.name);
+      .filter((req) => !approvedDocIds.includes(req.id))
+      .map((req) => req.name);
 
     return {
       complete: requiredRemaining.length === 0,
       requiredRemaining,
-      approvedDocuments: approvedDocs.map(doc => doc.type || doc.name)
+      approvedDocuments: approvedDocs.map((doc) => doc.type || doc.name),
     };
+  }
+
+  /**
+   * Get insurance certificate data for vehicle verification
+   */
+  private static getInsuranceCertificateData(carrierData: any): any {
+    // Look for insurance data in carrier data or uploaded documents
+    if (carrierData?.insuranceCertificate) {
+      return carrierData.insuranceCertificate;
+    }
+
+    // Mock insurance data for testing - in production this would come from uploaded documents
+    return {
+      carrierName: carrierData?.legalName || 'Sample Transport LLC',
+      policyNumber: 'INS-789456123',
+      effectiveDate: '2024-01-01',
+      expirationDate: '2025-01-01',
+      autoLiabilityCoverage: 1000000, // $1,000,000 Auto Liability
+      cargoCoverage: 100000, // $100,000 Cargo
+      generalLiabilityCoverage: 1000000, // $1,000,000 General Liability
+      workersCompensation: {
+        // Workers Compensation (As required by law)
+        hasValidCoverage: true,
+        policyNumber: 'WC-456789123',
+        carrierName: 'State Comp Insurance',
+        effectiveDate: '2024-01-01',
+        expirationDate: '2025-01-01',
+      },
+      insuranceCompany: 'Progressive Commercial',
+      coveredVehicles: [
+        {
+          vin: '1HGBH41JXMN109186',
+          make: 'Honda',
+          model: 'Civic',
+          year: 2021,
+          licensePlate: 'ABC1234',
+          state: 'TX',
+        },
+      ],
+    };
+  }
+
+  /**
+   * Send notification when vehicle is rejected due to insurance issues
+   */
+  private static async sendVehicleRejectionNotification(
+    carrierData: any,
+    vehicleData: any,
+    vinVerification: any
+  ): Promise<void> {
+    try {
+      const notificationData = {
+        type: 'vehicleRejected',
+        carrierName: carrierData?.legalName || 'Carrier',
+        email: carrierData?.email || 'carrier@example.com',
+        vehicleInfo: {
+          vin: vehicleData.vin,
+          make: vinVerification.vinData?.make || 'Unknown',
+          model: vinVerification.vinData?.model || 'Unknown',
+          year: vinVerification.vinData?.year || 'Unknown',
+        },
+        rejectionReasons: vinVerification.issues,
+        nextSteps: [
+          'Verify vehicle is listed on insurance certificate',
+          'Contact insurance provider to add vehicle to policy',
+          'Re-upload vehicle documents after insurance update',
+          'Contact FleetFlow support if you need assistance',
+        ],
+        timestamp: new Date().toISOString(),
+      };
+
+      // Send to notification service (mock for now)
+      console.log('🚨 VEHICLE REJECTION NOTIFICATION:', notificationData);
+
+      // In production, this would send actual email/SMS notifications
+      await this.sendNotification(
+        'vehicleRejected',
+        notificationData.email,
+        notificationData
+      );
+    } catch (error) {
+      console.error('Failed to send vehicle rejection notification:', error);
+    }
   }
 }

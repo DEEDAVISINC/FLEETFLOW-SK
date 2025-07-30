@@ -1,9 +1,79 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "next.config.js", "use": "@vercel/next" }
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "public": false,
+  "regions": ["iad1"],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/login",
+      "destination": "/auth/signin",
+      "permanent": false
+    }
   ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/$1" }
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com *.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' *.supabase.co *.anthropic.com wss://*.supabase.co *.vercel-analytics.com *.vercel-insights.com; media-src 'self' data: blob:;"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
   ]
 }

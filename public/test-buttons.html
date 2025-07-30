@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1e293b;
+            color: white;
+        }
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Button Test Page</h1>
+    <p>If you can see the emoji buttons below, the issue is with React hydration:</p>
+
+    <button class="test-button">🔔</button>
+    <button class="test-button">🚨</button>
+
+    <p>Expected: Bell and Emergency siren emojis</p>
+
+    <script>
+        console.log('Testing emoji support...');
+        document.querySelectorAll('.test-button').forEach((btn, i) => {
+            console.log(`Button ${i + 1}:`, btn.textContent);
+            btn.style.border = '2px solid lime';
+        });
+    </script>
+</body>
+</html>

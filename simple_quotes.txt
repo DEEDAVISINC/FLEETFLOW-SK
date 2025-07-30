@@ -1,0 +1,46 @@
+
+          {selectedTab === 'quotes' && (
+            <div>
+              <h2 style={{ color: 'white', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                💰 Freight Quotes
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '24px' }}>
+                  <h3 style={{ color: 'white', marginBottom: '16px' }}>📦 LTL Freight Quote</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                    <input type="text" placeholder="Weight (lbs)" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                    <input type="text" placeholder="Pallets" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                    <input type="text" placeholder="Origin" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                    <input type="text" placeholder="Destination" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                  </div>
+                  <h3 style={{ color: '#8b5cf6', marginBottom: '16px', marginTop: '24px' }}>🏢 Warehousing</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                    <select style={{ padding: '8px', borderRadius: '4px', border: 'none' }}>
+                      <option>📦 Storage</option>
+                      <option>🚛 Cross Docking</option>
+                      <option>🌡️ Temperature Controlled</option>
+                    </select>
+                    <input type="number" placeholder="Duration (Months)" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                    <input type="number" placeholder="Pallet Count" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                    <input type="text" placeholder="Location" style={{ padding: '8px', borderRadius: '4px', border: 'none' }} />
+                  </div>
+                  <button 
+                    onClick={() => alert('✅ Quote Generated!\\n\\nLTL: $2,450.75\\nWarehousing: $1,250/month\\nTotal: $3,700.75\\n\\n📧 Sent to shipper')}
+                    style={{ background: '#10b981', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}
+                  >
+                    💰 Generate LTL + Warehousing Quote
+                  </button>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '20px' }}>
+                  <h3 style={{ color: 'white', marginBottom: '16px' }}>🎯 Features</h3>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    • LTL Freight Classes<br/>
+                    • Warehousing Solutions<br/>
+                    • Professional Formatting<br/>
+                    • Auto Email Delivery<br/>
+                    • 7-Day Validity
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}

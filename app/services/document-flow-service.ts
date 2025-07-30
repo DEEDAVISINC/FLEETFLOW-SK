@@ -1,8 +1,8 @@
 // Document Flow Management Service
 // Ensures all information flows correctly between routing, drivers, shippers, brokers, dispatchers, invoices, rate confirmations, and BOLs
 
+import { CarrierData } from './enhanced-carrier-service';
 import { Load } from './loadService';
-import { CarrierData, carrierService } from './enhanced-carrier-service';
 import { smsService } from './sms';
 
 export interface DocumentPackage {
@@ -13,7 +13,9 @@ export interface DocumentPackage {
   invoice?: string;
   trackingInfo?: string;
   carrierInfo?: CarrierData;
-  
+  loadIdentifier?: string; // Added for rate confirmation
+  shipperId?: string; // Added for bill of lading
+
   // Document status tracking
   documentsGenerated: {
     route: boolean;
@@ -21,18 +23,47 @@ export interface DocumentPackage {
     billOfLading: boolean;
     invoice: boolean;
   };
-  
+
   // Communication tracking
   sentTo: {
-    driver?: { phone: string; timestamp: string; status: 'sent' | 'delivered' | 'failed' };
-    carrier?: { phone: string; email?: string; timestamp: string; status: 'sent' | 'delivered' | 'failed' };
-    shipper?: { email: string; timestamp: string; status: 'sent' | 'delivered' | 'failed' };
-    broker?: { email: string; timestamp: string; status: 'sent' | 'delivered' | 'failed' };
+    driver?: {
+      phone: string;
+      timestamp: string;
+      status: 'sent' | 'delivered' | 'failed';
+    };
+    carrier?: {
+      phone: string;
+      email?: string;
+      timestamp: string;
+      status: 'sent' | 'delivered' | 'failed';
+    };
+    shipper?: {
+      email: string;
+      timestamp: string;
+      status: 'sent' | 'delivered' | 'failed';
+    };
+    broker?: {
+      email: string;
+      timestamp: string;
+      status: 'sent' | 'delivered' | 'failed';
+    };
   };
 }
 
 export class DocumentFlowService {
   private documentStore: Map<string, DocumentPackage> = new Map();
+
+  // Helper method to extract broker initials from broker name
+  private extractBrokerInitials(brokerName: string): string {
+    return (
+      brokerName
+        .split(' ')
+        .map((word) => word.charAt(0))
+        .join('')
+        .substring(0, 3)
+        .toUpperCase() || 'BRK'
+    );
+  }
 
   // Initialize document package for a load
   initializeDocumentPackage(load: Load): DocumentPackage {
@@ -42,9 +73,9 @@ export class DocumentFlowService {
         route: false,
         rateConfirmation: false,
         billOfLading: false,
-        invoice: false
+        invoice: false,
       },
-      sentTo: {}
+      sentTo: {},
     };
 
     this.documentStore.set(load.id, packageData);
@@ -54,10 +85,45 @@ export class DocumentFlowService {
   // Generate Rate Confirmation
   generateRateConfirmation(load: Load, carrier: CarrierData): string {
     const currentDate = new Date().toLocaleDateString();
-    
+
+    // Generate comprehensive load identifier using LoadIdentificationService
+    const {
+      LoadIdentificationService,
+    } = require('./LoadIdentificationService');
+    let loadIdentifier = '';
+    try {
+      const identificationData = {
+        origin: load.origin,
+        destination: load.destination,
+        pickupDate: load.pickupDate,
+        equipment: load.equipment,
+        loadType:
+          (load.loadType as 'FTL' | 'LTL' | 'Partial' | 'Expedited') || 'FTL',
+        brokerInitials: this.extractBrokerInitials(
+          load.brokerName || 'FleetFlow'
+        ),
+        shipperName:
+          load.shipperInfo?.companyName ||
+          load.shipperName ||
+          'Unknown Shipper',
+        weight: load.weight,
+        rate: load.rate,
+        distance: load.distance,
+      };
+
+      const identifiers =
+        LoadIdentificationService.generateLoadIdentifiers(identificationData);
+      loadIdentifier = identifiers.loadId; // This gives us the full format: JS-25001-ATLMIA-WMT-DVFL-001
+    } catch (error) {
+      console.error('Error generating load identifier:', error);
+      // Fallback to basic load ID if service fails
+      loadIdentifier = load.id;
+    }
+
     const rateConfirmation = `
 RATE CONFIRMATION
 Load ID: ${load.id}
+Load Identifier: ${loadIdentifier}
 Date: ${currentDate}
 
 ═══════════════════════════════════════════════════════════
@@ -68,7 +134,9 @@ Contact: Dispatch Department
 Phone: (555) 123-4567
 
 SHIPPER INFORMATION
-${load.shipperInfo ? `
+${
+  load.shipperInfo
+    ? `
 Company: ${load.shipperInfo.companyName}
 Contact: ${load.shipperInfo.contactName}
 Phone: ${load.shipperInfo.phone}
@@ -76,7 +144,9 @@ Email: ${load.shipperInfo.email}
 Address: ${load.shipperInfo.address}
          ${load.shipperInfo.city}, ${load.shipperInfo.state} ${load.shipperInfo.zipCode}
 ${load.shipperInfo.specialInstructions ? `Special Instructions: ${load.shipperInfo.specialInstructions}` : ''}
-` : 'Shipper information to be provided'}
+`
+    : 'Shipper information to be provided'
+}
 
 CARRIER INFORMATION
 Company: ${carrier.companyName}
@@ -115,6 +185,7 @@ Generated by FleetFlow Document Management System
       packageData.rateConfirmation = rateConfirmation;
       packageData.documentsGenerated.rateConfirmation = true;
       packageData.carrierInfo = carrier;
+      packageData.loadIdentifier = loadIdentifier; // Store the load identifier
     }
 
     return rateConfirmation;
@@ -123,11 +194,57 @@ Generated by FleetFlow Document Management System
   // Generate Bill of Lading
   generateBillOfLading(load: Load, carrier: CarrierData): string {
     const currentDate = new Date().toLocaleDateString();
-    const bolNumber = `BOL-${load.id}-${Date.now()}`;
-    
+
+    // Generate comprehensive load identifier using LoadIdentificationService
+    const {
+      LoadIdentificationService,
+    } = require('./LoadIdentificationService');
+    let loadIdentifier = '';
+    let shipperId = load.shipperId || 'Unknown';
+
+    try {
+      const identificationData = {
+        origin: load.origin,
+        destination: load.destination,
+        pickupDate: load.pickupDate,
+        equipment: load.equipment,
+        loadType:
+          (load.loadType as 'FTL' | 'LTL' | 'Partial' | 'Expedited') || 'FTL',
+        brokerInitials: this.extractBrokerInitials(
+          load.brokerName || 'FleetFlow'
+        ),
+        shipperName:
+          load.shipperInfo?.companyName ||
+          load.shipperName ||
+          'Unknown Shipper',
+        weight: load.weight,
+        rate: load.rate,
+        distance: load.distance,
+      };
+
+      const identifiers =
+        LoadIdentificationService.generateLoadIdentifiers(identificationData);
+      loadIdentifier = identifiers.loadId; // Full format: JS-25001-ATLMIA-WMT-DVFL-001
+
+      // Use the corrected 9-character shipper ID if available
+      if (load.shipperId) {
+        shipperId = load.shipperId; // Should be format like ABC-204-070
+      }
+    } catch (error) {
+      console.error('Error generating load identifier:', error);
+      // Fallback to basic load ID if service fails
+      loadIdentifier = load.id;
+    }
+
+    // Generate BOL number using the comprehensive load identifier
+    const bolNumber = `BOL-${loadIdentifier.replace(/[^A-Z0-9]/g, '')}-${Date.now().toString().slice(-6)}`;
+
     const billOfLading = `
 BILL OF LADING
 BOL Number: ${bolNumber}
+Load ID: ${load.id}
+Load Identifier: ${loadIdentifier}
+Shipper ID: ${shipperId}
 Date: ${currentDate}
 
 ═══════════════════════════════════════════════════════════
@@ -138,14 +255,18 @@ Dispatch Department
 Phone: (555) 123-4567
 
 SHIPPER
-${load.shipperInfo ? `
+${
+  load.shipperInfo
+    ? `
 ${load.shipperInfo.companyName}
 ${load.shipperInfo.contactName}
 ${load.shipperInfo.address}
 ${load.shipperInfo.city}, ${load.shipperInfo.state} ${load.shipperInfo.zipCode}
 Phone: ${load.shipperInfo.phone}
 Email: ${load.shipperInfo.email}
-` : 'Shipper details to be provided'}
+`
+    : 'Shipper details to be provided'
+}
 
 CONSIGNEE
 Delivery Location
@@ -192,6 +313,9 @@ Generated by FleetFlow Document Management System
     if (packageData) {
       packageData.billOfLading = billOfLading;
       packageData.documentsGenerated.billOfLading = true;
+      packageData.carrierInfo = carrier;
+      packageData.loadIdentifier = loadIdentifier; // Store the load identifier
+      packageData.shipperId = shipperId; // Store the shipper ID
     }
 
     return billOfLading;
@@ -201,11 +325,30 @@ Generated by FleetFlow Document Management System
   generateInvoice(load: Load, carrier: CarrierData): string {
     const currentDate = new Date().toLocaleDateString();
     const invoiceNumber = `INV-${load.id}-${Date.now()}`;
-    const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString();
-    
+    const dueDate = new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000
+    ).toLocaleDateString();
+
+    // Generate load identifier using EDI service
+    let loadIdentifier = '';
+    let shipperId = '';
+    try {
+      const EDIService = require('./EDIService').default;
+      const loadId = EDIService.generateLoadIdFromData(load);
+      loadIdentifier = loadId.fullId;
+      shipperId = loadId.shipperId; // Extract shipper ID from load identifier
+    } catch (error) {
+      // Fallback to basic load ID if EDI service fails
+      loadIdentifier = load.id;
+      shipperId = 'N/A';
+    }
+
     const invoice = `
 INVOICE
 Invoice Number: ${invoiceNumber}
+Load ID: ${load.id}
+Load Identifier: ${loadIdentifier}
+Shipper ID: ${shipperId}
 Date: ${currentDate}
 Due Date: ${dueDate}
 
@@ -226,28 +369,17 @@ SERVICES PROVIDED
 Load ID: ${load.id}
 Service: Freight Transportation
 Route: ${load.origin} → ${load.destination}
-Service Date: ${load.pickupDate}
 Equipment: ${load.equipment}
+Weight: ${load.weight}
 Distance: ${load.distance}
 
-PAYMENT DETAILS
+CHARGES
 Freight Charges: $${load.rate.toLocaleString()}
-Fuel Surcharge: $0.00
-Other Charges: $0.00
-─────────────────────────────
-Total Amount Due: $${load.rate.toLocaleString()}
+Payment Terms: ${load.shipperInfo?.paymentTerms || 'Net 30 Days'}
 
-PAYMENT TERMS
-Net 30 Days
-Payment Method: ACH Transfer Preferred
-Late Fee: 1.5% per month on overdue amounts
+TOTAL DUE: $${load.rate.toLocaleString()}
 
-REMIT PAYMENT TO
-FleetFlow Financial Services
-Account: [Banking Information]
-Reference: ${invoiceNumber}
-
-Thank you for your business!
+Payment is due by ${dueDate}. Please include invoice number with payment.
 
 Generated by FleetFlow Document Management System
     `.trim();
@@ -257,19 +389,25 @@ Generated by FleetFlow Document Management System
     if (packageData) {
       packageData.invoice = invoice;
       packageData.documentsGenerated.invoice = true;
+      packageData.carrierInfo = carrier;
+      packageData.loadIdentifier = loadIdentifier; // Store the load identifier
+      packageData.shipperId = shipperId; // Store the shipper ID
     }
 
     return invoice;
   }
 
   // Send complete document package to all parties
-  async sendCompleteDocumentPackage(loadId: string, options: {
-    driverPhone?: string;
-    carrierPhone?: string;
-    carrierEmail?: string;
-    shipperEmail?: string;
-    brokerEmail?: string;
-  }): Promise<{
+  async sendCompleteDocumentPackage(
+    loadId: string,
+    options: {
+      driverPhone?: string;
+      carrierPhone?: string;
+      carrierEmail?: string;
+      shipperEmail?: string;
+      brokerEmail?: string;
+    }
+  ): Promise<{
     success: boolean;
     results: Array<{
       recipient: string;
@@ -280,7 +418,17 @@ Generated by FleetFlow Document Management System
   }> {
     const packageData = this.documentStore.get(loadId);
     if (!packageData) {
-      return { success: false, results: [{ recipient: 'system', type: 'sms', status: 'failed', message: 'Document package not found' }] };
+      return {
+        success: false,
+        results: [
+          {
+            recipient: 'system',
+            type: 'sms',
+            status: 'failed',
+            message: 'Document package not found',
+          },
+        ],
+      };
     }
 
     const results: Array<{
@@ -299,34 +447,39 @@ Generated by FleetFlow Document Management System
           destination: 'TBD',
           rate: '$0',
           pickupDate: new Date().toISOString(),
-          equipment: 'Various'
+          equipment: 'Various',
         };
-        
-        const recipients = [{
-          id: 'driver-1',
-          name: 'Driver',
-          phone: options.driverPhone,
-          type: 'driver' as const
-        }];
+
+        const recipients = [
+          {
+            id: 'driver-1',
+            name: 'Driver',
+            phone: options.driverPhone,
+            type: 'driver' as const,
+          },
+        ];
 
         const smsResult = await smsService.sendCustomMessage(
           loadData,
           recipients,
           `🗺️ ROUTE DOCUMENT\nLoad: ${loadId}\n\n${packageData.routeDocument.substring(0, 500)}...\n\nFull document available in driver portal.`
         );
-        
+
         results.push({
           recipient: options.driverPhone,
           type: 'sms',
           status: smsResult.summary.sent > 0 ? 'sent' : 'failed',
-          message: smsResult.summary.sent > 0 ? 'SMS sent successfully' : 'SMS failed to send'
+          message:
+            smsResult.summary.sent > 0
+              ? 'SMS sent successfully'
+              : 'SMS failed to send',
         });
 
         if (smsResult.summary.sent > 0) {
           packageData.sentTo.driver = {
             phone: options.driverPhone,
             timestamp: new Date().toISOString(),
-            status: 'sent'
+            status: 'sent',
           };
         }
       } catch (error) {
@@ -334,19 +487,24 @@ Generated by FleetFlow Document Management System
           recipient: options.driverPhone,
           type: 'sms',
           status: 'failed',
-          message: 'SMS sending failed'
+          message: 'SMS sending failed',
         });
       }
     }
 
     // Send documents to carrier via SMS/Email
-    if (options.carrierPhone && (packageData.rateConfirmation || packageData.billOfLading)) {
+    if (
+      options.carrierPhone &&
+      (packageData.rateConfirmation || packageData.billOfLading)
+    ) {
       try {
         const documents = [
           packageData.rateConfirmation ? 'Rate Confirmation' : null,
           packageData.billOfLading ? 'Bill of Lading' : null,
-          packageData.invoice ? 'Invoice' : null
-        ].filter(Boolean).join(', ');
+          packageData.invoice ? 'Invoice' : null,
+        ]
+          .filter(Boolean)
+          .join(', ');
 
         const carrierLoadData = {
           id: loadId,
@@ -354,27 +512,32 @@ Generated by FleetFlow Document Management System
           destination: 'TBD',
           rate: '$0',
           pickupDate: new Date().toISOString(),
-          equipment: 'Various'
+          equipment: 'Various',
         };
-        
-        const carrierRecipients = [{
-          id: 'carrier-1',
-          name: 'Carrier',
-          phone: options.carrierPhone,
-          type: 'carrier' as const
-        }];
+
+        const carrierRecipients = [
+          {
+            id: 'carrier-1',
+            name: 'Carrier',
+            phone: options.carrierPhone,
+            type: 'carrier' as const,
+          },
+        ];
 
         const smsResult = await smsService.sendCustomMessage(
           carrierLoadData,
           carrierRecipients,
           `📋 LOAD DOCUMENTS\nLoad: ${loadId}\nDocuments: ${documents}\n\nFull documents sent to your email. Please confirm receipt.`
         );
-        
+
         results.push({
           recipient: options.carrierPhone,
           type: 'sms',
           status: smsResult.summary.sent > 0 ? 'sent' : 'failed',
-          message: smsResult.summary.sent > 0 ? 'SMS sent successfully' : 'SMS failed to send'
+          message:
+            smsResult.summary.sent > 0
+              ? 'SMS sent successfully'
+              : 'SMS failed to send',
         });
 
         if (smsResult.summary.sent > 0) {
@@ -382,7 +545,7 @@ Generated by FleetFlow Document Management System
             phone: options.carrierPhone,
             email: options.carrierEmail,
             timestamp: new Date().toISOString(),
-            status: 'sent'
+            status: 'sent',
           };
         }
       } catch (error) {
@@ -390,7 +553,7 @@ Generated by FleetFlow Document Management System
           recipient: options.carrierPhone,
           type: 'sms',
           status: 'failed',
-          message: 'SMS sending failed'
+          message: 'SMS sending failed',
         });
       }
     }
@@ -399,8 +562,8 @@ Generated by FleetFlow Document Management System
     // This would include PDF attachments for all generated documents
 
     return {
-      success: results.some(r => r.status === 'sent'),
-      results
+      success: results.some((r) => r.status === 'sent'),
+      results,
     };
   }
 

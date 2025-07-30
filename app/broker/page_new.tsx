@@ -1,14 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import RecentActivity from '../components/RecentActivity';
-import LoadUpload from '../components/LoadUpload';
-import StickyNote from '../components/StickyNote';
-import SAFERLookup from '../components/SAFERLookup';
-import RateConfirmation from '../components/RateConfirmation';
-import BillOfLading from '../components/BillOfLading';
-import { useLoad, LoadData } from '../contexts/LoadContext';
+import { useState } from 'react';
+import { LoadData, useLoad } from '../contexts/LoadContext';
 
 interface BrokerAgent {
   id: string;
@@ -41,6 +35,7 @@ interface LoadBoard {
   freightClass?: string;
   commodity?: string;
   pieces?: string;
+  loadBoardNumber?: string; // Added for phone communication
 }
 
 interface Bid {
@@ -52,13 +47,20 @@ interface Bid {
 }
 
 export default function BrokerBoxPage() {
-  const [selectedTab, setSelectedTab] = useState<'loads' | 'bids' | 'contracts' | 'agents' | 'documents'>('loads');
-  const [activeDocument, setActiveDocument] = useState<'rate-confirmation' | 'bill-of-lading'>('rate-confirmation');
-  const [selectedLoadForDocs, setSelectedLoadForDocs] = useState<LoadBoard | null>(null);
+  const [selectedTab, setSelectedTab] = useState<
+    'loads' | 'bids' | 'contracts' | 'agents' | 'documents'
+  >('loads');
+  const [activeDocument, setActiveDocument] = useState<
+    'rate-confirmation' | 'bill-of-lading'
+  >('rate-confirmation');
+  const [selectedLoadForDocs, setSelectedLoadForDocs] =
+    useState<LoadBoard | null>(null);
   const [showBrokerAgentModal, setShowBrokerAgentModal] = useState(false);
-  const [showBrokerAssignmentModal, setShowBrokerAssignmentModal] = useState(false);
+  const [showBrokerAssignmentModal, setShowBrokerAssignmentModal] =
+    useState(false);
   const [assignmentLoadId, setAssignmentLoadId] = useState<string | null>(null);
-  const [tempSelectedBrokerAgent, setTempSelectedBrokerAgent] = useState<string>('');
+  const [tempSelectedBrokerAgent, setTempSelectedBrokerAgent] =
+    useState<string>('');
   const [newBrokerAgentForm, setNewBrokerAgentForm] = useState({
     name: '',
     email: '',
@@ -68,18 +70,22 @@ export default function BrokerBoxPage() {
     mcNumber: '',
     dotNumber: '',
     certifications: [] as string[],
-    specialties: [] as string[]
+    specialties: [] as string[],
   });
-  
+
   // Add state for info modals
   const [showLoadInfoModal, setShowLoadInfoModal] = useState(false);
   const [showBrokerInfoModal, setShowBrokerInfoModal] = useState(false);
-  const [selectedLoadInfo, setSelectedLoadInfo] = useState<LoadBoard | null>(null);
-  const [selectedBrokerInfo, setSelectedBrokerInfo] = useState<BrokerAgent | null>(null);
+  const [selectedLoadInfo, setSelectedLoadInfo] = useState<LoadBoard | null>(
+    null
+  );
+  const [selectedBrokerInfo, setSelectedBrokerInfo] =
+    useState<BrokerAgent | null>(null);
 
   const router = useRouter();
-  const { setSelectedLoad, addToHistory, selectedLoad, loadHistory } = useLoad();
-  
+  const { setSelectedLoad, addToHistory, selectedLoad, loadHistory } =
+    useLoad();
+
   // Convert broker load to shared LoadData format
   const convertToLoadData = (brokerLoad: LoadBoard): LoadData => {
     return {
@@ -103,7 +109,7 @@ export default function BrokerBoxPage() {
       brokerAgentCompany: brokerLoad.brokerAgent?.company,
       brokerAgentLicense: brokerLoad.brokerAgent?.licenseNumber,
       brokerAgentMC: brokerLoad.brokerAgent?.mcNumber,
-      brokerAgentDOT: brokerLoad.brokerAgent?.dotNumber
+      brokerAgentDOT: brokerLoad.brokerAgent?.dotNumber,
     };
   };
 
@@ -124,12 +130,15 @@ export default function BrokerBoxPage() {
       phone: '(555) 234-5679',
       company: 'LoadLink Pro Brokerage',
       isActive: true,
-      certifications: ['Transportation Intermediaries License', 'Freight Broker Bond'],
+      certifications: [
+        'Transportation Intermediaries License',
+        'Freight Broker Bond',
+      ],
       performanceRating: 4.7,
       licenseNumber: 'TIL-12345',
       mcNumber: 'MC-234567',
       dotNumber: 'DOT-1234567',
-      specialties: ['LTL Brokerage', 'Contract Loads', 'Rate Negotiations']
+      specialties: ['LTL Brokerage', 'Contract Loads', 'Rate Negotiations'],
     },
     {
       id: 'BR002',
@@ -138,12 +147,15 @@ export default function BrokerBoxPage() {
       phone: '(555) 345-6790',
       company: 'FreightMatch Solutions',
       isActive: true,
-      certifications: ['Transportation Intermediaries License', 'Load Board Certified'],
+      certifications: [
+        'Transportation Intermediaries License',
+        'Load Board Certified',
+      ],
       performanceRating: 4.9,
       licenseNumber: 'TIL-12346',
       mcNumber: 'MC-345678',
       dotNumber: 'DOT-2345678',
-      specialties: ['Spot Market', 'Dedicated Lanes', 'Cross-docking']
+      specialties: ['Spot Market', 'Dedicated Lanes', 'Cross-docking'],
     },
     {
       id: 'BR003',
@@ -152,12 +164,19 @@ export default function BrokerBoxPage() {
       phone: '(555) 456-7891',
       company: 'National Load Exchange',
       isActive: true,
-      certifications: ['Transportation Intermediaries License', 'Contract Negotiation'],
+      certifications: [
+        'Transportation Intermediaries License',
+        'Contract Negotiation',
+      ],
       performanceRating: 4.6,
       licenseNumber: 'TIL-23456',
       mcNumber: 'MC-456789',
       dotNumber: 'DOT-3456789',
-      specialties: ['Heavy Haul Brokerage', 'Specialized Equipment', 'Permit Loads']
+      specialties: [
+        'Heavy Haul Brokerage',
+        'Specialized Equipment',
+        'Permit Loads',
+      ],
     },
     {
       id: 'BR004',
@@ -166,12 +185,15 @@ export default function BrokerBoxPage() {
       phone: '(555) 567-8901',
       company: 'Williams Logistics',
       isActive: true,
-      certifications: ['Transportation Intermediaries License', 'Spot Market Specialist'],
+      certifications: [
+        'Transportation Intermediaries License',
+        'Spot Market Specialist',
+      ],
       performanceRating: 4.8,
       licenseNumber: 'TIL-23457',
       mcNumber: 'MC-567890',
       dotNumber: 'DOT-4567890',
-      specialties: ['Refrigerated Transport', 'Temperature Controlled']
+      specialties: ['Refrigerated Transport', 'Temperature Controlled'],
     },
     {
       id: 'BR005',
@@ -180,13 +202,17 @@ export default function BrokerBoxPage() {
       phone: '(555) 678-9012',
       company: 'Fast Freight Solutions',
       isActive: true,
-      certifications: ['Transportation Intermediaries License', 'Heavy Haul Specialist', 'Permit Coordination'],
+      certifications: [
+        'Transportation Intermediaries License',
+        'Heavy Haul Specialist',
+        'Permit Coordination',
+      ],
       performanceRating: 4.9,
       licenseNumber: 'TIL-34567',
       mcNumber: 'MC-678901',
       dotNumber: 'DOT-5678901',
-      specialties: ['Expedited Shipping', 'Time-Critical Loads']
-    }
+      specialties: ['Expedited Shipping', 'Time-Critical Loads'],
+    },
   ]);
 
   // Mock data
@@ -206,7 +232,8 @@ export default function BrokerBoxPage() {
       brokerAgent: brokerAgents[0],
       freightClass: '85',
       commodity: 'Electronics',
-      pieces: '18 pallets'
+      pieces: '18 pallets',
+      loadBoardNumber: '1001',
     },
     {
       id: 'L002',
@@ -221,27 +248,65 @@ export default function BrokerBoxPage() {
       broker: 'LogiTrans',
       status: 'Available',
       brokerAgent: brokerAgents[1],
-      freightClass: '65',
-      commodity: 'Food Products',
-      pieces: '22 pallets'
+      freightClass: '70',
+      commodity: 'Frozen Foods',
+      pieces: '24 pallets',
+      loadBoardNumber: '1002',
     },
     {
       id: 'L003',
       origin: 'Los Angeles, CA',
       destination: 'Phoenix, AZ',
-      rate: '$1,850',
+      rate: '$1,800',
       distance: '372 mi',
-      weight: '42,000 lbs',
-      equipment: 'Flatbed',
+      weight: '32,000 lbs',
+      equipment: 'Dry Van',
       pickupDate: '2024-12-22',
       deliveryDate: '2024-12-22',
-      broker: 'WestCoast Freight',
+      broker: 'FreightCorp',
       status: 'Pending',
       brokerAgent: brokerAgents[2],
-      freightClass: '60',
-      commodity: 'Steel Bars',
-      pieces: '8 bundles'
-    }
+      freightClass: '92.5',
+      commodity: 'Automotive Parts',
+      pieces: '15 pallets',
+      loadBoardNumber: '1003',
+    },
+    {
+      id: 'L004',
+      origin: 'Dallas, TX',
+      destination: 'Denver, CO',
+      rate: '$2,800',
+      distance: '781 mi',
+      weight: '42,000 lbs',
+      equipment: 'Flatbed',
+      pickupDate: '2024-12-23',
+      deliveryDate: '2024-12-25',
+      broker: 'LogiTrans',
+      status: 'Available',
+      brokerAgent: brokerAgents[3],
+      freightClass: '85',
+      commodity: 'Construction Materials',
+      pieces: '12 pallets',
+      loadBoardNumber: '1004',
+    },
+    {
+      id: 'L005',
+      origin: 'Seattle, WA',
+      destination: 'Portland, OR',
+      rate: '$1,200',
+      distance: '173 mi',
+      weight: '28,000 lbs',
+      equipment: 'Dry Van',
+      pickupDate: '2024-12-24',
+      deliveryDate: '2024-12-24',
+      broker: 'FreightCorp',
+      status: 'Booked',
+      brokerAgent: brokerAgents[4],
+      freightClass: '70',
+      commodity: 'Consumer Goods',
+      pieces: '20 pallets',
+      loadBoardNumber: '1005',
+    },
   ]);
 
   const bids: Bid[] = [
@@ -250,22 +315,22 @@ export default function BrokerBoxPage() {
       loadId: 'L001',
       amount: '$2,400',
       status: 'Pending',
-      submittedAt: '2024-12-19 14:30'
+      submittedAt: '2024-12-19 14:30',
     },
     {
       id: 'B002',
       loadId: 'L004',
       amount: '$2,800',
       status: 'Accepted',
-      submittedAt: '2024-12-18 09:15'
+      submittedAt: '2024-12-18 09:15',
     },
     {
       id: 'B003',
       loadId: 'L005',
       amount: '$1,950',
       status: 'Rejected',
-      submittedAt: '2024-12-17 16:45'
-    }
+      submittedAt: '2024-12-17 16:45',
+    },
   ];
 
   const getStatusColor = (status: string) => {
@@ -305,58 +370,101 @@ export default function BrokerBoxPage() {
   };
 
   return (
-    <div className="min-h-screen bg-light-blue-theme">
-      <div className="container mx-auto px-3 py-4">
-        <div className="space-y-4">
-          <div className="card-2d bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 text-white p-4 rounded-xl shadow-xl">
-            <div className="flex items-center space-x-3">
-              <span className="text-2xl">🏢</span>
+    <div className='bg-light-blue-theme min-h-screen'>
+      <div className='container mx-auto px-3 py-4'>
+        <div className='space-y-4'>
+          <div className='card-2d rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 p-4 text-white shadow-xl'>
+            <div className='flex items-center space-x-3'>
+              <span className='text-2xl'>🏢</span>
               <div>
-                <h1 className="text-xl font-bold drop-shadow-lg">Broker Command Center</h1>
-                <p className="text-emerald-100 nano-text drop-shadow-md">
-                  Complete freight management hub - Load boards, bidding, document generation, and carrier verification
+                <h1 className='text-xl font-bold drop-shadow-lg'>
+                  Broker Command Center
+                </h1>
+                <p className='nano-text text-emerald-100 drop-shadow-md'>
+                  Complete freight management hub - Load boards, bidding,
+                  document generation, and carrier verification
                 </p>
               </div>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="card-2d bg-gradient-to-r from-white to-sky-50 border border-sky-200">
-            <nav className="flex space-x-2 p-3">
+          <div className='card-2d border border-sky-200 bg-gradient-to-r from-white to-sky-50'>
+            <nav className='flex space-x-2 p-3'>
               {[
-                { id: 'loads', label: 'Load Board', count: loads.length, icon: '📦', color: 'blue' },
-                { id: 'bids', label: 'My Bids', count: bids.length, icon: '💰', color: 'green' },
-                { id: 'contracts', label: 'Contracts', count: 5, icon: '📋', color: 'purple' },
-                { id: 'agents', label: 'Broker Agents', count: brokerAgents.length, icon: '👤', color: 'indigo' },
-                { id: 'documents', label: 'Documents', count: loadHistory.length, icon: '📄', color: 'orange' }
+                {
+                  id: 'loads',
+                  label: 'Load Board',
+                  count: loads.length,
+                  icon: '📦',
+                  color: 'blue',
+                },
+                {
+                  id: 'bids',
+                  label: 'My Bids',
+                  count: bids.length,
+                  icon: '💰',
+                  color: 'green',
+                },
+                {
+                  id: 'contracts',
+                  label: 'Contracts',
+                  count: 5,
+                  icon: '📋',
+                  color: 'purple',
+                },
+                {
+                  id: 'agents',
+                  label: 'Broker Agents',
+                  count: brokerAgents.length,
+                  icon: '👤',
+                  color: 'indigo',
+                },
+                {
+                  id: 'documents',
+                  label: 'Documents',
+                  count: loadHistory.length,
+                  icon: '📄',
+                  color: 'orange',
+                },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setSelectedTab(tab.id as any)}
-                  className={`py-2 px-3 rounded-t-lg font-medium ultra-compact transition-all duration-200 border-b-2 ${
+                  className={`ultra-compact rounded-t-lg border-b-2 px-3 py-2 font-medium transition-all duration-200 ${
                     selectedTab === tab.id
-                      ? tab.color === 'blue' ? 'bg-blue-500 text-white border-blue-500 shadow-lg' :
-                        tab.color === 'green' ? 'bg-green-500 text-white border-green-500 shadow-lg' :
-                        tab.color === 'purple' ? 'bg-purple-500 text-white border-purple-500 shadow-lg' :
-                        tab.color === 'indigo' ? 'bg-indigo-500 text-white border-indigo-500 shadow-lg' :
-                        'bg-orange-500 text-white border-orange-500 shadow-lg'
+                      ? tab.color === 'blue'
+                        ? 'border-blue-500 bg-blue-500 text-white shadow-lg'
+                        : tab.color === 'green'
+                          ? 'border-green-500 bg-green-500 text-white shadow-lg'
+                          : tab.color === 'purple'
+                            ? 'border-purple-500 bg-purple-500 text-white shadow-lg'
+                            : tab.color === 'indigo'
+                              ? 'border-indigo-500 bg-indigo-500 text-white shadow-lg'
+                              : 'border-orange-500 bg-orange-500 text-white shadow-lg'
                       : `border-transparent text-gray-600 hover:text-gray-800 ${
-                        tab.color === 'blue' ? 'hover:bg-blue-100 hover:border-blue-300' :
-                        tab.color === 'green' ? 'hover:bg-green-100 hover:border-green-300' :
-                        tab.color === 'purple' ? 'hover:bg-purple-100 hover:border-purple-300' :
-                        tab.color === 'indigo' ? 'hover:bg-indigo-100 hover:border-indigo-300' :
-                        'hover:bg-orange-100 hover:border-orange-300'
-                      }`
+                          tab.color === 'blue'
+                            ? 'hover:border-blue-300 hover:bg-blue-100'
+                            : tab.color === 'green'
+                              ? 'hover:border-green-300 hover:bg-green-100'
+                              : tab.color === 'purple'
+                                ? 'hover:border-purple-300 hover:bg-purple-100'
+                                : tab.color === 'indigo'
+                                  ? 'hover:border-indigo-300 hover:bg-indigo-100'
+                                  : 'hover:border-orange-300 hover:bg-orange-100'
+                        }`
                   }`}
                 >
-                  <div className="flex items-center space-x-1">
-                    <span className="micro-text">{tab.icon}</span>
+                  <div className='flex items-center space-x-1'>
+                    <span className='micro-text'>{tab.icon}</span>
                     <span>{tab.label}</span>
-                    <span className={`nano-button ${
-                      selectedTab === tab.id
-                        ? 'bg-white/20 text-white'
-                        : 'bg-gray-200 text-gray-700'
-                    }`}>
+                    <span
+                      className={`nano-button ${
+                        selectedTab === tab.id
+                          ? 'bg-white/20 text-white'
+                          : 'bg-gray-200 text-gray-700'
+                      }`}
+                    >
                       {tab.count}
                     </span>
                   </div>
@@ -367,118 +475,155 @@ export default function BrokerBoxPage() {
 
           {/* Load Board Tab */}
           {selectedTab === 'loads' && (
-            <div className="load-card-compact bg-gradient-to-r from-white to-sky-50 border border-sky-200">
-              <div className="p-3">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="tiny-header text-gray-900">📦 Available Loads</h3>
-                  <div className="flex space-x-1">
-                    <button className="mini-button bg-blue-600 text-white hover:bg-blue-700">
+            <div className='load-card-compact border border-sky-200 bg-gradient-to-r from-white to-sky-50'>
+              <div className='p-3'>
+                <div className='mb-3 flex items-center justify-between'>
+                  <h3 className='tiny-header text-gray-900'>
+                    📦 Available Loads
+                  </h3>
+                  <div className='flex space-x-1'>
+                    <button className='mini-button bg-blue-600 text-white hover:bg-blue-700'>
                       🔍 Filter
                     </button>
-                    <button className="mini-button bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    <button className='mini-button bg-gray-100 text-gray-700 hover:bg-gray-200'>
                       🔄 Refresh
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Compact Load Cards */}
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   {loads.map((load) => (
-                    <div key={load.id} className="load-card-compact bg-gradient-to-r from-white to-sky-50 border border-sky-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          {/* Load ID */}
-                          <div className="flex items-center space-x-1">
-                            <span className="nano-text">📋</span>
-                            <span className="tiny-header text-blue-700">{load.id}</span>
+                    <div
+                      key={load.id}
+                      className='load-card-compact border border-sky-200 bg-gradient-to-r from-white to-sky-50'
+                    >
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center space-x-3'>
+                          {/* Load Board Number */}
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>📞</span>
+                            <span
+                              className='tiny-header font-mono text-green-700'
+                              style={{ fontFamily: 'monospace' }}
+                            >
+                              {load.loadBoardNumber || '000000'}
+                            </span>
                           </div>
-                          
+
+                          {/* Load ID */}
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>📋</span>
+                            <span className='tiny-header text-blue-700'>
+                              {load.id}
+                            </span>
+                          </div>
+
                           {/* Route */}
-                          <div className="flex items-center space-x-1">
-                            <span className="nano-text">🗺️</span>
-                            <span className="ultra-compact text-gray-700">
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>🗺️</span>
+                            <span className='ultra-compact text-gray-700'>
                               {load.origin} → {load.destination}
                             </span>
-                            <span className="micro-text text-gray-500">({load.distance})</span>
-                          </div>
-                          
-                          {/* Equipment & Weight */}
-                          <div className="flex items-center space-x-1">
-                            <span className="nano-text">🚚</span>
-                            <span className="ultra-compact text-gray-600">{load.equipment}</span>
-                            <span className="micro-text text-gray-500">{load.weight}</span>
-                          </div>
-                          
-                          {/* Rate */}
-                          <div className="flex items-center space-x-1">
-                            <span className="nano-text">💰</span>
-                            <span className="tiny-header text-green-700">{load.rate}</span>
-                          </div>
-                          
-                          {/* Dates */}
-                          <div className="flex items-center space-x-1">
-                            <span className="nano-text">📅</span>
-                            <span className="ultra-compact text-gray-600">
-                              {new Date(load.pickupDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            <span className='micro-text text-gray-500'>
+                              ({load.distance})
                             </span>
                           </div>
-                          
+
+                          {/* Equipment & Weight */}
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>🚚</span>
+                            <span className='ultra-compact text-gray-600'>
+                              {load.equipment}
+                            </span>
+                            <span className='micro-text text-gray-500'>
+                              {load.weight}
+                            </span>
+                          </div>
+
+                          {/* Rate */}
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>💰</span>
+                            <span className='tiny-header text-green-700'>
+                              {load.rate}
+                            </span>
+                          </div>
+
+                          {/* Dates */}
+                          <div className='flex items-center space-x-1'>
+                            <span className='nano-text'>📅</span>
+                            <span className='ultra-compact text-gray-600'>
+                              {new Date(load.pickupDate).toLocaleDateString(
+                                'en-US',
+                                { month: 'short', day: 'numeric' }
+                              )}
+                            </span>
+                          </div>
+
                           {/* Status */}
-                          <span className={`micro-button ${
-                            load.status === 'Available' ? 'bg-green-100 text-green-800 border border-green-300' :
-                            load.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' :
-                            'bg-gray-100 text-gray-800 border border-gray-300'
-                          }`}>
+                          <span
+                            className={`micro-button ${
+                              load.status === 'Available'
+                                ? 'border border-green-300 bg-green-100 text-green-800'
+                                : load.status === 'Pending'
+                                  ? 'border border-yellow-300 bg-yellow-100 text-yellow-800'
+                                  : 'border border-gray-300 bg-gray-100 text-gray-800'
+                            }`}
+                          >
                             {load.status}
                           </span>
                         </div>
-                        
+
                         {/* Action Buttons */}
-                        <div className="flex items-center space-x-1">
-                          <button 
-                            className="icon-only-btn bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-300"
-                            title="Load Information"
+                        <div className='flex items-center space-x-1'>
+                          <button
+                            className='icon-only-btn border border-blue-300 bg-blue-100 text-blue-700 hover:bg-blue-200'
+                            title='Load Information'
                             onClick={() => handleShowLoadInfo(load)}
                             style={{
-                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              background:
+                                'linear-gradient(135deg, #f97316, #ea580c)',
                               color: 'white',
-                              border: 'none'
+                              border: 'none',
                             }}
                           >
                             ℹ️
                           </button>
-                          <button 
-                            className="icon-only-btn bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
-                            title="Broker Agent Info"
+                          <button
+                            className='icon-only-btn border border-green-300 bg-green-100 text-green-700 hover:bg-green-200'
+                            title='Broker Agent Info'
                             onClick={() => handleShowBrokerInfo(load)}
                             style={{
-                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              background:
+                                'linear-gradient(135deg, #f97316, #ea580c)',
                               color: 'white',
-                              border: 'none'
+                              border: 'none',
                             }}
                           >
                             👤
                           </button>
-                          <button 
-                            className="icon-only-btn bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-300"
-                            title="Place Bid"
+                          <button
+                            className='icon-only-btn border border-purple-300 bg-purple-100 text-purple-700 hover:bg-purple-200'
+                            title='Place Bid'
                             onClick={() => handlePlaceBid(load)}
                             style={{
-                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              background:
+                                'linear-gradient(135deg, #f97316, #ea580c)',
                               color: 'white',
-                              border: 'none'
+                              border: 'none',
                             }}
                           >
                             💰
                           </button>
-                          <button 
-                            className="icon-only-btn bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-300"
-                            title="Contact"
+                          <button
+                            className='icon-only-btn border border-orange-300 bg-orange-100 text-orange-700 hover:bg-orange-200'
+                            title='Contact'
                             onClick={() => handleContact(load)}
                             style={{
-                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              background:
+                                'linear-gradient(135deg, #f97316, #ea580c)',
                               color: 'white',
-                              border: 'none'
+                              border: 'none',
                             }}
                           >
                             📞
@@ -494,65 +639,111 @@ export default function BrokerBoxPage() {
 
           {/* Load Info Modal */}
           {showLoadInfoModal && selectedLoadInfo && (
-            <div className="info-modal" onClick={() => setShowLoadInfoModal(false)}>
-              <div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="tiny-header text-gray-900">📦 Load Details</h3>
-                  <button 
-                    className="icon-only-btn bg-gray-100 text-gray-600 hover:bg-gray-200"
+            <div
+              className='info-modal'
+              onClick={() => setShowLoadInfoModal(false)}
+            >
+              <div
+                className='info-modal-content'
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className='mb-3 flex items-center justify-between'>
+                  <h3 className='tiny-header text-gray-900'>📦 Load Details</h3>
+                  <button
+                    className='icon-only-btn bg-gray-100 text-gray-600 hover:bg-gray-200'
                     onClick={() => setShowLoadInfoModal(false)}
                   >
                     ✕
                   </button>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Load ID:</span>
-                    <span className="ultra-compact font-semibold">{selectedLoadInfo.id}</span>
+                <div className='space-y-2'>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Load ID:
+                    </span>
+                    <span className='ultra-compact font-semibold'>
+                      {selectedLoadInfo.id}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Origin:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.origin}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Origin:</span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.origin}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Destination:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.destination}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Destination:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.destination}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Equipment:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.equipment}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Equipment:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.equipment}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Weight:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.weight}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Weight:</span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.weight}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Commodity:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.commodity}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Commodity:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.commodity}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Pieces:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.pieces}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Pieces:</span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.pieces}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Freight Class:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.freightClass}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Freight Class:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.freightClass}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Rate:</span>
-                    <span className="ultra-compact font-semibold text-green-700">{selectedLoadInfo.rate}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Rate:</span>
+                    <span className='ultra-compact font-semibold text-green-700'>
+                      {selectedLoadInfo.rate}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Distance:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.distance}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Distance:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.distance}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Pickup Date:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.pickupDate}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Pickup Date:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.pickupDate}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Delivery Date:</span>
-                    <span className="ultra-compact">{selectedLoadInfo.deliveryDate}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Delivery Date:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedLoadInfo.deliveryDate}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -561,55 +752,90 @@ export default function BrokerBoxPage() {
 
           {/* Broker Info Modal */}
           {showBrokerInfoModal && selectedBrokerInfo && (
-            <div className="info-modal" onClick={() => setShowBrokerInfoModal(false)}>
-              <div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="tiny-header text-gray-900">👤 Broker Agent</h3>
-                  <button 
-                    className="icon-only-btn bg-gray-100 text-gray-600 hover:bg-gray-200"
+            <div
+              className='info-modal'
+              onClick={() => setShowBrokerInfoModal(false)}
+            >
+              <div
+                className='info-modal-content'
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className='mb-3 flex items-center justify-between'>
+                  <h3 className='tiny-header text-gray-900'>👤 Broker Agent</h3>
+                  <button
+                    className='icon-only-btn bg-gray-100 text-gray-600 hover:bg-gray-200'
                     onClick={() => setShowBrokerInfoModal(false)}
                   >
                     ✕
                   </button>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Name:</span>
-                    <span className="ultra-compact font-semibold">{selectedBrokerInfo.name}</span>
+                <div className='space-y-2'>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Name:</span>
+                    <span className='ultra-compact font-semibold'>
+                      {selectedBrokerInfo.name}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Company:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.company}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      Company:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.company}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Email:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.email}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Email:</span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.email}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Phone:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.phone}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Phone:</span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.phone}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">License:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.licenseNumber}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      License:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.licenseNumber}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">MC Number:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.mcNumber}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      MC Number:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.mcNumber}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">DOT Number:</span>
-                    <span className="ultra-compact">{selectedBrokerInfo.dotNumber}</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>
+                      DOT Number:
+                    </span>
+                    <span className='ultra-compact'>
+                      {selectedBrokerInfo.dotNumber}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="ultra-compact text-gray-600">Rating:</span>
-                    <span className="ultra-compact">⭐ {selectedBrokerInfo.performanceRating}/5</span>
+                  <div className='flex justify-between'>
+                    <span className='ultra-compact text-gray-600'>Rating:</span>
+                    <span className='ultra-compact'>
+                      ⭐ {selectedBrokerInfo.performanceRating}/5
+                    </span>
                   </div>
                   <div>
-                    <span className="ultra-compact text-gray-600">Specialties:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
+                    <span className='ultra-compact text-gray-600'>
+                      Specialties:
+                    </span>
+                    <div className='mt-1 flex flex-wrap gap-1'>
                       {selectedBrokerInfo.specialties?.map((specialty, idx) => (
-                        <span key={idx} className="micro-button bg-blue-100 text-blue-700">
+                        <span
+                          key={idx}
+                          className='micro-button bg-blue-100 text-blue-700'
+                        >
                           {specialty}
                         </span>
                       ))}
@@ -622,22 +848,37 @@ export default function BrokerBoxPage() {
 
           {/* Rest of tabs content... */}
           {selectedTab === 'bids' && (
-            <div className="card-2d bg-white">
-              <div className="p-4">
-                <h3 className="tiny-header text-gray-900 mb-4">💰 My Submitted Bids</h3>
-                <div className="space-y-2">
+            <div className='card-2d bg-white'>
+              <div className='p-4'>
+                <h3 className='tiny-header mb-4 text-gray-900'>
+                  💰 My Submitted Bids
+                </h3>
+                <div className='space-y-2'>
                   {bids.map((bid) => (
-                    <div key={bid.id} className="load-card-compact bg-gradient-to-r from-white to-green-50 border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <span className="tiny-header text-blue-700">{bid.id}</span>
-                          <span className="ultra-compact text-gray-600">Load: {bid.loadId}</span>
-                          <span className="tiny-header text-green-700">{bid.amount}</span>
-                          <span className={`micro-button ${getStatusColor(bid.status)}`}>
+                    <div
+                      key={bid.id}
+                      className='load-card-compact border border-green-200 bg-gradient-to-r from-white to-green-50'
+                    >
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center space-x-3'>
+                          <span className='tiny-header text-blue-700'>
+                            {bid.id}
+                          </span>
+                          <span className='ultra-compact text-gray-600'>
+                            Load: {bid.loadId}
+                          </span>
+                          <span className='tiny-header text-green-700'>
+                            {bid.amount}
+                          </span>
+                          <span
+                            className={`micro-button ${getStatusColor(bid.status)}`}
+                          >
                             {bid.status}
                           </span>
                         </div>
-                        <span className="ultra-compact text-gray-500">{bid.submittedAt}</span>
+                        <span className='ultra-compact text-gray-500'>
+                          {bid.submittedAt}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -648,13 +889,15 @@ export default function BrokerBoxPage() {
 
           {/* Other tabs continue with similar compact styling... */}
           {selectedTab === 'contracts' && (
-            <div className="card-2d bg-white p-4">
-              <h3 className="tiny-header text-gray-900 mb-4">📋 Active Contracts</h3>
-              <div className="text-center py-8">
-                <div className="text-gray-400 ultra-compact">
+            <div className='card-2d bg-white p-4'>
+              <h3 className='tiny-header mb-4 text-gray-900'>
+                📋 Active Contracts
+              </h3>
+              <div className='py-8 text-center'>
+                <div className='ultra-compact text-gray-400'>
                   📄 No active contracts found
                 </div>
-                <p className="text-gray-500 micro-text mt-2">
+                <p className='micro-text mt-2 text-gray-500'>
                   Accepted bids and signed contracts will appear here
                 </p>
               </div>
@@ -662,22 +905,37 @@ export default function BrokerBoxPage() {
           )}
 
           {selectedTab === 'agents' && (
-            <div className="card-2d bg-white p-4">
-              <h3 className="tiny-header text-gray-900 mb-4">👤 Broker Agents</h3>
-              <div className="space-y-2">
+            <div className='card-2d bg-white p-4'>
+              <h3 className='tiny-header mb-4 text-gray-900'>
+                👤 Broker Agents
+              </h3>
+              <div className='space-y-2'>
                 {brokerAgents.map((agent) => (
-                  <div key={agent.id} className="load-card-compact bg-gradient-to-r from-white to-indigo-50 border border-indigo-200">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <span className="tiny-header text-indigo-700">{agent.name}</span>
-                        <span className="ultra-compact text-gray-600">{agent.company}</span>
-                        <span className="ultra-compact text-gray-500">⭐ {agent.performanceRating}</span>
-                        <span className={`micro-button ${agent.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  <div
+                    key={agent.id}
+                    className='load-card-compact border border-indigo-200 bg-gradient-to-r from-white to-indigo-50'
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center space-x-3'>
+                        <span className='tiny-header text-indigo-700'>
+                          {agent.name}
+                        </span>
+                        <span className='ultra-compact text-gray-600'>
+                          {agent.company}
+                        </span>
+                        <span className='ultra-compact text-gray-500'>
+                          ⭐ {agent.performanceRating}
+                        </span>
+                        <span
+                          className={`micro-button ${agent.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                        >
                           {agent.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <span className="ultra-compact text-gray-500">{agent.phone}</span>
+                      <div className='flex items-center space-x-1'>
+                        <span className='ultra-compact text-gray-500'>
+                          {agent.phone}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -687,19 +945,30 @@ export default function BrokerBoxPage() {
           )}
 
           {selectedTab === 'documents' && (
-            <div className="card-2d bg-white p-4">
-              <h3 className="tiny-header text-gray-900 mb-4">📄 Document Generation</h3>
-              <div className="space-y-2">
+            <div className='card-2d bg-white p-4'>
+              <h3 className='tiny-header mb-4 text-gray-900'>
+                📄 Document Generation
+              </h3>
+              <div className='space-y-2'>
                 {loadHistory.map((load, idx) => (
-                  <div key={idx} className="load-card-compact bg-gradient-to-r from-white to-orange-50 border border-orange-200">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <span className="tiny-header text-orange-700">{load.id}</span>
-                        <span className="ultra-compact text-gray-600">{load.origin} → {load.destination}</span>
-                        <span className="tiny-header text-green-700">{load.rate}</span>
+                  <div
+                    key={idx}
+                    className='load-card-compact border border-orange-200 bg-gradient-to-r from-white to-orange-50'
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center space-x-3'>
+                        <span className='tiny-header text-orange-700'>
+                          {load.id}
+                        </span>
+                        <span className='ultra-compact text-gray-600'>
+                          {load.origin} → {load.destination}
+                        </span>
+                        <span className='tiny-header text-green-700'>
+                          {load.rate}
+                        </span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <button className="mini-button bg-orange-600 text-white hover:bg-orange-700">
+                      <div className='flex items-center space-x-1'>
+                        <button className='mini-button bg-orange-600 text-white hover:bg-orange-700'>
                           📋 Generate Docs
                         </button>
                       </div>

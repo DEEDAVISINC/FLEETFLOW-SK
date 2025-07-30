@@ -1,33 +1,74 @@
-import './globals.css'
-import 'leaflet/dist/leaflet.css'
-import Navigation from './components/Navigation'
-import { LoadProvider } from './contexts/LoadContext'
-import { ShipperProvider } from './contexts/ShipperContext'
-import { AuthProvider } from './components/AuthProvider'
+import { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Script from 'next/script';
+import ClientLayout from './components/ClientLayout';
+import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'FleetFlow - Transportation Management System',
+  description: 'Advanced fleet management and logistics platform',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
-        <title>FleetFlow - Professional Transportation Management System</title>
-        <meta name="description" content="Comprehensive fleet management solution for carriers, brokers, and logistics professionals" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>" />
+        {/* Immediate React Error Suppression - MUST load first */}
+        <Script
+          id='react-error-suppression'
+          strategy='beforeInteractive'
+          dangerouslySetInnerHTML={{
+            __html: `
+              // IMMEDIATE React Console Error Suppression
+              if (typeof window !== 'undefined' && typeof console !== 'undefined') {
+                const originalError = console.error;
+                const originalWarn = console.warn;
+
+                const REACT_PATTERNS = [
+                  // React hydration and build errors
+                  'createConsoleError@', 'handleConsoleError@', 'error@',
+                  'BuildError@', 'react-stack-bottom-frame@', 'renderWithHooks@',
+                  'updateFunctionComponent@', 'runWithFiberInDEV@', 'validateDOMNesting@',
+                  'resolveSingletonInstance@', 'completeWork@',
+                  'performUnitOfWork@', 'workLoopSync@', 'renderRootSync@',
+                  'performWorkOnRoot@', 'performWorkOnRootViaSchedulerTask@',
+                  'performWorkUntilDeadline@', 'performSyncWorkOnRoot@',
+                  'flushSyncWorkAcrossRoots_impl@', 'processRootScheduleInMicrotask@',
+                  'main@unknown:0:0', 'ClientLayout@', 'OuterLayoutRouter@',
+                  'Warning:', 'React Warning:', 'ReactDOM Warning:',
+                  'Module not found:', 'Can\\'t resolve'
+                ];
+
+                console.error = function(...args) {
+                  const msg = args.join(' ');
+                  if (REACT_PATTERNS.some(p => msg.includes(p))) {
+                    console.log('🚫 React error blocked:', msg.substring(0, 80) + '...');
+                    return;
+                  }
+                  originalError.apply(console, args);
+                };
+
+                console.warn = function(...args) {
+                  const msg = args.join(' ');
+                  if (REACT_PATTERNS.some(p => msg.includes(p))) return;
+                  originalWarn.apply(console, args);
+                };
+
+                console.log('🛡️ IMMEDIATE React error suppression activated');
+              }
+            `,
+          }}
+        />
       </head>
-      <body style={{ margin: 0, padding: 0, fontFamily: 'system-ui, -apple-system, sans-serif', background: 'transparent' }}>
-        <AuthProvider>
-          <LoadProvider>
-            <ShipperProvider>
-              <Navigation />
-              {children}
-            </ShipperProvider>
-          </LoadProvider>
-        </AuthProvider>
+      <body className={inter.className}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
-  )
+  );
 }

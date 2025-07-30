@@ -58,7 +58,9 @@ export interface LoadRequest {
 
 export interface Shipper {
   id: string;
+  industry?: string;
   companyName: string;
+  industry?: string;
   mcNumber?: string;
   taxId: string;
   contacts: ShipperContact[];
@@ -78,6 +80,18 @@ export interface Shipper {
   totalRevenue: number;
   averageRate: number;
   notes?: string;
+  // Photo Requirements Policy (set by broker for this shipper)
+  photoRequirements?: {
+    pickupPhotosRequired: boolean;
+    deliveryPhotosRequired: boolean;
+    minimumPhotos: number;
+    canSkipPhotos: boolean; // Only photos can be skipped, other validations remain mandatory
+    photoTypes: string[]; // e.g., ['loaded_truck', 'bill_of_lading', 'unloaded_truck', 'delivery_receipt']
+    specialPhotoInstructions?: string;
+    setByBrokerId: string; // Who configured these requirements
+    setAt: string; // When requirements were set
+    reason?: string; // Why these specific requirements
+  };
 }
 
 export interface BrokerAgent {

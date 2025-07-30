@@ -1,51 +1,64 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { checkPermission, getCurrentUser, ACCESS_MESSAGES } from '../config/access';
+import Link from 'next/link';
+import { useState } from 'react';
+import { checkPermission, getCurrentUser } from '../config/access';
 
 // Access Control Component
 const AccessRestricted = () => (
-  <div style={{
-    background: 'linear-gradient(135deg, #059669, #047857)',
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px'
-  }}>
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.15)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '16px',
-      padding: '40px 32px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-      textAlign: 'center',
-      maxWidth: '400px',
-      width: '100%'
-    }}>
+  <div
+    style={{
+      background: 'linear-gradient(135deg, #059669, #047857)',
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+    }}
+  >
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        padding: '40px 32px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        maxWidth: '400px',
+        width: '100%',
+      }}
+    >
       <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🔒</div>
-      <h1 style={{ 
-        fontSize: '1.8rem', 
-        fontWeight: 'bold', 
-        color: 'white', 
-        marginBottom: '16px' 
-      }}>Access Restricted</h1>
-      <p style={{ 
-        color: 'rgba(255, 255, 255, 0.9)', 
-        marginBottom: '16px',
-        lineHeight: '1.6'
-      }}>
+      <h1
+        style={{
+          fontSize: '1.8rem',
+          fontWeight: 'bold',
+          color: 'white',
+          marginBottom: '16px',
+        }}
+      >
+        Access Restricted
+      </h1>
+      <p
+        style={{
+          color: 'rgba(255, 255, 255, 0.9)',
+          marginBottom: '16px',
+          lineHeight: '1.6',
+        }}
+      >
         You need appropriate permissions to access the accounting section.
       </p>
-      <p style={{ 
-        fontSize: '0.9rem', 
-        color: 'rgba(255, 255, 255, 0.7)', 
-        marginBottom: '24px' 
-      }}>
+      <p
+        style={{
+          fontSize: '0.9rem',
+          color: 'rgba(255, 255, 255, 0.7)',
+          marginBottom: '24px',
+        }}
+      >
         Contact your administrator for access to financial data.
       </p>
-      <button 
+      <button
         onClick={() => window.history.back()}
         style={{
           background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -56,10 +69,14 @@ const AccessRestricted = () => (
           fontWeight: 'bold',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
         }}
-        onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
-        onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+        onMouseOver={(e) =>
+          ((e.target as HTMLElement).style.transform = 'translateY(-2px)')
+        }
+        onMouseOut={(e) =>
+          ((e.target as HTMLElement).style.transform = 'translateY(0)')
+        }
       >
         Go Back
       </button>
@@ -73,6 +90,8 @@ interface ShipperInvoice {
   shipperName: string;
   shipperCompany: string;
   loadId: string;
+  loadIdentifier: string;
+  shipperId: string;
   amount: number;
   invoiceDate: string;
   dueDate: string;
@@ -85,7 +104,12 @@ interface ShipperInvoice {
     miles?: number;
   };
   daysOutstanding: number;
-  agingCategory: 'Current' | '1-30 Days' | '31-60 Days' | '61-90 Days' | '90+ Days';
+  agingCategory:
+    | 'Current'
+    | '1-30 Days'
+    | '31-60 Days'
+    | '61-90 Days'
+    | '90+ Days';
 }
 
 interface DispatcherInvoice {
@@ -103,7 +127,12 @@ interface DispatcherInvoice {
     miles?: number;
   };
   daysOutstanding: number;
-  agingCategory: 'Current' | '1-30 Days' | '31-60 Days' | '61-90 Days' | '90+ Days';
+  agingCategory:
+    | 'Current'
+    | '1-30 Days'
+    | '31-60 Days'
+    | '61-90 Days'
+    | '90+ Days';
 }
 
 interface PayrollRecord {
@@ -160,332 +189,539 @@ interface FinancialMetrics {
 }
 
 // Financial Metrics Card Component
-const MetricCard = ({ title, value, emoji, color }: { title: string; value: string; emoji: string; color: string }) => (
-  <div style={{
-    background: 'rgba(255, 255, 255, 0.2)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '12px',
-    padding: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-    transition: 'all 0.2s ease',
-    cursor: 'pointer'
-  }}
-  onMouseOver={(e) => {
-    (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-    (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)';
-  }}
-  onMouseOut={(e) => {
-    (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-    (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
-  }}
+const MetricCard = ({
+  title,
+  value,
+  emoji,
+  color,
+}: {
+  title: string;
+  value: string;
+  emoji: string;
+  color: string;
+}) => (
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.2)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer',
+    }}
+    onMouseOver={(e) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+      (e.currentTarget as HTMLElement).style.boxShadow =
+        '0 8px 24px rgba(0, 0, 0, 0.15)';
+    }}
+    onMouseOut={(e) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+      (e.currentTarget as HTMLElement).style.boxShadow =
+        '0 4px 16px rgba(0, 0, 0, 0.1)';
+    }}
   >
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
       <div>
-        <p style={{ 
-          fontSize: '0.9rem', 
-          color: 'rgba(255, 255, 255, 0.8)', 
-          marginBottom: '8px',
-          fontWeight: '500'
-        }}>{title}</p>
-        <p style={{ 
-          fontSize: '1.8rem', 
-          fontWeight: 'bold', 
-          color: 'white',
-          margin: 0
-        }}>{value}</p>
+        <p
+          style={{
+            fontSize: '0.9rem',
+            color: 'rgba(255, 255, 255, 0.8)',
+            marginBottom: '8px',
+            fontWeight: '500',
+          }}
+        >
+          {title}
+        </p>
+        <p
+          style={{
+            fontSize: '1.8rem',
+            fontWeight: 'bold',
+            color: 'white',
+            margin: 0,
+          }}
+        >
+          {value}
+        </p>
       </div>
-      <div style={{
-        fontSize: '2.5rem',
-        opacity: 0.8
-      }}>{emoji}</div>
+      <div
+        style={{
+          fontSize: '2.5rem',
+          opacity: 0.8,
+        }}
+      >
+        {emoji}
+      </div>
     </div>
   </div>
 );
 
-// Shipper Invoices Table Component (for brokers)
+// Shipper Invoices Table Component - STYLED TO MATCH SHIPPER DIRECTORY
 const ShipperInvoicesTable = ({ invoices }: { invoices: ShipperInvoice[] }) => (
-  <div style={{
-    background: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '12px',
-    padding: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    overflowX: 'auto'
-  }}>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '20px'
-    }}>
-      <h3 style={{
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        color: 'white',
-        margin: 0
-      }}>📋 Shipper Invoices</h3>
-      
-      <div style={{
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.1)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      overflowX: 'auto',
+    }}
+  >
+    <div
+      style={{
         display: 'flex',
-        gap: '12px'
-      }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.2)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
-          Total: {invoices.length} invoices
-        </div>
-        <div style={{
-          background: 'rgba(245, 158, 11, 0.8)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
-          Outstanding: {invoices.filter(inv => inv.status !== 'Paid').length}
-        </div>
-      </div>
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        paddingBottom: '12px',
+        borderBottom: '2px solid #059669',
+      }}
+    >
+      <h3
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          margin: 0,
+        }}
+      >
+        💰 Shipper Invoices ({invoices.length})
+      </h3>
     </div>
-    
-    <div style={{ 
-      background: 'rgba(255, 255, 255, 0.9)', 
-      borderRadius: '8px', 
-      overflow: 'hidden',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-    }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ background: 'rgba(59, 130, 246, 0.1)' }}>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Invoice ID</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Shipper</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Route</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Amount</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Due Date</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Status</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Days Outstanding</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.map((invoice, index) => (
-            <tr key={invoice.id} style={{
-              borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
-              transition: 'background-color 0.2s ease'
+
+    {/* EXACT SHIPPER DIRECTORY STYLING */}
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.98)',
+        borderRadius: '15px',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        overflow: 'hidden',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+      }}
+    >
+      {/* Table Header - Exact Match */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '180px 160px 200px 120px 100px',
+          background: '#f5f5f5',
+          borderBottom: '2px solid #e0e0e0',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#333',
+        }}
+      >
+        <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0' }}>
+          Invoice Details
+        </div>
+        <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0' }}>
+          Shipper & Load
+        </div>
+        <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0' }}>
+          Route & Equipment
+        </div>
+        <div style={{ padding: '15px', borderRight: '1px solid #e0e0e0' }}>
+          Amount
+        </div>
+        <div style={{ padding: '15px' }}>Status</div>
+      </div>
+
+      {/* Table Body - Exact Match */}
+      <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+        {invoices.map((invoice, index) => (
+          <div
+            key={invoice.id}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '180px 160px 200px 120px 100px',
+              borderBottom: '1px solid #e0e0e0',
+              backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9f9f9',
+              fontSize: '13px',
+              color: '#333',
+              transition: 'background-color 0.2s',
             }}
-            onMouseOver={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.05)'}
-            onMouseOut={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = '#e3f2fd')
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                index % 2 === 0 ? '#ffffff' : '#f9f9f9')
+            }
+          >
+            <div
+              style={{ padding: '12px 15px', borderRight: '1px solid #e0e0e0' }}
             >
-              <td style={{ padding: '12px', fontWeight: '500', color: '#374151', fontFamily: 'monospace' }}>
+              <div style={{ fontWeight: '600', marginBottom: '2px' }}>
                 {invoice.id}
-              </td>
-              <td style={{ padding: '12px', fontWeight: '500', color: '#374151' }}>
-                <div>{invoice.shipperName}</div>
-                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
-                  {invoice.shipperCompany}
-                </div>
-              </td>
-              <td style={{ padding: '12px', color: '#6b7280' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>
-                  {invoice.loadDetails.origin} → {invoice.loadDetails.destination}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
-                  {invoice.loadDetails.equipment} • {invoice.loadDetails.weight ? `${invoice.loadDetails.weight} lbs` : ''} • {invoice.loadDetails.miles} mi
-                </div>
-              </td>
-              <td style={{ padding: '12px', fontWeight: 'bold', color: '#3b82f6' }}>
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                {invoice.shipperCompany}
+              </div>
+              <div style={{ fontSize: '11px', color: '#999' }}>
+                {new Date(invoice.invoiceDate).toLocaleDateString()}
+              </div>
+            </div>
+            <div
+              style={{ padding: '12px 15px', borderRight: '1px solid #e0e0e0' }}
+            >
+              <div style={{ fontWeight: '500', marginBottom: '2px' }}>
+                {invoice.shipperId}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                Load: {invoice.loadId}
+              </div>
+            </div>
+            <div
+              style={{ padding: '12px 15px', borderRight: '1px solid #e0e0e0' }}
+            >
+              <div style={{ marginBottom: '2px' }}>
+                {invoice.loadDetails.origin} → {invoice.loadDetails.destination}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                {invoice.loadDetails.equipment}
+              </div>
+            </div>
+            <div
+              style={{
+                padding: '12px 15px',
+                borderRight: '1px solid #e0e0e0',
+                textAlign: 'right',
+              }}
+            >
+              <div style={{ fontWeight: '600', color: '#059669' }}>
                 ${invoice.amount.toLocaleString()}
-              </td>
-              <td style={{ padding: '12px', color: '#6b7280' }}>
-                {new Date(invoice.dueDate).toLocaleDateString()}
-              </td>
-              <td style={{ padding: '12px' }}>
-                <span style={{
-                  background: invoice.status === 'Paid' ? '#dcfce7' :
-                             invoice.status === 'Sent' ? '#dbeafe' :
-                             invoice.status === 'Pending' ? '#fef3c7' : '#fecaca',
-                  color: invoice.status === 'Paid' ? '#166534' :
-                         invoice.status === 'Sent' ? '#1e40af' :
-                         invoice.status === 'Pending' ? '#92400e' : '#dc2626',
+              </div>
+              <div style={{ fontSize: '11px', color: '#999' }}>
+                {invoice.daysOutstanding}d
+              </div>
+            </div>
+            <div style={{ padding: '12px 15px' }}>
+              <span
+                style={{
+                  background:
+                    invoice.status === 'Paid'
+                      ? '#dcfce7'
+                      : invoice.status === 'Overdue'
+                        ? '#fecaca'
+                        : '#fef3c7',
+                  color:
+                    invoice.status === 'Paid'
+                      ? '#166534'
+                      : invoice.status === 'Overdue'
+                        ? '#dc2626'
+                        : '#92400e',
                   padding: '4px 8px',
                   borderRadius: '6px',
-                  fontSize: '0.75rem',
+                  fontSize: '11px',
                   fontWeight: 'bold',
-                  textTransform: 'capitalize'
-                }}>{invoice.status}</span>
-              </td>
-              <td style={{ padding: '12px' }}>
-                {invoice.status === 'Paid' ? (
-                  <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>Paid</span>
-                ) : invoice.daysOutstanding === 0 ? (
-                  <span style={{ color: '#6b7280' }}>Current</span>
-                ) : (
-                  <div>
-                    <span style={{
-                      fontWeight: 'bold',
-                      color: invoice.daysOutstanding <= 30 ? '#f59e0b' :
-                             invoice.daysOutstanding <= 60 ? '#ea580c' : '#dc2626'
-                    }}>
-                      {invoice.daysOutstanding} days
-                    </span>
-                    <div style={{
-                      fontSize: '0.7rem',
-                      color: invoice.daysOutstanding <= 30 ? '#f59e0b' :
-                             invoice.daysOutstanding <= 60 ? '#ea580c' : '#dc2626',
-                      fontWeight: '500'
-                    }}>
-                      {invoice.agingCategory}
-                    </div>
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  textTransform: 'capitalize',
+                }}
+              >
+                {invoice.status}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
+
+    {invoices.length === 0 && (
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '40px',
+          color: '#6b7280',
+          fontSize: '1rem',
+        }}
+      >
+        No invoices found for the selected criteria.
+      </div>
+    )}
   </div>
 );
 
 // Dispatcher Invoices Table Component
 const InvoicesTable = ({ invoices }: { invoices: DispatcherInvoice[] }) => (
-  <div style={{
-    background: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '12px',
-    padding: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    overflowX: 'auto'
-  }}>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '20px'
-    }}>
-      <h3 style={{
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        color: 'white',
-        margin: 0
-      }}>Dispatcher Fee Invoices</h3>
-      
-      <div style={{
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.1)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      overflowX: 'auto',
+    }}
+  >
+    <div
+      style={{
         display: 'flex',
-        gap: '12px'
-      }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.2)',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+      }}
+    >
+      <h3
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
           color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
+          margin: 0,
+        }}
+      >
+        Dispatcher Fee Invoices
+      </h3>
+
+      <div
+        style={{
+          display: 'flex',
+          gap: '12px',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+          }}
+        >
           Total: {invoices.length} invoices
         </div>
-        <div style={{
-          background: 'rgba(245, 158, 11, 0.8)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
-          Outstanding: {invoices.filter(inv => inv.status !== 'Paid').length}
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.8)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+          }}
+        >
+          Outstanding: {invoices.filter((inv) => inv.status !== 'Paid').length}
         </div>
       </div>
     </div>
-    
-    <div style={{ 
-      background: 'rgba(255, 255, 255, 0.9)', 
-      borderRadius: '8px', 
-      overflow: 'hidden',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-    }}>
+
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: 'rgba(5, 150, 105, 0.1)' }}>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Invoice ID</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Carrier</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Route</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Fee</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Due Date</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Status</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Days Outstanding</th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Invoice ID
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Carrier
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Route
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Fee
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Due Date
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Status
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Days Outstanding
+            </th>
           </tr>
         </thead>
         <tbody>
           {invoices.map((invoice, index) => (
-            <tr key={invoice.id} style={{
-              borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
-              transition: 'background-color 0.2s ease'
-            }}
-            onMouseOver={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(5, 150, 105, 0.05)'}
-            onMouseOut={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
+            <tr
+              key={invoice.id}
+              style={{
+                borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseOver={(e) =>
+                ((e.currentTarget as HTMLElement).style.backgroundColor =
+                  'rgba(5, 150, 105, 0.05)')
+              }
+              onMouseOut={(e) =>
+                ((e.currentTarget as HTMLElement).style.backgroundColor =
+                  'transparent')
+              }
             >
-              <td style={{ padding: '12px', fontWeight: '500', color: '#374151', fontFamily: 'monospace' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  fontFamily: 'monospace',
+                }}
+              >
                 {invoice.id}
               </td>
-              <td style={{ padding: '12px', fontWeight: '500', color: '#374151' }}>
+              <td
+                style={{ padding: '12px', fontWeight: '500', color: '#374151' }}
+              >
                 <div>{invoice.carrierName}</div>
                 <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                   Load: {invoice.loadId}
                 </div>
               </td>
               <td style={{ padding: '12px', color: '#6b7280' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>
-                  {invoice.loadDetails.origin} → {invoice.loadDetails.destination}
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                    color: '#374151',
+                  }}
+                >
+                  {invoice.loadDetails.origin} →{' '}
+                  {invoice.loadDetails.destination}
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
-                  {invoice.loadDetails.equipment} • {invoice.loadDetails.miles} mi
+                  {invoice.loadDetails.equipment} • {invoice.loadDetails.miles}{' '}
+                  mi
                 </div>
               </td>
-              <td style={{ padding: '12px', fontWeight: 'bold', color: '#059669' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  color: '#059669',
+                }}
+              >
                 ${invoice.dispatchFee.toLocaleString()}
               </td>
               <td style={{ padding: '12px', color: '#6b7280' }}>
                 {new Date(invoice.dueDate).toLocaleDateString()}
               </td>
               <td style={{ padding: '12px' }}>
-                <span style={{
-                  background: invoice.status === 'Paid' ? '#dcfce7' :
-                             invoice.status === 'Sent' ? '#dbeafe' :
-                             invoice.status === 'Pending' ? '#fef3c7' : '#fecaca',
-                  color: invoice.status === 'Paid' ? '#166534' :
-                         invoice.status === 'Sent' ? '#1e40af' :
-                         invoice.status === 'Pending' ? '#92400e' : '#dc2626',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  textTransform: 'capitalize'
-                }}>{invoice.status}</span>
+                <span
+                  style={{
+                    background:
+                      invoice.status === 'Paid'
+                        ? '#dcfce7'
+                        : invoice.status === 'Sent'
+                          ? '#dbeafe'
+                          : invoice.status === 'Pending'
+                            ? '#fef3c7'
+                            : '#fecaca',
+                    color:
+                      invoice.status === 'Paid'
+                        ? '#166534'
+                        : invoice.status === 'Sent'
+                          ? '#1e40af'
+                          : invoice.status === 'Pending'
+                            ? '#92400e'
+                            : '#dc2626',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {invoice.status}
+                </span>
               </td>
               <td style={{ padding: '12px' }}>
                 {invoice.status === 'Paid' ? (
-                  <span style={{ color: '#059669', fontWeight: 'bold' }}>Paid</span>
+                  <span style={{ color: '#059669', fontWeight: 'bold' }}>
+                    Paid
+                  </span>
                 ) : invoice.daysOutstanding === 0 ? (
                   <span style={{ color: '#6b7280' }}>Current</span>
                 ) : (
                   <div>
-                    <span style={{
-                      fontWeight: 'bold',
-                      color: invoice.daysOutstanding <= 30 ? '#f59e0b' :
-                             invoice.daysOutstanding <= 60 ? '#ea580c' : '#dc2626'
-                    }}>
+                    <span
+                      style={{
+                        fontWeight: 'bold',
+                        color:
+                          invoice.daysOutstanding <= 30
+                            ? '#f59e0b'
+                            : invoice.daysOutstanding <= 60
+                              ? '#ea580c'
+                              : '#dc2626',
+                      }}
+                    >
                       {invoice.daysOutstanding} days
                     </span>
-                    <div style={{
-                      fontSize: '0.7rem',
-                      color: invoice.daysOutstanding <= 30 ? '#f59e0b' :
-                             invoice.daysOutstanding <= 60 ? '#ea580c' : '#dc2626',
-                      fontWeight: '500'
-                    }}>
+                    <div
+                      style={{
+                        fontSize: '0.7rem',
+                        color:
+                          invoice.daysOutstanding <= 30
+                            ? '#f59e0b'
+                            : invoice.daysOutstanding <= 60
+                              ? '#ea580c'
+                              : '#dc2626',
+                        fontWeight: '500',
+                      }}
+                    >
                       {invoice.agingCategory}
                     </div>
                   </div>
@@ -501,122 +737,251 @@ const InvoicesTable = ({ invoices }: { invoices: DispatcherInvoice[] }) => (
 
 // Payroll Table Component
 const PayrollTable = ({ records }: { records: PayrollRecord[] }) => (
-  <div style={{
-    background: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '12px',
-    padding: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    overflowX: 'auto'
-  }}>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '20px'
-    }}>
-      <h3 style={{
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        color: 'white',
-        margin: 0
-      }}>💼 Payroll Records</h3>
-      
-      <div style={{
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.1)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      overflowX: 'auto',
+    }}
+  >
+    <div
+      style={{
         display: 'flex',
-        gap: '12px'
-      }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.2)',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+      }}
+    >
+      <h3
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
           color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
+          margin: 0,
+        }}
+      >
+        💼 Payroll Records
+      </h3>
+
+      <div
+        style={{
+          display: 'flex',
+          gap: '12px',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+          }}
+        >
           Total: {records.length} employees
         </div>
-        <div style={{
-          background: 'rgba(245, 158, 11, 0.8)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-          fontWeight: 'bold'
-        }}>
-          Pending: {records.filter(r => r.status === 'Pending').length}
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.8)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+          }}
+        >
+          Pending: {records.filter((r) => r.status === 'Pending').length}
         </div>
       </div>
     </div>
-    
-    <div style={{ 
-      background: 'rgba(255, 255, 255, 0.9)', 
-      borderRadius: '8px', 
-      overflow: 'hidden',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-    }}>
+
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: 'rgba(5, 150, 105, 0.1)' }}>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Employee</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Role</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Pay Period</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Gross Pay</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Commissions</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Net Pay</th>
-            <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Status</th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Employee
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Role
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Pay Period
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Gross Pay
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Commissions
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Net Pay
+            </th>
+            <th
+              style={{
+                padding: '12px',
+                textAlign: 'left',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>
           {records.map((record, index) => (
-            <tr key={record.id} style={{
-              borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
-              transition: 'background-color 0.2s ease'
-            }}
-            onMouseOver={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(5, 150, 105, 0.05)'}
-            onMouseOut={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
+            <tr
+              key={record.id}
+              style={{
+                borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseOver={(e) =>
+                ((e.currentTarget as HTMLElement).style.backgroundColor =
+                  'rgba(5, 150, 105, 0.05)')
+              }
+              onMouseOut={(e) =>
+                ((e.currentTarget as HTMLElement).style.backgroundColor =
+                  'transparent')
+              }
             >
-              <td style={{ padding: '12px', fontWeight: '500', color: '#374151' }}>
+              <td
+                style={{ padding: '12px', fontWeight: '500', color: '#374151' }}
+              >
                 <div>{record.employeeName}</div>
                 <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                   ID: {record.id}
                 </div>
               </td>
               <td style={{ padding: '12px', color: '#6b7280' }}>
-                <span style={{
-                  background: '#f3f4f6',
-                  color: '#374151',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  fontSize: '0.8rem',
-                  fontWeight: 'bold',
-                  textTransform: 'capitalize'
-                }}>{record.role}</span>
+                <span
+                  style={{
+                    background: '#f3f4f6',
+                    color: '#374151',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {record.role}
+                </span>
               </td>
-              <td style={{ padding: '12px', color: '#6b7280', fontSize: '0.9rem' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                }}
+              >
                 {record.payPeriod}
               </td>
-              <td style={{ padding: '12px', fontWeight: 'bold', color: '#374151' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
                 ${record.grossPay.toLocaleString()}
               </td>
-              <td style={{ padding: '12px', fontWeight: 'bold', color: '#059669' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  color: '#059669',
+                }}
+              >
                 ${record.commissions?.toLocaleString() || '0'}
               </td>
-              <td style={{ padding: '12px', fontWeight: 'bold', color: '#3b82f6' }}>
+              <td
+                style={{
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  color: '#3b82f6',
+                }}
+              >
                 ${record.netPay.toLocaleString()}
               </td>
               <td style={{ padding: '12px' }}>
-                <span style={{
-                  background: record.status === 'Paid' ? '#dcfce7' :
-                             record.status === 'Processed' ? '#dbeafe' : '#fef3c7',
-                  color: record.status === 'Paid' ? '#166534' :
-                         record.status === 'Processed' ? '#1e40af' : '#92400e',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  textTransform: 'capitalize'
-                }}>{record.status}</span>
+                <span
+                  style={{
+                    background:
+                      record.status === 'Paid'
+                        ? '#dcfce7'
+                        : record.status === 'Processed'
+                          ? '#dbeafe'
+                          : '#fef3c7',
+                    color:
+                      record.status === 'Paid'
+                        ? '#166534'
+                        : record.status === 'Processed'
+                          ? '#1e40af'
+                          : '#92400e',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {record.status}
+                </span>
               </td>
             </tr>
           ))}
@@ -629,53 +994,67 @@ const PayrollTable = ({ records }: { records: PayrollRecord[] }) => (
 // Factoring Table Component
 const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
   const [showAddForm, setShowAddForm] = useState(false);
-  
+
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.1)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '12px',
-      padding: '24px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      overflowX: 'auto'
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '20px'
-      }}>
-        <h3 style={{
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
-          color: 'white',
-          margin: 0
-        }}>🏦 Driver/Carrier Factoring</h3>
-        
-        <div style={{
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        overflowX: 'auto',
+      }}
+    >
+      <div
+        style={{
           display: 'flex',
-          gap: '12px',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.2)',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
             color: 'white',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            fontSize: '0.9rem',
-            fontWeight: 'bold'
-          }}>
+            margin: 0,
+          }}
+        >
+          🏦 Driver/Carrier Factoring
+        </h3>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+            }}
+          >
             Total: {records.length} loads
           </div>
-          <div style={{
-            background: 'rgba(34, 197, 94, 0.8)',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            fontSize: '0.9rem',
-            fontWeight: 'bold'
-          }}>
-            Funded: {records.filter(r => r.status === 'Funded').length}
+          <div
+            style={{
+              background: 'rgba(34, 197, 94, 0.8)',
+              color: 'white',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+            }}
+          >
+            Funded: {records.filter((r) => r.status === 'Funded').length}
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
@@ -688,10 +1067,14 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
               fontSize: '0.9rem',
               fontWeight: 'bold',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
             }}
-            onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-1px)'}
-            onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+            onMouseOver={(e) =>
+              ((e.target as HTMLElement).style.transform = 'translateY(-1px)')
+            }
+            onMouseOut={(e) =>
+              ((e.target as HTMLElement).style.transform = 'translateY(0)')
+            }
           >
             + Add Factoring Record
           </button>
@@ -699,22 +1082,28 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
       </div>
 
       {showAddForm && (
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          borderRadius: '8px',
-          padding: '20px',
-          marginBottom: '20px',
-          border: '1px solid rgba(59, 130, 246, 0.3)'
-        }}>
-          <h4 style={{ color: 'white', marginBottom: '16px', fontSize: '1.2rem' }}>
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '8px',
+            padding: '20px',
+            marginBottom: '20px',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+          }}
+        >
+          <h4
+            style={{ color: 'white', marginBottom: '16px', fontSize: '1.2rem' }}
+          >
             📝 Add New Factoring Record
           </h4>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '12px',
-            marginBottom: '16px'
-          }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '12px',
+              marginBottom: '16px',
+            }}
+          >
             {[
               { label: 'Load ID', placeholder: 'LD-2024-XXX' },
               { label: 'Carrier Name', placeholder: 'Carrier Company Name' },
@@ -723,20 +1112,22 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
               { label: 'Driver Phone', placeholder: '(555) 123-4567' },
               { label: 'Invoice Amount', placeholder: '$5,000' },
               { label: 'Factor Rate %', placeholder: '3.5' },
-              { label: 'Factor Company', placeholder: 'Factoring Company' }
+              { label: 'Factor Company', placeholder: 'Factoring Company' },
             ].map((field, index) => (
               <div key={index}>
-                <label style={{ 
-                  color: 'white', 
-                  fontSize: '0.9rem', 
-                  fontWeight: 'bold',
-                  display: 'block',
-                  marginBottom: '4px'
-                }}>
+                <label
+                  style={{
+                    color: 'white',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    display: 'block',
+                    marginBottom: '4px',
+                  }}
+                >
                   {field.label}
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   placeholder={field.placeholder}
                   style={{
                     width: '100%',
@@ -745,25 +1136,27 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
                     border: '1px solid rgba(255, 255, 255, 0.3)',
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
                   }}
                 />
               </div>
             ))}
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button style={{
-              background: 'linear-gradient(135deg, #059669, #047857)',
-              color: 'white',
-              padding: '10px 20px',
-              borderRadius: '6px',
-              border: 'none',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #059669, #047857)',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
               💾 Save Factoring Record
             </button>
-            <button 
+            <button
               onClick={() => setShowAddForm(false)}
               style={{
                 background: 'rgba(255, 255, 255, 0.2)',
@@ -772,7 +1165,7 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
                 borderRadius: '6px',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
                 fontWeight: 'bold',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Cancel
@@ -780,37 +1173,121 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
           </div>
         </div>
       )}
-      
-      <div style={{ 
-        background: 'rgba(255, 255, 255, 0.9)', 
-        borderRadius: '8px', 
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-      }}>
+
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        }}
+      >
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'rgba(5, 150, 105, 0.1)' }}>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Load/Carrier</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Driver Info</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Route</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Invoice/Rate</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Advanced</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Factor Company</th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: 'bold', color: '#374151' }}>Status</th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Load/Carrier
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Driver Info
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Route
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Invoice/Rate
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Advanced
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Factor Company
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                }}
+              >
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
             {records.map((record, index) => (
-              <tr key={record.id} style={{
-                borderTop: index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
-                transition: 'background-color 0.2s ease'
-              }}
-              onMouseOver={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(5, 150, 105, 0.05)'}
-              onMouseOut={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
+              <tr
+                key={record.id}
+                style={{
+                  borderTop:
+                    index > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
+                  transition: 'background-color 0.2s ease',
+                }}
+                onMouseOver={(e) =>
+                  ((e.currentTarget as HTMLElement).style.backgroundColor =
+                    'rgba(5, 150, 105, 0.05)')
+                }
+                onMouseOut={(e) =>
+                  ((e.currentTarget as HTMLElement).style.backgroundColor =
+                    'transparent')
+                }
               >
-                <td style={{ padding: '12px', fontWeight: '500', color: '#374151' }}>
-                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>{record.loadId}</div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>{record.carrierName}</div>
+                <td
+                  style={{
+                    padding: '12px',
+                    fontWeight: '500',
+                    color: '#374151',
+                  }}
+                >
+                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
+                    {record.loadId}
+                  </div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+                    {record.carrierName}
+                  </div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     MC: {record.carrierMcNumber}
                   </div>
@@ -822,7 +1299,13 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
                   </div>
                 </td>
                 <td style={{ padding: '12px', color: '#6b7280' }}>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      color: '#374151',
+                    }}
+                  >
                     {record.route.origin} → {record.route.destination}
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
@@ -841,32 +1324,67 @@ const FactoringTable = ({ records }: { records: FactoringRecord[] }) => {
                   <div style={{ fontWeight: 'bold', color: '#059669' }}>
                     ${record.advanceAmount.toLocaleString()}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: '500' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: '#f59e0b',
+                      fontWeight: '500',
+                    }}
+                  >
                     Reserve: ${record.reserveAmount.toLocaleString()}
                   </div>
                 </td>
-                <td style={{ padding: '12px', fontSize: '0.9rem', color: '#374151' }}>
+                <td
+                  style={{
+                    padding: '12px',
+                    fontSize: '0.9rem',
+                    color: '#374151',
+                  }}
+                >
                   {record.factorCompany}
                 </td>
                 <td style={{ padding: '12px' }}>
-                  <span style={{
-                    background: record.status === 'Funded' ? '#dcfce7' :
-                               record.status === 'Approved' ? '#dbeafe' :
-                               record.status === 'Submitted' ? '#fef3c7' : 
-                               record.status === 'Collected' ? '#f0fdf4' : '#fecaca',
-                    color: record.status === 'Funded' ? '#166534' :
-                           record.status === 'Approved' ? '#1e40af' :
-                           record.status === 'Submitted' ? '#92400e' : 
-                           record.status === 'Collected' ? '#15803d' : '#dc2626',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold',
-                    textTransform: 'capitalize'
-                  }}>{record.status}</span>
+                  <span
+                    style={{
+                      background:
+                        record.status === 'Funded'
+                          ? '#dcfce7'
+                          : record.status === 'Approved'
+                            ? '#dbeafe'
+                            : record.status === 'Submitted'
+                              ? '#fef3c7'
+                              : record.status === 'Collected'
+                                ? '#f0fdf4'
+                                : '#fecaca',
+                      color:
+                        record.status === 'Funded'
+                          ? '#166534'
+                          : record.status === 'Approved'
+                            ? '#1e40af'
+                            : record.status === 'Submitted'
+                              ? '#92400e'
+                              : record.status === 'Collected'
+                                ? '#15803d'
+                                : '#dc2626',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {record.status}
+                  </span>
                   {record.fundingDate && (
-                    <div style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '2px' }}>
-                      Funded: {new Date(record.fundingDate).toLocaleDateString()}
+                    <div
+                      style={{
+                        fontSize: '0.7rem',
+                        color: '#6b7280',
+                        marginTop: '2px',
+                      }}
+                    >
+                      Funded:{' '}
+                      {new Date(record.fundingDate).toLocaleDateString()}
                     </div>
                   )}
                 </td>
@@ -886,58 +1404,16 @@ export default function AccountingPage() {
   }
 
   // State management
-  const [currentSection, setCurrentSection] = useState<'invoices' | 'payroll' | 'factoring'>('invoices');
-  const [currentViewRole, setCurrentViewRole] = useState<'broker' | 'dispatcher'>('broker');
+  const [currentSection, setCurrentSection] = useState<
+    'invoices' | 'payroll' | 'factoring'
+  >('invoices');
+  const [currentViewRole, setCurrentViewRole] = useState<
+    'broker' | 'dispatcher'
+  >('broker');
 
   // Get current user and role
   const { user } = getCurrentUser();
   const userRole = currentViewRole; // Use state instead of user.role for demo
-
-  // Mock data - Shipper Invoices (what shippers owe for freight services)
-  const shipperMetrics: FinancialMetrics = {
-    totalInvoiced: 285750,
-    totalPaid: 248200,
-    totalOutstanding: 37550,
-    avgDaysToPayment: 28.5,
-    currentReceivables: 28400,
-    overdueReceivables: 9150,
-    collectionRate: 86.9,
-    totalInvoices: 48
-  };
-
-  // Mock data - Dispatcher Fee Invoices (what carriers owe for dispatch services)
-  const dispatcherMetrics: FinancialMetrics = {
-    totalInvoiced: 28750,
-    totalPaid: 22400,
-    totalOutstanding: 6350,
-    avgDaysToPayment: 24.5,
-    currentReceivables: 4200,
-    overdueReceivables: 2150,
-    collectionRate: 77.9,
-    totalInvoices: 42
-  };
-
-  // Mock data - Payroll Summary
-  const payrollMetrics = {
-    totalPayroll: 48750,
-    totalCommissions: 12400,
-    totalDeductions: 8200,
-    netPayroll: 52950,
-    employeeCount: 12,
-    pendingPayments: 8
-  };
-
-  // Mock data - Factoring Summary  
-  const factoringMetrics = {
-    totalFactored: 234250,
-    totalAdvanced: 210330,
-    totalReserved: 23920,
-    avgFactorRate: 3.1,
-    pendingSubmissions: 1,
-    activeFunds: 3,
-    completedTransactions: 2,
-    totalCarriers: 5
-  };
 
   // Mock data - Shipper Invoices (what shippers owe for freight services)
   const shipperInvoices: ShipperInvoice[] = [
@@ -946,6 +1422,8 @@ export default function AccountingPage() {
       shipperName: 'John Manufacturing',
       shipperCompany: 'John Manufacturing Co.',
       loadId: 'LD-2024-789',
+      loadIdentifier: 'JMN-204-070-FTL-DRY-STD-001-20241205',
+      shipperId: 'JMN-204-070-001-20241205',
       amount: 4850,
       invoiceDate: '2024-12-05',
       dueDate: '2025-01-04',
@@ -955,35 +1433,39 @@ export default function AccountingPage() {
         destination: 'Miami, FL',
         equipment: 'Reefer',
         weight: 42000,
-        miles: 650
+        miles: 650,
       },
       daysOutstanding: 2,
-      agingCategory: 'Current'
+      agingCategory: 'Current',
     },
     {
-      id: 'SHP-2024-002', 
+      id: 'SHP-2024-002',
       shipperName: 'Global Electronics',
       shipperCompany: 'Global Electronics Inc.',
       loadId: 'LD-2024-790',
+      loadIdentifier: 'GLE-204-070-FTL-DRY-URG-002-20241120',
+      shipperId: 'GLE-204-070-002-20241120',
       amount: 6200,
       invoiceDate: '2024-11-20',
       dueDate: '2024-12-20',
       status: 'Overdue',
       loadDetails: {
         origin: 'Los Angeles, CA',
-        destination: 'Phoenix, AZ', 
+        destination: 'Phoenix, AZ',
         equipment: 'Dry Van',
         weight: 38500,
-        miles: 370
+        miles: 370,
       },
       daysOutstanding: 17,
-      agingCategory: '1-30 Days'
+      agingCategory: '1-30 Days',
     },
     {
       id: 'SHP-2024-003',
       shipperName: 'Fresh Foods Corp',
       shipperCompany: 'Fresh Foods Corporation',
       loadId: 'LD-2024-791',
+      loadIdentifier: 'FFC-204-070-FTL-REE-STD-003-20241210',
+      shipperId: 'FFC-204-070-003-20241210',
       amount: 3750,
       invoiceDate: '2024-12-10',
       dueDate: '2025-01-09',
@@ -993,11 +1475,11 @@ export default function AccountingPage() {
         destination: 'Portland, OR',
         equipment: 'Reefer',
         weight: 28000,
-        miles: 175
+        miles: 175,
       },
       daysOutstanding: 0,
-      agingCategory: 'Current'
-    }
+      agingCategory: 'Current',
+    },
   ];
 
   // Mock data - Dispatcher Fee Invoices (what carriers owe for dispatch services)
@@ -1014,10 +1496,10 @@ export default function AccountingPage() {
         origin: 'Atlanta, GA',
         destination: 'Miami, FL',
         equipment: 'Dry Van',
-        miles: 662
+        miles: 662,
       },
       daysOutstanding: 0,
-      agingCategory: 'Current' as const
+      agingCategory: 'Current' as const,
     },
     {
       id: 'INV-2024-002',
@@ -1031,10 +1513,10 @@ export default function AccountingPage() {
         origin: 'Chicago, IL',
         destination: 'Houston, TX',
         equipment: 'Refrigerated',
-        miles: 1083
+        miles: 1083,
       },
       daysOutstanding: 22,
-      agingCategory: '1-30 Days' as const
+      agingCategory: '1-30 Days' as const,
     },
     {
       id: 'INV-2024-003',
@@ -1048,10 +1530,10 @@ export default function AccountingPage() {
         origin: 'Los Angeles, CA',
         destination: 'Phoenix, AZ',
         equipment: 'Flatbed',
-        miles: 372
+        miles: 372,
       },
       daysOutstanding: 17,
-      agingCategory: 'Current' as const
+      agingCategory: 'Current' as const,
     },
     {
       id: 'INV-2024-004',
@@ -1065,10 +1547,10 @@ export default function AccountingPage() {
         origin: 'Denver, CO',
         destination: 'Salt Lake City, UT',
         equipment: 'Dry Van',
-        miles: 525
+        miles: 525,
       },
       daysOutstanding: 0,
-      agingCategory: 'Current' as const
+      agingCategory: 'Current' as const,
     },
     {
       id: 'INV-2024-005',
@@ -1082,11 +1564,11 @@ export default function AccountingPage() {
         origin: 'Seattle, WA',
         destination: 'Portland, OR',
         equipment: 'Dry Van',
-        miles: 174
+        miles: 174,
       },
       daysOutstanding: 52,
-      agingCategory: '31-60 Days' as const
-    }
+      agingCategory: '31-60 Days' as const,
+    },
   ];
 
   // Mock data - Payroll Records
@@ -1101,10 +1583,10 @@ export default function AccountingPage() {
       deductions: 425,
       netPay: 3625,
       status: 'Paid',
-      payDate: '2024-12-20'
+      payDate: '2024-12-20',
     },
     {
-      id: 'PAY-2024-002', 
+      id: 'PAY-2024-002',
       employeeName: 'Mike Chen',
       role: 'dispatcher',
       payPeriod: '12/01/24 - 12/15/24',
@@ -1112,19 +1594,19 @@ export default function AccountingPage() {
       commissions: 720,
       deductions: 380,
       netPay: 3140,
-      status: 'Processed'
+      status: 'Processed',
     },
     {
       id: 'PAY-2024-003',
       employeeName: 'John Smith',
       role: 'broker',
-      payPeriod: '12/01/24 - 12/15/24', 
+      payPeriod: '12/01/24 - 12/15/24',
       grossPay: 4500,
       commissions: 1200,
       deductions: 620,
       netPay: 5080,
-      status: 'Pending'
-    }
+      status: 'Pending',
+    },
   ];
 
   // Mock data - Factoring Records
@@ -1149,17 +1631,17 @@ export default function AccountingPage() {
       route: {
         origin: 'Atlanta, GA',
         destination: 'Miami, FL',
-        miles: 662
+        miles: 662,
       },
       bankInfo: {
         accountName: 'ABC Transport LLC',
         routingNumber: '061000227',
-        accountNumber: '****7892'
-      }
+        accountNumber: '****7892',
+      },
     },
     {
       id: 'FCT-2024-002',
-      loadId: 'LD-2024-790', 
+      loadId: 'LD-2024-790',
       carrierName: 'Express Logistics Inc',
       carrierMcNumber: 'MC-945127',
       driverName: 'Maria Santos',
@@ -1175,13 +1657,13 @@ export default function AccountingPage() {
       route: {
         origin: 'Chicago, IL',
         destination: 'Houston, TX',
-        miles: 1083
+        miles: 1083,
       },
       bankInfo: {
         accountName: 'Express Logistics Inc',
         routingNumber: '071923909',
-        accountNumber: '****3456'
-      }
+        accountNumber: '****3456',
+      },
     },
     {
       id: 'FCT-2024-003',
@@ -1201,13 +1683,13 @@ export default function AccountingPage() {
       route: {
         origin: 'Denver, CO',
         destination: 'Salt Lake City, UT',
-        miles: 525
+        miles: 525,
       },
       bankInfo: {
         accountName: 'Mountain View Transport',
         routingNumber: '102000076',
-        accountNumber: '****9012'
-      }
+        accountNumber: '****9012',
+      },
     },
     {
       id: 'FCT-2024-004',
@@ -1228,13 +1710,13 @@ export default function AccountingPage() {
       route: {
         origin: 'Phoenix, AZ',
         destination: 'Los Angeles, CA',
-        miles: 372
+        miles: 372,
       },
       bankInfo: {
         accountName: 'Sunshine Freight Co',
         routingNumber: '122000661',
-        accountNumber: '****5678'
-      }
+        accountNumber: '****5678',
+      },
     },
     {
       id: 'FCT-2024-005',
@@ -1256,14 +1738,14 @@ export default function AccountingPage() {
       route: {
         origin: 'Seattle, WA',
         destination: 'Portland, OR',
-        miles: 174
+        miles: 174,
       },
       bankInfo: {
         accountName: 'Elite Carriers LLC',
         routingNumber: '125000024',
-        accountNumber: '****2345'
-      }
-    }
+        accountNumber: '****2345',
+      },
+    },
   ];
 
   // Broker-specific invoices (what the broker owes for dispatch services)
@@ -1280,10 +1762,10 @@ export default function AccountingPage() {
         origin: 'Miami, FL',
         destination: 'Orlando, FL',
         equipment: 'Dry Van',
-        miles: 235
+        miles: 235,
       },
       daysOutstanding: 7,
-      agingCategory: 'Current' as const
+      agingCategory: 'Current' as const,
     },
     {
       id: 'INV-2024-B02',
@@ -1297,10 +1779,10 @@ export default function AccountingPage() {
         origin: 'Tampa, FL',
         destination: 'Jacksonville, FL',
         equipment: 'Refrigerated',
-        miles: 195
+        miles: 195,
       },
       daysOutstanding: 0,
-      agingCategory: 'Current' as const
+      agingCategory: 'Current' as const,
     },
     {
       id: 'INV-2024-B03',
@@ -1314,12 +1796,68 @@ export default function AccountingPage() {
         origin: 'Atlanta, GA',
         destination: 'Savannah, GA',
         equipment: 'Flatbed',
-        miles: 250
+        miles: 250,
       },
       daysOutstanding: 42,
-      agingCategory: '31-60 Days' as const
-    }
+      agingCategory: '31-60 Days' as const,
+    },
   ];
+
+  // Calculate metrics for each section
+  const shipperMetrics = {
+    totalInvoices: shipperInvoices.length,
+    totalAmount: shipperInvoices.reduce((sum, inv) => sum + inv.amount, 0),
+    paidAmount: shipperInvoices
+      .filter((inv) => inv.status === 'Paid')
+      .reduce((sum, inv) => sum + inv.amount, 0),
+    pendingAmount: shipperInvoices
+      .filter((inv) => inv.status !== 'Paid')
+      .reduce((sum, inv) => sum + inv.amount, 0),
+    overdueCount: shipperInvoices.filter((inv) => inv.status === 'Overdue')
+      .length,
+  };
+
+  const dispatcherMetrics = {
+    totalInvoices: brokerInvoices.length,
+    totalAmount: brokerInvoices.reduce((sum, inv) => sum + inv.dispatchFee, 0),
+    paidAmount: brokerInvoices
+      .filter((inv) => inv.status === 'Paid')
+      .reduce((sum, inv) => sum + inv.dispatchFee, 0),
+    pendingAmount: brokerInvoices
+      .filter((inv) => inv.status !== 'Paid')
+      .reduce((sum, inv) => sum + inv.dispatchFee, 0),
+    overdueCount: brokerInvoices.filter((inv) => inv.status === 'Overdue')
+      .length,
+  };
+
+  const payrollMetrics = {
+    totalRecords: payrollRecords.length,
+    totalAmount: payrollRecords.reduce((sum, rec) => sum + rec.netPay, 0),
+    paidAmount: payrollRecords
+      .filter((rec) => rec.status === 'Paid')
+      .reduce((sum, rec) => sum + rec.netPay, 0),
+    pendingAmount: payrollRecords
+      .filter((rec) => rec.status !== 'Paid')
+      .reduce((sum, rec) => sum + rec.netPay, 0),
+    pendingCount: payrollRecords.filter((rec) => rec.status === 'Pending')
+      .length,
+  };
+
+  const factoringMetrics = {
+    totalRecords: factoringRecords.length,
+    totalAmount: factoringRecords.reduce(
+      (sum, rec) => sum + rec.invoiceAmount,
+      0
+    ),
+    fundedAmount: factoringRecords
+      .filter((rec) => rec.status === 'Funded')
+      .reduce((sum, rec) => sum + rec.factoredAmount, 0),
+    pendingAmount: factoringRecords
+      .filter((rec) => rec.status !== 'Funded' && rec.status !== 'Collected')
+      .reduce((sum, rec) => sum + rec.factoredAmount, 0),
+    collectedCount: factoringRecords.filter((rec) => rec.status === 'Collected')
+      .length,
+  };
 
   // Choose data based on user role and current section
   const getCurrentMetrics = () => {
@@ -1338,234 +1876,367 @@ export default function AccountingPage() {
   const currentInvoices = getCurrentInvoices();
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #059669, #047857)',
-      minHeight: '100vh',
-      padding: '80px 20px 20px 20px'
-    }}>
-      
-      <main style={{
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `
+        linear-gradient(135deg, #022c22 0%, #032e2a 25%, #044e46 50%, #042f2e 75%, #0a1612 100%),
+        radial-gradient(circle at 20% 20%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.03) 0%, transparent 50%)
+      `,
+        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+        backgroundAttachment: 'fixed',
+        paddingTop: '80px',
+        position: 'relative',
+      }}
+    >
+      {/* Back Button */}
+      <div style={{ padding: '24px' }}>
+        <Link href='/' style={{ textDecoration: 'none' }}>
+          <button
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              color: 'white',
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontSize: '16px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <span style={{ marginRight: '8px' }}>←</span>
+            Back to Dashboard
+          </button>
+        </Link>
+      </div>
+
+      {/* Main Container */}
+      <div
+        style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 24px 32px',
+        }}
+      >
         {/* Header */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '40px 32px',
-          marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          textAlign: 'center'
-        }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: '8px',
-            textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-          }}>💰 FleetFlow Accounting</h1>
-          <div style={{
-            display: 'inline-block',
-            background: userRole === 'broker' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(5, 150, 105, 0.3)',
-            color: 'white',
-            padding: '6px 16px',
-            borderRadius: '20px',
-            fontSize: '0.9rem',
-            fontWeight: 'bold',
-            marginBottom: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.3)'
-          }}>
-            {userRole === 'broker' ? '🏢 Broker View' : '📋 Dispatcher View'} • {userRole === 'broker' ? 'John Smith (Global Freight)' : 'Sarah Johnson (Dispatcher)'}
-          </div>
-          
-          {/* Role Switcher Button */}
-          <div style={{ marginBottom: '12px' }}>
-            <button
-              onClick={() => setCurrentViewRole(currentViewRole === 'broker' ? 'dispatcher' : 'broker')}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            marginBottom: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div
+                style={{
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                }}
+              >
+                <span style={{ fontSize: '32px' }}>💰</span>
+              </div>
+              <div>
+                <h1
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    margin: 0,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  FleetFlow Accounting
+                </h1>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: '4px 0 0 0',
+                  }}
+                >
+                  Financial Management & Billing Operations
+                </p>
+              </div>
+            </div>
+
+            {/* Role indicator */}
+            <div
               style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
                 color: 'white',
-                padding: '8px 16px',
-                borderRadius: '20px',
-                border: 'none',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                backdropFilter: 'blur(10px)'
-              }}
-              onMouseOver={(e) => {
-                (e.target as HTMLElement).style.transform = 'translateY(-1px)';
-                (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-              }}
-              onMouseOut={(e) => {
-                (e.target as HTMLElement).style.transform = 'translateY(0)';
-                (e.target as HTMLElement).style.boxShadow = 'none';
+                padding: '12px 20px',
+                borderRadius: '12px',
+                textAlign: 'center',
               }}
             >
-              🔄 Switch to {userRole === 'broker' ? 'Dispatcher' : 'Broker'} View
+              <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                {userRole === 'broker'
+                  ? '🏢 Broker View'
+                  : '📋 Dispatcher View'}
+              </div>
+              <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+                {userRole === 'broker'
+                  ? 'John Smith (Global Freight)'
+                  : 'Sarah Johnson (Dispatcher)'}
+              </div>
+            </div>
+          </div>
+
+          {/* Role Switcher and Description */}
+          <div
+            style={{
+              marginTop: '20px',
+              padding: '16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '1.1rem',
+                color: 'rgba(255, 255, 255, 0.9)',
+                margin: 0,
+                lineHeight: '1.6',
+              }}
+            >
+              {userRole === 'broker'
+                ? 'Track shipper invoices and payment status for your freight services'
+                : 'Track dispatch fee invoices, payment status, and aging reports'}
+            </p>
+
+            <button
+              onClick={() =>
+                setCurrentViewRole(
+                  currentViewRole === 'broker' ? 'dispatcher' : 'broker'
+                )
+              }
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                color: 'white',
+                padding: '12px 20px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              🔄 Switch to {userRole === 'broker' ? 'Dispatcher' : 'Broker'}{' '}
+              View
             </button>
           </div>
-          
-          <p style={{
-            fontSize: '1.2rem',
-            color: 'rgba(255, 255, 255, 0.9)',
-            marginBottom: '0px',
-            lineHeight: '1.6'
-          }}>
-            {userRole === 'broker' 
-              ? 'Track payment status for your dispatch service fees'
-              : 'Track your dispatch fee invoices, payment status, and aging'
-            }
-          </p>
         </div>
 
         {/* Section Navigation */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
-          padding: '16px',
-          marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          display: 'flex',
-          gap: '8px',
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            padding: '16px',
+            marginBottom: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
           {[
-            { id: 'invoices', label: '📋 Invoices', desc: userRole === 'broker' ? 'Shipper Invoices' : 'Dispatch Fees' },
+            {
+              id: 'invoices',
+              label: '📋 Invoices',
+              desc:
+                userRole === 'broker' ? 'Shipper Invoices' : 'Dispatch Fees',
+            },
             { id: 'payroll', label: '💼 Payroll', desc: 'Employee Payments' },
-            { id: 'factoring', label: '🏦 Factoring', desc: 'Driver/Carrier Funding' }
+            {
+              id: 'factoring',
+              label: '🏦 Factoring',
+              desc: 'Driver/Carrier Funding',
+            },
           ].map((section) => (
             <button
               key={section.id}
               onClick={() => setCurrentSection(section.id as any)}
               style={{
-                background: currentSection === section.id 
-                  ? 'linear-gradient(135deg, #10b981, #059669)' 
-                  : 'rgba(255, 255, 255, 0.1)',
+                background:
+                  currentSection === section.id
+                    ? 'linear-gradient(135deg, #10b981, #059669)'
+                    : 'rgba(255, 255, 255, 0.1)',
                 color: 'white',
                 padding: '12px 20px',
                 borderRadius: '8px',
-                border: currentSection === section.id 
-                  ? '2px solid rgba(255, 255, 255, 0.5)' 
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+                border:
+                  currentSection === section.id
+                    ? '2px solid rgba(255, 255, 255, 0.5)'
+                    : '1px solid rgba(255, 255, 255, 0.2)',
                 fontWeight: 'bold',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 fontSize: '0.9rem',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
               onMouseOver={(e) => {
                 if (currentSection !== section.id) {
-                  (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.2)';
+                  (e.target as HTMLElement).style.background =
+                    'rgba(255, 255, 255, 0.2)';
                 }
               }}
               onMouseOut={(e) => {
                 if (currentSection !== section.id) {
-                  (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)';
+                  (e.target as HTMLElement).style.background =
+                    'rgba(255, 255, 255, 0.1)';
                 }
               }}
             >
               <div>{section.label}</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>{section.desc}</div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                {section.desc}
+              </div>
             </button>
           ))}
         </div>
 
         {/* Financial Metrics Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px',
-          marginBottom: '32px'
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px',
+            marginBottom: '32px',
+          }}
+        >
           {currentSection === 'invoices' && (
             <>
-              <MetricCard 
-                title="Total Invoiced" 
-                value={`$${(currentMetrics as FinancialMetrics).totalInvoiced.toLocaleString()}`} 
-                emoji="💰" 
-                color="#059669"
+              <MetricCard
+                title='Total Invoiced'
+                value={`$${(currentMetrics as any).totalAmount.toLocaleString()}`}
+                emoji='💰'
+                color='#059669'
               />
-              <MetricCard 
-                title="Total Paid" 
-                value={`$${(currentMetrics as FinancialMetrics).totalPaid.toLocaleString()}`} 
-                emoji="✅" 
-                color="#3b82f6"
+              <MetricCard
+                title='Total Paid'
+                value={`$${(currentMetrics as any).paidAmount.toLocaleString()}`}
+                emoji='✅'
+                color='#3b82f6'
               />
-              <MetricCard 
-                title="Outstanding" 
-                value={`$${(currentMetrics as FinancialMetrics).totalOutstanding.toLocaleString()}`} 
-                emoji="⏰" 
-                color="#f59e0b"
+              <MetricCard
+                title='Outstanding'
+                value={`$${(currentMetrics as any).pendingAmount.toLocaleString()}`}
+                emoji='⏰'
+                color='#f59e0b'
               />
-              <MetricCard 
-                title="Collection Rate" 
-                value={`${(currentMetrics as FinancialMetrics).collectionRate}%`} 
-                emoji="📊" 
-                color="#8b5cf6"
+              <MetricCard
+                title='Collection Rate'
+                value={`${Math.round(((currentMetrics as any).paidAmount / (currentMetrics as any).totalAmount) * 100) || 0}%`}
+                emoji='📊'
+                color='#8b5cf6'
               />
             </>
           )}
-          
+
           {currentSection === 'payroll' && (
             <>
-              <MetricCard 
-                title="Total Payroll" 
-                value={`$${(currentMetrics as any).totalPayroll.toLocaleString()}`} 
-                emoji="💼" 
-                color="#059669"
+              <MetricCard
+                title='Total Payroll'
+                value={`$${(currentMetrics as any).totalPayroll.toLocaleString()}`}
+                emoji='💼'
+                color='#059669'
               />
-              <MetricCard 
-                title="Total Commissions" 
-                value={`$${(currentMetrics as any).totalCommissions.toLocaleString()}`} 
-                emoji="🎯" 
-                color="#3b82f6"
+              <MetricCard
+                title='Total Commissions'
+                value={`$${(currentMetrics as any).totalCommissions.toLocaleString()}`}
+                emoji='🎯'
+                color='#3b82f6'
               />
-              <MetricCard 
-                title="Net Payroll" 
-                value={`$${(currentMetrics as any).netPayroll.toLocaleString()}`} 
-                emoji="💳" 
-                color="#f59e0b"
+              <MetricCard
+                title='Net Payroll'
+                value={`$${(currentMetrics as any).netPayroll.toLocaleString()}`}
+                emoji='💳'
+                color='#f59e0b'
               />
-              <MetricCard 
-                title="Employee Count" 
-                value={`${(currentMetrics as any).employeeCount}`} 
-                emoji="👥" 
-                color="#8b5cf6"
+              <MetricCard
+                title='Employee Count'
+                value={`${(currentMetrics as any).employeeCount}`}
+                emoji='👥'
+                color='#8b5cf6'
               />
             </>
           )}
-          
+
           {currentSection === 'factoring' && (
             <>
-              <MetricCard 
-                title="Total Factored" 
-                value={`$${(currentMetrics as any).totalFactored.toLocaleString()}`} 
-                emoji="🏦" 
-                color="#059669"
+              <MetricCard
+                title='Total Factored'
+                value={`$${(currentMetrics as any).totalFactored.toLocaleString()}`}
+                emoji='🏦'
+                color='#059669'
               />
-              <MetricCard 
-                title="Total Advanced" 
-                value={`$${(currentMetrics as any).totalAdvanced.toLocaleString()}`} 
-                emoji="💸" 
-                color="#3b82f6"
+              <MetricCard
+                title='Total Advanced'
+                value={`$${(currentMetrics as any).totalAdvanced.toLocaleString()}`}
+                emoji='💸'
+                color='#3b82f6'
               />
-              <MetricCard 
-                title="Average Rate" 
-                value={`${(currentMetrics as any).avgFactorRate}%`} 
-                emoji="📈" 
-                color="#f59e0b"
+              <MetricCard
+                title='Average Rate'
+                value={`${(currentMetrics as any).avgFactorRate}%`}
+                emoji='📈'
+                color='#f59e0b'
               />
-              <MetricCard 
-                title="Total Carriers" 
-                value={`${(currentMetrics as any).totalCarriers}`} 
-                emoji="🚛" 
-                color="#8b5cf6"
+              <MetricCard
+                title='Total Carriers'
+                value={`${(currentMetrics as any).totalCarriers}`}
+                emoji='🚛'
+                color='#8b5cf6'
               />
             </>
           )}
@@ -1573,49 +2244,59 @@ export default function AccountingPage() {
 
         {/* Dynamic Table Section */}
         {currentSection === 'invoices' && userRole === 'broker' && (
-          <ShipperInvoicesTable invoices={currentInvoices as ShipperInvoice[]} />
+          <ShipperInvoicesTable
+            invoices={currentInvoices as ShipperInvoice[]}
+          />
         )}
-        
+
         {currentSection === 'invoices' && userRole === 'dispatcher' && (
           <InvoicesTable invoices={currentInvoices as DispatcherInvoice[]} />
         )}
-        
+
         {currentSection === 'payroll' && (
           <PayrollTable records={currentInvoices as PayrollRecord[]} />
         )}
-        
+
         {currentSection === 'factoring' && (
           <FactoringTable records={currentInvoices as FactoringRecord[]} />
         )}
 
         {/* Quick Actions */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '32px',
-          marginTop: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}>
-          <h3 style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: '24px',
-            textAlign: 'center'
-          }}>Quick Actions</h3>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px'
-          }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            marginTop: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              color: 'white',
+              marginBottom: '24px',
+              textAlign: 'center',
+            }}
+          >
+            Quick Actions
+          </h3>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+            }}
+          >
             {[
               { label: '📊 Generate Financial Report', color: '#10b981' },
               { label: '💳 Process Settlements', color: '#10b981' },
               { label: '📋 Export Data', color: '#10b981' },
-              { label: '⚙️ Accounting Settings', color: '#10b981' }
+              { label: '⚙️ Accounting Settings', color: '#10b981' },
             ].map((action, index) => (
               <button
                 key={index}
@@ -1628,11 +2309,13 @@ export default function AccountingPage() {
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  fontSize: '1rem'
+                  fontSize: '1rem',
                 }}
                 onMouseOver={(e) => {
-                  (e.target as HTMLElement).style.transform = 'translateY(-2px)';
-                  (e.target as HTMLElement).style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                  (e.target as HTMLElement).style.transform =
+                    'translateY(-2px)';
+                  (e.target as HTMLElement).style.boxShadow =
+                    '0 8px 25px rgba(0, 0, 0, 0.2)';
                 }}
                 onMouseOut={(e) => {
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
@@ -1644,7 +2327,7 @@ export default function AccountingPage() {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

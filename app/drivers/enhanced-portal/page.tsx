@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { onboardingIntegration, DriverPortalProfile } from '../../services/onboarding-integration';
-import { checkPermission } from '../../config/access';
-import DriverTaxDashboard from '../../components/DriverTaxDashboard';
+import React from 'react';
+
+import {
+  DriverPortalProfile,
+  onboardingIntegration,
+} from '../../services/onboarding-integration';
 import { driverTaxService } from '../services/DriverTaxService';
-import { workflowManager, LoadWorkflow, WorkflowStep } from '../../lib/workflowManager';
 
 const AccessRestricted = () => (
   <div style={{
@@ -28,20 +29,20 @@ const AccessRestricted = () => (
       width: '100%'
     }}>
       <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🔒</div>
-      <h1 style={{ 
-        fontSize: '1.8rem', 
-        fontWeight: 'bold', 
-        color: '#2d3748', 
-        marginBottom: '16px' 
+      <h1 style={{
+        fontSize: '1.8rem',
+        fontWeight: 'bold',
+        color: '#2d3748',
+        marginBottom: '16px'
       }}>Access Restricted</h1>
-      <p style={{ 
-        color: 'rgba(45, 55, 72, 0.8)', 
+      <p style={{
+        color: 'rgba(45, 55, 72, 0.8)',
         marginBottom: '16px',
         lineHeight: '1.6'
       }}>
         You need driver management portal permissions to access this system.
       </p>
-      <button 
+      <button
         onClick={() => window.history.back()}
         style={{
           background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -107,36 +108,48 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
     }
   ];
 
-  // Mock active workflow steps
-  const mockWorkflowSteps = [
-    {
-      id: 'load_assignment_confirmation',
-      name: 'Load Assignment Confirmation',
-      description: 'Confirm receipt and acceptance of load L2025-002',
-      required: true,
-      completed: false,
-      loadId: 'L2025-002',
-      urgent: true
-    },
-    {
-      id: 'delivery_arrival',
-      name: 'Delivery Arrival',
-      description: 'Confirm arrival at Detroit, MI for load L2025-001',
-      required: true,
-      completed: false,
-      loadId: 'L2025-001',
-      urgent: false
-    },
-    {
-      id: 'pickup_completion',
-      name: 'Upload Pickup Photos',
-      description: 'Upload required pickup photos for load L2025-001',
-      required: true,
-      completed: false,
-      loadId: 'L2025-001',
-      urgent: false
-    }
-  ];
+  // Get real workflow steps from each active load
+  const getActiveWorkflowTasks = () => {
+    const activeTasks: any[] = [];
+
+    mockLoads.forEach((load) => {
+      // Initialize workflow if it doesn't exist
+      if (!workflowManager.getWorkflow(load.id)) {
+        workflowManager.initializeLoadWorkflow(
+          load.id,
+          demoDriver.personalInfo.name,
+          'dispatcher-001'
+        );
+      }
+
+      // Get current incomplete step
+      const currentStep = workflowManager.getCurrentStep(load.id);
+      const workflow = workflowManager.getWorkflow(load.id);
+
+      if (currentStep && !currentStep.completed) {
+        activeTasks.push({
+          id: currentStep.id,
+          name: currentStep.name,
+          description: `${currentStep.description} - Load ${load.id}`,
+          required: currentStep.required,
+          completed: currentStep.completed,
+          loadId: load.id,
+          urgent: currentStep.required,
+          timeRemaining: load.workflow.timeRemaining,
+          stepOrder: workflow?.currentStep || 0, // Natural workflow order
+          stepData: currentStep.data || {},
+          allowOverride: currentStep.allowOverride || false,
+          progress: workflowManager.getWorkflowProgress(load.id),
+        });
+      }
+    });
+
+    // Sort by workflow step order so Load Assignment Confirmation appears first naturally
+    return activeTasks.sort((a, b) => a.stepOrder - b.stepOrder);
+  };
+
+  // Replace mockWorkflowSteps with real workflow data
+  const activeWorkflowTasks = getActiveWorkflowTasks();
 
   // Mock notifications for this driver including workflow items
   const mockNotifications = [
@@ -208,15 +221,48 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
           <div style={{ fontSize: '3rem' }}>👤</div>
           <div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#2d3748', margin: 0 }}>
-              Welcome, {demoDriver.personalInfo.name}
-            </h2>
-            <p style={{ color: 'rgba(45, 55, 72, 0.7)', margin: 0 }}>
-              {demoDriver.employmentInfo.carrierName} • {demoDriver.employmentInfo.role === 'owner_operator' ? 'Owner Operator' : 'Company Driver'}
-            </p>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '10px',
+                  margin: '0 0 2px 0',
+                  fontWeight: '500',
+                }}
+              >
+                Monthly Earnings
+              </p>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  margin: '0 0 1px 0',
+                }}
+              >
+                $8,450
+              </p>
+              <p
+                style={{
+                  color: '#4ade80',
+                  fontSize: '8px',
+                  margin: 0,
+                }}
+              >
+                +12% vs last month
+              </p>
+            </div>
+            <div
+              style={{
+                padding: '4px',
+                background: 'rgba(34, 197, 94, 0.2)',
+                borderRadius: '6px',
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>💰</span>
+            </div>
           </div>
         </div>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
           <div style={{
             background: 'rgba(59, 130, 246, 0.1)',
@@ -227,7 +273,7 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
             <div style={{ fontSize: '1.5rem', color: '#3b82f6', fontWeight: 'bold' }}>✅</div>
             <div style={{ color: '#2d3748', fontSize: '0.9rem' }}>Account Active</div>
           </div>
-          
+
           <div style={{
             background: 'rgba(16, 185, 129, 0.1)',
             borderRadius: '8px',
@@ -237,26 +283,83 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
             <div style={{ fontSize: '1.5rem', color: '#10b981', fontWeight: 'bold' }}>{mockLoads.filter(l => l.status === 'In Transit' || l.status === 'Assigned').length}</div>
             <div style={{ color: '#2d3748', fontSize: '0.9rem' }}>Active Loads</div>
           </div>
-          
-          <div style={{
-            background: 'rgba(139, 92, 246, 0.1)',
-            borderRadius: '8px',
-            padding: '12px',
-            textAlign: 'center',
-            position: 'relative'
-          }}>
-            <div style={{ fontSize: '1.5rem', color: '#8b5cf6', fontWeight: 'bold' }}>{mockWorkflowSteps.length}</div>
-            <div style={{ color: '#2d3748', fontSize: '0.9rem' }}>Workflow Steps</div>
-            {mockWorkflowSteps.some(s => s.urgent) && (
-              <div style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                background: '#ef4444',
+
+        {/* Safety Score */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '10px',
+            padding: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '10px',
+                  margin: '0 0 2px 0',
+                  fontWeight: '500',
+                }}
+              >
+                Safety Score
+              </p>
+              <p
+                style={{
                 color: 'white',
-                borderRadius: '50%',
-                width: '16px',
-                height: '16px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  margin: '0 0 1px 0',
+                }}
+              >
+                98.5
+              </p>
+              <p
+                style={{
+                  color: '#4ade80',
+                  fontSize: '8px',
+                  margin: 0,
+                }}
+              >
+                Excellent rating
+              </p>
+            </div>
+            <div
+              style={{
+                padding: '4px',
+                background: 'rgba(34, 197, 94, 0.2)',
+                borderRadius: '6px',
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>🛡️</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Fuel Efficiency */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '10px',
+            padding: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          <div
+            style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -277,7 +380,7 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
             <div style={{ fontSize: '1.5rem', color: '#f59e0b', fontWeight: 'bold' }}>{mockNotifications.length}</div>
             <div style={{ color: '#2d3748', fontSize: '0.9rem' }}>Notifications</div>
           </div>
-          
+
           <div style={{
             background: 'rgba(239, 68, 68, 0.1)',
             borderRadius: '8px',
@@ -296,40 +399,62 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
                 right: '4px',
                 background: '#ef4444',
                 color: 'white',
-                borderRadius: '50%',
-                width: '16px',
-                height: '16px',
+                  borderRadius: '10px',
+                  minWidth: '18px',
+                  height: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.6rem',
-                fontWeight: 'bold'
-              }}>
-                !
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {tab.badge}
               </div>
             )}
-          </div>
-        </div>
+          </button>
+        ))}
       </div>
 
-      {/* Notifications Section */}
-      <div style={{
-        background: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(15px)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
+      {/* Tab Content */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
         borderRadius: '16px',
         padding: '24px',
-        marginBottom: '24px'
-      }}>
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', color: '#2d3748', marginBottom: '16px' }}>
-          🔔 Notifications
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          minHeight: '60vh',
+        }}
+      >
+        {/* ACTIVE TASKS TAB - Priority First */}
+        {activeTab === 'active-tasks' && (
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: 0,
+                }}
+              >
+                🔄 Active Tasks & Loads
         </h3>
         <div style={{ display: 'grid', gap: '12px' }}>
           {mockNotifications.map((notification) => (
             <div key={notification.id} style={{
-              background: notification.type === 'urgent' ? 'rgba(239, 68, 68, 0.1)' : 
+              background: notification.type === 'urgent' ? 'rgba(239, 68, 68, 0.1)' :
                          notification.type === 'warning' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-              border: `1px solid ${notification.type === 'urgent' ? '#ef4444' : 
+              border: `1px solid ${notification.type === 'urgent' ? '#ef4444' :
                                  notification.type === 'warning' ? '#f59e0b' : '#3b82f6'}`,
               borderRadius: '8px',
               padding: '16px',
@@ -378,25 +503,27 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
                   <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#2d3748', marginBottom: '4px' }}>
                     Load {load.id}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'rgba(45, 55, 72, 0.7)' }}>
-                    <span style={{
-                      background: load.status === 'In Transit' ? '#10b981' : '#3b82f6',
-                      color: 'white',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontSize: '0.8rem'
-                    }}>
-                      {load.status}
-                    </span>
-                    <span>{load.rate}</span>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '12px',
+                  }}
+                >
+                  Last updated: 2 minutes ago • Searching 150-mile radius
                   </div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '16px', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(45, 55, 72, 0.6)', marginBottom: '2px' }}>Pickup</div>
-                  <div style={{ fontWeight: 'bold', color: '#2d3748' }}>{load.pickup}</div>
-                  <div style={{ fontSize: '0.9rem', color: 'rgba(45, 55, 72, 0.7)' }}>{load.pickupDate}</div>
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: '#0369a1',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Dallas, TX → Houston, TX
                 </div>
                 <div style={{ textAlign: 'center', color: '#3b82f6', fontSize: '1.5rem' }}>→</div>
                 <div style={{ textAlign: 'right' }}>
@@ -405,7 +532,7 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
                   <div style={{ fontSize: '0.9rem', color: 'rgba(45, 55, 72, 0.7)' }}>{load.deliveryDate}</div>
                 </div>
               </div>
-              
+
               {/* Workflow Progress */}
               <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '6px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -414,10 +541,10 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
                     Step {load.workflow.currentStep} of {load.workflow.totalSteps}
                   </span>
                 </div>
-                <div style={{ 
-                  background: 'rgba(45, 55, 72, 0.1)', 
-                  borderRadius: '4px', 
-                  height: '6px', 
+                <div style={{
+                  background: 'rgba(45, 55, 72, 0.1)',
+                  borderRadius: '4px',
+                  height: '6px',
                   marginBottom: '8px',
                   position: 'relative'
                 }}>
@@ -463,8 +590,8 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
             }}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{ 
-                    fontWeight: 'bold', 
+                  <span style={{
+                    fontWeight: 'bold',
                     color: '#2d3748',
                     fontSize: '0.95rem'
                   }}>
@@ -524,7 +651,7 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
         <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', color: '#2d3748', marginBottom: '16px' }}>
           🚀 Quick Actions
         </h3>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
           {[
             { icon: '�', title: 'Workflow Steps', desc: `${mockWorkflowSteps.filter(s => s.urgent).length} urgent steps pending completion`, isHighlighted: mockWorkflowSteps.some(s => s.urgent) },
@@ -565,23 +692,32 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
               }}
             >
-              {action.isHighlighted && hasUrgentTaxAlerts && (
-                <div style={{
-                  position: 'absolute',
-                  top: '8px',
-                  right: '8px',
-                  background: '#ef4444',
+              <h4
+                style={{
+                  fontSize: '16px',
+                  fontWeight: 'bold',
                   color: 'white',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.7rem',
-                  fontWeight: 'bold'
-                }}>
-                  !
+                  marginBottom: '12px',
+                }}
+              >
+                📈 Recent Activity
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gap: '6px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '12px',
+                }}
+              >
+                <div>• Load LD-2025-001 confirmed at 10:30 AM</div>
+                <div>• ELD sync completed at 8:00 AM</div>
+                <div>• Location updated: Dallas, TX at 9:15 AM</div>
+                <div>• Dispatcher message received at 9:15 AM</div>
+                <div>• Tax receipt uploaded: Fuel - $247.50</div>
+                <div>• IFTA mileage logged: 1,247 miles</div>
+              </div>
+            </div>
                 </div>
               )}
               <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{action.icon}</div>
@@ -591,13 +727,90 @@ const DriverDashboardView: React.FC<{ driver?: DriverPortalProfile }> = ({ drive
               <div style={{ fontSize: '0.85rem', color: 'rgba(45, 55, 72, 0.7)' }}>
                 {action.desc}
               </div>
-            </button>
+        )}
+
+        {/* MESSAGES TAB */}
+        {activeTab === 'messages' && (
+          <div>
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#111827',
+                marginBottom: '20px',
+              }}
+            >
+              💬 Messages
+            </h3>
+
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {mockNotifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  style={{
+                    background:
+                      notification.type === 'urgent'
+                        ? 'rgba(239, 68, 68, 0.05)'
+                        : 'white',
+                    border:
+                      notification.type === 'urgent'
+                        ? '2px solid #ef4444'
+                        : '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'start',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px' }}>
+                      {notification.type === 'urgent'
+                        ? '🚨'
+                        : notification.type === 'warning'
+                          ? '⚠️'
+                          : 'ℹ️'}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          color: '#111827', // Dark gray for all titles
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {notification.title}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color:
+                            notification.type === 'urgent'
+                              ? '#1f2937' // Dark gray for urgent messages on light red background
+                              : '#6b7280', // Default gray for other messages
+                          marginBottom: '8px',
+                          fontWeight:
+                            notification.type === 'urgent' ? '600' : 'normal', // Make urgent messages bold
+                        }}
+                      >
+                        {notification.message}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                        {notification.time}
+                      </div>
+                    </div>
+                  </div>
+                </div>
           ))}
         </div>
       </div>
 
       {/* Tax Dashboard */}
-      <DriverTaxDashboard 
+      <DriverTaxDashboard
         driverId={driverId}
         driverName={demoDriver.personalInfo.name}
       />
@@ -637,7 +850,7 @@ export default function DriverFlow() {
 
   // Get all drivers and find the current one
   const allDrivers = onboardingIntegration.getAllDrivers();
-  
+
   let demoDriver;
   if (currentDriverId) {
     // If we have a logged-in driver ID, use that specific driver
@@ -677,12 +890,9 @@ export default function DriverFlow() {
   }
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: `
-        linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)),
-        linear-gradient(135deg, #f7c52d 0%, #f4a832 100%)
-      `,
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       padding: '80px 20px 20px 20px'
     }}>
       {/* Driver Selection for Demo - Remove in production */}
@@ -711,7 +921,7 @@ export default function DriverFlow() {
               ← Back to Dashboard
             </button>
           </Link>
-          
+
           {/* Demo Driver Selector or Logout */}
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {currentDriverId ? (

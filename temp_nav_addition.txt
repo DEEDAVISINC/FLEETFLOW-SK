@@ -1,0 +1,14 @@
+                <Link
+                  href="/broker-quotes-portal"
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💰 Broker Quotes Portal
+                </Link>

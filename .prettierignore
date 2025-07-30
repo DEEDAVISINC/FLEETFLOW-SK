@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Vercel
+.vercel/
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Generated files
+lib/types/supabase-*.ts
+*.min.js
+*.min.css
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation builds
+docs/build/
+storybook-static/
+
+# Package manager lockfiles (don't format these)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Auto-generated configuration
+tsconfig.tsbuildinfo
+
+# Public assets
+public/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# Backups
+backups/

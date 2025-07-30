@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 80,
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": true,
+  "embeddedLanguageFormatting": "auto",
+  "htmlWhitespaceSensitivity": "css",
+  "proseWrap": "preserve",
+  "insertPragma": false,
+  "requirePragma": false,
+  "vueIndentScriptAndStyle": false,
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindConfig": "./tailwind.config.js",
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "printWidth": 100,
+        "proseWrap": "always"
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.sql",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 // Stripe Service for FleetFlow Revenue Infrastructure
 import Stripe from 'stripe';
-import { requireValidEnvironment, isBillingEnabled } from '../../utils/environmentValidator';
+import {
+  isBillingEnabled,
+  requireValidEnvironment,
+} from '../../utils/environmentValidator';
 
 export interface Customer {
   id: string;
@@ -33,11 +36,13 @@ export class StripeService {
   constructor() {
     // Validate environment before initializing
     requireValidEnvironment();
-    
+
     if (!isBillingEnabled()) {
-      throw new Error('Billing is not properly configured. Please check your Stripe environment variables.');
+      throw new Error(
+        'Billing is not properly configured. Please check your Stripe environment variables.'
+      );
     }
-    
+
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: '2023-10-16',
     });
@@ -82,7 +87,10 @@ export class StripeService {
     }
   }
 
-  async updateCustomer(customerId: string, updates: Partial<Customer>): Promise<Customer> {
+  async updateCustomer(
+    customerId: string,
+    updates: Partial<Customer>
+  ): Promise<Customer> {
     try {
       const customer = await this.stripe.customers.update(customerId, {
         email: updates.email,
@@ -137,14 +145,17 @@ export class StripeService {
     items: Array<{ id?: string; price: string; quantity?: number }>
   ): Promise<Stripe.Subscription> {
     try {
-      const subscription = await this.stripe.subscriptions.update(subscriptionId, {
-        items: items.map(item => ({
-          id: item.id,
-          price: item.price,
-          quantity: item.quantity || 1,
-        })),
-        proration_behavior: 'create_prorations',
-      });
+      const subscription = await this.stripe.subscriptions.update(
+        subscriptionId,
+        {
+          items: items.map((item) => ({
+            id: item.id,
+            price: item.price,
+            quantity: item.quantity || 1,
+          })),
+          proration_behavior: 'create_prorations',
+        }
+      );
 
       return subscription;
     } catch (error) {
@@ -158,9 +169,12 @@ export class StripeService {
     immediately = false
   ): Promise<Stripe.Subscription> {
     try {
-      const subscription = await this.stripe.subscriptions.update(subscriptionId, {
-        cancel_at_period_end: !immediately,
-      });
+      const subscription = await this.stripe.subscriptions.update(
+        subscriptionId,
+        {
+          cancel_at_period_end: !immediately,
+        }
+      );
 
       if (immediately) {
         return await this.stripe.subscriptions.cancel(subscriptionId);
@@ -173,9 +187,12 @@ export class StripeService {
     }
   }
 
-  async getSubscription(subscriptionId: string): Promise<Stripe.Subscription | null> {
+  async getSubscription(
+    subscriptionId: string
+  ): Promise<Stripe.Subscription | null> {
     try {
-      const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+      const subscription =
+        await this.stripe.subscriptions.retrieve(subscriptionId);
       return subscription;
     } catch (error) {
       console.error('Error retrieving subscription:', error);
@@ -183,7 +200,9 @@ export class StripeService {
     }
   }
 
-  async listCustomerSubscriptions(customerId: string): Promise<Stripe.Subscription[]> {
+  async listCustomerSubscriptions(
+    customerId: string
+  ): Promise<Stripe.Subscription[]> {
     try {
       const subscriptions = await this.stripe.subscriptions.list({
         customer: customerId,
@@ -212,7 +231,9 @@ export class StripeService {
         subscriptionItemId,
         {
           quantity,
-          timestamp: timestamp ? Math.floor(timestamp.getTime() / 1000) : undefined,
+          timestamp: timestamp
+            ? Math.floor(timestamp.getTime() / 1000)
+            : undefined,
           action: 'increment',
         }
       );
@@ -227,20 +248,28 @@ export class StripeService {
   async createUsageRecord(usageData: UsageRecord): Promise<boolean> {
     try {
       // Find the customer's subscription items that match the feature
-      const subscriptions = await this.listCustomerSubscriptions(usageData.customerId);
-      
+      const subscriptions = await this.listCustomerSubscriptions(
+        usageData.customerId
+      );
+
       for (const subscription of subscriptions) {
         for (const item of subscription.items.data) {
           const price = item.price;
           if (price.metadata?.feature === usageData.feature) {
-            await this.recordUsage(item.id, usageData.quantity, usageData.timestamp);
+            await this.recordUsage(
+              item.id,
+              usageData.quantity,
+              usageData.timestamp
+            );
             return true;
           }
         }
       }
 
       // If no matching subscription item found, log the usage for later billing
-      console.warn(`No subscription item found for feature: ${usageData.feature}`);
+      console.warn(
+        `No subscription item found for feature: ${usageData.feature}`
+      );
       return false;
     } catch (error) {
       console.error('Error creating usage record:', error);
@@ -282,9 +311,12 @@ export class StripeService {
     paymentMethodId: string
   ): Promise<Stripe.PaymentIntent> {
     try {
-      const paymentIntent = await this.stripe.paymentIntents.confirm(paymentIntentId, {
-        payment_method: paymentMethodId,
-      });
+      const paymentIntent = await this.stripe.paymentIntents.confirm(
+        paymentIntentId,
+        {
+          payment_method: paymentMethodId,
+        }
+      );
 
       return paymentIntent;
     } catch (error) {
@@ -380,16 +412,24 @@ export class StripeService {
     try {
       switch (event.type) {
         case 'customer.subscription.created':
-          await this.handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+          await this.handleSubscriptionCreated(
+            event.data.object as Stripe.Subscription
+          );
           break;
         case 'customer.subscription.updated':
-          await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+          await this.handleSubscriptionUpdated(
+            event.data.object as Stripe.Subscription
+          );
           break;
         case 'customer.subscription.deleted':
-          await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+          await this.handleSubscriptionDeleted(
+            event.data.object as Stripe.Subscription
+          );
           break;
         case 'invoice.payment_succeeded':
-          await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
+          await this.handlePaymentSucceeded(
+            event.data.object as Stripe.Invoice
+          );
           break;
         case 'invoice.payment_failed':
           await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
@@ -403,21 +443,27 @@ export class StripeService {
     }
   }
 
-  private async handleSubscriptionCreated(subscription: Stripe.Subscription): Promise<void> {
+  private async handleSubscriptionCreated(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
     console.log('Subscription created:', subscription.id);
     // TODO: Update user's plan in database
     // TODO: Send welcome email
     // TODO: Enable features based on plan
   }
 
-  private async handleSubscriptionUpdated(subscription: Stripe.Subscription): Promise<void> {
+  private async handleSubscriptionUpdated(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
     console.log('Subscription updated:', subscription.id);
     // TODO: Update user's plan in database
     // TODO: Handle plan upgrades/downgrades
     // TODO: Adjust feature access
   }
 
-  private async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
+  private async handleSubscriptionDeleted(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
     console.log('Subscription deleted:', subscription.id);
     // TODO: Disable user's paid features
     // TODO: Send cancellation confirmation
@@ -440,60 +486,245 @@ export class StripeService {
 }
 
 // ========================================
-// PREDEFINED PRICING PLANS
+// PREDEFINED PRICING PLANS - COMPREHENSIVE FLEETFLOW ENTERPRISE STRUCTURE
 // ========================================
 
 export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
-  // TMS Plans
-  TMS_STARTER: {
-    id: 'tms_starter',
-    name: 'TMS Starter',
+  // ========================================
+  // PROFESSIONAL SUBSCRIPTION TIERS
+  // ========================================
+
+  // FleetFlow University℠
+  FLEETFLOW_UNIVERSITY: {
+    id: 'fleetflow_university',
+    name: 'FleetFlow University℠',
+    price: 49,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Complete training curriculum',
+      'BOL/MBL/HBL Documentation Mastery',
+      'Warehouse Operations Excellence',
+      'Enhanced Freight Brokerage training',
+      'Interactive components & certification',
+      'Role-specific content (dispatchers, brokers, managers)',
+      'Unlimited course access',
+      'Industry best practices library',
+      'Compliance training modules',
+      'Performance tracking & analytics',
+    ],
+  },
+
+  // Dispatcher Pro
+  DISPATCHER_PRO: {
+    id: 'dispatcher_pro',
+    name: 'Dispatcher Pro',
+    price: 99,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Advanced dispatch management',
+      'Real-time load tracking',
+      'Driver communication tools',
+      'Route optimization',
+      'Performance analytics',
+      'Mobile app access',
+      'Compliance monitoring',
+      'Emergency response protocols',
+      'Load board integration',
+      'Automated notifications',
+    ],
+  },
+
+  // RFx Professional (RFB/RFQ/RFP/RFI)
+  RFX_PROFESSIONAL: {
+    id: 'rfx_professional',
+    name: 'RFx Professional',
+    price: 119,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Professional Freight Quoting System',
+      'RFB/RFQ/RFP/RFI management',
+      'Government contracts (SAM.gov integration)',
+      'Enterprise RFPs (major corporations)',
+      'InstantMarkets integration (205,587+ opportunities)',
+      'Warehousing & 3PL opportunities ($25-50M)',
+      'AI-powered proposal generation',
+      'Competitive intelligence',
+      'Win/loss analytics',
+      'Automated bidding workflows',
+    ],
+  },
+
+  // Broker Elite
+  BROKER_ELITE: {
+    id: 'broker_elite',
+    name: 'Broker Elite',
+    price: 149,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Complete freight brokerage platform',
+      'Advanced carrier network',
+      'Smart load matching',
+      'Margin optimization tools',
+      'Credit management system',
+      'Factoring integration',
+      'Multi-modal shipping',
+      'Customer portal access',
+      'Advanced reporting & analytics',
+      'API access for integrations',
+    ],
+  },
+
+  // AI Flow Professional
+  AI_FLOW_PROFESSIONAL: {
+    id: 'ai_flow_professional',
+    name: 'AI Flow Professional',
     price: 199,
     interval: 'month',
     category: 'TMS',
     features: [
-      'Up to 10 drivers',
-      'Basic dispatch',
-      'Driver management',
-      'DOT compliance monitoring',
-      'Mobile app access',
-      'Email support',
-    ],
-  },
-  TMS_PROFESSIONAL: {
-    id: 'tms_professional',
-    name: 'TMS Professional',
-    price: 499,
-    interval: 'month',
-    category: 'TMS',
-    features: [
-      'Up to 50 drivers',
-      'Advanced analytics',
-      'Live load tracking',
-      'Route optimization',
-      'API access',
-      'Phone support',
-      'Training materials',
-    ],
-  },
-  TMS_ENTERPRISE: {
-    id: 'tms_enterprise',
-    name: 'TMS Enterprise',
-    price: 1299,
-    interval: 'month',
-    category: 'TMS',
-    features: [
-      'Unlimited drivers',
-      'White label options',
-      'Advanced API access',
-      'Custom integrations',
-      'Dedicated account manager',
-      'Priority support',
-      'Custom training',
+      'AI-Powered Call Center Platform (FreeSWITCH)',
+      'Claude AI negotiation capabilities (85-90% success rates)',
+      'Smart Auto-Bidding Rules engine',
+      'AI freight broker with dynamic pricing',
+      'AI dispatcher with load coordination',
+      'AI recruiting with lead management',
+      'Predictive analytics & forecasting',
+      'Real-time decision automation',
+      'Advanced machine learning models',
+      'Custom AI workflow builder',
     ],
   },
 
-  // Data Consortium Plans
+  // Enterprise Professional
+  ENTERPRISE_PROFESSIONAL: {
+    id: 'enterprise_professional',
+    name: 'Enterprise Professional',
+    price: 299,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Complete enterprise platform access',
+      'Unlimited users & drivers',
+      'White-label capabilities',
+      'Multi-tenant architecture',
+      'Advanced API access (all endpoints)',
+      'Custom integrations & workflows',
+      'Dedicated account manager',
+      'Priority support (24/7)',
+      'Custom training & onboarding',
+      'Enterprise SLA guarantees',
+    ],
+  },
+
+  // ========================================
+  // À LA CARTE SYSTEM
+  // ========================================
+
+  // Base Platform
+  BASE_PLATFORM: {
+    id: 'base_platform',
+    name: 'Base Platform',
+    price: 29,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Core TMS functionality',
+      'Basic driver management',
+      'Load tracking',
+      'DOT compliance basics',
+      'Mobile app access',
+      'Email support',
+      'Standard reporting',
+      'Up to 5 users',
+      'Basic API access',
+      'Community support',
+    ],
+  },
+
+  // À La Carte Add-ons
+  ADDON_ADVANCED_ANALYTICS: {
+    id: 'addon_advanced_analytics',
+    name: 'Advanced Analytics Module',
+    price: 39,
+    interval: 'month',
+    category: 'ADDON',
+    features: [
+      'Comprehensive performance dashboards',
+      'Predictive analytics',
+      'Custom report builder',
+      'ROI calculations',
+      'Benchmarking tools',
+    ],
+  },
+
+  ADDON_AI_AUTOMATION: {
+    id: 'addon_ai_automation',
+    name: 'AI Automation Module',
+    price: 59,
+    interval: 'month',
+    category: 'ADDON',
+    features: [
+      'Smart load matching',
+      'Automated dispatch',
+      'AI-powered routing',
+      'Predictive maintenance',
+      'Intelligent notifications',
+    ],
+  },
+
+  ADDON_COMPLIANCE_PRO: {
+    id: 'addon_compliance_pro',
+    name: 'Compliance Pro Module',
+    price: 49,
+    interval: 'month',
+    category: 'ADDON',
+    features: [
+      'Advanced DOT compliance',
+      'FMCSA integration',
+      'Automated form generation',
+      'Audit preparation',
+      'Violation management',
+    ],
+  },
+
+  ADDON_FINANCIAL_SUITE: {
+    id: 'addon_financial_suite',
+    name: 'Financial Suite Module',
+    price: 69,
+    interval: 'month',
+    category: 'ADDON',
+    features: [
+      'Advanced accounting',
+      'Bill.com integration',
+      'Invoice automation',
+      'Financial reporting',
+      'Cash flow management',
+    ],
+  },
+
+  ADDON_WAREHOUSE_3PL: {
+    id: 'addon_warehouse_3pl',
+    name: 'Warehouse & 3PL Module',
+    price: 89,
+    interval: 'month',
+    category: 'ADDON',
+    features: [
+      'Warehouse management system',
+      '3PL operations',
+      'Inventory tracking',
+      'Cross-docking',
+      'Distribution management',
+    ],
+  },
+
+  // ========================================
+  // DATA CONSORTIUM PLANS
+  // ========================================
+
   CONSORTIUM_BASIC: {
     id: 'consortium_basic',
     name: 'Data Consortium Basic',
@@ -501,12 +732,15 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'CONSORTIUM',
     features: [
-      'Industry benchmarking',
+      'Industry benchmarking (2,847+ companies)',
+      'Anonymous intelligence sharing',
       'Basic performance metrics',
-      'Monthly reports',
+      'Monthly market reports',
+      'Fuel price trends',
       'Email insights',
     ],
   },
+
   CONSORTIUM_PROFESSIONAL: {
     id: 'consortium_professional',
     name: 'Data Consortium Professional',
@@ -515,12 +749,17 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     category: 'CONSORTIUM',
     features: [
       'Real-time market intelligence',
+      'Financial Markets Intelligence Platform',
+      'Real-time diesel pricing & fuel futures',
+      'AI hedging recommendations',
       'Predictive analytics',
       'Custom dashboards',
       'API access',
       'Weekly insights',
+      'Competitive positioning data',
     ],
   },
+
   CONSORTIUM_ENTERPRISE: {
     id: 'consortium_enterprise',
     name: 'Data Consortium Enterprise',
@@ -528,16 +767,66 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'CONSORTIUM',
     features: [
-      'Full API access',
-      'Custom analytics',
+      'Full API access (all data streams)',
+      'Custom analytics & modeling',
       'Priority data access',
       'Dedicated insights team',
-      'Real-time alerts',
+      'Real-time alerts & notifications',
       'Custom integrations',
+      'Strategic consulting services',
+      'Exclusive market research',
+      'Direct analyst access',
     ],
   },
 
-  // Compliance Plans
+  // ========================================
+  // STRATEGIC ENTERPRISE TIERS
+  // ========================================
+
+  STRATEGIC_GROWTH: {
+    id: 'strategic_growth',
+    name: 'Strategic Growth',
+    price: 2499,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Complete platform suite',
+      'Fortune 500 partnership access',
+      'Government contract opportunities ($500K-$5M)',
+      'Quantum-inspired route optimization',
+      'Enterprise partnership platform',
+      'Strategic acquisition preparation',
+      'Dedicated success team',
+      'Custom development resources',
+      'White-glove onboarding',
+      'Strategic consulting included',
+    ],
+  },
+
+  STRATEGIC_ENTERPRISE: {
+    id: 'strategic_enterprise',
+    name: 'Strategic Enterprise',
+    price: 4999,
+    interval: 'month',
+    category: 'TMS',
+    features: [
+      'Full enterprise ecosystem access',
+      'Multi-billion dollar contract access',
+      'Strategic acquisition positioning',
+      'Custom platform development',
+      'Dedicated development team',
+      'C-suite strategic consulting',
+      'Merger & acquisition support',
+      'IPO preparation services',
+      'Board-ready analytics',
+      'Strategic exit planning',
+    ],
+  },
+
+  // ========================================
+  // COMPLIANCE PLANS
+  // ========================================
+
   COMPLIANCE_BASIC: {
     id: 'compliance_basic',
     name: 'DOT Compliance Basic',
@@ -549,8 +838,11 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'Deadline tracking',
       'Basic reporting',
       'Email reminders',
+      'Driver qualification files',
+      'Vehicle inspection records',
     ],
   },
+
   COMPLIANCE_FULL: {
     id: 'compliance_full',
     name: 'DOT Compliance Full',
@@ -558,13 +850,17 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'COMPLIANCE',
     features: [
+      'Complete DOT compliance platform',
+      'FMCSA integration',
       'Full automation',
       'Audit preparation',
       'Violation management',
       'Advanced reporting',
       'Phone support',
+      'Compliance consulting',
     ],
   },
+
   COMPLIANCE_MANAGED: {
     id: 'compliance_managed',
     name: 'DOT Compliance Managed',
@@ -577,6 +873,9 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'Guaranteed compliance',
       'Audit representation',
       'Priority support',
+      'Legal consultation',
+      'Risk assessment',
+      'Compliance strategy development',
     ],
   },
 };

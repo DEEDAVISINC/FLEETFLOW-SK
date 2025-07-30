@@ -1,0 +1,433 @@
+'use client'
+
+import React from 'react'
+
+interface QuantumResultsDisplayProps {
+  results: {
+    routes: any[]
+    metrics: any
+    quantumAnalysis?: {
+      superpositionExplored: number
+      entanglementCorrelations: number
+      annealingIterations: number
+      finalTemperature: number
+    }
+    apiUsed: string
+  } | null
+  isQuantumMode: boolean
+}
+
+export default function QuantumResultsDisplay({ results, isQuantumMode }: QuantumResultsDisplayProps) {
+  if (!results) return null
+
+  const { routes, metrics, quantumAnalysis, apiUsed } = results
+
+  return (
+    <div style={{
+      background: 'rgba(255, 255, 255, 0.95)',
+      borderRadius: '16px',
+      padding: '24px',
+      marginTop: '24px',
+      border: isQuantumMode ? '2px solid #6366f1' : '1px solid rgba(0, 0, 0, 0.1)',
+      boxShadow: isQuantumMode 
+        ? '0 8px 32px rgba(99, 102, 241, 0.3)' 
+        : '0 4px 16px rgba(0, 0, 0, 0.1)'
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontSize: '24px' }}>
+            {isQuantumMode ? '⚛️' : '📊'}
+          </div>
+          <h3 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            margin: 0,
+            background: isQuantumMode 
+              ? 'linear-gradient(45deg, #6366f1, #8b5cf6)' 
+              : 'linear-gradient(45deg, #374151, #6b7280)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent'
+          }}>
+            {isQuantumMode ? 'Quantum Optimization Results' : 'Route Optimization Results'}
+          </h3>
+        </div>
+        
+        <div style={{
+          padding: '8px 16px',
+          borderRadius: '20px',
+          background: isQuantumMode 
+            ? 'linear-gradient(45deg, #6366f1, #8b5cf6)' 
+            : 'linear-gradient(45deg, #374151, #6b7280)',
+          color: 'white',
+          fontSize: '14px',
+          fontWeight: '600'
+        }}>
+          {isQuantumMode ? 'Quantum-Inspired' : 
+           apiUsed === 'google-maps' ? 'Google Maps API' : 'Advanced Algorithm'}
+        </div>
+      </div>
+
+      {/* Key Metrics Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px'
+      }}>
+        <MetricCard
+          icon="🛣️"
+          title="Total Distance"
+          value={`${metrics.totalDistance} miles`}
+          gradient={isQuantumMode ? 'quantum' : 'classical'}
+        />
+        <MetricCard
+          icon="💰"
+          title="Total Cost"
+          value={`$${metrics.totalCost}`}
+          gradient={isQuantumMode ? 'quantum' : 'classical'}
+        />
+        <MetricCard
+          icon="📍"
+          title="Total Stops"
+          value={metrics.totalStops.toString()}
+          gradient={isQuantumMode ? 'quantum' : 'classical'}
+        />
+        <MetricCard
+          icon="⚡"
+          title="Avg Efficiency"
+          value={`${metrics.avgEfficiency}%`}
+          gradient={isQuantumMode ? 'quantum' : 'classical'}
+        />
+      </div>
+
+      {/* Quantum-Specific Metrics */}
+      {isQuantumMode && quantumAnalysis && (
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05))',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px',
+          border: '1px solid rgba(99, 102, 241, 0.2)'
+        }}>
+          <h4 style={{
+            fontSize: '18px',
+            fontWeight: 'bold',
+            margin: '0 0 16px 0',
+            color: '#6366f1',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            🔬 Quantum Analysis
+          </h4>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '16px'
+          }}>
+            <QuantumMetricCard
+              title="Superposition Paths"
+              value={quantumAnalysis.superpositionExplored}
+              description="Quantum states explored"
+            />
+            <QuantumMetricCard
+              title="Entanglement Links"
+              value={quantumAnalysis.entanglementCorrelations}
+              description="Vehicle correlations found"
+            />
+            <QuantumMetricCard
+              title="Annealing Cycles"
+              value={quantumAnalysis.annealingIterations}
+              description="Optimization iterations"
+            />
+            <QuantumMetricCard
+              title="Final Temperature"
+              value={`${quantumAnalysis.finalTemperature}°`}
+              description="Convergence temperature"
+            />
+            {metrics.quantumAdvantage && (
+              <QuantumMetricCard
+                title="Quantum Advantage"
+                value={`+${metrics.quantumAdvantage}%`}
+                description="Improvement over classical"
+                highlight={true}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Performance Metrics */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px'
+      }}>
+        <PerformanceCard
+          icon="⛽"
+          title="Fuel Savings"
+          value={`${metrics.fuelSavingsEstimate} miles`}
+          color="#10b981"
+          subtitle="Estimated efficiency gain"
+        />
+        <PerformanceCard
+          icon="⏱️"
+          title="Time Savings"
+          value={metrics.timeSavingsEstimate}
+          color="#f59e0b"
+          subtitle="vs manual routing"
+        />
+        <PerformanceCard
+          icon="🌱"
+          title="CO₂ Reduction"
+          value={`${metrics.co2ReductionEstimate} lbs`}
+          color="#22c55e"
+          subtitle="Environmental impact"
+        />
+        <PerformanceCard
+          icon="📈"
+          title="Optimization Score"
+          value={`${metrics.optimizationScore}/100`}
+          color={isQuantumMode ? "#6366f1" : "#374151"}
+          subtitle="Overall efficiency rating"
+        />
+      </div>
+
+      {/* Route Details */}
+      <div style={{
+        background: 'rgba(243, 244, 246, 0.5)',
+        borderRadius: '12px',
+        padding: '20px'
+      }}>
+        <h4 style={{
+          fontSize: '18px',
+          fontWeight: 'bold',
+          margin: '0 0 16px 0',
+          color: '#374151',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          🚛 Optimized Routes ({routes.length})
+        </h4>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {routes.map((route, index) => (
+            <RouteCard key={route.vehicleId} route={route} index={index} isQuantumMode={isQuantumMode} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Helper Components
+
+function MetricCard({ icon, title, value, gradient }: {
+  icon: string
+  title: string
+  value: string
+  gradient: 'quantum' | 'classical'
+}) {
+  return (
+    <div style={{
+      padding: '20px',
+      borderRadius: '12px',
+      background: gradient === 'quantum' 
+        ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1))'
+        : 'linear-gradient(135deg, rgba(55, 65, 81, 0.1), rgba(107, 114, 128, 0.1))',
+      border: gradient === 'quantum' 
+        ? '1px solid rgba(99, 102, 241, 0.2)'
+        : '1px solid rgba(107, 114, 128, 0.2)',
+      textAlign: 'center'
+    }}>
+      <div style={{ fontSize: '24px', marginBottom: '8px' }}>{icon}</div>
+      <div style={{
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: gradient === 'quantum' ? '#6366f1' : '#374151',
+        marginBottom: '4px'
+      }}>
+        {value}
+      </div>
+      <div style={{ fontSize: '14px', color: '#6b7280' }}>{title}</div>
+    </div>
+  )
+}
+
+function QuantumMetricCard({ title, value, description, highlight = false }: {
+  title: string
+  value: string | number
+  description: string
+  highlight?: boolean
+}) {
+  return (
+    <div style={{
+      padding: '16px',
+      borderRadius: '8px',
+      background: highlight 
+        ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))'
+        : 'rgba(255, 255, 255, 0.8)',
+      border: highlight 
+        ? '2px solid rgba(99, 102, 241, 0.4)'
+        : '1px solid rgba(99, 102, 241, 0.15)',
+      textAlign: 'center'
+    }}>
+      <div style={{
+        fontSize: '20px',
+        fontWeight: 'bold',
+        color: highlight ? '#6366f1' : '#374151',
+        marginBottom: '4px'
+      }}>
+        {value}
+      </div>
+      <div style={{
+        fontSize: '14px',
+        fontWeight: '600',
+        color: '#6366f1',
+        marginBottom: '2px'
+      }}>
+        {title}
+      </div>
+      <div style={{ fontSize: '12px', color: '#6b7280' }}>{description}</div>
+    </div>
+  )
+}
+
+function PerformanceCard({ icon, title, value, color, subtitle }: {
+  icon: string
+  title: string
+  value: string
+  color: string
+  subtitle: string
+}) {
+  return (
+    <div style={{
+      padding: '16px',
+      borderRadius: '12px',
+      background: 'rgba(255, 255, 255, 0.8)',
+      border: `1px solid ${color}30`,
+      textAlign: 'center'
+    }}>
+      <div style={{ fontSize: '20px', marginBottom: '8px' }}>{icon}</div>
+      <div style={{
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: color,
+        marginBottom: '4px'
+      }}>
+        {value}
+      </div>
+      <div style={{
+        fontSize: '14px',
+        fontWeight: '600',
+        color: '#374151',
+        marginBottom: '2px'
+      }}>
+        {title}
+      </div>
+      <div style={{ fontSize: '12px', color: '#6b7280' }}>{subtitle}</div>
+    </div>
+  )
+}
+
+function RouteCard({ route, index, isQuantumMode }: {
+  route: any
+  index: number
+  isQuantumMode: boolean
+}) {
+  const efficiency = route.efficiency || 0
+  const quantumScore = route.quantumScore || 0
+  
+  return (
+    <div style={{
+      padding: '16px',
+      borderRadius: '8px',
+      background: 'rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(0, 0, 0, 0.1)',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '8px',
+          background: isQuantumMode 
+            ? 'linear-gradient(45deg, #6366f1, #8b5cf6)' 
+            : 'linear-gradient(45deg, #374151, #6b7280)',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold'
+        }}>
+          {index + 1}
+        </div>
+        
+        <div>
+          <div style={{
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#374151',
+            marginBottom: '4px'
+          }}>
+            {route.vehicleDriver} ({route.vehicleId})
+          </div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            {route.stops.length} stops • {Math.round(route.totalDistance)} miles • ${Math.round(route.estimatedCost)}
+          </div>
+        </div>
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {isQuantumMode && (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#6366f1'
+            }}>
+              Q-Score: {Math.round(quantumScore)}
+            </div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>
+              Quantum confidence
+            </div>
+          </div>
+        )}
+        
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: efficiency >= 90 ? '#10b981' : efficiency >= 70 ? '#f59e0b' : '#ef4444'
+          }}>
+            {efficiency}%
+          </div>
+          <div style={{ fontSize: '12px', color: '#6b7280' }}>
+            Efficiency
+          </div>
+        </div>
+        
+        {route.warnings && route.warnings.length > 0 && (
+          <div style={{
+            padding: '6px 12px',
+            borderRadius: '6px',
+            background: 'rgba(245, 158, 11, 0.1)',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            fontSize: '12px',
+            color: '#f59e0b',
+            fontWeight: '500'
+          }}>
+            ⚠️ {route.warnings.length} warning{route.warnings.length > 1 ? 's' : ''}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

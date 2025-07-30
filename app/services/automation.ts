@@ -3,6 +3,9 @@ import { fleetAI } from './ai';
 import { smsService } from './sms';
 import { sendInvoiceEmail } from './email';
 import { samGovMonitor } from './SAMGovOpportunityMonitor';
+import { fmcsaShipperIntelligence } from './FMCSAShipperIntelligenceService';
+import { thomasNetAutomation } from './ThomasNetAutomationService';
+import { rfxAutomation } from './RFxAutomationService';
 // Add route generation template integration
 import { 
   generateUniversalPickupDocument, 
@@ -69,6 +72,26 @@ export class AIAutomationEngine {
     // NEW: Schedule SAM.gov opportunity monitoring (every 30 minutes)
     this.scheduleTask('sam-gov-monitoring', '*/30 * * * *', () => {
       this.runSAMGovMonitoring();
+    });
+
+    // NEW: FMCSA Shipper Intelligence Discovery (daily at 2 AM)
+    this.scheduleTask('fmcsa-shipper-discovery', '0 2 * * *', () => {
+      this.runFMCSAShipperIntelligence();
+    });
+
+    // NEW: ThomasNet Data Processing (weekly on Monday at 1 AM)
+    this.scheduleTask('thomasnet-processing', '0 1 * * 1', () => {
+      this.runThomasNetAutomation();
+    });
+
+    // NEW: Automated RFx Bidding (every 30 minutes during business hours)
+    this.scheduleTask('automated-rfx-bidding', '*/30 8-18 * * 1-5', () => {
+      this.runAutomatedRFxBidding();
+    });
+
+    // NEW: RFx Opportunity Discovery (every 2 hours during business hours)
+    this.scheduleTask('rfx-opportunity-discovery', '0 */2 8-18 * * *', () => {
+      this.runRFxOpportunityDiscovery();
     });
 
     console.log('✅ All AI automation tasks scheduled');
@@ -276,6 +299,147 @@ export class AIAutomationEngine {
     }
   }
 
+
+  // NEW: Run FMCSA Shipper Intelligence Discovery
+  private async runFMCSAShipperIntelligence() {
+    console.log('🧠 Running FMCSA Shipper Intelligence Discovery...');
+    
+    try {
+      const discoveredShippers = await fmcsaShipperIntelligence.discoverShippersFromCarriers({
+        location: 'nationwide',
+        industryFocus: 'manufacturing,retail,e-commerce',
+        maxResults: 100
+      });
+      
+      // Filter high-value prospects
+      const topProspects = discoveredShippers.filter(s => s.aiAnalysis.prospectScore >= 80);
+      
+      // Export to lead generation (simulate integration)
+      if (topProspects.length > 0) {
+        const exportResult = await fmcsaShipperIntelligence.exportShippersToLeadGeneration(topProspects);
+        
+        console.log(`✅ FMCSA Intelligence: Discovered ${exportResult.summary.totalShippers} shippers, ${exportResult.summary.highValueProspects} high-value prospects`);
+        
+        // Send summary notification
+        await this.sendSMSNotification(
+          process.env.BUSINESS_DEV_PHONE || '+1234567890',
+          `🧠 FMCSA Intelligence: Found ${exportResult.summary.highValueProspects} high-value shipper prospects. Avg score: ${exportResult.summary.averageProspectScore}`,
+          'normal'
+        );
+      } else {
+        console.log('ℹ️ No high-value shipper prospects found today');
+      }
+      
+    } catch (error) {
+      console.error('❌ FMCSA shipper intelligence failed:', error);
+    }
+  }
+
+  // NEW: Run ThomasNet Manufacturer Processing
+  private async runThomasNetAutomation() {
+    console.log('🏭 Running ThomasNet Manufacturer Data Processing...');
+    
+    try {
+      // Check for new CSV files (simulate file system check)
+      const csvFiles = await this.checkForThomasNetFiles();
+      
+      for (const csvContent of csvFiles) {
+        const result = await thomasNetAutomation.processThomasNetCSV(csvContent);
+        
+        console.log(`📊 ThomasNet Processing: ${result.totalProcessed} manufacturers processed, ${result.qualified} qualified, ${result.highPotential} high-potential`);
+        
+        // Export qualified manufacturers
+        if (result.qualified > 0) {
+          const exportResult = await thomasNetAutomation.exportToLeadGeneration(result.manufacturers, 75);
+          
+          console.log(`📈 Exported ${exportResult.summary.totalExported} qualified manufacturers to lead generation`);
+          
+          // Send summary notification
+          await this.sendSMSNotification(
+            process.env.BUSINESS_DEV_PHONE || '+1234567890',
+            `🏭 ThomasNet: Processed ${result.qualified} qualified manufacturers. Avg score: ${exportResult.summary.averageScore}. Est revenue: ${exportResult.summary.estimatedRevenue}`,
+            'normal'
+          );
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ ThomasNet automation failed:', error);
+    }
+  }
+
+  // NEW: Run Automated RFx Bidding
+  private async runAutomatedRFxBidding() {
+    console.log('📋 Running Automated RFx Bidding...');
+    
+    try {
+      const results = await rfxAutomation.runAutomatedRFxDiscovery();
+      
+      console.log(`🤖 RFx Automation Results:`);
+      console.log(`  📊 Total Opportunities: ${results.discovered.length}`);
+      console.log(`  🚀 Auto-Submitted: ${results.autoSubmitted.length}`);
+      console.log(`  📋 Queued for Review: ${results.queuedForReview.length}`);
+      console.log(`  ❌ Declined: ${results.declined.length}`);
+      console.log(`  💰 Est. Revenue Generated: $${Math.round(results.metrics.revenueGenerated)}`);
+      
+      // Send notifications for high-value auto-submissions
+      if (results.autoSubmitted.length > 0) {
+        const highValue = results.autoSubmitted.filter(op => op.estimatedValue > 500000);
+        
+        if (highValue.length > 0) {
+          await this.sendSMSNotification(
+            process.env.SALES_MANAGER_PHONE || '+1234567890',
+            `🚀 RFx Auto-Bid Alert: ${results.autoSubmitted.length} bids submitted automatically, ${highValue.length} high-value (>$500K)`,
+            'high'
+          );
+        }
+      }
+      
+      // Alert for opportunities needing review
+      if (results.queuedForReview.length > 0) {
+        await this.sendSMSNotification(
+          process.env.BID_MANAGER_PHONE || '+1234567890',
+          `📋 RFx Review Alert: ${results.queuedForReview.length} opportunities queued for manual review`,
+          'normal'
+        );
+      }
+      
+    } catch (error) {
+      console.error('❌ Automated RFx bidding failed:', error);
+    }
+  }
+
+  // NEW: Run RFx Opportunity Discovery
+  private async runRFxOpportunityDiscovery() {
+    console.log('🔍 Running RFx Opportunity Discovery...');
+    
+    try {
+      const dashboard = await rfxAutomation.getAutomationDashboard();
+      
+      console.log(`📊 RFx Discovery Status: ${dashboard.currentStatus}`);
+      console.log(`📈 Today Processed: ${dashboard.todayProcessed} opportunities`);
+      console.log(`🎯 Top Opportunities: ${dashboard.topOpportunities.length} high-scoring`);
+      
+      // Log top opportunities for visibility
+      dashboard.topOpportunities.slice(0, 3).forEach(op => {
+        console.log(`  🏆 ${op.title} - Score: ${op.aiScore.score}, Value: $${op.estimatedValue}`);
+      });
+      
+    } catch (error) {
+      console.error('❌ RFx opportunity discovery failed:', error);
+    }
+  }
+
+  // Helper method for ThomasNet file checking
+  private async checkForThomasNetFiles(): Promise<string[]> {
+    // Simulate checking for CSV files in designated folder
+    // In production, this would scan a specific directory for new CSV uploads
+    const mockCSV = `Company Name,Industry,Category,Products,Address,City,State,Zip,Phone,Website,Employees,Year,Description
+Southeast Manufacturing Inc,Automotive,Auto Parts,Brake Components;Engine Parts,123 Industrial Blvd,Atlanta,GA,30309,(555) 123-4567,www.southeastmfg.com,100-500,1985,Leading automotive parts manufacturer
+Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverages,456 Commerce Dr,Chicago,IL,60601,(555) 987-6543,www.midwestdist.com,50-100,1992,Regional food distributor serving Midwest markets`;
+    
+    return [mockCSV]; // Return mock data - in production would return actual file contents
+  }
   // Helper function to send SMS notifications
   private async sendSMSNotification(to: string, message: string, priority: string = 'normal') {
     try {

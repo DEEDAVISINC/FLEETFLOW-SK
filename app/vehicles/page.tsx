@@ -1,22 +1,21 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import StickyNote from '../components/StickyNote-Enhanced'
-import GoogleMaps from '../components/GoogleMaps'
-import FleetFlowLogo from '../components/Logo'
-import Link from 'next/link'
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import GoogleMaps from '../components/GoogleMaps';
+import StickyNote from '../components/StickyNote-Enhanced';
 
 interface Vehicle {
-  id: string
-  name: string
-  type: string
-  status: 'active' | 'inactive' | 'maintenance'
-  driver: string
-  location: string
-  fuelLevel: number
-  mileage: number
-  lastMaintenance: string
-  nextMaintenance: string
+  id: string;
+  name: string;
+  type: string;
+  status: 'active' | 'inactive' | 'maintenance';
+  driver: string;
+  location: string;
+  fuelLevel: number;
+  mileage: number;
+  lastMaintenance: string;
+  nextMaintenance: string;
 }
 
 export default function VehiclesPage() {
@@ -31,7 +30,7 @@ export default function VehiclesPage() {
       fuelLevel: 85,
       mileage: 125000,
       lastMaintenance: '2024-05-15',
-      nextMaintenance: '2024-08-15'
+      nextMaintenance: '2024-08-15',
     },
     {
       id: 'V002',
@@ -43,7 +42,7 @@ export default function VehiclesPage() {
       fuelLevel: 60,
       mileage: 89000,
       lastMaintenance: '2024-06-20',
-      nextMaintenance: '2024-09-20'
+      nextMaintenance: '2024-09-20',
     },
     {
       id: 'V003',
@@ -55,7 +54,7 @@ export default function VehiclesPage() {
       fuelLevel: 92,
       mileage: 78000,
       lastMaintenance: '2024-04-20',
-      nextMaintenance: '2024-07-20'
+      nextMaintenance: '2024-07-20',
     },
     {
       id: 'V004',
@@ -67,7 +66,7 @@ export default function VehiclesPage() {
       fuelLevel: 45,
       mileage: 156000,
       lastMaintenance: '2024-02-10',
-      nextMaintenance: '2024-05-10' // Overdue maintenance
+      nextMaintenance: '2024-05-10', // Overdue maintenance
     },
     {
       id: 'V005',
@@ -79,153 +78,251 @@ export default function VehiclesPage() {
       fuelLevel: 78,
       mileage: 65000,
       lastMaintenance: '2024-06-01',
-      nextMaintenance: '2024-07-15' // Approaching due date
-    }
-  ])
+      nextMaintenance: '2024-07-15', // Approaching due date
+    },
+  ]);
 
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [sortBy, setSortBy] = useState<'name' | 'fuelLevel' | 'mileage' | 'nextMaintenance' | 'driver'>('name')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-  const [lastUpdated, setLastUpdated] = useState(new Date())
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedVehicles, setSelectedVehicles] = useState<Set<string>>(new Set())
-  const [showBulkActions, setShowBulkActions] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<
+    'name' | 'fuelLevel' | 'mileage' | 'nextMaintenance' | 'driver'
+  >('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVehicles, setSelectedVehicles] = useState<Set<string>>(
+    new Set()
+  );
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [activeTab, setActiveTab] = useState<'fleet' | 'maintenance'>('fleet');
+  const [maintenanceView, setMaintenanceView] = useState<
+    'dashboard' | 'schedule' | 'history'
+  >('dashboard');
+
+  // Mock maintenance data for demonstration
+  const maintenanceData = {
+    upcomingTasks: [
+      {
+        id: 'T001',
+        vehicleId: 'V001',
+        vehicleName: 'Truck-045',
+        task: 'Oil Change',
+        dueDate: '2024-01-15',
+        priority: 'high',
+        cost: '$89.99',
+      },
+      {
+        id: 'T002',
+        vehicleId: 'V003',
+        vehicleName: 'Truck-067',
+        task: 'Tire Rotation',
+        dueDate: '2024-01-18',
+        priority: 'medium',
+        cost: '$45.00',
+      },
+      {
+        id: 'T003',
+        vehicleId: 'V002',
+        vehicleName: 'Van-023',
+        task: 'Brake Inspection',
+        dueDate: '2024-01-20',
+        priority: 'high',
+        cost: '$125.50',
+      },
+      {
+        id: 'T004',
+        vehicleId: 'V004',
+        vehicleName: 'Truck-089',
+        task: 'DOT Inspection',
+        dueDate: '2024-01-25',
+        priority: 'critical',
+        cost: '$275.00',
+      },
+    ],
+    recentWork: [
+      {
+        id: 'W001',
+        vehicleId: 'V001',
+        vehicleName: 'Truck-045',
+        work: 'Oil Change & Filter',
+        completedDate: '2024-12-20',
+        cost: '$89.99',
+        provider: 'Fleet Maintenance Co.',
+      },
+      {
+        id: 'W002',
+        vehicleId: 'V003',
+        vehicleName: 'Truck-067',
+        work: 'Tire Replacement',
+        completedDate: '2024-12-18',
+        cost: '$320.00',
+        provider: 'Tire Pro Services',
+      },
+      {
+        id: 'W003',
+        vehicleId: 'V002',
+        vehicleName: 'Van-023',
+        work: 'Engine Diagnostic',
+        completedDate: '2024-12-15',
+        cost: '$150.00',
+        provider: 'AutoTech Solutions',
+      },
+    ],
+    monthlySpending: 2450.75,
+    averageCostPerVehicle: 612.69,
+    scheduledThisWeek: 3,
+    overdueItems: 1,
+  };
 
   // Auto-refresh functionality
   useEffect(() => {
     const interval = setInterval(() => {
       // Simulate real-time data updates
-      setVehicles(prevVehicles => 
-        prevVehicles.map(vehicle => ({
+      setVehicles((prevVehicles) =>
+        prevVehicles.map((vehicle) => ({
           ...vehicle,
-          fuelLevel: Math.max(10, Math.min(100, vehicle.fuelLevel + (Math.random() - 0.5) * 2)), // Simulate fuel changes
-          location: vehicle.status === 'active' ? vehicle.location : vehicle.location // Keep location for active vehicles
+          fuelLevel: Math.max(
+            10,
+            Math.min(100, vehicle.fuelLevel + (Math.random() - 0.5) * 2)
+          ), // Simulate fuel changes
+          location:
+            vehicle.status === 'active' ? vehicle.location : vehicle.location, // Keep location for active vehicles
         }))
-      )
-      setLastUpdated(new Date())
-    }, 30000) // 30 seconds
+      );
+      setLastUpdated(new Date());
+    }, 30000); // 30 seconds
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   // Update bulk actions visibility when selection changes
   useEffect(() => {
-    setShowBulkActions(selectedVehicles.size > 0)
-  }, [selectedVehicles])
+    setShowBulkActions(selectedVehicles.size > 0);
+  }, [selectedVehicles]);
 
   // Close modal when clicking outside
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsModalOpen(false)
-        setSelectedVehicle(null)
+        setIsModalOpen(false);
+        setSelectedVehicle(null);
       }
-    }
-    
+    };
+
     if (isModalOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isModalOpen])
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
 
   // Manual refresh function
   const handleManualRefresh = () => {
-    setVehicles(prevVehicles => 
-      prevVehicles.map(vehicle => ({
+    setVehicles((prevVehicles) =>
+      prevVehicles.map((vehicle) => ({
         ...vehicle,
-        fuelLevel: Math.max(10, Math.min(100, vehicle.fuelLevel + (Math.random() - 0.5) * 5))
+        fuelLevel: Math.max(
+          10,
+          Math.min(100, vehicle.fuelLevel + (Math.random() - 0.5) * 5)
+        ),
       }))
-    )
-    setLastUpdated(new Date())
-  }
+    );
+    setLastUpdated(new Date());
+  };
 
   // Open vehicle details modal
   const handleVehicleClick = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle)
-    setIsModalOpen(true)
-  }
+    setSelectedVehicle(vehicle);
+    setIsModalOpen(true);
+  };
 
   // Close modal
   const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedVehicle(null)
-  }
+    setIsModalOpen(false);
+    setSelectedVehicle(null);
+  };
 
   // Handle vehicle selection
   const handleVehicleSelect = (vehicleId: string, isSelected: boolean) => {
-    const newSelectedVehicles = new Set(selectedVehicles)
+    const newSelectedVehicles = new Set(selectedVehicles);
     if (isSelected) {
-      newSelectedVehicles.add(vehicleId)
+      newSelectedVehicles.add(vehicleId);
     } else {
-      newSelectedVehicles.delete(vehicleId)
+      newSelectedVehicles.delete(vehicleId);
     }
-    setSelectedVehicles(newSelectedVehicles)
-  }
+    setSelectedVehicles(newSelectedVehicles);
+  };
 
   // Select all vehicles
   const handleSelectAll = () => {
     if (selectedVehicles.size === filteredVehicles.length) {
-      setSelectedVehicles(new Set())
+      setSelectedVehicles(new Set());
     } else {
-      setSelectedVehicles(new Set(filteredVehicles.map(v => v.id)))
+      setSelectedVehicles(new Set(filteredVehicles.map((v) => v.id)));
     }
-  }
+  };
 
   // Clear selection
   const handleClearSelection = () => {
-    setSelectedVehicles(new Set())
-  }
+    setSelectedVehicles(new Set());
+  };
 
   // Bulk actions handlers
   const handleBulkMaintenance = () => {
-    const selectedVehiclesList = Array.from(selectedVehicles).map(id => 
-      filteredVehicles.find(v => v.id === id)?.name
-    ).join(', ')
-    
-    alert(`🔧 Bulk Maintenance Scheduled\n\nThe following vehicles have been scheduled for maintenance:\n${selectedVehiclesList}\n\nThis would normally:\n• Update vehicle status to 'maintenance'\n• Notify drivers\n• Schedule maintenance appointments\n• Update fleet availability`)
-    handleClearSelection()
-  }
+    const selectedVehiclesList = Array.from(selectedVehicles)
+      .map((id) => filteredVehicles.find((v) => v.id === id)?.name)
+      .join(', ');
+
+    alert(
+      `🔧 Bulk Maintenance Scheduled\n\nThe following vehicles have been scheduled for maintenance:\n${selectedVehiclesList}\n\nThis would normally:\n• Update vehicle status to 'maintenance'\n• Notify drivers\n• Schedule maintenance appointments\n• Update fleet availability`
+    );
+    handleClearSelection();
+  };
 
   const handleBulkDriverReassignment = () => {
-    const selectedVehiclesList = Array.from(selectedVehicles).map(id => 
-      filteredVehicles.find(v => v.id === id)?.name
-    ).join(', ')
-    
-    alert(`👥 Bulk Driver Reassignment\n\nReassigning drivers for vehicles:\n${selectedVehiclesList}\n\nThis would normally:\n• Show available drivers list\n• Allow bulk reassignment\n• Update driver schedules\n• Send notifications`)
-    handleClearSelection()
-  }
+    const selectedVehiclesList = Array.from(selectedVehicles)
+      .map((id) => filteredVehicles.find((v) => v.id === id)?.name)
+      .join(', ');
+
+    alert(
+      `👥 Bulk Driver Reassignment\n\nReassigning drivers for vehicles:\n${selectedVehiclesList}\n\nThis would normally:\n• Show available drivers list\n• Allow bulk reassignment\n• Update driver schedules\n• Send notifications`
+    );
+    handleClearSelection();
+  };
 
   const handleBulkExport = () => {
-    const selectedVehiclesData = Array.from(selectedVehicles).map(id => 
-      filteredVehicles.find(v => v.id === id)
-    )
-    
-    const csvData = selectedVehiclesData.map(vehicle => 
-      `${vehicle?.id},${vehicle?.name},${vehicle?.type},${vehicle?.status},${vehicle?.driver},${vehicle?.location},${vehicle?.fuelLevel},${vehicle?.mileage},${vehicle?.lastMaintenance},${vehicle?.nextMaintenance}`
-    ).join('\n')
-    
-    const headers = 'ID,Name,Type,Status,Driver,Location,Fuel Level,Mileage,Last Maintenance,Next Maintenance\n'
-    const fullCsvData = headers + csvData
-    
-    const blob = new Blob([fullCsvData], { type: 'text/csv' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `fleet-vehicles-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
-    
-    handleClearSelection()
-  }
+    const selectedVehiclesData = Array.from(selectedVehicles).map((id) =>
+      filteredVehicles.find((v) => v.id === id)
+    );
+
+    const csvData = selectedVehiclesData
+      .map(
+        (vehicle) =>
+          `${vehicle?.id},${vehicle?.name},${vehicle?.type},${vehicle?.status},${vehicle?.driver},${vehicle?.location},${vehicle?.fuelLevel},${vehicle?.mileage},${vehicle?.lastMaintenance},${vehicle?.nextMaintenance}`
+      )
+      .join('\n');
+
+    const headers =
+      'ID,Name,Type,Status,Driver,Location,Fuel Level,Mileage,Last Maintenance,Next Maintenance\n';
+    const fullCsvData = headers + csvData;
+
+    const blob = new Blob([fullCsvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fleet-vehicles-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    handleClearSelection();
+  };
 
   // Generate mock maintenance history
   const generateMaintenanceHistory = (vehicle: Vehicle) => {
@@ -235,32 +332,32 @@ export default function VehiclesPage() {
         type: 'Oil Change & Filter',
         cost: '$89.99',
         mileage: vehicle.mileage - 5000,
-        notes: 'Routine maintenance completed'
+        notes: 'Routine maintenance completed',
       },
       {
         date: '2024-04-01',
         type: 'Tire Rotation',
         cost: '$45.00',
         mileage: vehicle.mileage - 8000,
-        notes: 'All tires rotated and balanced'
+        notes: 'All tires rotated and balanced',
       },
       {
         date: '2024-02-15',
         type: 'Brake Inspection',
         cost: '$125.50',
         mileage: vehicle.mileage - 12000,
-        notes: 'Brake pads replaced - front axle'
+        notes: 'Brake pads replaced - front axle',
       },
       {
         date: '2024-01-10',
         type: 'Annual DOT Inspection',
         cost: '$275.00',
         mileage: vehicle.mileage - 15000,
-        notes: 'Passed DOT inspection with minor repairs'
-      }
-    ]
-    return history
-  }
+        notes: 'Passed DOT inspection with minor repairs',
+      },
+    ];
+    return history;
+  };
 
   // Generate mock performance metrics
   const generatePerformanceMetrics = (vehicle: Vehicle) => {
@@ -270,81 +367,100 @@ export default function VehiclesPage() {
       averageSpeed: (55 + Math.random() * 10).toFixed(1),
       idleTime: (8 + Math.random() * 4).toFixed(1),
       deliveriesCompleted: Math.floor(200 + Math.random() * 100),
-      onTimeDeliveries: (92 + Math.random() * 6).toFixed(1)
-    }
-  }
+      onTimeDeliveries: (92 + Math.random() * 6).toFixed(1),
+    };
+  };
 
   // Check if maintenance is overdue or approaching
   const getMaintenanceStatus = (nextMaintenance: string) => {
-    const today = new Date()
-    const maintenanceDate = new Date(nextMaintenance)
-    const diffTime = maintenanceDate.getTime() - today.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
-    if (diffDays < 0) return 'overdue'
-    if (diffDays <= 7) return 'approaching'
-    return 'normal'
-  }
+    const today = new Date();
+    const maintenanceDate = new Date(nextMaintenance);
+    const diffTime = maintenanceDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'overdue';
+    if (diffDays <= 7) return 'approaching';
+    return 'normal';
+  };
 
   // Enhanced sorting function
   const sortedVehicles = [...vehicles].sort((a, b) => {
-    let aValue: any = a[sortBy]
-    let bValue: any = b[sortBy]
-    
-    if (sortBy === 'nextMaintenance') {
-      aValue = new Date(aValue)
-      bValue = new Date(bValue)
-    }
-    
-    if (sortBy === 'fuelLevel' || sortBy === 'mileage') {
-      aValue = Number(aValue)
-      bValue = Number(bValue)
-    }
-    
-    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
-    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
-    return 0
-  })
+    let aValue: any = a[sortBy];
+    let bValue: any = b[sortBy];
 
-  const filteredVehicles = sortedVehicles.filter(vehicle => {
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || vehicle.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+    if (sortBy === 'nextMaintenance') {
+      aValue = new Date(aValue);
+      bValue = new Date(bValue);
+    }
+
+    if (sortBy === 'fuelLevel' || sortBy === 'mileage') {
+      aValue = Number(aValue);
+      bValue = Number(bValue);
+    }
+
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const filteredVehicles = sortedVehicles.filter((vehicle) => {
+    const matchesSearch =
+      vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' || vehicle.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const getFuelLevelColor = (level: number) => {
-    if (level < 25) return '#ef4444'
-    if (level < 50) return '#f59e0b'
-    return '#10b981'
-  }
+    if (level < 25) return '#ef4444';
+    if (level < 50) return '#f59e0b';
+    return '#10b981';
+  };
 
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'active':
-        return { background: 'rgba(74, 222, 128, 0.2)', color: '#4ade80', border: '1px solid #4ade80' }
+        return {
+          background: 'rgba(74, 222, 128, 0.2)',
+          color: '#4ade80',
+          border: '1px solid #4ade80',
+        };
       case 'inactive':
-        return { background: 'rgba(156, 163, 175, 0.2)', color: '#9ca3af', border: '1px solid #9ca3af' }
+        return {
+          background: 'rgba(156, 163, 175, 0.2)',
+          color: '#9ca3af',
+          border: '1px solid #9ca3af',
+        };
       case 'maintenance':
-        return { background: 'rgba(251, 191, 36, 0.2)', color: '#fbbf24', border: '1px solid #fbbf24' }
+        return {
+          background: 'rgba(251, 191, 36, 0.2)',
+          color: '#fbbf24',
+          border: '1px solid #fbbf24',
+        };
       default:
-        return { background: 'rgba(156, 163, 175, 0.2)', color: '#9ca3af', border: '1px solid #9ca3af' }
+        return {
+          background: 'rgba(156, 163, 175, 0.2)',
+          color: '#9ca3af',
+          border: '1px solid #9ca3af',
+        };
     }
-  }
+  };
 
   const handleSort = (field: typeof sortBy) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
-      setSortBy(field)
-      setSortOrder('asc')
+      setSortBy(field);
+      setSortOrder('asc');
     }
-  }
+  };
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           input::placeholder {
             color: rgba(255, 255, 255, 0.8) !important;
             opacity: 1 !important;
@@ -358,13 +474,13 @@ export default function VehiclesPage() {
           input:-ms-input-placeholder {
             color: rgba(255, 255, 255, 0.8) !important;
           }
-          
+
           select option {
             background: #1e3a8a !important;
             color: white !important;
             padding: 8px !important;
           }
-          
+
           @keyframes pulse {
             0% {
               transform: scale(1);
@@ -379,11 +495,11 @@ export default function VehiclesPage() {
               opacity: 1;
             }
           }
-          
+
           .maintenance-alert {
             animation: pulse 2s infinite;
           }
-          
+
           .sort-button {
             background: none;
             border: none;
@@ -394,17 +510,17 @@ export default function VehiclesPage() {
             border-radius: 4px;
             transition: all 0.2s ease;
           }
-          
+
           .sort-button:hover {
             background: rgba(255, 255, 255, 0.1);
             color: white;
           }
-          
+
                      .sort-button.active {
              background: rgba(255, 255, 255, 0.2);
              color: white;
            }
-           
+
            @keyframes slideUp {
              from {
                transform: translateX(-50%) translateY(20px);
@@ -415,118 +531,165 @@ export default function VehiclesPage() {
                opacity: 1;
              }
           }
-        `
-      }} />
-      
-      <div style={{
-        minHeight: '100vh',
-        background: `
-          linear-gradient(135deg, #022c22 0%, #032e2a 25%, #044e46 50%, #042f2e 75%, #0a1612 100%),
-          radial-gradient(circle at 20% 20%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
-          radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.03) 0%, transparent 50%)
         `,
-        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
-        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
-        backgroundAttachment: 'fixed',
-        paddingTop: '80px',
-        position: 'relative'
-      }}>
-      {/* Back Button */}
-      <div style={{ padding: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <button style={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            color: 'white',
-            padding: '12px 24px',
-            borderRadius: '12px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            fontSize: '16px'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}>
-            <span style={{ marginRight: '8px' }}>←</span>
-            Back to Dashboard
-          </button>
-        </Link>
-      </div>
+        }}
+      />
 
-      {/* Main Container */}
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '0 24px 32px'
-      }}>
-        {/* Header */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '32px',
-          marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <div style={{
-                padding: '16px',
+      <div
+        style={{
+          minHeight: '100vh',
+          background:
+            'linear-gradient(135deg, #022c22 0%, #032e2a 25%, #044e46 50%, #042f2e 75%, #0a1612 100%)',
+          backgroundAttachment: 'fixed',
+          paddingTop: '80px',
+          position: 'relative',
+        }}
+      >
+        {/* Back Button */}
+        <div style={{ padding: '24px' }}>
+          <Link href='/' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
                 background: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '12px'
-              }}>
-                <span style={{ fontSize: '32px' }}>🚛</span>
-              </div>
-              <div>
-                <h1 style={{
-                  fontSize: '36px',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  margin: '0 0 8px 0',
-                  textShadow: '0 4px 8px rgba(0,0,0,0.3)'
-                }}>
-                  Fleet Management
-                </h1>
-                <p style={{
-                  fontSize: '18px',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  margin: '0 0 8px 0'
-                }}>
-                  Monitor and manage your entire fleet in real-time
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{
-                      width: '12px',
-                      height: '12px',
-                      background: '#4ade80',
-                      borderRadius: '50%',
-                      animation: 'pulse 2s infinite'
-                    }}></div>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Live Load Tracking
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontSize: '16px',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <span style={{ marginRight: '8px' }}>←</span>
+              Back to Dashboard
+            </button>
+          </Link>
+        </div>
+
+        {/* Main Container */}
+        <div
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '0 24px 32px',
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              marginBottom: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+              >
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <span style={{ fontSize: '32px' }}>🚛</span>
+                </div>
+                <div>
+                  <h1
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                      textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    Fleet Management
+                  </h1>
+                  <p
+                    style={{
+                      fontSize: '18px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: '0 0 8px 0',
+                    }}
+                  >
+                    Monitor and manage your entire fleet in real-time
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '24px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          background: '#4ade80',
+                          borderRadius: '50%',
+                          animation: 'pulse 2s infinite',
+                        }}
+                      ></div>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Live Load Tracking
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      {vehicles.length} Vehicles Active
                     </span>
-                  </div>
-                  <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                    {vehicles.length} Vehicles Active
-                  </span>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       Last Updated: {lastUpdated.toLocaleTimeString()}
                     </span>
+                  </div>
                 </div>
               </div>
-            </div>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={handleManualRefresh}
@@ -540,945 +703,2086 @@ export default function VehiclesPage() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    fontSize: '14px'
+                    fontSize: '14px',
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.3)';
                     e.currentTarget.style.transform = 'translateY(-2px)';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.2)';
                     e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   🔄 Refresh
                 </button>
-            <button style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '12px',
-              border: 'none',
-                  fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              + Add Vehicle
-            </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Enhanced Search and Filter Controls */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Search and Filter Row */}
-              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <input
-                type="text"
-                placeholder="Search vehicles or drivers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  padding: '12px 16px',
-                  border: '2px solid rgba(255, 255, 255, 0.6)',
-                  borderRadius: '12px',
-                  outline: 'none',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  color: 'white',
-                  fontSize: '16px',
-                    flex: '1',
-                    minWidth: '200px'
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.border = '2px solid rgba(255, 255, 255, 0.8)';
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.border = '2px solid rgba(255, 255, 255, 0.6)';
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                }}
-              />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={{
-                  padding: '12px 16px',
-                  border: '2px solid rgba(255, 255, 255, 0.6)',
-                  borderRadius: '12px',
-                  outline: 'none',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  color: 'white',
-                  fontSize: '16px',
-                    minWidth: '200px'
-                  }}
-                >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="maintenance">Maintenance</option>
-                </select>
-              </div>
-              
-                             {/* Sort Controls */}
-               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                 <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontWeight: '500' }}>
-                   Sort by:
-                 </span>
-                 <button
-                   onClick={() => handleSort('name')}
-                   className={`sort-button ${sortBy === 'name' ? 'active' : ''}`}
-                 >
-                   Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
-                 </button>
-                 <button
-                   onClick={() => handleSort('fuelLevel')}
-                   className={`sort-button ${sortBy === 'fuelLevel' ? 'active' : ''}`}
-                 >
-                   Fuel Level {sortBy === 'fuelLevel' && (sortOrder === 'asc' ? '↑' : '↓')}
-                 </button>
-                 <button
-                   onClick={() => handleSort('mileage')}
-                   className={`sort-button ${sortBy === 'mileage' ? 'active' : ''}`}
-                 >
-                   Mileage {sortBy === 'mileage' && (sortOrder === 'asc' ? '↑' : '↓')}
-                 </button>
-                 <button
-                   onClick={() => handleSort('driver')}
-                   className={`sort-button ${sortBy === 'driver' ? 'active' : ''}`}
-                 >
-                   Driver {sortBy === 'driver' && (sortOrder === 'asc' ? '↑' : '↓')}
-                 </button>
-                 <button
-                   onClick={() => handleSort('nextMaintenance')}
-                   className={`sort-button ${sortBy === 'nextMaintenance' ? 'active' : ''}`}
-                 >
-                   Maintenance Due {sortBy === 'nextMaintenance' && (sortOrder === 'asc' ? '↑' : '↓')}
-                 </button>
-               </div>
-               
-               {/* Bulk Selection Controls */}
-               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginTop: '8px' }}>
-                 <button
-                   onClick={handleSelectAll}
-                   className="sort-button"
-                 >
-                   {selectedVehicles.size === filteredVehicles.length ? '☑️ Deselect All' : '☐ Select All'}
-                 </button>
-                 {selectedVehicles.size > 0 && (
-                   <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                     {selectedVehicles.size} vehicle{selectedVehicles.size !== 1 ? 's' : ''} selected
-                   </span>
-                 )}
-               </div>
-            </div>
-                     </div>
-
-           {/* Bulk Actions Bar */}
-           {showBulkActions && (
-             <div style={{
-               position: 'fixed',
-               bottom: '32px',
-               left: '50%',
-               transform: 'translateX(-50%)',
-               background: 'rgba(255, 255, 255, 0.15)',
-               backdropFilter: 'blur(10px)',
-               borderRadius: '16px',
-               padding: '16px 24px',
-               border: '1px solid rgba(255, 255, 255, 0.2)',
-               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-               zIndex: 100,
-               display: 'flex',
-               alignItems: 'center',
-               gap: '16px',
-               animation: 'slideUp 0.3s ease-out'
-             }}>
-               <span style={{ color: 'white', fontSize: '14px', fontWeight: '500' }}>
-                 {selectedVehicles.size} vehicle{selectedVehicles.size !== 1 ? 's' : ''} selected
-               </span>
-               <div style={{ display: 'flex', gap: '8px' }}>
-                 <button
-                   onClick={handleBulkMaintenance}
-                   style={{
-                     background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                     color: 'white',
-                     padding: '8px 16px',
-                     borderRadius: '8px',
-                     border: 'none',
-                     fontSize: '14px',
-                     fontWeight: '600',
-                     cursor: 'pointer',
-                     transition: 'all 0.2s ease'
-                   }}
-                   onMouseOver={(e) => {
-                     e.currentTarget.style.transform = 'translateY(-2px)';
-                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-                   }}
-                   onMouseOut={(e) => {
-                     e.currentTarget.style.transform = 'translateY(0)';
-                     e.currentTarget.style.boxShadow = 'none';
-                   }}
-                 >
-                   🔧 Send to Maintenance
-                 </button>
-                 <button
-                   onClick={handleBulkDriverReassignment}
-                   style={{
-                     background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-                     color: 'white',
-                     padding: '8px 16px',
-                     borderRadius: '8px',
-                     border: 'none',
-                     fontSize: '14px',
-                     fontWeight: '600',
-                     cursor: 'pointer',
-                     transition: 'all 0.2s ease'
-                   }}
-                   onMouseOver={(e) => {
-                     e.currentTarget.style.transform = 'translateY(-2px)';
-                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-                   }}
-                   onMouseOut={(e) => {
-                     e.currentTarget.style.transform = 'translateY(0)';
-                     e.currentTarget.style.boxShadow = 'none';
-                   }}
-                 >
-                   👥 Reassign Drivers
-                 </button>
-                 <button
-                   onClick={handleBulkExport}
-                   style={{
-                     background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-                     color: 'white',
-                     padding: '8px 16px',
-                     borderRadius: '8px',
-                     border: 'none',
-                     fontSize: '14px',
-                     fontWeight: '600',
-                     cursor: 'pointer',
-                     transition: 'all 0.2s ease'
-                   }}
-                   onMouseOver={(e) => {
-                     e.currentTarget.style.transform = 'translateY(-2px)';
-                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-                   }}
-                   onMouseOut={(e) => {
-                     e.currentTarget.style.transform = 'translateY(0)';
-                     e.currentTarget.style.boxShadow = 'none';
-                   }}
-                 >
-                   📊 Export Fleet Data
-                 </button>
-                 <button
-                   onClick={handleClearSelection}
-                   style={{
-                     background: 'rgba(255, 255, 255, 0.2)',
-                     color: 'white',
-                     padding: '8px 16px',
-                     borderRadius: '8px',
-                     border: '1px solid rgba(255, 255, 255, 0.3)',
-                     fontSize: '14px',
-                     fontWeight: '600',
-                     cursor: 'pointer',
-                     transition: 'all 0.2s ease'
-                   }}
-                   onMouseOver={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                }}
-                   onMouseOut={(e) => {
-                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                   }}
-                 >
-                   ✕ Clear
-                 </button>
-            </div>
-          </div>
-           )}
-
-        {/* Vehicle Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
-            {filteredVehicles.map((vehicle) => {
-              const maintenanceStatus = getMaintenanceStatus(vehicle.nextMaintenance)
-              
-              return (
-            <div key={vehicle.id} style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.3s ease',
-                  cursor: 'pointer',
-                  position: 'relative'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-                }}
-                onClick={() => handleVehicleClick(vehicle)}
-                >
-                  
-                  {                   /* Selection Checkbox */}
-                   <div style={{
-                     position: 'absolute',
-                     top: '12px',
-                     left: '12px',
-                     zIndex: 10
-                   }}>
-                     <input
-                       type="checkbox"
-                       checked={selectedVehicles.has(vehicle.id)}
-                       onChange={(e) => {
-                         e.stopPropagation()
-                         handleVehicleSelect(vehicle.id, e.target.checked)
-                       }}
-                       style={{
-                         width: '18px',
-                         height: '18px',
-                         cursor: 'pointer',
-                         accentColor: '#10b981'
-                       }}
-                     />
-                   </div>
-                   
-                   {/* Maintenance Alert Indicator */}
-                   {maintenanceStatus !== 'normal' && (
-                     <div style={{
-                       position: 'absolute',
-                       top: '12px',
-                       right: '12px',
-                       width: '12px',
-                       height: '12px',
-                       borderRadius: '50%',
-                       background: maintenanceStatus === 'overdue' ? '#ef4444' : '#f59e0b',
-                       animation: 'pulse 2s infinite',
-                       boxShadow: `0 0 10px ${maintenanceStatus === 'overdue' ? '#ef4444' : '#f59e0b'}`
-                     }}
-                     title={maintenanceStatus === 'overdue' ? 'Maintenance Overdue!' : 'Maintenance Due Soon'}
-                     />
-                   )}
-                   
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', margin: 0 }}>
-                  {vehicle.name}
-                </h3>
-                <span style={{
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  ...getStatusStyle(vehicle.status)
-                }}>
-                  {vehicle.status}
-                </span>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Type:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{vehicle.type}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Driver:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{vehicle.driver}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Location:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{vehicle.location}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Mileage:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{vehicle.mileage.toLocaleString()} mi</span>
-                </div>
-                    
-                    {/* Maintenance Status */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Next Maintenance:</span>
-                      <span style={{ 
-                        color: maintenanceStatus === 'overdue' ? '#ef4444' : maintenanceStatus === 'approaching' ? '#f59e0b' : 'white', 
-                        fontWeight: '500', 
-                        fontSize: '14px' 
-                      }}>
-                        {new Date(vehicle.nextMaintenance).toLocaleDateString()}
-                        {maintenanceStatus === 'overdue' && ' ⚠️'}
-                        {maintenanceStatus === 'approaching' && ' 🔄'}
-                      </span>
-                    </div>
-                
-                {/* Fuel Level */}
-                <div style={{ marginTop: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Fuel Level:</span>
-                        <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{Math.round(vehicle.fuelLevel)}%</span>
-                  </div>
-                  <div style={{
-                    width: '100%',
-                    height: '8px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                          width: `${vehicle.fuelLevel}%`,
-                      height: '100%',
-                      background: getFuelLevelColor(vehicle.fuelLevel),
-                          transition: 'width 0.3s ease'
-                    }}></div>
-                  </div>
-                </div>
-                  </div>
-                  </div>
-              )
-            })}
-        </div>
-
-        {/* Map and Additional Components */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr',
-          gap: '32px'
-        }}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: '0 0 16px 0' }}>
-              🗺️ Live Load Tracking
-            </h3>
-            
-            {/* Load Address Input Section */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '16px',
-              marginBottom: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '600', margin: '0 0 12px 0' }}>
-                Add New Load for Tracking
-              </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: '12px', alignItems: 'end' }}>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Pickup Address
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter pickup address..."
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.6)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.4)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Delivery Address
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter delivery address..."
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.6)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.4)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                    }}
-                  />
-                </div>
                 <button
                   style={{
-                    background: 'linear-gradient(135deg, #059669, #047857)',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                     color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
                     border: 'none',
-                    fontSize: '12px',
+                    fontSize: '16px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    height: '36px'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.2)';
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
-                  onClick={() => {
-                    alert('🚛 New load added to tracking system!\n\nIn a real implementation, this would:\n• Create a new load entry\n• Assign to available driver\n• Initialize GPS tracking\n• Send notifications to dispatch');
-                  }}
                 >
-                  Add Load
+                  + Add Vehicle
                 </button>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '120px 120px 120px 1fr', gap: '12px', marginTop: '12px' }}>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Driver
-                  </label>
-                  <select
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '12px',
-                      outline: 'none'
-                    }}
-                  >
-                    <option value="" style={{ background: '#1e3a8a', color: 'white' }}>Select Driver</option>
-                    <option value="D001" style={{ background: '#1e3a8a', color: 'white' }}>John Smith</option>
-                    <option value="D002" style={{ background: '#1e3a8a', color: 'white' }}>Sarah Wilson</option>
-                    <option value="D003" style={{ background: '#1e3a8a', color: 'white' }}>Mike Johnson</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Vehicle
-                  </label>
-                  <select
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '12px',
-                      outline: 'none'
-                    }}
-                  >
-                    <option value="" style={{ background: '#1e3a8a', color: 'white' }}>Select Vehicle</option>
-                    <option value="V001" style={{ background: '#1e3a8a', color: 'white' }}>Truck-045</option>
-                    <option value="V002" style={{ background: '#1e3a8a', color: 'white' }}>Van-023</option>
-                    <option value="V003" style={{ background: '#1e3a8a', color: 'white' }}>Truck-067</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Weight (lbs)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="45,000"
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '12px',
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
-                    Cargo Type
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Electronics, Food, etc."
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      color: 'white',
-                      fontSize: '12px',
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-              </div>
             </div>
+          </div>
 
-            {/* Live Tracking Map */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              borderRadius: '12px',
-              minHeight: '400px',
-              padding: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              position: 'relative'
-            }}>
-              {/* Tracking Status Bar */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '16px',
-                padding: '12px',
-                background: 'linear-gradient(135deg, #1e3a8a, #1e1b4b)',
-                borderRadius: '8px',
-                color: 'white'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    background: '#10b981',
-                    borderRadius: '50%',
-                    animation: 'pulse 2s infinite'
-                  }}></div>
-                  <span style={{ fontSize: '14px', fontWeight: '600' }}>
-                    Live Tracking Active - {filteredVehicles.filter(v => v.status === 'active').length} Vehicles
-                  </span>
-                </div>
-                <div style={{ fontSize: '12px', opacity: 0.8 }}>
-                  Last Updated: {new Date().toLocaleTimeString()}
-                </div>
-              </div>
+          {/* Tab Navigation */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '8px',
+              marginBottom: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              gap: '8px',
+            }}
+          >
+            <button
+              onClick={() => setActiveTab('fleet')}
+              style={{
+                background:
+                  activeTab === 'fleet'
+                    ? 'rgba(255, 255, 255, 0.3)'
+                    : 'transparent',
+                color: 'white',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                flex: 1,
+                textAlign: 'center',
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== 'fleet') {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== 'fleet') {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              🚛 Fleet Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('maintenance')}
+              style={{
+                background:
+                  activeTab === 'maintenance'
+                    ? 'rgba(255, 255, 255, 0.3)'
+                    : 'transparent',
+                color: 'white',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                flex: 1,
+                textAlign: 'center',
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== 'maintenance') {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== 'maintenance') {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              🔧 Maintenance Management
+            </button>
+          </div>
 
-              {/* Map Placeholder with Vehicle Markers */}
-              <div style={{
-                background: 'linear-gradient(135deg, #e5f3ff 0%, #f0f9ff 100%)',
-                borderRadius: '8px',
-                height: '300px',
-                position: 'relative',
-                border: '2px dashed #93c5fd',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
-                {/* Simulated Map Background */}
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: `
-                    linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%),
-                    linear-gradient(0deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%)
-                  `,
-                  backgroundSize: '50px 50px'
-                }}></div>
-
-                {/* Vehicle Markers */}
-                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                  {filteredVehicles.filter(v => v.status === 'active').map((vehicle, index) => (
-                    <div
-                      key={vehicle.id}
-                      style={{
-                        position: 'absolute',
-                        left: `${20 + index * 25}%`,
-                        top: `${30 + index * 15}%`,
-                        background: 'white',
-                        borderRadius: '50%',
-                        width: '40px',
-                        height: '40px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                        border: '3px solid #10b981',
-                        animation: `pulse 2s infinite ${index * 0.5}s`,
-                        cursor: 'pointer'
-                      }}
-                      title={`${vehicle.name} - ${vehicle.driver} - ${vehicle.location}`}
-                      onClick={() => {
-                        alert(`🚛 Vehicle: ${vehicle.name}\n👨‍💼 Driver: ${vehicle.driver}\n📍 Location: ${vehicle.location}\n⛽ Fuel: ${vehicle.fuelLevel}%\n📊 Status: ${vehicle.status}`);
-                      }}
-                    >
-                      <span style={{ fontSize: '18px' }}>🚛</span>
-                    </div>
-                  ))}
-                  
-                  {/* Central Map Label */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    textAlign: 'center',
-                    color: '#6b7280',
-                    fontSize: '14px',
-                    fontWeight: '600'
-                  }}>
-                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>🗺️</div>
-                    <div>Interactive Fleet Tracking Map</div>
-                    <div style={{ fontSize: '12px', marginTop: '4px', opacity: 0.7 }}>
-                      Click vehicle markers for details
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Active Loads Summary */}
-              <div style={{
-                marginTop: '16px',
-                padding: '12px',
-                background: 'rgba(59, 130, 246, 0.1)',
-                borderRadius: '8px',
-                border: '1px solid rgba(59, 130, 246, 0.2)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <h5 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1e40af' }}>
-                    Active Load Summary
-                  </h5>
-                    <Link href="/tracking">
+          {/* MAINTENANCE MANAGEMENT SECTION */}
+          {activeTab === 'maintenance' && (
+            <div>
+              {/* Maintenance Sub-Navigation */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  marginBottom: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    onClick={() => setMaintenanceView('dashboard')}
+                    style={{
+                      background:
+                        maintenanceView === 'dashboard'
+                          ? 'rgba(34, 197, 94, 0.3)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    📊 Dashboard
+                  </button>
+                  <button
+                    onClick={() => setMaintenanceView('schedule')}
+                    style={{
+                      background:
+                        maintenanceView === 'schedule'
+                          ? 'rgba(34, 197, 94, 0.3)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    📅 Schedule
+                  </button>
+                  <button
+                    onClick={() => setMaintenanceView('history')}
+                    style={{
+                      background:
+                        maintenanceView === 'history'
+                          ? 'rgba(34, 197, 94, 0.3)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    📋 History
+                  </button>
                   <button
                     style={{
-                      background: 'none',
-                      border: '1px solid #3b82f6',
-                      color: '#3b82f6',
-                      padding: '4px 12px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
                       cursor: 'pointer',
-                          fontWeight: '500',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.background = 'none';
-                          e.currentTarget.style.transform = 'translateY(0)';
+                      marginLeft: 'auto',
                     }}
                   >
-                    View Full Dashboard
+                    ➕ Schedule Maintenance
                   </button>
-                    </Link>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px', fontSize: '12px', color: '#374151' }}>
-                  <div>📦 <strong>{filteredVehicles.filter(v => v.status === 'active').length}</strong> Active Loads</div>
-                  <div>🚛 <strong>{vehicles.length}</strong> Total Vehicles</div>
-                  <div>⏱️ <strong>94%</strong> On-Time Delivery</div>
-                  <div>📍 <strong>Real-time</strong> GPS Tracking</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <StickyNote 
-              section="vehicles" 
-              entityId="fleet" 
-              entityName="Fleet Management" 
-              entityType="vehicle"
-              isNotificationHub={true}
-            />
-          </div>
-        </div>        </div>
-      </div>
-
-      {/* Vehicle Details Modal */}
-      {selectedVehicle && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000,
-          backdropFilter: 'blur(10px)'
-        }} onClick={handleCloseModal}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '32px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
-            width: '90%',
-            maxWidth: '800px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px'
-          }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, color: 'white', fontSize: '28px', fontWeight: 'bold' }}>
-                {selectedVehicle.name} Details
-              </h2>
-              <button onClick={handleCloseModal} style={{ background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' }}>×</button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-              <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '24px', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', margin: '0 0 16px 0' }}>
-                  General Information
-                </h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>ID:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{selectedVehicle.id}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Type:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{selectedVehicle.type}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Status:</span>
-                  <span style={{ 
-                    color: selectedVehicle.status === 'active' ? '#4ade80' : selectedVehicle.status === 'maintenance' ? '#fbbf24' : '#9ca3af', 
-                    fontWeight: '500', 
-                    fontSize: '14px' 
-                  }}>
-                    {selectedVehicle.status}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Driver:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{selectedVehicle.driver}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Location:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{selectedVehicle.location}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Fuel Level:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{Math.round(selectedVehicle.fuelLevel)}%</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Mileage:</span>
-                  <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{selectedVehicle.mileage.toLocaleString()} mi</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Next Maintenance:</span>
-                  <span style={{ 
-                    color: getMaintenanceStatus(selectedVehicle.nextMaintenance) === 'overdue' ? '#ef4444' : getMaintenanceStatus(selectedVehicle.nextMaintenance) === 'approaching' ? '#f59e0b' : 'white', 
-                    fontWeight: '500', 
-                    fontSize: '14px' 
-                  }}>
-                    {new Date(selectedVehicle.nextMaintenance).toLocaleDateString()}
-                    {getMaintenanceStatus(selectedVehicle.nextMaintenance) === 'overdue' && ' ⚠️'}
-                    {getMaintenanceStatus(selectedVehicle.nextMaintenance) === 'approaching' && ' 🔄'}
-                  </span>
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '24px', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', margin: '0 0 16px 0' }}>
-                  Performance Metrics
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Avg Fuel Efficiency:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).avgFuelEfficiency} MPG</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Total Miles Driven:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).totalMilesDriven}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Average Speed:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).averageSpeed} MPH</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Idle Time:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).idleTime} Hours</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Deliveries Completed:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).deliveriesCompleted}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>On-Time Deliveries:</span>
-                    <span style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{generatePerformanceMetrics(selectedVehicle).onTimeDeliveries}%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '24px', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', margin: '0 0 16px 0' }}>
-                  Maintenance History
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {generateMaintenanceHistory(selectedVehicle).map((item, index) => (
-                    <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: 'white' }}>{item.type}</div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>{item.date}</div>
+              {/* Maintenance Dashboard */}
+              {maintenanceView === 'dashboard' && (
+                <div>
+                  {/* Maintenance KPIs */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(280px, 1fr))',
+                      gap: '24px',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <h3
+                          style={{
+                            color: 'white',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            margin: 0,
+                          }}
+                        >
+                          Overdue Items
+                        </h3>
+                        <span style={{ fontSize: '24px' }}>⚠️</span>
                       </div>
-                      <div style={{ textAlign: 'right', flex: 1 }}>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: 'white' }}>{item.cost}</div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>Mileage: {item.mileage}</div>
+                      <div
+                        style={{
+                          fontSize: '36px',
+                          fontWeight: 'bold',
+                          color: '#ef4444',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {maintenanceData.overdueItems}
                       </div>
-                      <div style={{ flex: 1, textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>{item.notes}</div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Requires immediate attention
                       </div>
                     </div>
-                  ))}
+
+                    <div
+                      style={{
+                        background: 'rgba(251, 191, 36, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        border: '1px solid rgba(251, 191, 36, 0.3)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <h3
+                          style={{
+                            color: 'white',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            margin: 0,
+                          }}
+                        >
+                          This Week
+                        </h3>
+                        <span style={{ fontSize: '24px' }}>📅</span>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '36px',
+                          fontWeight: 'bold',
+                          color: '#fbbf24',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {maintenanceData.scheduledThisWeek}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Scheduled maintenance tasks
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <h3
+                          style={{
+                            color: 'white',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            margin: 0,
+                          }}
+                        >
+                          Monthly Spending
+                        </h3>
+                        <span style={{ fontSize: '24px' }}>💰</span>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '36px',
+                          fontWeight: 'bold',
+                          color: '#22c55e',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        ${maintenanceData.monthlySpending.toLocaleString()}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Average: ${maintenanceData.averageCostPerVehicle}
+                        /vehicle
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Upcoming Tasks */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      marginBottom: '32px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      🔧 Upcoming Maintenance Tasks
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      {maintenanceData.upcomingTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                color: 'white',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {task.vehicleName} - {task.task}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Due: {new Date(task.dueDate).toLocaleDateString()}{' '}
+                              • Estimated Cost: {task.cost}
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                background:
+                                  task.priority === 'critical'
+                                    ? 'rgba(239, 68, 68, 0.3)'
+                                    : task.priority === 'high'
+                                      ? 'rgba(251, 191, 36, 0.3)'
+                                      : 'rgba(34, 197, 94, 0.3)',
+                                color:
+                                  task.priority === 'critical'
+                                    ? '#ef4444'
+                                    : task.priority === 'high'
+                                      ? '#fbbf24'
+                                      : '#22c55e',
+                                padding: '6px 12px',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {task.priority}
+                            </span>
+                            <button
+                              style={{
+                                background:
+                                  'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Schedule
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recent Work */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      ✅ Recent Completed Work
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      {maintenanceData.recentWork.map((work) => (
+                        <div
+                          key={work.id}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                color: 'white',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {work.vehicleName} - {work.work}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Completed:{' '}
+                              {new Date(
+                                work.completedDate
+                              ).toLocaleDateString()}{' '}
+                              • Provider: {work.provider}
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
+                            {work.cost}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Maintenance Schedule View */}
+              {maintenanceView === 'schedule' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                    📅
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Maintenance Schedule
+                  </h3>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    Interactive calendar view for scheduling and managing
+                    maintenance appointments coming soon.
+                  </p>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Open Full Calendar
+                  </button>
+                </div>
+              )}
+
+              {/* Maintenance History View */}
+              {maintenanceView === 'history' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                    📋
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Maintenance History
+                  </h3>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    Comprehensive maintenance records, reports, and analytics
+                    for your entire fleet.
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <button
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📊 Generate Report
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📥 Export Data
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* FLEET OVERVIEW SECTION - Only show when activeTab is 'fleet' */}
+          {activeTab === 'fleet' && (
+            <>
+              {/* Enhanced Search and Filter Controls */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  marginBottom: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                >
+                  {/* Search and Filter Row */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <input
+                      type='text'
+                      placeholder='Search vehicles or drivers...'
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{
+                        padding: '12px 16px',
+                        border: '2px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        outline: 'none',
+                        background: 'rgba(255, 255, 255, 0.25)',
+                        backdropFilter: 'blur(10px)',
+                        color: 'white',
+                        fontSize: '16px',
+                        flex: '1',
+                        minWidth: '200px',
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.border =
+                          '2px solid rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.3)';
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.border =
+                          '2px solid rgba(255, 255, 255, 0.6)';
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.25)';
+                      }}
+                    />
+
+                    {/* Filter by Status */}
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      style={{
+                        padding: '12px 16px',
+                        border: '2px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        outline: 'none',
+                        background: 'rgba(255, 255, 255, 0.25)',
+                        backdropFilter: 'blur(10px)',
+                        color: 'white',
+                        fontSize: '16px',
+                        minWidth: '150px',
+                      }}
+                    >
+                      <option
+                        value='all'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        All Status
+                      </option>
+                      <option
+                        value='active'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Active
+                      </option>
+                      <option
+                        value='maintenance'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Maintenance
+                      </option>
+                      <option
+                        value='inactive'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Inactive
+                      </option>
+                    </select>
+
+                    {/* Sort Options */}
+                    <select
+                      value={`${sortBy}-${sortOrder}`}
+                      onChange={(e) => {
+                        const [field, order] = e.target.value.split('-') as [
+                          typeof sortBy,
+                          typeof sortOrder,
+                        ];
+                        setSortBy(field);
+                        setSortOrder(order);
+                      }}
+                      style={{
+                        padding: '12px 16px',
+                        border: '2px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        outline: 'none',
+                        background: 'rgba(255, 255, 255, 0.25)',
+                        backdropFilter: 'blur(10px)',
+                        color: 'white',
+                        fontSize: '16px',
+                        minWidth: '180px',
+                      }}
+                    >
+                      <option
+                        value='name-asc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Name (A-Z)
+                      </option>
+                      <option
+                        value='name-desc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Name (Z-A)
+                      </option>
+                      <option
+                        value='fuelLevel-desc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Fuel (High-Low)
+                      </option>
+                      <option
+                        value='fuelLevel-asc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Fuel (Low-High)
+                      </option>
+                      <option
+                        value='mileage-desc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Mileage (High-Low)
+                      </option>
+                      <option
+                        value='mileage-asc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Mileage (Low-High)
+                      </option>
+                      <option
+                        value='nextMaintenance-asc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Maintenance (Due Soon)
+                      </option>
+                      <option
+                        value='nextMaintenance-desc'
+                        style={{ background: '#1e3a8a', color: 'white' }}
+                      >
+                        Maintenance (Due Later)
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* Quick Stats Row */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '24px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Total Vehicles:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
+                        {vehicles.length}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Active:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: '#4ade80',
+                        }}
+                      >
+                        {vehicles.filter((v) => v.status === 'active').length}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Maintenance:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: '#fbbf24',
+                        }}
+                      >
+                        {
+                          vehicles.filter((v) => v.status === 'maintenance')
+                            .length
+                        }
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Filtered Results:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
+                        {filteredVehicles.length}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bulk Actions Bar */}
+              {showBulkActions && (
+                <div
+                  style={{
+                    position: 'fixed',
+                    bottom: '24px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '16px 24px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                    zIndex: 1000,
+                    animation: 'slideUp 0.3s ease-out',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                  }}
+                >
+                  <span
+                    style={{
+                      color: '#1f2937',
+                      fontWeight: '600',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {selectedVehicles.size} vehicle
+                    {selectedVehicles.size !== 1 ? 's' : ''} selected
+                  </span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={handleSelectAll}
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        color: '#3b82f6',
+                        border: '1px solid #3b82f6',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {selectedVehicles.size === filteredVehicles.length
+                        ? 'Deselect All'
+                        : 'Select All'}
+                    </button>
+                    <button
+                      onClick={handleBulkMaintenance}
+                      style={{
+                        background: 'rgba(251, 191, 36, 0.1)',
+                        color: '#fbbf24',
+                        border: '1px solid #fbbf24',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🔧 Schedule Maintenance
+                    </button>
+                    <button
+                      onClick={handleBulkDriverReassignment}
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        color: '#22c55e',
+                        border: '1px solid #22c55e',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      👥 Reassign Drivers
+                    </button>
+                    <button
+                      onClick={handleBulkExport}
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        color: '#8b5cf6',
+                        border: '1px solid #8b5cf6',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📊 Export Data
+                    </button>
+                    <button
+                      onClick={handleClearSelection}
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        color: '#ef4444',
+                        border: '1px solid #ef4444',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ✕ Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Vehicle Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                {filteredVehicles.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: selectedVehicles.has(vehicle.id)
+                        ? '2px solid #3b82f6'
+                        : '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: selectedVehicles.has(vehicle.id)
+                        ? '0 8px 32px rgba(59, 130, 246, 0.3)'
+                        : '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onClick={() => handleVehicleClick(vehicle)}
+                    onMouseOver={(e) => {
+                      if (!selectedVehicles.has(vehicle.id)) {
+                        e.currentTarget.style.transform = 'translateY(-4px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 12px 40px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (!selectedVehicles.has(vehicle.id)) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow =
+                          '0 8px 32px rgba(0, 0, 0, 0.1)';
+                      }
+                    }}
+                  >
+                    {/* Vehicle Selection Checkbox */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        zIndex: 10,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVehicleSelect(
+                          vehicle.id,
+                          !selectedVehicles.has(vehicle.id)
+                        );
+                      }}
+                    >
+                      <input
+                        type='checkbox'
+                        checked={selectedVehicles.has(vehicle.id)}
+                        onChange={() => {}} // Handled by onClick above
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          cursor: 'pointer',
+                          accentColor: '#3b82f6',
+                        }}
+                      />
+                    </div>
+
+                    {/* Rest of vehicle card content... */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: '12px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '12px',
+                          }}
+                        >
+                          <span style={{ fontSize: '24px' }}>🚛</span>
+                        </div>
+                        <div>
+                          <h3
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                              color: 'white',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {vehicle.name}
+                          </h3>
+                          <p
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              margin: 0,
+                            }}
+                          >
+                            {vehicle.type}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          ...getStatusStyle(vehicle.status),
+                          padding: '6px 12px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {vehicle.status}
+                      </span>
+                    </div>
+
+                    {/* Vehicle details grid */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div>
+                        <p
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          Driver
+                        </p>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            margin: 0,
+                            fontWeight: '500',
+                          }}
+                        >
+                          {vehicle.driver}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          Location
+                        </p>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            margin: 0,
+                            fontWeight: '500',
+                          }}
+                        >
+                          {vehicle.location}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          Fuel Level
+                        </p>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '60px',
+                              height: '6px',
+                              background: 'rgba(255, 255, 255, 0.2)',
+                              borderRadius: '3px',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${vehicle.fuelLevel}%`,
+                                height: '100%',
+                                background:
+                                  vehicle.fuelLevel > 50
+                                    ? '#4ade80'
+                                    : vehicle.fuelLevel > 25
+                                      ? '#fbbf24'
+                                      : '#ef4444',
+                                borderRadius: '3px',
+                                transition: 'all 0.3s ease',
+                              }}
+                            ></div>
+                          </div>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              fontWeight: '500',
+                            }}
+                          >
+                            {Math.round(vehicle.fuelLevel)}%
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          Mileage
+                        </p>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            margin: 0,
+                            fontWeight: '500',
+                          }}
+                        >
+                          {vehicle.mileage.toLocaleString()} mi
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Maintenance status */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div>
+                        <p
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          Next Maintenance
+                        </p>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color:
+                              getMaintenanceStatus(vehicle.nextMaintenance) ===
+                              'overdue'
+                                ? '#ef4444'
+                                : getMaintenanceStatus(
+                                      vehicle.nextMaintenance
+                                    ) === 'approaching'
+                                  ? '#fbbf24'
+                                  : 'white',
+                            margin: 0,
+                            fontWeight: '500',
+                          }}
+                          className={
+                            getMaintenanceStatus(vehicle.nextMaintenance) ===
+                            'overdue'
+                              ? 'maintenance-alert'
+                              : ''
+                          }
+                        >
+                          {new Date(
+                            vehicle.nextMaintenance
+                          ).toLocaleDateString()}
+                          {getMaintenanceStatus(vehicle.nextMaintenance) ===
+                            'overdue' && ' ⚠️'}
+                          {getMaintenanceStatus(vehicle.nextMaintenance) ===
+                            'approaching' && ' 🔄'}
+                        </p>
+                      </div>
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Handle view details
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Map and Additional Components */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 1fr',
+                  gap: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    🗺️ Live Fleet Tracking
+                  </h3>
+                  <GoogleMaps />
+                </div>
+                <div>
+                  <StickyNote
+                    section='vehicles'
+                    entityId='fleet'
+                    entityName='Fleet Management'
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Vehicle Details Modal */}
+        {isModalOpen && selectedVehicle && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 2000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px',
+            }}
+            onClick={handleCloseModal}
+          >
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+                borderRadius: '20px',
+                padding: '32px',
+                maxWidth: '800px',
+                width: '100%',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '24px',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
+                >
+                  <div
+                    style={{
+                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <span style={{ fontSize: '32px' }}>🚛</span>
+                  </div>
+                  <div>
+                    <h2
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {selectedVehicle.name}
+                    </h2>
+                    <p
+                      style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        margin: 0,
+                      }}
+                    >
+                      {selectedVehicle.type}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleCloseModal}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.3)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.2)';
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Modal Content Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '24px',
+                }}
+              >
+                {/* Vehicle Information */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Vehicle Information
+                  </h3>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Status:
+                    </span>
+                    <span
+                      style={{
+                        ...getStatusStyle(selectedVehicle.status),
+                        padding: '4px 8px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {selectedVehicle.status}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Driver:
+                    </span>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {selectedVehicle.driver}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Location:
+                    </span>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {selectedVehicle.location}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Fuel Level:
+                    </span>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {Math.round(selectedVehicle.fuelLevel)}%
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Mileage:
+                    </span>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {selectedVehicle.mileage.toLocaleString()} mi
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Next Maintenance:
+                    </span>
+                    <span
+                      style={{
+                        color:
+                          getMaintenanceStatus(
+                            selectedVehicle.nextMaintenance
+                          ) === 'overdue'
+                            ? '#ef4444'
+                            : getMaintenanceStatus(
+                                  selectedVehicle.nextMaintenance
+                                ) === 'approaching'
+                              ? '#f59e0b'
+                              : 'white',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {new Date(
+                        selectedVehicle.nextMaintenance
+                      ).toLocaleDateString()}
+                      {getMaintenanceStatus(selectedVehicle.nextMaintenance) ===
+                        'overdue' && ' ⚠️'}
+                      {getMaintenanceStatus(selectedVehicle.nextMaintenance) ===
+                        'approaching' && ' 🔄'}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Performance Metrics
+                  </h3>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Avg Fuel Efficiency:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {
+                          generatePerformanceMetrics(selectedVehicle)
+                            .avgFuelEfficiency
+                        }{' '}
+                        MPG
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Total Miles Driven:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {
+                          generatePerformanceMetrics(selectedVehicle)
+                            .totalMilesDriven
+                        }
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Average Speed:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {
+                          generatePerformanceMetrics(selectedVehicle)
+                            .averageSpeed
+                        }{' '}
+                        MPH
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Idle Time:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {generatePerformanceMetrics(selectedVehicle).idleTime}{' '}
+                        Hours
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Deliveries Completed:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {
+                          generatePerformanceMetrics(selectedVehicle)
+                            .deliveriesCompleted
+                        }
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        On-Time Deliveries:
+                      </span>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {
+                          generatePerformanceMetrics(selectedVehicle)
+                            .onTimeDeliveries
+                        }
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    gridColumn: '1 / -1',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Maintenance History
+                  </h3>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {generateMaintenanceHistory(selectedVehicle).map(
+                      (item, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: 'white',
+                              }}
+                            >
+                              {item.type}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              {item.date}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right', flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: 'white',
+                              }}
+                            >
+                              {item.cost}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Mileage: {item.mileage}
+                            </div>
+                          </div>
+                          <div style={{ flex: 1, textAlign: 'right' }}>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              {item.notes}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
-  )
+  );
 }
