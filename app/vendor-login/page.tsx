@@ -25,6 +25,7 @@ export default function VendorLoginPage() {
 
     try {
       console.log('🔐 Attempting login with:', credentials.username);
+      console.log('🔐 Current credentials state:', credentials);
       
       const result = extendedShipperService.authenticateShipper(
         credentials.username,
@@ -364,6 +365,32 @@ export default function VendorLoginPage() {
               }}
             >
               🧪 Test Login (No Redirect)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                console.log('🧪 Current form state:');
+                console.log('Username:', credentials.username);
+                console.log('Password:', credentials.password);
+                console.log('Is loading:', isLoading);
+                console.log('Error:', error);
+                alert(`Current Form State:\n\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nCheck console for details.`);
+              }}
+              style={{
+                width: '100%',
+                background: '#8b5cf6',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginBottom: '16px',
+              }}
+            >
+              🧪 Show Form State
             </button>
           </form>
         ) : (
