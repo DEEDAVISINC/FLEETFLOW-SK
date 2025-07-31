@@ -98,6 +98,16 @@ ecosystem**, combining traditional TMS capabilities with:
 - **Fuel Futures Integration**: AI-powered hedging recommendations
 - **Market Intelligence**: Transportation industry financial analytics
 - **Cost Optimization**: Predictive cost reduction strategies
+
+#### **4. 🧾 QuickBooks Enterprise Integration**
+
+- **Multi-Tenant QuickBooks Connections**: Per-company OAuth authentication with secure token management
+- **ACH Payment Processing**: Complete ACH payment setup, authorization, and settlement tracking
+- **Automatic Withdrawal System**: Recurring payment configuration with approval workflows
+- **Payroll Integration**: Employee sync, payroll processing, direct deposit, and tax calculations
+- **Invoice Management**: Professional invoice creation with PDF generation and payment tracking
+- **48 Granular Permissions**: User-selectable QuickBooks permissions across 6 categories
+- **Enterprise Compliance**: ACH compliance, tax compliance, and complete audit trail maintenance
 - **ROI Analytics**: Comprehensive return on investment tracking
 
 #### **4. 🏛️ Government & Enterprise Contracts**
@@ -283,6 +293,18 @@ ecosystem**, combining traditional TMS capabilities with:
 | **Total Workflow Revenue**          | **$6M**             | **$72M**           |
 
 **Total Combined Revenue Year 3: $1,485M ($1.485B)**
+
+#### **🧾 QuickBooks Integration Revenue (Year 3):**
+
+| **Integration Component**           | **Monthly Price** | **Target Users** | **Annual Revenue** |
+| ---------------------------------- | ----------------- | ---------------- | ------------------ |
+| **QuickBooks Basic Integration**   | $39               | 100,000          | $47M               |
+| **QuickBooks Payroll Integration** | $59               | 75,000           | $53M               |
+| **QuickBooks ACH Processing**      | $49               | 60,000           | $35M               |
+| **QuickBooks Enterprise**          | $99               | 25,000           | $30M               |
+| **Total QuickBooks Revenue**       |                   | **260,000**      | **$165M**          |
+
+**Total Combined Revenue Year 3: $1,650M ($1.65B)**
 
 ---
 

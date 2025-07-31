@@ -1032,6 +1032,210 @@ enterprise-grade financial operations!**
 
 ---
 
+## 🧾 QuickBooks Integration ⭐ **NEW ENTERPRISE ACCOUNTING**
+
+### **What is QuickBooks Integration?**
+
+FleetFlow's comprehensive QuickBooks integration provides seamless accounting and financial management
+capabilities directly within the platform. This enterprise-grade integration enables ACH payments,
+automatic withdrawals, payroll processing, and complete invoice management with real-time
+synchronization to QuickBooks Online.
+
+### **Accessing QuickBooks Integration**
+
+1. **From Navigation**: Click "Settings" → "🧾 QuickBooks Integration"
+2. **Direct URL**: `/admin/settings/quickbooks`
+3. **Required Permissions**: Admin or QuickBooks Manager access
+4. **User Management**: Individual users can select QuickBooks permissions in their profile
+
+### **Key Features**
+
+#### **🔗 Multi-Tenant QuickBooks Connections**
+
+- **Per-Tenant OAuth**: Each company connects their own QuickBooks account
+- **Secure Token Management**: Automatic token refresh and secure credential storage
+- **Environment Support**: Sandbox and production environment configuration
+- **Connection Status**: Real-time connection monitoring and error handling
+
+#### **💰 Payroll Integration**
+
+- **Employee Sync**: Automatic employee data synchronization
+- **Payroll Processing**: Complete payroll calculation and processing
+- **Direct Deposit**: Automated direct deposit setup and management
+- **Tax Calculations**: Federal, state, and local tax calculations
+- **Pay Stub Generation**: Professional pay stub creation and distribution
+- **Deduction Management**: Comprehensive deduction tracking and processing
+
+#### **🏦 ACH Payment Processing**
+
+- **ACH Authorization**: Secure bank account authorization and verification
+- **Automatic Payments**: Recurring ACH payment setup and processing
+- **Payment Scheduling**: Flexible payment scheduling (weekly, biweekly, monthly)
+- **Settlement Tracking**: Real-time payment settlement and confirmation
+- **Error Handling**: Comprehensive error handling and retry mechanisms
+- **Compliance Management**: ACH compliance and audit trail maintenance
+
+#### **🧾 Invoice Management**
+
+- **Invoice Creation**: Professional invoice generation with custom templates
+- **PDF Generation**: Automatic PDF invoice creation and distribution
+- **Payment Tracking**: Real-time payment status and tracking
+- **Customer Management**: Complete customer data synchronization
+- **Tax Calculations**: Automatic tax calculation and application
+- **Payment Options**: Multiple payment method support (ACH, credit card, check)
+
+#### **🔄 Automatic Withdrawal System**
+
+- **Recurring Setup**: Automated recurring payment configuration
+- **Withdrawal Scheduling**: Flexible withdrawal scheduling options
+- **Approval Workflows**: Management approval for automatic withdrawals
+- **Monitoring**: Real-time withdrawal monitoring and alerts
+- **Compliance**: Regulatory compliance and audit trail maintenance
+- **Error Recovery**: Automatic error handling and retry mechanisms
+
+### **User Permission System**
+
+#### **48 QuickBooks Permissions**
+
+Users can select from 48 granular QuickBooks permissions across 6 categories:
+
+**🏢 Company Settings (8 permissions)**
+- Connection Management, OAuth Setup, Company Information
+- Environment Configuration, Token Management, Error Handling
+- Sync Status, Connection Testing
+
+**⚙️ Feature Management (8 permissions)**
+- Payroll Enable, ACH Enable, Invoicing Enable
+- Auto Withdrawal Enable, Sync Schedule, Data Mapping
+- Error Notifications, Audit Logs
+
+**📊 User Dashboard Integration (8 permissions)**
+- Status Widget, Sync Indicators, Error Display
+- Last Sync Time, Feature Status, Connection Status
+- Sync Progress, Notification Badges
+
+**💰 Payroll Integration (8 permissions)**
+- Payroll Sync, Payroll Export, Payroll Mapping
+- Payroll Schedule, Payroll Approval, Payroll Reports
+- Payroll Taxes, Payroll Deductions
+
+**🏦 ACH Payment Integration (8 permissions)**
+- ACH Setup, ACH Authorization, ACH Processing
+- ACH Settlement, ACH Error Handling, ACH Compliance
+- ACH Reporting, ACH Audit Trail
+
+**🧾 Invoicing Integration (8 permissions)**
+- Invoice Creation, Invoice Sync, Invoice Templates
+- Invoice Approval, Invoice Payment, Invoice Reporting
+- Invoice Tracking, Invoice Archiving
+
+### **QuickBooks Settings Dashboard**
+
+#### **Connection Status**
+
+- **Connection Monitoring**: Real-time connection status display
+- **Company Information**: Connected QuickBooks company details
+- **Environment Configuration**: Sandbox vs production settings
+- **Last Sync Time**: Most recent synchronization timestamp
+- **Error Handling**: Connection error display and resolution
+
+#### **Feature Configuration**
+
+- **Payroll Integration**: Enable/disable payroll sync and processing
+- **ACH Processing**: Configure ACH payment capabilities
+- **Invoicing**: Set up invoice creation and management
+- **Auto Withdrawal**: Configure automatic withdrawal features
+
+#### **Environment Management**
+
+- **Sandbox Mode**: Testing environment for development
+- **Production Mode**: Live environment for real data
+- **Environment Switching**: Seamless environment transitions
+- **Data Isolation**: Complete data separation between environments
+
+### **Integration Workflows**
+
+#### **Initial Setup**
+
+1. **Access Settings**: Navigate to QuickBooks Integration settings
+2. **Connect Account**: Click "Connect to QuickBooks" button
+3. **OAuth Flow**: Complete QuickBooks OAuth authentication
+4. **Company Selection**: Select your QuickBooks company
+5. **Feature Configuration**: Enable desired QuickBooks features
+6. **Environment Setup**: Configure sandbox or production environment
+7. **Test Connection**: Verify connection and functionality
+
+#### **Daily Operations**
+
+- **Automatic Sync**: Real-time data synchronization
+- **Payment Processing**: Automated ACH payment processing
+- **Invoice Management**: Seamless invoice creation and tracking
+- **Payroll Processing**: Automated payroll calculations and payments
+- **Error Monitoring**: Continuous error monitoring and alerts
+
+#### **User Management**
+
+- **Permission Assignment**: Assign QuickBooks permissions to users
+- **Feature Access**: Control user access to QuickBooks features
+- **Role-Based Access**: Different permission levels for different roles
+- **Audit Trail**: Complete audit trail of user actions
+
+### **Security & Compliance**
+
+#### **Data Security**
+
+- **OAuth 2.0**: Secure OAuth 2.0 authentication flow
+- **Token Management**: Secure token storage and refresh
+- **Data Encryption**: End-to-end data encryption
+- **Access Controls**: Role-based access control system
+
+#### **Compliance Features**
+
+- **ACH Compliance**: Full ACH compliance and audit trails
+- **Tax Compliance**: Automatic tax calculation and reporting
+- **Financial Reporting**: Comprehensive financial reporting capabilities
+- **Audit Trails**: Complete audit trail maintenance
+
+### **Getting Started with QuickBooks**
+
+#### **For Administrators**
+
+1. **Access Settings**: Navigate to QuickBooks Integration settings
+2. **Configure Environment**: Set up sandbox or production environment
+3. **Connect QuickBooks**: Complete OAuth authentication
+4. **Enable Features**: Configure desired QuickBooks features
+5. **Assign Permissions**: Set up user permissions and access
+6. **Test Integration**: Verify all functionality works correctly
+
+#### **For Users**
+
+1. **Check Permissions**: Verify QuickBooks permissions in user profile
+2. **Access Features**: Use QuickBooks features based on permissions
+3. **Monitor Status**: Check QuickBooks connection status
+4. **Report Issues**: Contact support for integration issues
+
+### **Support & Troubleshooting**
+
+#### **Common Issues**
+
+- **Connection Problems**: OAuth token refresh and reconnection
+- **Sync Errors**: Data synchronization troubleshooting
+- **Payment Issues**: ACH payment processing problems
+- **Permission Errors**: User permission configuration issues
+
+#### **Support Resources**
+
+- **QuickBooks Documentation**: Comprehensive integration guides
+- **Technical Support**: 24/7 technical support for integration issues
+- **Training Resources**: QuickBooks integration training materials
+- **Best Practices**: Integration best practices and recommendations
+
+**🧾 The FleetFlow QuickBooks integration provides enterprise-grade accounting capabilities with
+comprehensive ACH payment processing, automatic withdrawals, payroll management, and complete
+invoice management, enabling seamless financial operations within the platform!**
+
+---
+
 ## 🏢 Enhanced Carrier Portal ⭐ **NEW VISUAL DESIGN**
 
 ### **Overview**

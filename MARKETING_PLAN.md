@@ -98,6 +98,17 @@ workflows.
   - Load assignment confirmation integration with visual alerts
 
 - **⛽ Real-Time Financial Intelligence**:
+  - Live fuel rate monitoring with price change tracking
+  - Cost optimization recommendations and market analysis
+  - Integration with Financial Markets Service for comprehensive intelligence
+
+- **🧾 QuickBooks Enterprise Integration**:
+  - Multi-tenant QuickBooks connections with OAuth authentication
+  - ACH payment processing with automatic withdrawal capabilities
+  - Payroll integration with employee sync and direct deposit
+  - Professional invoice management with PDF generation
+  - 48 granular user permissions across 6 integration categories
+  - Enterprise compliance with ACH and tax audit trails
   - Live fuel rate monitoring with Financial Markets Service integration
   - Cost optimization recommendations and price change tracking
   - Market intelligence for route and fuel purchasing decisions
