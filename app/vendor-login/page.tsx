@@ -337,6 +337,13 @@ export default function VendorLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
+              onClick={(e) => {
+                // Backup click handler in case form submission doesn't work
+                const target = e.target as HTMLButtonElement;
+                if (target.type === 'submit') {
+                  console.log('🔘 Sign In button clicked directly');
+                }
+              }}
               style={{
                 width: '100%',
                 background: isLoading ? '#6b7280' : '#10b981',
