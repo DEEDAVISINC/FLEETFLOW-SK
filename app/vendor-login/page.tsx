@@ -451,6 +451,59 @@ export default function VendorLoginPage() {
             >
               🧪 Step-by-Step Test
             </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                console.log('🧪 TESTING REDIRECT FUNCTIONALITY');
+                
+                // First authenticate
+                const result = extendedShipperService.authenticateShipper(
+                  credentials.username,
+                  credentials.password
+                );
+                
+                if (result.success && result.shipper) {
+                  console.log('✅ Authentication successful, testing redirect...');
+                  
+                  // Set up session
+                  const sessionData = {
+                    shipperId: result.shipper.id,
+                    companyName: result.shipper.companyName,
+                    loginTime: new Date().toISOString(),
+                  };
+                  
+                  localStorage.setItem('vendorSession', JSON.stringify(sessionData));
+                  console.log('💾 Session stored, attempting redirect...');
+                  
+                  // Test redirect
+                  try {
+                    router.push('/vendor-portal');
+                    console.log('✅ Redirect initiated successfully');
+                    alert('✅ REDIRECT TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nRedirect: INITIATED\n\nYou should be redirected to the vendor portal.');
+                  } catch (error) {
+                    console.error('❌ Redirect failed:', error);
+                    alert('❌ REDIRECT TEST FAILED!\n\nError: ' + error + '\n\nCheck console for details.');
+                  }
+                } else {
+                  alert('❌ REDIRECT TEST FAILED!\n\nAuthentication failed: ' + result.error);
+                }
+              }}
+              style={{
+                width: '100%',
+                background: '#059669',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginBottom: '16px',
+              }}
+            >
+              🧪 Test Redirect
+            </button>
           </form>
         ) : (
           /* Forgot Password Form */
