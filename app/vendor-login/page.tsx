@@ -37,14 +37,18 @@ export default function VendorLoginPage() {
         console.log('✅ Login successful for:', result.shipper.companyName);
         
         // Store shipper info in session/localStorage for demo
-        localStorage.setItem(
-          'vendorSession',
-          JSON.stringify({
-            shipperId: result.shipper.id,
-            companyName: result.shipper.companyName,
-            loginTime: new Date().toISOString(),
-          })
-        );
+        const sessionData = {
+          shipperId: result.shipper.id,
+          companyName: result.shipper.companyName,
+          loginTime: new Date().toISOString(),
+        };
+        
+        localStorage.setItem('vendorSession', JSON.stringify(sessionData));
+        console.log('💾 Session stored:', sessionData);
+
+        // Test if we can read the session back
+        const testSession = localStorage.getItem('vendorSession');
+        console.log('🧪 Session read test:', testSession);
 
         console.log('💾 Session stored, redirecting to vendor portal...');
 
@@ -105,6 +109,44 @@ export default function VendorLoginPage() {
       const result = extendedShipperService.authenticateShipper(cred.username, cred.password);
       console.log(`🧪 Test ${cred.username}:`, result);
     });
+  };
+
+  // Simple test function that shows results on page
+  const testAuthAndShowResults = () => {
+    const results = demoCredentials.map(cred => {
+      const result = extendedShipperService.authenticateShipper(cred.username, cred.password);
+      return { credential: cred, result };
+    });
+    
+    console.log('🧪 All authentication test results:', results);
+    
+    // Show results in an alert for easy viewing
+    const successCount = results.filter(r => r.result.success).length;
+    const totalCount = results.length;
+    alert(`🧪 Authentication Test Results:\n\nSuccess: ${successCount}/${totalCount}\n\nCheck console for detailed results.`);
+  };
+
+  // Test login without redirect
+  const testLoginWithoutRedirect = async () => {
+    try {
+      console.log('🧪 Testing login without redirect...');
+      
+      const result = extendedShipperService.authenticateShipper(
+        credentials.username,
+        credentials.password
+      );
+
+      console.log('🧪 Test login result:', result);
+
+      if (result.success && result.shipper) {
+        alert(`✅ Login Test Successful!\n\nCompany: ${result.shipper.companyName}\nShipper ID: ${result.shipper.id}\n\nAuthentication is working correctly.`);
+      } else {
+        alert(`❌ Login Test Failed!\n\nError: ${result.error}\n\nAuthentication is not working.`);
+      }
+    } catch (err) {
+      console.error('🚨 Test login error:', err);
+      alert('🚨 Test login error occurred. Check console for details.');
+    }
   };
 
   // Run test on component mount
@@ -287,38 +329,41 @@ export default function VendorLoginPage() {
             )}
 
             <button
-              type='submit'
+              type="submit"
               disabled={isLoading}
               style={{
                 width: '100%',
-                background: isLoading
-                  ? 'rgba(255, 255, 255, 0.3)'
-                  : 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                background: isLoading ? '#6b7280' : '#10b981',
                 color: 'white',
-                border: 'none',
+                padding: '14px',
                 borderRadius: '8px',
-                padding: '14px 24px',
+                border: 'none',
                 fontSize: '1rem',
                 fontWeight: '600',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s ease',
-                opacity: isLoading ? 0.7 : 1,
-              }}
-              onMouseOver={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 6px 20px rgba(20, 184, 166, 0.4)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
+                marginBottom: '16px',
               }}
             >
-              {isLoading ? '🔄 Signing In...' : '🚀 Sign In'}
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </button>
+
+            <button
+              type="button"
+              onClick={testLoginWithoutRedirect}
+              style={{
+                width: '100%',
+                background: '#3b82f6',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginBottom: '16px',
+              }}
+            >
+              🧪 Test Login (No Redirect)
             </button>
           </form>
         ) : (
@@ -527,6 +572,22 @@ export default function VendorLoginPage() {
           <div style={{ marginTop: '12px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)' }}>
             Click any credential above to auto-fill the login form
           </div>
+          <button
+            onClick={testAuthAndShowResults}
+            style={{
+              background: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              marginTop: '12px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '600'
+            }}
+          >
+            🧪 Test All Credentials
+          </button>
         </div>
 
         {/* Footer */}
