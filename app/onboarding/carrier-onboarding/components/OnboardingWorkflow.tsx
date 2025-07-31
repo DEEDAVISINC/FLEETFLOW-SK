@@ -6,6 +6,7 @@ import { DocumentUploadEnhanced } from './DocumentUploadEnhanced';
 import { FactoringSetup } from './FactoringSetup';
 import { AgreementSigning } from './AgreementSigning';
 import { PortalSetup } from './PortalSetup';
+import { TravelLimitsCommodities } from './TravelLimitsCommodities';
 import { onboardingIntegration, OnboardingRecord as IntegrationRecord } from '../../../services/onboarding-integration';
 
 interface OnboardingStep {
@@ -50,6 +51,14 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
       completed: false,
       current: true,
       icon: '📊'
+    },
+    {
+      id: 'limits',
+      title: 'Travel Limits & Commodities',
+      description: 'Configure carrier travel restrictions and approved commodities',
+      completed: false,
+      current: false,
+      icon: '🗺️'
     },
     {
       id: 'documents',
@@ -173,6 +182,14 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
         );
       case 1:
         return (
+          <TravelLimitsCommodities
+            onDataConfigured={(data) => handleStepComplete(data)}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        );
+      case 2:
+        return (
           <DocumentUploadEnhanced
             onDocumentUploaded={(doc: any) => {
               // Update workflow data with document info
@@ -187,7 +204,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
             carrierData={workflowData.verification}
           />
         );
-      case 2:
+      case 3:
         return (
           <FactoringSetup
             onFactoringSetup={(data) => handleStepComplete(data)}
@@ -195,7 +212,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
             onBack={handleBack}
           />
         );
-      case 3:
+      case 4:
         return (
           <AgreementSigning
             onAgreementsSigned={(agreements) => handleStepComplete(agreements)}
@@ -203,7 +220,7 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({ onComple
             onBack={handleBack}
           />
         );
-      case 4:
+      case 5:
         return (
           <PortalSetup
             onPortalSetup={(data) => handleStepComplete(data)}
