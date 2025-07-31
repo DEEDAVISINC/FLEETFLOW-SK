@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { extendedShipperService } from '../services/shipperService';
+import React from 'react'; // Added missing import for React.useEffect
 
 export default function VendorLoginPage() {
   const [credentials, setCredentials] = useState({
@@ -23,12 +24,18 @@ export default function VendorLoginPage() {
     setError('');
 
     try {
+      console.log('🔐 Attempting login with:', credentials.username);
+      
       const result = extendedShipperService.authenticateShipper(
         credentials.username,
         credentials.password
       );
 
+      console.log('🔐 Authentication result:', result);
+
       if (result.success && result.shipper) {
+        console.log('✅ Login successful for:', result.shipper.companyName);
+        
         // Store shipper info in session/localStorage for demo
         localStorage.setItem(
           'vendorSession',
@@ -39,12 +46,16 @@ export default function VendorLoginPage() {
           })
         );
 
+        console.log('💾 Session stored, redirecting to vendor portal...');
+
         // Redirect to vendor portal dashboard
         router.push('/vendor-portal');
       } else {
+        console.log('❌ Login failed:', result.error);
         setError(result.error || 'Login failed');
       }
     } catch (err) {
+      console.error('🚨 Login error:', err);
       setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -86,6 +97,20 @@ export default function VendorLoginPage() {
       shipperId: 'TSL-204-085', // 9-character identifier
     },
   ];
+
+  // Debug function to test authentication
+  const testAuthentication = () => {
+    console.log('🧪 Testing authentication service...');
+    demoCredentials.forEach(cred => {
+      const result = extendedShipperService.authenticateShipper(cred.username, cred.password);
+      console.log(`🧪 Test ${cred.username}:`, result);
+    });
+  };
+
+  // Run test on component mount
+  React.useEffect(() => {
+    testAuthentication();
+  }, []);
 
   return (
     <div
@@ -467,6 +492,42 @@ export default function VendorLoginPage() {
             </div>
           </>
         )}
+
+        {/* Demo Credentials Section */}
+        <div style={{ marginTop: '32px', padding: '20px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
+          <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '16px' }}>
+            🧪 Demo Credentials
+          </h3>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {demoCredentials.map((cred, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCredentials({ username: cred.username, password: cred.password });
+                  console.log('🧪 Testing credentials:', cred);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontSize: '0.9rem'
+                }}
+              >
+                <div style={{ fontWeight: '600', marginBottom: '4px' }}>{cred.company}</div>
+                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                  Username: {cred.username} | Password: {cred.password}
+                </div>
+              </button>
+            ))}
+          </div>
+          <div style={{ marginTop: '12px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            Click any credential above to auto-fill the login form
+          </div>
+        </div>
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: '32px' }}>
