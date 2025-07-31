@@ -93,6 +93,14 @@ BILLCOM_PASSWORD=your_billcom_password_here
 BILLCOM_ENVIRONMENT=production
 BILLCOM_ORG_ID=your_billcom_org_id_here
 
+# 🧾 QUICKBOOKS INTEGRATION
+QUICKBOOKS_CLIENT_ID=your_quickbooks_client_id_here
+QUICKBOOKS_CLIENT_SECRET=your_quickbooks_client_secret_here
+QUICKBOOKS_REDIRECT_URI=https://your-domain.com/api/quickbooks/auth
+NEXT_PUBLIC_QUICKBOOKS_CLIENT_ID=your_quickbooks_client_id_here
+NEXT_PUBLIC_QUICKBOOKS_REDIRECT_URI=https://your-domain.com/api/quickbooks/auth
+QUICKBOOKS_ENVIRONMENT=sandbox
+
 # ===================================================================
 # 🏢 PHASE 3 - ENTERPRISE PARTNERSHIPS (INVITATION ONLY)
 # ===================================================================

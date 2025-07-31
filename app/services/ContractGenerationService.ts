@@ -92,8 +92,11 @@ export interface GeneratedContract {
   };
   terms: {
     commissionRate: number;
+    commissionType?: string; // 'one_time' | 'recurring_revenue_share'
     paymentSchedule: string;
     reportingRequirements: string;
+    recurringCommissionTerms?: string;
+    revenueTrackingRequirement?: string;
     auditRights: string;
     penaltyClauses: string[];
     terminationClauses: string[];
@@ -101,12 +104,28 @@ export interface GeneratedContract {
   revenueTracking: {
     totalRevenue: number;
     commissionEarned: number;
+    recurringRevenue?: number;
     lastPaymentDate?: string;
     nextPaymentDate: string;
     paymentHistory: Array<{
       date: string;
       amount: number;
       transactionId: string;
+      customerId?: string;
+      customerName?: string;
+      isRecurring?: boolean;
+      revenueAmount?: number;
+      commissionRate?: number;
+    }>;
+    aiGeneratedCustomers?: Array<{
+      customerId: string;
+      customerName: string;
+      firstPaymentDate: string;
+      lastPaymentDate: string;
+      totalRevenue: number;
+      totalCommission: number;
+      paymentCount: number;
+      isActive: boolean;
     }>;
   };
   metadata: {
@@ -139,7 +158,7 @@ export class ContractGenerationService {
 
   /**
    * Generate comprehensive ironclad contract for broker lead conversion
-   * UPDATED: 10% commission rate for brokers
+   * UPDATED: 50% recurring revenue share for brokers - ongoing commission for lifetime of AI-generated customer relationships
    */
   async generateLeadContract(
     data: LeadContractData
@@ -152,7 +171,7 @@ export class ContractGenerationService {
         brokerInitials: data.brokerId?.slice(0, 2).toUpperCase() || 'XX',
         brokerCompany: data.brokerCompany,
         shipperCode: (data.shipperCompany || 'XXX').slice(0, 3).toUpperCase(),
-        commissionRate: 10, // UPDATED: 10% for broker contracts
+        commissionRate: 50, // UPDATED: 50% recurring revenue share for broker contracts
         statusCode: 'P', // Pending signature by default
       };
       const generatedId =
@@ -186,14 +205,20 @@ export class ContractGenerationService {
           },
         },
         terms: {
-          commissionRate: 10.0, // UPDATED: 10% commission rate for brokers
-          paymentSchedule: 'Net 15 days from invoice date',
+          commissionRate: 50.0, // UPDATED: 50% recurring revenue share for brokers
+          commissionType: 'recurring_revenue_share', // NEW: Ongoing revenue sharing model
+          paymentSchedule:
+            'Net 15 days from invoice date for all ongoing revenue',
           reportingRequirements:
-            'Monthly revenue reports due by 5th of each month',
+            'Monthly revenue reports due by 5th of each month for all AI-generated leads',
+          recurringCommissionTerms:
+            'FleetFlow receives 50% of ALL revenue generated from AI-provided leads on an ongoing basis for the duration of customer relationships',
+          revenueTrackingRequirement:
+            'Broker must report all revenue from AI-generated customers monthly',
           auditRights:
-            'FleetFlow reserves the right to audit broker records at any time',
-          penaltyClauses: this.generatePenaltyClauses(),
-          terminationClauses: this.generateTerminationClauses(),
+            'FleetFlow reserves the right to audit broker records at any time to verify recurring revenue reporting',
+          penaltyClauses: this.generateRecurringPenaltyClauses(),
+          terminationClauses: this.generateRecurringTerminationClauses(),
         },
         revenueTracking: {
           totalRevenue: 0,
@@ -413,6 +438,52 @@ export class ContractGenerationService {
       'LIQUIDATED DAMAGES: In the event of early termination by Dispatcher without cause, Dispatcher agrees to pay liquidated damages equal to 6 months of average monthly commission payments, calculated based on the previous 6 months of revenue.',
 
       'NON-COMPETE: For 12 months following termination, Dispatcher may not directly dispatch for any carriers introduced through FleetFlow AI-generated leads without paying a $50,000 interference fee plus ongoing 5% commission to FleetFlow.',
+    ];
+  }
+
+  /**
+   * Generate recurring revenue share penalty clauses for 50% commission model
+   */
+  private generateRecurringPenaltyClauses(): string[] {
+    return [
+      'FAILURE TO PAY RECURRING COMMISSION: If Broker fails to pay the 50% recurring revenue share within 15 days of invoice date, a late fee of 2% per month (24% annually) will be assessed on all outstanding amounts. After 30 days of non-payment, FleetFlow will immediately LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including but not limited to: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, and all API access. SHIPPER INFORMATION ACCESS WILL BE COMPLETELY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will remain suspended until all outstanding payments, penalties, and interest are paid in full. FleetFlow reserves the right to terminate this agreement and pursue legal action for collection of all outstanding commissions plus legal fees.',
+
+      'UNDERREPORTING ONGOING REVENUE PENALTY: If FleetFlow discovers that Broker has underreported ongoing revenue from AI-generated customers by more than 3%, Broker will be assessed a penalty equal to 300% of the underreported commission amount, plus interest at 2% per month from the date the revenue should have been reported. Additionally, FleetFlow will immediately SUSPEND BROKER ACCESS to all FleetFlow systems for a minimum of 30 days or until the underreported revenue is fully disclosed and all penalties are paid. During suspension, Broker will lose access to: AI Lead Generation, FreightFlow RFx Platform, Broker Dashboard, CRM System, Analytics, all API integrations, and SHIPPER INFORMATION ACCESS including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, and shipper relationship management.',
+
+      'REVENUE CONCEALMENT PENALTY: Any attempt to conceal ongoing revenue from AI-generated customers, redirect customers to avoid revenue sharing, or engage in any form of revenue diversion will result in immediate contract termination and a penalty equal to 1000% of all concealed revenue, plus legal fees and court costs. FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE PERMANENTLY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will be permanently revoked and all data will be frozen until legal resolution is complete.',
+
+      'MONTHLY REPORTING FAILURE: Failure to provide monthly ongoing revenue reports by the 5th of each month will result in a $1,000 penalty per occurrence. Two consecutive late reports will trigger contract review and potential termination. After three consecutive late reports, FleetFlow will SUSPEND BROKER ACCESS to all FleetFlow systems for 14 days or until all overdue reports are submitted. During suspension, Broker will lose access to: AI Lead Generation, FreightFlow RFx Platform, Broker Dashboard, CRM System, Analytics, all API integrations, and SHIPPER INFORMATION ACCESS including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, and shipper relationship management.',
+
+      'CUSTOMER REDIRECT PENALTY: Any attempt to redirect AI-generated customers to avoid ongoing revenue sharing will result in immediate termination and a penalty equal to 500% of all revenue diverted, plus $50,000 liquidated damages per customer. FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE PERMANENTLY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will be permanently revoked and all data will be frozen until legal resolution is complete.',
+
+      "AUDIT RESISTANCE PENALTY: If Broker refuses to cooperate with FleetFlow's ongoing revenue audit rights or provides false information during audit, Broker will be assessed a penalty of $25,000 plus 200% of all recurring commissions owed for the audit period. FleetFlow will immediately SUSPEND BROKER ACCESS to all FleetFlow systems for 60 days or until full audit cooperation is provided. During suspension, Broker will lose access to: AI Lead Generation, FreightFlow RFx Platform, Broker Dashboard, CRM System, Analytics, all API integrations, and SHIPPER INFORMATION ACCESS including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, and shipper relationship management.",
+
+      'CONTINUING RELATIONSHIP VIOLATION: Any violation of the ongoing revenue sharing requirements for AI-generated customer relationships will result in immediate termination and a penalty equal to 12 months of projected revenue share based on historical averages. FleetFlow will immediately SUSPEND BROKER ACCESS to all FleetFlow systems for 90 days or until all violations are corrected and penalties are paid. During suspension, Broker will lose access to: AI Lead Generation, FreightFlow RFx Platform, Broker Dashboard, CRM System, Analytics, all API integrations, and SHIPPER INFORMATION ACCESS including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, and shipper relationship management.',
+
+      "DEFAULT ON RECURRING PAYMENTS: In the event of default on recurring revenue sharing, Broker agrees to pay all outstanding commissions, penalties, legal fees, and court costs. FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE COMPLETELY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will remain permanently suspended until all outstanding payments, penalties, and legal fees are paid in full. FleetFlow reserves the right to place liens on Broker's assets and pursue all available legal remedies including attachment of future receivables.",
+
+      'FRAUD ON ONGOING REVENUE: Any fraudulent activity related to ongoing revenue reporting, including but not limited to falsifying customer invoices, creating phantom revenue, or misrepresenting customer relationships will result in immediate termination, forfeiture of all commissions, and legal action for damages including punitive damages up to $500,000. FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE PERMANENTLY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will be permanently revoked and all data will be frozen until legal resolution is complete.',
+    ];
+  }
+
+  /**
+   * Generate recurring revenue share termination clauses for 50% commission model
+   */
+  private generateRecurringTerminationClauses(): string[] {
+    return [
+      'IMMEDIATE TERMINATION FOR RECURRING VIOLATIONS: This agreement may be terminated immediately by FleetFlow for: (a) failure to pay recurring revenue share within 30 days of due date, (b) underreporting ongoing revenue by more than 5%, (c) any fraudulent activity related to ongoing revenue, (d) violation of customer relationship continuity requirements, (e) failure to provide required ongoing documentation within 10 days of request. Upon immediate termination, FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE PERMANENTLY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will be permanently revoked and all data will be frozen until legal resolution is complete.',
+
+      'TERMINATION FOR CONVENIENCE: Either party may terminate this agreement with 60 days written notice. Upon termination, all outstanding recurring revenue share obligations continue for existing AI-generated customer relationships for the full duration of those relationships.',
+
+      'POST-TERMINATION ONGOING OBLIGATIONS: Upon termination, Broker remains obligated to: (a) pay 50% revenue share for ALL existing AI-generated customer relationships for the lifetime of those relationships, (b) provide monthly revenue reports for all ongoing customer relationships indefinitely, (c) cooperate with any audit requests for ongoing revenue for 60 months following termination, (d) maintain all customer relationship records for 10 years following termination.',
+
+      'SURVIVAL OF RECURRING OBLIGATIONS: All ongoing revenue sharing obligations, audit rights for recurring revenue, penalty provisions for ongoing payments, and customer relationship obligations survive termination of this agreement indefinitely for all AI-generated customer relationships established during the agreement term.',
+
+      'LIQUIDATED DAMAGES FOR EARLY TERMINATION: In the event of early termination by Broker without cause, Broker agrees to pay liquidated damages equal to 24 months of average monthly recurring commission payments, calculated based on the previous 24 months of ongoing revenue from AI-generated customers.',
+
+      'PERPETUAL NON-INTERFERENCE: Following termination, Broker may not attempt to restructure, redirect, or modify existing AI-generated customer relationships to avoid ongoing revenue sharing obligations. Any such interference will result in liquidated damages of $100,000 per customer plus restoration of full revenue sharing obligations. FleetFlow will IMMEDIATELY PERMANENTLY LOCK BROKER OUT OF ALL FLEETFLOW SYSTEMS including: AI Flow Platform, FreightFlow RFx System, Broker Operations Hub, Lead Generation Services, CRM System, Analytics Dashboard, API Access, Mobile Applications, and all FleetFlow services. SHIPPER INFORMATION ACCESS WILL BE PERMANENTLY BLOCKED including: shipper contact databases, shipper profiles, shipper load boards, shipper communication tools, shipper relationship management, and all shipper data exports. System access will be permanently revoked and all data will be frozen until legal resolution is complete.',
+
+      'ASSIGNMENT OF ONGOING RIGHTS: Upon termination, FleetFlow retains perpetual rights to 50% revenue share from all AI-generated customer relationships. These rights may be assigned, sold, or transferred by FleetFlow without Broker consent.',
     ];
   }
 
@@ -907,6 +978,170 @@ Date: _________________________
     } catch (error: any) {
       console.error('Failed to get contracts:', error);
       return [];
+    }
+  }
+
+  /**
+   * Track recurring revenue from AI-generated customers (50% ongoing commission)
+   */
+  async trackRecurringRevenue(
+    contractId: string,
+    revenue: number,
+    customerId: string,
+    customerName: string,
+    transactionId: string,
+    isRecurringPayment: boolean = true
+  ): Promise<void> {
+    try {
+      // Get current contract
+      const { data: contract, error } = await this.supabase
+        .from('contracts')
+        .select('*')
+        .eq('contract_id', contractId)
+        .single();
+
+      if (error) throw error;
+
+      // Validate this is a recurring revenue contract
+      if (contract.terms.commissionType !== 'recurring_revenue_share') {
+        throw new Error(
+          'Contract is not configured for recurring revenue sharing'
+        );
+      }
+
+      const commission = revenue * (contract.terms.commissionRate / 100);
+      const paymentDate = new Date().toISOString();
+
+      // Update revenue tracking with recurring revenue metadata
+      const updatedTracking = {
+        ...contract.revenue_tracking,
+        totalRevenue: contract.revenue_tracking.totalRevenue + revenue,
+        commissionEarned:
+          contract.revenue_tracking.commissionEarned + commission,
+        recurringRevenue:
+          (contract.revenue_tracking.recurringRevenue || 0) +
+          (isRecurringPayment ? revenue : 0),
+        lastPaymentDate: paymentDate,
+        nextPaymentDate: new Date(
+          Date.now() + 15 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        paymentHistory: [
+          ...contract.revenue_tracking.paymentHistory,
+          {
+            date: paymentDate,
+            amount: commission,
+            transactionId,
+            customerId,
+            customerName,
+            isRecurring: isRecurringPayment,
+            revenueAmount: revenue,
+            commissionRate: contract.terms.commissionRate,
+          },
+        ],
+        // Track AI-generated customers for ongoing revenue monitoring
+        aiGeneratedCustomers: [
+          ...(contract.revenue_tracking.aiGeneratedCustomers || []).filter(
+            (c: any) => c.customerId !== customerId
+          ),
+          {
+            customerId,
+            customerName,
+            firstPaymentDate:
+              contract.revenue_tracking.aiGeneratedCustomers?.find(
+                (c: any) => c.customerId === customerId
+              )?.firstPaymentDate || paymentDate,
+            lastPaymentDate: paymentDate,
+            totalRevenue:
+              (contract.revenue_tracking.aiGeneratedCustomers?.find(
+                (c: any) => c.customerId === customerId
+              )?.totalRevenue || 0) + revenue,
+            totalCommission:
+              (contract.revenue_tracking.aiGeneratedCustomers?.find(
+                (c: any) => c.customerId === customerId
+              )?.totalCommission || 0) + commission,
+            paymentCount:
+              (contract.revenue_tracking.aiGeneratedCustomers?.find(
+                (c: any) => c.customerId === customerId
+              )?.paymentCount || 0) + 1,
+            isActive: true,
+          },
+        ],
+      };
+
+      // Update contract
+      const { error: updateError } = await this.supabase
+        .from('contracts')
+        .update({ revenue_tracking: updatedTracking })
+        .eq('contract_id', contractId);
+
+      if (updateError) throw updateError;
+
+      console.log(
+        `✅ Recurring revenue tracked: Customer ${customerName} - $${revenue} -> 50% Commission: $${commission} (Recurring: ${isRecurringPayment})`
+      );
+
+      // Log recurring revenue alert for high-value customers
+      if (revenue > 10000) {
+        console.log(
+          `🚨 HIGH-VALUE RECURRING CUSTOMER: ${customerName} - $${revenue} revenue = $${commission} commission`
+        );
+      }
+    } catch (error: any) {
+      console.error('Failed to track recurring revenue:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get recurring revenue report for a broker contract
+   */
+  async getRecurringRevenueReport(contractId: string): Promise<{
+    totalRecurringRevenue: number;
+    totalRecurringCommission: number;
+    activeCustomers: number;
+    monthlyRecurringRevenue: number;
+    aiGeneratedCustomers: any[];
+  }> {
+    try {
+      const { data: contract, error } = await this.supabase
+        .from('contracts')
+        .select('*')
+        .eq('contract_id', contractId)
+        .single();
+
+      if (error) throw error;
+
+      const tracking = contract.revenue_tracking;
+      const aiCustomers = tracking.aiGeneratedCustomers || [];
+      const activeCustomers = aiCustomers.filter((c: any) => c.isActive);
+
+      // Calculate monthly recurring revenue (approximate based on recent activity)
+      const thirtyDaysAgo = new Date(
+        Date.now() - 30 * 24 * 60 * 60 * 1000
+      ).toISOString();
+      const recentPayments =
+        tracking.paymentHistory?.filter(
+          (p: any) => p.date > thirtyDaysAgo && p.isRecurring
+        ) || [];
+
+      const monthlyRecurringRevenue = recentPayments.reduce(
+        (sum: number, payment: any) => sum + (payment.revenueAmount || 0),
+        0
+      );
+
+      return {
+        totalRecurringRevenue: tracking.recurringRevenue || 0,
+        totalRecurringCommission: activeCustomers.reduce(
+          (sum: number, customer: any) => sum + customer.totalCommission,
+          0
+        ),
+        activeCustomers: activeCustomers.length,
+        monthlyRecurringRevenue,
+        aiGeneratedCustomers: activeCustomers,
+      };
+    } catch (error: any) {
+      console.error('Failed to get recurring revenue report:', error);
+      throw error;
     }
   }
 }
