@@ -19,6 +19,10 @@ export default function VendorLoginPage() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
+    console.log('🚀 FORM SUBMISSION STARTED');
+    console.log('Event:', e);
+    console.log('Event type:', e.type);
+    
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -64,6 +68,7 @@ export default function VendorLoginPage() {
       setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
+      console.log('🏁 FORM SUBMISSION COMPLETED');
     }
   };
 
@@ -391,6 +396,60 @@ export default function VendorLoginPage() {
               }}
             >
               🧪 Show Form State
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                console.log('🧪 STEP-BY-STEP LOGIN TEST');
+                console.log('Step 1: Current credentials:', credentials);
+                
+                // Test authentication directly
+                const result = extendedShipperService.authenticateShipper(
+                  credentials.username,
+                  credentials.password
+                );
+                
+                console.log('Step 2: Authentication result:', result);
+                
+                if (result.success && result.shipper) {
+                  console.log('Step 3: Authentication successful');
+                  console.log('Step 4: Shipper data:', result.shipper);
+                  
+                  // Test session storage
+                  const sessionData = {
+                    shipperId: result.shipper.id,
+                    companyName: result.shipper.companyName,
+                    loginTime: new Date().toISOString(),
+                  };
+                  
+                  localStorage.setItem('vendorSession', JSON.stringify(sessionData));
+                  console.log('Step 5: Session stored:', sessionData);
+                  
+                  // Test session read
+                  const testSession = localStorage.getItem('vendorSession');
+                  console.log('Step 6: Session read test:', testSession);
+                  
+                  alert(`✅ STEP-BY-STEP TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nShipper: ${result.shipper.companyName}\n\nCheck console for detailed steps.`);
+                } else {
+                  console.log('Step 3: Authentication failed');
+                  alert(`❌ STEP-BY-STEP TEST FAILED!\n\nError: ${result.error}\n\nCheck console for details.`);
+                }
+              }}
+              style={{
+                width: '100%',
+                background: '#dc2626',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginBottom: '16px',
+              }}
+            >
+              🧪 Step-by-Step Test
             </button>
           </form>
         ) : (
