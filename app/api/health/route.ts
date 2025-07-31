@@ -70,9 +70,9 @@ export async function GET() {
 
   // Test external APIs (basic connectivity)
   const apiTests = await Promise.allSettled([
-    fetch('https://api.fmcsa.dot.gov/safety/sms/query/carrier/123456789', {
+    fetch('https://mobile.fmcsa.dot.gov/qc/services/carriers/123456?webKey=' + (process.env.FMCSA_API_KEY || ''), {
       method: 'GET',
-      headers: { 'x-api-key': process.env.FMCSA_API_KEY || '' }
+      headers: { 'Accept': 'application/json' }
     }),
     fetch('https://api.weather.gov/points/40.7128,-74.0060'),
     fetch('https://api.exchangerate-api.com/v4/latest/USD')
