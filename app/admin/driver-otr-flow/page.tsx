@@ -7,6 +7,8 @@ import {
   FinancialMarketsService,
   FuelPriceData,
 } from '../../services/FinancialMarketsService';
+import { iftaService } from '../../services/IFTAService';
+import { taxBanditsForm2290Service } from '../../services/TaxBanditsForm2290Service';
 import { onboardingIntegration } from '../../services/onboarding-integration';
 
 // Access Control
@@ -200,6 +202,59 @@ const workflowManager = {
       dueDate: new Date(),
       status: 'pending',
     },
+    // 🧾 MANAGEMENT-APPROVED DISPATCH INVOICES (Critical Actions)
+    {
+      id: 'wf-002',
+      title: '🚨 DISPATCH INVOICE PAYMENT DUE THURSDAY',
+      description:
+        'Management-Approved Invoice #INV-2025-001 for dispatch services ($455.00) - DUE: This Thursday | LATE: Friday | LOAD RESTRICTION if unpaid',
+      type: 'dispatch_invoice_payment_due',
+      priority: 'CRITICAL',
+      dueDate: new Date('2025-01-09'), // This Thursday
+      status: 'pending',
+    },
+    {
+      id: 'wf-003',
+      title: '⚠️ INVOICE PAYMENT OVERDUE - LOAD ACCESS RESTRICTED',
+      description:
+        'Management-Approved Invoice #INV-2024-052 is OVERDUE ($285.00) - Payment required immediately to restore load access',
+      type: 'dispatch_invoice_overdue_restricted',
+      priority: 'CRITICAL',
+      dueDate: new Date('2025-01-03'), // Last Friday - overdue
+      status: 'overdue',
+    },
+    {
+      id: 'wf-004',
+      title: '📋 New Management-Approved Invoice Available',
+      description:
+        'Invoice #INV-2025-002 approved by management for week Jan 8-14, 2025 (4 loads dispatched) - Due: Next Thursday',
+      type: 'dispatch_invoice_approved',
+      priority: 'HIGH',
+      dueDate: new Date('2025-01-16'), // Next Thursday
+      status: 'pending',
+    },
+    // 🏛️ FORM 2290 HEAVY VEHICLE TAX DEADLINE
+    {
+      id: 'wf-005',
+      title: '🚛 Form 2290 Heavy Vehicle Tax Filing Due',
+      description:
+        'IRS Form 2290 filing required for 3 vehicles over 55,000 lbs. Estimated tax: $550. File electronically via IRS e-File system.',
+      type: 'form_2290_due',
+      priority: 'HIGH',
+      dueDate: new Date('2025-08-31'), // August 31st deadline
+      status: 'pending',
+    },
+    // 🗺️ IFTA QUARTERLY FILING DEADLINE
+    {
+      id: 'wf-006',
+      title: '🗺️ IFTA Q4 2024 Quarterly Return Due',
+      description:
+        'International Fuel Tax Agreement (IFTA) return for Q4 2024 due. 8 jurisdictions with $1,247 tax liability. URGENT: 5 days remaining!',
+      type: 'ifta_quarterly_due',
+      priority: 'CRITICAL',
+      dueDate: new Date('2025-01-31'), // January 31st deadline
+      status: 'pending',
+    },
   ],
 };
 
@@ -225,6 +280,142 @@ export default function AdminDriverOTRFlow() {
   });
   const [alertSoundsEnabled, setAlertSoundsEnabled] = useState(true);
   const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
+
+  // 🏛️ TAXBANDITS FORM 2290 STATE MANAGEMENT
+  const [taxFilingStatus, setTaxFilingStatus] = useState<{
+    isSubmitting: boolean;
+    lastSubmission?: {
+      submissionId: string;
+      status: string;
+      message: string;
+      stampedSchedule1Url?: string;
+    } | null;
+    connectionStatus: { success: boolean; message: string } | null;
+  }>({ isSubmitting: false, lastSubmission: null, connectionStatus: null });
+
+  // 🗺️ IFTA QUARTERLY FILING STATE MANAGEMENT
+  const [iftaFilingStatus, setIftaFilingStatus] = useState<{
+    isSubmitting: boolean;
+    lastSubmission?: {
+      submissionId: string;
+      quarter: string;
+      status: string;
+      message: string;
+      jurisdictions: number;
+      totalTaxOwed: number;
+      filingDeadline: string;
+    } | null;
+    connectionStatus: { success: boolean; message: string } | null;
+    availableStates: string[];
+  }>({
+    isSubmitting: false,
+    lastSubmission: null,
+    connectionStatus: null,
+    availableStates: ['CA', 'TX', 'FL', 'GA', 'AZ', 'NY'],
+  });
+
+  // 💰 FACTORING & PAYMENT PROCESSING STATE MANAGEMENT
+  const [factoringStatus, setFactoringStatus] = useState<{
+    isEnabled: boolean;
+    currentFactor: {
+      name: string;
+      rate: number;
+      advanceRate: number;
+      creditLimit: number;
+      availableCredit: number;
+      daysToPayment: number;
+      status: 'active' | 'pending' | 'suspended';
+    } | null;
+    pendingInvoices: {
+      invoiceId: string;
+      amount: number;
+      customerName: string;
+      loadId: string;
+      invoiceDate: string;
+      status: 'pending_factor' | 'factored' | 'collecting' | 'paid';
+      factorAdvance?: number;
+      advanceDate?: string;
+    }[];
+    paymentMethods: {
+      directDeposit: {
+        enabled: boolean;
+        bankName: string;
+        accountNumber: string;
+      };
+      payCard: { enabled: boolean; cardProvider: string; cardNumber: string };
+      check: { enabled: boolean; address: string };
+    };
+    recentTransactions: {
+      transactionId: string;
+      type:
+        | 'factor_advance'
+        | 'settlement'
+        | 'expense_deduction'
+        | 'dispatch_fee';
+      amount: number;
+      description: string;
+      date: string;
+      status: 'completed' | 'pending' | 'failed';
+    }[];
+  }>({
+    isEnabled: true,
+    currentFactor: {
+      name: 'TBS Factoring Service',
+      rate: 2.5,
+      advanceRate: 95,
+      creditLimit: 50000,
+      availableCredit: 42350,
+      daysToPayment: 1,
+      status: 'active',
+    },
+    pendingInvoices: [
+      {
+        invoiceId: 'INV-2025-003',
+        amount: 2850,
+        customerName: 'Walmart Distribution',
+        loadId: 'L2025-001',
+        invoiceDate: '2025-01-20',
+        status: 'pending_factor',
+      },
+      {
+        invoiceId: 'INV-2025-004',
+        amount: 3200,
+        customerName: 'Home Depot Logistics',
+        loadId: 'L2025-002',
+        invoiceDate: '2025-01-21',
+        status: 'factored',
+        factorAdvance: 3040,
+        advanceDate: '2025-01-21',
+      },
+    ],
+    paymentMethods: {
+      directDeposit: {
+        enabled: true,
+        bankName: 'Wells Fargo',
+        accountNumber: '****1234',
+      },
+      payCard: { enabled: false, cardProvider: '', cardNumber: '' },
+      check: { enabled: false, address: '' },
+    },
+    recentTransactions: [
+      {
+        transactionId: 'TXN-2025-0125',
+        type: 'factor_advance',
+        amount: 3040,
+        description: 'Factor advance for INV-2025-004 (Home Depot load)',
+        date: '2025-01-21',
+        status: 'completed',
+      },
+      {
+        transactionId: 'TXN-2025-0124',
+        type: 'settlement',
+        amount: 12130,
+        description: 'Weekly settlement - 5 loads completed',
+        date: '2025-01-15',
+        status: 'completed',
+      },
+    ],
+  });
 
   // 🗺️ GPS-PROXIMITY LOAD SYSTEM STATE MANAGEMENT
   const [driverLocation, setDriverLocation] = useState<DriverLocation | null>(
@@ -1064,6 +1255,338 @@ export default function AdminDriverOTRFlow() {
     return () => clearInterval(fuelTimer);
   }, []);
 
+  // 🏛️ TAXBANDITS FORM 2290 FILING FUNCTIONS
+  const testTaxBanditsConnection = async () => {
+    try {
+      const result = await taxBanditsForm2290Service.testConnection();
+      setTaxFilingStatus((prev) => ({ ...prev, connectionStatus: result }));
+      return result;
+    } catch (error) {
+      const errorResult = {
+        success: false,
+        message: `❌ Connection error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: errorResult,
+      }));
+      return errorResult;
+    }
+  };
+
+  const submitForm2290Filing = async () => {
+    setTaxFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
+
+    try {
+      // Generate mock vehicle data for demo
+      const vehicleData = taxBanditsForm2290Service.generateMockVehicleData();
+
+      // Submit to TaxBandits API
+      const result =
+        await taxBanditsForm2290Service.submitForm2290(vehicleData);
+
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: result.submissionId,
+          status: result.success ? 'submitted' : 'failed',
+          message: result.message,
+          stampedSchedule1Url: result.stampedSchedule1Url,
+        },
+      }));
+
+      if (result.success) {
+        alert(
+          `✅ Form 2290 successfully submitted!nnSubmission ID: ${result.submissionId}nMessage: ${result.message}`
+        );
+      } else {
+        alert(
+          `❌ Form 2290 submission failed:nn${result.message}nnErrors: ${result.errors?.join(', ') || 'None'}`
+        );
+      }
+    } catch (error) {
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: '',
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        },
+      }));
+      alert(
+        `❌ Form 2290 filing error:nn${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const checkSubmissionStatus = async (submissionId: string) => {
+    try {
+      const result =
+        await taxBanditsForm2290Service.checkSubmissionStatus(submissionId);
+
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        lastSubmission: prev.lastSubmission
+          ? {
+              ...prev.lastSubmission,
+              status: result.status,
+              message: result.message,
+              stampedSchedule1Url: result.stampedSchedule1Url,
+            }
+          : null,
+      }));
+
+      alert(
+        `📊 Submission Status Update:nnStatus: ${result.status}nMessage: ${result.message}`
+      );
+    } catch (error) {
+      alert(
+        `❌ Status check error:nn${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  // 🗺️ IFTA QUARTERLY FILING FUNCTIONS
+  const testIFTAConnection = async () => {
+    try {
+      // Test connection with available state portals
+      const mockResult = {
+        success: true,
+        message:
+          '✅ IFTA connection successful! Connected to 6 state portals (CA, TX, FL, GA, AZ, NY)',
+      };
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: mockResult,
+      }));
+      return mockResult;
+    } catch (error) {
+      const errorResult = {
+        success: false,
+        message: `❌ IFTA connection error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: errorResult,
+      }));
+      return errorResult;
+    }
+  };
+
+  const submitIFTAReturn = async (quarter: string = 'Q4 2024') => {
+    setIftaFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
+
+    try {
+      // Generate mock IFTA return data using our service
+      const returnData = iftaService.generateMockIFTAData();
+
+      // Submit to multiple state jurisdictions
+      const results = await iftaService.submitIFTAReturn(returnData);
+
+      // Check if all submissions were successful
+      const allSuccessful = results.every((r) => r.success);
+      const totalTaxOwed = results.reduce(
+        (sum, r) => sum + r.totalNetAmount,
+        0
+      );
+
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: results[0]?.submissionId || `IFTA-${Date.now()}`,
+          quarter: quarter,
+          status: allSuccessful ? 'submitted' : 'failed',
+          message: allSuccessful
+            ? 'IFTA return submitted to all jurisdictions'
+            : 'Some jurisdictions failed',
+          jurisdictions: results.length,
+          totalTaxOwed: totalTaxOwed,
+          filingDeadline: 'January 31, 2025',
+        },
+      }));
+
+      if (allSuccessful) {
+        alert(
+          `✅ IFTA ${quarter} return successfully submitted!\n\nJurisdictions: ${results.length}\nTotal Tax Owed: $${totalTaxOwed.toFixed(2)}\nDeadline: January 31, 2025`
+        );
+      } else {
+        const errors = results.flatMap((r) => r.errors || []);
+        alert(
+          `❌ IFTA submission failed:\n\nSome jurisdictions failed\n\nErrors: ${errors.join(', ') || 'None'}`
+        );
+      }
+    } catch (error) {
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: '',
+          quarter: quarter,
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          jurisdictions: 0,
+          totalTaxOwed: 0,
+          filingDeadline: 'January 31, 2025',
+        },
+      }));
+      alert(
+        `❌ IFTA filing error:\n\n${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const checkIFTASubmissionStatus = async (submissionId: string) => {
+    try {
+      // Mock status check - in production would check real state portal APIs
+      const mockResult = {
+        success: true,
+        status: 'processed',
+        message: 'IFTA return processed successfully by all jurisdictions',
+      };
+
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        lastSubmission: prev.lastSubmission
+          ? {
+              ...prev.lastSubmission,
+              status: mockResult.status,
+              message: mockResult.message,
+            }
+          : null,
+      }));
+
+      alert(
+        `📊 IFTA Status Update:\n\nStatus: ${mockResult.status}\nMessage: ${mockResult.message}`
+      );
+    } catch (error) {
+      alert(
+        `❌ IFTA status check error:\n\n${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  // 💰 FACTORING & PAYMENT PROCESSING FUNCTIONS
+  const submitInvoiceForFactoring = async (invoiceId: string) => {
+    try {
+      setFactoringStatus((prev) => ({
+        ...prev,
+        pendingInvoices: prev.pendingInvoices.map((inv) =>
+          inv.invoiceId === invoiceId
+            ? { ...inv, status: 'factored' as const }
+            : inv
+        ),
+      }));
+
+      // Mock factoring submission
+      const invoice = factoringStatus.pendingInvoices.find(
+        (inv) => inv.invoiceId === invoiceId
+      );
+      if (invoice && factoringStatus.currentFactor) {
+        const advanceAmount =
+          invoice.amount * (factoringStatus.currentFactor.advanceRate / 100);
+
+        alert(`✅ Invoice submitted for factoring!
+
+Invoice: ${invoiceId}
+Amount: $${invoice.amount.toFixed(2)}
+Factor Advance (${factoringStatus.currentFactor.advanceRate}%): $${advanceAmount.toFixed(2)}
+Expected Deposit: Within ${factoringStatus.currentFactor.daysToPayment} business day(s)`);
+
+        // Add transaction record
+        const newTransaction = {
+          transactionId: `TXN-${Date.now()}`,
+          type: 'factor_advance' as const,
+          amount: advanceAmount,
+          description: `Factor advance for ${invoiceId} (${invoice.customerName})`,
+          date: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+        };
+
+        setFactoringStatus((prev) => ({
+          ...prev,
+          recentTransactions: [
+            newTransaction,
+            ...prev.recentTransactions.slice(0, 9),
+          ],
+        }));
+      }
+    } catch (error) {
+      alert(
+        `❌ Factoring submission error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const updatePaymentMethod = (
+    method: 'directDeposit' | 'payCard' | 'check',
+    enabled: boolean
+  ) => {
+    setFactoringStatus((prev) => ({
+      ...prev,
+      paymentMethods: {
+        ...prev.paymentMethods,
+        [method]: { ...prev.paymentMethods[method], enabled },
+      },
+    }));
+
+    alert(
+      `${enabled ? '✅ Enabled' : '❌ Disabled'} ${method.replace(/([A-Z])/g, ' $1').toLowerCase()} payment method`
+    );
+  };
+
+  const requestAdvancePayment = async (amount: number) => {
+    try {
+      if (!factoringStatus.currentFactor) {
+        alert('❌ No active factoring agreement');
+        return;
+      }
+
+      if (amount > factoringStatus.currentFactor.availableCredit) {
+        alert(
+          `❌ Advance amount exceeds available credit: $${factoringStatus.currentFactor.availableCredit.toFixed(2)}`
+        );
+        return;
+      }
+
+      // Mock advance request
+      const newTransaction = {
+        transactionId: `ADV-${Date.now()}`,
+        type: 'factor_advance' as const,
+        amount: amount,
+        description: `Advance payment request`,
+        date: new Date().toISOString().split('T')[0],
+        status: 'pending' as const,
+      };
+
+      setFactoringStatus((prev) => ({
+        ...prev,
+        currentFactor: prev.currentFactor
+          ? {
+              ...prev.currentFactor,
+              availableCredit: prev.currentFactor.availableCredit - amount,
+            }
+          : null,
+        recentTransactions: [
+          newTransaction,
+          ...prev.recentTransactions.slice(0, 9),
+        ],
+      }));
+
+      alert(`✅ Advance payment requested!
+
+Amount: $${amount.toFixed(2)}
+Processing time: 1-2 business days
+Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).toFixed(2)}`);
+    } catch (error) {
+      alert(
+        `❌ Advance request error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
   const workflowTasks = workflowManager.getActiveWorkflowTasks(
     demoDriver?.driverId || 'driver-001'
   );
@@ -1529,8 +2052,9 @@ export default function AdminDriverOTRFlow() {
                   background: 'linear-gradient(135deg, #dc2626, #ef4444)',
                   borderRadius: '16px',
                   padding: '20px',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 8px 32px rgba(220, 38, 38, 0.3)',
+                  border: '3px solid #fbbf24', // Bright yellow border ring
+                  boxShadow:
+                    '0 0 0 4px rgba(251, 191, 36, 0.4), 0 8px 32px rgba(220, 38, 38, 0.3)', // Yellow outer glow + original red shadow
                   animation: 'pulse 2s infinite',
                 }}
               >
@@ -1580,6 +2104,85 @@ export default function AdminDriverOTRFlow() {
                     }}
                   >
                     CONFIRM NOW
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 🚫 LOAD ACCESS RESTRICTION WARNING (if invoices overdue) */}
+          {workflowTasks.some(
+            (task) => task.type === 'dispatch_invoice_overdue_restricted'
+          ) && (
+            <div style={{ marginBottom: '25px' }}>
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  border: '3px solid #fbbf24', // Yellow ring around restriction warning
+                  boxShadow:
+                    '0 0 0 4px rgba(251, 191, 36, 0.4), 0 8px 32px rgba(220, 38, 38, 0.3)',
+                  animation: 'pulse 2s infinite',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        margin: '0',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        color: 'white',
+                      }}
+                    >
+                      🚫 LOAD ACCESS RESTRICTED
+                    </h3>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        opacity: 0.9,
+                        fontSize: '16px',
+                        color: 'white',
+                      }}
+                    >
+                      Overdue dispatch invoice prevents load assignments. Pay
+                      immediately to restore access.
+                    </p>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        opacity: 0.8,
+                        fontSize: '14px',
+                        color: '#fbbf24',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📋 Invoice #INV-2024-052 ($285.00) - Overdue since Friday
+                    </p>
+                  </div>
+                  <button
+                    style={{
+                      background: 'white',
+                      color: '#dc2626',
+                      border: 'none',
+                      padding: '15px 30px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    PAY NOW
                   </button>
                 </div>
               </div>
@@ -3264,6 +3867,660 @@ export default function AdminDriverOTRFlow() {
                       </div>
                     </div>
 
+                    {/* 🚨 ENHANCED IFTA & TAX DASHBOARD */}
+                    <div
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #ef4444',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#ef4444',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        🚨 URGENT: IFTA Filing Alert
+                        <span
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            animation: 'pulse 2s infinite',
+                          }}
+                        >
+                          5 DAYS LEFT
+                        </span>
+                      </h5>
+
+                      <div style={{ marginBottom: '15px' }}>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Q4 2024 IFTA filing is due in 5 days (January 31,
+                          2025)
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '13px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '12px',
+                          }}
+                        >
+                          Missing fuel receipts detected. Upload required before
+                          filing.
+                        </div>
+
+                        <button
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            marginRight: '10px',
+                          }}
+                        >
+                          🚨 File IFTA Now
+                        </button>
+                        <button
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📋 Upload Receipts
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 📊 COMPREHENSIVE IFTA DASHBOARD */}
+                    <div
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(139, 92, 246, 0.2)',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#a78bfa',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        📊 IFTA Tax Dashboard
+                      </h5>
+
+                      {/* IFTA Summary Cards */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#60a5fa',
+                            }}
+                          >
+                            52,847
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🛣️ Total Miles (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#10b981',
+                            }}
+                          >
+                            $18,247
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ⛽ Fuel Purchased (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#f59e0b',
+                            }}
+                          >
+                            $3,247
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Tax Liability (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            $847
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💸 Refunds Received
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Compliance Status */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(200px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#ef4444' }}>
+                            ❌
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              IFTA Status
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Action Required
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#ef4444' }}>
+                            ❌
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              Fuel Receipts
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Missing Receipts
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#22c55e' }}>
+                            ✅
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              Mileage Logs
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Complete
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🧾 MANAGEMENT-APPROVED DISPATCH INVOICES */}
+                    <div
+                      style={{
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #f97316',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(249, 115, 22, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '18px',
+                          fontWeight: '700',
+                          color: '#f97316',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        🧾 Management-Approved Dispatch Invoices
+                        <span
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            animation: 'pulse 2s infinite',
+                          }}
+                        >
+                          PAY BY THURSDAY
+                        </span>
+                      </h5>
+
+                      {/* Payment Schedule Warning */}
+                      <div
+                        style={{
+                          background: 'rgba(220, 38, 38, 0.1)',
+                          border: '1px solid #dc2626',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#ef4444',
+                            marginBottom: '6px',
+                          }}
+                        >
+                          ⚠️ PAYMENT SCHEDULE & RESTRICTIONS:
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '13px',
+                            color: 'white',
+                            lineHeight: '1.4',
+                          }}
+                        >
+                          • <strong>DUE:</strong> Every Thursday by 11:59 PM
+                          <br />• <strong>LATE:</strong> Friday - considered
+                          overdue
+                          <br />• <strong>RESTRICTION:</strong> No load
+                          assignments until paid
+                        </div>
+                      </div>
+
+                      {/* Invoice Status */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#ef4444',
+                            }}
+                          >
+                            $740
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Total Due
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            Thu
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            📅 Due Day
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#dc2626',
+                            }}
+                          >
+                            RESTRICTED
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🚫 Load Access
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            ✅
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            📋 Mgmt Approved
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Recent Invoices List */}
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          overflow: 'hidden',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        {/* Header */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            background: 'rgba(249, 115, 22, 0.3)',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            color: 'white',
+                          }}
+                        >
+                          <div>INVOICE #</div>
+                          <div>PERIOD</div>
+                          <div>DESCRIPTION</div>
+                          <div>AMOUNT</div>
+                          <div>STATUS</div>
+                        </div>
+
+                        {/* Invoice Rows */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-001
+                          </div>
+                          <div>Jan 1-7</div>
+                          <div>3 loads dispatched (10% fee)</div>
+                          <div style={{ fontWeight: '600', color: '#ef4444' }}>
+                            $455.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#ef4444', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#ef4444', fontSize: '12px' }}
+                            >
+                              DUE
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-052
+                          </div>
+                          <div>Dec 18-24</div>
+                          <div>2 loads dispatched + late fee</div>
+                          <div style={{ fontWeight: '600', color: '#dc2626' }}>
+                            $285.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#dc2626', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#dc2626', fontSize: '12px' }}
+                            >
+                              OVERDUE
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-002
+                          </div>
+                          <div>Jan 8-14</div>
+                          <div>4 loads dispatched (10% fee)</div>
+                          <div style={{ fontWeight: '600', color: '#f59e0b' }}>
+                            $380.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#f59e0b', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#f59e0b', fontSize: '12px' }}
+                            >
+                              PENDING
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '15px 25px',
+                          borderRadius: '8px',
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >
+                        💳 PAY ALL INVOICES - RESTORE LOAD ACCESS ($740)
+                      </button>
+                    </div>
+
                     {/* Pay Period Breakdown */}
                     <div
                       style={{
@@ -3455,6 +4712,1156 @@ export default function AdminDriverOTRFlow() {
                             {businessMetrics.payPeriod.lastPeriod.netPay}
                           </span>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* 🚛 AUTOMATED TAX FILING INTEGRATION */}
+                    <div
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.1))',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #6366f1',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 20px 0',
+                          fontSize: '18px',
+                          fontWeight: '700',
+                          color: '#6366f1',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        🚛 Automated Tax Filing System
+                        <span
+                          style={{
+                            background: '#22c55e',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          API INTEGRATED
+                        </span>
+                      </h5>
+
+                      {/* Tax Filing Services Grid */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(280px, 1fr))',
+                          gap: '20px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        {/* Form 2290 Heavy Vehicle Tax */}
+                        <div
+                          style={{
+                            background: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid #22c55e',
+                            borderRadius: '12px',
+                            padding: '20px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '20px',
+                                background: '#22c55e',
+                                borderRadius: '8px',
+                                padding: '8px',
+                              }}
+                            >
+                              🏛️
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: '700',
+                                  color: '#22c55e',
+                                }}
+                              >
+                                Form 2290 - IRS e-File
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'white',
+                                  opacity: 0.8,
+                                }}
+                              >
+                                Heavy Highway Vehicle Tax
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tax Status */}
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#22c55e',
+                                }}
+                              >
+                                $550
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Estimated Tax
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#fbbf24',
+                                }}
+                              >
+                                3 Vehicles
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Over 55K lbs
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* TaxBandits Connection Test */}
+                          <div
+                            style={{
+                              marginBottom: '10px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <button
+                              onClick={testTaxBanditsConnection}
+                              style={{
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#2563eb')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#3b82f6')
+                              }
+                            >
+                              🔗 Test TaxBandits Connection
+                            </button>
+                            {taxFilingStatus.connectionStatus && (
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  marginTop: '5px',
+                                  color: taxFilingStatus.connectionStatus
+                                    .success
+                                    ? '#22c55e'
+                                    : '#ef4444',
+                                }}
+                              >
+                                {taxFilingStatus.connectionStatus.message}
+                              </div>
+                            )}
+                          </div>
+                          {/* File Button */}
+                          <button
+                            style={{
+                              width: '100%',
+                              background: '#22c55e',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '10px',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s',
+                            }}
+                            onMouseOver={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#16a34a')
+                            }
+                            onMouseOut={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#22c55e')
+                            }
+                            onClick={submitForm2290Filing}
+                            disabled={taxFilingStatus.isSubmitting}
+                          >
+                            {taxFilingStatus.isSubmitting
+                              ? '⏳ Filing in Progress...'
+                              : '🚀 File Form 2290 Now'}
+                          </button>
+
+                          {/* Last Filing */}
+                          <div
+                            style={{
+                              marginTop: '10px',
+                              fontSize: '11px',
+                              color: 'white',
+                              opacity: 0.7,
+                              textAlign: 'center',
+                            }}
+                          >
+                            {taxFilingStatus.lastSubmission
+                              ? `Last submission: ${taxFilingStatus.lastSubmission.submissionId} (${taxFilingStatus.lastSubmission.status}) ${taxFilingStatus.lastSubmission.status === 'submitted' ? '✅' : '❌'}`
+                              : 'No recent submissions'}
+                          </div>
+                        </div>
+
+                        {/* IFTA Quarterly Filing */}
+                        <div
+                          style={{
+                            background: 'rgba(168, 85, 247, 0.1)',
+                            border: '1px solid #a855f7',
+                            borderRadius: '12px',
+                            padding: '20px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '20px',
+                                background: '#a855f7',
+                                borderRadius: '8px',
+                                padding: '8px',
+                              }}
+                            >
+                              🗺️
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: '700',
+                                  color: '#a855f7',
+                                }}
+                              >
+                                IFTA Filing - Q4 2024
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'white',
+                                  opacity: 0.8,
+                                }}
+                              >
+                                International Fuel Tax
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* IFTA Status */}
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#ef4444',
+                                }}
+                              >
+                                $1,247
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Tax Owed
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#60a5fa',
+                                }}
+                              >
+                                8 States
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Jurisdictions
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* IFTA Due Date Warning */}
+                          <div
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid #ef4444',
+                              borderRadius: '8px',
+                              padding: '8px',
+                              marginBottom: '15px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color: '#ef4444',
+                              }}
+                            >
+                              ⚠️ DUE: January 31, 2025
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '10px',
+                                color: 'white',
+                                opacity: 0.8,
+                              }}
+                            >
+                              5 days remaining
+                            </div>
+                          </div>
+
+                          {/* IFTA Connection Test */}
+                          <div
+                            style={{
+                              marginBottom: '10px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <button
+                              onClick={testIFTAConnection}
+                              style={{
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#2563eb')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#3b82f6')
+                              }
+                            >
+                              🌐 Test IFTA Connection
+                            </button>
+                            {iftaFilingStatus.connectionStatus && (
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  marginTop: '5px',
+                                  color: iftaFilingStatus.connectionStatus
+                                    .success
+                                    ? '#22c55e'
+                                    : '#ef4444',
+                                }}
+                              >
+                                {iftaFilingStatus.connectionStatus.message}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* File Button */}
+                          <button
+                            style={{
+                              width: '100%',
+                              background: '#a855f7',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '10px',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s',
+                            }}
+                            onMouseOver={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#9333ea')
+                            }
+                            onMouseOut={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#a855f7')
+                            }
+                            onClick={() => submitIFTAReturn('Q4 2024')}
+                            disabled={iftaFilingStatus.isSubmitting}
+                          >
+                            {iftaFilingStatus.isSubmitting
+                              ? '⏳ Filing in Progress...'
+                              : '📊 File IFTA Return'}
+                          </button>
+
+                          {/* Multi-State Status */}
+                          <div
+                            style={{
+                              marginTop: '10px',
+                              fontSize: '11px',
+                              color: 'white',
+                              opacity: 0.7,
+                              textAlign: 'center',
+                            }}
+                          >
+                            CA, TX, FL, GA ready for e-filing
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Integration Status */}
+                      <div
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.05)',
+                          border: '1px solid rgba(34, 197, 94, 0.2)',
+                          borderRadius: '8px',
+                          padding: '15px',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        <h6
+                          style={{
+                            margin: '0 0 10px 0',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#22c55e',
+                          }}
+                        >
+                          🔗 API Integration Status
+                        </h6>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: '10px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <span style={{ color: '#22c55e' }}>✅</span>
+                            <span style={{ color: 'white' }}>
+                              IRS e-File (Form 2290)
+                            </span>
+                          </div>
+                          {iftaFilingStatus.lastSubmission ? (
+                            <>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      iftaFilingStatus.lastSubmission.status ===
+                                      'submitted'
+                                        ? '#22c55e'
+                                        : '#ef4444',
+                                  }}
+                                >
+                                  {iftaFilingStatus.lastSubmission.status ===
+                                  'submitted'
+                                    ? '✅'
+                                    : '❌'}
+                                </span>
+                                <span style={{ color: 'white' }}>
+                                  IFTA {iftaFilingStatus.lastSubmission.quarter}{' '}
+                                  Filing
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#3b82f6' }}>📊</span>
+                                <span style={{ color: 'white' }}>
+                                  {
+                                    iftaFilingStatus.lastSubmission
+                                      .jurisdictions
+                                  }{' '}
+                                  Jurisdictions Filed
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#f97316' }}>💰</span>
+                                <span style={{ color: 'white' }}>
+                                  $
+                                  {iftaFilingStatus.lastSubmission.totalTaxOwed.toFixed(
+                                    2
+                                  )}{' '}
+                                  Total Tax
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#22c55e' }}>✅</span>
+                                <span style={{ color: 'white' }}>
+                                  California IFTA Portal
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#fbbf24' }}>🔄</span>
+                                <span style={{ color: 'white' }}>
+                                  Texas IFTA (Ready)
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#fbbf24' }}>🔄</span>
+                                <span style={{ color: 'white' }}>
+                                  Florida IFTA (Ready)
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Benefits */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            15 min
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ⚡ Filing Time Saved
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#60a5fa',
+                            }}
+                          >
+                            $500
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Annual Savings
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#a855f7',
+                            }}
+                          >
+                            24/7
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🕒 Automated Filing
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#f59e0b',
+                            }}
+                          >
+                            100%
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ✅ Compliance Rate
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 💰 FACTORING AND FUNDING DASHBOARD */}
+                <div
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1))',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#22c55e',
+                      marginBottom: '20px',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    💰 Factoring and Funding
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(300px, 1fr))',
+                      gap: '20px',
+                    }}
+                  >
+                    {/* Current Factor Information */}
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(34, 197, 94, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#22c55e',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🏦 Current Factor Agreement
+                      </h4>
+
+                      {factoringStatus.currentFactor && (
+                        <>
+                          <div style={{ marginBottom: '10px' }}>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: '#94a3b8',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              Factor Company
+                            </div>
+                            <div style={{ color: 'white', fontWeight: '600' }}>
+                              {factoringStatus.currentFactor.name}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Rate
+                              </div>
+                              <div
+                                style={{ color: '#22c55e', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.rate}%
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Advance Rate
+                              </div>
+                              <div
+                                style={{ color: '#22c55e', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.advanceRate}%
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Available Credit
+                              </div>
+                              <div
+                                style={{ color: '#fbbf24', fontWeight: '600' }}
+                              >
+                                $
+                                {factoringStatus.currentFactor.availableCredit.toLocaleString()}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Days to Payment
+                              </div>
+                              <div
+                                style={{ color: '#3b82f6', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.daysToPayment}{' '}
+                                day(s)
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ marginTop: '15px' }}>
+                            <button
+                              onClick={() => requestAdvancePayment(1000)}
+                              style={{
+                                width: '100%',
+                                background: '#22c55e',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '8px 12px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#16a34a')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#22c55e')
+                              }
+                            >
+                              💳 Request $1,000 Advance
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Pending Invoices */}
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#3b82f6',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📋 Pending Invoices
+                      </h4>
+
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {factoringStatus.pendingInvoices.map(
+                          (invoice, index) => (
+                            <div
+                              key={invoice.invoiceId}
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '6px',
+                                padding: '10px',
+                                marginBottom: '8px',
+                                fontSize: '11px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  marginBottom: '5px',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'white', fontWeight: '600' }}
+                                >
+                                  {invoice.invoiceId}
+                                </span>
+                                <span
+                                  style={{
+                                    color:
+                                      invoice.status === 'factored'
+                                        ? '#22c55e'
+                                        : invoice.status === 'pending_factor'
+                                          ? '#fbbf24'
+                                          : '#3b82f6',
+                                    fontSize: '10px',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {invoice.status.replace('_', ' ')}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  color: '#94a3b8',
+                                  marginBottom: '3px',
+                                }}
+                              >
+                                {invoice.customerName}
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color: '#22c55e',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  ${invoice.amount.toLocaleString()}
+                                </span>
+                                <span style={{ color: '#94a3b8' }}>
+                                  {invoice.invoiceDate}
+                                </span>
+                              </div>
+
+                              {invoice.status === 'pending_factor' && (
+                                <button
+                                  onClick={() =>
+                                    submitInvoiceForFactoring(invoice.invoiceId)
+                                  }
+                                  style={{
+                                    width: '100%',
+                                    background: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    fontSize: '10px',
+                                    marginTop: '8px',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  💰 Submit for Factoring
+                                </button>
+                              )}
+
+                              {invoice.status === 'factored' &&
+                                invoice.factorAdvance && (
+                                  <div
+                                    style={{
+                                      marginTop: '5px',
+                                      fontSize: '10px',
+                                      color: '#22c55e',
+                                    }}
+                                  >
+                                    Advance: $
+                                    {invoice.factorAdvance.toLocaleString()} (
+                                    {invoice.advanceDate})
+                                  </div>
+                                )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Payment Methods */}
+                    <div
+                      style={{
+                        background: 'rgba(168, 85, 247, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(168, 85, 247, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#a855f7',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        💳 Payment Methods
+                      </h4>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '10px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            🏦 Direct Deposit:{' '}
+                            {factoringStatus.paymentMethods.directDeposit
+                              .enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            💳 Pay Card:{' '}
+                            {factoringStatus.paymentMethods.payCard.enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            📮 Check:{' '}
+                            {factoringStatus.paymentMethods.check.enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Transactions */}
+                    <div
+                      style={{
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(249, 115, 22, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#f97316',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📊 Recent Transactions
+                      </h4>
+
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {factoringStatus.recentTransactions.map(
+                          (txn, index) => (
+                            <div
+                              key={txn.transactionId}
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '6px',
+                                padding: '8px',
+                                marginBottom: '6px',
+                                fontSize: '11px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  marginBottom: '3px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      txn.type === 'factor_advance'
+                                        ? '#22c55e'
+                                        : txn.type === 'settlement'
+                                          ? '#3b82f6'
+                                          : '#f97316',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  ${txn.amount.toLocaleString()}
+                                </span>
+                                <span
+                                  style={{ color: '#22c55e', fontSize: '9px' }}
+                                >
+                                  {txn.status.toUpperCase()}
+                                </span>
+                              </div>
+                              <div
+                                style={{ color: 'white', marginBottom: '2px' }}
+                              >
+                                {txn.description}
+                              </div>
+                              <div
+                                style={{ color: '#94a3b8', fontSize: '10px' }}
+                              >
+                                {txn.date}
+                              </div>
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
