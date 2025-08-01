@@ -7,7 +7,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FleetFlow - Transportation Management System',
+  title: 'FleetFlow™ - Transportation Management System',
   description: 'Advanced fleet management and logistics platform',
 };
 

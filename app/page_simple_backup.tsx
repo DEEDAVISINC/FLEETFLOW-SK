@@ -204,7 +204,7 @@ export default function Dashboard() {
                 </div>
                 <div className='text-white'>
                   <h1 className='mb-3 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-5xl font-bold text-transparent'>
-                    FleetFlow Command Center
+                    FleetFlow Command Center℠
                   </h1>
                   <p className='text-xl text-gray-300'>
                     Real-time fleet operations dashboard

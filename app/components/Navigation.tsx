@@ -472,7 +472,7 @@ export default function ProfessionalNavigation() {
                 }}
               >
                 <Link
-                  href='/training'
+                  href='/university'
                   onClick={handleDropdownClose}
                   style={{
                     display: 'block',

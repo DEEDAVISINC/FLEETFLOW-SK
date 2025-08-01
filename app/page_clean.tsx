@@ -150,7 +150,7 @@ export default function Dashboard() {
             className='mb-2 text-gray-900'
             style={{ fontSize: '2rem', fontWeight: 'bold' }}
           >
-            FleetFlow Command Center
+            FleetFlow Command Center℠
           </h1>
           <p className='text-gray-600'>Real-time fleet operations dashboard</p>
           <div className='mt-2 flex items-center space-x-4 text-sm text-gray-500'>

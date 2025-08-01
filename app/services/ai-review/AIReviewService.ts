@@ -2,7 +2,7 @@
 // Comprehensive validation and cross-reference system for all processes
 // Centralized in AI Flow platform
 
-import { ClaudeService } from '../claude/ClaudeService';
+import { ClaudeAIService } from '../../../lib/claude-ai-service';
 
 export interface ReviewContext {
   processType:
@@ -70,11 +70,11 @@ export interface AIReviewMetrics {
 }
 
 export class AIReviewService {
-  private claudeService: ClaudeService;
+  private claudeService: ClaudeAIService;
   private validationRules: Map<string, ValidationRule[]>;
 
   constructor() {
-    this.claudeService = new ClaudeService();
+    this.claudeService = new ClaudeAIService();
     this.validationRules = new Map();
     this.initializeValidationRules();
   }
@@ -476,7 +476,10 @@ export class AIReviewService {
     `;
 
     try {
-      const aiResponse = await this.claudeService.analyze(prompt);
+      const aiResponse = await this.claudeService.generateDocument(
+        prompt,
+        'ai-review-analysis'
+      );
 
       // Parse AI response and extract structured data
       return this.parseAIResponse(aiResponse);

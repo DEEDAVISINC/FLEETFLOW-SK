@@ -1243,7 +1243,7 @@ const permissionCategories = {
     color: '#f97316',
     subPages: {
       'fleetflow-university': {
-        name: 'FleetFlow University',
+        name: 'FleetFlow University℠',
         icon: '🎓',
         sections: [
           'university-course-catalog',

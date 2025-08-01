@@ -6,7 +6,7 @@ import AIFlowPlatform from '../components/AIFlowPlatform';
 
 export default function AIHubPage() {
   const [currentPage, setCurrentPage] = useState<'ai-flow' | 'ai-hub'>(
-    'ai-flow'
+    'ai-hub'
   );
 
   const flipPage = () => {

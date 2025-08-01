@@ -166,3 +166,64 @@ export function getInvoiceMetrics(): {
     ).length,
   };
 }
+
+// Additional utility functions for dispatch page and invoice modal
+
+export function getInvoiceStats() {
+  const metrics = getInvoiceMetrics();
+  const allInvoices = Array.from(invoices.values());
+  const totalAmount = allInvoices.reduce((sum, inv) => sum + inv.loadAmount, 0);
+  const pendingAmount = allInvoices
+    .filter((inv) => inv.status === 'Pending')
+    .reduce((sum, inv) => sum + inv.loadAmount, 0);
+  const paidAmount = allInvoices
+    .filter((inv) => inv.status === 'Paid')
+    .reduce((sum, inv) => sum + inv.loadAmount, 0);
+
+  return {
+    counts: {
+      total: metrics.total,
+      pending: metrics.pending,
+      sent: 0, // No 'sent' status in our current system, but dispatch page expects it
+      paid: metrics.paid,
+      overdue: metrics.overdue,
+    },
+    amounts: {
+      total: totalAmount,
+      pending: pendingAmount,
+      paid: paidAmount,
+    },
+  };
+}
+
+export function ensureUniqueKey(invoice: any, index: number): string {
+  // Generate a unique key for React components based on invoice data
+  if (invoice && invoice.id) {
+    return `invoice-${invoice.id}`;
+  }
+  return `invoice-${index}`;
+}
+
+export function generateInvoiceNumber(): string {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substr(2, 5).toUpperCase();
+  return `INV-${timestamp}-${random}`;
+}
+
+export function getDepartmentCode(userIdentifier: string): string {
+  // Extract department code from user identifier format: XX-DEPT-YYYYMMM
+  const parts = userIdentifier.split('-');
+  if (parts.length >= 2) {
+    return parts[1]; // Return department code (DC, BB, DM, MGR, etc.)
+  }
+  return 'UNK'; // Unknown department
+}
+
+export function getUserInitials(userIdentifier: string): string {
+  // Extract user initials from user identifier format: XX-DEPT-YYYYMMM
+  const parts = userIdentifier.split('-');
+  if (parts.length >= 1) {
+    return parts[0]; // Return user initials
+  }
+  return 'UN'; // Unknown user
+}

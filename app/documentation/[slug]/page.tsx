@@ -1,43 +1,44 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { getCurrentUser, checkPermission } from '../../config/access'
+import Link from 'next/link';
+import { use, useEffect, useState } from 'react';
+import { checkPermission, getCurrentUser } from '../../config/access';
 
 interface DocumentViewerProps {
-  params: {
-    slug: string
-  }
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
 export default function DocumentViewer({ params }: DocumentViewerProps) {
-  const [content, setContent] = useState<string>('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
-  
+  const resolvedParams = use(params);
+  const [content, setContent] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+
   // Check access permissions
-  const { user } = getCurrentUser()
-  const hasManagementAccess = checkPermission('hasManagementAccess')
+  const { user } = getCurrentUser();
+  const hasManagementAccess = checkPermission('hasManagementAccess');
 
   useEffect(() => {
     // Redirect if no management access
     if (typeof window !== 'undefined' && !hasManagementAccess) {
-      window.location.href = '/?error=access_denied'
-      return
+      window.location.href = '/?error=access_denied';
+      return;
     }
 
-    loadDocument()
-  }, [params.slug, hasManagementAccess])
+    loadDocument();
+  }, [resolvedParams.slug, hasManagementAccess]);
 
   const generateDynamicBusinessPlan = () => {
-    const currentDate = new Date().toLocaleDateString()
-    const currentVersion = "2025.1.0"
-    
+    const currentDate = new Date().toLocaleDateString();
+    const currentVersion = '2025.1.0';
+
     return `# 💼 FleetFlow Comprehensive Business Plan
 ## Transportation Management System & Executive Strategy
 
-**Document Generated:** ${currentDate}  
-**Version:** ${currentVersion}  
+**Document Generated:** ${currentDate}
+**Version:** ${currentVersion}
 **Status:** Production Ready & Market Launch
 
 ---
@@ -707,13 +708,13 @@ export default function DocumentViewer({ params }: DocumentViewerProps) {
 *This business plan is automatically generated from FleetFlow's current production capabilities and is updated in real-time as new features are deployed.*
 
 **For more information:** Contact FleetFlow Management Team
-**System Status:** All modules operational and production-ready`
-  }
+**System Status:** All modules operational and production-ready`;
+  };
 
   const generateDynamicUserGuide = () => {
-    const currentDate = new Date().toLocaleDateString()
-    const currentVersion = "2025.1.0"
-    
+    const currentDate = new Date().toLocaleDateString();
+    const currentVersion = '2025.1.0';
+
     return `# 📖 FleetFlow Comprehensive User Guide
 *Generated: ${currentDate} | Version: ${currentVersion}*
 
@@ -975,26 +976,26 @@ Your FleetFlow dashboard provides access to all system features:
 *This user guide is automatically generated from FleetFlow's current production capabilities and is updated in real-time as new features are deployed. For the most current information, access the in-app help system or contact support.*
 
 **Last Updated**: ${currentDate} | **System Version**: ${currentVersion}
-**Support**: help@fleetflow.com | **Training**: university@fleetflow.com`
-  }
+**Support**: help@fleetflow.com | **Training**: university@fleetflow.com`;
+  };
 
   const loadDocument = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Generate dynamic content based on current app state
-      let documentContent = ''
-      
-      switch (params.slug) {
+      let documentContent = '';
+
+      switch (resolvedParams.slug) {
         case 'business-plan':
-          documentContent = generateDynamicBusinessPlan()
-          break
+          documentContent = generateDynamicBusinessPlan();
+          break;
         case 'user-guide':
-          documentContent = generateDynamicUserGuide()
-          break
+          documentContent = generateDynamicUserGuide();
+          break;
         case 'executive-summary':
-          documentContent = generateDynamicBusinessPlan() // Executive summary is part of business plan
-          break
+          documentContent = generateDynamicBusinessPlan(); // Executive summary is part of business plan
+          break;
         case 'ai-guide':
           documentContent = `# 🤖 FleetFlow AI Implementation Guide
 *Generated: ${new Date().toLocaleDateString()} | Auto-updating with AI system capabilities*
@@ -1032,7 +1033,7 @@ Your FleetFlow dashboard provides access to all system features:
 const aiLoadMatching = {
   factors: [
     'Geographic proximity and efficiency',
-    'Vehicle capacity and load requirements', 
+    'Vehicle capacity and load requirements',
     'Driver qualifications and certifications',
     'Historical performance and reliability',
     'Customer preferences and specifications',
@@ -1284,8 +1285,8 @@ const aiLoadMatching = {
 **AI System Status**: ✅ All AI systems operational
 **Last Updated**: ${new Date().toLocaleDateString()}
 **AI Training**: Available through FleetFlow University
-**Support**: ai-support@fleetflow.com | **Development**: ai-dev@fleetflow.com`
-          break
+**Support**: ai-support@fleetflow.com | **Development**: ai-dev@fleetflow.com`;
+          break;
         case 'quick-reference':
           documentContent = `# 📋 FleetFlow Quick Reference Cards
 *Generated: ${new Date().toLocaleDateString()} | Auto-updating with system changes*
@@ -1575,8 +1576,8 @@ const aiLoadMatching = {
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Print Version**: Available in system settings
 **Mobile Access**: Optimized for mobile devices
-**Offline Access**: Download for offline reference`
-          break
+**Offline Access**: Download for offline reference`;
+          break;
         case 'marketing-strategy':
           documentContent = `# 📈 FleetFlow Marketing Strategy
 *Generated: ${new Date().toLocaleDateString()}*
@@ -1590,7 +1591,7 @@ const aiLoadMatching = {
 
 ### Target Market Segments
 - **Primary**: Mid-market carriers (10-100 trucks) - 8,000+ companies
-- **Secondary**: Growing carriers (100-500 trucks) - 3,000+ companies  
+- **Secondary**: Growing carriers (100-500 trucks) - 3,000+ companies
 - **Tertiary**: Small operations (5-10 trucks) - 25,000+ operators
 
 ### Marketing Channels
@@ -1605,8 +1606,8 @@ const aiLoadMatching = {
 - Lifetime Value: $35,000+
 - LTV/CAC Ratio: 29:1
 
-*Complete marketing plan available in MARKETING_PLAN.md*`
-          break
+*Complete marketing plan available in MARKETING_PLAN.md*`;
+          break;
         case 'technical-architecture':
           documentContent = `# 🏗️ FleetFlow Technical Architecture
 *Generated: ${new Date().toLocaleDateString()} | Auto-updating with production system*
@@ -1869,8 +1870,8 @@ System_Logs (audit trails, monitoring)
 **System Status**: ✅ All systems operational
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Monitoring**: 24/7 automated monitoring active
-**Support**: tech@fleetflow.com | **Infrastructure**: ops@fleetflow.com`
-          break
+**Support**: tech@fleetflow.com | **Infrastructure**: ops@fleetflow.com`;
+          break;
         case 'compliance-guide':
           documentContent = `# ⚖️ DOT Compliance Guide
 *Generated: ${new Date().toLocaleDateString()}*
@@ -1902,8 +1903,8 @@ System_Logs (audit trails, monitoring)
 - Compliance consulting and training
 - Emergency response coordination
 
-*Access DOT Compliance Center for real-time compliance management.*`
-          break
+*Access DOT Compliance Center for real-time compliance management.*`;
+          break;
         case 'implementation-guide':
           documentContent = `# 🚀 FleetFlow Implementation Guide
 *Generated: ${new Date().toLocaleDateString()}*
@@ -1940,8 +1941,8 @@ System_Logs (audit trails, monitoring)
 - 4.8/5.0 average satisfaction score
 - Zero downtime during migration
 
-*Contact implementation team for personalized onboarding support.*`
-          break
+*Contact implementation team for personalized onboarding support.*`;
+          break;
         case 'training-checklists':
           documentContent = `# ✅ FleetFlow University Training Checklists & Certification Management
 *Generated: ${new Date().toLocaleDateString()} | Auto-updating with training progress*
@@ -2215,8 +2216,8 @@ System_Logs (audit trails, monitoring)
 **Training Status**: ✅ All courses operational and current
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Course Enrollment**: Available 24/7 through FleetFlow University portal
-**Support**: university@fleetflow.com | **Certification**: certification@fleetflow.com`
-          break
+**Support**: university@fleetflow.com | **Certification**: certification@fleetflow.com`;
+          break;
         default:
           documentContent = `# 📄 Document Not Found
 The requested document "${params.slug}" could not be found.
@@ -2233,17 +2234,16 @@ The requested document "${params.slug}" could not be found.
 - **Quick Reference Cards** - Daily workflow checklists and guides
 - **Executive Summary** - Business overview and investment opportunity
 
-Return to [Documentation Hub](/documentation) to browse all available resources.`
+Return to [Documentation Hub](/documentation) to browse all available resources.`;
       }
-      
-      setContent(documentContent)
-      
+
+      setContent(documentContent);
     } catch (err) {
-      setError('Failed to load document')
+      setError('Failed to load document');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getDocumentTitle = (slug: string) => {
     const titles: Record<string, string> = {
@@ -2256,54 +2256,71 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
       'technical-architecture': '🏗️ Technical Architecture',
       'compliance-guide': '⚖️ DOT Compliance Guide',
       'implementation-guide': '� Implementation Guide',
-      'marketing-strategy': '📈 Marketing Strategy'
-    }
-    return titles[slug] || 'Document'
-  }
+      'marketing-strategy': '📈 Marketing Strategy',
+    };
+    return titles[slug] || 'Document';
+  };
 
   if (!hasManagementAccess) {
-    return null // Will redirect in useEffect
+    return null; // Will redirect in useEffect
   }
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      minHeight: '100vh',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <div style={{
-        padding: '20px',
-        color: 'white'
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
+    <div
+      style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        minHeight: '100vh',
+        fontFamily: 'Arial, sans-serif',
+      }}
+    >
+      <div
+        style={{
+          padding: '20px',
+          color: 'white',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+          }}
+        >
           {/* Back Navigation - Enhanced */}
-          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link href="/documentation" style={{
-              color: 'rgba(255, 255, 255, 0.95)',
-              textDecoration: 'none',
-              fontSize: '1.1rem',
-              fontWeight: '500',
-              display: 'inline-flex',
+          <div
+            style={{
+              marginBottom: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              gap: '10px',
-              padding: '12px 20px',
-              background: 'rgba(255, 255, 255, 0.15)',
-              borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              backdropFilter: 'blur(15px)',
-              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer'
-            }}>
-              <span style={{ fontSize: '1.2rem' }}>←</span> Back to Documentation Hub
+            }}
+          >
+            <Link
+              href='/documentation'
+              style={{
+                color: 'rgba(255, 255, 255, 0.95)',
+                textDecoration: 'none',
+                fontSize: '1.1rem',
+                fontWeight: '500',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 20px',
+                background: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                backdropFilter: 'blur(15px)',
+                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+              }}
+            >
+              <span style={{ fontSize: '1.2rem' }}>←</span> Back to
+              Documentation Hub
             </Link>
-            
+
             {/* Quick actions */}
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button 
+              <button
                 onClick={() => window.print()}
                 style={{
                   background: 'rgba(76, 175, 80, 0.8)',
@@ -2314,20 +2331,21 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
                   cursor: 'pointer',
                   fontSize: '0.9rem',
                   backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
-                }}>
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 🖨️ Print
               </button>
-              <button 
+              <button
                 onClick={() => {
                   if (navigator.share) {
                     navigator.share({
                       title: getDocumentTitle(params.slug),
-                      url: window.location.href
-                    })
+                      url: window.location.href,
+                    });
                   } else {
-                    navigator.clipboard.writeText(window.location.href)
-                    alert('Link copied to clipboard!')
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link copied to clipboard!');
                   }
                 }}
                 style={{
@@ -2339,157 +2357,189 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
                   cursor: 'pointer',
                   fontSize: '0.9rem',
                   backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
-                }}>
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 📤 Share
               </button>
             </div>
           </div>
 
           {/* Main Container */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '30px',
-            borderRadius: '20px',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
-            border: '1px solid rgba(255, 255, 255, 0.18)'
-          }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '30px',
+              borderRadius: '20px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+            }}
+          >
             {/* Header */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '30px'
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '30px',
+              }}
+            >
               <div>
-                <h1 style={{
-                  fontSize: '2.5rem',
-                  margin: '0 0 10px 0',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-                }}>
+                <h1
+                  style={{
+                    fontSize: '2.5rem',
+                    margin: '0 0 10px 0',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                  }}
+                >
                   {getDocumentTitle(params.slug)}
                 </h1>
-                <p style={{
-                  fontSize: '1rem',
-                  margin: 0,
-                  opacity: 0.9
-                }}>
-                  Management Access Only | Role: {user?.role?.toUpperCase() || 'UNKNOWN'}
+                <p
+                  style={{
+                    fontSize: '1rem',
+                    margin: 0,
+                    opacity: 0.9,
+                  }}
+                >
+                  Management Access Only | Role:{' '}
+                  {user?.role?.toUpperCase() || 'UNKNOWN'}
                 </p>
               </div>
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button style={{
-                  background: 'rgba(244, 67, 54, 0.8)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: 'white',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
-                }}>
+                <button
+                  style={{
+                    background: 'rgba(244, 67, 54, 0.8)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
                   📄 Export PDF
                 </button>
-                <button style={{
-                  background: 'rgba(33, 150, 243, 0.8)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: 'white',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
-                }}>
+                <button
+                  style={{
+                    background: 'rgba(33, 150, 243, 0.8)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
                   🖨️ Print
                 </button>
               </div>
             </div>
 
             {/* Document Content */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              padding: '30px',
-              borderRadius: '15px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(10px)',
-              minHeight: '500px'
-            }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                padding: '30px',
+                borderRadius: '15px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                minHeight: '500px',
+              }}
+            >
               {loading && (
                 <div style={{ textAlign: 'center', padding: '50px' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '20px' }}>📄</div>
+                  <div style={{ fontSize: '2rem', marginBottom: '20px' }}>
+                    📄
+                  </div>
                   <p>Loading document...</p>
                 </div>
               )}
 
               {error && (
                 <div style={{ textAlign: 'center', padding: '50px' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '20px' }}>❌</div>
+                  <div style={{ fontSize: '2rem', marginBottom: '20px' }}>
+                    ❌
+                  </div>
                   <p style={{ color: '#ff6b6b' }}>{error}</p>
                 </div>
               )}
 
               {!loading && !error && (
-                <div style={{
-                  lineHeight: '1.8',
-                  fontSize: '1.1rem'
-                }}>
+                <div
+                  style={{
+                    lineHeight: '1.8',
+                    fontSize: '1.1rem',
+                  }}
+                >
                   {/* This would render the actual markdown content in production */}
-                  <pre style={{
-                    whiteSpace: 'pre-wrap',
-                    fontFamily: 'inherit',
-                    margin: 0
-                  }}>
+                  <pre
+                    style={{
+                      whiteSpace: 'pre-wrap',
+                      fontFamily: 'inherit',
+                      margin: 0,
+                    }}
+                  >
                     {content}
                   </pre>
-                  
+
                   {/* Bottom Navigation */}
-                  <div style={{
-                    marginTop: '40px',
-                    paddingTop: '30px',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: '20px'
-                  }}>
-                    <Link href="/documentation" style={{
-                      color: 'rgba(255, 255, 255, 0.95)',
-                      textDecoration: 'none',
-                      fontSize: '1.1rem',
-                      fontWeight: '500',
-                      display: 'inline-flex',
+                  <div
+                    style={{
+                      marginTop: '40px',
+                      paddingTop: '30px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
-                      gap: '10px',
-                      padding: '12px 24px',
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      backdropFilter: 'blur(15px)',
-                      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.3s ease'
-                    }}>
-                      <span style={{ fontSize: '1.2rem' }}>←</span> Back to Documentation Hub
+                      flexWrap: 'wrap',
+                      gap: '20px',
+                    }}
+                  >
+                    <Link
+                      href='/documentation'
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        textDecoration: 'none',
+                        fontSize: '1.1rem',
+                        fontWeight: '500',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        padding: '12px 24px',
+                        background: 'rgba(255, 255, 255, 0.15)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        backdropFilter: 'blur(15px)',
+                        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.2rem' }}>←</span> Back to
+                      Documentation Hub
                     </Link>
-                    
-                    <div style={{
-                      fontSize: '0.9rem',
-                      opacity: 0.8,
-                      textAlign: 'right'
-                    }}>
+
+                    <div
+                      style={{
+                        fontSize: '0.9rem',
+                        opacity: 0.8,
+                        textAlign: 'right',
+                      }}
+                    >
                       <div>Last Updated: {new Date().toLocaleDateString()}</div>
                       <div>Auto-updating with system changes</div>
                     </div>
                   </div>
                 </div>
               )}
-              
+
               {/* Floating Back Button */}
-              <Link 
-                href="/documentation"
+              <Link
+                href='/documentation'
                 style={{
                   position: 'fixed',
                   bottom: '30px',
@@ -2508,9 +2558,9 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
                   backdropFilter: 'blur(15px)',
                   boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
                   transition: 'all 0.3s ease',
-                  zIndex: 1000
+                  zIndex: 1000,
                 }}
-                title="Back to Documentation Hub"
+                title='Back to Documentation Hub'
               >
                 ←
               </Link>
@@ -2519,5 +2569,5 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
         </div>
       </div>
     </div>
-  )
+  );
 }

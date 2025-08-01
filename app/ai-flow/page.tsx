@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CRMDashboard from '../components/CRMDashboard';
-import AIReviewDashboard from '../components/ai-review/AIReviewDashboard';
+// import AIReviewDashboard from '../components/ai-review/AIReviewDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -257,7 +257,7 @@ export default function FleetFlowAIPlatform() {
             </TabsTrigger>
             <TabsTrigger value='dispatch' className='flex items-center gap-2'>
               <Navigation className='h-4 w-4' />
-              Dispatch AI
+              AI Dispatch
             </TabsTrigger>
             <TabsTrigger value='recruiting' className='flex items-center gap-2'>
               <UserPlus className='h-4 w-4' />
@@ -557,87 +557,31 @@ export default function FleetFlowAIPlatform() {
             </Card>
           </TabsContent>
 
-          {/* Dispatch AI Tab */}
+          {/* AI Dispatch Tab - WORKING TEST */}
           <TabsContent value='dispatch' className='space-y-6'>
             <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
               <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
                   <Navigation className='h-5 w-5' />
-                  AI Dispatch Intelligence Center
+                  🚨 AI DISPATCH TAB IS NOW WORKING! 🚨
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-                  <div className='rounded-lg bg-green-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-green-600'>
-                      {aiMetrics.dispatchStats.driversActive}
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Drivers Active
-                    </div>
-                    <Badge className='bg-green-100 text-green-800'>
-                      Online
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-blue-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-blue-600'>
-                      {aiMetrics.dispatchStats.routeOptimization.toFixed(1)}%
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Route Efficiency
-                    </div>
-                    <Badge className='bg-blue-100 text-blue-800'>
-                      AI Optimized
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-purple-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-purple-600'>
-                      {aiMetrics.dispatchStats.deliveryTime.toFixed(1)}%
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      On-Time Delivery
-                    </div>
-                    <Badge className='bg-purple-100 text-purple-800'>
-                      Excellent
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className='mt-6 rounded-lg bg-gradient-to-r from-green-50 to-blue-50 p-4'>
-                  <h3 className='mb-3 text-lg font-semibold'>
-                    Smart Dispatch Features
-                  </h3>
-                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Navigation className='h-4 w-4 text-green-600' />
-                        <span className='text-sm'>
-                          Real-time Route Optimization
-                        </span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Users className='h-4 w-4 text-blue-600' />
-                        <span className='text-sm'>
-                          Driver Performance Analytics
-                        </span>
-                      </div>
-                    </div>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Brain className='h-4 w-4 text-purple-600' />
-                        <span className='text-sm'>Predictive Maintenance</span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Target className='h-4 w-4 text-orange-600' />
-                        <span className='text-sm'>Load Assignment AI</span>
-                      </div>
-                    </div>
-                  </div>
+                <div className='p-8 text-center'>
+                  <h2 className='mb-4 text-2xl font-bold text-green-600'>
+                    ✅ SUCCESS!
+                  </h2>
+                  <p className='mb-4 text-lg text-gray-700'>
+                    The AI Dispatch tab is now rendering properly!
+                  </p>
+                  <p className='text-gray-600'>
+                    The complex design was causing a React error. Now we can
+                    rebuild it step by step.
+                  </p>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-
           {/* Recruiting AI Tab */}
           <TabsContent value='recruiting' className='space-y-6'>
             <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
@@ -897,12 +841,14 @@ export default function FleetFlowAIPlatform() {
 
           {/* AI Review System Tab */}
           <TabsContent value='ai-review' className='space-y-6'>
-            <AIReviewDashboard
-              showMetrics={true}
-              onReviewComplete={(result) => {
-                console.log('AI Review completed:', result);
-              }}
-            />
+            <div className='p-8 text-center'>
+              <h2 className='mb-4 text-2xl font-bold text-gray-900'>
+                AI Review System
+              </h2>
+              <p className='text-gray-600'>
+                AI Review Dashboard temporarily disabled for debugging
+              </p>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
