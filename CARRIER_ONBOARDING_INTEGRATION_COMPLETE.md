@@ -2,13 +2,15 @@
 
 ## Overview
 
-This document describes the complete carrier onboarding workflow system implemented in FleetFlow, including the integration between the onboarding process and the carrier/driver portals.
+This document describes the complete carrier onboarding workflow system implemented in FleetFlow,
+including the integration between the onboarding process and the carrier/driver portals.
 
 ## System Architecture
 
 ### Core Components
 
-1. **Onboarding Workflow Engine** (`app/onboarding/carrier-onboarding/components/OnboardingWorkflow.tsx`)
+1. **Onboarding Workflow Engine**
+   (`app/onboarding/carrier-onboarding/components/OnboardingWorkflow.tsx`)
 2. **Integration Service** (`app/services/onboarding-integration.ts`)
 3. **Enhanced Carrier Portal** (`app/carriers/enhanced-portal/page.tsx`)
 4. **Enhanced Driver Portal** (`app/drivers/enhanced-portal/page.tsx`)
@@ -17,6 +19,7 @@ This document describes the complete carrier onboarding workflow system implemen
 ## Workflow Process
 
 ### Step 1: FMCSA Verification
+
 - **Component**: `FMCSAVerification.tsx`
 - **Service**: `FMCSAService.ts`
 - **Purpose**: Verify carrier information from FMCSA database
@@ -28,6 +31,7 @@ This document describes the complete carrier onboarding workflow system implemen
   - Equipment Types
 
 ### Step 2: Document Upload
+
 - **Component**: `DocumentUpload.tsx`
 - **Purpose**: Collect required documents
 - **Document Types**:
@@ -38,6 +42,7 @@ This document describes the complete carrier onboarding workflow system implemen
   - Custom documents
 
 ### Step 3: Factoring Setup
+
 - **Component**: `FactoringSetup.tsx`
 - **Purpose**: Configure payment processing
 - **Options**:
@@ -46,6 +51,7 @@ This document describes the complete carrier onboarding workflow system implemen
   - Submit Notice of Assignment (NOA)
 
 ### Step 4: Agreement Signing
+
 - **Component**: `AgreementSigning.tsx`
 - **Purpose**: Electronic signature of agreements
 - **Agreement Types**:
@@ -55,6 +61,7 @@ This document describes the complete carrier onboarding workflow system implemen
   - Payment Terms
 
 ### Step 5: Portal Setup
+
 - **Component**: `PortalSetup.tsx`
 - **Purpose**: Create portal access for carrier and drivers
 - **Features**:
@@ -66,11 +73,12 @@ This document describes the complete carrier onboarding workflow system implemen
 ## Data Integration Flow
 
 ### Onboarding Completion
+
 When a carrier completes the onboarding process:
 
 1. **Data Collection**: All step data is aggregated into an `OnboardingRecord`
 2. **Integration Service**: `OnboardingIntegrationService.completeOnboarding()` is called
-3. **Profile Creation**: 
+3. **Profile Creation**:
    - Carrier portal profile is created
    - Driver portal profiles are created for each driver
 4. **Notification**: Welcome notifications are sent (mock implementation)
@@ -79,6 +87,7 @@ When a carrier completes the onboarding process:
 ### Data Models
 
 #### CarrierPortalProfile
+
 ```typescript
 interface CarrierPortalProfile {
   carrierId: string;
@@ -94,6 +103,7 @@ interface CarrierPortalProfile {
 ```
 
 #### DriverPortalProfile
+
 ```typescript
 interface DriverPortalProfile {
   driverId: string;
@@ -108,8 +118,10 @@ interface DriverPortalProfile {
 ## Portal Features
 
 ### Enhanced Carrier Portal
+
 - **Location**: `/carriers/enhanced-portal`
-- **Visual Design**: Modern 3D glass morphism interface with darker green gradient background, enhanced visibility, and professional styling
+- **Visual Design**: Modern 3D glass morphism interface with darker green gradient background,
+  enhanced visibility, and professional styling
 - **Features**:
   - View all onboarded carriers with enhanced visual presentation
   - Advanced search and filter capabilities with improved readability
@@ -122,6 +134,7 @@ interface DriverPortalProfile {
   - Responsive design optimized for professional use
 
 ### Enhanced Driver Portal
+
 - **Location**: `/drivers/enhanced-portal`
 - **Features**:
   - View all onboarded drivers
@@ -134,6 +147,7 @@ interface DriverPortalProfile {
 ## Access Control
 
 ### Permissions
+
 The system uses granular permissions:
 
 - `canAccessCarrierOnboarding`: Basic access to onboarding system
@@ -146,6 +160,7 @@ The system uses granular permissions:
 - `canViewDriverPortal`: View driver portal information
 
 ### Role-Based Access
+
 - **Admin**: Full access to all features
 - **Manager**: Full access to all features
 - **Dispatcher**: Full access to onboarding and portal management
@@ -159,7 +174,7 @@ The system is integrated into the main navigation under "Driver Management":
 ```
 🚛 DRIVER MANAGEMENT ▼
 ├── 🚛 Driver Management
-├── 📱 Driver Dashboard  
+├── 📱 Driver Dashboard
 ├── 👥 Enhanced Driver Portal
 ├── 🚛 Carrier Onboarding
 ├── 🏢 Enhanced Carrier Portal
@@ -169,11 +184,13 @@ The system is integrated into the main navigation under "Driver Management":
 ## API Integration Points
 
 ### FMCSA Service
+
 - **Endpoint**: FMCSA Web Services
 - **Purpose**: Real-time carrier verification
 - **Features**: DOT/MC lookup, safety rating validation
 
 ### BrokerSnapshot Integration
+
 - **Service**: `enhanced-carrier-service.ts`
 - **Purpose**: Credit checks and carrier history
 - **Features**: Payment history, references, tracking capability
@@ -181,18 +198,21 @@ The system is integrated into the main navigation under "Driver Management":
 ## Future Enhancements
 
 ### Automation Features
+
 1. **Automated Reminders**: Email/SMS reminders for incomplete steps
 2. **OCR Document Processing**: Automatic document data extraction
 3. **Compliance Monitoring**: Real-time safety and insurance monitoring
 4. **Performance Analytics**: Load performance tracking and rating
 
 ### Advanced Portal Features
+
 1. **Load Assignment**: Direct load assignment from onboarding
 2. **Real-time Chat**: Integrated communication system
 3. **Mobile Apps**: Dedicated driver mobile application
 4. **API Access**: Third-party integrations for carriers
 
 ### Reporting & Analytics
+
 1. **Onboarding Metrics**: Time-to-completion, success rates
 2. **Carrier Performance**: Delivery metrics, rating trends
 3. **Compliance Reports**: Safety violations, insurance lapses
@@ -201,6 +221,7 @@ The system is integrated into the main navigation under "Driver Management":
 ## Database Schema (Conceptual)
 
 ### Tables Required for Production
+
 ```sql
 -- Carriers
 CREATE TABLE carriers (
@@ -250,16 +271,19 @@ CREATE TABLE portal_users (
 ## Testing Strategy
 
 ### Unit Testing
+
 - Individual component testing
 - Service method validation
 - Permission checking logic
 
 ### Integration Testing
+
 - Full workflow completion
 - Portal data flow validation
 - Access control verification
 
 ### End-to-End Testing
+
 - Complete onboarding process
 - Portal access validation
 - Cross-component data consistency
@@ -267,6 +291,7 @@ CREATE TABLE portal_users (
 ## Deployment Considerations
 
 ### Environment Variables
+
 ```env
 FMCSA_API_KEY=your_fmcsa_api_key
 BROKERSNAPSHOT_API_KEY=your_brokersnapshot_key
@@ -276,6 +301,7 @@ SMS_SERVICE_API_KEY=your_sms_service_key
 ```
 
 ### Security Requirements
+
 - HTTPS for all communications
 - Encrypted document storage
 - Secure password generation
@@ -283,6 +309,7 @@ SMS_SERVICE_API_KEY=your_sms_service_key
 - Data encryption at rest
 
 ### Performance Considerations
+
 - Caching of FMCSA lookup results
 - Lazy loading of portal data
 - Optimized database queries
@@ -292,12 +319,14 @@ SMS_SERVICE_API_KEY=your_sms_service_key
 ## Support & Maintenance
 
 ### Monitoring
+
 - Onboarding completion rates
 - Portal usage metrics
 - Error tracking and alerting
 - Performance monitoring
 
 ### Backup & Recovery
+
 - Regular database backups
 - Document storage redundancy
 - Configuration backup
@@ -305,6 +334,11 @@ SMS_SERVICE_API_KEY=your_sms_service_key
 
 ## Conclusion
 
-The carrier onboarding workflow system provides a comprehensive solution for managing the entire carrier lifecycle from initial verification through ongoing portal access. The modular design allows for easy extension and customization while maintaining data integrity and proper access controls throughout the process.
+The carrier onboarding workflow system provides a comprehensive solution for managing the entire
+carrier lifecycle from initial verification through ongoing portal access. The modular design allows
+for easy extension and customization while maintaining data integrity and proper access controls
+throughout the process.
 
-The integration between onboarding and portal systems ensures seamless data flow and eliminates duplicate data entry, providing a superior user experience for both internal staff and external carriers and drivers.
+The integration between onboarding and portal systems ensures seamless data flow and eliminates
+duplicate data entry, providing a superior user experience for both internal staff and external
+carriers and drivers.

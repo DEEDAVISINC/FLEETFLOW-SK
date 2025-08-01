@@ -1,6 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import AccessVerificationLoading from '../components/AccessVerificationLoading';
+import ManagerOnlyAccessDenied from '../components/ManagerOnlyAccessDenied';
+import {
+  ManagerAccessControlService,
+  type ManagerVerification,
+} from '../services/ManagerAccessControlService';
 
 // Comprehensive mock users with ALL detailed information + drivers with carrier onboarding
 const mockUsers = [
@@ -1296,7 +1302,7 @@ const permissionCategories = {
           'quickbooks-token-management',
           'quickbooks-error-handling',
           'quickbooks-sync-status',
-          'quickbooks-connection-test'
+          'quickbooks-connection-test',
         ],
       },
       'feature-management': {
@@ -1310,7 +1316,7 @@ const permissionCategories = {
           'quickbooks-sync-schedule',
           'quickbooks-data-mapping',
           'quickbooks-error-notifications',
-          'quickbooks-audit-logs'
+          'quickbooks-audit-logs',
         ],
       },
       'user-dashboard-integration': {
@@ -1324,7 +1330,7 @@ const permissionCategories = {
           'quickbooks-feature-status',
           'quickbooks-connection-status',
           'quickbooks-sync-progress',
-          'quickbooks-notification-badges'
+          'quickbooks-notification-badges',
         ],
       },
       'payroll-integration': {
@@ -1338,7 +1344,7 @@ const permissionCategories = {
           'quickbooks-payroll-approval',
           'quickbooks-payroll-reports',
           'quickbooks-payroll-taxes',
-          'quickbooks-payroll-deductions'
+          'quickbooks-payroll-deductions',
         ],
       },
       'ach-payment-integration': {
@@ -1352,7 +1358,7 @@ const permissionCategories = {
           'quickbooks-ach-error-handling',
           'quickbooks-ach-compliance',
           'quickbooks-ach-reporting',
-          'quickbooks-ach-audit-trail'
+          'quickbooks-ach-audit-trail',
         ],
       },
       'invoicing-integration': {
@@ -1366,7 +1372,7 @@ const permissionCategories = {
           'quickbooks-invoice-payment',
           'quickbooks-invoice-reporting',
           'quickbooks-invoice-tracking',
-          'quickbooks-invoice-archiving'
+          'quickbooks-invoice-archiving',
         ],
       },
       'auto-withdrawal-integration': {
@@ -1380,7 +1386,7 @@ const permissionCategories = {
           'quickbooks-auto-withdrawal-error-handling',
           'quickbooks-auto-withdrawal-compliance',
           'quickbooks-auto-withdrawal-reporting',
-          'quickbooks-auto-withdrawal-audit'
+          'quickbooks-auto-withdrawal-audit',
         ],
       },
     },
@@ -1710,7 +1716,8 @@ const getPermissionDisplayName = (permission: string) => {
     'quickbooks-auto-withdrawal-schedule': 'Auto Withdrawal Schedule',
     'quickbooks-auto-withdrawal-monitoring': 'Auto Withdrawal Monitoring',
     'quickbooks-auto-withdrawal-approval': 'Auto Withdrawal Approval',
-    'quickbooks-auto-withdrawal-error-handling': 'Auto Withdrawal Error Handling',
+    'quickbooks-auto-withdrawal-error-handling':
+      'Auto Withdrawal Error Handling',
     'quickbooks-auto-withdrawal-compliance': 'Auto Withdrawal Compliance',
     'quickbooks-auto-withdrawal-reporting': 'Auto Withdrawal Reporting',
     'quickbooks-auto-withdrawal-audit': 'Auto Withdrawal Audit',
@@ -1726,6 +1733,12 @@ const getPermissionDisplayName = (permission: string) => {
 };
 
 export default function UserManagement() {
+  // Manager access control state
+  const [managerAccess, setManagerAccess] =
+    useState<ManagerVerification | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedPermissionCategory, setExpandedPermissionCategory] = useState<
@@ -1746,6 +1759,31 @@ export default function UserManagement() {
   );
 
   const currentUser = filteredUsers[currentUserIndex];
+
+  // Manager access verification
+  useEffect(() => {
+    verifyManagerAccess();
+  }, []);
+
+  const verifyManagerAccess = async () => {
+    try {
+      // CRITICAL: Verify manager access first
+      const verification =
+        await ManagerAccessControlService.verifyCompanyManager();
+      setManagerAccess(verification);
+
+      if (verification.isVerified) {
+        setLoading(false);
+      } else {
+        setAccessDenied(true);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Manager access verification failed:', error);
+      setAccessDenied(true);
+      setLoading(false);
+    }
+  };
 
   // Initialize user permissions from current user
   useEffect(() => {
@@ -1812,6 +1850,22 @@ export default function UserManagement() {
       JSON.stringify(originalPermissions) !== JSON.stringify(userPermissions)
     );
   };
+
+  // Show access denied for non-managers
+  if (accessDenied) {
+    return (
+      <ManagerOnlyAccessDenied
+        attemptedResource='user management and payment routing configuration'
+        userRole='broker agent'
+        redirectPath='/broker/dashboard'
+      />
+    );
+  }
+
+  // Show loading while verifying access
+  if (!managerAccess || loading) {
+    return <AccessVerificationLoading />;
+  }
 
   if (!currentUser) {
     return (
@@ -2624,6 +2678,184 @@ export default function UserManagement() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </div>
+
+            {/* Portal Invitation Status */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '10px',
+                padding: '16px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  margin: '0 0 12px 0',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span>🔗 Portal Invitation Status</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.8)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '4px 8px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📧 Send Invitation
+                  </button>
+                  <button
+                    style={{
+                      background: 'rgba(251, 191, 36, 0.8)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '4px 8px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🔄 Resend
+                  </button>
+                </div>
+              </h4>
+
+              {/* Mock invitation status - in production this would come from the invitation service */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px',
+                  fontSize: '12px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Invitation Status:</strong>
+                    <span
+                      style={{
+                        color:
+                          currentUser?.status === 'active'
+                            ? '#10b981'
+                            : '#fbbf24',
+                        marginLeft: '4px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {currentUser?.status === 'active'
+                        ? '✅ Setup Completed'
+                        : '⏳ Pending Setup'}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Portal Access:</strong>
+                    <span
+                      style={{
+                        color:
+                          currentUser?.status === 'active'
+                            ? '#10b981'
+                            : '#6b7280',
+                        marginLeft: '4px',
+                      }}
+                    >
+                      {currentUser?.status === 'active' ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    <strong>Login Created:</strong>{' '}
+                    {currentUser?.status === 'active' ? 'Yes' : 'No'}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Invitation Sent:</strong>{' '}
+                    {formatDate(currentUser?.hiredDate)}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Setup Completed:</strong>{' '}
+                    {currentUser?.status === 'active'
+                      ? formatDate(currentUser?.lastActive)
+                      : 'Not completed'}
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    <strong>Last Login:</strong>{' '}
+                    {currentUser?.status === 'active'
+                      ? formatDate(currentUser?.lastActive)
+                      : 'Never'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Notification when user completes setup */}
+              {currentUser?.status === 'active' && (
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    border: '1px solid #10b981',
+                    borderRadius: '6px',
+                    padding: '8px',
+                    marginTop: '12px',
+                    fontSize: '11px',
+                    color: '#10b981',
+                    fontWeight: '600',
+                  }}
+                >
+                  🎉 User has successfully created their login profile and
+                  completed portal setup!
+                </div>
+              )}
+
+              {currentUser?.status !== 'active' && (
+                <div
+                  style={{
+                    background: 'rgba(251, 191, 36, 0.2)',
+                    border: '1px solid #fbbf24',
+                    borderRadius: '6px',
+                    padding: '8px',
+                    marginTop: '12px',
+                    fontSize: '11px',
+                    color: '#fbbf24',
+                    fontWeight: '600',
+                  }}
+                >
+                  ⏳ Waiting for user to complete their account setup via
+                  invitation email...
                 </div>
               )}
             </div>

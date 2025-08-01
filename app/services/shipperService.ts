@@ -296,11 +296,255 @@ const sendWelcomeEmail = (
   `);
 };
 
-// Extended shipper service with portal functionality
+// ========================================
+// 🎯 ENHANCED INVITATION-BASED WORKFLOW
+// ========================================
+
+export interface ShipperInvitation {
+  invitationId: string;
+  shipperId: string;
+  email: string;
+  invitationToken: string;
+  expiresAt: string;
+  isUsed: boolean;
+  sentAt: string;
+  invitedBy: string;
+  setupCompletedAt?: string;
+}
+
+// Mock invitation database
+let SHIPPER_INVITATIONS: ShipperInvitation[] = [];
+
+// Generate secure invitation token
+const generateSecureToken = (): string => {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let token = '';
+  for (let i = 0; i < 32; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+};
+
+// Create shipper invitation (instead of auto-credentials)
+const createShipperInvitation = (
+  shipper: ShipperInfo,
+  invitedBy: string = 'system'
+): ShipperInvitation => {
+  const invitationToken = generateSecureToken();
+  const invitation: ShipperInvitation = {
+    invitationId: `INV-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    shipperId: shipper.id,
+    email: shipper.email,
+    invitationToken,
+    expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 48 hours
+    isUsed: false,
+    sentAt: new Date().toISOString(),
+    invitedBy,
+  };
+
+  SHIPPER_INVITATIONS.push(invitation);
+
+  // Create portal credentials record (but leave login fields empty)
+  const portalCredentials: ShipperPortalCredentials = {
+    shipperId: shipper.id,
+    username: '', // Will be set during self-registration
+    password: '', // Will be set during self-registration
+    isActive: false, // Inactive until setup complete
+    createdAt: new Date().toISOString(),
+    loginAttempts: 0,
+    // NEW: Invitation tracking fields
+    invitationSent: true,
+    invitationToken,
+    setupCompleted: false,
+  };
+
+  SHIPPER_PORTAL_CREDENTIALS.push(portalCredentials);
+
+  // Send invitation email
+  sendInvitationEmail(shipper, invitation);
+
+  // Send notification to admin who created the shipper
+  sendAdminNotification(invitedBy, shipper, invitation);
+
+  return invitation;
+};
+
+// Send invitation email to shipper
+const sendInvitationEmail = (
+  shipper: ShipperInfo,
+  invitation: ShipperInvitation
+) => {
+  console.log(`📧 Invitation Email Sent to ${shipper.email}:
+
+  🚚 FleetFlow Vendor Portal - Account Setup Invitation
+
+  Dear ${shipper.contactName},
+
+  You've been invited to set up your FleetFlow Vendor Portal account for ${shipper.companyName}.
+
+  🔗 Complete Your Account Setup:
+  https://app.fleetflow.com/vendor-setup?token=${invitation.invitationToken}
+
+  This link expires in 48 hours.
+
+  Portal Benefits:
+  ✅ Real-time load tracking
+  ✅ Direct broker communication
+  ✅ Performance analytics
+  ✅ Document management
+
+  Create your own secure username and password to get started.
+
+  Questions? Contact your broker team.
+
+  Best regards,
+  FleetFlow Team
+  `);
+};
+
+// Send notification to admin about invitation sent
+const sendAdminNotification = (
+  adminId: string,
+  shipper: ShipperInfo,
+  invitation: ShipperInvitation
+) => {
+  // In production, this would integrate with the notification system
+  console.log(`🔔 Admin Notification to ${adminId}:
+
+  📧 Vendor Portal Invitation Sent
+
+  Invitation sent to ${shipper.companyName} (${shipper.email})
+  Status: Pending Setup
+  Expires: ${new Date(invitation.expiresAt).toLocaleDateString()}
+
+  The shipper will receive an email to create their own login credentials.
+  You'll be notified when they complete their account setup.
+  `);
+};
+
+// Complete shipper self-registration
+const completeShipperSetup = (
+  invitationToken: string,
+  setupData: {
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }
+): { success: boolean; message: string; shipperId?: string } => {
+  // Find invitation
+  const invitation = SHIPPER_INVITATIONS.find(
+    (inv) => inv.invitationToken === invitationToken && !inv.isUsed
+  );
+
+  if (!invitation) {
+    return { success: false, message: 'Invalid or expired invitation token' };
+  }
+
+  if (new Date(invitation.expiresAt) < new Date()) {
+    return { success: false, message: 'Invitation has expired' };
+  }
+
+  if (setupData.password !== setupData.confirmPassword) {
+    return { success: false, message: 'Passwords do not match' };
+  }
+
+  // Update portal credentials
+  const credentialsIndex = SHIPPER_PORTAL_CREDENTIALS.findIndex(
+    (cred) => cred.shipperId === invitation.shipperId
+  );
+
+  if (credentialsIndex === -1) {
+    return { success: false, message: 'Portal credentials not found' };
+  }
+
+  // Complete the setup
+  SHIPPER_PORTAL_CREDENTIALS[credentialsIndex] = {
+    ...SHIPPER_PORTAL_CREDENTIALS[credentialsIndex],
+    username: setupData.username,
+    password: setupData.password, // In production: await bcrypt.hash(password, 10)
+    isActive: true,
+    setupCompleted: true,
+    invitationToken: undefined, // Clear token
+  };
+
+  // Mark invitation as used
+  invitation.isUsed = true;
+  invitation.setupCompletedAt = new Date().toISOString();
+
+  // Send completion notifications
+  const shipper = shipperService.getShipperById(invitation.shipperId);
+  if (shipper) {
+    sendSetupCompletionNotifications(shipper, invitation);
+  }
+
+  return {
+    success: true,
+    message: 'Account setup completed successfully!',
+    shipperId: invitation.shipperId,
+  };
+};
+
+// Send notifications when setup is completed
+const sendSetupCompletionNotifications = (
+  shipper: ShipperInfo,
+  invitation: ShipperInvitation
+) => {
+  // Email to shipper
+  console.log(`📧 Setup Confirmation Email to ${shipper.email}:
+
+  🎉 FleetFlow Vendor Portal - Account Activated!
+
+  Dear ${shipper.contactName},
+
+  Your FleetFlow Vendor Portal account has been successfully activated!
+
+  🌐 Login at: https://app.fleetflow.com/vendor-login
+  👤 Username: [Your chosen username]
+
+  You can now:
+  ✅ Track your loads in real-time
+  ✅ Communicate directly with your broker team
+  ✅ Access performance analytics
+  ✅ Manage your documents
+
+  Welcome to FleetFlow!
+
+  Best regards,
+  FleetFlow Team
+  `);
+
+  // Notification to admin who sent invitation
+  console.log(`🔔 Admin Notification to ${invitation.invitedBy}:
+
+  ✅ Vendor Portal Setup Completed
+
+  ${shipper.companyName} has completed their portal setup!
+
+  Shipper: ${shipper.contactName} (${shipper.email})
+  Company: ${shipper.companyName}
+  Setup Completed: ${new Date().toLocaleDateString()}
+  Status: Active Portal Access
+
+  The shipper can now access their vendor portal with their chosen credentials.
+  `);
+};
+
+// Extended shipper service with invitation functionality
 export const extendedShipperService = {
   ...shipperService,
 
-  // Add shipper with automatic portal setup
+  // Add shipper with invitation-based portal setup
+  addShipperWithInvitation: (
+    shipperData: Omit<ShipperInfo, 'id'>,
+    invitedBy: string = 'system'
+  ): { shipper: ShipperInfo; invitation: ShipperInvitation } => {
+    const shipper = shipperService.addShipper(shipperData);
+    const invitation = createShipperInvitation(shipper, invitedBy);
+
+    return { shipper, invitation };
+  },
+
+  // Legacy method for backward compatibility
   addShipperWithPortal: (
     shipperData: Omit<ShipperInfo, 'id'>
   ): { shipper: ShipperInfo; credentials: ShipperPortalCredentials } => {
@@ -308,6 +552,52 @@ export const extendedShipperService = {
     const credentials = createShipperPortalCredentials(shipper);
 
     return { shipper, credentials };
+  },
+
+  // Complete shipper self-registration
+  completeShipperSetup,
+
+  // Get shipper invitation status
+  getShipperInvitation: (shipperId: string): ShipperInvitation | null => {
+    return (
+      SHIPPER_INVITATIONS.find((inv) => inv.shipperId === shipperId) || null
+    );
+  },
+
+  // Get all pending invitations (for admin dashboard)
+  getPendingInvitations: (): ShipperInvitation[] => {
+    return SHIPPER_INVITATIONS.filter(
+      (inv) => !inv.isUsed && new Date(inv.expiresAt) > new Date()
+    );
+  },
+
+  // Resend invitation
+  resendInvitation: (
+    shipperId: string,
+    invitedBy: string
+  ): { success: boolean; message: string } => {
+    const shipper = shipperService.getShipperById(shipperId);
+    if (!shipper) {
+      return { success: false, message: 'Shipper not found' };
+    }
+
+    // Find existing invitation
+    const existingInvitation = SHIPPER_INVITATIONS.find(
+      (inv) => inv.shipperId === shipperId
+    );
+    if (existingInvitation && !existingInvitation.isUsed) {
+      // Update expiry and resend
+      existingInvitation.expiresAt = new Date(
+        Date.now() + 48 * 60 * 60 * 1000
+      ).toISOString();
+      existingInvitation.sentAt = new Date().toISOString();
+      sendInvitationEmail(shipper, existingInvitation);
+      return { success: true, message: 'Invitation resent successfully' };
+    }
+
+    // Create new invitation if previous was used or doesn't exist
+    const newInvitation = createShipperInvitation(shipper, invitedBy);
+    return { success: true, message: 'New invitation sent successfully' };
   },
 
   // Get shipper portal credentials

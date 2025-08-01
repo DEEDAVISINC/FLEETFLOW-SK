@@ -1,13 +1,16 @@
 # 🗄️ FleetFlow Supabase Setup Guide
 
 ## 🚨 Current Issue
+
 The current Supabase configuration is using placeholder credentials that don't exist:
+
 - **URL**: `https://nleqplwwothhxgrovnjw.supabase.co` (does not exist)
 - **Key**: Placeholder key (invalid)
 
 ## ✅ Solution: Set Up Your Own Supabase Project
 
 ### Step 1: Create Supabase Project
+
 1. Go to [supabase.com](https://supabase.com)
 2. Sign up/Login with your account
 3. Click "New Project"
@@ -19,6 +22,7 @@ The current Supabase configuration is using placeholder credentials that don't e
 6. Click "Create new project"
 
 ### Step 2: Get Your Credentials
+
 1. In your Supabase dashboard, go to **Settings** → **API**
 2. Copy the following values:
    - **Project URL** (e.g., `https://your-project-id.supabase.co`)
@@ -26,6 +30,7 @@ The current Supabase configuration is using placeholder credentials that don't e
    - **service_role** key (for admin operations)
 
 ### Step 3: Configure Environment Variables
+
 Create a `.env.local` file in your project root:
 
 ```bash
@@ -36,6 +41,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```
 
 ### Step 4: Create Database Tables
+
 Run these SQL commands in your Supabase SQL Editor:
 
 ```sql
@@ -102,6 +108,7 @@ CREATE POLICY "Allow public read access" ON vehicles FOR SELECT USING (true);
 ```
 
 ### Step 5: Test Your Setup
+
 1. Restart your development server: `npm run dev`
 2. Test the connection: `http://localhost:3001/api/supabase-connection-test`
 3. Check the API status: `http://localhost:3001/api-status`
@@ -124,6 +131,7 @@ export const loadService = {
 ## 📊 API Status Monitoring
 
 After setup, monitor your APIs at:
+
 - **Health Check**: `/api/health`
 - **Supabase Test**: `/api/supabase-test`
 - **Connection Test**: `/api/supabase-connection-test`
@@ -133,6 +141,7 @@ After setup, monitor your APIs at:
 ## 🚀 Production Deployment
 
 For production deployment:
+
 1. Set up environment variables in your hosting platform
 2. Ensure HTTPS is enabled
 3. Configure proper CORS settings
@@ -142,6 +151,7 @@ For production deployment:
 ## 📞 Support
 
 If you need help with Supabase setup:
+
 1. Check the [Supabase documentation](https://supabase.com/docs)
 2. Review the API status dashboard
 3. Check the connection test results

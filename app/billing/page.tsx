@@ -2,6 +2,12 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import AccessVerificationLoading from '../components/AccessVerificationLoading';
+import ManagerOnlyAccessDenied from '../components/ManagerOnlyAccessDenied';
+import {
+  ManagerAccessControlService,
+  type ManagerVerification,
+} from '../services/ManagerAccessControlService';
 import {
   FLEETFLOW_PRICING_PLANS,
   StripeService,
@@ -542,6 +548,9 @@ const ROICalculator: React.FC<{ roiMetrics: ROIMetrics }> = ({
 // ========================================
 
 const EnterpriseBillingDashboard: React.FC = () => {
+  const [managerAccess, setManagerAccess] =
+    useState<ManagerVerification | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
   const [billingData, setBillingData] = useState<EnterpriseBillingData | null>(
     null
   );
@@ -555,8 +564,28 @@ const EnterpriseBillingDashboard: React.FC = () => {
   );
 
   useEffect(() => {
-    loadEnterpriseBillingData();
+    verifyManagerAccess();
   }, []);
+
+  const verifyManagerAccess = async () => {
+    try {
+      // CRITICAL: Verify manager access first
+      const verification =
+        await ManagerAccessControlService.verifyCompanyManager();
+      setManagerAccess(verification);
+
+      if (verification.isVerified) {
+        loadEnterpriseBillingData();
+      } else {
+        setAccessDenied(true);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Manager access verification failed:', error);
+      setAccessDenied(true);
+      setLoading(false);
+    }
+  };
 
   const loadEnterpriseBillingData = async () => {
     try {
@@ -775,6 +804,22 @@ const EnterpriseBillingDashboard: React.FC = () => {
     (sum, sub) => sum + sub.price,
     0
   );
+
+  // Show access denied for non-managers
+  if (accessDenied) {
+    return (
+      <ManagerOnlyAccessDenied
+        attemptedResource='company billing and payment management'
+        userRole='broker agent'
+        redirectPath='/broker/dashboard'
+      />
+    );
+  }
+
+  // Show loading while verifying access
+  if (!managerAccess || loading) {
+    return <AccessVerificationLoading />;
+  }
 
   return (
     <div

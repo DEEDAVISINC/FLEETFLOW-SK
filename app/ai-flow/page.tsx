@@ -5,6 +5,7 @@ import {
   BarChart3,
   Brain,
   Calendar,
+  CheckCircle,
   DollarSign,
   Gauge,
   Headphones,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CRMDashboard from '../components/CRMDashboard';
+import AIReviewDashboard from '../components/ai-review/AIReviewDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -234,7 +236,7 @@ export default function FleetFlowAIPlatform() {
           onValueChange={setActiveTab}
           className='space-y-6'
         >
-          <TabsList className='grid w-full grid-cols-8 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+          <TabsList className='grid w-full grid-cols-9 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -275,6 +277,10 @@ export default function FleetFlowAIPlatform() {
             <TabsTrigger value='analytics' className='flex items-center gap-2'>
               <BarChart3 className='h-4 w-4' />
               AI Analytics
+            </TabsTrigger>
+            <TabsTrigger value='ai-review' className='flex items-center gap-2'>
+              <CheckCircle className='h-4 w-4' />
+              AI Review
             </TabsTrigger>
           </TabsList>
 
@@ -887,6 +893,16 @@ export default function FleetFlowAIPlatform() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* AI Review System Tab */}
+          <TabsContent value='ai-review' className='space-y-6'>
+            <AIReviewDashboard
+              showMetrics={true}
+              onReviewComplete={(result) => {
+                console.log('AI Review completed:', result);
+              }}
+            />
           </TabsContent>
         </Tabs>
       </div>

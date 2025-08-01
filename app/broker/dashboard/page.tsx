@@ -7,6 +7,7 @@ import AddShipperForm from '../../components/AddShipperForm';
 import BOLReviewPanel from '../../components/BOLReviewPanel';
 import CreateLoadForm from '../../components/CreateLoadForm';
 import EnhancedLoadBoard from '../../components/EnhancedLoadBoard';
+import WarehouseShipmentFlow from '../../components/WarehouseShipmentFlow';
 import { getAvailableDispatchers } from '../../config/access';
 import { businessWorkflowManager } from '../../services/businessWorkflowManager';
 // import { useShipper } from '../../contexts/ShipperContext';
@@ -992,13 +993,54 @@ export default function BrokerDashboard() {
         {/* Navigation Tabs */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
           {[
-            { id: 'shippers', label: 'My Shippers', icon: '🏢' },
-            { id: 'loads', label: 'My Loads', icon: '📦' },
-            { id: 'quotes', label: 'Freight Quotes', icon: '💰' },
-            { id: 'bol-review', label: 'BOL Review', icon: '📋' },
-            { id: 'bids', label: 'Active Bids', icon: '💰' },
-            { id: 'contracts', label: 'Contracts', icon: '📋' },
-            { id: 'analytics', label: 'Analytics', icon: '📊' },
+            {
+              id: 'shippers',
+              label: 'My Shippers',
+              icon: '🏢',
+              color: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+            }, // OPERATIONS - Blue
+            {
+              id: 'loads',
+              label: 'My Loads',
+              icon: '📦',
+              color: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+            }, // OPERATIONS - Blue
+            {
+              id: 'quotes',
+              label: 'Freight Quotes',
+              icon: '💰',
+              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            }, // ANALYTICS - Purple
+            {
+              id: 'warehouse-flow',
+              label: 'Warehouse Flow',
+              icon: '🏭',
+              color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+            }, // FLEETFLOW - Teal
+            {
+              id: 'bol-review',
+              label: 'BOL Review',
+              icon: '📋',
+              color: 'linear-gradient(135deg, #f97316, #ea580c)',
+            }, // RESOURCES - Orange
+            {
+              id: 'bids',
+              label: 'Active Bids',
+              icon: '💰',
+              color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+            }, // FLEETFLOW - Teal
+            {
+              id: 'contracts',
+              label: 'Contracts',
+              icon: '📋',
+              color: 'linear-gradient(135deg, #f97316, #ea580c)',
+            }, // RESOURCES - Orange
+            {
+              id: 'analytics',
+              label: 'Analytics',
+              icon: '📊',
+              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            }, // ANALYTICS - Purple
           ].map((tab) => (
             <button
               key={tab.id}
@@ -1012,20 +1054,34 @@ export default function BrokerDashboard() {
                 transition: 'all 0.3s ease',
                 background:
                   selectedTab === tab.id
-                    ? 'rgba(255, 255, 255, 0.9)'
+                    ? tab.color
                     : 'rgba(255, 255, 255, 0.15)',
-                color: selectedTab === tab.id ? '#1e40af' : 'white',
+                color: 'white',
                 backdropFilter: 'blur(10px)',
                 border:
                   selectedTab === tab.id
-                    ? '1px solid rgba(255, 255, 255, 0.4)'
+                    ? 'none'
                     : '1px solid rgba(255, 255, 255, 0.2)',
                 transform:
                   selectedTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
                 boxShadow:
                   selectedTab === tab.id
-                    ? '0 8px 25px rgba(0, 0, 0, 0.2)'
+                    ? '0 8px 25px rgba(0, 0, 0, 0.3)'
                     : 'none',
+              }}
+              onMouseOver={(e) => {
+                if (selectedTab !== tab.id) {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (selectedTab !== tab.id) {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
               }}
             >
               <span style={{ marginRight: '8px' }}>{tab.icon}</span>
@@ -1069,7 +1125,7 @@ export default function BrokerDashboard() {
                 <button
                   onClick={() => setShowAddShipper(true)}
                   style={{
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)', // OPERATIONS - Blue
                     color: 'white',
                     border: 'none',
                     padding: '12px 24px',
@@ -1250,7 +1306,7 @@ export default function BrokerDashboard() {
                 <button
                   onClick={() => setShowCreateForm(true)}
                   style={{
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)', // OPERATIONS - Blue
                     color: 'white',
                     border: 'none',
                     padding: '12px 24px',
@@ -1262,14 +1318,14 @@ export default function BrokerDashboard() {
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.background =
-                      'linear-gradient(135deg, #059669, #047857)';
+                      'linear-gradient(135deg, #2563eb, #1d4ed8)';
                     e.currentTarget.style.transform = 'translateY(-2px)';
                     e.currentTarget.style.boxShadow =
                       '0 8px 25px rgba(0, 0, 0, 0.2)';
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.background =
-                      'linear-gradient(135deg, #10b981, #059669)';
+                      'linear-gradient(135deg, #3b82f6, #2563eb)';
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
@@ -1618,7 +1674,7 @@ export default function BrokerDashboard() {
                     }}
                     style={{
                       marginTop: '24px',
-                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      background: 'linear-gradient(135deg, #6366f1, #4f46e5)', // ANALYTICS - Purple
                       color: 'white',
                       padding: '16px 32px',
                       borderRadius: '12px',
@@ -1902,7 +1958,7 @@ export default function BrokerDashboard() {
                     }}
                     style={{
                       marginTop: '24px',
-                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      background: 'linear-gradient(135deg, #6366f1, #4f46e5)', // ANALYTICS - Purple
                       color: 'white',
                       padding: '16px 32px',
                       borderRadius: '12px',
@@ -2146,7 +2202,7 @@ export default function BrokerDashboard() {
                     }}
                     style={{
                       marginTop: '24px',
-                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      background: 'linear-gradient(135deg, #6366f1, #4f46e5)', // ANALYTICS - Purple
                       color: 'white',
                       padding: '16px 32px',
                       borderRadius: '12px',
@@ -2362,7 +2418,7 @@ export default function BrokerDashboard() {
                     }}
                     style={{
                       marginTop: '24px',
-                      background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                      background: 'linear-gradient(135deg, #14b8a6, #0d9488)', // FLEETFLOW - Teal
                       color: 'white',
                       padding: '16px 32px',
                       borderRadius: '12px',
@@ -2751,6 +2807,16 @@ export default function BrokerDashboard() {
             </div>
           )}
 
+          {selectedTab === 'warehouse-flow' && (
+            <div>
+              <WarehouseShipmentFlow
+                brokerId={brokerSession.id}
+                brokerName={brokerSession.brokerName}
+                selectedShipperId={undefined}
+              />
+            </div>
+          )}
+
           {selectedTab === 'bol-review' && (
             <div>
               <BOLReviewPanel
@@ -2912,7 +2978,7 @@ export default function BrokerDashboard() {
                   <Link
                     href='/broker/contracts'
                     style={{
-                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)', // RESOURCES - Orange
                       color: 'white',
                       border: 'none',
                       padding: '12px 24px',
@@ -3282,7 +3348,7 @@ export default function BrokerDashboard() {
               <button
                 onClick={confirmQuote}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)', // ANALYTICS - Purple
                   color: 'white',
                   padding: '12px 24px',
                   borderRadius: '8px',

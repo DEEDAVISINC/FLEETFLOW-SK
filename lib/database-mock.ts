@@ -1,5 +1,5 @@
 // Mock database service for development when Supabase is not available
-import { DBLoad, DBDriver, DBVehicle } from './database';
+import { DBDriver, DBLoad, DBVehicle } from './database';
 
 // Mock data for development
 const mockLoads: DBLoad[] = [
@@ -11,14 +11,14 @@ const mockLoads: DBLoad[] = [
     pickup_date: '2024-01-15',
     delivery_date: '2024-01-17',
     status: 'available',
-    rate: 2500.00,
+    rate: 2500.0,
     weight: '45,000 lbs',
     equipment: 'Dry Van',
     carrier_name: 'ABC Trucking',
     driver_name: 'John Smith',
     broker_name: 'FleetFlow Brokerage',
     created_at: '2024-01-10T10:00:00Z',
-    updated_at: '2024-01-10T10:00:00Z'
+    updated_at: '2024-01-10T10:00:00Z',
   },
   {
     id: '2',
@@ -28,14 +28,14 @@ const mockLoads: DBLoad[] = [
     pickup_date: '2024-01-16',
     delivery_date: '2024-01-18',
     status: 'assigned',
-    rate: 1800.00,
+    rate: 1800.0,
     weight: '38,000 lbs',
     equipment: 'Reefer',
     carrier_name: 'XYZ Transport',
     driver_name: 'Mike Johnson',
     broker_name: 'FleetFlow Brokerage',
     created_at: '2024-01-11T14:30:00Z',
-    updated_at: '2024-01-11T14:30:00Z'
+    updated_at: '2024-01-11T14:30:00Z',
   },
   {
     id: '3',
@@ -45,15 +45,15 @@ const mockLoads: DBLoad[] = [
     pickup_date: '2024-01-20',
     delivery_date: '2024-01-25',
     status: 'in_transit',
-    rate: 4200.00,
+    rate: 4200.0,
     weight: '42,000 lbs',
     equipment: 'Dry Van',
     carrier_name: 'West Coast Logistics',
     driver_name: 'Sarah Wilson',
     broker_name: 'FleetFlow Brokerage',
     created_at: '2024-01-12T09:15:00Z',
-    updated_at: '2024-01-12T09:15:00Z'
-  }
+    updated_at: '2024-01-12T09:15:00Z',
+  },
 ];
 
 const mockDrivers: DBDriver[] = [
@@ -66,16 +66,16 @@ const mockDrivers: DBDriver[] = [
     vehicle_id: '1',
     status: 'available',
     location: {
-      lat: 33.7490,
-      lng: -84.3880,
-      address: 'Atlanta, GA'
+      lat: 33.749,
+      lng: -84.388,
+      address: 'Atlanta, GA',
     },
     hours_of_service: {
       remaining: 8.5,
-      last_reset: '2024-01-10T00:00:00Z'
+      last_reset: '2024-01-10T00:00:00Z',
     },
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-10T10:00:00Z'
+    updated_at: '2024-01-10T10:00:00Z',
   },
   {
     id: '2',
@@ -88,14 +88,14 @@ const mockDrivers: DBDriver[] = [
     location: {
       lat: 41.8781,
       lng: -87.6298,
-      address: 'Chicago, IL'
+      address: 'Chicago, IL',
     },
     hours_of_service: {
       remaining: 6.2,
-      last_reset: '2024-01-10T00:00:00Z'
+      last_reset: '2024-01-10T00:00:00Z',
     },
     created_at: '2024-01-02T00:00:00Z',
-    updated_at: '2024-01-11T14:30:00Z'
+    updated_at: '2024-01-11T14:30:00Z',
   },
   {
     id: '3',
@@ -108,15 +108,15 @@ const mockDrivers: DBDriver[] = [
     location: {
       lat: 34.0522,
       lng: -118.2437,
-      address: 'Los Angeles, CA'
+      address: 'Los Angeles, CA',
     },
     hours_of_service: {
       remaining: 11.8,
-      last_reset: '2024-01-10T00:00:00Z'
+      last_reset: '2024-01-10T00:00:00Z',
     },
     created_at: '2024-01-03T00:00:00Z',
-    updated_at: '2024-01-12T09:15:00Z'
-  }
+    updated_at: '2024-01-12T09:15:00Z',
+  },
 ];
 
 const mockVehicles: DBVehicle[] = [
@@ -132,12 +132,12 @@ const mockVehicles: DBVehicle[] = [
     status: 'active',
     driver_id: '1',
     location: {
-      lat: 33.7490,
-      lng: -84.3880,
-      address: 'Atlanta, GA'
+      lat: 33.749,
+      lng: -84.388,
+      address: 'Atlanta, GA',
     },
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-10T10:00:00Z'
+    updated_at: '2024-01-10T10:00:00Z',
   },
   {
     id: '2',
@@ -153,10 +153,10 @@ const mockVehicles: DBVehicle[] = [
     location: {
       lat: 41.8781,
       lng: -87.6298,
-      address: 'Chicago, IL'
+      address: 'Chicago, IL',
     },
     created_at: '2024-01-02T00:00:00Z',
-    updated_at: '2024-01-11T14:30:00Z'
+    updated_at: '2024-01-11T14:30:00Z',
   },
   {
     id: '3',
@@ -172,11 +172,11 @@ const mockVehicles: DBVehicle[] = [
     location: {
       lat: 34.0522,
       lng: -118.2437,
-      address: 'Los Angeles, CA'
+      address: 'Los Angeles, CA',
     },
     created_at: '2024-01-03T00:00:00Z',
-    updated_at: '2024-01-12T09:15:00Z'
-  }
+    updated_at: '2024-01-12T09:15:00Z',
+  },
 ];
 
 // Mock database service with the same interface as the real database
@@ -186,37 +186,43 @@ export const mockLoadService = {
   },
 
   async getById(id: string): Promise<DBLoad | null> {
-    return mockLoads.find(load => load.id === id) || null;
+    return mockLoads.find((load) => load.id === id) || null;
   },
 
-  async create(load: Omit<DBLoad, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    load: Omit<DBLoad, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     const newLoad: DBLoad = {
       id: (mockLoads.length + 1).toString(),
       ...load,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     mockLoads.push(newLoad);
     return newLoad.id;
   },
 
   async update(id: string, updates: Partial<DBLoad>): Promise<void> {
-    const index = mockLoads.findIndex(load => load.id === id);
+    const index = mockLoads.findIndex((load) => load.id === id);
     if (index !== -1) {
-      mockLoads[index] = { ...mockLoads[index], ...updates, updated_at: new Date().toISOString() };
+      mockLoads[index] = {
+        ...mockLoads[index],
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
     }
   },
 
   async delete(id: string): Promise<void> {
-    const index = mockLoads.findIndex(load => load.id === id);
+    const index = mockLoads.findIndex((load) => load.id === id);
     if (index !== -1) {
       mockLoads.splice(index, 1);
     }
   },
 
   async getByStatus(status: DBLoad['status']): Promise<DBLoad[]> {
-    return mockLoads.filter(load => load.status === status);
-  }
+    return mockLoads.filter((load) => load.status === status);
+  },
 };
 
 export const mockDriverService = {
@@ -225,29 +231,38 @@ export const mockDriverService = {
   },
 
   async getById(id: string): Promise<DBDriver | null> {
-    return mockDrivers.find(driver => driver.id === id) || null;
+    return mockDrivers.find((driver) => driver.id === id) || null;
   },
 
-  async create(driver: Omit<DBDriver, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    driver: Omit<DBDriver, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     const newDriver: DBDriver = {
       id: (mockDrivers.length + 1).toString(),
       ...driver,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     mockDrivers.push(newDriver);
     return newDriver.id;
   },
 
   async update(id: string, updates: Partial<DBDriver>): Promise<void> {
-    const index = mockDrivers.findIndex(driver => driver.id === id);
+    const index = mockDrivers.findIndex((driver) => driver.id === id);
     if (index !== -1) {
-      mockDrivers[index] = { ...mockDrivers[index], ...updates, updated_at: new Date().toISOString() };
+      mockDrivers[index] = {
+        ...mockDrivers[index],
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
     }
   },
 
-  async updateLocation(id: string, location: DBDriver['location']): Promise<void> {
-    const index = mockDrivers.findIndex(driver => driver.id === id);
+  async updateLocation(
+    id: string,
+    location: DBDriver['location']
+  ): Promise<void> {
+    const index = mockDrivers.findIndex((driver) => driver.id === id);
     if (index !== -1) {
       mockDrivers[index].location = location;
       mockDrivers[index].updated_at = new Date().toISOString();
@@ -255,8 +270,8 @@ export const mockDriverService = {
   },
 
   async getAvailable(): Promise<DBDriver[]> {
-    return mockDrivers.filter(driver => driver.status === 'available');
-  }
+    return mockDrivers.filter((driver) => driver.status === 'available');
+  },
 };
 
 export const mockVehicleService = {
@@ -265,43 +280,54 @@ export const mockVehicleService = {
   },
 
   async getById(id: string): Promise<DBVehicle | null> {
-    return mockVehicles.find(vehicle => vehicle.id === id) || null;
+    return mockVehicles.find((vehicle) => vehicle.id === id) || null;
   },
 
-  async create(vehicle: Omit<DBVehicle, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    vehicle: Omit<DBVehicle, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     const newVehicle: DBVehicle = {
       id: (mockVehicles.length + 1).toString(),
       ...vehicle,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     mockVehicles.push(newVehicle);
     return newVehicle.id;
   },
 
   async update(id: string, updates: Partial<DBVehicle>): Promise<void> {
-    const index = mockVehicles.findIndex(vehicle => vehicle.id === id);
+    const index = mockVehicles.findIndex((vehicle) => vehicle.id === id);
     if (index !== -1) {
-      mockVehicles[index] = { ...mockVehicles[index], ...updates, updated_at: new Date().toISOString() };
+      mockVehicles[index] = {
+        ...mockVehicles[index],
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
     }
   },
 
   async getActive(): Promise<DBVehicle[]> {
-    return mockVehicles.filter(vehicle => vehicle.status === 'active');
-  }
+    return mockVehicles.filter((vehicle) => vehicle.status === 'active');
+  },
 };
 
-export const mockAssignLoadToDriver = async (loadId: string, driverId: string, vehicleId: string): Promise<void> => {
+export const mockAssignLoadToDriver = async (
+  loadId: string,
+  driverId: string,
+  vehicleId: string
+): Promise<void> => {
   // Update load status
-  const loadIndex = mockLoads.findIndex(load => load.id === loadId);
+  const loadIndex = mockLoads.findIndex((load) => load.id === loadId);
   if (loadIndex !== -1) {
     mockLoads[loadIndex].status = 'assigned';
-    mockLoads[loadIndex].driver_name = mockDrivers.find(d => d.id === driverId)?.name || '';
+    mockLoads[loadIndex].driver_name =
+      mockDrivers.find((d) => d.id === driverId)?.name || '';
     mockLoads[loadIndex].updated_at = new Date().toISOString();
   }
 
   // Update driver status
-  const driverIndex = mockDrivers.findIndex(driver => driver.id === driverId);
+  const driverIndex = mockDrivers.findIndex((driver) => driver.id === driverId);
   if (driverIndex !== -1) {
     mockDrivers[driverIndex].status = 'on_route';
     mockDrivers[driverIndex].vehicle_id = vehicleId;
@@ -309,9 +335,11 @@ export const mockAssignLoadToDriver = async (loadId: string, driverId: string, v
   }
 
   // Update vehicle assignment
-  const vehicleIndex = mockVehicles.findIndex(vehicle => vehicle.id === vehicleId);
+  const vehicleIndex = mockVehicles.findIndex(
+    (vehicle) => vehicle.id === vehicleId
+  );
   if (vehicleIndex !== -1) {
     mockVehicles[vehicleIndex].driver_id = driverId;
     mockVehicles[vehicleIndex].updated_at = new Date().toISOString();
   }
-}; 
+};

@@ -33,6 +33,34 @@ interface PriceRule {
   };
 }
 
+// Virtual Warehousing Interfaces
+interface WarehouseProvider {
+  id: string;
+  name: string;
+  location: string;
+  rating: number;
+  reviewCount: number;
+  services: string[];
+  capacity: number;
+  availableCapacity: number;
+  baseRate: number;
+  markup: number;
+  specialties: string[];
+  certifications: string[];
+}
+
+interface VirtualWarehouseQuote {
+  providerId: string;
+  providerName: string;
+  providerRate: number;
+  markup: number;
+  totalRate: number;
+  capacity: number;
+  rating: number;
+  specialties: string[];
+  estimatedSavings: number;
+}
+
 export default function FreightFlowQuotingEngine() {
   const [activeTab, setActiveTab] = useState<
     'LTL' | 'FTL' | 'Specialized' | 'Warehousing' | 'History' | 'Rules'
@@ -79,7 +107,65 @@ export default function FreightFlowQuotingEngine() {
     specialRequirements: [] as string[],
     location: '',
     temperature: 'Ambient',
+    // Virtual Warehousing Enhancements
+    preferredProviders: [] as string[],
+    bundleWithTransportation: false,
+    optimizeLocation: true,
+    networkDiscount: 0,
   });
+
+  // Virtual Warehousing State
+  const [warehouseProviders, setWarehouseProviders] = useState<
+    WarehouseProvider[]
+  >([
+    {
+      id: 'wp-001',
+      name: 'LogiCore Solutions',
+      location: 'Atlanta, GA',
+      rating: 4.8,
+      reviewCount: 127,
+      services: ['Storage', 'Cross Docking', 'Pick & Pack'],
+      capacity: 50000,
+      availableCapacity: 15000,
+      baseRate: 120,
+      markup: 15,
+      specialties: ['E-commerce', 'Retail'],
+      certifications: ['ISO 9001', 'C-TPAT'],
+    },
+    {
+      id: 'wp-002',
+      name: 'Global Storage Partners',
+      location: 'Chicago, IL',
+      rating: 4.6,
+      reviewCount: 89,
+      services: ['Storage', 'Temperature Controlled', 'Hazmat Storage'],
+      capacity: 75000,
+      availableCapacity: 25000,
+      baseRate: 140,
+      markup: 12,
+      specialties: ['Pharmaceutical', 'Food & Beverage'],
+      certifications: ['FDA', 'HACCP'],
+    },
+    {
+      id: 'wp-003',
+      name: 'Coastal Logistics Hub',
+      location: 'Los Angeles, CA',
+      rating: 4.9,
+      reviewCount: 203,
+      services: ['Storage', 'Cross Docking', 'Returns Processing'],
+      capacity: 100000,
+      availableCapacity: 30000,
+      baseRate: 160,
+      markup: 18,
+      specialties: ['Import/Export', 'Fashion'],
+      certifications: ['C-TPAT', 'ISO 14001'],
+    },
+  ]);
+
+  const [virtualQuotes, setVirtualQuotes] = useState<VirtualWarehouseQuote[]>(
+    []
+  );
+  const [showProviderComparison, setShowProviderComparison] = useState(false);
 
   // Olimp Integration State
   const [showOlimpIntegration, setShowOlimpIntegration] = useState(false);
@@ -375,7 +461,7 @@ export default function FreightFlowQuotingEngine() {
     }
   };
 
-  // Calculate Warehousing quote
+  // Calculate Warehousing quote with Virtual Warehousing
   const calculateWarehousing = () => {
     if (!warehousingData.duration || !warehousingData.palletCount) return;
 
@@ -386,60 +472,108 @@ export default function FreightFlowQuotingEngine() {
     const duration = parseInt(warehousingData.duration);
     const palletCount = parseInt(warehousingData.palletCount);
 
-    // Base calculation - per pallet per month
-    let total = baseRate * palletCount * duration;
+    // Generate Virtual Warehouse Quotes
+    const virtualQuotes: VirtualWarehouseQuote[] = warehouseProviders
+      .filter(
+        (provider) =>
+          provider.services.includes(warehousingData.serviceType) &&
+          provider.availableCapacity >= palletCount
+      )
+      .map((provider) => {
+        // Base calculation - per pallet per month
+        let providerRate = provider.baseRate * palletCount * duration;
 
-    // Service type multipliers
-    const serviceMultipliers: { [key: string]: number } = {
-      Storage: 1.0,
-      'Cross Docking': 0.8,
-      'Pick & Pack': 1.5,
-      Kitting: 1.3,
-      'Returns Processing': 1.2,
-      'Temperature Controlled': 1.4,
-      'Hazmat Storage': 2.0,
-    };
-    total *= serviceMultipliers[warehousingData.serviceType] || 1.0;
+        // Service type multipliers
+        const serviceMultipliers: { [key: string]: number } = {
+          Storage: 1.0,
+          'Cross Docking': 0.8,
+          'Pick & Pack': 1.5,
+          Kitting: 1.3,
+          'Returns Processing': 1.2,
+          'Temperature Controlled': 1.4,
+          'Hazmat Storage': 2.0,
+        };
+        providerRate *= serviceMultipliers[warehousingData.serviceType] || 1.0;
 
-    // Temperature requirements
-    if (warehousingData.temperature === 'Refrigerated') total *= 1.3;
-    if (warehousingData.temperature === 'Frozen') total *= 1.5;
+        // Temperature requirements
+        if (warehousingData.temperature === 'Refrigerated') providerRate *= 1.3;
+        if (warehousingData.temperature === 'Frozen') providerRate *= 1.5;
 
-    // Special requirements
-    warehousingData.specialRequirements.forEach((req) => {
-      if (req === 'Security') total *= 1.1;
-      if (req === 'Insurance') total += 50 * palletCount;
-      if (req === 'Inventory Management') total *= 1.2;
-      if (req === 'EDI Integration') total += 200;
-    });
+        // Special requirements
+        warehousingData.specialRequirements.forEach((req) => {
+          if (req === 'Security') providerRate *= 1.1;
+          if (req === 'Insurance') providerRate += 50 * palletCount;
+          if (req === 'Inventory Management') providerRate *= 1.2;
+          if (req === 'EDI Integration') providerRate += 200;
+        });
 
-    // Service fee
-    const serviceFee = total * (fuelSurcharge / 100);
-    const finalTotal = total + serviceFee;
+        // Calculate markup and total
+        const markup = providerRate * (provider.markup / 100);
+        const totalRate = providerRate + markup;
 
-    const quote: Quote = {
-      id: Date.now().toString(),
-      quoteNumber: `WH-${Date.now().toString().slice(-6)}`,
-      type: 'Warehousing' as any,
-      baseRate: total,
-      fuelSurcharge: serviceFee,
-      total: finalTotal,
-      details: {
-        ...warehousingData,
-        duration,
-        palletCount,
-        specialRequirements:
-          warehousingData.specialRequirements.join(', ') || 'None',
-      },
-      timestamp: new Date().toISOString(),
-      appliedRule: rule?.name,
-    };
+        // Calculate estimated savings vs direct provider
+        const directRate = providerRate * 1.25; // Assume 25% markup if going direct
+        const estimatedSavings = directRate - totalRate;
 
-    if (finalTotal > 10000) {
-      setPendingQuote(quote);
-      setShowConfirmation(true);
-    } else {
-      setQuotes((prev) => [quote, ...prev]);
+        return {
+          providerId: provider.id,
+          providerName: provider.name,
+          providerRate: providerRate,
+          markup: markup,
+          totalRate: totalRate,
+          capacity: provider.availableCapacity,
+          rating: provider.rating,
+          specialties: provider.specialties,
+          estimatedSavings: estimatedSavings,
+        };
+      })
+      .sort((a, b) => a.totalRate - b.totalRate); // Sort by best price
+
+    setVirtualQuotes(virtualQuotes);
+
+    // Use the best quote for the main calculation
+    const bestQuote = virtualQuotes[0];
+    if (bestQuote) {
+      const total = bestQuote.totalRate;
+      const serviceFee = total * (fuelSurcharge / 100);
+      const finalTotal = total + serviceFee;
+
+      // Apply network discount if applicable
+      const networkDiscount =
+        warehousingData.networkDiscount > 0
+          ? finalTotal * (warehousingData.networkDiscount / 100)
+          : 0;
+      const finalTotalWithDiscount = finalTotal - networkDiscount;
+
+      const quote: Quote = {
+        id: Date.now().toString(),
+        quoteNumber: `WH-${Date.now().toString().slice(-6)}`,
+        type: 'Warehousing' as any,
+        baseRate: total,
+        fuelSurcharge: serviceFee,
+        total: finalTotalWithDiscount,
+        details: {
+          ...warehousingData,
+          duration,
+          palletCount,
+          specialRequirements:
+            warehousingData.specialRequirements.join(', ') || 'None',
+          selectedProvider: bestQuote.providerName,
+          providerRate: bestQuote.providerRate,
+          markup: bestQuote.markup,
+          estimatedSavings: bestQuote.estimatedSavings,
+          networkDiscount: networkDiscount,
+        },
+        timestamp: new Date().toISOString(),
+        appliedRule: rule?.name,
+      };
+
+      if (finalTotalWithDiscount > 10000) {
+        setPendingQuote(quote);
+        setShowConfirmation(true);
+      } else {
+        setQuotes((prev) => [quote, ...prev]);
+      }
     }
   };
 
@@ -1903,6 +2037,380 @@ export default function FreightFlowQuotingEngine() {
                 </div>
               </div>
 
+              {/* Virtual Warehousing Enhancements */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      🏭 Virtual Warehousing Network
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Access our network of premium warehouse providers
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      color: '#10b981',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {warehouseProviders.length} Providers
+                  </div>
+                </div>
+
+                {/* Provider Selection */}
+                <div style={{ marginBottom: '20px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    Preferred Providers (Optional)
+                  </label>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '12px',
+                    }}
+                  >
+                    {warehouseProviders.map((provider) => (
+                      <label
+                        key={provider.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '14px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          padding: '8px',
+                          borderRadius: '6px',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                        }}
+                      >
+                        <input
+                          type='checkbox'
+                          checked={warehousingData.preferredProviders.includes(
+                            provider.id
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setWarehousingData({
+                                ...warehousingData,
+                                preferredProviders: [
+                                  ...warehousingData.preferredProviders,
+                                  provider.id,
+                                ],
+                              });
+                            } else {
+                              setWarehousingData({
+                                ...warehousingData,
+                                preferredProviders:
+                                  warehousingData.preferredProviders.filter(
+                                    (p) => p !== provider.id
+                                  ),
+                              });
+                            }
+                          }}
+                          style={{ width: '16px', height: '16px' }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: '600' }}>
+                            {provider.name}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                            }}
+                          >
+                            {provider.location} • ⭐ {provider.rating} (
+                            {provider.reviewCount})
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Virtual Warehousing Options */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'white',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <input
+                      type='checkbox'
+                      checked={warehousingData.bundleWithTransportation}
+                      onChange={(e) =>
+                        setWarehousingData({
+                          ...warehousingData,
+                          bundleWithTransportation: e.target.checked,
+                        })
+                      }
+                      style={{ width: '16px', height: '16px' }}
+                    />
+                    🚛 Bundle with Transportation
+                  </label>
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'white',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <input
+                      type='checkbox'
+                      checked={warehousingData.optimizeLocation}
+                      onChange={(e) =>
+                        setWarehousingData({
+                          ...warehousingData,
+                          optimizeLocation: e.target.checked,
+                        })
+                      }
+                      style={{ width: '16px', height: '16px' }}
+                    />
+                    🎯 Optimize Location
+                  </label>
+                </div>
+
+                {/* Network Discount */}
+                <div style={{ marginTop: '16px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    Network Discount (%)
+                  </label>
+                  <input
+                    type='number'
+                    value={warehousingData.networkDiscount}
+                    onChange={(e) =>
+                      setWarehousingData({
+                        ...warehousingData,
+                        networkDiscount: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    placeholder='0'
+                    min='0'
+                    max='25'
+                    style={{
+                      width: '100px',
+                      padding: '8px',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginLeft: '8px',
+                    }}
+                  >
+                    (0-25% discount for using our network)
+                  </span>
+                </div>
+              </div>
+
+              {/* Provider Comparison Results */}
+              {virtualQuotes.length > 0 && (
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: 0,
+                      }}
+                    >
+                      💰 Provider Comparison
+                    </h3>
+                    <button
+                      onClick={() =>
+                        setShowProviderComparison(!showProviderComparison)
+                      }
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.2)',
+                        color: '#8b5cf6',
+                        border: '1px solid rgba(139, 92, 246, 0.3)',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {showProviderComparison ? 'Hide' : 'Show'} Details
+                    </button>
+                  </div>
+
+                  {showProviderComparison && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {virtualQuotes.slice(0, 3).map((quote, index) => (
+                        <div
+                          key={quote.providerId}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '8px',
+                            padding: '16px',
+                            border:
+                              index === 0
+                                ? '2px solid #10b981'
+                                : '1px solid rgba(255, 255, 255, 0.1)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                  color: 'white',
+                                }}
+                              >
+                                {quote.providerName}
+                                {index === 0 && (
+                                  <span
+                                    style={{
+                                      background: '#10b981',
+                                      color: 'white',
+                                      padding: '2px 8px',
+                                      borderRadius: '12px',
+                                      fontSize: '12px',
+                                      marginLeft: '8px',
+                                    }}
+                                  >
+                                    Best Value
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                }}
+                              >
+                                ⭐ {quote.rating} •{' '}
+                                {quote.specialties.join(', ')}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  fontSize: '18px',
+                                  fontWeight: '600',
+                                  color: '#10b981',
+                                }}
+                              >
+                                ${quote.totalRate.toLocaleString()}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                }}
+                              >
+                                Save ${quote.estimatedSavings.toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Olimp Integration Section */}
               <div
                 style={{
@@ -2285,6 +2793,50 @@ export default function FreightFlowQuotingEngine() {
                             <div>
                               Requirements: {quote.details.specialRequirements}
                             </div>
+                            {quote.details.selectedProvider && (
+                              <>
+                                <div
+                                  style={{
+                                    marginTop: '8px',
+                                    paddingTop: '8px',
+                                    borderTop:
+                                      '1px solid rgba(255, 255, 255, 0.2)',
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      color: '#10b981',
+                                      fontWeight: '600',
+                                    }}
+                                  >
+                                    🏭 Provider:{' '}
+                                    {quote.details.selectedProvider}
+                                  </div>
+                                  {quote.details.estimatedSavings > 0 && (
+                                    <div
+                                      style={{
+                                        color: '#10b981',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      💰 Saved: $
+                                      {quote.details.estimatedSavings.toLocaleString()}
+                                    </div>
+                                  )}
+                                  {quote.details.networkDiscount > 0 && (
+                                    <div
+                                      style={{
+                                        color: '#8b5cf6',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      🎯 Network Discount:{' '}
+                                      {quote.details.networkDiscount}%
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
                           </>
                         )}
                         {quote.details.origin && (
@@ -3177,6 +3729,200 @@ export default function FreightFlowQuotingEngine() {
           </div>
         </div>
       )}
+
+      {/* Provider Management Section */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden',
+          marginTop: '24px',
+        }}
+      >
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            padding: '24px',
+            color: 'white',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <h2
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                🏭 Warehouse Provider Management
+              </h2>
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+                Manage your virtual warehousing network providers
+              </p>
+            </div>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: '600',
+              }}
+            >
+              {warehouseProviders.length} Active Providers
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '32px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {warehouseProviders.map((provider) => (
+              <div
+                key={provider.id}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {provider.name}
+                    </h3>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      📍 {provider.location}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      background: '#10b981',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    ⭐ {provider.rating}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Services:</strong> {provider.services.join(', ')}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Specialties:</strong>{' '}
+                    {provider.specialties.join(', ')}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Capacity:</strong>{' '}
+                    {provider.availableCapacity.toLocaleString()} /{' '}
+                    {provider.capacity.toLocaleString()} pallets
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Base Rate:</strong> ${provider.baseRate}
+                    /pallet/month
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    <strong>Markup:</strong> {provider.markup}%
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  {provider.certifications.map((cert) => (
+                    <span
+                      key={cert}
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#10b981',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

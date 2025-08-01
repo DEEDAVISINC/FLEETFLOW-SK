@@ -1,13 +1,27 @@
 // Database service for FleetFlow using Supabase with fallback to mock data
 import { createClient } from '@supabase/supabase-js';
-import { mockLoadService, mockDriverService, mockVehicleService, mockAssignLoadToDriver } from './database-mock';
+import {
+  mockAssignLoadToDriver,
+  mockDriverService,
+  mockLoadService,
+  mockVehicleService,
+} from './database-mock';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nleqplwwothhxgrovnjw.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZXFwbHd3b3RoaHhncm92bmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNzczODcsImV4cCI6MjA2Nzk1MzM4N30.SewQx-DIRXaKLtPHbxnmRWvdx96_VtMu5sjoKpaBWjg';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  'https://nleqplwwothhxgrovnjw.supabase.co';
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZXFwbHd3b3RoaHhncm92bmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNzczODcsImV4cCI6MjA2Nzk1MzM4N30.SewQx-DIRXaKLtPHbxnmRWvdx96_VtMu5sjoKpaBWjg';
 
 // Check if environment variables are properly set for production
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  console.warn('⚠️ Database: Using fallback Supabase values. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY for production.');
+if (
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+) {
+  console.warn(
+    '⚠️ Database: Using fallback Supabase values. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY for production.'
+  );
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -21,7 +35,7 @@ try {
       .from('loads')
       .select('count')
       .limit(1);
-    
+
     if (!error) {
       supabaseAvailable = true;
       console.log('✅ Supabase connection successful');
@@ -30,7 +44,7 @@ try {
       supabaseAvailable = false;
     }
   };
-  
+
   testConnection();
 } catch (error) {
   console.warn('⚠️ Supabase connection error, using mock data');
@@ -106,7 +120,7 @@ export const loadService = {
           .from('loads')
           .select('*')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
@@ -126,7 +140,7 @@ export const loadService = {
           .select('*')
           .eq('id', id)
           .single();
-        
+
         if (error) return null;
         return data;
       } catch (error) {
@@ -138,7 +152,9 @@ export const loadService = {
     }
   },
 
-  async create(load: Omit<DBLoad, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    load: Omit<DBLoad, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     if (supabaseAvailable) {
       try {
         const now = new Date().toISOString();
@@ -147,7 +163,7 @@ export const loadService = {
           .insert([{ ...load, created_at: now, updated_at: now }])
           .select()
           .single();
-        
+
         if (error) throw error;
         return data.id;
       } catch (error) {
@@ -166,7 +182,7 @@ export const loadService = {
           .from('loads')
           .update({ ...updates, updated_at: new Date().toISOString() })
           .eq('id', id);
-        
+
         if (error) throw error;
       } catch (error) {
         console.warn('⚠️ Supabase load update failed, using mock data');
@@ -180,11 +196,8 @@ export const loadService = {
   async delete(id: string): Promise<void> {
     if (supabaseAvailable) {
       try {
-        const { error } = await supabase
-          .from('loads')
-          .delete()
-          .eq('id', id);
-        
+        const { error } = await supabase.from('loads').delete().eq('id', id);
+
         if (error) throw error;
       } catch (error) {
         console.warn('⚠️ Supabase load deletion failed, using mock data');
@@ -203,7 +216,7 @@ export const loadService = {
           .select('*')
           .eq('status', status)
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
@@ -213,7 +226,7 @@ export const loadService = {
     } else {
       return mockLoadService.getByStatus(status);
     }
-  }
+  },
 };
 
 // Driver Operations with fallback to mock data
@@ -225,7 +238,7 @@ export const driverService = {
           .from('drivers')
           .select('*')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
@@ -245,7 +258,7 @@ export const driverService = {
           .select('*')
           .eq('id', id)
           .single();
-        
+
         if (error) return null;
         return data;
       } catch (error) {
@@ -257,7 +270,9 @@ export const driverService = {
     }
   },
 
-  async create(driver: Omit<DBDriver, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    driver: Omit<DBDriver, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     if (supabaseAvailable) {
       try {
         const now = new Date().toISOString();
@@ -266,7 +281,7 @@ export const driverService = {
           .insert([{ ...driver, created_at: now, updated_at: now }])
           .select()
           .single();
-        
+
         if (error) throw error;
         return data.id;
       } catch (error) {
@@ -285,7 +300,7 @@ export const driverService = {
           .from('drivers')
           .update({ ...updates, updated_at: new Date().toISOString() })
           .eq('id', id);
-        
+
         if (error) throw error;
       } catch (error) {
         console.warn('⚠️ Supabase driver update failed, using mock data');
@@ -296,17 +311,22 @@ export const driverService = {
     }
   },
 
-  async updateLocation(id: string, location: DBDriver['location']): Promise<void> {
+  async updateLocation(
+    id: string,
+    location: DBDriver['location']
+  ): Promise<void> {
     if (supabaseAvailable) {
       try {
         const { error } = await supabase
           .from('drivers')
           .update({ location, updated_at: new Date().toISOString() })
           .eq('id', id);
-        
+
         if (error) throw error;
       } catch (error) {
-        console.warn('⚠️ Supabase driver location update failed, using mock data');
+        console.warn(
+          '⚠️ Supabase driver location update failed, using mock data'
+        );
         return mockDriverService.updateLocation(id, location);
       }
     } else {
@@ -322,17 +342,19 @@ export const driverService = {
           .select('*')
           .eq('status', 'available')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
-        console.warn('⚠️ Supabase available drivers fetch failed, using mock data');
+        console.warn(
+          '⚠️ Supabase available drivers fetch failed, using mock data'
+        );
         return mockDriverService.getAvailable();
       }
     } else {
       return mockDriverService.getAvailable();
     }
-  }
+  },
 };
 
 // Vehicle Operations with fallback to mock data
@@ -344,7 +366,7 @@ export const vehicleService = {
           .from('vehicles')
           .select('*')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
@@ -364,7 +386,7 @@ export const vehicleService = {
           .select('*')
           .eq('id', id)
           .single();
-        
+
         if (error) return null;
         return data;
       } catch (error) {
@@ -376,7 +398,9 @@ export const vehicleService = {
     }
   },
 
-  async create(vehicle: Omit<DBVehicle, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async create(
+    vehicle: Omit<DBVehicle, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     if (supabaseAvailable) {
       try {
         const now = new Date().toISOString();
@@ -385,7 +409,7 @@ export const vehicleService = {
           .insert([{ ...vehicle, created_at: now, updated_at: now }])
           .select()
           .single();
-        
+
         if (error) throw error;
         return data.id;
       } catch (error) {
@@ -404,7 +428,7 @@ export const vehicleService = {
           .from('vehicles')
           .update({ ...updates, updated_at: new Date().toISOString() })
           .eq('id', id);
-        
+
         if (error) throw error;
       } catch (error) {
         console.warn('⚠️ Supabase vehicle update failed, using mock data');
@@ -423,49 +447,55 @@ export const vehicleService = {
           .select('*')
           .eq('status', 'active')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         return data || [];
       } catch (error) {
-        console.warn('⚠️ Supabase active vehicles fetch failed, using mock data');
+        console.warn(
+          '⚠️ Supabase active vehicles fetch failed, using mock data'
+        );
         return mockVehicleService.getActive();
       }
     } else {
       return mockVehicleService.getActive();
     }
-  }
+  },
 };
 
 // Assignment Operations with fallback to mock data
-export const assignLoadToDriver = async (loadId: string, driverId: string, vehicleId: string): Promise<void> => {
+export const assignLoadToDriver = async (
+  loadId: string,
+  driverId: string,
+  vehicleId: string
+): Promise<void> => {
   if (supabaseAvailable) {
     try {
       // Update load status
       await supabase
         .from('loads')
-        .update({ 
-          status: 'assigned', 
+        .update({
+          status: 'assigned',
           driver_id: driverId,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString(),
         })
         .eq('id', loadId);
 
       // Update driver status
       await supabase
         .from('drivers')
-        .update({ 
-          status: 'on_route', 
+        .update({
+          status: 'on_route',
           vehicle_id: vehicleId,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString(),
         })
         .eq('id', driverId);
 
       // Update vehicle assignment
       await supabase
         .from('vehicles')
-        .update({ 
+        .update({
           driver_id: driverId,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString(),
         })
         .eq('id', vehicleId);
     } catch (error) {

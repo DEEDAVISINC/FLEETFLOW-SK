@@ -2,7 +2,12 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { checkPermission } from '../config/access';
+import AccessVerificationLoading from '../components/AccessVerificationLoading';
+import ManagerOnlyAccessDenied from '../components/ManagerOnlyAccessDenied';
+import {
+  ManagerAccessControlService,
+  type ManagerVerification,
+} from '../services/ManagerAccessControlService';
 import {
   ensureUniqueKey,
   forceCleanupDuplicates,
@@ -304,11 +309,10 @@ class EnterpriseInvoiceService {
 }
 
 export default function EnterpriseFinancialsPage() {
-  // Check permissions
-  const hasAccess = checkPermission('financial');
-  if (!hasAccess) {
-    return <AccessRestricted />;
-  }
+  // Manager access control state
+  const [managerAccess, setManagerAccess] =
+    useState<ManagerVerification | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   // State management
   const [selectedTab, setSelectedTab] = useState('overview');
@@ -344,14 +348,37 @@ export default function EnterpriseFinancialsPage() {
     };
   }
 
-  // Clean up duplicate invoices on component mount
+  // Manager access verification and initialization
   useEffect(() => {
-    // Initialize global registry first
-    initializeGlobalRegistry();
-    // Run ultimate cleanup for maximum effectiveness
-    const cleaned = ultimateCleanup();
-    setCleanedInvoices(cleaned);
+    verifyManagerAccess();
   }, []);
+
+  const verifyManagerAccess = async () => {
+    try {
+      // CRITICAL: Verify manager access first
+      const verification =
+        await ManagerAccessControlService.verifyCompanyManager();
+      setManagerAccess(verification);
+
+      if (verification.isVerified) {
+        // Initialize global registry first
+        initializeGlobalRegistry();
+        // Run ultimate cleanup for maximum effectiveness
+        const cleaned = ultimateCleanup();
+        setCleanedInvoices(cleaned);
+
+        // Initialize enterprise data
+        initializeEnterpriseData();
+      } else {
+        setAccessDenied(true);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Manager access verification failed:', error);
+      setAccessDenied(true);
+      setLoading(false);
+    }
+  };
 
   // Refresh cleaned invoices when tab changes
   useEffect(() => {
@@ -362,174 +389,168 @@ export default function EnterpriseFinancialsPage() {
     }
   }, [selectedTab]);
 
-  // Initialize enterprise data
-  useEffect(() => {
-    const initializeEnterpriseData = async () => {
-      setLoading(true);
+  // Initialize enterprise data function
+  const initializeEnterpriseData = async () => {
+    setLoading(true);
 
-      try {
-        // Get all shippers from existing shipper management
-        const shippers = shipperService.getAllShippers();
-        const invoiceService = EnterpriseInvoiceService.getInstance();
+    try {
+      // Get all shippers from existing shipper management
+      const shippers = shipperService.getAllShippers();
+      const invoiceService = EnterpriseInvoiceService.getInstance();
 
-        // Generate sample enterprise invoices for each shipper
-        const sampleInvoices: EnterpriseInvoice[] = [];
-        const summaries: ShipperFinancialSummary[] = [];
+      // Generate sample enterprise invoices for each shipper
+      const sampleInvoices: EnterpriseInvoice[] = [];
+      const summaries: ShipperFinancialSummary[] = [];
 
-        for (const shipper of shippers) {
-          // Generate 2-5 invoices per shipper
-          const invoiceCount = Math.floor(Math.random() * 4) + 2;
-          const shipperInvoices: EnterpriseInvoice[] = [];
+      for (const shipper of shippers) {
+        // Generate 2-5 invoices per shipper
+        const invoiceCount = Math.floor(Math.random() * 4) + 2;
+        const shipperInvoices: EnterpriseInvoice[] = [];
 
-          for (let i = 0; i < invoiceCount; i++) {
-            const loadDetails = {
-              loadId: `LD-${Date.now()}-${i}`,
-              amount: Math.floor(Math.random() * 5000) + 1500,
-              description: `Freight: ${getRandomOrigin()} to ${getRandomDestination()}`,
-              origin: getRandomOrigin(),
-              destination: getRandomDestination(),
-              miles: Math.floor(Math.random() * 1000) + 100,
-              weight: Math.floor(Math.random() * 40000) + 10000,
-              commodity: getRandomCommodity(),
-              equipmentType: getRandomEquipment(),
-              carrierCost: Math.floor(Math.random() * 3000) + 1000,
-            };
+        for (let i = 0; i < invoiceCount; i++) {
+          const loadDetails = {
+            loadId: `LD-${Date.now()}-${i}`,
+            amount: Math.floor(Math.random() * 5000) + 1500,
+            description: `Freight: ${getRandomOrigin()} to ${getRandomDestination()}`,
+            origin: getRandomOrigin(),
+            destination: getRandomDestination(),
+            miles: Math.floor(Math.random() * 1000) + 100,
+            weight: Math.floor(Math.random() * 40000) + 10000,
+            commodity: getRandomCommodity(),
+            equipmentType: getRandomEquipment(),
+            carrierCost: Math.floor(Math.random() * 3000) + 1000,
+          };
 
-            const invoice = await invoiceService.generateInvoiceFromShipper(
-              shipper.id,
-              loadDetails
-            );
+          const invoice = await invoiceService.generateInvoiceFromShipper(
+            shipper.id,
+            loadDetails
+          );
 
-            // Randomize status and dates for demo
-            const statuses: EnterpriseInvoice['status'][] = [
-              'paid',
-              'sent',
-              'overdue',
-              'draft',
-            ];
-            invoice.status =
-              statuses[Math.floor(Math.random() * statuses.length)];
+          // Randomize status and dates for demo
+          const statuses: EnterpriseInvoice['status'][] = [
+            'paid',
+            'sent',
+            'overdue',
+            'draft',
+          ];
+          invoice.status =
+            statuses[Math.floor(Math.random() * statuses.length)];
 
-            if (invoice.status === 'paid') {
-              invoice.paymentStatus = 'paid';
-              invoice.agingBucket = 'current';
-            } else if (invoice.status === 'overdue') {
-              invoice.agingBucket = ['1-30', '31-60', '61-90'][
-                Math.floor(Math.random() * 3)
-              ] as any;
-              invoice.daysOutstanding = Math.floor(Math.random() * 60) + 30;
-            }
-
-            // Adjust dates for realism
-            const daysAgo = Math.floor(Math.random() * 90);
-            const createdDate = new Date();
-            createdDate.setDate(createdDate.getDate() - daysAgo);
-            invoice.createdAt = createdDate.toISOString();
-            invoice.daysOutstanding = invoiceService.calculateDaysOutstanding(
-              invoice.createdAt
-            );
-
-            shipperInvoices.push(invoice);
-            sampleInvoices.push(invoice);
+          if (invoice.status === 'paid') {
+            invoice.paymentStatus = 'paid';
+            invoice.agingBucket = 'current';
+          } else if (invoice.status === 'overdue') {
+            invoice.agingBucket = ['1-30', '31-60', '61-90'][
+              Math.floor(Math.random() * 3)
+            ] as any;
+            invoice.daysOutstanding = Math.floor(Math.random() * 60) + 30;
           }
 
-          // Calculate shipper summary
-          const totalRevenue = shipperInvoices.reduce(
-            (sum, inv) => sum + inv.totalAmount,
-            0
+          // Adjust dates for realism
+          const daysAgo = Math.floor(Math.random() * 90);
+          const createdDate = new Date();
+          createdDate.setDate(createdDate.getDate() - daysAgo);
+          invoice.createdAt = createdDate.toISOString();
+          invoice.daysOutstanding = invoiceService.calculateDaysOutstanding(
+            invoice.createdAt
           );
-          const paidInvoices = shipperInvoices.filter(
-            (inv) => inv.status === 'paid'
-          );
-          const overdueInvoices = shipperInvoices.filter(
-            (inv) => inv.status === 'overdue'
-          );
-          const averagePaymentDays =
-            paidInvoices.length > 0
-              ? paidInvoices.reduce(
-                  (sum, inv) => sum + inv.daysOutstanding,
-                  0
-                ) / paidInvoices.length
-              : 0;
 
-          summaries.push({
-            shipperId: shipper.id,
-            shipperName: shipper.companyName,
-            totalInvoices: shipperInvoices.length,
-            totalRevenue,
-            averageInvoiceAmount: totalRevenue / shipperInvoices.length,
-            averagePaymentDays,
-            creditRating: shipper.creditRating || 'B',
-            paymentTerms: shipper.paymentTerms || 'Net 30',
-            outstandingBalance: shipperInvoices
-              .filter((inv) => inv.status !== 'paid')
-              .reduce((sum, inv) => sum + inv.totalAmount, 0),
-            overdueAmount: overdueInvoices.reduce(
-              (sum, inv) => sum + inv.totalAmount,
-              0
-            ),
-            disputedAmount: shipperInvoices
-              .filter((inv) => inv.status === 'disputed')
-              .reduce((sum, inv) => sum + inv.totalAmount, 0),
-            lastPaymentDate:
-              paidInvoices.length > 0
-                ? paidInvoices[paidInvoices.length - 1].createdAt.split('T')[0]
-                : 'N/A',
-            riskScore: calculateRiskScore(
-              shipper.creditRating || 'B',
-              averagePaymentDays,
-              overdueInvoices.length
-            ),
-          });
+          shipperInvoices.push(invoice);
+          sampleInvoices.push(invoice);
         }
 
-        // Calculate tenant metrics
-        const totalRevenue = sampleInvoices.reduce(
+        // Calculate shipper summary
+        const totalRevenue = shipperInvoices.reduce(
           (sum, inv) => sum + inv.totalAmount,
           0
         );
-        const paidInvoices = sampleInvoices.filter(
+        const paidInvoices = shipperInvoices.filter(
           (inv) => inv.status === 'paid'
         );
-        const overdueInvoices = sampleInvoices.filter(
+        const overdueInvoices = shipperInvoices.filter(
           (inv) => inv.status === 'overdue'
         );
+        const averagePaymentDays =
+          paidInvoices.length > 0
+            ? paidInvoices.reduce((sum, inv) => sum + inv.daysOutstanding, 0) /
+              paidInvoices.length
+            : 0;
 
-        const metrics: TenantFinancialMetrics = {
-          tenantId: 'tenant-fleetflow-001',
-          tenantName: 'FleetFlow Enterprise',
+        summaries.push({
+          shipperId: shipper.id,
+          shipperName: shipper.companyName,
+          totalInvoices: shipperInvoices.length,
           totalRevenue,
-          monthlyRecurringRevenue: totalRevenue / 3, // Approximate MRR
-          averageMargin:
-            sampleInvoices.reduce((sum, inv) => {
-              const margin = inv.lineItems.reduce(
-                (lineSum, item) => lineSum + (item.marginPercent || 0),
-                0
-              );
-              return sum + margin / inv.lineItems.length;
-            }, 0) / sampleInvoices.length,
-          totalInvoices: sampleInvoices.length,
-          paidInvoices: paidInvoices.length,
-          overdueInvoices: overdueInvoices.length,
-          collectionEfficiency:
-            (paidInvoices.length / sampleInvoices.length) * 100,
-          daysOutstanding:
-            sampleInvoices.reduce((sum, inv) => sum + inv.daysOutstanding, 0) /
-            sampleInvoices.length,
-        };
-
-        setEnterpriseInvoices(sampleInvoices);
-        setShipperSummaries(summaries);
-        setTenantMetrics(metrics);
-      } catch (error) {
-        console.error('Error initializing enterprise data:', error);
-      } finally {
-        setLoading(false);
+          averageInvoiceAmount: totalRevenue / shipperInvoices.length,
+          averagePaymentDays,
+          creditRating: shipper.creditRating || 'B',
+          paymentTerms: shipper.paymentTerms || 'Net 30',
+          outstandingBalance: shipperInvoices
+            .filter((inv) => inv.status !== 'paid')
+            .reduce((sum, inv) => sum + inv.totalAmount, 0),
+          overdueAmount: overdueInvoices.reduce(
+            (sum, inv) => sum + inv.totalAmount,
+            0
+          ),
+          disputedAmount: shipperInvoices
+            .filter((inv) => inv.status === 'disputed')
+            .reduce((sum, inv) => sum + inv.totalAmount, 0),
+          lastPaymentDate:
+            paidInvoices.length > 0
+              ? paidInvoices[paidInvoices.length - 1].createdAt.split('T')[0]
+              : 'N/A',
+          riskScore: calculateRiskScore(
+            shipper.creditRating || 'B',
+            averagePaymentDays,
+            overdueInvoices.length
+          ),
+        });
       }
-    };
 
-    initializeEnterpriseData();
-  }, []);
+      // Calculate tenant metrics
+      const totalRevenue = sampleInvoices.reduce(
+        (sum, inv) => sum + inv.totalAmount,
+        0
+      );
+      const paidInvoices = sampleInvoices.filter(
+        (inv) => inv.status === 'paid'
+      );
+      const overdueInvoices = sampleInvoices.filter(
+        (inv) => inv.status === 'overdue'
+      );
+
+      const metrics: TenantFinancialMetrics = {
+        tenantId: 'tenant-fleetflow-001',
+        tenantName: 'FleetFlow Enterprise',
+        totalRevenue,
+        monthlyRecurringRevenue: totalRevenue / 3, // Approximate MRR
+        averageMargin:
+          sampleInvoices.reduce((sum, inv) => {
+            const margin = inv.lineItems.reduce(
+              (lineSum, item) => lineSum + (item.marginPercent || 0),
+              0
+            );
+            return sum + margin / inv.lineItems.length;
+          }, 0) / sampleInvoices.length,
+        totalInvoices: sampleInvoices.length,
+        paidInvoices: paidInvoices.length,
+        overdueInvoices: overdueInvoices.length,
+        collectionEfficiency:
+          (paidInvoices.length / sampleInvoices.length) * 100,
+        daysOutstanding:
+          sampleInvoices.reduce((sum, inv) => sum + inv.daysOutstanding, 0) /
+          sampleInvoices.length,
+      };
+
+      setEnterpriseInvoices(sampleInvoices);
+      setShipperSummaries(summaries);
+      setTenantMetrics(metrics);
+    } catch (error) {
+      console.error('Error initializing enterprise data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Helper functions
   const getRandomOrigin = () => {
@@ -694,17 +715,20 @@ export default function EnterpriseFinancialsPage() {
     }
   };
 
-  if (loading) {
+  // Show access denied for non-managers
+  if (accessDenied) {
     return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='text-center'>
-          <div className='mx-auto h-32 w-32 animate-spin rounded-full border-b-2 border-blue-600'></div>
-          <p className='mt-4 text-lg text-gray-600'>
-            Loading Enterprise Financial Data...
-          </p>
-        </div>
-      </div>
+      <ManagerOnlyAccessDenied
+        attemptedResource='company financial management and reporting'
+        userRole='broker agent'
+        redirectPath='/broker/dashboard'
+      />
     );
+  }
+
+  // Show loading while verifying access
+  if (!managerAccess || loading) {
+    return <AccessVerificationLoading />;
   }
 
   return (
