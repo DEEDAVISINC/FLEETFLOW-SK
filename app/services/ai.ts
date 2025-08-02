@@ -8,11 +8,13 @@ export class FleetFlowAI {
   constructor() {
     this.isEnabled = !!process.env.ANTHROPIC_API_KEY;
     this.claude = new ClaudeAIService();
-    
+
     if (this.isEnabled) {
       console.log('🤖 AI Service running with Claude AI - Production Ready');
     } else {
-      console.log('🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production');
+      console.log(
+        '🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production'
+      );
     }
   }
 
@@ -25,10 +27,10 @@ export class FleetFlowAI {
     try {
       const prompt = `
         As a fleet management AI, optimize the following route assignment:
-        
+
         Vehicles: ${JSON.stringify(vehicles, null, 2)}
         Destinations: ${JSON.stringify(destinations, null, 2)}
-        
+
         Consider:
         - Vehicle fuel levels and efficiency
         - Driver availability and HOS compliance
@@ -36,7 +38,7 @@ export class FleetFlowAI {
         - Distance efficiency and traffic patterns
         - Maintenance schedules and vehicle condition
         - Cost optimization and fuel savings
-        
+
         Return a JSON response with optimized assignments including:
         - vehicle assignments with reasoning
         - estimated fuel consumption and costs
@@ -46,7 +48,10 @@ export class FleetFlowAI {
         - risk assessment and mitigation
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'route_optimization');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'route_optimization'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Route Optimization Error:', error);
@@ -63,9 +68,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Analyze this vehicle's data for predictive maintenance:
-        
+
         Vehicle Data: ${JSON.stringify(vehicle, null, 2)}
-        
+
         Consider:
         - Current mileage vs last maintenance interval
         - Fuel efficiency patterns and degradation
@@ -73,7 +78,7 @@ export class FleetFlowAI {
         - Vehicle age, type, and manufacturer specs
         - Seasonal factors and operating conditions
         - Historical maintenance patterns
-        
+
         Provide maintenance predictions with:
         - Risk level (low/medium/high/critical)
         - Specific recommended actions with priorities
@@ -81,11 +86,14 @@ export class FleetFlowAI {
         - Cost estimates for different scenarios
         - Priority components to inspect immediately
         - Preventive measures to extend life
-        
+
         Format as JSON with structured recommendations.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'maintenance_prediction');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'maintenance_prediction'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Maintenance Prediction Error:', error);
@@ -102,9 +110,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Analyze driver performance data comprehensively:
-        
+
         Driver Data: ${JSON.stringify(driverData, null, 2)}
-        
+
         Evaluate:
         - Fuel efficiency trends and patterns
         - On-time delivery rates and consistency
@@ -113,7 +121,7 @@ export class FleetFlowAI {
         - Customer feedback and satisfaction
         - HOS compliance and violations
         - Vehicle handling and maintenance impact
-        
+
         Provide analysis with:
         - Overall performance score (1-100)
         - Specific strengths and areas for improvement
@@ -121,11 +129,14 @@ export class FleetFlowAI {
         - Safety insights and risk assessment
         - Efficiency tips and best practices
         - Career development suggestions
-        
+
         Format as JSON with actionable insights.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'driver_analysis');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'driver_analysis'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Driver Analysis Error:', error);
@@ -142,9 +153,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Analyze fleet data for comprehensive cost optimization:
-        
+
         Fleet Data: ${JSON.stringify(fleetData, null, 2)}
-        
+
         Analyze:
         - Fuel consumption patterns and inefficiencies
         - Maintenance costs and prevention opportunities
@@ -152,7 +163,7 @@ export class FleetFlowAI {
         - Vehicle utilization and capacity optimization
         - Driver productivity and performance impact
         - Insurance and operational cost factors
-        
+
         Provide recommendations for:
         - Immediate cost savings (0-30 days)
         - Medium-term optimizations (1-6 months)
@@ -160,11 +171,14 @@ export class FleetFlowAI {
         - ROI calculations for each recommendation
         - Implementation priorities and timelines
         - Expected savings percentages with confidence levels
-        
+
         Format as JSON with structured cost optimization plan.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'cost_optimization');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'cost_optimization'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Cost Optimization Error:', error);
@@ -181,9 +195,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Generate intelligent notification based on fleet context:
-        
+
         Context: ${JSON.stringify(context, null, 2)}
-        
+
         Create appropriate notification with:
         - Priority level (low/medium/high/critical)
         - Clear and actionable message content
@@ -191,18 +205,20 @@ export class FleetFlowAI {
         - Appropriate recipient suggestions
         - Follow-up requirements and escalation
         - Related system integrations needed
-        
+
         Format as JSON with complete notification structure.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'smart_notification');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'smart_notification'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Smart Notification Error:', error);
       return this.mockSmartNotification(context);
     }
   }
-
 
   // AI-powered shipper intelligence analysis
   async analyzeCarrierForShippers(carrierData: any): Promise<any> {
@@ -213,15 +229,15 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Analyze this carrier's data to identify their likely customers/shippers:
-        
+
         Carrier Data: ${JSON.stringify(carrierData, null, 2)}
-        
+
         Based on the carrier's:
         - Operating routes and locations
         - Equipment types and specializations
         - Safety ratings and performance
         - Operating authority and history
-        
+
         Identify potential shippers/customers with:
         - Company names and types (manufacturer, distributor, retailer)
         - Industry categories they likely serve
@@ -229,11 +245,14 @@ export class FleetFlowAI {
         - Route frequencies and equipment needs
         - Confidence level for each shipper (1-100)
         - Relationship type (primary, secondary, seasonal)
-        
+
         Format as JSON with structured shipper intelligence data.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'shipper_analysis');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'shipper_analysis'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Shipper Analysis Error:', error);
@@ -250,9 +269,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Score this shipper prospect for freight brokerage potential:
-        
+
         Shipper Data: ${JSON.stringify(shipperData, null, 2)}
-        
+
         Evaluate based on:
         - Estimated shipping volume and frequency
         - Industry growth trends and stability
@@ -260,7 +279,7 @@ export class FleetFlowAI {
         - Equipment requirements and specialization
         - Market competition and accessibility
         - Revenue potential and profitability
-        
+
         Provide scoring with:
         - Overall prospect score (1-100)
         - Key opportunity factors
@@ -268,11 +287,14 @@ export class FleetFlowAI {
         - Competitive landscape analysis
         - Best contact timing recommendations
         - Risk factors and mitigation
-        
+
         Format as JSON with detailed scoring analysis.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'prospect_scoring');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'prospect_scoring'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Prospect Scoring Error:', error);
@@ -289,9 +311,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Analyze this manufacturer for freight transportation potential:
-        
+
         Manufacturer Data: ${JSON.stringify(manufacturerData, null, 2)}
-        
+
         Assess their freight needs based on:
         - Product types and manufacturing processes
         - Company size and production capacity
@@ -299,7 +321,7 @@ export class FleetFlowAI {
         - Industry supply chain requirements
         - Seasonal patterns and growth indicators
         - Raw material sourcing needs
-        
+
         Determine freight potential including:
         - Estimated shipping volume (loads per month)
         - Primary freight services needed
@@ -307,11 +329,14 @@ export class FleetFlowAI {
         - Freight spending estimate
         - Best approach strategy
         - Competition level assessment
-        
+
         Format as JSON with comprehensive freight analysis.
       `;
 
-      const result = await this.claude.generateDocument(prompt, 'manufacturer_analysis');
+      const result = await this.claude.generateDocument(
+        prompt,
+        'manufacturer_analysis'
+      );
       return JSON.parse(result);
     } catch (error) {
       console.error('Claude AI Manufacturer Analysis Error:', error);
@@ -328,9 +353,9 @@ export class FleetFlowAI {
     try {
       const prompt = `
         Score this RFx opportunity for automated bidding potential:
-        
+
         RFx Data: ${JSON.stringify(rfxData, null, 2)}
-        
+
         Evaluate opportunity based on:
         - Requirements complexity and clarity
         - Bid deadline and preparation time
@@ -338,7 +363,7 @@ export class FleetFlowAI {
         - Competition level and win probability
         - Compliance requirements and risk factors
         - Strategic value and relationship potential
-        
+
         Provide analysis with:
         - Overall opportunity score (1-100)
         - Confidence level for automated bidding
@@ -346,7 +371,7 @@ export class FleetFlowAI {
         - Risk assessment and mitigation needs
         - Recommended bid strategy
         - Resource requirements estimate
-        
+
         Format as JSON with detailed opportunity analysis.
       `;
 
@@ -365,28 +390,32 @@ export class FleetFlowAI {
         destination: destinations[index % destinations.length],
         estimatedFuel: Math.round(20 + Math.random() * 30),
         estimatedTime: Math.round(60 + Math.random() * 120),
-        estimatedCost: Math.round(150 + Math.random() * 200)
+        estimatedCost: Math.round(150 + Math.random() * 200),
       })),
       efficiencyScore: Math.round(75 + Math.random() * 20),
       totalEstimatedCost: Math.round(vehicles.length * 200),
-      recommendation: "Routes optimized for fuel efficiency and time"
+      recommendation: 'Routes optimized for fuel efficiency and time',
     };
   }
 
   private mockMaintenancePrediction(vehicle: any) {
     const riskLevels = ['low', 'medium', 'high'];
     const risk = riskLevels[Math.floor(Math.random() * 3)];
-    
+
     return {
       riskLevel: risk,
-      nextServiceDue: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      nextServiceDue: new Date(
+        Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000
+      )
+        .toISOString()
+        .split('T')[0],
       recommendedActions: [
         'Oil change due soon',
         'Tire pressure check recommended',
-        'Brake inspection suggested'
+        'Brake inspection suggested',
       ],
       estimatedCost: Math.round(200 + Math.random() * 500),
-      confidence: Math.round(80 + Math.random() * 15)
+      confidence: Math.round(80 + Math.random() * 15),
     };
   }
 
@@ -395,8 +424,11 @@ export class FleetFlowAI {
       performanceScore: Math.round(70 + Math.random() * 25),
       strengths: ['Punctual deliveries', 'Good fuel efficiency'],
       improvements: ['Route planning could be optimized'],
-      trainingRecommendations: ['Advanced safety course', 'Eco-driving techniques'],
-      safetyRating: Math.round(85 + Math.random() * 10)
+      trainingRecommendations: [
+        'Advanced safety course',
+        'Eco-driving techniques',
+      ],
+      safetyRating: Math.round(85 + Math.random() * 10),
     };
   }
 
@@ -405,19 +437,19 @@ export class FleetFlowAI {
       immediateSavings: {
         fuelOptimization: '$2,500/month',
         routeEfficiency: '$1,800/month',
-        maintenanceScheduling: '$1,200/month'
+        maintenanceScheduling: '$1,200/month',
       },
       longTermSavings: {
         vehicleReplacement: '$15,000/year',
-        driverTraining: '$8,000/year'
+        driverTraining: '$8,000/year',
       },
       totalPotentialSavings: '$28,500/year',
       roi: '340%',
       implementationPriority: [
         'Route optimization',
         'Predictive maintenance',
-        'Driver training program'
-      ]
+        'Driver training program',
+      ],
     };
   }
 
@@ -428,7 +460,7 @@ export class FleetFlowAI {
       message: 'AI detected potential optimization opportunity',
       recommendedActions: ['Review route efficiency', 'Check vehicle status'],
       recipients: ['fleet_manager', 'dispatch'],
-      followUp: '24 hours'
+      followUp: '24 hours',
     };
   }
 
@@ -442,15 +474,19 @@ export class FleetFlowAI {
           confidence: 75,
           relationship: 'secondary',
           routes: [
-            { origin: 'Atlanta, GA', destination: 'Charlotte, NC', frequency: 8 }
+            {
+              origin: 'Atlanta, GA',
+              destination: 'Charlotte, NC',
+              frequency: 8,
+            },
           ],
           volume: 25,
           equipment: ['Dry Van'],
-          seasonality: ['Q4']
-        }
+          seasonality: ['Q4'],
+        },
       ],
       confidence: 70,
-      dataPoints: 5
+      dataPoints: 5,
     };
   }
 
@@ -460,11 +496,11 @@ export class FleetFlowAI {
       factors: [
         'Regular shipping patterns identified',
         'Industry growth potential',
-        'Geographic accessibility'
+        'Geographic accessibility',
       ],
       approach: 'Direct outreach with industry expertise focus',
       competition: ['Regional carriers', 'National brokers'],
-      timing: 'Tuesday-Thursday 10AM-2PM'
+      timing: 'Tuesday-Thursday 10AM-2PM',
     };
   }
 
@@ -474,7 +510,12 @@ export class FleetFlowAI {
       shippingVolume: Math.floor(Math.random() * 50) + 20, // 20-70 loads/month
       services: ['FTL Transportation', 'Warehousing', 'Distribution'],
       approach: 'Manufacturing-focused solution presentation',
-      spend: '$' + (Math.floor(Math.random() * 500) + 200) + 'K-$' + (Math.floor(Math.random() * 500) + 600) + 'K annually'
+      spend:
+        '$' +
+        (Math.floor(Math.random() * 500) + 200) +
+        'K-$' +
+        (Math.floor(Math.random() * 500) + 600) +
+        'K annually',
     };
   }
 
@@ -485,11 +526,71 @@ export class FleetFlowAI {
       factors: [
         'Clear requirements and specifications',
         'Reasonable timeline for preparation',
-        'Good profit margin potential'
+        'Good profit margin potential',
       ],
       risks: ['High competition expected', 'Complex compliance requirements'],
       strategy: 'Competitive pricing with service differentiation',
-      resources: 'Medium effort required'
+      resources: 'Medium effort required',
+    };
+  }
+
+  // Generic Data Analysis using Claude AI
+  async analyzeData(analysisRequest: {
+    type: string;
+    data: any;
+    prompt?: string;
+  }): Promise<any> {
+    if (!this.isEnabled) {
+      return this.mockDataAnalysis(analysisRequest);
+    }
+
+    try {
+      const { type, data, prompt } = analysisRequest;
+
+      const defaultPrompt = `
+        Analyze this data for ${type}:
+
+        Data: ${JSON.stringify(data, null, 2)}
+
+        Provide comprehensive analysis including:
+        - Key insights and findings
+        - Recommendations and actions
+        - Risk factors and opportunities
+        - Confidence level in analysis
+        - Strategic implications
+
+        Format as JSON with structured analysis.
+      `;
+
+      const analysisPrompt = prompt || defaultPrompt;
+      const result = await this.claude.generateDocument(analysisPrompt, type);
+      return JSON.parse(result);
+    } catch (error) {
+      console.error(`Claude AI ${analysisRequest.type} Analysis Error:`, error);
+      return this.mockDataAnalysis(analysisRequest);
+    }
+  }
+
+  private mockDataAnalysis(analysisRequest: {
+    type: string;
+    data: any;
+    prompt?: string;
+  }) {
+    return {
+      insights: [
+        'Key trend identified in data analysis',
+        'Opportunity for optimization detected',
+        'Risk factor requiring attention',
+      ],
+      recommendations: [
+        'Implement suggested improvements',
+        'Monitor key metrics closely',
+        'Consider strategic adjustments',
+      ],
+      confidence: Math.floor(Math.random() * 30) + 70, // 70-100 range
+      riskFactors: ['Market volatility', 'Competitive pressure'],
+      opportunities: ['Cost optimization', 'Efficiency gains'],
+      strategicImplications: 'Positive outlook with recommended actions',
     };
   }
 }

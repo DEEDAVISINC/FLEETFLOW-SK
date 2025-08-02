@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import RFxTaskPrioritizationPanel from '../components/RFxTaskPrioritizationPanel';
 
 // Enhanced RFx Request interface with document upload support
 interface RFxRequest {
@@ -2388,6 +2389,12 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               color: 'linear-gradient(135deg, #10b981, #059669)',
             },
             {
+              id: 'priority-queue',
+              label: 'Priority Queue',
+              icon: '🎯',
+              color: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            },
+            {
               id: 'government',
               label: 'Government Ops',
               icon: '🏛️',
@@ -2729,6 +2736,188 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Priority Queue Content */}
+        {activeTab === 'priority-queue' && (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '24px',
+              marginBottom: '24px',
+            }}
+          >
+            {/* RFx Task Prioritization Panel */}
+            <RFxTaskPrioritizationPanel />
+
+            {/* RFx Performance Metrics */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '16px',
+                padding: '24px',
+                color: 'white',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                  color: '#f59e0b',
+                }}
+              >
+                📊 RFx Performance Dashboard
+              </h3>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#10b981',
+                    }}
+                  >
+                    73%
+                  </div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                    Win Rate
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    $12.3M
+                  </div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                    Pipeline Value
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    18
+                  </div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                    Active RFx
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#8b5cf6',
+                    }}
+                  >
+                    4.2h
+                  </div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                    Avg Response Time
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '1.2rem' }}>🎯</span>
+                  <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>
+                    Priority Insights
+                  </span>
+                </div>
+                <ul
+                  style={{
+                    margin: 0,
+                    paddingLeft: '20px',
+                    fontSize: '0.8rem',
+                    opacity: 0.9,
+                  }}
+                >
+                  <li style={{ marginBottom: '4px' }}>
+                    Focus on Walmart RFP - highest revenue potential
+                  </li>
+                  <li style={{ marginBottom: '4px' }}>
+                    Complete competitive research for Amazon RFQ today
+                  </li>
+                  <li style={{ marginBottom: '4px' }}>
+                    FedEx partnership proposal has 80% win probability
+                  </li>
+                  <li>
+                    3 RFx responses due within 24 hours - allocate resources
+                    accordingly
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         )}
 

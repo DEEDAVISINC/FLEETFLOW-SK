@@ -21,6 +21,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
 // import AIReviewDashboard from '../components/ai-review/AIReviewDashboard';
 import { Badge } from '../components/ui/badge';
@@ -557,30 +558,62 @@ export default function FleetFlowAIPlatform() {
             </Card>
           </TabsContent>
 
-          {/* AI Dispatch Tab - WORKING TEST */}
+          {/* AI Dispatch Tab */}
           <TabsContent value='dispatch' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Navigation className='h-5 w-5' />
-                  🚨 AI DISPATCH TAB IS NOW WORKING! 🚨
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='p-8 text-center'>
-                  <h2 className='mb-4 text-2xl font-bold text-green-600'>
-                    ✅ SUCCESS!
-                  </h2>
-                  <p className='mb-4 text-lg text-gray-700'>
-                    The AI Dispatch tab is now rendering properly!
-                  </p>
-                  <p className='text-gray-600'>
-                    The complex design was causing a React error. Now we can
-                    rebuild it step by step.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              {/* AI Task Prioritization Panel */}
+              <AITaskPrioritizationPanel mode='dispatch' />
+
+              {/* Dispatch Metrics */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <Navigation className='h-5 w-5' />
+                    AI Dispatch Control
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='rounded-lg bg-blue-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-blue-600'>
+                        {aiMetrics.freightStats.activeLoads}
+                      </div>
+                      <div className='text-sm text-gray-600'>Active Loads</div>
+                    </div>
+                    <div className='rounded-lg bg-green-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-green-600'>
+                        {aiMetrics.freightStats.avgMargin}%
+                      </div>
+                      <div className='text-sm text-gray-600'>Avg Margin</div>
+                    </div>
+                    <div className='rounded-lg bg-purple-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-purple-600'>
+                        {aiMetrics.systemEfficiency}%
+                      </div>
+                      <div className='text-sm text-gray-600'>AI Efficiency</div>
+                    </div>
+                    <div className='rounded-lg bg-orange-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-orange-600'>
+                        {aiMetrics.totalDecisions}
+                      </div>
+                      <div className='text-sm text-gray-600'>AI Decisions</div>
+                    </div>
+                  </div>
+
+                  <div className='mt-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white'>
+                    <div className='mb-2 flex items-center gap-2'>
+                      <Zap className='h-4 w-4' />
+                      <span className='font-semibold'>AI Status</span>
+                    </div>
+                    <p className='text-sm opacity-90'>
+                      Smart task prioritization is analyzing{' '}
+                      {aiMetrics.activeOperations} operations and optimizing
+                      dispatch decisions in real-time.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
           {/* Recruiting AI Tab */}
           <TabsContent value='recruiting' className='space-y-6'>
@@ -791,52 +824,89 @@ export default function FleetFlowAIPlatform() {
 
           {/* AI Analytics Tab */}
           <TabsContent value='analytics' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <BarChart3 className='h-5 w-5' />
-                  AI Analytics & Intelligence Dashboard
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='py-12 text-center'>
-                  <BarChart3 className='mx-auto mb-4 h-16 w-16 text-indigo-600' />
-                  <h3 className='mb-2 text-2xl font-bold text-indigo-600'>
-                    Comprehensive AI Analytics
-                  </h3>
-                  <p className='mb-4 text-gray-600'>
-                    Real-time metrics with government API integration and
-                    predictive insights
-                  </p>
-                  <div className='mx-auto grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-3'>
-                    <div className='rounded-lg bg-indigo-50 p-4'>
-                      <div className='font-semibold text-indigo-600'>
-                        Predictive Analytics
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              {/* AI Task Analytics Panel */}
+              <AITaskPrioritizationPanel mode='analytics' />
+
+              {/* Analytics Metrics */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <BarChart3 className='h-5 w-5' />
+                    AI Analytics Dashboard
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='mb-6 grid grid-cols-2 gap-4'>
+                    <div className='rounded-lg bg-indigo-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-indigo-600'>
+                        {aiMetrics.systemEfficiency}%
                       </div>
                       <div className='text-sm text-gray-600'>
-                        AI forecasts market trends
+                        System Efficiency
                       </div>
                     </div>
-                    <div className='rounded-lg bg-purple-50 p-4'>
-                      <div className='font-semibold text-purple-600'>
-                        Government APIs
+                    <div className='rounded-lg bg-green-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-green-600'>
+                        ${(aiMetrics.dailyRevenue / 1000).toFixed(1)}K
                       </div>
-                      <div className='text-sm text-gray-600'>
-                        Real-time regulatory data
-                      </div>
+                      <div className='text-sm text-gray-600'>Daily Revenue</div>
                     </div>
-                    <div className='rounded-lg bg-blue-50 p-4'>
-                      <div className='font-semibold text-blue-600'>
-                        Performance AI
+                    <div className='rounded-lg bg-purple-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-purple-600'>
+                        {aiMetrics.totalDecisions}
+                      </div>
+                      <div className='text-sm text-gray-600'>AI Decisions</div>
+                    </div>
+                    <div className='rounded-lg bg-orange-50 p-4 text-center'>
+                      <div className='text-2xl font-bold text-orange-600'>
+                        {aiMetrics.activeOperations}
                       </div>
                       <div className='text-sm text-gray-600'>
-                        Operational optimization
+                        Active Operations
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+
+                  <div className='space-y-4'>
+                    <div className='rounded-lg bg-indigo-50 p-4'>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <Target className='h-4 w-4 text-indigo-600' />
+                        <span className='font-semibold text-indigo-600'>
+                          Predictive Analytics
+                        </span>
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        AI forecasts market trends and optimizes resource
+                        allocation
+                      </div>
+                    </div>
+                    <div className='rounded-lg bg-purple-50 p-4'>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <Shield className='h-4 w-4 text-purple-600' />
+                        <span className='font-semibold text-purple-600'>
+                          Government APIs
+                        </span>
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        Real-time regulatory data and compliance monitoring
+                      </div>
+                    </div>
+                    <div className='rounded-lg bg-blue-50 p-4'>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <Gauge className='h-4 w-4 text-blue-600' />
+                        <span className='font-semibold text-blue-600'>
+                          Performance AI
+                        </span>
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        Operational optimization and efficiency monitoring
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* AI Review System Tab */}

@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AddShipperForm from '../../components/AddShipperForm';
 import BOLReviewPanel from '../../components/BOLReviewPanel';
+import BrokerTaskPrioritizationPanel from '../../components/BrokerTaskPrioritizationPanel';
 import CreateLoadForm from '../../components/CreateLoadForm';
 import EnhancedLoadBoard from '../../components/EnhancedLoadBoard';
+import SpotRateOptimizationWidget from '../../components/SpotRateOptimizationWidget';
 import WarehouseShipmentFlow from '../../components/WarehouseShipmentFlow';
-import { getAvailableDispatchers } from '../../config/access';
+// import { getAvailableDispatchers } from '../../config/access';
 import { businessWorkflowManager } from '../../services/businessWorkflowManager';
 // import { useShipper } from '../../contexts/ShipperContext';
 import { Load } from '../../services/loadService';
@@ -31,7 +33,7 @@ export default function BrokerDashboard() {
     null
   );
   const router = useRouter();
-  const availableDispatchers = getAvailableDispatchers();
+  // const availableDispatchers = getAvailableDispatchers();
 
   // Temporary shipper state until context is fixed
   const [shippers] = useState([]);
@@ -42,7 +44,13 @@ export default function BrokerDashboard() {
   const [pendingQuote, setPendingQuote] = useState<any>(null);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [activeQuoteTab, setActiveQuoteTab] = useState<
-    'LTL' | 'FTL' | 'Specialized' | 'Warehousing' | 'Multi-Service' | 'History'
+    | 'LTL'
+    | 'FTL'
+    | 'Specialized'
+    | 'Warehousing'
+    | 'Multi-Service'
+    | 'History'
+    | 'SpotRates'
   >('LTL');
 
   // LTL State
@@ -544,9 +552,9 @@ export default function BrokerDashboard() {
     );
   }
 
-  const currentDispatcher = availableDispatchers.find(
-    (d) => d.id === brokerSession.id.replace('broker-', 'disp-')
-  );
+  // const currentDispatcher = availableDispatchers.find(
+  //   (d) => d.id === brokerSession.id.replace('broker-', 'disp-')
+  // );
 
   // Add function to handle shipper creation mode selection
   const handleShipperCreationMode = (mode: 'manual' | 'automated') => {
@@ -1041,6 +1049,12 @@ export default function BrokerDashboard() {
               icon: '📊',
               color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
             }, // ANALYTICS - Purple
+            {
+              id: 'task-priority',
+              label: 'Task Priority',
+              icon: '🎯',
+              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            }, // ANALYTICS - Purple
           ].map((tab) => (
             <button
               key={tab.id}
@@ -1360,6 +1374,7 @@ export default function BrokerDashboard() {
                   { id: 'Specialized', label: 'Specialized', icon: '⭐' },
                   { id: 'Warehousing', label: 'Warehousing', icon: '🏢' },
                   { id: 'Multi-Service', label: 'Multi-Service', icon: '🔄' },
+                  { id: 'SpotRates', label: 'Spot Rates', icon: '📈' },
                   { id: 'History', label: 'History', icon: '📋' },
                 ].map((tab) => (
                   <button
@@ -2804,6 +2819,35 @@ export default function BrokerDashboard() {
                   )}
                 </div>
               )}
+
+              {/* Spot Rate Optimization */}
+              {activeQuoteTab === 'SpotRates' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    color: 'white',
+                  }}
+                >
+                  <h3 style={{ marginBottom: '24px', color: '#6366f1' }}>
+                    📈 AI-Powered Spot Rate Optimization
+                  </h3>
+                  <div style={{ marginBottom: '16px' }}>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Get real-time market intelligence and optimal pricing
+                      recommendations for your freight quotes.
+                    </p>
+                  </div>
+                  <SpotRateOptimizationWidget />
+                </div>
+              )}
             </div>
           )}
 
@@ -2923,6 +2967,25 @@ export default function BrokerDashboard() {
                   Track your performance, revenue, and shipper relationships
                 </p>
               </div>
+            </div>
+          )}
+
+          {selectedTab === 'task-priority' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '24px',
+                }}
+              >
+                🎯 Smart Task Prioritization
+              </h2>
+              <BrokerTaskPrioritizationPanel
+                brokerId={brokerSession?.id || 'broker-demo-001'}
+                tenantId='tenant-demo-123'
+              />
             </div>
           )}
 

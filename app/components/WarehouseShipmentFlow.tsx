@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 // Import existing services for data integration
 import { ShipperInfo } from '../services/loadService';
-import { getAllShippers } from '../services/shipperService';
+import { shipperService } from '../services/shipperService';
 
 // Vendor Portal Session Interface
 interface VendorSession {
@@ -110,7 +110,7 @@ export default function WarehouseShipmentFlow({
   useEffect(() => {
     const loadShipperData = async () => {
       try {
-        const shipperData = await getAllShippers();
+        const shipperData = shipperService.getAllShippers();
         setShippers(shipperData);
 
         // Create vendor sessions from shipper data

@@ -1,0 +1,447 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useFeatureFlag } from '../config/feature-flags';
+
+interface CustomerData {
+  customerId: string;
+  customerName: string;
+  totalRevenue: number;
+  loadCount: number;
+  averageRate: number;
+  lastLoadDate: string;
+  daysSinceLastLoad: number;
+  customerType: 'premium' | 'standard' | 'occasional';
+  serviceAreas: string[];
+  preferredCarriers: string[];
+  paymentHistory: {
+    onTime: number;
+    late: number;
+    averageDaysToPay: number;
+  };
+  communicationHistory: {
+    inquiries: number;
+    complaints: number;
+    compliments: number;
+    lastContact: string;
+  };
+}
+
+interface RetentionAnalysis {
+  result: CustomerData;
+  confidence: number;
+  reasoning: string;
+  recommendations: string[];
+  riskFactors: string[];
+  retentionRisk: 'low' | 'medium' | 'high';
+  churnProbability: number;
+  lifetimeValue: number;
+  retentionStrategies: string[];
+  upsellOpportunities: string[];
+  customerSatisfaction: number;
+  loyaltyScore: number;
+}
+
+interface RetentionMetrics {
+  overallRetentionRate: number;
+  averageCustomerLifetime: number;
+  churnRate: number;
+  revenueAtRisk: number;
+  topRetentionFactors: string[];
+  improvementAreas: string[];
+}
+
+interface CustomerSegment {
+  segmentName: string;
+  customerCount: number;
+  averageRevenue: number;
+  retentionRate: number;
+  churnRisk: 'low' | 'medium' | 'high';
+  recommendedActions: string[];
+}
+
+export default function CustomerRetentionWidget() {
+  const isEnabled = useFeatureFlag('CUSTOMER_RETENTION_ANALYSIS');
+  const [loading, setLoading] = useState(false);
+  const [customerId, setCustomerId] = useState('');
+  const [analysis, setAnalysis] = useState<RetentionAnalysis | null>(null);
+  const [metrics, setMetrics] = useState<RetentionMetrics | null>(null);
+  const [segments, setSegments] = useState<CustomerSegment[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'analysis' | 'segments'
+  >('overview');
+
+  useEffect(() => {
+    if (isEnabled) {
+      loadRetentionMetrics();
+      loadCustomerSegments();
+    }
+  }, [isEnabled]);
+
+  const loadRetentionMetrics = async () => {
+    try {
+      const response = await fetch('/api/analytics/retention?action=metrics');
+      const data = await response.json();
+      if (data.success) {
+        setMetrics(data.data);
+      }
+    } catch (error) {
+      console.error('Error loading retention metrics:', error);
+    }
+  };
+
+  const loadCustomerSegments = async () => {
+    try {
+      const response = await fetch('/api/analytics/retention?action=segments');
+      const data = await response.json();
+      if (data.success) {
+        setSegments(data.data);
+      }
+    } catch (error) {
+      console.error('Error loading customer segments:', error);
+    }
+  };
+
+  const analyzeCustomer = async () => {
+    if (!customerId.trim()) {
+      setError('Please enter a customer ID');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/analytics/retention?action=analyze&customerId=${customerId}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        setAnalysis(data.data);
+        setActiveTab('analysis');
+      } else {
+        setError(data.error || 'Analysis failed');
+      }
+    } catch (error) {
+      setError('Failed to analyze customer retention');
+      console.error('Error analyzing customer:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRiskColor = (risk: 'low' | 'medium' | 'high') => {
+    switch (risk) {
+      case 'low':
+        return '#10b981';
+      case 'medium':
+        return '#f59e0b';
+      case 'high':
+        return '#ef4444';
+      default:
+        return '#6b7280';
+    }
+  };
+
+  if (!isEnabled) {
+    return (
+      <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
+        <div className='flex items-center gap-3'>
+          <div className='text-2xl'>📊</div>
+          <div>
+            <h3 className='font-semibold text-yellow-800'>
+              Customer Retention Analysis
+            </h3>
+            <p className='text-sm text-yellow-700'>
+              Enable ENABLE_CUSTOMER_RETENTION_ANALYSIS=true to access customer
+              retention insights
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='rounded-lg bg-white p-6 shadow-lg'>
+      <div className='mb-6 flex items-center justify-between'>
+        <div className='flex items-center gap-3'>
+          <div className='text-3xl'>📊</div>
+          <div>
+            <h2 className='text-xl font-bold text-gray-900'>
+              Customer Retention Analysis
+            </h2>
+            <p className='text-sm text-gray-600'>
+              Analyze customer behavior and retention strategies
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className='mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1'>
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'overview'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('analysis')}
+          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'analysis'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Customer Analysis
+        </button>
+        <button
+          onClick={() => setActiveTab('segments')}
+          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'segments'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Segments
+        </button>
+      </div>
+
+      {/* Overview Tab */}
+      {activeTab === 'overview' && metrics && (
+        <div className='space-y-6'>
+          <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+            <div className='rounded-lg bg-blue-50 p-4'>
+              <div className='text-2xl font-bold text-blue-600'>
+                {metrics.overallRetentionRate}%
+              </div>
+              <div className='text-sm text-blue-600'>Retention Rate</div>
+            </div>
+            <div className='rounded-lg bg-green-50 p-4'>
+              <div className='text-2xl font-bold text-green-600'>
+                {metrics.averageCustomerLifetime} years
+              </div>
+              <div className='text-sm text-green-600'>Avg. Lifetime</div>
+            </div>
+            <div className='rounded-lg bg-red-50 p-4'>
+              <div className='text-2xl font-bold text-red-600'>
+                {metrics.churnRate}%
+              </div>
+              <div className='text-sm text-red-600'>Churn Rate</div>
+            </div>
+            <div className='rounded-lg bg-orange-50 p-4'>
+              <div className='text-2xl font-bold text-orange-600'>
+                ${(metrics.revenueAtRisk / 1000).toFixed(0)}K
+              </div>
+              <div className='text-sm text-orange-600'>Revenue at Risk</div>
+            </div>
+          </div>
+
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <div className='rounded-lg border border-gray-200 p-4'>
+              <h3 className='mb-3 font-semibold text-gray-900'>
+                Top Retention Factors
+              </h3>
+              <ul className='space-y-2'>
+                {metrics.topRetentionFactors.map((factor, index) => (
+                  <li
+                    key={index}
+                    className='flex items-center gap-2 text-sm text-gray-600'
+                  >
+                    <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                    {factor}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className='rounded-lg border border-gray-200 p-4'>
+              <h3 className='mb-3 font-semibold text-gray-900'>
+                Improvement Areas
+              </h3>
+              <ul className='space-y-2'>
+                {metrics.improvementAreas.map((area, index) => (
+                  <li
+                    key={index}
+                    className='flex items-center gap-2 text-sm text-gray-600'
+                  >
+                    <div className='h-2 w-2 rounded-full bg-orange-500'></div>
+                    {area}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Customer Analysis Tab */}
+      {activeTab === 'analysis' && (
+        <div className='space-y-6'>
+          <div className='flex gap-4'>
+            <input
+              type='text'
+              value={customerId}
+              onChange={(e) => setCustomerId(e.target.value)}
+              placeholder='Enter Customer ID'
+              className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none'
+            />
+            <button
+              onClick={analyzeCustomer}
+              disabled={loading}
+              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+            >
+              {loading ? 'Analyzing...' : 'Analyze'}
+            </button>
+          </div>
+
+          {error && (
+            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+          )}
+
+          {analysis && (
+            <div className='space-y-6'>
+              <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    {analysis.result.customerName}
+                  </div>
+                  <div className='text-sm text-gray-600'>Customer</div>
+                </div>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    {analysis.retentionRisk.toUpperCase()}
+                  </div>
+                  <div className='text-sm text-gray-600'>Risk Level</div>
+                </div>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    {analysis.churnProbability}%
+                  </div>
+                  <div className='text-sm text-gray-600'>Churn Probability</div>
+                </div>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    ${(analysis.lifetimeValue / 1000).toFixed(0)}K
+                  </div>
+                  <div className='text-sm text-gray-600'>Lifetime Value</div>
+                </div>
+              </div>
+
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <div className='rounded-lg border border-gray-200 p-4'>
+                  <h3 className='mb-3 font-semibold text-gray-900'>
+                    Retention Strategies
+                  </h3>
+                  <ul className='space-y-2'>
+                    {analysis.retentionStrategies.map((strategy, index) => (
+                      <li
+                        key={index}
+                        className='flex items-center gap-2 text-sm text-gray-600'
+                      >
+                        <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                        {strategy}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className='rounded-lg border border-gray-200 p-4'>
+                  <h3 className='mb-3 font-semibold text-gray-900'>
+                    Upsell Opportunities
+                  </h3>
+                  <ul className='space-y-2'>
+                    {analysis.upsellOpportunities.map((opportunity, index) => (
+                      <li
+                        key={index}
+                        className='flex items-center gap-2 text-sm text-gray-600'
+                      >
+                        <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                        {opportunity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className='rounded-lg border border-gray-200 p-4'>
+                <h3 className='mb-3 font-semibold text-gray-900'>
+                  AI Analysis
+                </h3>
+                <p className='text-sm text-gray-600'>{analysis.reasoning}</p>
+                <div className='mt-3 text-xs text-gray-500'>
+                  Confidence: {analysis.confidence}%
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Segments Tab */}
+      {activeTab === 'segments' && (
+        <div className='space-y-6'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+            {segments.map((segment, index) => (
+              <div
+                key={index}
+                className='rounded-lg border border-gray-200 p-4'
+              >
+                <div className='mb-3 flex items-center justify-between'>
+                  <h3 className='font-semibold text-gray-900'>
+                    {segment.segmentName}
+                  </h3>
+                  <div
+                    className='rounded-full px-2 py-1 text-xs font-medium text-white'
+                    style={{ backgroundColor: getRiskColor(segment.churnRisk) }}
+                  >
+                    {segment.churnRisk.toUpperCase()}
+                  </div>
+                </div>
+
+                <div className='mb-4 space-y-2'>
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-gray-600'>Customers:</span>
+                    <span className='font-medium'>{segment.customerCount}</span>
+                  </div>
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-gray-600'>Avg Revenue:</span>
+                    <span className='font-medium'>
+                      ${(segment.averageRevenue / 1000).toFixed(0)}K
+                    </span>
+                  </div>
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-gray-600'>Retention Rate:</span>
+                    <span className='font-medium'>
+                      {segment.retentionRate}%
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className='mb-2 text-sm font-medium text-gray-900'>
+                    Recommended Actions:
+                  </h4>
+                  <ul className='space-y-1'>
+                    {segment.recommendedActions.map((action, actionIndex) => (
+                      <li key={actionIndex} className='text-xs text-gray-600'>
+                        • {action}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

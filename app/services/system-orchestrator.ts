@@ -1,22 +1,27 @@
 /**
  * FleetFlow Integrated System Orchestrator
  * Connects route generation with optimization, planning, tracking, and notifications
- * 
+ *
  * System Flow Integration:
  * 1. Route Generation → Schedule Management → Live Tracking → SMS Notifications
  * 2. Route Optimization → Load Distribution → Driver Assignment → Real-time Updates
  * 3. AI Dispatch → Route Planning → Document Flow → Customer Notifications
  */
 
-import { AIAutomationEngine } from './automation';
-import { RouteOptimizationService } from './route-optimization';
-import { AIDispatcher } from './ai-dispatcher';
-import { LoadDistributionService } from './load-distribution';
+import {
+  generateAgriculturalRouteDocument,
+  generateManufacturingRouteDocument,
+  generateSamsClubDeliveryDocument,
+  generateUniversalPickupDocument,
+} from '../../src/route-generator/templates/route-generators.js';
 import { SchedulingService } from '../scheduling/service';
+import { AIDispatcher } from './ai-dispatcher';
+import { AIAutomationEngine } from './automation';
 import { DocumentFlowService } from './document-flow-service';
-import { smsService } from './sms';
-import { sendInvoiceEmail } from './email';
 import { EnhancedCarrierService } from './enhanced-carrier-service';
+import { LoadDistributionService } from './load-distribution';
+import { RouteOptimizationService } from './route-optimization';
+import { SmartTaskPrioritizationService } from './smart-task-prioritization';
 
 // Heavy Haul Permit Service interfaces (avoiding import conflicts)
 export interface HeavyHaulLoadDataData {
@@ -30,7 +35,11 @@ export interface HeavyHaulLoadDataData {
   route: {
     origin: { city: string; state: string; coordinates: [number, number] };
     destination: { city: string; state: string; coordinates: [number, number] };
-    waypoints?: Array<{ city: string; state: string; coordinates: [number, number] }>;
+    waypoints?: Array<{
+      city: string;
+      state: string;
+      coordinates: [number, number];
+    }>;
   };
   equipment: {
     tractor: string;
@@ -67,13 +76,6 @@ export interface HeavyHaulPermitApp {
   };
   notes: string[];
 }
-import { 
-  generateUniversalPickupDocument, 
-  generateClaudeStyleRouteDocument,
-  generateSamsClubDeliveryDocument,
-  generateManufacturingRouteDocument,
-  generateAgriculturalRouteDocument
-} from '../../src/route-generator/templates/route-generators.js';
 
 export interface SystemIntegrationConfig {
   enableRealTimeTracking: boolean;
@@ -83,6 +85,7 @@ export interface SystemIntegrationConfig {
   enablePredictiveAnalytics: boolean;
   enableCarrierValidation: boolean;
   enableCarrierMonitoring: boolean;
+  enableTaskPrioritization: boolean;
 }
 
 export interface CarrierValidationResult {
@@ -120,7 +123,14 @@ export interface CarrierValidationResult {
 export interface IntegratedWorkflow {
   id: string;
   loadId: string;
-  status: 'pending' | 'route_generated' | 'optimized' | 'scheduled' | 'dispatched' | 'in_transit' | 'delivered';
+  status:
+    | 'pending'
+    | 'route_generated'
+    | 'optimized'
+    | 'scheduled'
+    | 'dispatched'
+    | 'in_transit'
+    | 'delivered';
   routeDocument?: any;
   optimizedRoute?: any;
   schedule?: any;
@@ -139,6 +149,7 @@ export class FleetFlowSystemOrchestrator {
   private documentFlow: DocumentFlowService;
   private carrierService: EnhancedCarrierService;
   private heavyHaulPermitService: HeavyHaulPermitService;
+  private taskPrioritization: SmartTaskPrioritizationService;
   private workflows: Map<string, IntegratedWorkflow> = new Map();
   private validatedCarriers: Map<string, CarrierValidationResult> = new Map();
   private config: SystemIntegrationConfig;
@@ -147,15 +158,18 @@ export class FleetFlowSystemOrchestrator {
   private carrierValidationCache = new Map<string, CarrierValidationResult>();
   private carrierMonitoringInterval: NodeJS.Timeout | null = null;
 
-  constructor(config: SystemIntegrationConfig = {
-    enableRealTimeTracking: true,
-    enableSmartRouting: true,
-    enableAutoNotifications: true,
-    enableScheduleOptimization: true,
-    enablePredictiveAnalytics: true,
-    enableCarrierValidation: true,
-    enableCarrierMonitoring: true
-  }) {
+  constructor(
+    config: SystemIntegrationConfig = {
+      enableRealTimeTracking: true,
+      enableSmartRouting: true,
+      enableAutoNotifications: true,
+      enableScheduleOptimization: true,
+      enablePredictiveAnalytics: true,
+      enableCarrierValidation: true,
+      enableCarrierMonitoring: true,
+      enableTaskPrioritization: true,
+    }
+  ) {
     this.automation = new AIAutomationEngine();
     this.routeOptimizer = new RouteOptimizationService();
     this.aiDispatcher = new AIDispatcher();
@@ -164,12 +178,13 @@ export class FleetFlowSystemOrchestrator {
       maxDriversPerLoad: 5,
       radiusMiles: 250,
       equipmentMatching: true,
-      priorityDriversFirst: true
+      priorityDriversFirst: true,
     });
     this.scheduling = new SchedulingService();
     this.documentFlow = new DocumentFlowService();
     this.carrierService = new EnhancedCarrierService();
     this.heavyHaulPermitService = new HeavyHaulPermitService();
+    this.taskPrioritization = new SmartTaskPrioritizationService();
     this.config = config;
 
     console.log('🔗 FleetFlow System Orchestrator initialized');
@@ -190,7 +205,7 @@ export class FleetFlowSystemOrchestrator {
       status: 'pending',
       notifications: [],
       created: new Date(),
-      updated: new Date()
+      updated: new Date(),
     };
 
     try {
@@ -201,14 +216,20 @@ export class FleetFlowSystemOrchestrator {
 
       // STEP 2: Optimize Route with AI
       if (this.config.enableSmartRouting) {
-        workflow.optimizedRoute = await this.optimizeRoute(loadData, workflow.routeDocument);
+        workflow.optimizedRoute = await this.optimizeRoute(
+          loadData,
+          workflow.routeDocument
+        );
         workflow.status = 'optimized';
         await this.updateWorkflow(workflow);
       }
 
       // STEP 3: Schedule with Driver/Vehicle Management
       if (this.config.enableScheduleOptimization) {
-        workflow.schedule = await this.createOptimalSchedule(loadData, workflow.optimizedRoute);
+        workflow.schedule = await this.createOptimalSchedule(
+          loadData,
+          workflow.optimizedRoute
+        );
         workflow.status = 'scheduled';
         await this.updateWorkflow(workflow);
       }
@@ -220,7 +241,10 @@ export class FleetFlowSystemOrchestrator {
 
       // STEP 5: Initialize Live Tracking
       if (this.config.enableRealTimeTracking) {
-        workflow.trackingData = await this.initializeLiveTracking(loadData, workflow);
+        workflow.trackingData = await this.initializeLiveTracking(
+          loadData,
+          workflow
+        );
         workflow.status = 'in_transit';
         await this.updateWorkflow(workflow);
       }
@@ -232,7 +256,6 @@ export class FleetFlowSystemOrchestrator {
 
       console.log(`✅ Integrated workflow completed for load ${loadData.id}`);
       return workflow;
-
     } catch (error) {
       console.error(`❌ Workflow failed for load ${loadData.id}:`, error);
       workflow.status = 'pending';
@@ -245,13 +268,15 @@ export class FleetFlowSystemOrchestrator {
    * Uses AI to detect pickup location type and generate appropriate document
    */
   private async generateRouteDocument(loadData: any): Promise<any> {
-    console.log('📋 Generating route document with smart template selection...');
+    console.log(
+      '📋 Generating route document with smart template selection...'
+    );
 
     // Detect pickup location type using AI
     const locationType = await this.detectPickupLocationType(loadData.origin);
-    
+
     let routeDocument;
-    
+
     // Smart template selection based on location type
     switch (locationType) {
       case 'manufacturing':
@@ -265,17 +290,20 @@ export class FleetFlowSystemOrchestrator {
           pickupLocation: loadData.origin,
           pickupContact: loadData.pickupContact || 'Site Supervisor',
           pickupPhone: loadData.pickupPhone || '(555) 123-4567',
-          specialInstructions: loadData.specialInstructions || 'Report to security first',
-          deliveryStops: [{
-            name: loadData.destination,
-            address: loadData.destination,
-            time: loadData.deliveryTime || '10:00 AM',
-            items: loadData.commodity || 'General freight',
-            contact: loadData.deliveryContact || 'Receiving Manager',
-            phone: loadData.deliveryPhone || '(555) 987-6543'
-          }],
+          specialInstructions:
+            loadData.specialInstructions || 'Report to security first',
+          deliveryStops: [
+            {
+              name: loadData.destination,
+              address: loadData.destination,
+              time: loadData.deliveryTime || '10:00 AM',
+              items: loadData.commodity || 'General freight',
+              contact: loadData.deliveryContact || 'Receiving Manager',
+              phone: loadData.deliveryPhone || '(555) 987-6543',
+            },
+          ],
           driverName: loadData.driverName || 'TBD',
-          vehicleNumber: loadData.vehicleNumber || 'TBD'
+          vehicleNumber: loadData.vehicleNumber || 'TBD',
         });
         break;
 
@@ -290,17 +318,20 @@ export class FleetFlowSystemOrchestrator {
           pickupLocation: loadData.origin,
           pickupContact: loadData.pickupContact || 'Store Manager',
           pickupPhone: loadData.pickupPhone || '(555) 123-4567',
-          confirmationNumber: loadData.confirmationNumber || `SC-${loadData.id}`,
-          deliveryStops: [{
-            name: loadData.destination,
-            address: loadData.destination,
-            time: loadData.deliveryTime || '10:00 AM',
-            items: loadData.commodity || 'Retail merchandise',
-            contact: loadData.deliveryContact || 'Receiving Manager',
-            phone: loadData.deliveryPhone || '(555) 987-6543'
-          }],
+          confirmationNumber:
+            loadData.confirmationNumber || `SC-${loadData.id}`,
+          deliveryStops: [
+            {
+              name: loadData.destination,
+              address: loadData.destination,
+              time: loadData.deliveryTime || '10:00 AM',
+              items: loadData.commodity || 'Retail merchandise',
+              contact: loadData.deliveryContact || 'Receiving Manager',
+              phone: loadData.deliveryPhone || '(555) 987-6543',
+            },
+          ],
           driverName: loadData.driverName || 'TBD',
-          vehicleNumber: loadData.vehicleNumber || 'TBD'
+          vehicleNumber: loadData.vehicleNumber || 'TBD',
         });
         break;
 
@@ -315,17 +346,20 @@ export class FleetFlowSystemOrchestrator {
           pickupLocation: loadData.origin,
           pickupContact: loadData.pickupContact || 'Farm Manager',
           pickupPhone: loadData.pickupPhone || '(555) 123-4567',
-          specialInstructions: loadData.specialInstructions || 'Use farm gate entrance',
-          deliveryStops: [{
-            name: loadData.destination,
-            address: loadData.destination,
-            time: loadData.deliveryTime || '10:00 AM',
-            items: loadData.commodity || 'Agricultural products',
-            contact: loadData.deliveryContact || 'Receiving Manager',
-            phone: loadData.deliveryPhone || '(555) 987-6543'
-          }],
+          specialInstructions:
+            loadData.specialInstructions || 'Use farm gate entrance',
+          deliveryStops: [
+            {
+              name: loadData.destination,
+              address: loadData.destination,
+              time: loadData.deliveryTime || '10:00 AM',
+              items: loadData.commodity || 'Agricultural products',
+              contact: loadData.deliveryContact || 'Receiving Manager',
+              phone: loadData.deliveryPhone || '(555) 987-6543',
+            },
+          ],
           driverName: loadData.driverName || 'TBD',
-          vehicleNumber: loadData.vehicleNumber || 'TBD'
+          vehicleNumber: loadData.vehicleNumber || 'TBD',
         });
         break;
 
@@ -341,16 +375,18 @@ export class FleetFlowSystemOrchestrator {
           pickupLocation: loadData.origin,
           pickupContact: loadData.pickupContact || 'Site Contact',
           pickupPhone: loadData.pickupPhone || '(555) 123-4567',
-          deliveryStops: [{
-            name: loadData.destination,
-            address: loadData.destination,
-            time: loadData.deliveryTime || '10:00 AM',
-            items: loadData.commodity || 'General freight',
-            contact: loadData.deliveryContact || 'Receiving Manager',
-            phone: loadData.deliveryPhone || '(555) 987-6543'
-          }],
+          deliveryStops: [
+            {
+              name: loadData.destination,
+              address: loadData.destination,
+              time: loadData.deliveryTime || '10:00 AM',
+              items: loadData.commodity || 'General freight',
+              contact: loadData.deliveryContact || 'Receiving Manager',
+              phone: loadData.deliveryPhone || '(555) 987-6543',
+            },
+          ],
           driverName: loadData.driverName || 'TBD',
-          vehicleNumber: loadData.vehicleNumber || 'TBD'
+          vehicleNumber: loadData.vehicleNumber || 'TBD',
         });
     }
 
@@ -358,7 +394,7 @@ export class FleetFlowSystemOrchestrator {
     return {
       document: routeDocument,
       locationType,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
   }
 
@@ -370,16 +406,18 @@ export class FleetFlowSystemOrchestrator {
     console.log('🗺️ Optimizing route with AI...');
 
     const optimizationRequest = {
-      vehicles: [{
-        id: loadData.vehicleId || 'V001',
-        type: 'truck' as const,
-        capacity: loadData.capacity || 80000,
-        location: loadData.origin,
-        driver: loadData.driverName || 'TBD',
-        fuelType: 'diesel' as const,
-        mpg: 6.5,
-        maxDrivingHours: 11
-      }],
+      vehicles: [
+        {
+          id: loadData.vehicleId || 'V001',
+          type: 'truck' as const,
+          capacity: loadData.capacity || 80000,
+          location: loadData.origin,
+          driver: loadData.driverName || 'TBD',
+          fuelType: 'diesel' as const,
+          mpg: 6.5,
+          maxDrivingHours: 11,
+        },
+      ],
       stops: [
         {
           id: 'pickup',
@@ -387,11 +425,11 @@ export class FleetFlowSystemOrchestrator {
           type: 'pickup' as const,
           timeWindow: {
             start: loadData.pickupTimeStart || '08:00',
-            end: loadData.pickupTimeEnd || '10:00'
+            end: loadData.pickupTimeEnd || '10:00',
           },
           serviceTime: 30,
           weight: loadData.weight || 0,
-          priority: 'high' as const
+          priority: 'high' as const,
         },
         {
           id: 'delivery',
@@ -399,28 +437,29 @@ export class FleetFlowSystemOrchestrator {
           type: 'delivery' as const,
           timeWindow: {
             start: loadData.deliveryTimeStart || '14:00',
-            end: loadData.deliveryTimeEnd || '16:00'
+            end: loadData.deliveryTimeEnd || '16:00',
           },
           serviceTime: 30,
           weight: loadData.weight || 0,
-          priority: 'high' as const
-        }
+          priority: 'high' as const,
+        },
       ],
       constraints: {
         maxRouteTime: 14,
         maxRouteDistance: 1000,
-        allowOvertimeDrivers: false
-      }
+        allowOvertimeDrivers: false,
+      },
     };
 
-    const optimizedRoutes = await this.routeOptimizer.optimizeRoutes(optimizationRequest);
-    
+    const optimizedRoutes =
+      await this.routeOptimizer.optimizeRoutes(optimizationRequest);
+
     console.log('✅ Route optimization completed');
     return {
       optimizedRoute: optimizedRoutes[0],
       optimizationScore: optimizedRoutes[0]?.efficiency || 85,
       estimatedSavings: '$125',
-      optimizedAt: new Date().toISOString()
+      optimizedAt: new Date().toISOString(),
     };
   }
 
@@ -428,7 +467,10 @@ export class FleetFlowSystemOrchestrator {
    * STEP 3: Intelligent Schedule Management
    * Creates optimal schedules considering driver availability and HOS
    */
-  private async createOptimalSchedule(loadData: any, optimizedRoute: any): Promise<any> {
+  private async createOptimalSchedule(
+    loadData: any,
+    optimizedRoute: any
+  ): Promise<any> {
     console.log('📅 Creating optimal schedule...');
 
     const scheduleData = {
@@ -438,23 +480,25 @@ export class FleetFlowSystemOrchestrator {
       startTime: loadData.pickupTime || '08:00',
       endTime: loadData.deliveryTime || '16:00',
       scheduleType: 'Delivery' as const,
-      priority: (loadData.priority as 'Low' | 'Medium' | 'High' | 'Urgent') || 'Medium',
+      priority:
+        (loadData.priority as 'Low' | 'Medium' | 'High' | 'Urgent') || 'Medium',
       driverId: loadData.driverId,
       vehicleId: loadData.vehicleId,
       origin: loadData.origin,
       destination: loadData.destination,
-      estimatedDistance: optimizedRoute?.optimizedRoute?.totalDistance || loadData.distance,
+      estimatedDistance:
+        optimizedRoute?.optimizedRoute?.totalDistance || loadData.distance,
       estimatedDuration: optimizedRoute?.optimizedRoute?.totalDuration || 480,
-      specialRequirements: loadData.specialRequirements || []
+      specialRequirements: loadData.specialRequirements || [],
     };
 
     const scheduleResult = await this.scheduling.createSchedule(scheduleData);
-    
+
     console.log('✅ Schedule created with conflict detection');
     return {
       schedule: scheduleResult.schedule,
       conflicts: scheduleResult.conflicts || [],
-      scheduledAt: new Date().toISOString()
+      scheduledAt: new Date().toISOString(),
     };
   }
 
@@ -462,7 +506,10 @@ export class FleetFlowSystemOrchestrator {
    * STEP 4: AI Dispatch and Load Distribution
    * Uses AI to match loads with optimal carriers/drivers
    */
-  private async executeAIDispatch(loadData: any, workflow: IntegratedWorkflow): Promise<any> {
+  private async executeAIDispatch(
+    loadData: any,
+    workflow: IntegratedWorkflow
+  ): Promise<any> {
     console.log('🤖 Executing AI dispatch...');
 
     // Mock carrier data for dispatch matching
@@ -474,22 +521,25 @@ export class FleetFlowSystemOrchestrator {
         capacity: 80000,
         specializations: ['general_freight'],
         performanceScore: 95,
-        rateHistory: [2.50, 2.45, 2.55],
+        rateHistory: [2.5, 2.45, 2.55],
         availability: {
           earliestPickup: new Date().toISOString(),
-          preferredLanes: [loadData.origin]
+          preferredLanes: [loadData.origin],
         },
         equipmentType: 'dry_van',
         safetyRating: 95,
         onTimePercentage: 94,
         customerSatisfaction: 4.8,
         experienceScore: 92,
-        reliability: 96
-      }
+        reliability: 96,
+      },
     ];
 
-    const dispatchRecommendation = await this.aiDispatcher.matchLoadToCarrier(loadData, availableCarriers);
-    
+    const dispatchRecommendation = await this.aiDispatcher.matchLoadToCarrier(
+      loadData,
+      availableCarriers
+    );
+
     // Distribute to available drivers
     const distributionResult = await this.loadDistribution.distributeLoad({
       id: loadData.id,
@@ -501,14 +551,14 @@ export class FleetFlowSystemOrchestrator {
       pickupDate: loadData.pickupDate,
       deliveryDate: loadData.deliveryDate,
       commodity: loadData.commodity,
-      specialInstructions: loadData.specialInstructions
+      specialInstructions: loadData.specialInstructions,
     });
 
     console.log('✅ AI dispatch completed');
     return {
       recommendation: dispatchRecommendation,
       distribution: distributionResult,
-      dispatchedAt: new Date().toISOString()
+      dispatchedAt: new Date().toISOString(),
     };
   }
 
@@ -516,7 +566,10 @@ export class FleetFlowSystemOrchestrator {
    * STEP 5: Live Tracking Initialization
    * Sets up real-time GPS tracking for the load
    */
-  private async initializeLiveTracking(loadData: any, workflow: IntegratedWorkflow): Promise<any> {
+  private async initializeLiveTracking(
+    loadData: any,
+    workflow: IntegratedWorkflow
+  ): Promise<any> {
     console.log('🛰️ Initializing live tracking...');
 
     const trackingData = {
@@ -527,23 +580,23 @@ export class FleetFlowSystemOrchestrator {
         lat: 39.7392,
         lng: -104.9903,
         address: loadData.origin,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       status: 'en_route_to_pickup',
       estimatedArrival: {
         pickup: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        delivery: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
+        delivery: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
       },
       route: {
         planned: workflow.optimizedRoute?.optimizedRoute?.stops || [],
-        traveled: []
+        traveled: [],
       },
       notifications: {
         geofencing: true,
         delays: true,
         arrivals: true,
-        departures: true
-      }
+        departures: true,
+      },
     };
 
     // In production, this would connect to actual GPS/ELD systems
@@ -551,7 +604,7 @@ export class FleetFlowSystemOrchestrator {
     return {
       tracking: trackingData,
       trackingUrl: `https://track.fleetflow.com/load/${loadData.id}`,
-      initializedAt: new Date().toISOString()
+      initializedAt: new Date().toISOString(),
     };
   }
 
@@ -559,11 +612,14 @@ export class FleetFlowSystemOrchestrator {
    * STEP 6: Multi-Channel Integrated Notifications
    * Sends comprehensive notifications to all stakeholders
    */
-  private async sendIntegratedNotifications(workflow: IntegratedWorkflow): Promise<void> {
+  private async sendIntegratedNotifications(
+    workflow: IntegratedWorkflow
+  ): Promise<void> {
     console.log('📧 Sending integrated notifications...');
 
     const loadId = workflow.loadId;
-    const routeDoc = workflow.routeDocument?.document || 'Route document generated';
+    const routeDoc =
+      workflow.routeDocument?.document || 'Route document generated';
     const trackingUrl = workflow.trackingData?.trackingUrl || '#';
 
     // 1. Driver Notifications (SMS + Email)
@@ -571,8 +627,8 @@ export class FleetFlowSystemOrchestrator {
       sms: `📋 New load assigned: ${loadId}. Route document ready! Track at: ${trackingUrl}`,
       email: {
         subject: `Route Document: Load ${loadId}`,
-        body: `Your route document is ready!\n\n${routeDoc}\n\nLive tracking: ${trackingUrl}`
-      }
+        body: `Your route document is ready!\n\n${routeDoc}\n\nLive tracking: ${trackingUrl}`,
+      },
     };
 
     // 2. Carrier Notifications
@@ -580,8 +636,8 @@ export class FleetFlowSystemOrchestrator {
       sms: `✅ Load ${loadId} dispatched successfully. Driver assigned. Tracking active.`,
       email: {
         subject: `Load Confirmation: ${loadId}`,
-        body: `Load has been successfully dispatched with optimized routing and live tracking enabled.`
-      }
+        body: `Load has been successfully dispatched with optimized routing and live tracking enabled.`,
+      },
     };
 
     // 3. Customer Notifications
@@ -589,16 +645,16 @@ export class FleetFlowSystemOrchestrator {
       sms: `📦 Your shipment ${loadId} is in transit. Track progress at: ${trackingUrl}`,
       email: {
         subject: `Shipment Update: ${loadId} In Transit`,
-        body: `Your shipment is now in transit with real-time tracking available.`
-      }
+        body: `Your shipment is now in transit with real-time tracking available.`,
+      },
     };
 
     // 4. Dispatch Team Notifications
     const dispatchNotification = {
       email: {
         subject: `Workflow Complete: Load ${loadId}`,
-        body: `Integrated workflow completed:\n✅ Route optimized\n✅ Schedule created\n✅ Driver assigned\n✅ Tracking active\n\nOptimization Score: ${workflow.optimizedRoute?.optimizationScore || 'N/A'}%`
-      }
+        body: `Integrated workflow completed:\n✅ Route optimized\n✅ Schedule created\n✅ Driver assigned\n✅ Tracking active\n\nOptimization Score: ${workflow.optimizedRoute?.optimizationScore || 'N/A'}%`,
+      },
     };
 
     // Send notifications
@@ -630,24 +686,39 @@ export class FleetFlowSystemOrchestrator {
   private async detectPickupLocationType(location: string): Promise<string> {
     // Simple keyword detection - in production would use ML/AI
     const locationLower = location.toLowerCase();
-    
-    if (locationLower.includes('steel') || locationLower.includes('manufacturing') || 
-        locationLower.includes('plant') || locationLower.includes('factory')) {
+
+    if (
+      locationLower.includes('steel') ||
+      locationLower.includes('manufacturing') ||
+      locationLower.includes('plant') ||
+      locationLower.includes('factory')
+    ) {
       return 'manufacturing';
     }
-    
-    if (locationLower.includes('sam\'s club') || locationLower.includes('walmart') || 
-        locationLower.includes('costco') || locationLower.includes('store')) {
+
+    if (
+      locationLower.includes("sam's club") ||
+      locationLower.includes('walmart') ||
+      locationLower.includes('costco') ||
+      locationLower.includes('store')
+    ) {
       return 'retail';
     }
-    
-    if (locationLower.includes('farm') || locationLower.includes('agricultural') || 
-        locationLower.includes('grain') || locationLower.includes('ranch')) {
+
+    if (
+      locationLower.includes('farm') ||
+      locationLower.includes('agricultural') ||
+      locationLower.includes('grain') ||
+      locationLower.includes('ranch')
+    ) {
       return 'agricultural';
     }
-    
-    if (locationLower.includes('port') || locationLower.includes('terminal') || 
-        locationLower.includes('dock')) {
+
+    if (
+      locationLower.includes('port') ||
+      locationLower.includes('terminal') ||
+      locationLower.includes('dock')
+    ) {
       return 'port';
     }
 
@@ -660,9 +731,11 @@ export class FleetFlowSystemOrchestrator {
   private async updateWorkflow(workflow: IntegratedWorkflow): Promise<void> {
     workflow.updated = new Date();
     this.workflows.set(workflow.id, workflow);
-    
+
     // In production, this would trigger WebSocket updates to the UI
-    console.log(`🔄 Workflow ${workflow.id} updated - Status: ${workflow.status}`);
+    console.log(
+      `🔄 Workflow ${workflow.id} updated - Status: ${workflow.status}`
+    );
   }
 
   /**
@@ -709,13 +782,19 @@ export class FleetFlowSystemOrchestrator {
       loadDistribution: 'online',
       scheduling: 'online',
       documentFlow: 'online',
-      carrierValidation: this.config.enableCarrierValidation ? 'enabled' : 'disabled',
-      carrierMonitoring: this.config.enableCarrierMonitoring ? 'enabled' : 'disabled',
+      carrierValidation: this.config.enableCarrierValidation
+        ? 'enabled'
+        : 'disabled',
+      carrierMonitoring: this.config.enableCarrierMonitoring
+        ? 'enabled'
+        : 'disabled',
       tracking: this.config.enableRealTimeTracking ? 'enabled' : 'disabled',
-      notifications: this.config.enableAutoNotifications ? 'enabled' : 'disabled',
+      notifications: this.config.enableAutoNotifications
+        ? 'enabled'
+        : 'disabled',
       activeWorkflows: this.workflows.size,
       validatedCarriers: this.validatedCarriers.size,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -728,7 +807,10 @@ export class FleetFlowSystemOrchestrator {
    * Validate and add new carrier to the system
    * Called when carriers are uploaded/registered
    */
-  async validateAndAddCarrier(mcNumber: string, carrierData?: any): Promise<CarrierValidationResult> {
+  async validateAndAddCarrier(
+    mcNumber: string,
+    carrierData?: any
+  ): Promise<CarrierValidationResult> {
     console.log(`🛡️ Validating new carrier: ${mcNumber}`);
 
     const validationResult: CarrierValidationResult = {
@@ -747,22 +829,25 @@ export class FleetFlowSystemOrchestrator {
         insuranceRequired: 'Unknown',
         insuranceOnFile: 'Unknown',
         insuranceStatus: 'Unknown',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       },
       validatedAt: new Date().toISOString(),
       monitoringActive: false,
-      monitoringEnabled: false
+      monitoringEnabled: false,
     };
 
     try {
       // STEP 1: FMCSA Validation (Primary validation when carrier is uploaded)
       if (this.config.enableCarrierValidation) {
         console.log('📋 Running FMCSA validation...');
-        
-        const fmcsaData = await this.carrierService.verifyCarrierFMCSA(mcNumber);
-        
+
+        const fmcsaData =
+          await this.carrierService.verifyCarrierFMCSA(mcNumber);
+
         if (!fmcsaData) {
-          validationResult.validationErrors.push('FMCSA validation failed - carrier not found');
+          validationResult.validationErrors.push(
+            'FMCSA validation failed - carrier not found'
+          );
           console.log('❌ FMCSA validation failed');
           return validationResult;
         }
@@ -773,11 +858,15 @@ export class FleetFlowSystemOrchestrator {
         }
 
         if (fmcsaData.safetyRating === 'UNSATISFACTORY') {
-          validationResult.validationErrors.push('Carrier has UNSATISFACTORY safety rating');
+          validationResult.validationErrors.push(
+            'Carrier has UNSATISFACTORY safety rating'
+          );
         }
 
         if (fmcsaData.insuranceStatus === 'INACTIVE') {
-          validationResult.validationErrors.push('Carrier insurance is INACTIVE');
+          validationResult.validationErrors.push(
+            'Carrier insurance is INACTIVE'
+          );
         }
 
         // Store FMCSA data with proper mapping
@@ -790,10 +879,13 @@ export class FleetFlowSystemOrchestrator {
           safetyRating: fmcsaData.safetyRating,
           insuranceRequired: 'YES',
           insuranceOnFile: (fmcsaData as any).insuranceOnFile || 'NO',
-          insuranceStatus: (fmcsaData as any).insuranceOnFile === 'YES' ? 'ACTIVE' : 'INACTIVE',
-          lastUpdated: new Date().toISOString()
+          insuranceStatus:
+            (fmcsaData as any).insuranceOnFile === 'YES'
+              ? 'ACTIVE'
+              : 'INACTIVE',
+          lastUpdated: new Date().toISOString(),
         };
-        
+
         if (validationResult.validationErrors.length === 0) {
           validationResult.isValid = true;
           console.log('✅ FMCSA validation passed');
@@ -803,14 +895,18 @@ export class FleetFlowSystemOrchestrator {
       // STEP 2: Enable BrokerSnapshot Monitoring (For ongoing monitoring)
       if (this.config.enableCarrierMonitoring && validationResult.isValid) {
         console.log('📊 Enabling BrokerSnapshot monitoring...');
-        
-        const monitoringResult = await this.carrierService.enableCarrierTracking(mcNumber);
-        
+
+        const monitoringResult =
+          await this.carrierService.enableCarrierTracking(mcNumber);
+
         if (monitoringResult.success) {
           validationResult.monitoringEnabled = true;
           console.log('✅ BrokerSnapshot monitoring enabled');
         } else {
-          console.log('⚠️ BrokerSnapshot monitoring setup failed:', monitoringResult.message);
+          console.log(
+            '⚠️ BrokerSnapshot monitoring setup failed:',
+            monitoringResult.message
+          );
         }
       }
 
@@ -820,12 +916,15 @@ export class FleetFlowSystemOrchestrator {
       // Send validation notification
       await this.sendCarrierValidationNotification(validationResult);
 
-      console.log(`✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`);
+      console.log(
+        `✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`
+      );
       return validationResult;
-
     } catch (error) {
       console.error(`❌ Carrier validation error for ${mcNumber}:`, error);
-      validationResult.validationErrors.push(`Validation system error: ${error}`);
+      validationResult.validationErrors.push(
+        `Validation system error: ${error}`
+      );
       return validationResult;
     }
   }
@@ -837,61 +936,81 @@ export class FleetFlowSystemOrchestrator {
   async monitorCarriers(): Promise<void> {
     console.log('📊 Running carrier monitoring checks...');
 
-    const validatedCarriers = Array.from(this.validatedCarriers.values())
-      .filter(carrier => carrier.isValid && carrier.monitoringEnabled);
+    const validatedCarriers = Array.from(
+      this.validatedCarriers.values()
+    ).filter((carrier) => carrier.isValid && carrier.monitoringEnabled);
 
     for (const carrier of validatedCarriers) {
       try {
         // Get updated carrier data from BrokerSnapshot
-        const updatedData = await this.carrierService.getCarrierBrokerSnapshot(carrier.mcNumber);
-        
+        const updatedData = await this.carrierService.getCarrierBrokerSnapshot(
+          carrier.mcNumber
+        );
+
         if (updatedData) {
           // Check for significant changes
           const alerts = this.analyzeCarrierChanges(carrier, updatedData);
-          
+
           if (alerts.length > 0) {
             await this.sendCarrierAlerts(carrier, alerts);
           }
         }
 
         // Get real-time location if tracking enabled
-        const locationData = await this.carrierService.getCarrierLocation(carrier.mcNumber);
+        const locationData = await this.carrierService.getCarrierLocation(
+          carrier.mcNumber
+        );
         if (locationData.success) {
           console.log(`📍 Carrier ${carrier.mcNumber} location updated`);
         }
-
       } catch (error) {
-        console.error(`❌ Monitoring error for carrier ${carrier.mcNumber}:`, error);
+        console.error(
+          `❌ Monitoring error for carrier ${carrier.mcNumber}:`,
+          error
+        );
       }
     }
 
-    console.log(`✅ Carrier monitoring completed for ${validatedCarriers.length} carriers`);
+    console.log(
+      `✅ Carrier monitoring completed for ${validatedCarriers.length} carriers`
+    );
   }
 
   /**
    * Analyze carrier data changes for monitoring alerts
    */
-  private analyzeCarrierChanges(carrier: CarrierValidationResult, newData: any): string[] {
+  private analyzeCarrierChanges(
+    carrier: CarrierValidationResult,
+    newData: any
+  ): string[] {
     const alerts: string[] = [];
 
     // Check for safety rating changes
     if (carrier.fmcsaData?.safetyRating !== newData.safetyRating) {
-      alerts.push(`Safety rating changed from ${carrier.fmcsaData?.safetyRating} to ${newData.safetyRating}`);
+      alerts.push(
+        `Safety rating changed from ${carrier.fmcsaData?.safetyRating} to ${newData.safetyRating}`
+      );
     }
 
     // Check for insurance status changes
     if (carrier.fmcsaData?.insuranceStatus !== newData.insuranceStatus) {
-      alerts.push(`Insurance status changed from ${carrier.fmcsaData?.insuranceStatus} to ${newData.insuranceStatus}`);
+      alerts.push(
+        `Insurance status changed from ${carrier.fmcsaData?.insuranceStatus} to ${newData.insuranceStatus}`
+      );
     }
 
     // Check for operating status changes
     if (carrier.fmcsaData?.operatingStatus !== newData.operatingStatus) {
-      alerts.push(`Operating status changed from ${carrier.fmcsaData?.operatingStatus} to ${newData.operatingStatus}`);
+      alerts.push(
+        `Operating status changed from ${carrier.fmcsaData?.operatingStatus} to ${newData.operatingStatus}`
+      );
     }
 
     // Check credit score changes (BrokerSnapshot data)
     if (newData.creditScore && newData.creditScore < 70) {
-      alerts.push(`Credit score alert: ${newData.creditScore} (below threshold)`);
+      alerts.push(
+        `Credit score alert: ${newData.creditScore} (below threshold)`
+      );
     }
 
     return alerts;
@@ -900,9 +1019,12 @@ export class FleetFlowSystemOrchestrator {
   /**
    * Carrier Validation and Monitoring Methods
    */
-  async validateCarrier(mcNumber: string, dotNumber?: string): Promise<CarrierValidationResult> {
+  async validateCarrier(
+    mcNumber: string,
+    dotNumber?: string
+  ): Promise<CarrierValidationResult> {
     console.log(`🔍 Starting FMCSA carrier validation for MC-${mcNumber}...`);
-    
+
     try {
       const validationResult: CarrierValidationResult = {
         mcNumber,
@@ -920,18 +1042,20 @@ export class FleetFlowSystemOrchestrator {
           insuranceRequired: '',
           insuranceOnFile: '',
           insuranceStatus: '',
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         },
         validatedAt: new Date().toISOString(),
         monitoringActive: false,
-        monitoringEnabled: false
+        monitoringEnabled: false,
       };
 
       // FMCSA API validation (simulated for demo)
       const fmcsaData = await this.fetchFMCSAData(mcNumber, dotNumber);
-      
+
       if (!fmcsaData) {
-        validationResult.validationErrors.push('FMCSA validation failed - carrier not found');
+        validationResult.validationErrors.push(
+          'FMCSA validation failed - carrier not found'
+        );
         validationResult.status = 'invalid';
       } else {
         // Check operating status
@@ -939,13 +1063,17 @@ export class FleetFlowSystemOrchestrator {
           validationResult.status = 'out_of_service';
           validationResult.validationErrors.push('Carrier is OUT OF SERVICE');
         }
-        
+
         if (fmcsaData.safetyRating === 'UNSATISFACTORY') {
-          validationResult.validationErrors.push('Carrier has UNSATISFACTORY safety rating');
+          validationResult.validationErrors.push(
+            'Carrier has UNSATISFACTORY safety rating'
+          );
         }
-        
+
         if (fmcsaData.insuranceOnFile !== 'YES') {
-          validationResult.validationErrors.push('Carrier insurance is INACTIVE');
+          validationResult.validationErrors.push(
+            'Carrier insurance is INACTIVE'
+          );
         }
 
         validationResult.fmcsaData = {
@@ -957,17 +1085,19 @@ export class FleetFlowSystemOrchestrator {
           safetyRating: fmcsaData.safetyRating,
           insuranceRequired: fmcsaData.insuranceRequired || 'YES',
           insuranceOnFile: fmcsaData.insuranceOnFile || 'NO',
-          insuranceStatus: fmcsaData.insuranceOnFile === 'YES' ? 'ACTIVE' : 'INACTIVE',
-          lastUpdated: new Date().toISOString()
+          insuranceStatus:
+            fmcsaData.insuranceOnFile === 'YES' ? 'ACTIVE' : 'INACTIVE',
+          lastUpdated: new Date().toISOString(),
         };
-        
+
         if (validationResult.validationErrors.length === 0) {
           validationResult.isValid = true;
           validationResult.status = 'valid';
           validationResult.validationScore = 85;
         }
 
-        validationResult.companyName = fmcsaData.legalName || fmcsaData.companyName;
+        validationResult.companyName =
+          fmcsaData.legalName || fmcsaData.companyName;
       }
 
       // Start BrokerSnapshot monitoring if carrier is valid
@@ -986,32 +1116,35 @@ export class FleetFlowSystemOrchestrator {
       // Send validation notification
       await this.sendCarrierValidationNotification(validationResult);
 
-      console.log(`✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`);
-      
+      console.log(
+        `✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`
+      );
+
       return validationResult;
     } catch (error) {
       console.error('❌ Carrier validation error:', error);
-      const errorResult: CarrierValidationResult = this.carrierValidationCache.get(mcNumber) || {
-        mcNumber, 
-        companyName: 'Unknown', 
-        status: 'invalid' as const, 
-        validationScore: 0,
-        isValid: false, 
-        validationErrors: [], 
-        fmcsaData: {
-          operatingStatus: 'UNKNOWN',
-          legalName: 'Unknown',
-          physicalAddress: 'Unknown',
-          phoneNumber: 'Unknown',
-          insuranceRequired: 'UNKNOWN',
-          insuranceOnFile: 'UNKNOWN',
-          insuranceStatus: 'UNKNOWN',
-          lastUpdated: new Date().toISOString()
-        },
-        validatedAt: new Date().toISOString(), 
-        monitoringActive: false, 
-        monitoringEnabled: false
-      };
+      const errorResult: CarrierValidationResult =
+        this.carrierValidationCache.get(mcNumber) || {
+          mcNumber,
+          companyName: 'Unknown',
+          status: 'invalid' as const,
+          validationScore: 0,
+          isValid: false,
+          validationErrors: [],
+          fmcsaData: {
+            operatingStatus: 'UNKNOWN',
+            legalName: 'Unknown',
+            physicalAddress: 'Unknown',
+            phoneNumber: 'Unknown',
+            insuranceRequired: 'UNKNOWN',
+            insuranceOnFile: 'UNKNOWN',
+            insuranceStatus: 'UNKNOWN',
+            lastUpdated: new Date().toISOString(),
+          },
+          validatedAt: new Date().toISOString(),
+          monitoringActive: false,
+          monitoringEnabled: false,
+        };
       errorResult.validationErrors.push(`Validation system error: ${error}`);
       return errorResult;
     }
@@ -1021,23 +1154,30 @@ export class FleetFlowSystemOrchestrator {
     if (!this.config.enableCarrierMonitoring) return;
 
     console.log('🔄 Starting carrier monitoring service...');
-    
+
     const monitorCarriers = async () => {
-      const carriersToMonitor = Array.from(this.carrierValidationCache.values())
-        .filter(carrier => carrier.isValid && carrier.monitoringEnabled);
+      const carriersToMonitor = Array.from(
+        this.carrierValidationCache.values()
+      ).filter((carrier) => carrier.isValid && carrier.monitoringEnabled);
 
       for (const carrier of carriersToMonitor) {
         try {
           await this.monitorCarrier(carrier.mcNumber);
         } catch (error) {
-          console.error(`❌ Error monitoring carrier ${carrier.mcNumber}:`, error);
+          console.error(
+            `❌ Error monitoring carrier ${carrier.mcNumber}:`,
+            error
+          );
         }
       }
     };
 
     // Monitor every 30 minutes
-    this.carrierMonitoringInterval = setInterval(monitorCarriers, 30 * 60 * 1000);
-    
+    this.carrierMonitoringInterval = setInterval(
+      monitorCarriers,
+      30 * 60 * 1000
+    );
+
     // Initial monitoring run
     await monitorCarriers();
   }
@@ -1050,27 +1190,39 @@ export class FleetFlowSystemOrchestrator {
 
     try {
       // Check for FMCSA status changes
-      const newFMCSAData = await this.fetchFMCSAData(mcNumber, carrier.dotNumber);
+      const newFMCSAData = await this.fetchFMCSAData(
+        mcNumber,
+        carrier.dotNumber
+      );
       const newBrokerData = await this.fetchBrokerSnapshotData(mcNumber);
 
       const alerts: string[] = [];
 
       // Check for status changes
-      if (newFMCSAData && carrier.fmcsaData.operatingStatus !== newFMCSAData.operatingStatus) {
-        alerts.push(`Operating status changed from ${carrier.fmcsaData.operatingStatus} to ${newFMCSAData.operatingStatus}`);
+      if (
+        newFMCSAData &&
+        carrier.fmcsaData.operatingStatus !== newFMCSAData.operatingStatus
+      ) {
+        alerts.push(
+          `Operating status changed from ${carrier.fmcsaData.operatingStatus} to ${newFMCSAData.operatingStatus}`
+        );
       }
 
-      if (carrier.fmcsaData?.insuranceStatus !== newFMCSAData?.insuranceOnFile) {
-        alerts.push(`Insurance status changed from ${carrier.fmcsaData?.insuranceStatus} to ${newFMCSAData?.insuranceOnFile}`);
+      if (
+        carrier.fmcsaData?.insuranceStatus !== newFMCSAData?.insuranceOnFile
+      ) {
+        alerts.push(
+          `Insurance status changed from ${carrier.fmcsaData?.insuranceStatus} to ${newFMCSAData?.insuranceOnFile}`
+        );
       }
 
       // Update broker snapshot data
       if (newBrokerData) {
         carrier.brokerSnapshotData = {
           ...newBrokerData,
-          lastMonitored: new Date().toISOString()
+          lastMonitored: new Date().toISOString(),
         };
-        
+
         if (newBrokerData.alerts && newBrokerData.alerts.length > 0) {
           alerts.push(...newBrokerData.alerts);
         }
@@ -1080,13 +1232,14 @@ export class FleetFlowSystemOrchestrator {
       if (alerts.length > 0) {
         await this.sendCarrierAlerts(carrier, alerts);
       }
-
     } catch (error) {
       console.error(`❌ Error monitoring carrier ${mcNumber}:`, error);
     }
   }
 
-  async sendCarrierValidationNotification(validation: CarrierValidationResult): Promise<void> {
+  async sendCarrierValidationNotification(
+    validation: CarrierValidationResult
+  ): Promise<void> {
     const subject = validation.isValid
       ? `✅ Carrier Validated: MC-${validation.mcNumber}`
       : `❌ Carrier Validation Failed: MC-${validation.mcNumber}`;
@@ -1103,7 +1256,7 @@ export class FleetFlowSystemOrchestrator {
 
     // Send email notification
     console.log(`📧 Sending carrier validation notification: ${subject}`);
-    
+
     // Send SMS alert for failed validations
     if (!validation.isValid) {
       const smsMessage = `CARRIER ALERT: MC-${validation.mcNumber} validation failed. Check dispatch system for details.`;
@@ -1111,20 +1264,30 @@ export class FleetFlowSystemOrchestrator {
     }
   }
 
-  async sendCarrierAlerts(carrier: CarrierValidationResult, alerts: string[]): Promise<void> {
+  async sendCarrierAlerts(
+    carrier: CarrierValidationResult,
+    alerts: string[]
+  ): Promise<void> {
     const subject = `🚨 Carrier Alert: MC-${carrier.mcNumber}`;
-    const message = `Carrier MC-${carrier.mcNumber} (${carrier.companyName}) has status changes:\n\n` +
-      alerts.join('\n') + '\n\n' +
+    const message =
+      `Carrier MC-${carrier.mcNumber} (${carrier.companyName}) has status changes:\n\n` +
+      alerts.join('\n') +
+      '\n\n' +
       'Please review carrier status and take appropriate action.';
 
     console.log(`📧 Sending carrier alert: ${subject}`);
-    console.log(`📱 SMS Alert: Carrier MC-${carrier.mcNumber} status changed. Check alerts.`);
+    console.log(
+      `📱 SMS Alert: Carrier MC-${carrier.mcNumber} status changed. Check alerts.`
+    );
   }
 
-  private async fetchFMCSAData(mcNumber: string, dotNumber?: string): Promise<any> {
+  private async fetchFMCSAData(
+    mcNumber: string,
+    dotNumber?: string
+  ): Promise<any> {
     // Simulated FMCSA API call - replace with actual FMCSA API integration
     console.log(`🔍 Fetching FMCSA data for MC-${mcNumber}...`);
-    
+
     // Demo data for different scenarios
     const demoData: Record<string, any> = {
       '123456': {
@@ -1134,7 +1297,7 @@ export class FleetFlowSystemOrchestrator {
         safetyRating: 'SATISFACTORY',
         insuranceOnFile: 'YES',
         physicalAddress: '123 Main St, Dallas, TX 75201',
-        phoneNumber: '(555) 123-4567'
+        phoneNumber: '(555) 123-4567',
       },
       '789012': {
         companyName: 'Problem Carrier Inc',
@@ -1143,7 +1306,7 @@ export class FleetFlowSystemOrchestrator {
         safetyRating: 'UNSATISFACTORY',
         insuranceOnFile: 'NO',
         physicalAddress: '456 Bad St, Houston, TX 77001',
-        phoneNumber: '(555) 789-0123'
+        phoneNumber: '(555) 789-0123',
       },
       '345678': {
         companyName: 'Good Logistics Co',
@@ -1152,8 +1315,8 @@ export class FleetFlowSystemOrchestrator {
         safetyRating: 'SATISFACTORY',
         insuranceOnFile: 'YES',
         physicalAddress: '789 Good Ave, Austin, TX 78701',
-        phoneNumber: '(555) 345-6789'
-      }
+        phoneNumber: '(555) 345-6789',
+      },
     };
 
     return demoData[mcNumber] || null;
@@ -1162,35 +1325,37 @@ export class FleetFlowSystemOrchestrator {
   private async fetchBrokerSnapshotData(mcNumber: string): Promise<any> {
     // Simulated BrokerSnapshot API call
     console.log(`🔍 Fetching BrokerSnapshot data for MC-${mcNumber}...`);
-    
+
     const demoData: Record<string, any> = {
       '123456': {
         creditScore: 750,
         paymentHistory: 'EXCELLENT',
         riskLevel: 'low',
         alerts: [],
-        lastMonitored: new Date().toISOString()
+        lastMonitored: new Date().toISOString(),
       },
       '789012': {
         creditScore: 450,
         paymentHistory: 'POOR',
         riskLevel: 'high',
         alerts: ['Late payments reported', 'Insurance lapse detected'],
-        lastMonitored: new Date().toISOString()
+        lastMonitored: new Date().toISOString(),
       },
       '345678': {
         creditScore: 680,
         paymentHistory: 'GOOD',
         riskLevel: 'medium',
         alerts: [],
-        lastMonitored: new Date().toISOString()
-      }
+        lastMonitored: new Date().toISOString(),
+      },
     };
 
     return demoData[mcNumber] || null;
   }
 
-  async getCarrierValidationStatus(mcNumber: string): Promise<CarrierValidationResult | null> {
+  async getCarrierValidationStatus(
+    mcNumber: string
+  ): Promise<CarrierValidationResult | null> {
     return this.carrierValidationCache.get(mcNumber) || null;
   }
 
@@ -1210,7 +1375,9 @@ export class FleetFlowSystemOrchestrator {
     timeline: string;
     applications?: HeavyHaulPermitApp[];
   }> {
-    console.log(`🚛 Analyzing heavy haul requirements for load ${loadData.id}...`);
+    console.log(
+      `🚛 Analyzing heavy haul requirements for load ${loadData.id}...`
+    );
 
     // Convert load data to HeavyHaulLoadData format
     const heavyHaulLoad: HeavyHaulLoadDataData = {
@@ -1219,57 +1386,60 @@ export class FleetFlowSystemOrchestrator {
         length: loadData.dimensions?.length || 0,
         width: loadData.dimensions?.width || 0,
         height: loadData.dimensions?.height || 0,
-        weight: loadData.dimensions?.weight || 0
+        weight: loadData.dimensions?.weight || 0,
       },
       route: {
         origin: {
           city: loadData.pickup?.city || '',
           state: loadData.pickup?.state || '',
-          coordinates: loadData.pickup?.coordinates || [0, 0]
+          coordinates: loadData.pickup?.coordinates || [0, 0],
         },
         destination: {
           city: loadData.delivery?.city || '',
           state: loadData.delivery?.state || '',
-          coordinates: loadData.delivery?.coordinates || [0, 0]
+          coordinates: loadData.delivery?.coordinates || [0, 0],
         },
-        waypoints: loadData.waypoints || []
+        waypoints: loadData.waypoints || [],
       },
       equipment: {
         tractor: loadData.equipment?.tractor || 'Standard',
         trailer: loadData.equipment?.trailer || 'Standard',
-        axleConfiguration: loadData.equipment?.axleConfiguration || 'Standard'
+        axleConfiguration: loadData.equipment?.axleConfiguration || 'Standard',
       },
       cargo: {
         description: loadData.cargo?.description || 'General freight',
-        type: loadData.cargo?.type || 'other'
+        type: loadData.cargo?.type || 'other',
       },
       timeline: {
         pickupDate: new Date(loadData.pickupDate || Date.now()),
         deliveryDate: new Date(loadData.deliveryDate || Date.now() + 86400000),
-        travelDays: loadData.travelDays || 1
-      }
+        travelDays: loadData.travelDays || 1,
+      },
     };
 
     // Analyze permit requirements
     const analysis = this.heavyHaulPermitService.analyzeLoad(heavyHaulLoad);
-    
+
     let applications: HeavyHaulPermitApp[] = [];
-    
+
     if (analysis.requiresPermits) {
-      console.log(`📋 Permits required: ${analysis.permitType} for states: ${analysis.affectedStates.join(', ')}`);
-      
+      console.log(
+        `📋 Permits required: ${analysis.permitType} for states: ${analysis.affectedStates.join(', ')}`
+      );
+
       // Get permit requirements
       const requirements = this.heavyHaulPermitService.getPermitRequirements(
         analysis.affectedStates,
         analysis.permitType
       );
-      
+
       // Create permit applications
-      applications = await this.heavyHaulPermitService.createHeavyHaulPermitApps(
-        heavyHaulLoad,
-        requirements
-      );
-      
+      applications =
+        await this.heavyHaulPermitService.createHeavyHaulPermitApps(
+          heavyHaulLoad,
+          requirements
+        );
+
       console.log(`✅ Created ${applications.length} permit applications`);
     } else {
       console.log(`✅ No permits required for load ${loadData.id}`);
@@ -1277,18 +1447,23 @@ export class FleetFlowSystemOrchestrator {
 
     return {
       ...analysis,
-      applications
+      applications,
     };
   }
 
-  async processHeavyHaulPermits(loadId: string, applications: HeavyHaulPermitApp[]): Promise<{
+  async processHeavyHaulPermits(
+    loadId: string,
+    applications: HeavyHaulPermitApp[]
+  ): Promise<{
     submitted: number;
     pending: number;
     approved: number;
     totalCost: number;
     readyToTravel: boolean;
   }> {
-    console.log(`🚀 Processing ${applications.length} heavy haul permits for load ${loadId}...`);
+    console.log(
+      `🚀 Processing ${applications.length} heavy haul permits for load ${loadId}...`
+    );
 
     let submitted = 0;
     let pending = 0;
@@ -1298,33 +1473,47 @@ export class FleetFlowSystemOrchestrator {
     // Submit all applications
     for (const application of applications) {
       try {
-        const result = await this.heavyHaulPermitService.submitHeavyHaulPermitApp(application);
-        
+        const result =
+          await this.heavyHaulPermitService.submitHeavyHaulPermitApp(
+            application
+          );
+
         if (result.success) {
           submitted++;
-          console.log(`✅ Submitted permit for ${application.state}: ${result.confirmationNumber}`);
+          console.log(
+            `✅ Submitted permit for ${application.state}: ${result.confirmationNumber}`
+          );
         } else {
-          console.log(`❌ Failed to submit permit for ${application.state}: ${result.message}`);
+          console.log(
+            `❌ Failed to submit permit for ${application.state}: ${result.message}`
+          );
         }
 
         totalCost += application.cost;
       } catch (error) {
-        console.error(`Error submitting permit for ${application.state}:`, error);
+        console.error(
+          `Error submitting permit for ${application.state}:`,
+          error
+        );
       }
     }
 
     // Track status of all applications
     for (const application of applications) {
       try {
-        const status = await this.heavyHaulPermitService.trackPermitStatus(application);
-        
+        const status =
+          await this.heavyHaulPermitService.trackPermitStatus(application);
+
         if (status.status === 'approved') {
           approved++;
         } else if (['submitted', 'pending'].includes(status.status)) {
           pending++;
         }
       } catch (error) {
-        console.error(`Error tracking permit status for ${application.state}:`, error);
+        console.error(
+          `Error tracking permit status for ${application.state}:`,
+          error
+        );
       }
     }
 
@@ -1342,7 +1531,7 @@ export class FleetFlowSystemOrchestrator {
       pending,
       approved,
       totalCost,
-      readyToTravel
+      readyToTravel,
     };
   }
 
@@ -1359,7 +1548,7 @@ export class FleetFlowSystemOrchestrator {
           ...app,
           status: status.status,
           lastUpdate: status.lastUpdate,
-          estimatedApproval: status.estimatedApproval
+          estimatedApproval: status.estimatedApproval,
         };
       })
     );
@@ -1370,26 +1559,30 @@ export class FleetFlowSystemOrchestrator {
       dimensions: { length: 0, width: 0, height: 0, weight: 0 },
       route: {
         origin: { city: '', state: '', coordinates: [0, 0] },
-        destination: { city: '', state: '', coordinates: [0, 0] }
+        destination: { city: '', state: '', coordinates: [0, 0] },
       },
       equipment: { tractor: '', trailer: '', axleConfiguration: '' },
       cargo: { description: '', type: 'other' },
       timeline: {
         pickupDate: new Date(),
         deliveryDate: new Date(),
-        travelDays: 1
-      }
+        travelDays: 1,
+      },
     };
 
-    const summary = this.heavyHaulPermitService.getPermitSummary(mockLoad, updatedApplications);
-    
+    const summary = this.heavyHaulPermitService.getPermitSummary(
+      mockLoad,
+      updatedApplications
+    );
+
     // Check for permit renewals
-    const renewals = this.heavyHaulPermitService.getPermitRenewals(updatedApplications);
+    const renewals =
+      this.heavyHaulPermitService.getPermitRenewals(updatedApplications);
 
     return {
       applications: updatedApplications,
       summary,
-      renewals
+      renewals,
     };
   }
 
@@ -1400,16 +1593,18 @@ export class FleetFlowSystemOrchestrator {
     message: string;
   }> {
     const workflow = this.workflows.get(workflowId);
-    
+
     if (!workflow) {
       return {
         success: false,
-        message: 'Workflow not found'
+        message: 'Workflow not found',
       };
     }
 
     try {
-      console.log(`🔗 Integrating heavy haul permits with workflow ${workflowId}...`);
+      console.log(
+        `🔗 Integrating heavy haul permits with workflow ${workflowId}...`
+      );
 
       // Analyze heavy haul requirements from workflow load data
       const permitAnalysis = await this.analyzeHeavyHaulRequirements(workflow);
@@ -1430,8 +1625,8 @@ export class FleetFlowSystemOrchestrator {
             affectedStates: permitAnalysis.affectedStates,
             totalCost: permitStatus.totalCost,
             readyToTravel: permitStatus.readyToTravel,
-            applications: permitAnalysis.applications
-          }
+            applications: permitAnalysis.applications,
+          },
         };
 
         // Add permit notifications
@@ -1443,17 +1638,19 @@ export class FleetFlowSystemOrchestrator {
             permitType: permitAnalysis.permitType,
             states: permitAnalysis.affectedStates,
             cost: permitStatus.totalCost,
-            status: permitStatus.readyToTravel ? 'ready' : 'pending'
-          }
+            status: permitStatus.readyToTravel ? 'ready' : 'pending',
+          },
         });
 
-        console.log(`✅ Heavy haul permits integrated with workflow ${workflowId}`);
+        console.log(
+          `✅ Heavy haul permits integrated with workflow ${workflowId}`
+        );
 
         return {
           success: true,
           permitAnalysis,
           permitStatus,
-          message: `Heavy haul permits ${permitStatus.readyToTravel ? 'ready' : 'processing'} - ${permitAnalysis.permitType} permits for ${permitAnalysis.affectedStates.length} states`
+          message: `Heavy haul permits ${permitStatus.readyToTravel ? 'ready' : 'processing'} - ${permitAnalysis.permitType} permits for ${permitAnalysis.affectedStates.length} states`,
         };
       } else {
         // No permits required
@@ -1461,22 +1658,22 @@ export class FleetFlowSystemOrchestrator {
           ...workflow.routeDocument,
           heavyHaulPermits: {
             required: false,
-            message: 'Load is within legal limits - no permits required'
-          }
+            message: 'Load is within legal limits - no permits required',
+          },
         };
 
         return {
           success: true,
           permitAnalysis,
-          message: 'No heavy haul permits required for this load'
+          message: 'No heavy haul permits required for this load',
         };
       }
     } catch (error) {
       console.error('Heavy haul permit integration error:', error);
-      
+
       return {
         success: false,
-        message: `Heavy haul permit integration failed: ${error}`
+        message: `Heavy haul permit integration failed: ${error}`,
       };
     }
   }
@@ -1500,8 +1697,12 @@ export class HeavyHaulPermitService {
     timeline: string;
   } {
     // Simplified analysis logic
-    const requiresPermits = load.dimensions.weight > 80000 || load.dimensions.length > 53;
-    const permitType = load.dimensions.weight > 80000 && load.dimensions.length > 53 ? 'both' : 'oversize';
+    const requiresPermits =
+      load.dimensions.weight > 80000 || load.dimensions.length > 53;
+    const permitType =
+      load.dimensions.weight > 80000 && load.dimensions.length > 53
+        ? 'both'
+        : 'oversize';
     const affectedStates = ['TX', 'OK', 'KS']; // Simplified - would be based on route
     const estimatedCost = requiresPermits ? 500 : 0;
     const timeline = requiresPermits ? '7-10 business days' : 'N/A';
@@ -1511,31 +1712,37 @@ export class HeavyHaulPermitService {
       permitType,
       affectedStates,
       estimatedCost,
-      timeline
+      timeline,
     };
   }
 
   /**
    * Get permit requirements for states
    */
-  getPermitRequirements(states: string[], permitType: 'oversize' | 'overweight' | 'both'): any[] {
+  getPermitRequirements(
+    states: string[],
+    permitType: 'oversize' | 'overweight' | 'both'
+  ): any[] {
     // Simplified requirements
-    return states.map(state => ({
+    return states.map((state) => ({
       state,
       permitType,
       maxWidth: permitType === 'oversize' ? 8.5 : undefined,
       maxWeight: permitType === 'overweight' ? 80000 : undefined,
       routeRestrictions: [],
-      notes: 'Check specific route restrictions'
+      notes: 'Check specific route restrictions',
     }));
   }
 
   /**
    * Create permit applications for a load
    */
-  async createHeavyHaulPermitApps(load: HeavyHaulLoadData, requirements: any[]): Promise<HeavyHaulPermitApp[]> {
+  async createHeavyHaulPermitApps(
+    load: HeavyHaulLoadData,
+    requirements: any[]
+  ): Promise<HeavyHaulPermitApp[]> {
     // Mock application creation
-    return requirements.map(req => ({
+    return requirements.map((req) => ({
       id: `APP-${load.id}-${req.state}`,
       loadId: load.id,
       state: req.state,
@@ -1544,23 +1751,31 @@ export class HeavyHaulPermitService {
       cost: 100, // Mock cost
       confirmationNumber: '',
       applicationDate: new Date().toISOString(),
-      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      notes: 'Pending approval'
+      expirationDate: new Date(
+        Date.now() + 30 * 24 * 60 * 60 * 1000
+      ).toISOString(),
+      notes: 'Pending approval',
     }));
   }
 
   /**
    * Submit a permit application
    */
-  async submitHeavyHaulPermitApp(application: HeavyHaulPermitApp): Promise<{ success: boolean; message?: string; confirmationNumber?: string }> {
+  async submitHeavyHaulPermitApp(
+    application: HeavyHaulPermitApp
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    confirmationNumber?: string;
+  }> {
     // Mock submission logic
     console.log(`📄 Submitting permit application for ${application.state}...`);
-    
-    return new Promise(resolve => {
+
+    return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
           success: true,
-          confirmationNumber: `CONF-${application.id}`
+          confirmationNumber: `CONF-${application.id}`,
         });
       }, 1000);
     });
@@ -1569,16 +1784,24 @@ export class HeavyHaulPermitService {
   /**
    * Track the status of a permit application
    */
-  async trackPermitStatus(application: HeavyHaulPermitApp): Promise<{ status: 'pending' | 'approved' | 'rejected'; lastUpdate?: string; estimatedApproval?: string }> {
+  async trackPermitStatus(
+    application: HeavyHaulPermitApp
+  ): Promise<{
+    status: 'pending' | 'approved' | 'rejected';
+    lastUpdate?: string;
+    estimatedApproval?: string;
+  }> {
     // Mock tracking logic
     console.log(`📦 Tracking permit application ${application.id}...`);
-    
-    return new Promise(resolve => {
+
+    return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
           status: 'approved',
           lastUpdate: new Date().toISOString(),
-          estimatedApproval: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
+          estimatedApproval: new Date(
+            Date.now() + 5 * 24 * 60 * 60 * 1000
+          ).toISOString(),
         });
       }, 1000);
     });
@@ -1587,17 +1810,24 @@ export class HeavyHaulPermitService {
   /**
    * Get a summary of permit statuses for a load
    */
-  getPermitSummary(load: HeavyHaulLoadData, applications: HeavyHaulPermitApp[]): any {
+  getPermitSummary(
+    load: HeavyHaulLoadData,
+    applications: HeavyHaulPermitApp[]
+  ): any {
     const totalCost = applications.reduce((sum, app) => sum + app.cost, 0);
-    const approved = applications.filter(app => app.status === 'approved').length;
-    const pending = applications.filter(app => app.status === 'pending').length;
+    const approved = applications.filter(
+      (app) => app.status === 'approved'
+    ).length;
+    const pending = applications.filter(
+      (app) => app.status === 'pending'
+    ).length;
 
     return {
       loadId: load.id,
       totalCost,
       approved,
       pending,
-      requiresPermits: approved > 0
+      requiresPermits: approved > 0,
     };
   }
 
@@ -1606,9 +1836,11 @@ export class HeavyHaulPermitService {
    */
   getPermitRenewals(applications: HeavyHaulPermitApp[]): HeavyHaulPermitApp[] {
     const now = new Date();
-    return applications.filter(app => {
+    return applications.filter((app) => {
       const expirationDate = new Date(app.expirationDate);
-      const diffDays = Math.ceil((expirationDate.getTime() - now.getTime()) / (1000 * 3600 * 24));
+      const diffDays = Math.ceil(
+        (expirationDate.getTime() - now.getTime()) / (1000 * 3600 * 24)
+      );
       return diffDays <= 30; // Renewals due within 30 days
     });
   }
@@ -1622,21 +1854,31 @@ export class IntegrationHelpers {
   /**
    * Quick load processing with full integration and carrier validation
    */
-  static async processLoadWithFullIntegration(loadData: any): Promise<IntegratedWorkflow> {
+  static async processLoadWithFullIntegration(
+    loadData: any
+  ): Promise<IntegratedWorkflow> {
     return await fleetFlowOrchestrator.processLoad(loadData);
   }
 
   /**
    * Validate carrier when uploaded to system
    */
-  static async validateCarrier(mcNumber: string, carrierData?: any): Promise<CarrierValidationResult> {
-    return await fleetFlowOrchestrator.validateAndAddCarrier(mcNumber, carrierData);
+  static async validateCarrier(
+    mcNumber: string,
+    carrierData?: any
+  ): Promise<CarrierValidationResult> {
+    return await fleetFlowOrchestrator.validateAndAddCarrier(
+      mcNumber,
+      carrierData
+    );
   }
 
   /**
    * Get carrier validation status
    */
-  static async getCarrierStatus(mcNumber: string): Promise<CarrierValidationResult | null> {
+  static async getCarrierStatus(
+    mcNumber: string
+  ): Promise<CarrierValidationResult | null> {
     return await fleetFlowOrchestrator.getCarrierValidationStatus(mcNumber);
   }
 
@@ -1650,7 +1892,11 @@ export class IntegrationHelpers {
   /**
    * Real-time status updates for tracking
    */
-  static async updateLoadStatus(loadId: string, status: string, location?: any): Promise<void> {
+  static async updateLoadStatus(
+    loadId: string,
+    status: string,
+    location?: any
+  ): Promise<void> {
     console.log(`📍 Load ${loadId} status update: ${status}`, location);
     // In production, this would update the tracking system and notify stakeholders
   }
@@ -1658,7 +1904,10 @@ export class IntegrationHelpers {
   /**
    * Emergency notification system
    */
-  static async sendEmergencyAlert(loadId: string, message: string): Promise<void> {
+  static async sendEmergencyAlert(
+    loadId: string,
+    message: string
+  ): Promise<void> {
     console.log(`🚨 EMERGENCY ALERT for Load ${loadId}: ${message}`);
     // In production, this would send urgent notifications to all stakeholders
   }
@@ -1684,9 +1933,9 @@ export class IntegrationHelpers {
       return {
         success: validation.isValid,
         validation,
-        message: validation.isValid 
+        message: validation.isValid
           ? `Carrier ${carrierData.mcNumber} validated successfully and monitoring enabled`
-          : `Carrier validation failed: ${validation.validationErrors.join(', ')}`
+          : `Carrier validation failed: ${validation.validationErrors.join(', ')}`,
       };
     } catch (error) {
       return {
@@ -1707,15 +1956,456 @@ export class IntegrationHelpers {
             insuranceRequired: 'Unknown',
             insuranceOnFile: 'Unknown',
             insuranceStatus: 'Unknown',
-            lastUpdated: new Date().toISOString()
+            lastUpdated: new Date().toISOString(),
           },
           validatedAt: new Date().toISOString(),
           monitoringActive: false,
-          monitoringEnabled: false
+          monitoringEnabled: false,
         },
-        message: `Carrier validation system error: ${error}`
+        message: `Carrier validation system error: ${error}`,
       };
     }
+  }
+
+  /**
+   * INTELLIGENT WORKFLOW PRIORITIZATION
+   * Uses AI-powered task prioritization to optimize system workflow execution
+   */
+  async prioritizeSystemWorkflows(workflows: IntegratedWorkflow[]): Promise<{
+    prioritizedWorkflows: IntegratedWorkflow[];
+    prioritizationMetrics: any;
+    recommendations: string[];
+  }> {
+    if (!this.config.enableTaskPrioritization) {
+      console.log(
+        '⚠️ Task prioritization is disabled - returning workflows in original order'
+      );
+      return {
+        prioritizedWorkflows: workflows,
+        prioritizationMetrics: {
+          totalWorkflows: workflows.length,
+          averageUrgency: 50,
+          resourceUtilization: 50,
+          riskMitigation: 50,
+          timeToCompletion: workflows.length * 30,
+        },
+        recommendations: [
+          'Enable task prioritization for AI-powered workflow optimization',
+        ],
+      };
+    }
+
+    try {
+      console.log(
+        `🎯 Prioritizing ${workflows.length} system workflows using AI...`
+      );
+
+      // Convert workflows to task priority format
+      const systemTasks = workflows.map((workflow, index) => ({
+        id: workflow.id,
+        type: this.determineTaskType(workflow),
+        title: `Workflow: ${workflow.loadId} - ${this.getWorkflowDescription(workflow)}`,
+        description: this.generateWorkflowDescription(workflow),
+        urgencyScore: this.calculateWorkflowUrgency(workflow),
+        profitabilityScore: this.calculateWorkflowProfitability(workflow),
+        resourceRequirement: this.calculateWorkflowComplexity(workflow),
+        deadline: this.getWorkflowDeadline(workflow),
+        associatedRevenue: this.extractWorkflowRevenue(workflow),
+        riskLevel: this.assessWorkflowRisk(workflow),
+        dependencies: this.identifyWorkflowDependencies(workflow, workflows),
+        estimatedDuration: this.estimateWorkflowDuration(workflow),
+        assignedTo: 'system-orchestrator',
+        createdAt: workflow.created.toISOString(),
+        metadata: {
+          workflowId: workflow.id,
+          loadId: workflow.loadId,
+          department: 'operations',
+          businessImpact: this.assessBusinessImpact(workflow),
+          systemComponent: this.identifyPrimaryComponent(workflow),
+          integrationLevel: this.calculateIntegrationComplexity(workflow),
+        },
+      }));
+
+      // Create prioritization request
+      const prioritizationRequest = {
+        tasks: systemTasks,
+        constraints: {
+          availableResources: 100, // System capacity
+          maxTasksPerHour: 10,
+          prioritizeRevenue: true,
+          riskTolerance: 'balanced' as const,
+          departmentFocus: ['operations', 'dispatch', 'scheduling'],
+        },
+        businessContext: {
+          currentHour: new Date().getHours(),
+          dayOfWeek: new Date().getDay(),
+          seasonalFactor: 1.0,
+          marketConditions: 'busy' as const,
+        },
+      };
+
+      // Use task prioritization service
+      const prioritizationResult =
+        await this.taskPrioritization.prioritizeTasks(prioritizationRequest);
+
+      if (prioritizationResult.success && prioritizationResult.data) {
+        // Map prioritized tasks back to workflows
+        const taskOrder = prioritizationResult.data.tasks.map(
+          (task) => task.id
+        );
+        const prioritizedWorkflows = taskOrder
+          .map((taskId) => workflows.find((w) => w.id === taskId))
+          .filter(Boolean) as IntegratedWorkflow[];
+
+        // Add any workflows that weren't in the prioritization
+        const remainingWorkflows = workflows.filter(
+          (w) => !prioritizedWorkflows.some((pw) => pw.id === w.id)
+        );
+        prioritizedWorkflows.push(...remainingWorkflows);
+
+        console.log(
+          `✅ Successfully prioritized ${prioritizedWorkflows.length} workflows`
+        );
+        console.log(
+          `🎯 Top priority: ${prioritizedWorkflows[0]?.loadId} (${this.getWorkflowDescription(prioritizedWorkflows[0])})`
+        );
+
+        return {
+          prioritizedWorkflows,
+          prioritizationMetrics: {
+            ...prioritizationResult.data.optimizationMetrics,
+            totalWorkflows: prioritizedWorkflows.length,
+            systemEfficiencyGain: this.calculateEfficiencyGain(
+              workflows,
+              prioritizedWorkflows
+            ),
+          },
+          recommendations: [
+            ...prioritizationResult.data.recommendations,
+            'System workflows optimized for maximum efficiency and revenue impact',
+            'High-priority workflows will be processed first for better customer satisfaction',
+          ],
+        };
+      } else {
+        throw new Error(
+          prioritizationResult.message || 'Task prioritization failed'
+        );
+      }
+    } catch (error) {
+      console.error('❌ Workflow prioritization error:', error);
+      // Fallback to original order with basic prioritization
+      return {
+        prioritizedWorkflows: this.basicWorkflowPrioritization(workflows),
+        prioritizationMetrics: {
+          totalWorkflows: workflows.length,
+          averageUrgency: 60,
+          resourceUtilization: 70,
+          riskMitigation: 50,
+          timeToCompletion: workflows.length * 25,
+        },
+        recommendations: [
+          'Workflow prioritization encountered an error - using basic prioritization fallback',
+        ],
+      };
+    }
+  }
+
+  private determineTaskType(workflow: IntegratedWorkflow): string {
+    if (workflow.routeDocument) return 'route_optimization';
+    if (workflow.schedule) return 'schedule_management';
+    if (workflow.trackingData) return 'live_tracking';
+    return 'workflow_processing';
+  }
+
+  private getWorkflowDescription(workflow: IntegratedWorkflow): string {
+    switch (workflow.status) {
+      case 'route_generated':
+        return 'Route Generation';
+      case 'optimized':
+        return 'Route Optimization';
+      case 'scheduled':
+        return 'Schedule Management';
+      case 'dispatched':
+        return 'AI Dispatch';
+      case 'in_transit':
+        return 'Live Tracking';
+      case 'completed':
+        return 'Workflow Complete';
+      default:
+        return 'Processing';
+    }
+  }
+
+  private generateWorkflowDescription(workflow: IntegratedWorkflow): string {
+    return (
+      `System workflow for load ${workflow.loadId} - Current status: ${workflow.status}. ` +
+      `Integrates route optimization, scheduling, dispatch, and live tracking.`
+    );
+  }
+
+  private calculateWorkflowUrgency(workflow: IntegratedWorkflow): number {
+    let urgency = 50; // Base urgency
+
+    // Status-based urgency
+    switch (workflow.status) {
+      case 'pending':
+        urgency += 20;
+        break;
+      case 'route_generated':
+        urgency += 15;
+        break;
+      case 'optimized':
+        urgency += 10;
+        break;
+      case 'scheduled':
+        urgency += 5;
+        break;
+      case 'dispatched':
+        urgency += 30;
+        break;
+      case 'in_transit':
+        urgency += 40;
+        break;
+      case 'completed':
+        urgency -= 20;
+        break;
+    }
+
+    // Time-based urgency (workflows get more urgent over time)
+    const hoursOld =
+      (Date.now() - workflow.created.getTime()) / (1000 * 60 * 60);
+    if (hoursOld > 24) urgency += 30;
+    else if (hoursOld > 12) urgency += 20;
+    else if (hoursOld > 6) urgency += 10;
+
+    return Math.min(100, Math.max(0, urgency));
+  }
+
+  private calculateWorkflowProfitability(workflow: IntegratedWorkflow): number {
+    // Extract revenue from workflow data or use defaults
+    const revenue = this.extractWorkflowRevenue(workflow);
+    if (revenue > 5000) return 95;
+    if (revenue > 3000) return 80;
+    if (revenue > 1500) return 65;
+    if (revenue > 500) return 50;
+    return 30;
+  }
+
+  private calculateWorkflowComplexity(workflow: IntegratedWorkflow): number {
+    let complexity = 30; // Base complexity
+
+    // Add complexity based on components involved
+    if (workflow.routeDocument) complexity += 15;
+    if (workflow.optimizedRoute) complexity += 20;
+    if (workflow.schedule) complexity += 15;
+    if (workflow.trackingData) complexity += 25;
+    if (workflow.notifications?.length > 0) complexity += 10;
+
+    return Math.min(100, complexity);
+  }
+
+  private getWorkflowDeadline(
+    workflow: IntegratedWorkflow
+  ): string | undefined {
+    // Estimate deadline based on workflow age and status
+    const baseTime = workflow.created.getTime();
+    let deadlineHours = 24; // Default 24 hour deadline
+
+    switch (workflow.status) {
+      case 'pending':
+        deadlineHours = 2;
+        break;
+      case 'route_generated':
+        deadlineHours = 4;
+        break;
+      case 'optimized':
+        deadlineHours = 6;
+        break;
+      case 'scheduled':
+        deadlineHours = 8;
+        break;
+      case 'dispatched':
+        deadlineHours = 12;
+        break;
+      case 'in_transit':
+        deadlineHours = 48;
+        break;
+    }
+
+    return new Date(baseTime + deadlineHours * 60 * 60 * 1000).toISOString();
+  }
+
+  private extractWorkflowRevenue(workflow: IntegratedWorkflow): number {
+    // Try to extract revenue from workflow data
+    // This would integrate with actual load/revenue data in production
+    return Math.floor(Math.random() * 4000) + 1000; // Mock revenue for now
+  }
+
+  private assessWorkflowRisk(
+    workflow: IntegratedWorkflow
+  ): 'low' | 'medium' | 'high' | 'critical' {
+    const age = (Date.now() - workflow.created.getTime()) / (1000 * 60 * 60);
+
+    if (workflow.status === 'pending' && age > 4) return 'critical';
+    if (workflow.status === 'in_transit') return 'high';
+    if (age > 12) return 'high';
+    if (age > 6) return 'medium';
+    return 'low';
+  }
+
+  private identifyWorkflowDependencies(
+    workflow: IntegratedWorkflow,
+    allWorkflows: IntegratedWorkflow[]
+  ): string[] {
+    // Identify workflows that this workflow depends on
+    // In a real implementation, this would check actual dependencies
+    return [];
+  }
+
+  private estimateWorkflowDuration(workflow: IntegratedWorkflow): number {
+    // Estimate duration in minutes based on workflow complexity
+    let duration = 15; // Base duration
+
+    switch (workflow.status) {
+      case 'pending':
+        duration = 30;
+        break;
+      case 'route_generated':
+        duration = 45;
+        break;
+      case 'optimized':
+        duration = 20;
+        break;
+      case 'scheduled':
+        duration = 25;
+        break;
+      case 'dispatched':
+        duration = 60;
+        break;
+      case 'in_transit':
+        duration = 480;
+        break; // 8 hours for in-transit
+    }
+
+    return duration;
+  }
+
+  private assessBusinessImpact(
+    workflow: IntegratedWorkflow
+  ): 'low' | 'medium' | 'high' | 'critical' {
+    const revenue = this.extractWorkflowRevenue(workflow);
+    if (revenue > 4000) return 'critical';
+    if (revenue > 2500) return 'high';
+    if (revenue > 1000) return 'medium';
+    return 'low';
+  }
+
+  private identifyPrimaryComponent(workflow: IntegratedWorkflow): string {
+    if (workflow.trackingData) return 'live_tracking';
+    if (workflow.schedule) return 'scheduling';
+    if (workflow.optimizedRoute) return 'route_optimization';
+    if (workflow.routeDocument) return 'route_generation';
+    return 'workflow_management';
+  }
+
+  private calculateIntegrationComplexity(workflow: IntegratedWorkflow): number {
+    let complexity = 1;
+    if (workflow.routeDocument) complexity++;
+    if (workflow.optimizedRoute) complexity++;
+    if (workflow.schedule) complexity++;
+    if (workflow.trackingData) complexity++;
+    if (workflow.notifications?.length > 0) complexity++;
+    return complexity;
+  }
+
+  private calculateEfficiencyGain(
+    original: IntegratedWorkflow[],
+    prioritized: IntegratedWorkflow[]
+  ): number {
+    // Calculate estimated efficiency gain from prioritization
+    // This is a simplified calculation - in production, this would be more sophisticated
+    const highPriorityFirst = prioritized
+      .slice(0, 3)
+      .every((w) => this.calculateWorkflowUrgency(w) > 70);
+    return highPriorityFirst ? 25 : 10; // 25% gain if high priority items are first
+  }
+
+  private basicWorkflowPrioritization(
+    workflows: IntegratedWorkflow[]
+  ): IntegratedWorkflow[] {
+    // Fallback prioritization - sort by status priority and age
+    const statusPriority = {
+      pending: 5,
+      route_generated: 4,
+      optimized: 3,
+      scheduled: 2,
+      dispatched: 6,
+      in_transit: 7,
+      completed: 1,
+    };
+
+    return [...workflows].sort((a, b) => {
+      const aPriority =
+        statusPriority[a.status as keyof typeof statusPriority] || 0;
+      const bPriority =
+        statusPriority[b.status as keyof typeof statusPriority] || 0;
+
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority; // Higher priority first
+      }
+
+      // If same priority, older workflows first
+      return a.created.getTime() - b.created.getTime();
+    });
+  }
+
+  /**
+   * Process multiple loads with intelligent prioritization
+   */
+  async processMultipleLoadsWithPrioritization(loadDataArray: any[]): Promise<{
+    workflows: IntegratedWorkflow[];
+    prioritizationResults: any;
+    processingOrder: string[];
+  }> {
+    console.log(
+      `🚀 Processing ${loadDataArray.length} loads with intelligent prioritization...`
+    );
+
+    // Create workflows for all loads
+    const workflows: IntegratedWorkflow[] = [];
+    for (const loadData of loadDataArray) {
+      try {
+        const workflow = await this.processLoad(loadData);
+        workflows.push(workflow);
+      } catch (error) {
+        console.error(
+          `❌ Failed to create workflow for load ${loadData.id}:`,
+          error
+        );
+      }
+    }
+
+    // Apply intelligent prioritization
+    const prioritizationResults =
+      await this.prioritizeSystemWorkflows(workflows);
+
+    // Process workflows in prioritized order
+    const processingOrder = prioritizationResults.prioritizedWorkflows.map(
+      (w) => w.loadId
+    );
+
+    console.log(
+      `✅ Processed ${workflows.length} loads with AI prioritization`
+    );
+    console.log(
+      `🎯 Processing order optimized for ${prioritizationResults.prioritizationMetrics.systemEfficiencyGain}% efficiency gain`
+    );
+
+    return {
+      workflows: prioritizationResults.prioritizedWorkflows,
+      prioritizationResults,
+      processingOrder,
+    };
   }
 }
 

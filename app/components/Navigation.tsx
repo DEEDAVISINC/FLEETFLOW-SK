@@ -750,11 +750,8 @@ export default function ProfessionalNavigation() {
                   📊 Reports & Analytics
                 </Link>
                 <Link
-                  href='#'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDropdownClick('tech-system');
-                  }}
+                  href='/automation-demo'
+                  onClick={handleDropdownClose}
                   style={{
                     display: 'block',
                     padding: '10px 20px',
@@ -762,37 +759,10 @@ export default function ProfessionalNavigation() {
                     textDecoration: 'none',
                     fontSize: '0.9rem',
                     fontWeight: '500',
-                    cursor: 'pointer',
                   }}
                 >
-                  🔧 Tech System ▼
+                  🔧 Tech System
                 </Link>
-                {(activeDropdown as string) === 'tech-system' && (
-                  <div
-                    style={{
-                      background: 'rgba(139, 92, 246, 0.05)',
-                      borderLeft: '3px solid #8B5CF6',
-                      margin: '0 20px',
-                      borderRadius: '6px',
-                    }}
-                  >
-                    <Link
-                      href='/automation-demo'
-                      onClick={handleDropdownClose}
-                      style={{
-                        display: 'block',
-                        padding: '10px 20px 10px 30px',
-                        color: '#8B5CF6',
-                        textDecoration: 'none',
-                        fontSize: '0.85rem',
-                        fontWeight: '400',
-                        opacity: '0.9',
-                      }}
-                    >
-                      🤖 Communication Automation
-                    </Link>
-                  </div>
-                )}
               </div>
             )}
           </div>

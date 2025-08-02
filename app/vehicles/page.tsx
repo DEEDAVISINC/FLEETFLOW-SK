@@ -2175,17 +2175,61 @@ export default function VehiclesPage() {
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <h3
+                  <div
                     style={{
-                      color: 'white',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      margin: '0 0 16px 0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '16px',
                     }}
                   >
-                    🗺️ Live Fleet Tracking
-                  </h3>
-                  <GoogleMaps />
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        margin: '0',
+                      }}
+                    >
+                      🗺️ Live Fleet Tracking
+                    </h3>
+                    <Link
+                      href='/tracking'
+                      style={{
+                        background: 'rgba(20, 184, 166, 0.2)',
+                        border: '1px solid #14b8a6',
+                        color: '#14b8a6',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(20, 184, 166, 0.3)';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(20, 184, 166, 0.2)';
+                        e.currentTarget.style.color = '#14b8a6';
+                      }}
+                    >
+                      📍 Full Tracking
+                    </Link>
+                  </div>
+                  <GoogleMaps
+                    addresses={
+                      vehicles
+                        .filter((v) => v.status === 'active')
+                        .map((v) => v.location)
+                        .slice(0, 5) // Limit to first 5 active vehicles
+                    }
+                    height='400px'
+                    zoom={8}
+                  />
                 </div>
                 <div>
                   <StickyNote

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import EmergencyLoadPricingWidget from '../components/EmergencyLoadPricingWidget';
 
 // Quote interface
 interface Quote {
@@ -3921,6 +3922,11 @@ export default function FreightFlowQuotingEngine() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Emergency Load Pricing Widget */}
+        <div style={{ marginTop: '32px' }}>
+          <EmergencyLoadPricingWidget />
         </div>
       </div>
     </div>

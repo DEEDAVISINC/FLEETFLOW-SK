@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import EnhancedLoadBoard from '../components/EnhancedLoadBoard';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
@@ -683,6 +684,7 @@ export default function DispatchCentral() {
         >
           {[
             { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+            { id: 'task-priority', label: '🎯 Task Priority', icon: '🎯' },
             { id: 'loads', label: '📋 Load Management', icon: '📋' },
             { id: 'tracking', label: '🗺️ Live Tracking', icon: '🗺️' },
             { id: 'workflow', label: '🔄 Workflow Center', icon: '🔄' },
@@ -1160,6 +1162,22 @@ export default function DispatchCentral() {
             ))}
           </div>
         </div>
+
+        {selectedTab === 'task-priority' && (
+          <div>
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                marginBottom: '15px',
+              }}
+            >
+              🎯 AI-Powered Task Prioritization
+            </h2>
+            <DispatchTaskPrioritizationPanel />
+          </div>
+        )}
 
         {selectedTab === 'loads' && (
           <div>
