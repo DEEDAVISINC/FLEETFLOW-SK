@@ -2,84 +2,27 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Load, getMainDashboardLoads } from './services/loadService';
 
 export default function HomePage() {
   const [selectedLoad, setSelectedLoad] = useState<string>('');
   const [showLoadDetails, setShowLoadDetails] = useState(false);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [loads, setLoads] = useState<Load[]>([]);
 
-  // Initialize time only on client to prevent hydration mismatch
+  // Initialize time and load data
   useEffect(() => {
     setCurrentTime(new Date());
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
+
+    // Load data from shared service
+    const dashboardLoads = getMainDashboardLoads();
+    setLoads(dashboardLoads);
+
     return () => clearInterval(timer);
   }, []);
-
-  // Mock loads data
-  const loads = [
-    {
-      id: 'FL-001-ATL-MIA',
-      status: 'active',
-      origin: 'Atlanta, GA',
-      destination: 'Miami, FL',
-      driver: 'John Smith',
-      truck: 'TRK-045',
-      revenue: '$2,850',
-      distance: '647 mi',
-      eta: '14:30 EST',
-      progress: 65,
-      commodity: 'Electronics',
-      weight: '42,000 lbs',
-      priority: 'high',
-    },
-    {
-      id: 'FL-002-CHI-HOU',
-      status: 'pending',
-      origin: 'Chicago, IL',
-      destination: 'Houston, TX',
-      driver: 'Sarah Johnson',
-      truck: 'TRK-023',
-      revenue: '$3,200',
-      distance: '1,082 mi',
-      eta: '16:45 CST',
-      progress: 0,
-      commodity: 'Automotive Parts',
-      weight: '45,500 lbs',
-      priority: 'medium',
-    },
-    {
-      id: 'FL-003-LAX-SEA',
-      status: 'delivered',
-      origin: 'Los Angeles, CA',
-      destination: 'Seattle, WA',
-      driver: 'Mike Davis',
-      truck: 'TRK-067',
-      revenue: '$2,950',
-      distance: '1,135 mi',
-      eta: 'Delivered',
-      progress: 100,
-      commodity: 'Consumer Goods',
-      weight: '38,200 lbs',
-      priority: 'low',
-    },
-    {
-      id: 'FL-004-NYC-BOS',
-      status: 'active',
-      origin: 'New York, NY',
-      destination: 'Boston, MA',
-      driver: 'Lisa Chen',
-      truck: 'TRK-089',
-      revenue: '$1,450',
-      distance: '215 mi',
-      eta: '11:20 EST',
-      progress: 85,
-      commodity: 'Food Products',
-      weight: '28,500 lbs',
-      priority: 'high',
-    },
-  ];
 
   // Real-time alerts state management
   const alerts = [
@@ -163,7 +106,7 @@ export default function HomePage() {
       color: 'white',
     },
     {
-      href: '/accounting',
+      href: '/admin/accounting',
       bg: 'linear-gradient(135deg, #059669, #047857)',
       emoji: '💰',
       title: 'Finance',
@@ -213,52 +156,23 @@ export default function HomePage() {
     },
   ];
 
-  // TEMPORARILY DISABLED TO FIX INFINITE RENDER
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setCurrentTime(new Date());
-  //   }, 1000);
-  //   return () => clearInterval(timer);
-  // }, []);
-
   const handleLoadClick = (loadId: string) => {
     setSelectedLoad(loadId);
     setShowLoadDetails(true);
-  };
-
-  const handleAcceptLoad = (loadId: string) => {
-    alert(`Load ${loadId} accepted! Assigning to next available driver.`);
-    setShowLoadDetails(false);
-  };
-
-  const handleBidLoad = (loadId: string) => {
-    alert(`Bid submitted for load ${loadId}! Waiting for broker response.`);
-    setShowLoadDetails(false);
   };
 
   const selectedLoadData = loads.find((load) => load.id === selectedLoad);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-        return '#10b981';
-      case 'pending':
+      case 'Available':
+        return '#3b82f6';
+      case 'Assigned':
         return '#f59e0b';
-      case 'delivered':
+      case 'In Transit':
+        return '#10b981';
+      case 'Delivered':
         return '#6366f1';
-      default:
-        return '#6b7280';
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return '#ef4444';
-      case 'medium':
-        return '#f59e0b';
-      case 'low':
-        return '#10b981';
       default:
         return '#6b7280';
     }
@@ -367,7 +281,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Executive KPIs - Back to original glassmorphism style */}
+      {/* Executive KPIs */}
       <div
         style={{
           display: 'grid',
@@ -398,7 +312,7 @@ export default function HomePage() {
               marginBottom: '5px',
             }}
           >
-            247
+            {loads.filter((load) => load.status === 'In Transit').length}
           </div>
           <div
             style={{
@@ -587,7 +501,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* Executive Load Management */}
+      {/* Management Load Overview - Same data as Dispatch Central */}
       <div
         style={{
           background: 'rgba(255, 255, 255, 0.15)',
@@ -618,9 +532,9 @@ export default function HomePage() {
               gap: '10px',
             }}
           >
-            🚛 Executive Load Management
+            🌐 Management Load Overview - All Brokers
           </h2>
-          <Link href='/tracking' style={{ textDecoration: 'none' }}>
+          <Link href='/dispatch' style={{ textDecoration: 'none' }}>
             <button
               style={{
                 background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -634,12 +548,12 @@ export default function HomePage() {
                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
               }}
             >
-              View Full Tracking
+              View Dispatch Central
             </button>
           </Link>
         </div>
 
-        {/* Executive Load Management KPIs - Exact match to tracking page status distribution */}
+        {/* Load Status Distribution */}
         <div
           style={{
             display: 'grid',
@@ -667,12 +581,40 @@ export default function HomePage() {
                 marginBottom: '5px',
               }}
             >
-              {loads.filter((load) => load.status === 'pending').length}
+              {loads.filter((load) => load.status === 'Available').length}
             </div>
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
               Available
+            </div>
+          </div>
+
+          {/* Assigned */}
+          <div
+            style={{
+              background: 'rgba(245, 158, 11, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📝</div>
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#f59e0b',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              {loads.filter((load) => load.status === 'Assigned').length}
+            </div>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Assigned
             </div>
           </div>
 
@@ -695,40 +637,12 @@ export default function HomePage() {
                 marginBottom: '5px',
               }}
             >
-              {loads.filter((load) => load.status === 'active').length}
+              {loads.filter((load) => load.status === 'In Transit').length}
             </div>
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
               In Transit
-            </div>
-          </div>
-
-          {/* Loading */}
-          <div
-            style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-            }}
-          >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>⏳</div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#f59e0b',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              0
-            </div>
-            <div
-              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Loading
             </div>
           </div>
 
@@ -751,7 +665,7 @@ export default function HomePage() {
                 marginBottom: '5px',
               }}
             >
-              {loads.filter((load) => load.status === 'delivered').length}
+              {loads.filter((load) => load.status === 'Delivered').length}
             </div>
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
@@ -761,280 +675,183 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Live Load Board - Enhanced with functionality */}
+        {/* Professional Loadboard - Matching Dispatch Central Format - LIGHTENED */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '10px',
             border: '1px solid rgba(255, 255, 255, 0.15)',
-            padding: '25px',
-            marginTop: '20px',
+            overflow: 'hidden',
           }}
         >
+          {/* Loadboard Header */}
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
+              display: 'grid',
+              gridTemplateColumns:
+                '90px 80px 1.5fr 1fr 120px 100px 100px 100px',
+              gap: '10px',
+              padding: '12px 15px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              fontWeight: '700',
+              color: '#d1d5db',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            {/* Load Board Header */}
-            <h3
+            <div>📞 Board #</div>
+            <div>Load ID</div>
+            <div>Route</div>
+            <div>Broker</div>
+            <div>Rate</div>
+            <div>Status</div>
+            <div>Distance</div>
+            <div>Type</div>
+          </div>
+
+          {/* Load Rows */}
+          {loads.slice(0, 8).map((load, index) => (
+            <div
+              key={load.id}
+              onClick={() => handleLoadClick(load.id)}
               style={{
-                fontSize: '20px',
-                fontWeight: '600',
-                color: '#ffffff',
-                margin: 0,
-                display: 'flex',
-                alignItems: 'center',
+                display: 'grid',
+                gridTemplateColumns:
+                  '90px 80px 1.5fr 1fr 120px 100px 100px 100px',
                 gap: '10px',
+                padding: '10px 15px',
+                background:
+                  index % 2 === 0
+                    ? 'rgba(255, 255, 255, 0.06)'
+                    : 'rgba(255, 255, 255, 0.03)',
+                color: '#f3f4f6',
+                fontSize: '12px',
+                transition: 'all 0.3s ease',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background =
+                  index % 2 === 0
+                    ? 'rgba(255, 255, 255, 0.06)'
+                    : 'rgba(255, 255, 255, 0.03)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              📊 Live Load Board
-            </h3>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                }}
-              >
-                Last updated: {currentTime?.toLocaleTimeString() || '--'}
-              </span>
               <div
                 style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#10b981',
-                  animation: 'pulse 2s infinite',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Load Board Rows */}
-          <div style={{ display: 'grid', gap: '15px' }}>
-            {loads.map((load, index) => (
-              <div
-                key={index}
-                onClick={() => handleLoadClick(load.id)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.15)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  fontWeight: '700',
+                  color: '#10b981',
+                  fontSize: '9px',
+                  fontFamily: 'monospace',
+                  textAlign: 'center',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  borderRadius: '4px',
+                  padding: '2px 4px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                        marginBottom: '10px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '700',
-                          color: '#ffffff',
-                        }}
-                      >
-                        {load.id}
-                      </span>
-                      <span
-                        style={{
-                          background: getStatusColor(load.status),
-                          color: 'white',
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {load.status}
-                      </span>
-                      <span
-                        style={{
-                          background: getPriorityColor(load.priority),
-                          color: 'white',
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {load.priority}
-                      </span>
-                    </div>
-
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns:
-                          'repeat(auto-fit, minmax(150px, 1fr))',
-                        gap: '15px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Route
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: '#ffffff',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {load.origin} → {load.destination}
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Driver
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: '#ffffff',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {load.driver}
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Revenue
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: '#10b981',
-                            fontWeight: '700',
-                          }}
-                        >
-                          {load.revenue}
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          ETA
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: '#ffffff',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {load.eta}
-                        </div>
-                      </div>
-                    </div>
-
-                    {load.status === 'active' && (
-                      <div style={{ marginTop: '15px' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            marginBottom: '5px',
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: '12px',
-                              color: 'rgba(255, 255, 255, 0.6)',
-                            }}
-                          >
-                            Progress
-                          </span>
-                          <span
-                            style={{
-                              fontSize: '12px',
-                              color: '#ffffff',
-                              fontWeight: '600',
-                            }}
-                          >
-                            {load.progress}%
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.2)',
-                            borderRadius: '10px',
-                            height: '6px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <div
-                            style={{
-                              background:
-                                'linear-gradient(90deg, #10b981, #059669)',
-                              height: '100%',
-                              width: `${load.progress}%`,
-                              borderRadius: '10px',
-                              transition: 'width 0.3s ease',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                {load.loadBoardNumber}
+              </div>
+              <div
+                style={{
+                  fontWeight: '700',
+                  color: '#60a5fa',
+                  fontSize: '9px',
+                  fontFamily: 'monospace',
+                  textAlign: 'center',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {load.id}
+              </div>
+              <div>
+                <div style={{ fontWeight: '600' }}>{load.origin}</div>
+                <div style={{ fontSize: '11px', opacity: 0.7 }}>
+                  → {load.destination}
                 </div>
               </div>
-            ))}
-          </div>
+              <div style={{ fontSize: '12px', fontWeight: '500' }}>
+                {load.brokerName}
+              </div>
+              <div
+                style={{
+                  fontWeight: '700',
+                  color: '#22c55e',
+                  fontSize: '13px',
+                }}
+              >
+                ${load.rate?.toLocaleString()}
+              </div>
+              <div>
+                <span
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    fontSize: '10px',
+                    fontWeight: '600',
+                    background: getStatusColor(load.status),
+                    color: 'white',
+                  }}
+                >
+                  {load.status}
+                </span>
+              </div>
+              <div style={{ fontSize: '12px' }}>{load.distance}</div>
+              <div style={{ fontSize: '12px' }}>{load.equipment}</div>
+            </div>
+          ))}
+        </div>
+
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '20px',
+            padding: '15px',
+            background: 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '10px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '14px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '10px',
+            }}
+          >
+            Showing {Math.min(8, loads.length)} of {loads.length} total loads
+            from all brokers
+          </p>
+          <Link href='/dispatch' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              View Full Loadboard in Dispatch Central →
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -1206,33 +1023,6 @@ export default function HomePage() {
               Total
             </div>
           </div>
-
-          {/* Notifications Count */}
-          <div
-            style={{
-              background: 'rgba(168, 85, 247, 0.2)',
-              borderRadius: '12px',
-              padding: '15px',
-              textAlign: 'center',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#a855f7',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              15
-            </div>
-            <div
-              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Notifications
-            </div>
-          </div>
         </div>
 
         {/* Recent Alerts Preview */}
@@ -1325,59 +1115,9 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-
-        {/* Call to Action */}
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '25px',
-            padding: '20px',
-            background: 'rgba(59, 130, 246, 0.1)',
-            borderRadius: '12px',
-            border: '1px solid rgba(59, 130, 246, 0.2)',
-          }}
-        >
-          <h3
-            style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#ffffff',
-              marginBottom: '10px',
-            }}
-          >
-            Stay Ahead of Issues
-          </h3>
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '15px',
-            }}
-          >
-            Monitor your fleet in real-time and take proactive action on
-            critical alerts
-          </p>
-          <Link href='/notes' style={{ textDecoration: 'none' }}>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '12px 24px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-              }}
-            >
-              View Alert Center →
-            </button>
-          </Link>
-        </div>
       </div>
 
-      {/* Load Details Modal */}
+      {/* Management Load Details Modal - Information Only */}
       {showLoadDetails && selectedLoadData && (
         <div
           style={{
@@ -1400,7 +1140,7 @@ export default function HomePage() {
               borderRadius: '20px',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               padding: '40px',
-              maxWidth: '600px',
+              maxWidth: '700px',
               width: '90%',
               maxHeight: '80vh',
               overflow: 'auto',
@@ -1423,7 +1163,7 @@ export default function HomePage() {
                   margin: 0,
                 }}
               >
-                Load Details: {selectedLoadData.id}
+                Management Load Overview: {selectedLoadData.id}
               </h3>
               <button
                 onClick={() => setShowLoadDetails(false)}
@@ -1442,12 +1182,13 @@ export default function HomePage() {
               </button>
             </div>
 
-            <div style={{ display: 'grid', gap: '20px' }}>
+            <div style={{ display: 'grid', gap: '25px' }}>
+              {/* Load Information */}
               <div
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '20px',
+                  gap: '25px',
                 }}
               >
                 <div>
@@ -1455,7 +1196,63 @@ export default function HomePage() {
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Load Board Number
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#10b981',
+                      fontWeight: '700',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    #{selectedLoadData.loadBoardNumber}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Broker
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.brokerName}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '25px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
                     Origin
@@ -1475,7 +1272,9 @@ export default function HomePage() {
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
                     Destination
@@ -1496,7 +1295,7 @@ export default function HomePage() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '20px',
+                  gap: '25px',
                 }}
               >
                 <div>
@@ -1504,19 +1303,21 @@ export default function HomePage() {
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    Driver
+                    Rate
                   </div>
                   <div
                     style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
+                      fontSize: '24px',
+                      color: '#10b981',
+                      fontWeight: '700',
                     }}
                   >
-                    {selectedLoadData.driver}
+                    ${selectedLoadData.rate?.toLocaleString()}
                   </div>
                 </div>
                 <div>
@@ -1524,19 +1325,25 @@ export default function HomePage() {
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    Truck
+                    Status
                   </div>
                   <div
                     style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
+                      fontSize: '16px',
+                      color: 'white',
                       fontWeight: '600',
+                      background: getStatusColor(selectedLoadData.status),
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
                     }}
                   >
-                    {selectedLoadData.truck}
+                    {selectedLoadData.status}
                   </div>
                 </div>
               </div>
@@ -1545,7 +1352,7 @@ export default function HomePage() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '20px',
+                  gap: '25px',
                 }}
               >
                 <div>
@@ -1553,27 +1360,9 @@ export default function HomePage() {
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
-                    }}
-                  >
-                    Revenue
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#10b981',
-                      fontWeight: '700',
-                    }}
-                  >
-                    {selectedLoadData.revenue}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
                     Distance
@@ -1588,24 +1377,17 @@ export default function HomePage() {
                     {selectedLoadData.distance}
                   </div>
                 </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '20px',
-                }}
-              >
                 <div>
                   <div
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    Commodity
+                    Equipment
                   </div>
                   <div
                     style={{
@@ -1614,15 +1396,26 @@ export default function HomePage() {
                       fontWeight: '600',
                     }}
                   >
-                    {selectedLoadData.commodity}
+                    {selectedLoadData.equipment}
                   </div>
                 </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '25px',
+                }}
+              >
                 <div>
                   <div
                     style={{
                       fontSize: '14px',
                       color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '5px',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
                     Weight
@@ -1637,41 +1430,148 @@ export default function HomePage() {
                     {selectedLoadData.weight}
                   </div>
                 </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Pickup Date
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {new Date(selectedLoadData.pickupDate).toLocaleDateString()}
+                  </div>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
-                <button
-                  onClick={() => handleAcceptLoad(selectedLoadData.id)}
+              {selectedLoadData.dispatcherName && (
+                <div
                   style={{
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '12px 24px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    flex: 1,
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '25px',
                   }}
                 >
-                  Accept Load
-                </button>
-                <button
-                  onClick={() => handleBidLoad(selectedLoadData.id)}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Assigned Dispatcher
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        color: '#ffffff',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {selectedLoadData.dispatcherName}
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Delivery Date
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        color: '#ffffff',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {new Date(
+                        selectedLoadData.deliveryDate
+                      ).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Management Actions */}
+              <div
+                style={{
+                  marginTop: '20px',
+                  padding: '20px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  textAlign: 'center',
+                }}
+              >
+                <h4
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '12px 24px',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     fontWeight: '600',
-                    cursor: 'pointer',
-                    flex: 1,
+                    color: '#ffffff',
+                    marginBottom: '15px',
                   }}
                 >
-                  Submit Bid
-                </button>
+                  Management Actions
+                </h4>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '15px',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Link href='/dispatch' style={{ textDecoration: 'none' }}>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '10px 20px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      View in Dispatch Central
+                    </button>
+                  </Link>
+                  <Link href='/tracking' style={{ textDecoration: 'none' }}>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '10px 20px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Track Load
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

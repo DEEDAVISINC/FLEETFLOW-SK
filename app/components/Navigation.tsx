@@ -623,6 +623,21 @@ export default function ProfessionalNavigation() {
                 >
                   👤 User Profile
                 </Link>
+                <Link
+                  href='/dialer'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px 10px 40px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '400',
+                    opacity: '0.8',
+                  }}
+                >
+                  📞 Phone Dialer
+                </Link>
 
                 {/* MANAGER-ONLY ITEMS */}
                 {isManager && (
@@ -707,6 +722,20 @@ export default function ProfessionalNavigation() {
                   🚛 Driver OTR Flow
                 </Link>
                 <Link
+                  href='/admin/accounting'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💰 Accounting & Finance
+                </Link>
+                <Link
                   href='/reports'
                   onClick={handleDropdownClose}
                   style={{
@@ -720,6 +749,50 @@ export default function ProfessionalNavigation() {
                 >
                   📊 Reports & Analytics
                 </Link>
+                <Link
+                  href='#'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDropdownClick('tech-system');
+                  }}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                  }}
+                >
+                  🔧 Tech System ▼
+                </Link>
+                {(activeDropdown as string) === 'tech-system' && (
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.05)',
+                      borderLeft: '3px solid #8B5CF6',
+                      margin: '0 20px',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    <Link
+                      href='/automation-demo'
+                      onClick={handleDropdownClose}
+                      style={{
+                        display: 'block',
+                        padding: '10px 20px 10px 30px',
+                        color: '#8B5CF6',
+                        textDecoration: 'none',
+                        fontSize: '0.85rem',
+                        fontWeight: '400',
+                        opacity: '0.9',
+                      }}
+                    >
+                      🤖 Communication Automation
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
           </div>

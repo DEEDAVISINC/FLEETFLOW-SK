@@ -15,7 +15,12 @@ interface ReceiverNotificationRequest {
   currentLocation?: string;
   estimatedArrival: string;
   deliveryInstructions?: string;
-  notificationType: 'eta_update' | 'departure' | 'arrival' | 'delay' | 'delivery_complete';
+  notificationType:
+    | 'eta_update'
+    | 'departure'
+    | 'arrival'
+    | 'delay'
+    | 'delivery_complete';
 }
 
 interface NotificationResponse {
@@ -31,7 +36,9 @@ export class ReceiverNotificationService {
   /**
    * Send SMS notification to receiver
    */
-  static async sendSMSNotification(request: ReceiverNotificationRequest): Promise<NotificationResponse> {
+  static async sendSMSNotification(
+    request: ReceiverNotificationRequest
+  ): Promise<NotificationResponse> {
     try {
       const message = this.generateSMSMessage(request);
 
@@ -43,19 +50,19 @@ export class ReceiverNotificationService {
       console.log(`Message: ${message}`);
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       return {
         success: true,
         messageId: `SMS-${Date.now()}`,
-        method: 'sms'
+        method: 'sms',
       };
     } catch (error) {
       console.error('SMS notification failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        method: 'sms'
+        method: 'sms',
       };
     }
   }
@@ -63,7 +70,9 @@ export class ReceiverNotificationService {
   /**
    * Send email notification to receiver
    */
-  static async sendEmailNotification(request: ReceiverNotificationRequest): Promise<NotificationResponse> {
+  static async sendEmailNotification(
+    request: ReceiverNotificationRequest
+  ): Promise<NotificationResponse> {
     try {
       const { subject, body } = this.generateEmailContent(request);
 
@@ -74,19 +83,19 @@ export class ReceiverNotificationService {
       console.log(`Body: ${body}`);
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       return {
         success: true,
         messageId: `EMAIL-${Date.now()}`,
-        method: 'email'
+        method: 'email',
       };
     } catch (error) {
       console.error('Email notification failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        method: 'email'
+        method: 'email',
       };
     }
   }
@@ -94,18 +103,22 @@ export class ReceiverNotificationService {
   /**
    * Send notification via both SMS and email
    */
-  static async sendBothNotifications(request: ReceiverNotificationRequest): Promise<NotificationResponse[]> {
+  static async sendBothNotifications(
+    request: ReceiverNotificationRequest
+  ): Promise<NotificationResponse[]> {
     const results = await Promise.allSettled([
       this.sendSMSNotification(request),
-      this.sendEmailNotification(request)
+      this.sendEmailNotification(request),
     ]);
 
-    return results.map(result =>
-      result.status === 'fulfilled' ? result.value : {
-        success: false,
-        error: 'Promise rejected',
-        method: 'unknown' as const
-      }
+    return results.map((result) =>
+      result.status === 'fulfilled'
+        ? result.value
+        : {
+            success: false,
+            error: 'Promise rejected',
+            method: 'unknown' as const,
+          }
     );
   }
 
@@ -113,15 +126,29 @@ export class ReceiverNotificationService {
    * Generate receiver tracking link
    */
   static generateReceiverTrackingLink(shipmentId: string): string {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const baseUrl =
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : 'http://localhost:3000';
     return `${baseUrl}/receiver-portal?token=${shipmentId}&type=tracking`;
   }
 
   /**
    * Generate SMS message based on notification type
    */
-  private static generateSMSMessage(request: ReceiverNotificationRequest): string {
-    const { notificationType, vendorName, receiverName, loadId, estimatedArrival, driverName, driverPhone, currentLocation } = request;
+  private static generateSMSMessage(
+    request: ReceiverNotificationRequest
+  ): string {
+    const {
+      notificationType,
+      vendorName,
+      receiverName,
+      loadId,
+      estimatedArrival,
+      driverName,
+      driverPhone,
+      currentLocation,
+    } = request;
 
     const trackingLink = this.generateReceiverTrackingLink(request.shipmentId);
     const etaTime = new Date(estimatedArrival).toLocaleString();
@@ -150,8 +177,20 @@ export class ReceiverNotificationService {
   /**
    * Generate email content based on notification type
    */
-  private static generateEmailContent(request: ReceiverNotificationRequest): { subject: string; body: string } {
-    const { notificationType, vendorName, receiverName, loadId, estimatedArrival, driverName, driverPhone, deliveryInstructions } = request;
+  private static generateEmailContent(request: ReceiverNotificationRequest): {
+    subject: string;
+    body: string;
+  } {
+    const {
+      notificationType,
+      vendorName,
+      receiverName,
+      loadId,
+      estimatedArrival,
+      driverName,
+      driverPhone,
+      deliveryInstructions,
+    } = request;
 
     const trackingLink = this.generateReceiverTrackingLink(request.shipmentId);
     const etaTime = new Date(estimatedArrival).toLocaleString();
@@ -208,7 +247,8 @@ FleetFlow Logistics Platform
    * Validate phone number format
    */
   static isValidPhoneNumber(phone: string): boolean {
-    const phoneRegex = /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/;
+    const phoneRegex =
+      /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/;
     return phoneRegex.test(phone);
   }
 
@@ -223,7 +263,10 @@ FleetFlow Logistics Platform
   /**
    * Get notification preferences for a receiver
    */
-  static getNotificationPreferences(receiverId: string): { sms: boolean; email: boolean } {
+  static getNotificationPreferences(receiverId: string): {
+    sms: boolean;
+    email: boolean;
+  } {
     // In production, this would fetch from database
     // For now, return default preferences
     return { sms: true, email: true };

@@ -16,7 +16,7 @@ interface Resource {
 
 export default function ResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<
-    'drivers' | 'dispatch' | 'broker' | 'heavyhaul'
+    'drivers' | 'dispatch' | 'broker' | 'heavyhaul' | 'factoring'
   >('drivers');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -1518,6 +1518,102 @@ export default function ResourcesPage() {
         ],
       },
     ],
+    factoring: [
+      {
+        name: 'Bankers Factoring',
+        description:
+          'Critical Working Capital for Entrepreneurs™ - Get funding in as little as 24 hours',
+        website: 'https://bankersfactoring.com',
+        category: 'Factoring Services',
+        type: 'Factoring Application',
+        features: [
+          'Same-day funding available',
+          'Recourse & Non-recourse options',
+          'Notification & Confidential factoring',
+          'Competitive rates',
+          'Dedicated account management',
+          'Online application portal',
+        ],
+        contact: '📞 866-598-4295 | 📧 invoice@freight1stdirect.com',
+        tags: [
+          'factoring',
+          'financing',
+          'cash-flow',
+          'working-capital',
+          'invoice-factoring',
+        ],
+      },
+      {
+        name: 'RTS Financial',
+        description:
+          'Transportation factoring with fuel advances and load board access',
+        website: 'https://rtsfinancial.com',
+        category: 'Factoring Services',
+        features: [
+          'Fuel advances',
+          'Load board access',
+          'Fleet management tools',
+          'Mobile app',
+          'Quick setup',
+        ],
+        tags: ['factoring', 'fuel-advances', 'transportation', 'mobile-app'],
+      },
+      {
+        name: 'Triumph Business Capital',
+        description:
+          'Full-service factoring with credit protection and collections',
+        website: 'https://triumphbusinesscapital.com',
+        category: 'Factoring Services',
+        features: [
+          'Credit protection',
+          'Collections management',
+          'Online portal',
+          'Fuel cards',
+          'Equipment financing',
+        ],
+        tags: [
+          'factoring',
+          'credit-protection',
+          'collections',
+          'equipment-financing',
+        ],
+      },
+      {
+        name: 'Porter Capital',
+        description:
+          'Fast approval factoring with flexible terms for growing businesses',
+        website: 'https://portercapital.com',
+        category: 'Factoring Services',
+        features: [
+          'Fast approval',
+          'Flexible terms',
+          'No long-term contracts',
+          'Industry expertise',
+          'Personal service',
+        ],
+        tags: ['factoring', 'fast-approval', 'flexible-terms', 'no-contracts'],
+      },
+      {
+        name: 'Apex Capital',
+        description:
+          'Transportation factoring with fuel cards and business tools',
+        website: 'https://apexcapitalcorp.com',
+        category: 'Factoring Services',
+        features: [
+          'Fuel cards',
+          'Business credit building',
+          'Load board discounts',
+          'Mobile app',
+          'Same-day funding',
+        ],
+        tags: [
+          'factoring',
+          'fuel-cards',
+          'credit-building',
+          'same-day-funding',
+        ],
+      },
+    ],
   };
 
   // Filter resources based on search and category
@@ -1705,58 +1801,66 @@ export default function ResourcesPage() {
             }}
           >
             <div style={{ display: 'flex', gap: '8px' }}>
-              {(['drivers', 'dispatch', 'broker', 'heavyhaul'] as const).map(
-                (category) => {
-                  const getCategoryColor = (cat: string) => {
-                    switch (cat) {
-                      case 'drivers':
-                        return 'linear-gradient(135deg, #f7c52d, #f4a832)';
-                      case 'dispatch':
-                        return 'linear-gradient(135deg, #3b82f6, #2563eb)';
-                      case 'broker':
-                        return 'linear-gradient(135deg, #f97316, #ea580c)';
-                      case 'heavyhaul':
-                        return 'linear-gradient(135deg, #14b8a6, #0d9488)';
-                      default:
-                        return 'rgba(255, 255, 255, 0.08)';
-                    }
-                  };
-                  return (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      style={{
-                        padding: '12px 20px',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        transition: 'all 0.3s ease',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background:
-                          selectedCategory === category
-                            ? getCategoryColor(category)
-                            : 'rgba(255, 255, 255, 0.08)',
-                        color:
-                          selectedCategory === category &&
-                          category === 'drivers'
-                            ? '#2d3748'
-                            : 'white',
-                        backdropFilter: 'blur(10px)',
-                        fontSize: '14px',
-                        boxShadow:
-                          selectedCategory === category
-                            ? '0 8px 25px rgba(0, 0, 0, 0.3)'
-                            : '0 4px 15px rgba(0, 0, 0, 0.1)',
-                      }}
-                    >
-                      {category === 'drivers' && '🚛 Drivers'}
-                      {category === 'dispatch' && '📋 Dispatch'}
-                      {category === 'broker' && '🏢 Brokers'}
-                      {category === 'heavyhaul' && '🏗️ Heavy Haul'}
-                    </button>
-                  );
-                }
-              )}
+              {(
+                [
+                  'drivers',
+                  'dispatch',
+                  'broker',
+                  'heavyhaul',
+                  'factoring',
+                ] as const
+              ).map((category) => {
+                const getCategoryColor = (cat: string) => {
+                  switch (cat) {
+                    case 'drivers':
+                      return 'linear-gradient(135deg, #f7c52d, #f4a832)';
+                    case 'dispatch':
+                      return 'linear-gradient(135deg, #3b82f6, #2563eb)';
+                    case 'broker':
+                      return 'linear-gradient(135deg, #f97316, #ea580c)';
+                    case 'heavyhaul':
+                      return 'linear-gradient(135deg, #14b8a6, #0d9488)';
+                    case 'factoring':
+                      return 'linear-gradient(135deg, #10b981, #059669)';
+                    default:
+                      return 'rgba(255, 255, 255, 0.08)';
+                  }
+                };
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    style={{
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease',
+                      border: 'none',
+                      cursor: 'pointer',
+                      background:
+                        selectedCategory === category
+                          ? getCategoryColor(category)
+                          : 'rgba(255, 255, 255, 0.08)',
+                      color:
+                        selectedCategory === category && category === 'drivers'
+                          ? '#2d3748'
+                          : 'white',
+                      backdropFilter: 'blur(10px)',
+                      fontSize: '14px',
+                      boxShadow:
+                        selectedCategory === category
+                          ? '0 8px 25px rgba(0, 0, 0, 0.3)'
+                          : '0 4px 15px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    {category === 'drivers' && '🚛 Drivers'}
+                    {category === 'dispatch' && '📋 Dispatch'}
+                    {category === 'broker' && '🏢 Brokers'}
+                    {category === 'heavyhaul' && '🏗️ Heavy Haul'}
+                    {category === 'factoring' && '💰 Factoring'}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -1806,6 +1910,565 @@ export default function ResourcesPage() {
         >
           Showing {filteredResources.length} resources
         </div>
+
+        {/* Factoring Application Form - Special Section */}
+        {selectedCategory === 'factoring' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              marginBottom: '32px',
+              overflow: 'hidden',
+              boxShadow: '0 15px 35px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                padding: '24px',
+                textAlign: 'center',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '2rem',
+                  marginBottom: '8px',
+                  fontWeight: 'bold',
+                }}
+              >
+                🏛️ Bankers Factoring Application
+              </h2>
+              <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>
+                Critical Working Capital for Entrepreneurs™ - Get funding in as
+                little as 24 hours
+              </p>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+              <div
+                style={{
+                  background: '#e8f5e8',
+                  border: '1px solid #10b981',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginBottom: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                <span style={{ fontSize: '1.5rem' }}>🔒</span>
+                <div>
+                  <strong style={{ color: '#059669' }}>
+                    Secure Application Portal
+                  </strong>
+                  <p
+                    style={{ margin: 0, color: '#2d3748', fontSize: '0.9rem' }}
+                  >
+                    Your information is protected with bank-level 256-bit SSL
+                    encryption
+                  </p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '24px',
+                }}
+              >
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                    ⚡
+                  </div>
+                  <strong style={{ color: '#2d3748' }}>Same-Day Funding</strong>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                    Get approved and funded within 24 hours
+                  </p>
+                </div>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                    💼
+                  </div>
+                  <strong style={{ color: '#2d3748' }}>Flexible Options</strong>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                    Recourse & Non-recourse factoring available
+                  </p>
+                </div>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                    📞
+                  </div>
+                  <strong style={{ color: '#2d3748' }}>Personal Service</strong>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                    Dedicated account management team
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <button
+                  onClick={() => {
+                    // Create and open the factoring application in a new window
+                    const factoringHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankers Factoring - Factoring Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo-main .factoring {
+            color: #fbbf24;
+        }
+
+        .logo-tagline {
+            font-size: 0.85rem;
+            color: #e5e7eb;
+            margin-top: 0.2rem;
+            font-weight: 400;
+        }
+
+        .phone {
+            font-size: 1.1rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-content {
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            font-size: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .file-upload {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #2980b9;
+            background: #ecf0f1;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .submit-section {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .submit-btn {
+            background: white;
+            color: #27ae60;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .security-icon {
+            color: #f39c12;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .logo {
+                text-align: center;
+            }
+
+            .logo-main {
+                font-size: 1.6rem;
+            }
+
+            .logo-tagline {
+                font-size: 0.75rem;
+            }
+
+            .container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+
+            .form-content {
+                padding: 1rem;
+            }
+        }
+
+        .info-text {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🏛️⭐⭐⭐</div>
+                <div class="logo-text">
+                    <div class="logo-main">
+                        Bankers<span class="factoring">Factoring</span>
+                    </div>
+                    <div class="logo-tagline">Critical Working Capital for Entrepreneurs™</div>
+                </div>
+            </div>
+            <div class="phone">📞 866-598-4295</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-header">
+            <h1>Factoring Application</h1>
+            <p>Secure & Encrypted - Get funding in as little as 24 hours</p>
+        </div>
+
+        <div class="form-content">
+            <div class="security-notice">
+                <span class="security-icon">🔒</span>
+                <span>Your information is protected with bank-level 256-bit SSL encryption</span>
+            </div>
+
+            <div class="section" style="background: #e8f5e8; border-left-color: #27ae60;">
+                <h2><span class="section-icon">🔖</span>Application Reference</h2>
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label for="reference-id">Reference ID Number</label>
+                        <input type="text" id="reference-id" name="reference-id" readonly style="background: #f8f9fa; font-weight: bold; font-size: 1.1rem; color: #27ae60;">
+                    </div>
+                </div>
+                <div class="info-text" style="background: #d4edda; border-left-color: #27ae60;">
+                    <strong>Please save this reference number</strong> - You can use it to track your application status and reference it in any correspondence with us.
+                </div>
+            </div>
+
+            <!-- Rest of the form sections would continue here... -->
+            <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;">
+                <h3 style="color: #2c3e50; margin-bottom: 1rem;">Complete Factoring Application</h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">This is a preview of the factoring application portal. The full application includes:</p>
+                <ul style="text-align: left; max-width: 400px; margin: 0 auto 1.5rem auto; color: #666;">
+                    <li>Company Information</li>
+                    <li>Principal/Owner Details</li>
+                    <li>Financial Information</li>
+                    <li>Customer Information</li>
+                    <li>Factoring Requirements</li>
+                    <li>Document Upload</li>
+                    <li>Terms & Conditions</li>
+                </ul>
+                <button class="submit-btn" onclick="alert('Full application would be processed here')">
+                    Start Full Application
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate reference ID on page load
+        function generateReferenceId() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const referenceId = \`DDD\${year}\${month}\${day}\${hours}\${minutes}\`;
+
+            document.getElementById('reference-id').value = referenceId;
+            return referenceId;
+        }
+
+        window.addEventListener('load', function() {
+            generateReferenceId();
+        });
+    </script>
+</body>
+</html>`;
+
+                    const newWindow = window.open('', '_blank');
+                    if (newWindow) {
+                      newWindow.document.write(factoringHTML);
+                      newWindow.document.close();
+                    }
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px 32px',
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold',
+                    borderRadius: '50px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 6px 20px rgba(16, 185, 129, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 4px 15px rgba(16, 185, 129, 0.3)';
+                  }}
+                >
+                  🚀 Open Factoring Application
+                </button>
+                <p
+                  style={{
+                    marginTop: '12px',
+                    fontSize: '0.9rem',
+                    color: '#666',
+                  }}
+                >
+                  📧 Applications sent to:{' '}
+                  <strong>invoice@freight1stdirect.com</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Resources Grid */}
         <div
@@ -2055,7 +2718,7 @@ export default function ResourcesPage() {
             }}
           >
             <Link
-              href="/link-verification"
+              href='/link-verification'
               style={{
                 color: '#ffffff',
                 background: 'rgba(59, 130, 246, 0.6)',
@@ -2073,7 +2736,8 @@ export default function ResourcesPage() {
               onMouseOver={(e) => {
                 e.currentTarget.style.background = 'rgba(59, 130, 246, 0.8)';
                 e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(59, 130, 246, 0.4)';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.background = 'rgba(59, 130, 246, 0.6)';

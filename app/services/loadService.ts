@@ -1,7 +1,17 @@
 // Load Management Service - Centralized load operations with unified flow
-import { getAvailableDispatchers, getCurrentUser } from '../config/access';
+import { getCurrentUser } from '../config/access';
+import { DispatchCommunicationIntegration } from '../utils/DispatchCommunicationIntegration';
 import { EDIService } from './EDIService';
 import { LoadIdentificationService } from './LoadIdentificationService';
+
+// Mock dispatchers for development
+const mockDispatchers = [
+  { id: 'disp-001', name: 'Sarah Johnson' },
+  { id: 'disp-002', name: 'Mike Chen' },
+  { id: 'disp-003', name: 'Lisa Rodriguez' },
+];
+
+const getAvailableDispatchers = () => mockDispatchers;
 
 export interface ShipperInfo {
   id: string;
@@ -416,7 +426,7 @@ export const assignLoadToDispatcher = (
 ): Load | null => {
   const load = LOADS_DB.find((l) => l.id === loadId);
   const dispatchers = getAvailableDispatchers();
-  const dispatcher = dispatchers.find((d) => d.id === dispatcherId);
+  const dispatcher = dispatchers.find((d: any) => d.id === dispatcherId);
 
   if (!load || !dispatcher) return null;
 
@@ -525,8 +535,9 @@ export const updateLoad = (
   const loadIndex = LOADS_DB.findIndex((load) => load.id === loadId);
   if (loadIndex === -1) return null;
 
+  const oldLoad = LOADS_DB[loadIndex];
   const updatedLoad = {
-    ...LOADS_DB[loadIndex],
+    ...oldLoad,
     ...updates,
     updatedAt: new Date().toISOString(),
   };
@@ -537,7 +548,9 @@ export const updateLoad = (
     updates.dispatcherId !== LOADS_DB[loadIndex].dispatcherId
   ) {
     const dispatchers = getAvailableDispatchers();
-    const dispatcher = dispatchers.find((d) => d.id === updates.dispatcherId);
+    const dispatcher = dispatchers.find(
+      (d: any) => d.id === updates.dispatcherId
+    );
     updatedLoad.dispatcherName = dispatcher?.name;
     updatedLoad.assignedAt = new Date().toISOString();
 
@@ -547,11 +560,150 @@ export const updateLoad = (
 
   LOADS_DB[loadIndex] = updatedLoad;
 
+  // 🤖 AUTOMATED COMMUNICATION INTEGRATION
+  // Trigger automated communication if status changed
+  if (updates.status && updates.status !== oldLoad.status) {
+    handleLoadStatusChangeWithCommunication(
+      updatedLoad.id,
+      oldLoad.status,
+      updates.status,
+      updatedLoad
+    );
+  }
+
   // Trigger notifications
   notifyDispatchCentral(updatedLoad, 'update');
   notifyBrokerBox(updatedLoad, 'update');
 
   return updatedLoad;
+};
+
+// 🤖 AUTOMATED COMMUNICATION HANDLER
+// Handles load status changes with smart communication automation
+const handleLoadStatusChangeWithCommunication = async (
+  loadId: string,
+  oldStatus: string,
+  newStatus: string,
+  loadData: Load
+) => {
+  try {
+    console.log(`🚛 Load ${loadId}: ${oldStatus} → ${newStatus}`);
+
+    // Prepare load data for communication
+    const communicationData = {
+      customerName:
+        loadData.shipperInfo?.contactName ||
+        loadData.shipperInfo?.companyName ||
+        'Customer',
+      customerCompany: loadData.shipperInfo?.companyName || 'Unknown Company',
+      customerPhone: loadData.shipperInfo?.phone || '+1234567890', // Replace with actual customer phone
+      driverName: 'Driver Name', // TODO: Get from driver assignment
+      eta: loadData.deliveryDate,
+      currentLocation: loadData.currentLocation
+        ? `${loadData.currentLocation.lat}, ${loadData.currentLocation.lng}`
+        : loadData.origin,
+      delayHours: 0, // TODO: Calculate from expected vs actual timing
+      delayReason: '', // TODO: Get from load updates
+      newEta: loadData.realTimeETA || loadData.deliveryDate,
+      brokerName: loadData.brokerName,
+      dispatcherName: loadData.dispatcherName,
+    };
+
+    // Trigger automated communication via integration
+    await DispatchCommunicationIntegration.handleLoadStatusChange(
+      loadId,
+      oldStatus,
+      newStatus,
+      communicationData
+    );
+
+    console.log(`✅ Automated communication triggered for load ${loadId}`);
+  } catch (error) {
+    console.error(
+      `❌ Failed to trigger automated communication for load ${loadId}:`,
+      error
+    );
+  }
+};
+
+// 🚨 DRIVER EVENT HANDLER
+// Handles driver events (breakdowns, accidents, delays) with automated communication
+export const handleDriverEvent = async (
+  loadId: string,
+  eventType: 'breakdown' | 'accident' | 'running_late' | 'route_deviation',
+  eventData: {
+    driverName?: string;
+    driverPhone?: string;
+    currentLocation?: string;
+    delayMinutes?: number;
+    breakdownType?: string;
+    description?: string;
+  }
+) => {
+  try {
+    console.log(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
+
+    // Update load status if needed
+    if (eventType === 'breakdown' || eventType === 'accident') {
+      updateLoad(loadId, {
+        status: 'In Transit', // Keep in transit but mark as having issues
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    // Trigger automated communication
+    await DispatchCommunicationIntegration.handleDriverEvent(
+      loadId,
+      eventType,
+      eventData
+    );
+
+    console.log(`✅ Driver event communication triggered for load ${loadId}`);
+  } catch (error) {
+    console.error(
+      `❌ Failed to handle driver event for load ${loadId}:`,
+      error
+    );
+  }
+};
+
+// 📞 CUSTOMER INQUIRY HANDLER
+// Handles customer inquiries with automated communication routing
+export const handleCustomerInquiry = async (
+  customerId: string,
+  inquiryType:
+    | 'rate_request'
+    | 'complaint'
+    | 'delivery_status'
+    | 'billing_dispute',
+  inquiryData: {
+    customerName?: string;
+    customerCompany?: string;
+    customerPhone?: string;
+    loadId?: string;
+    hasIssues?: boolean;
+    description?: string;
+  }
+) => {
+  try {
+    console.log(`📞 Customer inquiry: ${inquiryType}`);
+
+    // Trigger automated communication with smart escalation
+    await DispatchCommunicationIntegration.handleCustomerInquiry(
+      customerId,
+      inquiryType,
+      inquiryData
+    );
+
+    console.log(
+      `✅ Customer inquiry communication triggered for ${customerId}`
+    );
+  } catch (error) {
+    console.error(
+      `❌ Failed to handle customer inquiry for ${customerId}:`,
+      error
+    );
+  }
 };
 
 // Assign dispatcher to load
@@ -560,7 +712,7 @@ export const assignDispatcherToLoad = (
   dispatcherId: string
 ): boolean => {
   const dispatchers = getAvailableDispatchers();
-  const dispatcher = dispatchers.find((d) => d.id === dispatcherId);
+  const dispatcher = dispatchers.find((d: any) => d.id === dispatcherId);
 
   if (!dispatcher) return false;
 
@@ -577,7 +729,11 @@ export const assignDispatcherToLoad = (
 export const getLoadsForUser = (): Load[] => {
   const { user, permissions } = getCurrentUser();
 
-  if (permissions.canViewAllLoads) {
+  if (
+    user.role === 'admin' ||
+    user.role === 'dispatcher' ||
+    user.role === 'management'
+  ) {
     // Dispatchers, managers, admins see all loads
     return LOADS_DB;
   } else if (user.role === 'broker') {

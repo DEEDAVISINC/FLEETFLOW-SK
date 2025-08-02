@@ -6,6 +6,8 @@ import AIOperationsCenter from './AIOperationsCenter';
 import CRMDashboard from './CRMDashboard';
 import { FreeSWITCHCallCenterDashboard } from './FreeSWITCHCallCenterDashboard';
 import FreightBrokerDashboard from './FreightBrokerDashboard';
+import SalesAnalyticsDashboard from './SalesAnalyticsDashboard';
+import SalesDivisionPlatform from './SalesDivisionPlatform';
 
 export default function AIFlowPlatform() {
   const [activeView, setActiveView] = useState('dashboard');
@@ -1209,6 +1211,20 @@ export default function AIFlowPlatform() {
               color: '#8b5cf6',
               borderColor: 'rgba(139, 92, 246, 0.3)',
             },
+            {
+              id: 'sales-division',
+              label: 'Sales Division',
+              icon: '🎯',
+              color: '#22c55e',
+              borderColor: 'rgba(34, 197, 94, 0.3)',
+            },
+            {
+              id: 'sales-analytics',
+              label: 'Sales Analytics',
+              icon: '📊',
+              color: '#16a34a',
+              borderColor: 'rgba(22, 163, 74, 0.3)',
+            },
           ].map((tab) => {
             const getGradient = (color: string) => {
               switch (color) {
@@ -1232,6 +1248,10 @@ export default function AIFlowPlatform() {
                   return 'linear-gradient(135deg, #d946ef, #c026d3)'; // Dark Pink (AI Operations)
                 case '#334155':
                   return 'linear-gradient(135deg, #334155, #475569)'; // Slate (Dashboard)
+                case '#22c55e':
+                  return 'linear-gradient(135deg, #22c55e, #16a34a)'; // Green (Sales Division)
+                case '#16a34a':
+                  return 'linear-gradient(135deg, #16a34a, #15803d)'; // Dark Green (Sales Analytics)
                 default:
                   return 'linear-gradient(135deg, #334155, #475569)'; // Slate (default)
               }
@@ -4015,6 +4035,84 @@ export default function AIFlowPlatform() {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Sales Division View */}
+        {activeView === 'sales-division' && (
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '20px',
+              }}
+            >
+              <h2
+                style={{
+                  color: '#22c55e',
+                  margin: 0,
+                  fontSize: '20px',
+                  fontWeight: '600',
+                }}
+              >
+                🎯 Sales Division Operations
+              </h2>
+              <div
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  color: '#22c55e',
+                  textTransform: 'uppercase',
+                }}
+              >
+                HUMAN-POWERED
+              </div>
+            </div>
+            <SalesDivisionPlatform />
+          </div>
+        )}
+
+        {/* Sales Analytics View */}
+        {activeView === 'sales-analytics' && (
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '20px',
+              }}
+            >
+              <h2
+                style={{
+                  color: '#16a34a',
+                  margin: 0,
+                  fontSize: '20px',
+                  fontWeight: '600',
+                }}
+              >
+                📊 Sales Performance Analytics
+              </h2>
+              <div
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  background: 'rgba(22, 163, 74, 0.2)',
+                  color: '#16a34a',
+                  textTransform: 'uppercase',
+                }}
+              >
+                AI-ENHANCED
+              </div>
+            </div>
+            <SalesAnalyticsDashboard />
           </div>
         )}
       </div>

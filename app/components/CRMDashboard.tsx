@@ -5,6 +5,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  UserIdentifier,
+  centralCRMService,
+} from '../services/CentralCRMService';
+import CRMTransferCenter from './CRMTransferCenter';
 
 // ============================================================================
 // TYPESCRIPT INTERFACES
@@ -91,6 +96,7 @@ export default function CRMDashboard() {
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'contacts'
+    | 'transfers'
     | 'opportunities'
     | 'activities'
     | 'pipeline'
@@ -100,6 +106,7 @@ export default function CRMDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [currentUser, setCurrentUser] = useState<UserIdentifier | null>(null);
 
   // Mock data for development (in production, this would come from API)
   const [dashboardMetrics, setDashboardMetrics] = useState<DashboardMetrics>({
@@ -331,15 +338,54 @@ export default function CRMDashboard() {
 
   useEffect(() => {
     fetchDashboardMetrics();
+    loadCurrentUser();
 
     // Auto-refresh every 5 minutes
     const interval = setInterval(fetchDashboardMetrics, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
+  const loadCurrentUser = async () => {
+    try {
+      // In production, get current user from auth context
+      // For demo, we'll use the first broker user
+      const users = await centralCRMService.getAllUsers();
+      const demoUser = users.find((u) => u.department === 'BB') || users[0];
+      setCurrentUser(demoUser);
+    } catch (error) {
+      console.error('Failed to load current user:', error);
+    }
+  };
+
   // ============================================================================
   // UTILITY FUNCTIONS
   // ============================================================================
+
+  const getTabColor = (tabId: string) => {
+    const colors = {
+      overview: '#3b82f6', // Blue - Overview/Dashboard
+      contacts: '#22c55e', // Green - Call Log/Contacts
+      transfers: '#f97316', // Orange - Transfers
+      opportunities: '#8b5cf6', // Purple - Pipeline/Opportunities
+      activities: '#eab308', // Yellow - Activities
+      pipeline: '#ef4444', // Red - Sales Board
+      ai: '#06b6d4', // Cyan - AI Insights
+      reports: '#6b7280', // Gray - Reports
+    };
+    return colors[tabId as keyof typeof colors] || '#6b7280';
+  };
+
+  const getKPIColor = (kpiType: string) => {
+    const colors = {
+      contacts: '#22c55e', // Green - Total Contacts
+      opportunities: '#8b5cf6', // Purple - Opportunities
+      activities: '#eab308', // Yellow - Activities
+      revenue: '#ef4444', // Red - Revenue
+      conversion: '#06b6d4', // Cyan - Conversion Rate
+      performance: '#f97316', // Orange - Performance
+    };
+    return colors[kpiType as keyof typeof colors] || '#3b82f6';
+  };
 
   const getContactTypeColor = (type: string) => {
     const colors = {
@@ -417,19 +463,21 @@ export default function CRMDashboard() {
       >
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: `linear-gradient(135deg, ${getKPIColor('contacts')}20, ${getKPIColor('contacts')}10)`,
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getKPIColor('contacts')}40`,
             textAlign: 'center' as const,
+            boxShadow: `0 4px 12px ${getKPIColor('contacts')}20`,
           }}
         >
           <div
             style={{
               fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: getKPIColor('contacts'),
               marginBottom: '8px',
+              fontWeight: '600',
             }}
           >
             👥 Total Contacts
@@ -451,19 +499,21 @@ export default function CRMDashboard() {
 
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: `linear-gradient(135deg, ${getKPIColor('opportunities')}20, ${getKPIColor('opportunities')}10)`,
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getKPIColor('opportunities')}40`,
             textAlign: 'center' as const,
+            boxShadow: `0 4px 12px ${getKPIColor('opportunities')}20`,
           }}
         >
           <div
             style={{
               fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: getKPIColor('opportunities'),
               marginBottom: '8px',
+              fontWeight: '600',
             }}
           >
             💰 Pipeline Value
@@ -485,19 +535,21 @@ export default function CRMDashboard() {
 
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: `linear-gradient(135deg, ${getKPIColor('conversion')}20, ${getKPIColor('conversion')}10)`,
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getKPIColor('conversion')}40`,
             textAlign: 'center' as const,
+            boxShadow: `0 4px 12px ${getKPIColor('conversion')}20`,
           }}
         >
           <div
             style={{
               fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: getKPIColor('conversion'),
               marginBottom: '8px',
+              fontWeight: '600',
             }}
           >
             📈 Conversion Rate
@@ -519,19 +571,21 @@ export default function CRMDashboard() {
 
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: `linear-gradient(135deg, ${getKPIColor('activities')}20, ${getKPIColor('activities')}10)`,
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getKPIColor('activities')}40`,
             textAlign: 'center' as const,
+            boxShadow: `0 4px 12px ${getKPIColor('activities')}20`,
           }}
         >
           <div
             style={{
               fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: getKPIColor('activities'),
               marginBottom: '8px',
+              fontWeight: '600',
             }}
           >
             📅 Recent Activities
@@ -1066,7 +1120,7 @@ export default function CRMDashboard() {
             fontWeight: '600',
           }}
         >
-          👥 Contact Management
+          📞 Call Log & Contact Management
         </h2>
         <div
           style={{
@@ -1227,6 +1281,289 @@ export default function CRMDashboard() {
           border: '1px solid rgba(255, 255, 255, 0.2)',
         }}
       >
+        {/* Call Log Section */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <h3
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '600',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            📞 Recent Call Activity
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                color: 'white',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginLeft: 'auto',
+              }}
+            >
+              Make New Call
+            </button>
+          </h3>
+
+          {/* Call Log Stats */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: '12px',
+              marginBottom: '16px',
+            }}
+          >
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '8px',
+                background: 'rgba(34, 197, 94, 0.1)',
+                borderRadius: '6px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#22c55e',
+                }}
+              >
+                12
+              </div>
+              <div
+                style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Completed
+              </div>
+            </div>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '8px',
+                background: 'rgba(245, 158, 11, 0.1)',
+                borderRadius: '6px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#f59e0b',
+                }}
+              >
+                3
+              </div>
+              <div
+                style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Missed
+              </div>
+            </div>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '8px',
+                background: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: '6px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#3b82f6',
+                }}
+              >
+                8
+              </div>
+              <div
+                style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Inbound
+              </div>
+            </div>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '8px',
+                background: 'rgba(139, 92, 246, 0.1)',
+                borderRadius: '6px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#8b5cf6',
+                }}
+              >
+                7
+              </div>
+              <div
+                style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Outbound
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Calls List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {[
+              {
+                name: 'John Smith',
+                company: 'ABC Logistics',
+                phone: '+1 (555) 123-4567',
+                time: '2:30 PM',
+                type: 'outbound',
+                status: 'completed',
+                duration: '5:23',
+              },
+              {
+                name: 'Sarah Johnson',
+                company: 'Quick Transport',
+                phone: '+1 (555) 987-6543',
+                time: '1:15 PM',
+                type: 'inbound',
+                status: 'completed',
+                duration: '12:45',
+              },
+              {
+                name: 'Mike Davis',
+                company: 'Metro Shipping',
+                phone: '+1 (555) 456-7890',
+                time: '12:00 PM',
+                type: 'outbound',
+                status: 'missed',
+                duration: '0:00',
+              },
+            ].map((call, index) => (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background:
+                        call.type === 'inbound'
+                          ? 'rgba(59, 130, 246, 0.2)'
+                          : 'rgba(139, 92, 246, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {call.type === 'inbound' ? '📞' : '📱'}
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      {call.name}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '11px',
+                      }}
+                    >
+                      {call.company}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <div style={{ textAlign: 'right' }}>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '11px',
+                      }}
+                    >
+                      {call.time}
+                    </div>
+                    <div
+                      style={{
+                        color:
+                          call.status === 'completed' ? '#22c55e' : '#f59e0b',
+                        fontSize: '10px',
+                      }}
+                    >
+                      {call.status === 'completed'
+                        ? `✅ ${call.duration}`
+                        : '⚠️ Missed'}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        color: '#22c55e',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📞
+                    </button>
+                    <button
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.2)',
+                        color: '#8b5cf6',
+                        border: '1px solid rgba(139, 92, 246, 0.3)',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📝
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <h3
           style={{
             color: 'white',
@@ -1394,6 +1731,21 @@ export default function CRMDashboard() {
       </div>
     </div>
   );
+
+  const renderTransfers = () => {
+    const handleTransferComplete = (transferId: string) => {
+      console.log(`✅ Transfer completed: ${transferId}`);
+      // Refresh dashboard metrics or show success message
+      setLastRefresh(new Date());
+    };
+
+    return (
+      <CRMTransferCenter
+        currentUser={currentUser || undefined}
+        onTransferComplete={handleTransferComplete}
+      />
+    );
+  };
 
   const renderOpportunities = () => (
     <div style={{ padding: '0' }}>
@@ -2765,11 +3117,16 @@ export default function CRMDashboard() {
       <div
         style={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px',
+          background: `
+        linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(168, 85, 247, 0.04) 0%, transparent 50%)
+      `,
+          backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+          backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }}
       >
         <div
@@ -2834,69 +3191,114 @@ export default function CRMDashboard() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: `
+        linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(168, 85, 247, 0.04) 0%, transparent 50%)
+      `,
+        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         paddingTop: '0px',
       }}
     >
-      {/* Modern Header */}
+      {/* Header - Matching Live Tracking Style */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '20px 0',
-          marginBottom: '32px',
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 24px 32px',
         }}
       >
         <div
-          style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            marginBottom: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
         >
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '24px',
                 }}
               >
-                🤝
+                <span style={{ fontSize: '32px' }}>🏢</span>
               </div>
               <div>
                 <h1
                   style={{
-                    color: 'white',
-                    fontSize: '28px',
+                    fontSize: '36px',
                     fontWeight: 'bold',
-                    margin: 0,
+                    color: 'white',
+                    margin: '0 0 8px 0',
                     textShadow: '0 4px 8px rgba(0,0,0,0.3)',
                   }}
                 >
-                  FleetFlow™ CRM
+                  Customer Relationship Center
                 </h1>
                 <p
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    margin: 0,
-                    fontSize: '16px',
+                    fontSize: '18px',
+                    margin: '0 0 16px 0',
                   }}
                 >
-                  AI-powered customer relationship management for freight
-                  operations
+                  Comprehensive customer management & sales intelligence
                 </p>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        background: '#10b981',
+                        borderRadius: '50%',
+                        boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                        animation: 'pulse 2s infinite',
+                      }}
+                    ></div>
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Live Sync Active
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Last updated: {lastRefresh.toLocaleTimeString()}
+                  </div>
+                </div>
               </div>
             </div>
             <div
@@ -2953,7 +3355,8 @@ export default function CRMDashboard() {
           >
             {[
               { id: 'overview', label: 'Overview', icon: '📊' },
-              { id: 'contacts', label: 'Contacts', icon: '👥' },
+              { id: 'contacts', label: 'Call Log', icon: '📞' },
+              { id: 'transfers', label: 'Transfers', icon: '🔄' },
               { id: 'opportunities', label: 'Pipeline', icon: '🎯' },
               { id: 'activities', label: 'Activities', icon: '📅' },
               { id: 'pipeline', label: 'Sales Board', icon: '📈' },
@@ -2969,30 +3372,40 @@ export default function CRMDashboard() {
                   gap: '8px',
                   padding: '12px 20px',
                   borderRadius: '12px',
-                  border: 'none',
+                  border:
+                    activeTab === tab.id
+                      ? `2px solid ${getTabColor(tab.id)}`
+                      : '2px solid transparent',
                   background:
                     activeTab === tab.id
-                      ? 'rgba(255, 255, 255, 0.2)'
+                      ? `linear-gradient(135deg, ${getTabColor(tab.id)}20, ${getTabColor(tab.id)}10)`
                       : 'transparent',
                   color:
-                    activeTab === tab.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                    activeTab === tab.id
+                      ? getTabColor(tab.id)
+                      : 'rgba(255, 255, 255, 0.7)',
                   fontSize: '14px',
                   fontWeight: activeTab === tab.id ? '600' : '500',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap' as const,
+                  boxShadow:
+                    activeTab === tab.id
+                      ? `0 4px 12px ${getTabColor(tab.id)}30`
+                      : 'none',
                 }}
                 onMouseOver={(e) => {
                   if (activeTab !== tab.id) {
-                    e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.1)';
-                    e.currentTarget.style.color = 'white';
+                    e.currentTarget.style.background = `linear-gradient(135deg, ${getTabColor(tab.id)}15, ${getTabColor(tab.id)}05)`;
+                    e.currentTarget.style.color = getTabColor(tab.id);
+                    e.currentTarget.style.border = `2px solid ${getTabColor(tab.id)}40`;
                   }
                 }}
                 onMouseOut={(e) => {
                   if (activeTab !== tab.id) {
                     e.currentTarget.style.background = 'transparent';
                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+                    e.currentTarget.style.border = '2px solid transparent';
                   }
                 }}
               >
@@ -3010,12 +3423,28 @@ export default function CRMDashboard() {
       >
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'contacts' && renderContacts()}
+        {activeTab === 'transfers' && renderTransfers()}
         {activeTab === 'opportunities' && renderOpportunities()}
         {activeTab === 'activities' && renderActivities()}
         {activeTab === 'pipeline' && renderPipeline()}
         {activeTab === 'ai' && renderAIInsights()}
         {activeTab === 'reports' && renderReports()}
       </div>
+
+      {/* CSS Animation for pulse effect */}
+      <style jsx>{`
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
