@@ -56,7 +56,7 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   EMERGENCY_LOAD_PRICING: false,
 
   // Specialized Routing
-  PERMIT_ROUTE_PLANNING: false,
+  PERMIT_ROUTE_PLANNING: true,
   HAZMAT_ROUTE_COMPLIANCE: false,
   SEASONAL_LOAD_PLANNING: false,
   CROSS_DOCKING_OPTIMIZATION: false,

@@ -2,14 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import CertificationSystem from '../components/CertificationSystem';
 import { checkPermission, getCurrentUser } from '../config/access';
-import {
-  brokerQuizQuestions,
-  complianceQuizQuestions,
-  dispatchQuizQuestions,
-  smsWorkflowQuizQuestions,
-} from '../data/quizQuestions';
 import { quizGenerator } from '../utils/quizGenerator';
 import {
   getUserTrainingAccess,
@@ -53,10 +46,17 @@ export default function TrainingPage() {
     }
   );
 
-  const [selectedModule, setSelectedModule] = useState<
-    'overview' | 'dispatch' | 'broker' | 'compliance' | 'safety' | 'video'
-  >('overview');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  // Enhanced admin state management
+  const [activeView, setActiveView] = useState<
+    | 'dashboard'
+    | 'students'
+    | 'courses'
+    | 'analytics'
+    | 'assessments'
+    | 'reports'
+  >('dashboard');
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [showQuiz, setShowQuiz] = useState<string | null>(null);
   const [certificates, setCertificates] = useState<any[]>([]);
   const [moduleProgress, setModuleProgress] = useState<{
@@ -64,6 +64,181 @@ export default function TrainingPage() {
   }>({});
   const [availableModules, setAvailableModules] = useState<string[]>([]);
   const [dynamicQuizData, setDynamicQuizData] = useState<any>(null);
+
+  // Mock student data for demonstration
+  const [students] = useState([
+    {
+      id: 'FM-MGR-2023005',
+      name: 'Francisco Martinez',
+      email: 'francisco.martinez@fleetflow.com',
+      department: 'Management',
+      role: 'Fleet Manager',
+      enrollmentDate: '2024-01-15',
+      completedCourses: 3,
+      totalCourses: 4,
+      averageScore: 94.2,
+      lastActivity: '2024-12-30',
+      status: 'Active',
+      currentCourse: 'Fleet Operations Excellence',
+      progress: 78,
+    },
+    {
+      id: 'SJ-DC-2024014',
+      name: 'Sarah Johnson',
+      email: 'sarah.johnson@fleetflow.com',
+      department: 'Dispatch',
+      role: 'Senior Dispatcher',
+      enrollmentDate: '2024-02-01',
+      completedCourses: 2,
+      totalCourses: 4,
+      averageScore: 89.7,
+      lastActivity: '2024-12-29',
+      status: 'Active',
+      currentCourse: 'Dispatcher Operations Mastery',
+      progress: 92,
+    },
+    {
+      id: 'ED-BB-2024061',
+      name: 'Emily Davis',
+      email: 'emily.davis@fleetflow.com',
+      department: 'Brokerage',
+      role: 'Freight Broker',
+      enrollmentDate: 'I2024-03-10',
+      completedCourses: 4,
+      totalCourses: 4,
+      averageScore: 96.8,
+      lastActivity: '2024-12-30',
+      status: 'Completed',
+      currentCourse: 'All Courses Complete',
+      progress: 100,
+    },
+    {
+      id: 'MR-DM-2024022',
+      name: 'Michael Rodriguez',
+      email: 'michael.rodriguez@fleetflow.com',
+      department: 'Driver Management',
+      role: 'Driver Coordinator',
+      enrollmentDate: '2024-01-25',
+      completedCourses: 1,
+      totalCourses: 4,
+      averageScore: 87.3,
+      lastActivity: '2024-12-28',
+      status: 'In Progress',
+      currentCourse: 'Compliance & Safety Excellence',
+      progress: 34,
+    },
+  ]);
+
+  // Administrative view of courses (referencing university courses)
+  const comprehensiveCourses = [
+    {
+      id: 'dispatcher-operations-mastery',
+      title: 'Dispatcher Operations Mastery',
+      enrolledStudents: students.filter((s) =>
+        s.currentCourse.includes('Dispatcher')
+      ).length,
+      completionRate: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Dispatcher'))
+          .reduce((acc, s) => acc + s.progress, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Dispatcher'))
+              .length,
+            1
+          )
+      ),
+      averageScore: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Dispatcher'))
+          .reduce((acc, s) => acc + s.averageScore, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Dispatcher'))
+              .length,
+            1
+          )
+      ),
+      status: 'Active',
+    },
+    {
+      id: 'broker-business-mastery',
+      title: 'Broker Business Mastery',
+      enrolledStudents: students.filter((s) => s.department === 'Brokerage')
+        .length,
+      completionRate: Math.round(
+        students
+          .filter((s) => s.department === 'Brokerage')
+          .reduce((acc, s) => acc + s.progress, 0) /
+          Math.max(
+            students.filter((s) => s.department === 'Brokerage').length,
+            1
+          )
+      ),
+      averageScore: Math.round(
+        students
+          .filter((s) => s.department === 'Brokerage')
+          .reduce((acc, s) => acc + s.averageScore, 0) /
+          Math.max(
+            students.filter((s) => s.department === 'Brokerage').length,
+            1
+          )
+      ),
+      status: 'Active',
+    },
+    {
+      id: 'fleet-operations-excellence',
+      title: 'Fleet Operations Excellence',
+      enrolledStudents: students.filter((s) =>
+        s.currentCourse.includes('Fleet')
+      ).length,
+      completionRate: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Fleet'))
+          .reduce((acc, s) => acc + s.progress, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Fleet')).length,
+            1
+          )
+      ),
+      averageScore: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Fleet'))
+          .reduce((acc, s) => acc + s.averageScore, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Fleet')).length,
+            1
+          )
+      ),
+      status: 'Active',
+    },
+    {
+      id: 'compliance-safety-excellence',
+      title: 'Compliance & Safety Excellence',
+      enrolledStudents: students.filter((s) =>
+        s.currentCourse.includes('Compliance')
+      ).length,
+      completionRate: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Compliance'))
+          .reduce((acc, s) => acc + s.progress, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Compliance'))
+              .length,
+            1
+          )
+      ),
+      averageScore: Math.round(
+        students
+          .filter((s) => s.currentCourse.includes('Compliance'))
+          .reduce((acc, s) => acc + s.averageScore, 0) /
+          Math.max(
+            students.filter((s) => s.currentCourse.includes('Compliance'))
+              .length,
+            1
+          )
+      ),
+      status: 'Active',
+    },
+  ];
 
   // Check if user has access to training
   if (!trainingAccess.canAccessTraining) {
@@ -102,7 +277,7 @@ export default function TrainingPage() {
               marginBottom: '30px',
             }}
           >
-            You don't have access to FleetFlow University. Please contact your
+            You don't have access to FleetFlow University℠. Please contact your
             administrator to request training access.
           </p>
           <Link href='/' style={{ textDecoration: 'none' }}>
@@ -203,271 +378,58 @@ export default function TrainingPage() {
     }
   };
 
-  // Training modules data
-  const trainingModules = [
-    {
-      id: 'dispatch-mastery',
-      title: '🚛 FleetFlow™ Dispatch Operations Mastery',
-      category: 'Operations',
-      description:
-        'Complete dispatcher training with FleetFlow™ system integration - from basic operations to advanced driver management and load coordination',
-      duration: '8-10 hours',
-      level: 'Professional',
-      color: 'rgba(59, 130, 246, 0.15)',
-      borderColor: 'rgba(59, 130, 246, 0.3)',
-      resources: [
-        {
-          type: 'system-training',
-          title: 'FleetFlow™ Dispatch Central Interface',
-          url: '/dispatch',
-          icon: '🖥️',
-        },
-        {
-          type: 'interactive',
-          title: 'Enhanced Load Board Navigation',
-          url: '/dispatch',
-          icon: '📋',
-        },
-        {
-          type: 'live-system',
-          title: 'Live Load Tracking Dashboard',
-          url: '/tracking',
-          icon: '📍',
-        },
-        {
-          type: 'management',
-          title: 'Driver Management & Performance Analytics',
-          url: '/drivers',
-          icon: '👥',
-        },
-        {
-          type: 'process',
-          title: 'Load Identification System Training',
-          url: '/load-identifier-demo',
-          icon: '🏷️',
-        },
-        {
-          type: 'communication',
-          title: 'SMS Communication & Notifications',
-          url: '/sms-training',
-          icon: '📱',
-        },
-        {
-          type: 'workflow',
-          title: 'Route Planning & Optimization',
-          url: '/routes',
-          icon: '🗺️',
-        },
-        {
-          type: 'certification',
-          title: 'FleetFlow™ Certified Dispatcher Exam',
-          url: '#',
-          icon: '🏆',
-        },
-      ],
-    },
-    {
-      id: 'brokerage-mastery',
-      title: '🤝 FleetFlow™ Brokerage & Documentation Mastery',
-      category: 'Operations',
-      description:
-        'Comprehensive freight brokerage training with BOL/MBL/HBL documentation, customer relations, warehouse operations, and FleetFlow™ system integration',
-      duration: '8.5-10.5 hours',
-      level: 'Advanced Professional',
-      color: 'rgba(16, 185, 129, 0.15)',
-      borderColor: 'rgba(16, 185, 129, 0.3)',
-      resources: [
-        {
-          type: 'comprehensive',
-          title: 'BOL Documentation System (MBL/HBL/40 Documents)',
-          url: '/training/bol-documentation',
-          icon: '📄',
-        },
-        {
-          type: 'system-training',
-          title: 'FreightFlow RFx℠ System Training',
-          url: '/freightflow-rfx',
-          icon: '📊',
-        },
-        {
-          type: 'api-integration',
-          title: 'FMCSA Carrier Verification System',
-          url: '/carrier-verification',
-          icon: '🔍',
-        },
-        {
-          type: 'customer-system',
-          title: 'FleetFlow™ CRM & Customer Management',
-          url: '/crm',
-          icon: '🤝',
-        },
-        {
-          type: 'portal-training',
-          title: 'Shipper Portal Integration',
-          url: '/shipper-portal',
-          icon: '🏢',
-        },
-        {
-          type: 'warehouse-ops',
-          title: 'Warehouse Operations Dashboard',
-          url: '#',
-          icon: '🏭',
-        },
-        {
-          type: 'billing-system',
-          title: 'Bill.com API Billing Automation',
-          url: '/billing',
-          icon: '💰',
-        },
-        {
-          type: 'quoting-system',
-          title: 'Enhanced Quoting Module',
-          url: '/quoting-enhanced',
-          icon: '💲',
-        },
-        {
-          type: 'certification',
-          title: 'FleetFlow™ Certified Freight Broker Exam',
-          url: '#',
-          icon: '🏆',
-        },
-      ],
-    },
-    {
-      id: 'workflow-communication',
-      title: '🔄 FleetFlow™ Workflow & Communication Systems',
-      category: 'Communications',
-      description:
-        'Master the complete FleetFlow™ digital ecosystem including SMS workflows, notification systems, and mobile integration',
-      duration: '3-4 hours',
-      level: 'Intermediate',
-      color: 'rgba(102, 126, 234, 0.15)',
-      borderColor: 'rgba(102, 126, 234, 0.3)',
-      resources: [
-        {
-          type: 'workflow-system',
-          title: 'Complete Workflow Ecosystem Training',
-          url: '/workflow-training',
-          icon: '🔄',
-        },
-        {
-          type: 'sms-system',
-          title: 'SMS Notification System Mastery',
-          url: '/sms-training',
-          icon: '📱',
-        },
-        {
-          type: 'notification-hub',
-          title: 'Notification Hub & Department Alerts',
-          url: '/notifications',
-          icon: '🔔',
-        },
-        {
-          type: 'mobile-integration',
-          title: 'Driver Mobile App Integration',
-          url: '/driver-portal',
-          icon: '📲',
-        },
-        {
-          type: 'tracking-system',
-          title: 'Real-Time Message Tracking & Logs',
-          url: '/notes',
-          icon: '📋',
-        },
-        {
-          type: 'templates',
-          title: 'Communication Templates & Best Practices',
-          url: '/sms-training',
-          icon: '📝',
-        },
-        {
-          type: 'certification',
-          title: 'FleetFlow™ Workflow Specialist Certification',
-          url: '#',
-          icon: '🏆',
-        },
-      ],
-    },
-    {
-      id: 'compliance-safety',
-      title: '🛡️ FleetFlow™ Compliance & Safety Hub',
-      category: 'Compliance',
-      description:
-        'Comprehensive DOT compliance and safety management training integrated with FleetFlow™ compliance tracking and reporting systems',
-      duration: '3-4 hours',
-      level: 'Essential',
-      color: 'rgba(239, 68, 68, 0.15)',
-      borderColor: 'rgba(239, 68, 68, 0.3)',
-      resources: [
-        {
-          type: 'compliance-system',
-          title: 'DOT Compliance Tracking in FleetFlow™',
-          url: '/dot-compliance',
-          icon: '⚖️',
-        },
-        {
-          type: 'safety-system',
-          title: 'Safety Management Protocols & Reporting',
-          url: '/safety',
-          icon: '🦺',
-        },
-        {
-          type: 'fmcsa-integration',
-          title: 'FMCSA SAFER API Integration',
-          url: '/carrier-verification',
-          icon: '🔗',
-        },
-        {
-          type: 'document-system',
-          title: 'Automated Compliance Documentation',
-          url: '/documents',
-          icon: '📑',
-        },
-        {
-          type: 'hos-tracking',
-          title: 'Hours of Service (HOS) Compliance',
-          url: '/drivers',
-          icon: '⏰',
-        },
-        {
-          type: 'violation-prevention',
-          title: 'Violation Prevention & Risk Management',
-          url: '/compliance',
-          icon: '🛡️',
-        },
-        {
-          type: 'certification',
-          title: 'FleetFlow™ Compliance Officer Certification',
-          url: '#',
-          icon: '🏆',
-        },
-      ],
-    },
-  ];
-
-  const categories = ['All', 'Operations', 'Communications', 'Compliance'];
-
-  // Filter modules based on user access and category
-  const accessibleModules = trainingModules.filter((module) =>
-    trainingAccess.allowedModules.includes(module.id as any)
-  );
-
-  const filteredModules =
-    selectedCategory === 'All'
-      ? accessibleModules
-      : accessibleModules.filter(
-          (module) => module.category === selectedCategory
-        );
-
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
         minHeight: '100vh',
         paddingTop: '80px',
         paddingBottom: '40px',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* CSS Keyframes */}
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+      `}</style>
+
+      {/* Animated Background Elements */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '10%',
+          right: '15%',
+          width: '300px',
+          height: '300px',
+          background:
+            'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
+          borderRadius: '50%',
+          animation: 'float 6s ease-in-out infinite',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '20%',
+          left: '10%',
+          width: '200px',
+          height: '200px',
+          background:
+            'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)',
+          borderRadius: '50%',
+          animation: 'float 4s ease-in-out infinite reverse',
+        }}
+      />
       {/* Navigation */}
       <div
         style={{
@@ -527,12 +489,11 @@ export default function TrainingPage() {
         </div>
       </div>
 
-      {/* Header Section */}
+      {/* Professional LMS Header */}
       <div
         style={{
-          textAlign: 'center',
-          marginBottom: '40px',
-          padding: '0 20px',
+          marginBottom: '32px',
+          padding: '0 24px',
         }}
       >
         <div
@@ -540,853 +501,1166 @@ export default function TrainingPage() {
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
-            padding: '40px',
+            padding: '32px',
             margin: '0 auto',
-            maxWidth: '800px',
+            maxWidth: '1600px',
             border: '1px solid rgba(255, 255, 255, 0.18)',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <h1
-            style={{
-              fontSize: '3rem',
-              fontWeight: 'bold',
-              color: 'white',
-              margin: '0 0 16px 0',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-            }}
-          >
-            🎓 FleetFlow University
-          </h1>
-          <p
-            style={{
-              fontSize: '1.4rem',
-              color: 'rgba(255, 255, 255, 0.95)',
-              margin: '0 0 8px 0',
-              fontWeight: '600',
-              textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
-            }}
-          >
-            "Knowledge on & off the Road"
-          </p>
-          <p
-            style={{
-              fontSize: '1.1rem',
-              color: 'rgba(255, 255, 255, 0.9)',
-              margin: 0,
-              lineHeight: '1.6',
-              fontStyle: 'italic',
-            }}
-          >
-            "Dispatch Smart, Drive Safe, Deal Right"
-          </p>
-
-          {/* User Info */}
-          <div
-            style={{
-              marginTop: '20px',
-              display: 'inline-block',
-              padding: '8px 16px',
-              background:
-                user?.role === 'broker'
-                  ? 'rgba(16, 185, 129, 0.3)'
-                  : user?.role === 'dispatcher'
-                    ? 'rgba(59, 130, 246, 0.3)'
-                    : user?.role === 'driver'
-                      ? 'rgba(239, 68, 68, 0.3)'
-                      : 'rgba(76, 175, 80, 0.3)',
-              border:
-                user?.role === 'broker'
-                  ? '1px solid rgba(16, 185, 129, 0.5)'
-                  : user?.role === 'dispatcher'
-                    ? '1px solid rgba(59, 130, 246, 0.5)'
-                    : user?.role === 'driver'
-                      ? '1px solid rgba(239, 68, 68, 0.5)'
-                      : '1px solid rgba(76, 175, 80, 0.5)',
-              borderRadius: '10px',
-              fontSize: '0.9rem',
-              color:
-                user?.role === 'broker'
-                  ? '#10B981'
-                  : user?.role === 'dispatcher'
-                    ? '#3B82F6'
-                    : user?.role === 'driver'
-                      ? '#EF4444'
-                      : '#4CAF50',
-              fontWeight: '600',
-            }}
-          >
-            {user?.role === 'broker'
-              ? '🤝'
-              : user?.role === 'dispatcher'
-                ? '🚛'
-                : user?.role === 'driver'
-                  ? '👨‍💼'
-                  : '🔐'}{' '}
-            {user?.name || 'Current User'} |{' '}
-            {user?.role?.toUpperCase() || 'TRAINEE'}
-            <br />
-            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-              Access to {trainingAccess.allowedModules.length} training modules
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Category Filter */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '10px',
-          justifyContent: 'center',
-          marginBottom: '40px',
-          flexWrap: 'wrap',
-          padding: '0 20px',
-        }}
-      >
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            style={{
-              background:
-                selectedCategory === category
-                  ? 'rgba(255, 255, 255, 0.9)'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color: selectedCategory === category ? '#667eea' : 'white',
-              border:
-                selectedCategory === category
-                  ? '2px solid rgba(255, 255, 255, 0.9)'
-                  : '1px solid rgba(255, 255, 255, 0.3)',
-              padding: '10px 20px',
-              borderRadius: '25px',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)',
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* Progress Summary Card */}
-      <div
-        style={{
-          maxWidth: '1000px',
-          margin: '0 auto 40px',
-          padding: '0 20px',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            padding: '30px',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <h3
-            style={{
-              fontSize: '1.4rem',
-              fontWeight: 'bold',
-              color: '#1f2937',
-              marginBottom: '20px',
-              textAlign: 'center',
-            }}
-          >
-            🎯 Your Learning Journey
-          </h3>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '16px',
-              marginBottom: '20px',
-            }}
-          >
-            {accessibleModules.map((module) => (
-              <div
-                key={module.id}
-                style={{
-                  textAlign: 'center',
-                  padding: '12px',
-                  background: module.color,
-                  borderRadius: '12px',
-                  border: `1px solid ${module.borderColor}`,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '1.5rem',
-                    marginBottom: '4px',
-                  }}
-                >
-                  {moduleProgress[module.id] === 100
-                    ? '🏆'
-                    : moduleProgress[module.id] > 50
-                      ? '📚'
-                      : '📖'}
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '4px',
-                  }}
-                >
-                  {module.id.toUpperCase()}
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.9rem',
-                    fontWeight: 'bold',
-                    color:
-                      moduleProgress[module.id] === 100 ? '#059669' : '#6b7280',
-                  }}
-                >
-                  {moduleProgress[module.id] || 0}%
-                </div>
-              </div>
-            ))}
-          </div>
-
           <div
             style={{
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
-              padding: '16px',
-              background: 'rgba(59, 130, 246, 0.1)',
-              borderRadius: '12px',
-              border: '1px solid rgba(59, 130, 246, 0.2)',
+              justifyContent: 'space-between',
+              marginBottom: '24px',
             }}
           >
-            <div>
+            <div style={{ textAlign: 'left' }}>
+              <h1
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                }}
+              >
+                🎓 FleetFlow University℠
+              </h1>
               <div
                 style={{
-                  fontSize: '0.9rem',
-                  color: '#6b7280',
+                  background:
+                    'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2))',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  display: 'inline-block',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#60a5fa',
+                    margin: '0',
+                    fontWeight: '700',
+                  }}
+                >
+                  🏫 Learning Management System - Administrator Console
+                </h2>
+              </div>
+            </div>
+
+            {/* Instructor Info */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                textAlign: 'right',
+              }}
+            >
+              <div
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
                   marginBottom: '4px',
                 }}
               >
-                Overall Progress
+                👨‍🏫 {user?.name}
               </div>
               <div
                 style={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: '#1f2937',
-                }}
-              >
-                {Math.round(
-                  Object.values(moduleProgress).reduce((a, b) => a + b, 0) /
-                    accessibleModules.length
-                ) || 0}
-                % Complete
-              </div>
-            </div>
-            <div>
-              <div
-                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
                   fontSize: '0.9rem',
-                  color: '#6b7280',
-                  marginBottom: '4px',
+                  marginBottom: '8px',
                 }}
               >
-                Certificates Earned
+                Training Administrator • {user?.role?.toUpperCase()}
               </div>
               <div
                 style={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: '#059669',
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'flex-end',
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.7)',
                 }}
               >
-                {certificates.length} 🏆
+                <span>📊 {students.length} Students</span>
+                <span>📚 {comprehensiveCourses.length} Active Courses</span>
+                <span>
+                  🎯 {students.filter((s) => s.status === 'Completed').length}{' '}
+                  Graduates
+                </span>
               </div>
             </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            {[
+              { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+              { id: 'students', label: '👥 Student Roster', icon: '👥' },
+              { id: 'courses', label: '📚 Course Management', icon: '📚' },
+              { id: 'analytics', label: '📈 Analytics', icon: '📈' },
+              { id: 'assessments', label: '🧠 Assessments', icon: '🧠' },
+              { id: 'reports', label: '📋 Reports', icon: '📋' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveView(tab.id as any)}
+                style={{
+                  background:
+                    activeView === tab.id
+                      ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.3))'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  border:
+                    activeView === tab.id
+                      ? '2px solid rgba(59, 130, 246, 0.5)'
+                      : '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  padding: '12px 20px',
+                  color:
+                    activeView === tab.id
+                      ? '#60a5fa'
+                      : 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '0.95rem',
+                  fontWeight: activeView === tab.id ? '700' : '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow:
+                    activeView === tab.id
+                      ? '0 4px 12px rgba(59, 130, 246, 0.2)'
+                      : 'none',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Training Modules Grid */}
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '0 20px',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-            gap: '30px',
-          }}
-        >
-          {filteredModules.map((module) => (
+      {/* Main Content Area */}
+      <div style={{ padding: '0 24px', maxWidth: '1600px', margin: '0 auto' }}>
+        {activeView === 'students' && (
+          <div>
+            {/* Student Roster Header */}
             <div
-              key={module.id}
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
+                background: 'rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
-                borderRadius: '20px',
-                padding: '30px',
-                border: `2px solid ${module.borderColor}`,
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow =
-                  '0 20px 40px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 8px 32px rgba(0, 0, 0, 0.1)';
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
               }}
             >
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
                   marginBottom: '20px',
                 }}
               >
-                <div>
-                  <h3
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    margin: 0,
+                  }}
+                >
+                  👥 Student Roster Management
+                </h3>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
                     style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 'bold',
-                      color: '#1f2937',
-                      margin: '0 0 8px 0',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
                     }}
                   >
-                    {module.title}
-                  </h3>
-                  <div
+                    + Add Student
+                  </button>
+                  <button
                     style={{
-                      display: 'flex',
-                      gap: '10px',
-                      marginBottom: '12px',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
                     }}
                   >
-                    <span
-                      style={{
-                        background: module.color,
-                        color: '#374151',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {module.level}
-                    </span>
-                    <span
-                      style={{
-                        background: 'rgba(107, 114, 128, 0.1)',
-                        color: '#374151',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      ⏱️ {module.duration}
-                    </span>
-                  </div>
+                    📊 Export Report
+                  </button>
                 </div>
               </div>
 
-              <p
-                style={{
-                  color: '#6b7280',
-                  lineHeight: '1.6',
-                  marginBottom: '24px',
-                  fontSize: '1rem',
-                }}
-              >
-                {module.description}
-              </p>
-
-              {/* Resources */}
+              {/* Student Grid */}
               <div
                 style={{
-                  borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-                  paddingTop: '20px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                {students.map((student) => (
+                  <div
+                    key={student.id}
+                    onClick={() => setSelectedStudent(student)}
+                    style={{
+                      background:
+                        selectedStudent?.id === student.id
+                          ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2))'
+                          : 'rgba(255, 255, 255, 0.08)',
+                      border:
+                        selectedStudent?.id === student.id
+                          ? '2px solid rgba(59, 130, 246, 0.5)'
+                          : '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <div>
+                        <h4
+                          style={{
+                            color: 'white',
+                            fontSize: '1.1rem',
+                            fontWeight: '600',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          {student.name}
+                        </h4>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.9rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          🆔 {student.id}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          📧 {student.email}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background:
+                            student.status === 'Completed'
+                              ? '#10b981'
+                              : student.status === 'Active'
+                                ? '#3b82f6'
+                                : '#f59e0b',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {student.status}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.8rem',
+                            marginBottom: '2px',
+                          }}
+                        >
+                          Department
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {student.department}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.8rem',
+                            marginBottom: '2px',
+                          }}
+                        >
+                          Role
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {student.role}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '12px' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          Overall Progress
+                        </span>
+                        <span
+                          style={{
+                            color: 'white',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {student.progress}%
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '10px',
+                          height: '8px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background:
+                              student.progress >= 80
+                                ? '#10b981'
+                                : student.progress >= 50
+                                  ? '#3b82f6'
+                                  : '#f59e0b',
+                            height: '100%',
+                            width: `${student.progress}%`,
+                            transition: 'width 0.3s ease',
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '0.8rem',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      <span>
+                        📚 {student.completedCourses}/{student.totalCourses}{' '}
+                        Courses
+                      </span>
+                      <span>⭐ {student.averageScore}% Avg</span>
+                      <span>📅 {student.lastActivity}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Selected Student Details */}
+            {selectedStudent && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    marginBottom: '20px',
+                  }}
+                >
+                  📊 Student Profile: {selectedStudent.name}
+                </h3>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: '24px',
+                  }}
+                >
+                  <div>
+                    <h4
+                      style={{
+                        color: '#60a5fa',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Personal Information
+                    </h4>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        lineHeight: '1.6',
+                      }}
+                    >
+                      <div>
+                        <strong>Student ID:</strong> {selectedStudent.id}
+                      </div>
+                      <div>
+                        <strong>Email:</strong> {selectedStudent.email}
+                      </div>
+                      <div>
+                        <strong>Department:</strong>{' '}
+                        {selectedStudent.department}
+                      </div>
+                      <div>
+                        <strong>Role:</strong> {selectedStudent.role}
+                      </div>
+                      <div>
+                        <strong>Enrolled:</strong>{' '}
+                        {selectedStudent.enrollmentDate}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4
+                      style={{
+                        color: '#60a5fa',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Academic Performance
+                    </h4>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        lineHeight: '1.6',
+                      }}
+                    >
+                      <div>
+                        <strong>Current Course:</strong>{' '}
+                        {selectedStudent.currentCourse}
+                      </div>
+                      <div>
+                        <strong>Progress:</strong> {selectedStudent.progress}%
+                      </div>
+                      <div>
+                        <strong>Completed:</strong>{' '}
+                        {selectedStudent.completedCourses}/
+                        {selectedStudent.totalCourses} courses
+                      </div>
+                      <div>
+                        <strong>Average Score:</strong>{' '}
+                        {selectedStudent.averageScore}%
+                      </div>
+                      <div>
+                        <strong>Status:</strong> {selectedStudent.status}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4
+                      style={{
+                        color: '#60a5fa',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Quick Actions
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                      }}
+                    >
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        📝 Assign Course
+                      </button>
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        🏆 Award Certificate
+                      </button>
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #f59e0b, #d97706)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        📧 Send Message
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeView === 'dashboard' && (
+          <div>
+            {/* Dashboard Overview */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px',
+                marginBottom: '24px',
+              }}
+            >
+              {/* Stats Cards */}
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1))',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '16px',
+                  padding: '24px',
                 }}
               >
                 <h4
                   style={{
+                    color: '#60a5fa',
                     fontSize: '1.1rem',
                     fontWeight: '600',
-                    color: '#374151',
+                    marginBottom: '8px',
+                  }}
+                >
+                  📊 Total Students
+                </h4>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '2.5rem',
+                    fontWeight: '700',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {students.length}
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Across all departments
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#10b981',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🎯 Completion Rate
+                </h4>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '2.5rem',
+                    fontWeight: '700',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {Math.round(
+                    students.reduce((acc, s) => acc + s.progress, 0) /
+                      students.length
+                  )}
+                  %
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Average progress
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1))',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#f59e0b',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🏆 Graduates
+                </h4>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '2.5rem',
+                    fontWeight: '700',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {students.filter((s) => s.status === 'Completed').length}
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Certified professionals
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'courses' && (
+          <div>
+            {/* Course Management Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    margin: 0,
+                  }}
+                >
+                  📚 Course Analytics & Oversight
+                </h3>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <Link href='/university' style={{ textDecoration: 'none' }}>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🎓 View University Courses
+                    </button>
+                  </Link>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📊 Full Analytics
+                  </button>
+                </div>
+              </div>
+
+              {/* Course Overview Stats */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#60a5fa',
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {comprehensiveCourses.length}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Active Courses
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#10b981',
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {comprehensiveCourses.reduce(
+                      (acc, course) => acc + course.enrolledStudents,
+                      0
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Total Enrollments
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {Math.round(
+                      comprehensiveCourses.reduce(
+                        (acc, course) => acc + course.completionRate,
+                        0
+                      ) / comprehensiveCourses.length
+                    )}
+                    %
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Avg Completion
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.1)',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#a855f7',
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {Math.round(
+                      comprehensiveCourses.reduce(
+                        (acc, course) => acc + course.averageScore,
+                        0
+                      ) / comprehensiveCourses.length
+                    )}
+                    %
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Avg Score
+                  </div>
+                </div>
+              </div>
+
+              {/* Course Performance Summary */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
                     marginBottom: '16px',
                   }}
                 >
-                  📚 Training Resources
+                  📋 Course Performance Summary
                 </h4>
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                    gap: '12px',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '16px',
                   }}
                 >
-                  {module.resources.map((resource, index) => (
-                    <a
-                      key={index}
-                      href={resource.url}
+                  {comprehensiveCourses.map((course, index) => (
+                    <div
+                      key={course.id}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '12px',
-                        background: 'rgba(249, 250, 251, 0.8)',
+                        background: 'rgba(255, 255, 255, 0.08)',
                         borderRadius: '10px',
-                        textDecoration: 'none',
-                        color: '#374151',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        transition: 'all 0.3s ease',
-                        border: '1px solid rgba(0, 0, 0, 0.05)',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = module.color;
-                        e.currentTarget.style.transform = 'translateX(4px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(249, 250, 251, 0.8)';
-                        e.currentTarget.style.transform = 'translateX(0)';
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                       }}
                     >
-                      <span style={{ fontSize: '1.2rem' }}>
-                        {resource.icon}
-                      </span>
-                      <span>{resource.title}</span>
-                    </a>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        <h5
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            margin: 0,
+                          }}
+                        >
+                          {course.title}
+                        </h5>
+                        <div
+                          style={{
+                            background:
+                              course.status === 'Active'
+                                ? '#10b981'
+                                : '#6b7280',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {course.status}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr 1fr',
+                          gap: '8px',
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#60a5fa', fontWeight: '700' }}>
+                            {course.enrolledStudents}
+                          </div>
+                          <div style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                            Students
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#10b981', fontWeight: '700' }}>
+                            {course.completionRate}%
+                          </div>
+                          <div style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                            Complete
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#f59e0b', fontWeight: '700' }}>
+                            {course.averageScore}%
+                          </div>
+                          <div style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                            Avg Score
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              {/* Progress Bar */}
+              {/* Note about course location */}
               <div
                 style={{
-                  marginBottom: '16px',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '8px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      color: '#374151',
-                    }}
-                  >
-                    Progress
-                  </span>
-                  <span style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-                    {moduleProgress[module.id] || 0}%
-                  </span>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(107, 114, 128, 0.1)',
-                    borderRadius: '8px',
-                    height: '8px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      background:
-                        moduleProgress[module.id] === 100
-                          ? 'linear-gradient(135deg, #10B981, #059669)'
-                          : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                      height: '100%',
-                      width: `${moduleProgress[module.id] || 0}%`,
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '12px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '12px',
+                  padding: '16px',
                   marginTop: '20px',
+                  textAlign: 'center',
                 }}
               >
-                <button
-                  onClick={() =>
-                    handleStartLesson(module.id, `lesson_${Date.now()}`)
-                  }
+                <p
                   style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #a16207, #92400e)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '14px',
-                    borderRadius: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 25px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '0.9rem',
+                    margin: 0,
                   }}
                 >
-                  🚀 Start Training
-                </button>
-
-                {/* Show certification button for all modules with quiz support */}
-                {(availableModules.includes(module.id) ||
-                  [
-                    'dispatch-mastery',
-                    'brokerage-mastery',
-                    'compliance-safety',
-                  ].includes(module.id)) && (
-                  <button
-                    onClick={() => handleStartQuiz(module.id)}
-                    disabled={
-                      !progressManager.isCertificationEligible(
-                        module.id,
-                        user?.id
-                      )
-                    }
-                    style={{
-                      flex: 1,
-                      background: progressManager.isCertificationEligible(
-                        module.id,
-                        user?.id
-                      )
-                        ? 'linear-gradient(135deg, #F59E0B, #D97706)'
-                        : 'rgba(107, 114, 128, 0.3)',
-                      color: progressManager.isCertificationEligible(
-                        module.id,
-                        user?.id
-                      )
-                        ? 'white'
-                        : '#9CA3AF',
-                      border: 'none',
-                      padding: '14px',
-                      borderRadius: '12px',
-                      fontSize: '1rem',
-                      fontWeight: '600',
-                      cursor: progressManager.isCertificationEligible(
-                        module.id,
-                        user?.id
-                      )
-                        ? 'pointer'
-                        : 'not-allowed',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (
-                        progressManager.isCertificationEligible(
-                          module.id,
-                          user?.id
-                        )
-                      ) {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 8px 25px rgba(245, 158, 11, 0.25)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (
-                        progressManager.isCertificationEligible(
-                          module.id,
-                          user?.id
-                        )
-                      ) {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }
-                    }}
-                  >
-                    {progressManager.isCertificationEligible(
-                      module.id,
-                      user?.id
-                    )
-                      ? '🏆 Get Certified'
-                      : '🔒 Complete Training First'}
-                  </button>
-                )}
+                  💡 <strong>Course Management:</strong> The 4 Role-Based
+                  Comprehensive Courses are managed in
+                  <strong style={{ color: '#60a5fa' }}>
+                    {' '}
+                    FleetFlow University℠
+                  </strong>{' '}
+                  (/university). This dashboard provides administrative
+                  oversight and analytics.
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer Info */}
-      <div
-        style={{
-          textAlign: 'center',
-          marginTop: '60px',
-          padding: '0 20px',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '15px',
-            padding: '30px',
-            margin: '0 auto',
-            maxWidth: '600px',
-            border: '1px solid rgba(255, 255, 255, 0.18)',
-          }}
-        >
-          <h3
-            style={{
-              fontSize: '1.3rem',
-              fontWeight: 'bold',
-              color: 'white',
-              marginBottom: '16px',
-            }}
-          >
-            💡 Training Center Features
-          </h3>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-              gap: '20px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontSize: '0.9rem',
-            }}
-          >
-            <div>📊 Interactive Presentations</div>
-            <div>🎥 Video Learning</div>
-            <div>📋 Downloadable Resources</div>
-            <div>🧠 Knowledge Assessments</div>
-            <div>📈 Progress Tracking</div>
-            <div>🏆 Certification System</div>
           </div>
-        </div>
+        )}
 
-        {/* Dynamic Quiz Status - Admin View */}
-        {hasManagementAccess && (
+        {activeView === 'analytics' && (
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
-              borderRadius: '15px',
-              padding: '20px',
-              margin: '20px auto 0',
-              maxWidth: '800px',
+              borderRadius: '16px',
+              padding: '40px',
+              textAlign: 'center',
               border: '1px solid rgba(255, 255, 255, 0.18)',
             }}
           >
-            <h4
+            <h3
               style={{
-                fontSize: '1.1rem',
-                fontWeight: 'bold',
                 color: 'white',
-                marginBottom: '12px',
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '16px',
               }}
             >
-              🔧 Quiz System Status (Admin View)
-            </h4>
-            <div
+              📈 Advanced Analytics
+            </h3>
+            <p
+              style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}
+            >
+              Comprehensive analytics dashboard coming soon...
+            </p>
+          </div>
+        )}
+
+        {activeView === 'assessments' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '40px',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+            }}
+          >
+            <h3
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '12px',
-                color: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '0.8rem',
+                color: 'white',
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '16px',
               }}
             >
-              {availableModules.map((moduleId) => {
-                const validation =
-                  quizGenerator.validateModuleQuestions(moduleId);
-                return (
-                  <div
-                    key={moduleId}
-                    style={{
-                      padding: '8px 12px',
-                      background: validation.isValid
-                        ? 'rgba(16, 185, 129, 0.2)'
-                        : 'rgba(239, 68, 68, 0.2)',
-                      borderRadius: '8px',
-                      border: validation.isValid
-                        ? '1px solid rgba(16, 185, 129, 0.4)'
-                        : '1px solid rgba(239, 68, 68, 0.4)',
-                    }}
-                  >
-                    <div style={{ fontWeight: '600' }}>
-                      {validation.isValid ? '✅' : '⚠️'}{' '}
-                      {moduleId.toUpperCase()}
-                    </div>
-                    <div>
-                      {validation.availableQuestions}/
-                      {validation.requiredQuestions} questions
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div
+              🧠 Assessment Management
+            </h3>
+            <p
+              style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}
+            >
+              Quiz and assessment creation tools coming soon...
+            </p>
+          </div>
+        )}
+
+        {activeView === 'reports' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '40px',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+            }}
+          >
+            <h3
               style={{
-                marginTop: '12px',
-                fontSize: '0.8rem',
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontStyle: 'italic',
+                color: 'white',
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '16px',
               }}
             >
-              ✨ Dynamic quiz system automatically updates as training content
-              grows
-            </div>
+              📋 Advanced Reporting
+            </h3>
+            <p
+              style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}
+            >
+              Comprehensive reporting suite coming soon...
+            </p>
           </div>
         )}
       </div>
-
-      {/* Certification Quiz Overlay */}
-      {showQuiz && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '800px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflow: 'auto',
-              position: 'relative',
-            }}
-          >
-            <button
-              onClick={() => {
-                setShowQuiz(null);
-                setDynamicQuizData(null);
-              }}
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                background: 'rgba(239, 68, 68, 0.9)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '40px',
-                height: '40px',
-                fontSize: '1.2rem',
-                cursor: 'pointer',
-                zIndex: 2001,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              ✕
-            </button>
-
-            {/* Dynamic Quiz Support */}
-            {showQuiz &&
-              dynamicQuizData &&
-              availableModules.includes(showQuiz) && (
-                <CertificationSystem
-                  moduleId={showQuiz}
-                  moduleTitle={`${showQuiz.charAt(0).toUpperCase() + showQuiz.slice(1)} Certification`}
-                  questions={dynamicQuizData.questions}
-                  passingScore={dynamicQuizData.config.passingScore}
-                  onCertificationEarned={handleCertificationEarned}
-                />
-              )}
-
-            {/* Legacy Static Quizzes (for backward compatibility) */}
-            {showQuiz === 'dispatch-mastery' &&
-              (!dynamicQuizData ||
-                !availableModules.includes('dispatch-mastery')) && (
-                <CertificationSystem
-                  moduleId='dispatch-mastery'
-                  moduleTitle='FleetFlow™ Dispatch Operations Certification'
-                  questions={dispatchQuizQuestions}
-                  passingScore={80}
-                  onCertificationEarned={handleCertificationEarned}
-                />
-              )}
-
-            {showQuiz === 'brokerage-mastery' &&
-              (!dynamicQuizData ||
-                !availableModules.includes('brokerage-mastery')) && (
-                <CertificationSystem
-                  moduleId='brokerage-mastery'
-                  moduleTitle='FleetFlow™ Brokerage & Documentation Certification'
-                  questions={brokerQuizQuestions}
-                  passingScore={85}
-                  onCertificationEarned={handleCertificationEarned}
-                />
-              )}
-
-            {showQuiz === 'workflow-communication' &&
-              (!dynamicQuizData ||
-                !availableModules.includes('workflow-communication')) && (
-                <CertificationSystem
-                  moduleId='workflow-communication'
-                  moduleTitle='FleetFlow™ Workflow & Communication Certification'
-                  questions={smsWorkflowQuizQuestions}
-                  passingScore={85}
-                  onCertificationEarned={handleCertificationEarned}
-                />
-              )}
-
-            {showQuiz === 'compliance-safety' &&
-              (!dynamicQuizData ||
-                !availableModules.includes('compliance-safety')) && (
-                <CertificationSystem
-                  moduleId='compliance-safety'
-                  moduleTitle='FleetFlow™ Compliance & Safety Certification'
-                  questions={complianceQuizQuestions}
-                  passingScore={90}
-                  onCertificationEarned={handleCertificationEarned}
-                />
-              )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

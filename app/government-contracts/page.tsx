@@ -286,7 +286,7 @@ export default function GovernmentContractsPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            ← Back to FreightFlow RFx
+            ← Back to FreightFlow RFx℠
           </button>
         </Link>
 

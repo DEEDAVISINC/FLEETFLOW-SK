@@ -1,86 +1,95 @@
-'use client'
+'use client';
 
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
-import { getModuleColorScheme, extractModuleIdFromTitle, type ModuleColorScheme } from '../utils/moduleColors'
-import { getInstructorForModule, generateCertificateId, formatCertificateSerial, type InstructorInfo } from '../utils/instructorUtils'
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import {
+  formatCertificateSerial,
+  generateCertificateId,
+  getInstructorForModule,
+  type InstructorInfo,
+} from '../utils/instructorUtils';
+import {
+  extractModuleIdFromTitle,
+  getModuleColorScheme,
+} from '../utils/moduleColors';
 
 export interface CertificateData {
-  id: string
-  moduleTitle: string
-  recipientName: string
-  recipientEmail?: string
-  recipientRole: string
-  dateEarned: string
-  score: number
-  validUntil: string
-  instructorName?: string
-  companyName?: string
-  certificateId?: string
-  instructor?: InstructorInfo | null
+  id: string;
+  moduleTitle: string;
+  recipientName: string;
+  recipientEmail?: string;
+  recipientRole: string;
+  dateEarned: string;
+  score: number;
+  validUntil: string;
+  instructorName?: string;
+  companyName?: string;
+  certificateId?: string;
+  instructor?: InstructorInfo | null;
 }
 
 export class CertificateGenerator {
-  
-  static async generateCertificatePDF(certificateData: CertificateData): Promise<Blob> {
+  static async generateCertificatePDF(
+    certificateData: CertificateData
+  ): Promise<Blob> {
     // Generate unique certificate ID if not provided
     if (!certificateData.certificateId) {
       certificateData.certificateId = generateCertificateId();
     }
-    
+
     // Get instructor information for the module
     const moduleId = extractModuleIdFromTitle(certificateData.moduleTitle);
     if (!certificateData.instructor) {
       certificateData.instructor = getInstructorForModule(moduleId);
     }
-    
+
     // Create a temporary div for the certificate design
-    const certificateDiv = document.createElement('div')
-    certificateDiv.style.position = 'absolute'
-    certificateDiv.style.left = '-9999px'
-    certificateDiv.style.width = '1200px'
-    certificateDiv.style.height = '900px'
-    certificateDiv.style.background = 'white'
-    certificateDiv.style.fontFamily = 'Arial, sans-serif'
-    
-    certificateDiv.innerHTML = this.getCertificateHTML(certificateData)
-    
-    document.body.appendChild(certificateDiv)
-    
+    const certificateDiv = document.createElement('div');
+    certificateDiv.style.position = 'absolute';
+    certificateDiv.style.left = '-9999px';
+    certificateDiv.style.width = '1200px';
+    certificateDiv.style.height = '900px';
+    certificateDiv.style.background = 'white';
+    certificateDiv.style.fontFamily = 'Arial, sans-serif';
+
+    certificateDiv.innerHTML = this.getCertificateHTML(certificateData);
+
+    document.body.appendChild(certificateDiv);
+
     try {
       // Convert to canvas
       const canvas = await html2canvas(certificateDiv, {
         width: 1200,
         height: 900,
         scale: 2,
-        backgroundColor: '#ffffff'
-      })
-      
+        backgroundColor: '#ffffff',
+      });
+
       // Create PDF
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'px',
-        format: [1200, 900]
-      })
-      
-      const imgData = canvas.toDataURL('image/png')
-      pdf.addImage(imgData, 'PNG', 0, 0, 1200, 900)
-      
+        format: [1200, 900],
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, 1200, 900);
+
       // Clean up
-      document.body.removeChild(certificateDiv)
-      
-      return pdf.output('blob')
+      document.body.removeChild(certificateDiv);
+
+      return pdf.output('blob');
     } catch (error) {
-      document.body.removeChild(certificateDiv)
-      throw error
+      document.body.removeChild(certificateDiv);
+      throw error;
     }
   }
 
   private static getCertificateHTML(data: CertificateData): string {
     // Get module-specific color scheme
-    const moduleId = extractModuleIdFromTitle(data.moduleTitle)
-    const colors = getModuleColorScheme(moduleId)
-    
+    const moduleId = extractModuleIdFromTitle(data.moduleTitle);
+    const colors = getModuleColorScheme(moduleId);
+
     return `
       <div style="
         width: 100%;
@@ -99,12 +108,12 @@ export class CertificateGenerator {
           left: 0;
           right: 0;
           bottom: 0;
-          background-image: 
+          background-image:
             radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
             radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
           background-size: 50px 50px;
         "></div>
-        
+
         <!-- Certificate Content -->
         <div style="
           background: rgba(255, 255, 255, 0.98);
@@ -148,7 +157,7 @@ export class CertificateGenerator {
                   font-weight: bold;
                   color: #1f2937;
                   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-                ">FleetFlow University</div>
+                ">FleetFlow University℠</div>
                 <div style="
                   font-size: 16px;
                   color: #6b7280;
@@ -183,7 +192,7 @@ export class CertificateGenerator {
               margin-bottom: 20px;
               font-style: italic;
             ">This is to certify that</div>
-            
+
             <div style="
               font-size: 40px;
               font-weight: bold;
@@ -193,13 +202,13 @@ export class CertificateGenerator {
               border-bottom: 3px solid ${colors.primary};
               display: inline-block;
             ">${data.recipientName}</div>
-            
+
             <div style="
               font-size: 20px;
               color: #374151;
               margin: 20px 0;
             ">has successfully completed the training program</div>
-            
+
             <div style="
               font-size: 28px;
               font-weight: bold;
@@ -210,7 +219,7 @@ export class CertificateGenerator {
               border-radius: 10px;
               border: 2px solid ${colors.border};
             ">${data.moduleTitle}</div>
-            
+
             <div style="
               font-size: 18px;
               color: #374151;
@@ -239,7 +248,7 @@ export class CertificateGenerator {
                 color: #1f2937;
               ">${data.dateEarned}</div>
             </div>
-            
+
             <div style="text-align: center;">
               <div style="
                 font-size: 16px;
@@ -253,7 +262,7 @@ export class CertificateGenerator {
                 font-family: monospace;
               ">${data.certificateId ? formatCertificateSerial(data.certificateId) : data.id}</div>
             </div>
-            
+
             <div style="text-align: center;">
               <div style="
                 font-size: 14px;
@@ -266,7 +275,7 @@ export class CertificateGenerator {
                 color: ${data.score >= 80 ? colors.primary : '#ef4444'};
               ">${data.score}%</div>
             </div>
-            
+
             <div style="text-align: right;">
               <div style="
                 font-size: 16px;
@@ -289,7 +298,9 @@ export class CertificateGenerator {
             align-items: center;
             padding: 0 40px;
           ">
-            ${data.instructor ? `
+            ${
+              data.instructor
+                ? `
             <!-- Instructor Signature -->
             <div style="text-align: center;">
               <div style="
@@ -314,8 +325,10 @@ export class CertificateGenerator {
                 margin-top: 2px;
               ">${data.instructor.credentials}</div>
             </div>
-            ` : ''}
-            
+            `
+                : ''
+            }
+
             <!-- Director Signature -->
             <div style="text-align: center;">
               <div style="
@@ -328,7 +341,7 @@ export class CertificateGenerator {
                 font-size: 16px;
                 color: #374151;
                 font-weight: 600;
-              ">FleetFlow University Director</div>
+              ">FleetFlow University℠ Director</div>
               <div style="
                 font-size: 14px;
                 color: #6b7280;
@@ -357,7 +370,7 @@ export class CertificateGenerator {
               font-weight: bold;
             ">✓</div>
           </div>
-          
+
           <!-- Security Watermark -->
           <div style="
             position: absolute;
@@ -370,17 +383,17 @@ export class CertificateGenerator {
           ">AUTHENTICATED CERTIFICATE</div>
         </div>
       </div>
-    `
+    `;
   }
 
   static downloadCertificate(blob: Blob, filename: string) {
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }

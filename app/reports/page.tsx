@@ -317,7 +317,7 @@ export default function ReportsPage() {
       priority: 'HIGH',
       title: '📊 Market Disruption Prediction',
       insight:
-        'Predictive models indicate 340% demand surge in autonomous freight by Q3 2025. FleetFlow positioned to capture 67% market share.',
+        'Predictive models indicate 340% demand surge in autonomous freight by Q3 2025. FleetFlow™ positioned to capture 67% market share.',
       confidence: 94.2,
       impact: '$127B Revenue Opportunity',
       color: '#3b82f6',
@@ -347,7 +347,7 @@ export default function ReportsPage() {
       priority: 'STRATEGIC',
       title: '🏆 Industry Dominance Confirmed',
       insight:
-        'FleetFlow achieves 47.3% global market share, surpassing all competitors combined. Regulatory approval for mega-merger opportunities.',
+        'FleetFlow™ achieves 47.3% global market share, surpassing all competitors combined. Regulatory approval for mega-merger opportunities.',
       confidence: 98.9,
       impact: 'Market Leadership',
       color: '#8b5cf6',
@@ -488,7 +488,7 @@ export default function ReportsPage() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                🚀 FLEETFLOW ENTERPRISE COMMAND
+                🚀 FLEETFLOW™ ENTERPRISE COMMAND
               </h1>
               <p
                 style={{

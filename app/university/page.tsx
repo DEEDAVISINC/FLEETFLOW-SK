@@ -327,6 +327,62 @@ export default function UniversityPage() {
     },
   ];
 
+  // ROLE-BASED COMPREHENSIVE COURSES (Featured)
+  const integratedCourses: Course[] = [
+    {
+      id: 'dispatcher-operations-mastery',
+      title: 'Dispatcher Operations Mastery',
+      description:
+        'Complete dispatcher training including load matching strategies, carrier coordination, route optimization, real-time tracking, emergency procedures, and performance management.',
+      duration: '180 minutes',
+      difficulty: 'Advanced',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 856,
+      rating: 4.8,
+      thumbnail: '📋',
+    },
+    {
+      id: 'broker-business-mastery',
+      title: 'Broker Business Mastery',
+      description:
+        'Comprehensive broker training covering rate negotiations, customer acquisition, market analysis, sales pipeline management, and professional communication for revenue optimization.',
+      duration: '180 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      certification: true,
+      enrolledCount: 1534,
+      rating: 4.7,
+      thumbnail: '💼',
+    },
+    {
+      id: 'fleet-operations-excellence',
+      title: 'Fleet Operations Excellence',
+      description:
+        'Strategic fleet management including fleet capacity management, utilization optimization, cross-department coordination, performance metrics, and resource allocation.',
+      duration: '150 minutes',
+      difficulty: 'Advanced',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 1247,
+      rating: 4.9,
+      thumbnail: '🚛',
+    },
+    {
+      id: 'compliance-safety-excellence',
+      title: 'Compliance & Safety Excellence',
+      description:
+        'Complete regulatory excellence covering FMCSA 2025 compliance, safety management systems, risk assessment, audit preparation, and comprehensive safety program implementation.',
+      duration: '120 minutes',
+      difficulty: 'Advanced',
+      category: 'Compliance',
+      certification: true,
+      enrolledCount: 1012,
+      rating: 4.9,
+      thumbnail: '⚖️',
+    },
+  ];
+
   const courses: Course[] = [
     {
       id: 'carrier-onboard-workflow',
@@ -1048,7 +1104,24 @@ export default function UniversityPage() {
   };
 
   const handleCourseSelect = (courseId: string) => {
-    if (courseId === 'freight-broker-agent') {
+    // Handle Role-Based Comprehensive Courses
+    if (courseId === 'dispatcher-operations-mastery') {
+      alert(
+        '🚛 Starting Dispatcher Operations Mastery Course!\n\n📋 Course Content:\n• FleetFlow™ Dispatch Central Interface\n• Enhanced Load Board Navigation\n• Live Load Tracking Dashboard\n• Driver Management & Performance Analytics\n• Load Identification System\n• SMS Communication & Notifications\n• Route Planning & Optimization\n• Emergency Response Procedures\n\n⏱️ Duration: 180 minutes\n🎓 Certification: Professional Dispatcher'
+      );
+    } else if (courseId === 'broker-business-mastery') {
+      alert(
+        '💼 Starting Broker Business Mastery Course!\n\n📋 Course Content:\n• FreightFlow RFx℠ System Navigation\n• Customer Relationship Management\n• Freight Pricing & Negotiations\n• Carrier Network Development\n• Load Matching Strategies\n• Financial Management & Invoicing\n• Market Intelligence & Analytics\n• Business Development\n\n⏱️ Duration: 180 minutes\n🎓 Certification: Professional Freight Broker'
+      );
+    } else if (courseId === 'fleet-operations-excellence') {
+      alert(
+        '🚛 Starting Fleet Operations Excellence Course!\n\n📋 Course Content:\n• Fleet Management Dashboard\n• Vehicle Maintenance Scheduling\n• Driver Performance Analytics\n• Route Optimization\n• Fuel Management\n• Safety & Compliance Monitoring\n• Equipment Utilization\n• Operational Cost Analysis\n\n⏱️ Duration: 150 minutes\n🎓 Certification: Fleet Operations Professional'
+      );
+    } else if (courseId === 'compliance-safety-excellence') {
+      alert(
+        '⚖️ Starting Compliance & Safety Excellence Course!\n\n📋 Course Content:\n• DOT Regulations & Requirements\n• Hours of Service (HOS) Management\n• Vehicle Inspection Procedures\n• Driver Qualification Standards\n• Safety Management Systems\n• Accident Investigation\n• Regulatory Reporting\n• Risk Management\n\n⏱️ Duration: 120 minutes\n🎓 Certification: Safety & Compliance Specialist'
+      );
+    } else if (courseId === 'freight-broker-agent') {
       window.location.href = '/training/broker-agent-resources';
     } else if (courseId.startsWith('ai-') || courseId.includes('ai')) {
       setActiveTab('ai-training');
@@ -1063,6 +1136,15 @@ export default function UniversityPage() {
       alert(`Opening ${courseId} training...`);
     }
   };
+
+  const filteredIntegratedCourses = integratedCourses.filter((course) => {
+    const matchesCategory =
+      selectedCategory === 'all' || course.category === selectedCategory;
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const filteredCourses = courses.filter((course) => {
     const matchesCategory =
@@ -1809,179 +1891,373 @@ export default function UniversityPage() {
 
         {activeTab === 'courses' && (
           <div>
+            {/* ROLE-BASED COMPREHENSIVE COURSES SECTION */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '24px',
-                marginBottom: '24px',
-                display: 'flex',
-                gap: '16px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <input
-                type='text'
-                placeholder='Search courses...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+              <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  color: 'white',
-                  fontSize: '1rem',
-                  flex: 1,
-                  minWidth: '250px',
-                }}
-              />
-
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  color: 'white',
-                  fontSize: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '24px',
                 }}
               >
-                <option value='all'>All Categories</option>
-                <option value='Operations'>Operations</option>
-                <option value='Compliance'>Compliance</option>
-                <option value='Technology'>Technology</option>
-                <option value='Safety'>Safety</option>
-                <option value='Business'>Business</option>
-              </select>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px',
-              }}
-            >
-              {filteredCourses.map((course) => (
-                <div
-                  key={course.id}
+                <h2
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onClick={() => handleCourseSelect(course.id)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 16px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    color: 'white',
+                    fontSize: '2rem',
+                    fontWeight: 'bold',
+                    margin: '0',
                   }}
                 >
+                  🎯 Role-Based Comprehensive Courses
+                </h2>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    color: '#10b981',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  ✨ Featured Training
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '24px',
+                }}
+              >
+                {filteredIntegratedCourses.map((course) => (
                   <div
+                    key={course.id}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '12px',
+                      background:
+                        'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1))',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '2px solid rgba(16, 185, 129, 0.3)',
+                      boxShadow: '0 8px 32px rgba(16, 185, 129, 0.2)',
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => handleCourseSelect(course.id)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 40px rgba(16, 185, 129, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 32px rgba(16, 185, 129, 0.2)';
                     }}
                   >
                     <div
                       style={{
-                        fontSize: '2rem',
-                        marginRight: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px',
+                        marginBottom: '16px',
                       }}
                     >
-                      {course.thumbnail}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h3
-                        style={{
-                          color: 'white',
-                          fontSize: '1rem',
-                          fontWeight: 'bold',
-                          marginBottom: '6px',
-                        }}
-                      >
-                        {course.title}
-                      </h3>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '8px',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                        }}
-                      >
-                        <span
+                      <div style={{ fontSize: '2.5rem' }}>
+                        {course.thumbnail}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h3
                           style={{
-                            background: getDifficultyColor(course.difficulty),
                             color: 'white',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.7rem',
+                            fontSize: '1.3rem',
                             fontWeight: 'bold',
+                            margin: '0 0 8px 0',
                           }}
                         >
-                          {course.difficulty}
-                        </span>
-                        <span
+                          {course.title}
+                        </h3>
+                        <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '0.8rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            fontSize: '0.9rem',
                           }}
                         >
-                          {course.duration}
-                        </span>
-                        {course.certification && (
                           <span
                             style={{
-                              color: '#f59e0b',
+                              background: getDifficultyColor(course.difficulty),
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {course.difficulty}
+                          </span>
+                          <span
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '0.9rem',
+                            }}
+                          >
+                            ⏱️ {course.duration}
+                          </span>
+                          {course.certification && (
+                            <span
+                              style={{
+                                color: '#f59e0b',
+                                fontSize: '0.9rem',
+                              }}
+                            >
+                              🏆
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '1rem',
+                        lineHeight: '1.6',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      {course.description}
+                    </p>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: '0.9rem',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      <span>👥 {course.enrolledCount} students</span>
+                      <span>⭐ {course.rating}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* INDIVIDUAL COURSES SECTION */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '1.8rem',
+                  fontWeight: 'bold',
+                  margin: '0 0 24px 0',
+                }}
+              >
+                📚 Individual Specialized Courses
+              </h2>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginBottom: '24px',
+                  display: 'flex',
+                  gap: '16px',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <input
+                  type='text'
+                  placeholder='Search courses...'
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    color: 'white',
+                    fontSize: '1rem',
+                    flex: 1,
+                    minWidth: '250px',
+                  }}
+                />
+
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    color: 'white',
+                    fontSize: '1rem',
+                  }}
+                >
+                  <option value='all'>All Categories</option>
+                  <option value='Operations'>Operations</option>
+                  <option value='Compliance'>Compliance</option>
+                  <option value='Technology'>Technology</option>
+                  <option value='Safety'>Safety</option>
+                  <option value='Business'>Business</option>
+                </select>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                {filteredCourses.map((course) => (
+                  <div
+                    key={course.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onClick={() => handleCourseSelect(course.id)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 16px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '2rem',
+                          marginRight: '12px',
+                        }}
+                      >
+                        {course.thumbnail}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h3
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: 'bold',
+                            marginBottom: '6px',
+                          }}
+                        >
+                          {course.title}
+                        </h3>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          <span
+                            style={{
+                              background: getDifficultyColor(course.difficulty),
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '0.7rem',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {course.difficulty}
+                          </span>
+                          <span
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
                               fontSize: '0.8rem',
                             }}
                           >
-                            🏆
+                            {course.duration}
                           </span>
-                        )}
+                          {course.certification && (
+                            <span
+                              style={{
+                                color: '#f59e0b',
+                                fontSize: '0.8rem',
+                              }}
+                            >
+                              🏆
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.85rem',
-                      lineHeight: '1.4',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    {course.description}
-                  </p>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '0.85rem',
+                        lineHeight: '1.4',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      {course.description}
+                    </p>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '0.8rem',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                    }}
-                  >
-                    <span>👥 {course.enrolledCount}</span>
-                    <span>⭐ {course.rating}</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: '0.8rem',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      <span>👥 {course.enrolledCount}</span>
+                      <span>⭐ {course.rating}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}

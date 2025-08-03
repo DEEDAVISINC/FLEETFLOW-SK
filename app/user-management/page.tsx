@@ -1,12 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import AccessVerificationLoading from '../components/AccessVerificationLoading';
-import ManagerOnlyAccessDenied from '../components/ManagerOnlyAccessDenied';
-import {
-  ManagerAccessControlService,
-  type ManagerVerification,
-} from '../services/ManagerAccessControlService';
 
 // Comprehensive mock users with ALL detailed information + drivers with carrier onboarding
 const mockUsers = [
@@ -1391,21 +1385,576 @@ const permissionCategories = {
       },
     },
   },
+  // NEW COMPREHENSIVE CATEGORIES - 8 MAJOR MISSING SECTIONS
+  'ai-flow-platform': {
+    name: 'AI FLOW PLATFORM',
+    icon: '🤖',
+    color: '#ec4899',
+    subPages: {
+      'ai-flow-dashboard': {
+        name: 'AI Flow Dashboard',
+        icon: '📊',
+        sections: [
+          'ai-flow-main-dashboard',
+          'ai-flow-analytics-overview',
+          'ai-flow-lead-generation-hub',
+          'ai-flow-performance-metrics',
+          'ai-flow-revenue-tracking',
+          'ai-flow-system-monitoring',
+          'ai-flow-automation-status',
+          'ai-flow-integration-health',
+        ],
+      },
+      'lead-generation-system': {
+        name: 'Lead Generation System',
+        icon: '🎯',
+        sections: [
+          'lead-fmcsa-api-integration',
+          'lead-weather-gov-integration',
+          'lead-exchange-rate-api',
+          'lead-thomasnet-integration',
+          'lead-prospecting-tools',
+          'lead-conversion-tracking',
+          'lead-scoring-system',
+          'lead-automated-outreach',
+        ],
+      },
+      'ai-negotiator-service': {
+        name: 'AI Negotiator Service',
+        icon: '🤝',
+        sections: [
+          'ai-negotiator-rate-negotiations',
+          'ai-negotiator-contract-terms',
+          'ai-negotiator-rfx-bidding',
+          'ai-negotiator-carrier-agreements',
+          'ai-negotiator-psychological-tactics',
+          'ai-negotiator-strategy-adjustment',
+          'ai-negotiator-performance-tracking',
+          'ai-negotiator-learning-system',
+        ],
+      },
+      'smart-auto-bidding': {
+        name: 'Smart Auto-Bidding',
+        icon: '⚡',
+        sections: [
+          'auto-bidding-rules-engine',
+          'auto-bidding-who-criteria',
+          'auto-bidding-what-criteria',
+          'auto-bidding-when-criteria',
+          'auto-bidding-where-criteria',
+          'auto-bidding-how-much-criteria',
+          'auto-bidding-risk-assessment',
+          'auto-bidding-management-approval',
+        ],
+      },
+    },
+  },
+  'call-center-communications': {
+    name: 'CALL CENTER & COMMUNICATIONS',
+    icon: '📞',
+    color: '#8b5cf6',
+    subPages: {
+      'freeswitch-dialer': {
+        name: 'FreeSWITCH Dialer',
+        icon: '☎️',
+        sections: [
+          'dialer-call-management',
+          'dialer-agent-routing',
+          'dialer-call-recording',
+          'dialer-real-time-monitoring',
+          'dialer-queue-management',
+          'dialer-performance-analytics',
+          'dialer-integration-management',
+          'dialer-system-configuration',
+        ],
+      },
+      'sms-workflow-system': {
+        name: 'SMS Workflow System',
+        icon: '💬',
+        sections: [
+          'sms-automated-messaging',
+          'sms-workflow-triggers',
+          'sms-template-management',
+          'sms-delivery-tracking',
+          'sms-response-handling',
+          'sms-compliance-management',
+          'sms-analytics-reporting',
+          'sms-integration-apis',
+        ],
+      },
+      'multi-channel-communications': {
+        name: 'Multi-Channel Communications',
+        icon: '📡',
+        sections: [
+          'multi-channel-unified-inbox',
+          'multi-channel-message-routing',
+          'multi-channel-response-automation',
+          'multi-channel-escalation-management',
+          'multi-channel-analytics-dashboard',
+          'multi-channel-integration-hub',
+          'multi-channel-compliance-tracking',
+          'multi-channel-performance-metrics',
+        ],
+      },
+    },
+  },
+  'crm-customer-management': {
+    name: 'CRM & CUSTOMER MANAGEMENT',
+    icon: '👥',
+    color: '#f59e0b',
+    subPages: {
+      'crm-suite': {
+        name: 'CRM Suite',
+        icon: '📋',
+        sections: [
+          'crm-contact-management',
+          'crm-account-management',
+          'crm-opportunity-tracking',
+          'crm-sales-pipeline',
+          'crm-activity-logging',
+          'crm-relationship-mapping',
+          'crm-customer-segmentation',
+          'crm-interaction-history',
+        ],
+      },
+      'sales-pipeline': {
+        name: 'Sales Pipeline',
+        icon: '📈',
+        sections: [
+          'pipeline-lead-qualification',
+          'pipeline-opportunity-management',
+          'pipeline-stage-progression',
+          'pipeline-conversion-tracking',
+          'pipeline-forecasting-tools',
+          'pipeline-performance-analytics',
+          'pipeline-automated-workflows',
+          'pipeline-reporting-dashboard',
+        ],
+      },
+      'customer-portal': {
+        name: 'Customer Portal',
+        icon: '🌐',
+        sections: [
+          'portal-customer-dashboard',
+          'portal-shipment-tracking',
+          'portal-invoice-management',
+          'portal-document-sharing',
+          'portal-communication-tools',
+          'portal-service-requests',
+          'portal-analytics-access',
+          'portal-mobile-access',
+        ],
+      },
+    },
+  },
+  'warehousing-3pl-operations': {
+    name: 'WAREHOUSING & 3PL OPERATIONS',
+    icon: '🏢',
+    color: '#06b6d4',
+    subPages: {
+      'warehouse-management': {
+        name: 'Warehouse Management',
+        icon: '📦',
+        sections: [
+          'warehouse-inventory-tracking',
+          'warehouse-receiving-operations',
+          'warehouse-put-away-process',
+          'warehouse-picking-operations',
+          'warehouse-packing-shipping',
+          'warehouse-cycle-counting',
+          'warehouse-space-optimization',
+          'warehouse-labor-management',
+        ],
+      },
+      'cross-docking-operations': {
+        name: 'Cross-Docking Operations',
+        icon: '🔄',
+        sections: [
+          'cross-dock-inbound-scheduling',
+          'cross-dock-staging-management',
+          'cross-dock-sorting-operations',
+          'cross-dock-outbound-planning',
+          'cross-dock-flow-optimization',
+          'cross-dock-quality-control',
+          'cross-dock-performance-tracking',
+          'cross-dock-exception-handling',
+        ],
+      },
+      'vendor-portal-integration': {
+        name: 'Vendor Portal Integration',
+        icon: '🤝',
+        sections: [
+          'vendor-portal-onboarding',
+          'vendor-portal-performance-tracking',
+          'vendor-portal-communication-hub',
+          'vendor-portal-document-management',
+          'vendor-portal-payment-processing',
+          'vendor-portal-compliance-monitoring',
+          'vendor-portal-analytics-reporting',
+          'vendor-portal-integration-apis',
+        ],
+      },
+    },
+  },
+  'government-contracts-rfp': {
+    name: 'GOVERNMENT CONTRACTS & RFP',
+    icon: '🏛️',
+    color: '#dc2626',
+    subPages: {
+      'sam-gov-integration': {
+        name: 'SAM.gov Integration',
+        icon: '🇺🇸',
+        sections: [
+          'sam-gov-opportunity-discovery',
+          'sam-gov-contract-tracking',
+          'sam-gov-vendor-registration',
+          'sam-gov-compliance-monitoring',
+          'sam-gov-bid-submission',
+          'sam-gov-award-notifications',
+          'sam-gov-performance-reporting',
+          'sam-gov-api-management',
+        ],
+      },
+      'rfp-discovery-system': {
+        name: 'RFP Discovery System',
+        icon: '🔍',
+        sections: [
+          'rfp-opportunity-scanning',
+          'rfp-matching-algorithms',
+          'rfp-qualification-assessment',
+          'rfp-response-management',
+          'rfp-collaboration-tools',
+          'rfp-submission-tracking',
+          'rfp-win-loss-analysis',
+          'rfp-pipeline-management',
+        ],
+      },
+      'enterprise-rfps': {
+        name: 'Enterprise RFPs',
+        icon: '🏢',
+        sections: [
+          'enterprise-rfp-monitoring',
+          'enterprise-rfp-qualification',
+          'enterprise-rfp-response-automation',
+          'enterprise-rfp-collaboration',
+          'enterprise-rfp-pricing-tools',
+          'enterprise-rfp-presentation-builder',
+          'enterprise-rfp-submission-management',
+          'enterprise-rfp-relationship-tracking',
+        ],
+      },
+      'instantmarkets-integration': {
+        name: 'InstantMarkets Integration',
+        icon: '⚡',
+        sections: [
+          'instantmarkets-opportunity-feed',
+          'instantmarkets-automated-matching',
+          'instantmarkets-bid-automation',
+          'instantmarkets-performance-tracking',
+          'instantmarkets-analytics-dashboard',
+          'instantmarkets-integration-management',
+          'instantmarkets-notification-system',
+          'instantmarkets-reporting-tools',
+        ],
+      },
+    },
+  },
+  'financial-services-integration': {
+    name: 'FINANCIAL SERVICES INTEGRATION',
+    icon: '💰',
+    color: '#059669',
+    subPages: {
+      'banking-integration': {
+        name: 'Banking Integration',
+        icon: '🏦',
+        sections: [
+          'banking-account-management',
+          'banking-transaction-monitoring',
+          'banking-automated-payments',
+          'banking-cash-flow-management',
+          'banking-reconciliation-tools',
+          'banking-fraud-detection',
+          'banking-compliance-reporting',
+          'banking-api-management',
+        ],
+      },
+      'fuel-card-management': {
+        name: 'Fuel Card Management',
+        icon: '⛽',
+        sections: [
+          'fuel-card-comdata-integration',
+          'fuel-card-efs-integration',
+          'fuel-card-fleetcor-integration',
+          'fuel-card-wex-integration',
+          'fuel-card-transaction-monitoring',
+          'fuel-card-spending-controls',
+          'fuel-card-reporting-analytics',
+          'fuel-card-fraud-prevention',
+        ],
+      },
+      'insurance-provider-integration': {
+        name: 'Insurance Provider Integration',
+        icon: '🛡️',
+        sections: [
+          'insurance-policy-management',
+          'insurance-claims-processing',
+          'insurance-risk-assessment',
+          'insurance-premium-tracking',
+          'insurance-compliance-monitoring',
+          'insurance-certificate-management',
+          'insurance-renewal-automation',
+          'insurance-reporting-analytics',
+        ],
+      },
+      'tax-services': {
+        name: 'Tax Services',
+        icon: '📊',
+        sections: [
+          'tax-bandits-form-2290',
+          'tax-ifta-integration',
+          'tax-multi-state-filing',
+          'tax-quarterly-reporting',
+          'tax-compliance-monitoring',
+          'tax-audit-preparation',
+          'tax-payment-processing',
+          'tax-analytics-reporting',
+        ],
+      },
+    },
+  },
+  'system-administration': {
+    name: 'SYSTEM ADMINISTRATION',
+    icon: '⚙️',
+    color: '#7c3aed',
+    subPages: {
+      'user-profile-management': {
+        name: 'User Profile Management',
+        icon: '👤',
+        sections: [
+          'profile-account-settings',
+          'profile-security-preferences',
+          'profile-notification-settings',
+          'profile-access-permissions',
+          'profile-activity-logging',
+          'profile-session-management',
+          'profile-data-privacy',
+          'profile-integration-preferences',
+        ],
+      },
+      'system-configuration': {
+        name: 'System Configuration',
+        icon: '🔧',
+        sections: [
+          'system-global-settings',
+          'system-feature-toggles',
+          'system-performance-tuning',
+          'system-scaling-configuration',
+          'system-maintenance-scheduling',
+          'system-update-management',
+          'system-environment-variables',
+          'system-logging-configuration',
+        ],
+      },
+      'api-management': {
+        name: 'API Management',
+        icon: '🔌',
+        sections: [
+          'api-key-management',
+          'api-rate-limiting',
+          'api-authentication-config',
+          'api-endpoint-monitoring',
+          'api-usage-analytics',
+          'api-integration-testing',
+          'api-documentation-management',
+          'api-security-configuration',
+        ],
+      },
+      'security-settings': {
+        name: 'Security Settings',
+        icon: '🔒',
+        sections: [
+          'security-access-control',
+          'security-authentication-methods',
+          'security-encryption-settings',
+          'security-audit-logging',
+          'security-threat-monitoring',
+          'security-compliance-tracking',
+          'security-incident-response',
+          'security-vulnerability-management',
+        ],
+      },
+      'backup-recovery': {
+        name: 'Backup & Recovery',
+        icon: '💾',
+        sections: [
+          'backup-automated-schedules',
+          'backup-data-retention',
+          'backup-recovery-procedures',
+          'backup-disaster-planning',
+          'backup-integrity-verification',
+          'backup-storage-management',
+          'backup-monitoring-alerts',
+          'backup-compliance-reporting',
+        ],
+      },
+    },
+  },
+  'training-certification': {
+    name: 'TRAINING & CERTIFICATION',
+    icon: '🎓',
+    color: '#e11d48',
+    subPages: {
+      'training-management': {
+        name: 'Training Management',
+        icon: '📚',
+        sections: [
+          'training-program-administration',
+          'training-content-management',
+          'training-scheduling-tools',
+          'training-resource-allocation',
+          'training-compliance-tracking',
+          'training-performance-assessment',
+          'training-reporting-analytics',
+          'training-integration-systems',
+        ],
+      },
+      'certificate-generation': {
+        name: 'Certificate Generation',
+        icon: '📜',
+        sections: [
+          'certificate-template-management',
+          'certificate-automated-generation',
+          'certificate-digital-signatures',
+          'certificate-verification-system',
+          'certificate-expiration-tracking',
+          'certificate-renewal-automation',
+          'certificate-compliance-reporting',
+          'certificate-integration-apis',
+        ],
+      },
+      'progress-tracking': {
+        name: 'Progress Tracking',
+        icon: '📈',
+        sections: [
+          'progress-individual-tracking',
+          'progress-milestone-management',
+          'progress-completion-reporting',
+          'progress-performance-analytics',
+          'progress-intervention-alerts',
+          'progress-goal-setting',
+          'progress-competency-mapping',
+          'progress-dashboard-tools',
+        ],
+      },
+      'instructor-tools': {
+        name: 'Instructor Tools',
+        icon: '👨‍🏫',
+        sections: [
+          'instructor-content-delivery',
+          'instructor-student-management',
+          'instructor-assessment-tools',
+          'instructor-grading-system',
+          'instructor-communication-hub',
+          'instructor-resource-library',
+          'instructor-performance-tracking',
+          'instructor-reporting-tools',
+        ],
+      },
+      'assessment-system': {
+        name: 'Assessment System',
+        icon: '📝',
+        sections: [
+          'assessment-test-creation',
+          'assessment-automated-grading',
+          'assessment-proctoring-tools',
+          'assessment-analytics-reporting',
+          'assessment-cheating-prevention',
+          'assessment-adaptive-testing',
+          'assessment-feedback-systems',
+          'assessment-certification-pathways',
+        ],
+      },
+    },
+  },
 };
 
-// Utility functions
-const getDepartmentColor = (code: string) => {
-  switch (code) {
-    case 'MGR':
-      return '#f97316';
-    case 'DC':
-      return '#f4a832';
-    case 'BB':
-      return '#6366f1';
-    case 'DM':
-      return '#eab308';
+// Utility functions - Department color system
+interface DepartmentColorScheme {
+  color: string;
+  background: string;
+  border?: string;
+  department?: string;
+}
+
+const getDepartmentColor = (
+  input: string | undefined,
+  returnObject: boolean = false
+): string | DepartmentColorScheme => {
+  if (!input) {
+    return returnObject
+      ? {
+          color: 'rgba(255, 255, 255, 0.7)',
+          background: 'rgba(255, 255, 255, 0.1)',
+        }
+      : '#6b7280';
+  }
+
+  let departmentCode = input;
+
+  // If input looks like a user identifier (contains dashes), extract department code
+  if (input.includes('-')) {
+    const parts = input.split('-');
+    if (parts.length >= 2) {
+      departmentCode = parts[1];
+    }
+  }
+
+  departmentCode = departmentCode.toUpperCase();
+
+  switch (departmentCode) {
+    case 'DC': // Dispatcher - blue
+      return returnObject
+        ? {
+            color: '#3b82f6',
+            background: 'rgba(59, 130, 246, 0.15)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            department: 'Dispatcher',
+          }
+        : '#3b82f6';
+    case 'BB': // Broker - orange
+      return returnObject
+        ? {
+            color: '#f97316',
+            background: 'rgba(249, 115, 22, 0.15)',
+            border: '1px solid rgba(249, 115, 22, 0.3)',
+            department: 'Broker',
+          }
+        : '#f97316';
+    case 'DM': // Driver - yellow
+      return returnObject
+        ? {
+            color: '#f4a832',
+            background: 'rgba(244, 168, 50, 0.15)',
+            border: '1px solid rgba(244, 168, 50, 0.3)',
+            department: 'Driver',
+          }
+        : '#f4a832';
+    case 'MGR': // Management - purple
+      return returnObject
+        ? {
+            color: '#9333ea',
+            background: 'rgba(147, 51, 234, 0.15)',
+            border: '1px solid rgba(147, 51, 234, 0.3)',
+            department: 'Management',
+          }
+        : '#9333ea';
     default:
-      return '#6b7280';
+      return returnObject
+        ? {
+            color: 'rgba(255, 255, 255, 0.7)',
+            background: 'rgba(255, 255, 255, 0.1)',
+          }
+        : '#6b7280';
   }
 };
 
@@ -1733,12 +2282,6 @@ const getPermissionDisplayName = (permission: string) => {
 };
 
 export default function UserManagement() {
-  // Manager access control state
-  const [managerAccess, setManagerAccess] =
-    useState<ManagerVerification | null>(null);
-  const [accessDenied, setAccessDenied] = useState(false);
-  const [loading, setLoading] = useState(true);
-
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedPermissionCategory, setExpandedPermissionCategory] = useState<
@@ -1760,35 +2303,12 @@ export default function UserManagement() {
 
   const currentUser = filteredUsers[currentUserIndex];
 
-  // Manager access verification
-  useEffect(() => {
-    verifyManagerAccess();
-  }, []);
-
-  const verifyManagerAccess = async () => {
-    try {
-      // CRITICAL: Verify manager access first
-      const verification =
-        await ManagerAccessControlService.verifyCompanyManager();
-      setManagerAccess(verification);
-
-      if (verification.isVerified) {
-        setLoading(false);
-      } else {
-        setAccessDenied(true);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Manager access verification failed:', error);
-      setAccessDenied(true);
-      setLoading(false);
-    }
-  };
-
   // Initialize user permissions from current user
   useEffect(() => {
     if (currentUser?.permissions) {
-      setUserPermissions(currentUser.permissions as { [key: string]: boolean });
+      setUserPermissions(
+        currentUser.permissions as unknown as { [key: string]: boolean }
+      );
     }
   }, [currentUser]);
 
@@ -1843,29 +2363,13 @@ export default function UserManagement() {
 
   const hasUnsavedChanges = () => {
     if (!currentUser?.permissions) return false;
-    const originalPermissions = currentUser.permissions as {
+    const originalPermissions = currentUser.permissions as unknown as {
       [key: string]: boolean;
     };
     return (
       JSON.stringify(originalPermissions) !== JSON.stringify(userPermissions)
     );
   };
-
-  // Show access denied for non-managers
-  if (accessDenied) {
-    return (
-      <ManagerOnlyAccessDenied
-        attemptedResource='user management and payment routing configuration'
-        userRole='broker agent'
-        redirectPath='/broker/dashboard'
-      />
-    );
-  }
-
-  // Show loading while verifying access
-  if (!managerAccess || loading) {
-    return <AccessVerificationLoading />;
-  }
 
   if (!currentUser) {
     return (
@@ -1887,96 +2391,205 @@ export default function UserManagement() {
   return (
     <div
       style={{
-        background:
-          'radial-gradient(circle at 20% 50%, #667eea 0%, transparent 50%), radial-gradient(circle at 80% 20%, #764ba2 0%, transparent 50%), radial-gradient(circle at 40% 80%, #667eea 0%, transparent 50%), linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         minHeight: '100vh',
-        padding: '80px 20px 20px 20px',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        padding: '60px 16px 16px 16px',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <main style={{ maxWidth: '1600px', margin: '0 auto' }}>
-        {/* Header */}
+      {/* Animated Background Elements */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+          radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)
+        `,
+          animation: 'pulse 4s ease-in-out infinite alternate',
+        }}
+      />
+
+      <div
+        style={{
+          maxWidth: '1600px',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 10,
+        }}
+      >
+        {/* Enterprise Command Header */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
             borderRadius: '16px',
-            padding: '24px 32px',
-            marginBottom: '32px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
-          <div>
-            <h1
-              style={{
-                fontSize: '1.8rem',
-                fontWeight: 'bold',
-                color: 'white',
-                marginBottom: '4px',
-              }}
-            >
-              👥 User Management
-            </h1>
-            <p
-              style={{
-                fontSize: '1rem',
-                color: 'rgba(255, 255, 255, 0.8)',
-                margin: 0,
-              }}
-            >
-              Comprehensive user dashboard with detailed permissions & workflow
-              tracking
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <input
-              type='text'
-              placeholder='Search users...'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                background: 'rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                fontSize: '12px',
-                outline: 'none',
-                width: '200px',
-              }}
-            />
-            <button
-              style={{
-                background: 'rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-              }}
-            >
-              🔄 Refresh
-            </button>
-            <button
-              style={{
-                background: 'rgba(16, 185, 129, 0.8)',
-                color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-              }}
-            >
-              ➕ Add User
-            </button>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background:
+                'linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6, #ef4444, #f59e0b)',
+            }}
+          />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div
+                style={{
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                }}
+              >
+                <span style={{ fontSize: '32px' }}>👥</span>
+              </div>
+              <div>
+                <h1
+                  style={{
+                    fontSize: '32px',
+                    fontWeight: '800',
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                    background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  👥 FLEETFLOW™ USER MANAGEMENT COMMAND
+                </h1>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '16px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: '0 0 12px 0',
+                      fontWeight: '500',
+                    }}
+                  >
+                    Enterprise Access Control & Permissions Intelligence
+                    Platform
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#10b981',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        border: '1px solid #10b981',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      🟢 ACCESS CONTROL ACTIVE
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      System Status: OPTIMAL • {filteredUsers.length} Users
+                      Active
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <input
+                type='text'
+                placeholder='Search users...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: 'white',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  width: '200px',
+                }}
+              />
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  border: 'none',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                🔄 REFRESH
+              </button>
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  border: 'none',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                ➕ ADD USER
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1984,30 +2597,30 @@ export default function UserManagement() {
           style={{
             display: 'grid',
             gridTemplateColumns: '350px 1fr',
-            gap: '32px',
+            gap: '25px',
             alignItems: 'start',
           }}
         >
           {/* User Navigation */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(15, 23, 42, 0.8)',
+              backdropFilter: 'blur(20px)',
               borderRadius: '16px',
               padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
               height: 'fit-content',
             }}
           >
             {/* User Avatar Card */}
             <div
               style={{
-                background: `${getDepartmentColor(currentUser?.departmentCode)}20`,
+                background: `${getDepartmentColor(currentUser?.departmentCode, false) as string}20`,
                 borderRadius: '12px',
                 padding: '20px',
                 marginBottom: '20px',
-                border: `2px solid ${getDepartmentColor(currentUser?.departmentCode)}66`,
+                border: `2px solid ${getDepartmentColor(currentUser?.departmentCode, false) as string}66`,
                 textAlign: 'center',
               }}
             >
@@ -2016,7 +2629,10 @@ export default function UserManagement() {
                   width: '80px',
                   height: '80px',
                   borderRadius: '50%',
-                  background: getDepartmentColor(currentUser?.departmentCode),
+                  background: getDepartmentColor(
+                    currentUser?.departmentCode,
+                    false
+                  ) as string,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -2156,22 +2772,22 @@ export default function UserManagement() {
           {/* User Details Panel */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(15, 23, 42, 0.8)',
+              backdropFilter: 'blur(20px)',
               borderRadius: '16px',
               padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
             }}
           >
             {/* Account Details */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
                 padding: '16px',
                 marginBottom: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <h4
@@ -2188,51 +2804,244 @@ export default function UserManagement() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '12px',
+                  gap: '16px',
                   fontSize: '12px',
                 }}
               >
-                <div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <strong>Email:</strong> {currentUser?.email}
+                {/* Left Column */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                  }}
+                >
+                  {/* Email Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📧 <strong>EMAIL ADDRESS</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        color: '#60a5fa',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        wordBreak: 'break-all',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      {currentUser?.email || 'Not provided'}
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <strong>Phone:</strong> {currentUser?.phone}
+
+                  {/* Phone Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📱 <strong>PHONE NUMBER</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        color: '#34d399',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        fontFamily: 'monospace',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      {currentUser?.phone || 'Not provided'}
+                    </div>
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    <strong>Department:</strong> {currentUser?.department}
+
+                  {/* Department Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🏢 <strong>DEPARTMENT</strong>
+                    </div>
+                    {(() => {
+                      const deptColorScheme = getDepartmentColor(
+                        currentUser?.department,
+                        true
+                      ) as DepartmentColorScheme;
+                      return (
+                        <div
+                          style={{
+                            color: deptColorScheme.color,
+                            background: deptColorScheme.background,
+                            border: deptColorScheme.border,
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: 'bold',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                          }}
+                        >
+                          <span>
+                            {currentUser?.department || 'Not assigned'}
+                          </span>
+                          {deptColorScheme.department && (
+                            <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                              {deptColorScheme.department}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
-                <div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <strong>Security Level:</strong>{' '}
-                    {(currentUser as any)?.systemAccess?.securityLevel}
+
+                {/* Right Column */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                  }}
+                >
+                  {/* Security Level Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🔒 <strong>SECURITY LEVEL</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        color: '#f87171',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                        fontSize: '13px',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase',
+                        textAlign: 'center',
+                        letterSpacing: '1px',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      {(currentUser as any)?.systemAccess?.securityLevel ||
+                        'STANDARD'}
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <strong>User ID:</strong> {currentUser?.id}
+
+                  {/* User ID Field - Enhanced */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🆔 <strong>USER IDENTIFIER</strong>
+                    </div>
+                    {(() => {
+                      const colorScheme = getDepartmentColor(
+                        currentUser?.id,
+                        true
+                      ) as DepartmentColorScheme;
+                      return (
+                        <div
+                          style={{
+                            color: colorScheme.color,
+                            background: colorScheme.background,
+                            border: colorScheme.border,
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            fontFamily: 'monospace',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          <span>{currentUser?.id}</span>
+                          {colorScheme.department && (
+                            <span
+                              style={{
+                                fontSize: '10px',
+                                opacity: 0.8,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                              }}
+                            >
+                              {colorScheme.department}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    <strong>Hired:</strong> {formatDate(currentUser?.hiredDate)}
+
+                  {/* Hire Date Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📅 <strong>HIRE DATE</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(20, 184, 166, 0.1)',
+                        color: '#2dd4bf',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(20, 184, 166, 0.2)',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      {formatDate(currentUser?.hiredDate)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2241,11 +3050,11 @@ export default function UserManagement() {
             {/* Emergency Contact */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
                 padding: '16px',
                 marginBottom: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <h4
@@ -2258,55 +3067,202 @@ export default function UserManagement() {
               >
                 🆘 Emergency Contact
               </h4>
+              {/* Badge/Tag Style Layout */}
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
+                  display: 'flex',
+                  flexWrap: 'wrap',
                   gap: '12px',
-                  fontSize: '12px',
+                  alignItems: 'center',
                 }}
               >
-                <div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <strong>Name:</strong>{' '}
-                    {(currentUser as any)?.emergencyContact?.name}
-                  </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    <strong>Relation:</strong>{' '}
-                    {(currentUser as any)?.emergencyContact?.relation}
+                {/* Contact Name Badge */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background:
+                      'linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.08))',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    borderRadius: '20px',
+                    padding: '8px 16px',
+                    minWidth: '120px',
+                    boxShadow: '0 2px 8px rgba(168, 85, 247, 0.1)',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    👤
+                  </span>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '600',
+                        marginBottom: '2px',
+                      }}
+                    >
+                      Contact
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        color: '#c4b5fd',
+                        fontWeight: '600',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {(currentUser as any)?.emergencyContact?.name ||
+                        'Not provided'}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <strong>Phone:</strong>{' '}
-                    {(currentUser as any)?.emergencyContact?.phone}
-                  </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    <strong>Alt Phone:</strong>{' '}
-                    {(currentUser as any)?.emergencyContact?.altPhone}
+
+                {/* Relationship Badge */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background:
+                      'linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(239, 68, 68, 0.08))',
+                    border: '1px solid rgba(244, 63, 94, 0.3)',
+                    borderRadius: '20px',
+                    padding: '8px 16px',
+                    minWidth: '100px',
+                    boxShadow: '0 2px 8px rgba(244, 63, 94, 0.1)',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    ❤️
+                  </span>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '600',
+                        marginBottom: '2px',
+                      }}
+                    >
+                      Relation
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        color: '#fda4af',
+                        fontWeight: '600',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {(currentUser as any)?.emergencyContact?.relation ||
+                        'Not specified'}
+                    </div>
                   </div>
                 </div>
+
+                {/* Primary Phone Badge */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background:
+                      'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(22, 163, 74, 0.08))',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '20px',
+                    padding: '8px 16px',
+                    minWidth: '140px',
+                    boxShadow: '0 2px 8px rgba(34, 197, 94, 0.1)',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    📞
+                  </span>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '600',
+                        marginBottom: '2px',
+                      }}
+                    >
+                      Primary
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        color: '#86efac',
+                        fontWeight: '600',
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {(currentUser as any)?.emergencyContact?.phone ||
+                        'Not provided'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Alternative Phone Badge - Only show if exists */}
+                {(currentUser as any)?.emergencyContact?.altPhone && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      background:
+                        'linear-gradient(135deg, rgba(148, 163, 184, 0.15), rgba(100, 116, 139, 0.08))',
+                      border: '1px solid rgba(148, 163, 184, 0.3)',
+                      borderRadius: '20px',
+                      padding: '8px 16px',
+                      minWidth: '140px',
+                      boxShadow: '0 2px 8px rgba(148, 163, 184, 0.1)',
+                    }}
+                  >
+                    <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                      📱
+                    </span>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '10px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        Alternative
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: '#cbd5e1',
+                          fontWeight: '600',
+                          fontFamily: 'monospace',
+                        }}
+                      >
+                        {(currentUser as any)?.emergencyContact?.altPhone}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* EXPANDABLE KPI Access Granting System */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
                 padding: '16px',
                 marginBottom: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <h4
@@ -2685,11 +3641,11 @@ export default function UserManagement() {
             {/* Portal Invitation Status */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
                 padding: '16px',
                 marginBottom: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <h4
@@ -2863,11 +3819,11 @@ export default function UserManagement() {
             {/* Notes */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '10px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
                 padding: '16px',
                 marginBottom: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <h4
@@ -3045,7 +4001,7 @@ export default function UserManagement() {
                   {/* Document Status Tracking */}
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.3)',
                       borderRadius: '8px',
                       padding: '12px',
                     }}
@@ -3095,7 +4051,7 @@ export default function UserManagement() {
                   {/* Training Progress OR Vehicle/Compliance Info */}
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.3)',
                       borderRadius: '8px',
                       padding: '12px',
                     }}
@@ -3290,10 +4246,25 @@ export default function UserManagement() {
               >
                 🗑️
               </button>
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  flex: 1,
+                }}
+              >
+                🔮 Prospective Permissions
+              </button>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

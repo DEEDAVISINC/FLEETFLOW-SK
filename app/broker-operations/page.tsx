@@ -421,7 +421,7 @@ const BrokerOperationsPage: React.FC = () => {
                   margin: 0,
                 }}
               >
-                FreightFlow RFx System • Live Market Intelligence • Competitive
+                FreightFlow RFx℠ System • Live Market Intelligence • Competitive
                 Bidding
               </p>
             </div>
@@ -468,7 +468,7 @@ const BrokerOperationsPage: React.FC = () => {
         >
           {[
             { key: 'overview', label: 'Overview', icon: '📊' },
-            { key: 'rfx', label: 'FreightFlow RFx Center', icon: '📋' },
+            { key: 'rfx', label: 'FreightFlow RFx℠ Center', icon: '📋' },
             { key: 'shippers', label: 'Shipper Management', icon: '🏢' },
             { key: 'quotes', label: 'Quick Quotes', icon: '💰' },
             { key: 'loadboard', label: 'Loadboard', icon: '🚛' },
@@ -812,7 +812,7 @@ const BrokerOperationsPage: React.FC = () => {
                     textAlign: 'center',
                   }}
                 >
-                  📋 FreightFlow RFx Center
+                  📋 FreightFlow RFx℠ Center
                 </button>
                 <button
                   onClick={() => setActiveTab('shippers')}
@@ -875,7 +875,7 @@ const BrokerOperationsPage: React.FC = () => {
                   textShadow: '0 4px 8px rgba(0,0,0,0.3)',
                 }}
               >
-                📋 FreightFlow RFx Response Center
+                📋 FreightFlow RFx℠ Response Center
               </h2>
               <p
                 style={{

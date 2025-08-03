@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { rfxResponseService } from '../services/RFxResponseService';
-import RFxResponseDashboard from '../components/RFxResponseDashboard';
+import React, { useState } from 'react';
 import LiveMarketIntelligence from '../components/LiveMarketIntelligence';
+import RFxResponseDashboard from '../components/RFxResponseDashboard';
 
 const BrokerOperationsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'rfx' | 'shippers' | 'quotes' | 'analytics'>('overview');
-  const [user] = useState({ 
-    name: 'Alex Rodriguez', 
+  const [user] = useState({
+    name: 'Alex Rodriguez',
     role: 'Senior Broker',
     email: 'alex.rodriguez@fleetflow.com'
   });
@@ -108,7 +107,7 @@ const BrokerOperationsPage: React.FC = () => {
                 color: 'rgba(255, 255, 255, 0.7)',
                 margin: 0
               }}>
-                FreightFlow RFx System • Live Market Intelligence • Competitive Bidding
+                FreightFlow RFx℠ System • Live Market Intelligence • Competitive Bidding
               </p>
             </div>
             <div style={{
@@ -142,7 +141,7 @@ const BrokerOperationsPage: React.FC = () => {
         }}>
           {[
             { key: 'overview', label: 'Overview', icon: '📊' },
-            { key: 'rfx', label: 'FreightFlow RFx Center', icon: '📋' },
+            { key: 'rfx', label: 'FreightFlow RFx℠ Center', icon: '📋' },
             { key: 'shippers', label: 'Shipper Management', icon: '🏢' },
             { key: 'quotes', label: 'Quick Quotes', icon: '💰' },
             { key: 'analytics', label: 'Performance', icon: '📈' },
@@ -193,7 +192,7 @@ const BrokerOperationsPage: React.FC = () => {
                 marginBottom: '24px',
                 textAlign: 'center'
               }}>📊 Broker Performance Metrics</h2>
-              
+
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -299,7 +298,7 @@ const BrokerOperationsPage: React.FC = () => {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '16px'
               }}>
-                <button 
+                <button
                   onClick={() => setActiveTab('rfx')}
                   style={{
                     background: 'linear-gradient(135deg, #e11d48, #be185d)',
@@ -314,9 +313,9 @@ const BrokerOperationsPage: React.FC = () => {
                     textAlign: 'center'
                   }}
                 >
-                  📋 FreightFlow RFx Center
+                  📋 FreightFlow RFx℠ Center
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab('shippers')}
                   style={{
                     background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -333,7 +332,7 @@ const BrokerOperationsPage: React.FC = () => {
                 >
                   🏢 Manage Shippers
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab('analytics')}
                   style={{
                     background: 'linear-gradient(135deg, #10b981, #059669)',
@@ -361,7 +360,7 @@ const BrokerOperationsPage: React.FC = () => {
                   <p className="text-blue-100 text-sm">Generate intelligent responses to RFB, RFQ, RFP, and RFI requests</p>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveTab('quotes')}
                   className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-xl hover:shadow-lg transition-all text-left"
                 >
@@ -370,7 +369,7 @@ const BrokerOperationsPage: React.FC = () => {
                   <p className="text-green-100 text-sm">Fast competitive quotes with live market rates</p>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveTab('shippers')}
                   className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl hover:shadow-lg transition-all text-left"
                 >
@@ -443,7 +442,7 @@ const BrokerOperationsPage: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">🔥 Market Intelligence Preview</h3>
-                <button 
+                <button
                   onClick={() => setActiveTab('rfx')}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                 >

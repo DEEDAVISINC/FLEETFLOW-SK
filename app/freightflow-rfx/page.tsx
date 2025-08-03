@@ -1829,7 +1829,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           marginBottom: '30px',
         }}
       >
-        📋 FreightFlow RFx Management
+        📋 FreightFlow RFx℠ Management
       </h1>
 
       {/* Header Stats */}

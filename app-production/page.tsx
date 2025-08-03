@@ -303,7 +303,7 @@ export default function HomePage() {
                 textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               }}
             >
-              FleetFlow Command Center
+              FleetFlow Command Center℠
             </h1>
             <p
               style={{
