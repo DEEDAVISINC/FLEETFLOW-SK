@@ -1,18 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import btsService, {
+  PortPerformanceBenchmark,
+  WaterborneCommerceData,
+} from '../../services/BTSService';
+import {
+  NOAAPortConditions,
+  noaaPortsService,
+} from '../../services/NOAAPortsService';
 import {
   NOADVesselData,
   PortIntelligence,
   VesselSchedule,
 } from '../../services/NOADService';
-import { NOAAPortConditions } from '../../services/NOAAPortsService';
-import { PortAuthorityOperations } from '../../services/PortAuthoritySystemsService';
-import { WaterborneCommerceData, PortPerformanceBenchmark } from '../../services/BTSService';
 import { portAuthorityService } from '../../services/PortAuthorityService';
-import { noaaPortsService } from '../../services/NOAAPortsService';
-import { portAuthoritySystemsService } from '../../services/PortAuthoritySystemsService';
-import btsService from '../../services/BTSService';
+import {
+  PortAuthorityOperations,
+  portAuthoritySystemsService,
+} from '../../services/PortAuthoritySystemsService';
 
 interface MaritimeIntelligenceViewProps {
   shipments?: any[];
@@ -33,7 +39,13 @@ export default function MaritimeIntelligenceView({
 }: MaritimeIntelligenceViewProps) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'vessels' | 'ports' | 'schedules' | 'conditions' | 'operations' | 'commerce'
+    | 'overview'
+    | 'vessels'
+    | 'ports'
+    | 'schedules'
+    | 'conditions'
+    | 'operations'
+    | 'commerce'
   >('overview');
   const [summary, setSummary] = useState<MaritimeIntelligenceSummary | null>(
     null
@@ -42,12 +54,20 @@ export default function MaritimeIntelligenceView({
   const [portData, setPortData] = useState<PortIntelligence[]>([]);
   const [scheduleData, setScheduleData] = useState<VesselSchedule[]>([]);
   const [selectedPort, setSelectedPort] = useState<string>('all');
-  
+
   // New data sources
-  const [noaaConditions, setNoaaConditions] = useState<NOAAPortConditions[]>([]);
-  const [portOperations, setPortOperations] = useState<PortAuthorityOperations[]>([]);
-  const [commerceData, setCommerceData] = useState<WaterborneCommerceData[]>([]);
-  const [portBenchmarks, setPortBenchmarks] = useState<PortPerformanceBenchmark[]>([]);
+  const [noaaConditions, setNoaaConditions] = useState<NOAAPortConditions[]>(
+    []
+  );
+  const [portOperations, setPortOperations] = useState<
+    PortAuthorityOperations[]
+  >([]);
+  const [commerceData, setCommerceData] = useState<WaterborneCommerceData[]>(
+    []
+  );
+  const [portBenchmarks, setPortBenchmarks] = useState<
+    PortPerformanceBenchmark[]
+  >([]);
 
   const majorPorts = [
     { code: 'USLAX', name: 'Los Angeles' },
@@ -89,17 +109,21 @@ export default function MaritimeIntelligenceView({
       setScheduleData(schedules);
 
       // Load NOAA port conditions
-      const noaaPromises = majorPorts.map(port => 
+      const noaaPromises = majorPorts.map((port) =>
         noaaPortsService.getPortConditions(port.code)
       );
-      const conditions = (await Promise.all(noaaPromises)).filter(Boolean) as NOAAPortConditions[];
+      const conditions = (await Promise.all(noaaPromises)).filter(
+        Boolean
+      ) as NOAAPortConditions[];
       setNoaaConditions(conditions);
 
       // Load port authority operations
-      const operationsPromises = majorPorts.map(port => 
+      const operationsPromises = majorPorts.map((port) =>
         portAuthoritySystemsService.getPortOperations(port.code)
       );
-      const operations = (await Promise.all(operationsPromises)).filter(Boolean) as PortAuthorityOperations[];
+      const operations = (await Promise.all(operationsPromises)).filter(
+        Boolean
+      ) as PortAuthorityOperations[];
       setPortOperations(operations);
 
       // Load BTS waterborne commerce data
@@ -109,7 +133,6 @@ export default function MaritimeIntelligenceView({
       // Load BTS port performance benchmarks
       const benchmarks = await btsService.getPortPerformanceBenchmarks();
       setPortBenchmarks(benchmarks);
-
     } catch (error) {
       console.error('Error loading maritime data:', error);
     } finally {
@@ -1036,52 +1059,158 @@ export default function MaritimeIntelligenceView({
       {/* NOAA Conditions Tab */}
       {activeTab === 'conditions' && (
         <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+            }}
+          >
             {noaaConditions.map((condition, index) => (
-              <div key={index} style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '12px',
-                padding: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                  <h4 style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      margin: 0,
+                    }}
+                  >
                     {condition.portName}
                   </h4>
-                  <span style={{
-                    background: `${getCongestionColor(condition.conditions.safetyLevel === 'green' ? 'low' : condition.conditions.safetyLevel === 'yellow' ? 'medium' : 'high')}20`,
-                    color: getCongestionColor(condition.conditions.safetyLevel === 'green' ? 'low' : condition.conditions.safetyLevel === 'yellow' ? 'medium' : 'high'),
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    fontWeight: '500'
-                  }}>
+                  <span
+                    style={{
+                      background: `${getCongestionColor(condition.conditions.safetyLevel === 'green' ? 'low' : condition.conditions.safetyLevel === 'yellow' ? 'medium' : 'high')}20`,
+                      color: getCongestionColor(
+                        condition.conditions.safetyLevel === 'green'
+                          ? 'low'
+                          : condition.conditions.safetyLevel === 'yellow'
+                            ? 'medium'
+                            : 'high'
+                      ),
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                    }}
+                  >
                     {condition.conditions.safetyLevel}
                   </span>
                 </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px',
+                    marginBottom: '16px',
+                  }}
+                >
                   <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Water Level</div>
-                    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>{condition.waterLevel.current}ft</div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Water Level
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {condition.waterLevel.current}ft
+                    </div>
                   </div>
                   <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Wind Speed</div>
-                    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>{condition.weather.windSpeed}kts</div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Wind Speed
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {condition.weather.windSpeed}kts
+                    </div>
                   </div>
                   <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Current</div>
-                    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>{condition.currents.speed}kts</div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Current
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {condition.currents.speed}kts
+                    </div>
                   </div>
                   <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Visibility</div>
-                    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>{condition.weather.visibility}NM</div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Visibility
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {condition.weather.visibility}NM
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
-                  <div>Next High Tide: {formatDateTime(condition.waterLevel.nextHighTide)}</div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '14px',
+                  }}
+                >
+                  <div>
+                    Next High Tide:{' '}
+                    {formatDateTime(condition.waterLevel.nextHighTide)}
+                  </div>
                   <div>Air Temp: {condition.weather.airTemperature}°F</div>
                   <div>Water Temp: {condition.weather.waterTemperature}°F</div>
                 </div>
@@ -1096,60 +1225,170 @@ export default function MaritimeIntelligenceView({
         <div>
           <div style={{ display: 'grid', gap: '20px' }}>
             {portOperations.map((operation, index) => (
-              <div key={index} style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '12px',
-                padding: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}>
-                <h4 style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', margin: '0 0 16px 0' }}>
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    margin: '0 0 16px 0',
+                  }}
+                >
                   {operation.portName}
                 </h4>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-                  <div style={{ background: 'rgba(59, 130, 246, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#60a5fa', fontSize: '12px' }}>Available Berths</div>
-                    <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
-                      {operation.berths.filter(b => b.status === 'available').length}/{operation.berths.length}
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#60a5fa', fontSize: '12px' }}>
+                      Available Berths
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {
+                        operation.berths.filter((b) => b.status === 'available')
+                          .length
+                      }
+                      /{operation.berths.length}
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#34d399', fontSize: '12px' }}>Yard Utilization</div>
-                    <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#34d399', fontSize: '12px' }}>
+                      Yard Utilization
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {operation.cargo.containerYardUtilization}%
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(245, 158, 11, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#fbbf24', fontSize: '12px' }}>Daily Throughput</div>
-                    <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#fbbf24', fontSize: '12px' }}>
+                      Daily Throughput
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {operation.cargo.dailyThroughput.toLocaleString()}
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(139, 92, 246, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#a78bfa', fontSize: '12px' }}>Avg Wait Time</div>
-                    <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#a78bfa', fontSize: '12px' }}>
+                      Avg Wait Time
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {operation.traffic.averageWaitTime.toFixed(1)}h
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '20px',
+                  }}
+                >
                   <div>
-                    <h5 style={{ color: 'white', fontSize: '16px', fontWeight: 'bold', margin: '0 0 12px 0' }}>
+                    <h5
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        margin: '0 0 12px 0',
+                      }}
+                    >
                       Terminals ({operation.terminals.length})
                     </h5>
                     {operation.terminals.slice(0, 3).map((terminal, i) => (
-                      <div key={i} style={{ marginBottom: '8px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                        {terminal.terminalName}: {terminal.utilization}% utilization
+                      <div
+                        key={i}
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {terminal.terminalName}: {terminal.utilization}%
+                        utilization
                       </div>
                     ))}
                   </div>
                   <div>
-                    <h5 style={{ color: 'white', fontSize: '16px', fontWeight: 'bold', margin: '0 0 12px 0' }}>
+                    <h5
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        margin: '0 0 12px 0',
+                      }}
+                    >
                       Traffic Status
                     </h5>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
                       <div>Vessel Queue: {operation.traffic.vesselQueue}</div>
                       <div>Channel: {operation.traffic.channelStatus}</div>
                       <div>Pilotage: {operation.traffic.pilotageStatus}</div>
@@ -1167,77 +1406,206 @@ export default function MaritimeIntelligenceView({
         <div>
           <div style={{ display: 'grid', gap: '20px' }}>
             {commerceData.map((commerce, index) => (
-              <div key={index} style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '12px',
-                padding: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '20px',
+                  }}
+                >
                   <div>
-                    <h4 style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
                       {commerce.port_name}
                     </h4>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
-                      {commerce.state} • Market Share: {commerce.market_share.toFixed(1)}%
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {commerce.state} • Market Share:{' '}
+                      {commerce.market_share.toFixed(1)}%
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: commerce.tonnage_growth_rate > 0 ? '#10b981' : '#ef4444', fontSize: '18px', fontWeight: 'bold' }}>
-                      {commerce.tonnage_growth_rate > 0 ? '+' : ''}{commerce.tonnage_growth_rate.toFixed(1)}%
+                    <div
+                      style={{
+                        color:
+                          commerce.tonnage_growth_rate > 0
+                            ? '#10b981'
+                            : '#ef4444',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {commerce.tonnage_growth_rate > 0 ? '+' : ''}
+                      {commerce.tonnage_growth_rate.toFixed(1)}%
                     </div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Growth Rate</div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Growth Rate
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-                  <div style={{ background: 'rgba(59, 130, 246, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#60a5fa', fontSize: '12px' }}>Total Tonnage</div>
-                    <div style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#60a5fa', fontSize: '12px' }}>
+                      Total Tonnage
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {(commerce.total_tonnage / 1000000).toFixed(1)}M tons
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#34d399', fontSize: '12px' }}>Total Value</div>
-                    <div style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#34d399', fontSize: '12px' }}>
+                      Total Value
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       ${(commerce.total_value_millions / 1000).toFixed(1)}B
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(245, 158, 11, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#fbbf24', fontSize: '12px' }}>Imports</div>
-                    <div style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#fbbf24', fontSize: '12px' }}>
+                      Imports
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {(commerce.imports / 1000000).toFixed(1)}M tons
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(139, 92, 246, 0.2)', padding: '12px', borderRadius: '8px' }}>
-                    <div style={{ color: '#a78bfa', fontSize: '12px' }}>Exports</div>
-                    <div style={{ color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.2)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div style={{ color: '#a78bfa', fontSize: '12px' }}>
+                      Exports
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {(commerce.exports / 1000000).toFixed(1)}M tons
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h5 style={{ color: 'white', fontSize: '16px', fontWeight: 'bold', margin: '0 0 12px 0' }}>
+                  <h5
+                    style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      margin: '0 0 12px 0',
+                    }}
+                  >
                     Top Commodities
                   </h5>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                    {commerce.top_commodities.slice(0, 4).map((commodity, i) => (
-                      <div key={i} style={{ 
-                        background: 'rgba(255, 255, 255, 0.05)', 
-                        padding: '8px 12px', 
-                        borderRadius: '6px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                        <span style={{ color: 'white', fontSize: '14px' }}>{commodity.commodity}</span>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                          {commodity.percentage_of_total}%
-                        </span>
-                      </div>
-                    ))}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '12px',
+                    }}
+                  >
+                    {commerce.top_commodities
+                      .slice(0, 4)
+                      .map((commodity, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            {commodity.commodity}
+                          </span>
+                          <span
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {commodity.percentage_of_total}%
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

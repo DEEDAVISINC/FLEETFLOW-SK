@@ -1,9 +1,9 @@
 /**
  * Enhanced Bureau of Transportation Statistics (BTS) API Service
- * 
+ *
  * FREE API - No API key required
  * Provides comprehensive transportation industry benchmarking data with MARITIME FOCUS
- * 
+ *
  * Value Proposition:
  * - Industry performance benchmarking
  * - Modal share analysis (truck, rail, air, water)
@@ -13,7 +13,7 @@
  * - Economic indicators and cost trends
  * - Regional market analysis
  * - Safety and compliance metrics
- * 
+ *
  * Data Sources:
  * - Freight Analysis Framework (FAF)
  * - Commodity Flow Survey (CFS)
@@ -23,7 +23,7 @@
  * - Transportation Economic Trends (TET)
  * - Border Crossing/Entry Data
  * - North American Transborder Freight Data
- * 
+ *
  * Estimated Value Add: $3-5M (Enhanced with maritime intelligence)
  */
 
@@ -113,7 +113,7 @@ export interface WaterborneCommerceData {
   state: string;
   year: number;
   quarter?: number;
-  
+
   // Tonnage Data
   total_tonnage: number; // short tons
   domestic_tonnage: number;
@@ -121,12 +121,12 @@ export interface WaterborneCommerceData {
   imports: number;
   exports: number;
   internal_tonnage: number; // domestic port-to-port
-  
+
   // Value Data
   total_value_millions: number;
   import_value_millions: number;
   export_value_millions: number;
-  
+
   // Commodity Breakdown
   top_commodities: {
     commodity: string;
@@ -134,16 +134,16 @@ export interface WaterborneCommerceData {
     value_millions: number;
     percentage_of_total: number;
   }[];
-  
+
   // Vessel Traffic
   vessel_calls: number;
   average_vessel_size: number; // deadweight tons
-  
+
   // Performance Metrics
   tonnage_growth_rate: number; // year-over-year
   value_growth_rate: number;
   market_share: number; // percentage of total US waterborne commerce
-  
+
   // Trade Partners (for foreign trade)
   top_trading_partners: {
     country: string;
@@ -160,18 +160,18 @@ export interface MaritimeTradeFlow {
   destination_country: string;
   commodity_group: string;
   specific_commodity: string;
-  
+
   // Flow Data
   annual_tonnage: number;
   annual_value_millions: number;
   average_shipment_size: number;
   frequency: number; // shipments per year
-  
+
   // Route Analysis
   distance_nautical_miles: number;
   transit_time_days: number;
   route_efficiency: number; // 0-100 score
-  
+
   // Market Intelligence
   growth_trend: 'increasing' | 'decreasing' | 'stable';
   seasonality_factor: number;
@@ -191,24 +191,24 @@ export interface PortPerformanceBenchmark {
     regional_rank: number;
     total_ports_ranked: number;
   };
-  
+
   // Throughput Metrics
   container_throughput_teu: number;
   bulk_tonnage: number;
   breakbulk_tonnage: number;
   total_tonnage: number;
-  
+
   // Efficiency Metrics
   vessel_turnaround_time: number; // hours
   container_dwell_time: number; // days
   berth_productivity: number; // containers per hour
   gate_productivity: number; // trucks per hour
-  
+
   // Economic Impact
   jobs_supported: number;
   economic_impact_millions: number;
   tax_revenue_millions: number;
-  
+
   // Comparative Analysis
   peer_ports: string[];
   performance_vs_peers: {
@@ -216,7 +216,7 @@ export interface PortPerformanceBenchmark {
     efficiency_percentile: number;
     growth_percentile: number;
   };
-  
+
   // Trends
   five_year_growth_rate: number;
   market_share_trend: 'gaining' | 'losing' | 'stable';
@@ -226,28 +226,28 @@ export interface PortPerformanceBenchmark {
 export interface MaritimeModalAnalysis {
   trade_lane: string;
   commodity_group: string;
-  
+
   // Modal Share
   water_share: number; // percentage
   rail_share: number;
   truck_share: number;
   pipeline_share: number;
-  
+
   // Cost Analysis
   water_cost_per_ton: number;
   rail_cost_per_ton: number;
   truck_cost_per_ton: number;
-  
+
   // Service Characteristics
   water_transit_time: number; // days
   rail_transit_time: number;
   truck_transit_time: number;
-  
+
   // Reliability Metrics
   water_on_time_performance: number; // percentage
   rail_on_time_performance: number;
   truck_on_time_performance: number;
-  
+
   // Modal Shift Analysis
   historical_trends: {
     year: number;
@@ -255,7 +255,7 @@ export interface MaritimeModalAnalysis {
     rail_share: number;
     truck_share: number;
   }[];
-  
+
   projected_trends: {
     year: number;
     water_share: number;
@@ -299,15 +299,17 @@ class BTSService {
   /**
    * Get freight analysis data by mode and commodity
    */
-  async getFreightAnalysis(filters: {
-    mode?: string;
-    commodity?: string;
-    origin_state?: string;
-    destination_state?: string;
-    year?: number;
-  } = {}): Promise<FreightAnalysis[]> {
+  async getFreightAnalysis(
+    filters: {
+      mode?: string;
+      commodity?: string;
+      origin_state?: string;
+      destination_state?: string;
+      year?: number;
+    } = {}
+  ): Promise<FreightAnalysis[]> {
     const cacheKey = `freight_analysis_${JSON.stringify(filters)}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       // Mock comprehensive freight analysis data
       const mockData: FreightAnalysis[] = [
@@ -321,7 +323,7 @@ class BTSService {
           ton_miles_millions: 187500,
           average_distance: 1495,
           year: 2023,
-          quarter: 4
+          quarter: 4,
         },
         {
           mode: 'truck',
@@ -333,7 +335,7 @@ class BTSService {
           ton_miles_millions: 65800,
           average_distance: 1456,
           year: 2023,
-          quarter: 4
+          quarter: 4,
         },
         {
           mode: 'truck',
@@ -345,7 +347,7 @@ class BTSService {
           ton_miles_millions: 52400,
           average_distance: 587,
           year: 2023,
-          quarter: 4
+          quarter: 4,
         },
         {
           mode: 'rail',
@@ -357,7 +359,7 @@ class BTSService {
           ton_miles_millions: 189600,
           average_distance: 772,
           year: 2023,
-          quarter: 4
+          quarter: 4,
         },
         {
           mode: 'truck',
@@ -369,8 +371,8 @@ class BTSService {
           ton_miles_millions: 18900,
           average_distance: 279,
           year: 2023,
-          quarter: 4
-        }
+          quarter: 4,
+        },
       ];
 
       return mockData;
@@ -382,7 +384,7 @@ class BTSService {
    */
   async getModalShareAnalysis(): Promise<ModalShare[]> {
     const cacheKey = 'modal_share_analysis';
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: ModalShare[] = [
         {
@@ -391,7 +393,7 @@ class BTSService {
           value_share: 68.5,
           tonnage_share: 72.1,
           growth_rate: 0.034,
-          trend: 'increasing'
+          trend: 'increasing',
         },
         {
           mode: 'Rail',
@@ -399,7 +401,7 @@ class BTSService {
           value_share: 16.2,
           tonnage_share: 14.1,
           growth_rate: 0.021,
-          trend: 'stable'
+          trend: 'stable',
         },
         {
           mode: 'Water',
@@ -407,7 +409,7 @@ class BTSService {
           value_share: 9.1,
           tonnage_share: 8.8,
           growth_rate: 0.015,
-          trend: 'stable'
+          trend: 'stable',
         },
         {
           mode: 'Air',
@@ -415,7 +417,7 @@ class BTSService {
           value_share: 4.8,
           tonnage_share: 0.3,
           growth_rate: 0.067,
-          trend: 'increasing'
+          trend: 'increasing',
         },
         {
           mode: 'Pipeline',
@@ -423,7 +425,7 @@ class BTSService {
           value_share: 1.2,
           tonnage_share: 4.5,
           growth_rate: -0.012,
-          trend: 'decreasing'
+          trend: 'decreasing',
         },
         {
           mode: 'Multimodal',
@@ -431,8 +433,8 @@ class BTSService {
           value_share: 0.2,
           tonnage_share: 0.2,
           growth_rate: 0.089,
-          trend: 'increasing'
-        }
+          trend: 'increasing',
+        },
       ];
 
       return mockData;
@@ -444,7 +446,7 @@ class BTSService {
    */
   async getEconomicIndicators(): Promise<EconomicIndicator[]> {
     const cacheKey = 'economic_indicators';
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: EconomicIndicator[] = [
         {
@@ -455,7 +457,7 @@ class BTSService {
           year_over_year_change: 0.058,
           quarter_over_quarter_change: 0.015,
           trend: 'up',
-          significance: 'high'
+          significance: 'high',
         },
         {
           indicator: 'Average Truck Utilization Rate',
@@ -465,7 +467,7 @@ class BTSService {
           year_over_year_change: 0.023,
           quarter_over_quarter_change: 0.008,
           trend: 'up',
-          significance: 'high'
+          significance: 'high',
         },
         {
           indicator: 'Freight Rate Index - Dry Van',
@@ -475,7 +477,7 @@ class BTSService {
           year_over_year_change: 0.042,
           quarter_over_quarter_change: 0.019,
           trend: 'up',
-          significance: 'high'
+          significance: 'high',
         },
         {
           indicator: 'Driver Shortage Index',
@@ -485,7 +487,7 @@ class BTSService {
           year_over_year_change: -0.034,
           quarter_over_quarter_change: -0.012,
           trend: 'down',
-          significance: 'medium'
+          significance: 'medium',
         },
         {
           indicator: 'Fuel Cost as % of Operating Costs',
@@ -495,8 +497,8 @@ class BTSService {
           year_over_year_change: 0.015,
           quarter_over_quarter_change: 0.007,
           trend: 'up',
-          significance: 'medium'
-        }
+          significance: 'medium',
+        },
       ];
 
       return mockData;
@@ -508,7 +510,7 @@ class BTSService {
    */
   async getRegionalAnalysis(region?: string): Promise<RegionalAnalysis[]> {
     const cacheKey = `regional_analysis_${region || 'all'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: RegionalAnalysis[] = [
         {
@@ -521,7 +523,7 @@ class BTSService {
           dominant_commodities: ['Oil & Gas', 'Chemicals', 'Food Products'],
           growth_rate: 0.048,
           capacity_utilization: 0.876,
-          competitive_index: 0.92
+          competitive_index: 0.92,
         },
         {
           region: 'West',
@@ -533,7 +535,7 @@ class BTSService {
           dominant_commodities: ['Electronics', 'Agriculture', 'Textiles'],
           growth_rate: 0.035,
           capacity_utilization: 0.894,
-          competitive_index: 0.88
+          competitive_index: 0.88,
         },
         {
           region: 'Southeast',
@@ -542,10 +544,14 @@ class BTSService {
           freight_tons_thousands: 1234600,
           truck_share: 0.789,
           rail_share: 0.087,
-          dominant_commodities: ['Food Products', 'Tourism Goods', 'Construction'],
+          dominant_commodities: [
+            'Food Products',
+            'Tourism Goods',
+            'Construction',
+          ],
           growth_rate: 0.029,
           capacity_utilization: 0.823,
-          competitive_index: 0.76
+          competitive_index: 0.76,
         },
         {
           region: 'Midwest',
@@ -557,7 +563,7 @@ class BTSService {
           dominant_commodities: ['Manufacturing', 'Agriculture', 'Automotive'],
           growth_rate: 0.031,
           capacity_utilization: 0.867,
-          competitive_index: 0.85
+          competitive_index: 0.85,
         },
         {
           region: 'Northeast',
@@ -566,11 +572,15 @@ class BTSService {
           freight_tons_thousands: 987600,
           truck_share: 0.743,
           rail_share: 0.134,
-          dominant_commodities: ['Financial Services', 'Fashion', 'Food Products'],
+          dominant_commodities: [
+            'Financial Services',
+            'Fashion',
+            'Food Products',
+          ],
           growth_rate: 0.025,
           capacity_utilization: 0.901,
-          competitive_index: 0.82
-        }
+          competitive_index: 0.82,
+        },
       ];
 
       return mockData;
@@ -582,7 +592,7 @@ class BTSService {
    */
   async getSafetyMetrics(): Promise<SafetyMetrics[]> {
     const cacheKey = 'safety_metrics';
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: SafetyMetrics[] = [
         {
@@ -593,7 +603,7 @@ class BTSService {
           property_damage_rate: 4.2,
           compliance_score: 0.87,
           safety_trend: 'improving',
-          year: 2023
+          year: 2023,
         },
         {
           mode: 'Rail',
@@ -603,7 +613,7 @@ class BTSService {
           property_damage_rate: 1.2,
           compliance_score: 0.94,
           safety_trend: 'stable',
-          year: 2023
+          year: 2023,
         },
         {
           mode: 'Water',
@@ -613,7 +623,7 @@ class BTSService {
           property_damage_rate: 0.9,
           compliance_score: 0.91,
           safety_trend: 'improving',
-          year: 2023
+          year: 2023,
         },
         {
           mode: 'Air',
@@ -623,8 +633,8 @@ class BTSService {
           property_damage_rate: 0.3,
           compliance_score: 0.98,
           safety_trend: 'stable',
-          year: 2023
-        }
+          year: 2023,
+        },
       ];
 
       return mockData;
@@ -636,7 +646,7 @@ class BTSService {
    */
   async getIndustryBenchmarks(category?: string): Promise<IndustryBenchmark[]> {
     const cacheKey = `industry_benchmarks_${category || 'all'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: IndustryBenchmark[] = [
         {
@@ -647,7 +657,7 @@ class BTSService {
           bottom_quartile: 1.89,
           unit: 'USD per mile',
           benchmark_year: 2023,
-          data_source: 'BTS Freight Analysis'
+          data_source: 'BTS Freight Analysis',
         },
         {
           category: 'Operating Efficiency',
@@ -657,7 +667,7 @@ class BTSService {
           bottom_quartile: 5.4,
           unit: 'MPG',
           benchmark_year: 2023,
-          data_source: 'BTS Economic Trends'
+          data_source: 'BTS Economic Trends',
         },
         {
           category: 'Financial Performance',
@@ -667,7 +677,7 @@ class BTSService {
           bottom_quartile: 0.968,
           unit: 'Ratio',
           benchmark_year: 2023,
-          data_source: 'BTS Financial Data'
+          data_source: 'BTS Financial Data',
         },
         {
           category: 'Safety',
@@ -677,7 +687,7 @@ class BTSService {
           bottom_quartile: 3.8,
           unit: 'Incidents per million miles',
           benchmark_year: 2023,
-          data_source: 'BTS Safety Database'
+          data_source: 'BTS Safety Database',
         },
         {
           category: 'Utilization',
@@ -687,8 +697,8 @@ class BTSService {
           bottom_quartile: 0.756,
           unit: 'Percentage',
           benchmark_year: 2023,
-          data_source: 'BTS Operations Data'
-        }
+          data_source: 'BTS Operations Data',
+        },
       ];
 
       return mockData;
@@ -700,54 +710,79 @@ class BTSService {
    */
   async getMarketTrends(): Promise<MarketTrend[]> {
     const cacheKey = 'market_trends';
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: MarketTrend[] = [
         {
           trend_name: 'Electric Vehicle Adoption',
-          description: 'Growing adoption of electric trucks in urban delivery and regional hauls',
+          description:
+            'Growing adoption of electric trucks in urban delivery and regional hauls',
           impact_level: 'high',
           affected_modes: ['truck'],
           time_horizon: 'medium_term',
           confidence_level: 0.85,
-          key_drivers: ['Environmental regulations', 'Battery technology', 'Charging infrastructure']
+          key_drivers: [
+            'Environmental regulations',
+            'Battery technology',
+            'Charging infrastructure',
+          ],
         },
         {
           trend_name: 'Autonomous Freight Technology',
-          description: 'Development of autonomous trucking and freight automation systems',
+          description:
+            'Development of autonomous trucking and freight automation systems',
           impact_level: 'high',
           affected_modes: ['truck', 'rail'],
           time_horizon: 'long_term',
           confidence_level: 0.72,
-          key_drivers: ['Technology advancement', 'Labor shortages', 'Safety improvements']
+          key_drivers: [
+            'Technology advancement',
+            'Labor shortages',
+            'Safety improvements',
+          ],
         },
         {
           trend_name: 'Intermodal Growth',
-          description: 'Increased use of intermodal transportation for long-haul freight',
+          description:
+            'Increased use of intermodal transportation for long-haul freight',
           impact_level: 'medium',
           affected_modes: ['truck', 'rail'],
           time_horizon: 'short_term',
           confidence_level: 0.91,
-          key_drivers: ['Cost efficiency', 'Environmental concerns', 'Capacity constraints']
+          key_drivers: [
+            'Cost efficiency',
+            'Environmental concerns',
+            'Capacity constraints',
+          ],
         },
         {
           trend_name: 'Supply Chain Regionalization',
-          description: 'Shift from global to regional supply chains affecting freight patterns',
+          description:
+            'Shift from global to regional supply chains affecting freight patterns',
           impact_level: 'high',
           affected_modes: ['truck', 'rail', 'water'],
           time_horizon: 'medium_term',
           confidence_level: 0.88,
-          key_drivers: ['Geopolitical tensions', 'Resilience focus', 'Cost considerations']
+          key_drivers: [
+            'Geopolitical tensions',
+            'Resilience focus',
+            'Cost considerations',
+          ],
         },
         {
           trend_name: 'Digital Freight Platforms',
-          description: 'Growing use of digital platforms for freight matching and logistics',
+          description:
+            'Growing use of digital platforms for freight matching and logistics',
           impact_level: 'medium',
           affected_modes: ['truck'],
           time_horizon: 'short_term',
           confidence_level: 0.94,
-          key_drivers: ['Technology adoption', 'Efficiency gains', 'Market transparency']
-        }
+          key_drivers: [
+            'Technology adoption',
+            'Efficiency gains',
+            'Market transparency',
+          ],
+        },
       ];
 
       return mockData;
@@ -757,15 +792,17 @@ class BTSService {
   /**
    * Get trade flow data
    */
-  async getTradeFlowData(filters: {
-    trade_type?: 'import' | 'export' | 'domestic';
-    commodity?: string;
-    origin?: string;
-    destination?: string;
-    year?: number;
-  } = {}): Promise<TradeFlowData[]> {
+  async getTradeFlowData(
+    filters: {
+      trade_type?: 'import' | 'export' | 'domestic';
+      commodity?: string;
+      origin?: string;
+      destination?: string;
+      year?: number;
+    } = {}
+  ): Promise<TradeFlowData[]> {
     const cacheKey = `trade_flow_${JSON.stringify(filters)}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       const mockData: TradeFlowData[] = [
         {
@@ -777,7 +814,7 @@ class BTSService {
           weight_tons: 145600,
           transport_mode: 'Water-Truck',
           year: 2023,
-          month: 12
+          month: 12,
         },
         {
           trade_type: 'export',
@@ -789,7 +826,7 @@ class BTSService {
           transport_mode: 'Truck',
           border_crossing: 'Laredo, TX',
           year: 2023,
-          month: 12
+          month: 12,
         },
         {
           trade_type: 'domestic',
@@ -800,8 +837,8 @@ class BTSService {
           weight_tons: 78900,
           transport_mode: 'Truck',
           year: 2023,
-          month: 12
-        }
+          month: 12,
+        },
       ];
 
       return mockData;
@@ -820,15 +857,22 @@ class BTSService {
     benchmarks: IndustryBenchmark[];
   }> {
     const cacheKey = 'industry_dashboard';
-    
+
     return this.getCachedData(cacheKey, async () => {
-      const [modalShare, economicIndicators, regionalAnalysis, safetyMetrics, marketTrends, benchmarks] = await Promise.all([
+      const [
+        modalShare,
+        economicIndicators,
+        regionalAnalysis,
+        safetyMetrics,
+        marketTrends,
+        benchmarks,
+      ] = await Promise.all([
         this.getModalShareAnalysis(),
         this.getEconomicIndicators(),
         this.getRegionalAnalysis(),
         this.getSafetyMetrics(),
         this.getMarketTrends(),
-        this.getIndustryBenchmarks()
+        this.getIndustryBenchmarks(),
       ]);
 
       return {
@@ -837,7 +881,7 @@ class BTSService {
         regionalAnalysis,
         safetyMetrics,
         marketTrends,
-        benchmarks
+        benchmarks,
       };
     });
   }
@@ -849,24 +893,34 @@ class BTSService {
   /**
    * Get waterborne commerce statistics for specific ports
    */
-  async getWaterborneCommerceData(portCode?: string, year?: number): Promise<WaterborneCommerceData[]> {
+  async getWaterborneCommerceData(
+    portCode?: string,
+    year?: number
+  ): Promise<WaterborneCommerceData[]> {
     const cacheKey = `waterborne_commerce_${portCode || 'all'}_${year || 'current'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       // In production, this would connect to BTS Waterborne Commerce API
       // https://www.bts.gov/waterborne-commerce
-      const ports = portCode ? [portCode] : ['USLAX', 'USNYK', 'USMIA', 'USSAV', 'USSEA', 'USCH1', 'USHOU'];
-      
-      return ports.map(port => this.generateWaterborneCommerceData(port, year || 2023));
+      const ports = portCode
+        ? [portCode]
+        : ['USLAX', 'USNYK', 'USMIA', 'USSAV', 'USSEA', 'USCH1', 'USHOU'];
+
+      return ports.map((port) =>
+        this.generateWaterborneCommerceData(port, year || 2023)
+      );
     });
   }
 
   /**
    * Get maritime trade flow analysis
    */
-  async getMaritimeTradeFlows(originPort?: string, destinationPort?: string): Promise<MaritimeTradeFlow[]> {
+  async getMaritimeTradeFlows(
+    originPort?: string,
+    destinationPort?: string
+  ): Promise<MaritimeTradeFlow[]> {
     const cacheKey = `maritime_trade_flows_${originPort || 'all'}_${destinationPort || 'all'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       return this.generateMaritimeTradeFlows(originPort, destinationPort);
     });
@@ -875,21 +929,36 @@ class BTSService {
   /**
    * Get port performance benchmarks
    */
-  async getPortPerformanceBenchmarks(portCodes?: string[]): Promise<PortPerformanceBenchmark[]> {
+  async getPortPerformanceBenchmarks(
+    portCodes?: string[]
+  ): Promise<PortPerformanceBenchmark[]> {
     const cacheKey = `port_benchmarks_${portCodes?.join(',') || 'all'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
-      const ports = portCodes || ['USLAX', 'USNYK', 'USMIA', 'USSAV', 'USSEA', 'USCH1', 'USHOU'];
-      return ports.map((port, index) => this.generatePortPerformanceBenchmark(port, index + 1));
+      const ports = portCodes || [
+        'USLAX',
+        'USNYK',
+        'USMIA',
+        'USSAV',
+        'USSEA',
+        'USCH1',
+        'USHOU',
+      ];
+      return ports.map((port, index) =>
+        this.generatePortPerformanceBenchmark(port, index + 1)
+      );
     });
   }
 
   /**
    * Get maritime modal analysis (water vs other modes)
    */
-  async getMaritimeModalAnalysis(tradeLane?: string, commodity?: string): Promise<MaritimeModalAnalysis[]> {
+  async getMaritimeModalAnalysis(
+    tradeLane?: string,
+    commodity?: string
+  ): Promise<MaritimeModalAnalysis[]> {
     const cacheKey = `maritime_modal_analysis_${tradeLane || 'all'}_${commodity || 'all'}`;
-    
+
     return this.getCachedData(cacheKey, async () => {
       return this.generateMaritimeModalAnalysis(tradeLane, commodity);
     });
@@ -911,22 +980,33 @@ class BTSService {
     };
   }> {
     const cacheKey = 'maritime_dashboard';
-    
-    return this.getCachedData(cacheKey, async () => {
-      const [waterborneCommerce, tradeFlows, portBenchmarks, modalAnalysis] = await Promise.all([
-        this.getWaterborneCommerceData(),
-        this.getMaritimeTradeFlows(),
-        this.getPortPerformanceBenchmarks(),
-        this.getMaritimeModalAnalysis()
-      ]);
 
-      const totalTonnage = waterborneCommerce.reduce((sum, port) => sum + port.total_tonnage, 0);
-      const totalValue = waterborneCommerce.reduce((sum, port) => sum + port.total_value_millions, 0);
+    return this.getCachedData(cacheKey, async () => {
+      const [waterborneCommerce, tradeFlows, portBenchmarks, modalAnalysis] =
+        await Promise.all([
+          this.getWaterborneCommerceData(),
+          this.getMaritimeTradeFlows(),
+          this.getPortPerformanceBenchmarks(),
+          this.getMaritimeModalAnalysis(),
+        ]);
+
+      const totalTonnage = waterborneCommerce.reduce(
+        (sum, port) => sum + port.total_tonnage,
+        0
+      );
+      const totalValue = waterborneCommerce.reduce(
+        (sum, port) => sum + port.total_value_millions,
+        0
+      );
       const topPorts = waterborneCommerce
         .sort((a, b) => b.total_tonnage - a.total_tonnage)
         .slice(0, 5)
-        .map(port => port.port_name);
-      const growthRate = waterborneCommerce.reduce((sum, port) => sum + port.tonnage_growth_rate, 0) / waterborneCommerce.length;
+        .map((port) => port.port_name);
+      const growthRate =
+        waterborneCommerce.reduce(
+          (sum, port) => sum + port.tonnage_growth_rate,
+          0
+        ) / waterborneCommerce.length;
 
       return {
         waterborneCommerce,
@@ -937,27 +1017,35 @@ class BTSService {
           totalTonnage,
           totalValue,
           topPorts,
-          growthRate
-        }
+          growthRate,
+        },
       };
     });
   }
 
   // Maritime data generation methods
-  private generateWaterborneCommerceData(portCode: string, year: number): WaterborneCommerceData {
+  private generateWaterborneCommerceData(
+    portCode: string,
+    year: number
+  ): WaterborneCommerceData {
     const portNames = {
-      'USLAX': 'Port of Los Angeles',
-      'USNYK': 'Port of New York/New Jersey',
-      'USMIA': 'Port of Miami',
-      'USSAV': 'Port of Savannah',
-      'USSEA': 'Port of Seattle',
-      'USCH1': 'Port of Charleston',
-      'USHOU': 'Port of Houston'
+      USLAX: 'Port of Los Angeles',
+      USNYK: 'Port of New York/New Jersey',
+      USMIA: 'Port of Miami',
+      USSAV: 'Port of Savannah',
+      USSEA: 'Port of Seattle',
+      USCH1: 'Port of Charleston',
+      USHOU: 'Port of Houston',
     };
 
     const states = {
-      'USLAX': 'CA', 'USNYK': 'NY', 'USMIA': 'FL', 'USSAV': 'GA',
-      'USSEA': 'WA', 'USCH1': 'SC', 'USHOU': 'TX'
+      USLAX: 'CA',
+      USNYK: 'NY',
+      USMIA: 'FL',
+      USSAV: 'GA',
+      USSEA: 'WA',
+      USCH1: 'SC',
+      USHOU: 'TX',
     };
 
     const baseTonnage = Math.floor(Math.random() * 100000000) + 50000000; // 50-150M tons
@@ -965,7 +1053,8 @@ class BTSService {
 
     return {
       port_code: portCode,
-      port_name: portNames[portCode as keyof typeof portNames] || 'Unknown Port',
+      port_name:
+        portNames[portCode as keyof typeof portNames] || 'Unknown Port',
       state: states[portCode as keyof typeof states] || 'US',
       year,
       total_tonnage: baseTonnage,
@@ -978,10 +1067,30 @@ class BTSService {
       import_value_millions: Math.floor(baseValue * 0.6),
       export_value_millions: Math.floor(baseValue * 0.4),
       top_commodities: [
-        { commodity: 'Petroleum Products', tonnage: Math.floor(baseTonnage * 0.25), value_millions: Math.floor(baseValue * 0.3), percentage_of_total: 25 },
-        { commodity: 'Containers', tonnage: Math.floor(baseTonnage * 0.2), value_millions: Math.floor(baseValue * 0.4), percentage_of_total: 20 },
-        { commodity: 'Coal', tonnage: Math.floor(baseTonnage * 0.15), value_millions: Math.floor(baseValue * 0.1), percentage_of_total: 15 },
-        { commodity: 'Grain', tonnage: Math.floor(baseTonnage * 0.1), value_millions: Math.floor(baseValue * 0.05), percentage_of_total: 10 }
+        {
+          commodity: 'Petroleum Products',
+          tonnage: Math.floor(baseTonnage * 0.25),
+          value_millions: Math.floor(baseValue * 0.3),
+          percentage_of_total: 25,
+        },
+        {
+          commodity: 'Containers',
+          tonnage: Math.floor(baseTonnage * 0.2),
+          value_millions: Math.floor(baseValue * 0.4),
+          percentage_of_total: 20,
+        },
+        {
+          commodity: 'Coal',
+          tonnage: Math.floor(baseTonnage * 0.15),
+          value_millions: Math.floor(baseValue * 0.1),
+          percentage_of_total: 15,
+        },
+        {
+          commodity: 'Grain',
+          tonnage: Math.floor(baseTonnage * 0.1),
+          value_millions: Math.floor(baseValue * 0.05),
+          percentage_of_total: 10,
+        },
       ],
       vessel_calls: Math.floor(Math.random() * 5000) + 2000,
       average_vessel_size: Math.floor(Math.random() * 50000) + 25000,
@@ -989,31 +1098,69 @@ class BTSService {
       value_growth_rate: Math.random() * 12 - 3, // -3% to +9%
       market_share: Math.random() * 15 + 5, // 5-20%
       top_trading_partners: [
-        { country: 'China', tonnage: Math.floor(baseTonnage * 0.2), value_millions: Math.floor(baseValue * 0.25), trade_type: 'both' as 'both' },
-        { country: 'Japan', tonnage: Math.floor(baseTonnage * 0.1), value_millions: Math.floor(baseValue * 0.15), trade_type: 'both' as 'both' },
-        { country: 'South Korea', tonnage: Math.floor(baseTonnage * 0.08), value_millions: Math.floor(baseValue * 0.12), trade_type: 'both' as 'both' }
-      ]
+        {
+          country: 'China',
+          tonnage: Math.floor(baseTonnage * 0.2),
+          value_millions: Math.floor(baseValue * 0.25),
+          trade_type: 'both' as 'both',
+        },
+        {
+          country: 'Japan',
+          tonnage: Math.floor(baseTonnage * 0.1),
+          value_millions: Math.floor(baseValue * 0.15),
+          trade_type: 'both' as 'both',
+        },
+        {
+          country: 'South Korea',
+          tonnage: Math.floor(baseTonnage * 0.08),
+          value_millions: Math.floor(baseValue * 0.12),
+          trade_type: 'both' as 'both',
+        },
+      ],
     };
   }
 
-  private generateMaritimeTradeFlows(originPort?: string, destinationPort?: string): MaritimeTradeFlow[] {
-    const ports = ['USLAX', 'USNYK', 'USMIA', 'USSAV', 'CNSHA', 'NLRTM', 'SGSIN'];
-    const commodities = ['Electronics', 'Automobiles', 'Machinery', 'Chemicals', 'Food Products', 'Textiles'];
+  private generateMaritimeTradeFlows(
+    originPort?: string,
+    destinationPort?: string
+  ): MaritimeTradeFlow[] {
+    const ports = [
+      'USLAX',
+      'USNYK',
+      'USMIA',
+      'USSAV',
+      'CNSHA',
+      'NLRTM',
+      'SGSIN',
+    ];
+    const commodities = [
+      'Electronics',
+      'Automobiles',
+      'Machinery',
+      'Chemicals',
+      'Food Products',
+      'Textiles',
+    ];
     const flows: MaritimeTradeFlow[] = [];
 
     for (let i = 0; i < 10; i++) {
-      const origin = originPort || ports[Math.floor(Math.random() * ports.length)];
-      const destination = destinationPort || ports[Math.floor(Math.random() * ports.length)];
-      
+      const origin =
+        originPort || ports[Math.floor(Math.random() * ports.length)];
+      const destination =
+        destinationPort || ports[Math.floor(Math.random() * ports.length)];
+
       if (origin === destination) continue;
 
       flows.push({
         origin_port: origin,
         destination_port: destination,
         origin_country: origin.startsWith('US') ? 'United States' : 'Foreign',
-        destination_country: destination.startsWith('US') ? 'United States' : 'Foreign',
+        destination_country: destination.startsWith('US')
+          ? 'United States'
+          : 'Foreign',
         commodity_group: 'Manufactured Goods',
-        specific_commodity: commodities[Math.floor(Math.random() * commodities.length)],
+        specific_commodity:
+          commodities[Math.floor(Math.random() * commodities.length)],
         annual_tonnage: Math.floor(Math.random() * 5000000) + 1000000,
         annual_value_millions: Math.floor(Math.random() * 10000) + 2000,
         average_shipment_size: Math.floor(Math.random() * 20000) + 5000,
@@ -1021,38 +1168,47 @@ class BTSService {
         distance_nautical_miles: Math.floor(Math.random() * 8000) + 2000,
         transit_time_days: Math.floor(Math.random() * 25) + 5,
         route_efficiency: Math.floor(Math.random() * 30) + 70,
-        growth_trend: Math.random() > 0.6 ? 'increasing' : Math.random() > 0.3 ? 'stable' : 'decreasing' as 'increasing' | 'stable' | 'decreasing',
+        growth_trend:
+          Math.random() > 0.6
+            ? 'increasing'
+            : Math.random() > 0.3
+              ? 'stable'
+              : ('decreasing' as 'increasing' | 'stable' | 'decreasing'),
         seasonality_factor: Math.random() * 0.4 + 0.8,
         competitive_routes: [`${origin}-ALT`, `${destination}-ALT`],
         modal_competition: {
           rail_alternative: Math.random() > 0.5,
           truck_alternative: Math.random() > 0.7,
-          pipeline_alternative: Math.random() > 0.9
-        }
+          pipeline_alternative: Math.random() > 0.9,
+        },
       });
     }
 
     return flows;
   }
 
-  private generatePortPerformanceBenchmark(portCode: string, rank: number): PortPerformanceBenchmark {
+  private generatePortPerformanceBenchmark(
+    portCode: string,
+    rank: number
+  ): PortPerformanceBenchmark {
     const portNames = {
-      'USLAX': 'Port of Los Angeles',
-      'USNYK': 'Port of New York/New Jersey',
-      'USMIA': 'Port of Miami',
-      'USSAV': 'Port of Savannah',
-      'USSEA': 'Port of Seattle',
-      'USCH1': 'Port of Charleston',
-      'USHOU': 'Port of Houston'
+      USLAX: 'Port of Los Angeles',
+      USNYK: 'Port of New York/New Jersey',
+      USMIA: 'Port of Miami',
+      USSAV: 'Port of Savannah',
+      USSEA: 'Port of Seattle',
+      USCH1: 'Port of Charleston',
+      USHOU: 'Port of Houston',
     };
 
     return {
       port_code: portCode,
-      port_name: portNames[portCode as keyof typeof portNames] || 'Unknown Port',
+      port_name:
+        portNames[portCode as keyof typeof portNames] || 'Unknown Port',
       ranking: {
         national_rank: rank,
         regional_rank: Math.floor(rank / 2) + 1,
-        total_ports_ranked: 50
+        total_ports_ranked: 50,
       },
       container_throughput_teu: Math.floor(Math.random() * 8000000) + 2000000,
       bulk_tonnage: Math.floor(Math.random() * 50000000) + 10000000,
@@ -1065,23 +1221,47 @@ class BTSService {
       jobs_supported: Math.floor(Math.random() * 100000) + 50000,
       economic_impact_millions: Math.floor(Math.random() * 50000) + 10000,
       tax_revenue_millions: Math.floor(Math.random() * 2000) + 500,
-      peer_ports: ['USLAX', 'USNYK', 'USSAV'].filter(p => p !== portCode).slice(0, 3),
+      peer_ports: ['USLAX', 'USNYK', 'USSAV']
+        .filter((p) => p !== portCode)
+        .slice(0, 3),
       performance_vs_peers: {
         throughput_percentile: Math.floor(Math.random() * 40) + 60,
         efficiency_percentile: Math.floor(Math.random() * 40) + 55,
-        growth_percentile: Math.floor(Math.random() * 50) + 50
+        growth_percentile: Math.floor(Math.random() * 50) + 50,
       },
       five_year_growth_rate: Math.random() * 8 + 2,
-      market_share_trend: Math.random() > 0.6 ? 'gaining' : Math.random() > 0.3 ? 'stable' : 'losing' as 'gaining' | 'stable' | 'losing',
-      investment_level: Math.random() > 0.6 ? 'high' : Math.random() > 0.3 ? 'medium' : 'low' as 'high' | 'medium' | 'low'
+      market_share_trend:
+        Math.random() > 0.6
+          ? 'gaining'
+          : Math.random() > 0.3
+            ? 'stable'
+            : ('losing' as 'gaining' | 'stable' | 'losing'),
+      investment_level:
+        Math.random() > 0.6
+          ? 'high'
+          : Math.random() > 0.3
+            ? 'medium'
+            : ('low' as 'high' | 'medium' | 'low'),
     };
   }
 
-  private generateMaritimeModalAnalysis(tradeLane?: string, commodity?: string): MaritimeModalAnalysis[] {
-    const tradeLanes = ['US West Coast - Asia', 'US East Coast - Europe', 'US Gulf - Latin America'];
-    const commodityGroups = ['Electronics', 'Automobiles', 'Chemicals', 'Food Products'];
-    
-    return tradeLanes.map(lane => ({
+  private generateMaritimeModalAnalysis(
+    tradeLane?: string,
+    commodity?: string
+  ): MaritimeModalAnalysis[] {
+    const tradeLanes = [
+      'US West Coast - Asia',
+      'US East Coast - Europe',
+      'US Gulf - Latin America',
+    ];
+    const commodityGroups = [
+      'Electronics',
+      'Automobiles',
+      'Chemicals',
+      'Food Products',
+    ];
+
+    return tradeLanes.map((lane) => ({
       trade_lane: tradeLane || lane,
       commodity_group: commodity || 'Mixed Freight',
       water_share: Math.random() * 30 + 40, // 40-70%
@@ -1101,14 +1281,14 @@ class BTSService {
         year: 2019 + i,
         water_share: 50 + Math.random() * 10 - 5,
         rail_share: 25 + Math.random() * 10 - 5,
-        truck_share: 20 + Math.random() * 10 - 5
+        truck_share: 20 + Math.random() * 10 - 5,
       })),
       projected_trends: Array.from({ length: 5 }, (_, i) => ({
         year: 2024 + i,
         water_share: 55 + Math.random() * 10 - 5,
         rail_share: 23 + Math.random() * 10 - 5,
-        truck_share: 18 + Math.random() * 10 - 5
-      }))
+        truck_share: 18 + Math.random() * 10 - 5,
+      })),
     }));
   }
 
@@ -1120,4 +1300,4 @@ class BTSService {
   }
 }
 
-export default new BTSService(); 
+export default new BTSService();
