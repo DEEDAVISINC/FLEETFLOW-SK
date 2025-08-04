@@ -437,9 +437,23 @@ export default function SpotRateOptimizationWidget() {
               >
                 Load Parameters
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Origin
                   </label>
                   <input
@@ -448,12 +462,30 @@ export default function SpotRateOptimizationWidget() {
                     onChange={(e) =>
                       setLoadParams({ ...loadParams, origin: e.target.value })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                     placeholder='e.g., ATL'
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Destination
                   </label>
                   <input
@@ -465,12 +497,30 @@ export default function SpotRateOptimizationWidget() {
                         destination: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                     placeholder='e.g., LAX'
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Distance (miles)
                   </label>
                   <input
@@ -482,11 +532,29 @@ export default function SpotRateOptimizationWidget() {
                         distance: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Weight (lbs)
                   </label>
                   <input
@@ -498,12 +566,30 @@ export default function SpotRateOptimizationWidget() {
                         weight: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                   />
                 </div>
               </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '6px',
+                  }}
+                >
                   Urgency
                 </label>
                 <select
@@ -514,18 +600,45 @@ export default function SpotRateOptimizationWidget() {
                       urgency: e.target.value as any,
                     })
                   }
-                  className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                  }}
                 >
-                  <option value='standard'>Standard</option>
-                  <option value='expedited'>Expedited</option>
-                  <option value='rush'>Rush</option>
+                  <option value='standard' style={{ background: '#1f2937', color: 'white' }}>Standard</option>
+                  <option value='expedited' style={{ background: '#1f2937', color: 'white' }}>Expedited</option>
+                  <option value='rush' style={{ background: '#1f2937', color: 'white' }}>Rush</option>
                 </select>
               </div>
             </div>
 
             {/* Market Conditions */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>Market Conditions</h3>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Market Conditions
+              </h3>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
