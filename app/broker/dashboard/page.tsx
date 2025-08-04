@@ -2848,6 +2848,49 @@ export default function BrokerDashboard() {
                   <SpotRateOptimizationWidget />
                 </div>
               )}
+              
+              {/* Navigation to Full Quotes Page */}
+              <div style={{ 
+                marginTop: '32px', 
+                padding: '24px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ color: 'white', marginBottom: '16px', fontSize: '18px' }}>
+                  🎯 Advanced Quote Management
+                </h3>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '20px', fontSize: '14px' }}>
+                  Access the complete unified quoting system with AI-powered pricing engines,
+                  emergency load pricing, spot rate optimization, and volume discounts.
+                </p>
+                <button
+                  onClick={() => router.push('/quoting')}
+                  style={{
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 16px rgba(99, 102, 241, 0.3)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0px)';
+                    e.target.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.3)';
+                  }}
+                >
+                  🚀 Open Full Quoting System
+                </button>
+              </div>
             </div>
           )}
 
