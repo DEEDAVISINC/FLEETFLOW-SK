@@ -26,7 +26,7 @@ import GovernmentContractIntelligence from '../components/GovernmentContractInte
 
 import PortAuthorityIntelligence from '../components/PortAuthorityIntelligence';
 import SmartTaskPrioritizationWidget from '../components/SmartTaskPrioritizationWidget';
-import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
+
 import VolumeDiscountWidget from '../components/VolumeDiscountWidget';
 
 // Register Chart.js components
@@ -1959,11 +1959,6 @@ export default function AnalyticsPage() {
           {/* Customer Retention Widget */}
           <div style={{ marginBottom: '32px' }}>
             <CustomerRetentionWidget />
-          </div>
-
-          {/* Spot Rate Optimization Widget */}
-          <div style={{ marginBottom: '32px' }}>
-            <SpotRateOptimizationWidget />
           </div>
 
           {/* Smart Task Prioritization Widget */}

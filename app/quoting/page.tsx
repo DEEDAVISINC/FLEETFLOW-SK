@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import EmergencyLoadPricingWidget from '../components/EmergencyLoadPricingWidget';
+import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
 
 // Quote interface
 interface Quote {
@@ -3927,6 +3928,11 @@ export default function FreightFlowQuotingEngine() {
         {/* Emergency Load Pricing Widget */}
         <div style={{ marginTop: '32px' }}>
           <EmergencyLoadPricingWidget />
+        </div>
+
+        {/* Spot Rate Optimization Widget */}
+        <div style={{ marginTop: '32px' }}>
+          <SpotRateOptimizationWidget />
         </div>
       </div>
     </div>

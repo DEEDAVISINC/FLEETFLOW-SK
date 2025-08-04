@@ -32,7 +32,7 @@ export class FinancialMarketsService {
   private baseUrl = {
     fred: 'https://api.stlouisfed.org/fred',
     alphaVantage: 'https://www.alphavantage.co/query',
-    exchangeRate: 'https://api.exchangerate-api.com/v4'
+    exchangeRate: 'https://api.exchangerate-api.com/v4',
   };
 
   constructor() {
@@ -43,13 +43,13 @@ export class FinancialMarketsService {
   async getDieselPrice(): Promise<FuelPriceData> {
     try {
       const response = await fetch('/api/financial-markets?action=fuel-price');
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
         return result.data;
       } else {
@@ -62,7 +62,7 @@ export class FinancialMarketsService {
         currentPrice: 3.45,
         priceChange: 0.05,
         lastUpdated: new Date().toISOString().split('T')[0],
-        source: 'FleetFlow Market Intelligence (Demo)'
+        source: 'FleetFlow Market Intelligence (Demo)',
       };
     }
   }
@@ -79,7 +79,7 @@ export class FinancialMarketsService {
       }
 
       const data = await response.json();
-      
+
       if (data['Error Message'] || data['Note']) {
         throw new Error('Alpha Vantage API limit reached');
       }
@@ -91,16 +91,19 @@ export class FinancialMarketsService {
         // Estimate diesel futures (crude oil + refining margin)
         return (latestPrice / 42) * 1.15; // Convert barrel to gallon with refining margin
       }
-      
+
       throw new Error('No futures data available');
     } catch (error) {
       console.error('Error fetching fuel futures:', error);
       // Return estimated futures based on current price + 10%
-      return 3.80; // Mock futures price
+      return 3.8; // Mock futures price
     }
   }
 
-  async getExchangeRate(from: string = 'USD', to: string = 'CAD'): Promise<ExchangeRateData> {
+  async getExchangeRate(
+    from: string = 'USD',
+    to: string = 'CAD'
+  ): Promise<ExchangeRateData> {
     try {
       const response = await fetch(
         `${this.baseUrl.exchangeRate}/latest/${from}`
@@ -112,7 +115,7 @@ export class FinancialMarketsService {
 
       const data = await response.json();
       const currentRate = data.rates[to];
-      
+
       // Get previous day's rate for change calculation
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -130,7 +133,7 @@ export class FinancialMarketsService {
       return {
         rate: currentRate,
         change,
-        lastUpdated: data.date
+        lastUpdated: data.date,
       };
     } catch (error) {
       console.error('Error fetching exchange rate:', error);
@@ -138,12 +141,15 @@ export class FinancialMarketsService {
       return {
         rate: 1.3642,
         change: -0.0023,
-        lastUpdated: new Date().toISOString().split('T')[0]
+        lastUpdated: new Date().toISOString().split('T')[0],
       };
     }
   }
 
-  calculateHedgingRecommendation(currentPrice: number, futurePrice: number): HedgingRecommendation {
+  calculateHedgingRecommendation(
+    currentPrice: number,
+    futurePrice: number
+  ): HedgingRecommendation {
     const priceChange = ((futurePrice - currentPrice) / currentPrice) * 100;
     const potentialSavings = Math.abs(priceChange * 1000); // Estimate based on 1000 gallons
 
@@ -153,7 +159,7 @@ export class FinancialMarketsService {
         risk: 'HIGH',
         message: `🔴 HIGH RISK: Prices expected to rise ${priceChange.toFixed(1)}%. Strong recommendation to hedge fuel costs immediately.`,
         potentialSavings,
-        confidence: 85
+        confidence: 85,
       };
     } else if (priceChange > 8) {
       return {
@@ -161,7 +167,7 @@ export class FinancialMarketsService {
         risk: 'MODERATE',
         message: `🟡 MODERATE RISK: Prices may rise ${priceChange.toFixed(1)}%. Consider hedging portion of fuel needs.`,
         potentialSavings,
-        confidence: 70
+        confidence: 70,
       };
     } else if (priceChange < -10) {
       return {
@@ -169,21 +175,21 @@ export class FinancialMarketsService {
         risk: 'MODERATE',
         message: `🟢 OPPORTUNITY: Prices expected to fall ${Math.abs(priceChange).toFixed(1)}%. Consider selling any existing hedges.`,
         potentialSavings,
-        confidence: 75
+        confidence: 75,
       };
     } else if (priceChange > 3) {
       return {
         type: 'MONITOR',
         risk: 'LOW',
         message: `🟡 WATCH: Slight upward pressure ${priceChange.toFixed(1)}%. Monitor closely for hedging opportunities.`,
-        confidence: 60
+        confidence: 60,
       };
     } else {
       return {
         type: 'HOLD',
         risk: 'LOW',
         message: `🟢 STABLE: Price volatility is low. No immediate hedging action required.`,
-        confidence: 80
+        confidence: 80,
       };
     }
   }
@@ -191,13 +197,13 @@ export class FinancialMarketsService {
   async getMarketData(): Promise<MarketData> {
     try {
       const response = await fetch('/api/financial-markets?action=market-data');
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
         return result.data;
       } else {
@@ -212,7 +218,7 @@ export class FinancialMarketsService {
   formatCurrency(amount: number, currency: string = 'USD'): string {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(amount);
   }
 
@@ -222,10 +228,14 @@ export class FinancialMarketsService {
 
   getRiskColor(risk: string): string {
     switch (risk) {
-      case 'HIGH': return '#ef4444';
-      case 'MODERATE': return '#f59e0b';
-      case 'LOW': return '#10b981';
-      default: return '#6b7280';
+      case 'HIGH':
+        return '#ef4444';
+      case 'MODERATE':
+        return '#f59e0b';
+      case 'LOW':
+        return '#10b981';
+      default:
+        return '#6b7280';
     }
   }
 }
