@@ -66,8 +66,8 @@ interface VirtualWarehouseQuote {
 
 export default function FreightFlowQuotingEngine() {
   const [activeTab, setActiveTab] = useState<
-    'LTL' | 'FTL' | 'Specialized' | 'Warehousing' | 'History' | 'Rules'
-  >('LTL');
+    'LTL' | 'FTL' | 'Specialized' | 'Warehousing' | 'History' | 'Rules' | 'Workflow'
+  >('Workflow');
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [priceRules, setPriceRules] = useState<PriceRule[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -185,6 +185,41 @@ export default function FreightFlowQuotingEngine() {
     priority: 5,
     active: true,
     conditions: {},
+  });
+
+  // Integrated Workflow State Management
+  const [workflowStep, setWorkflowStep] = useState<
+    'customer' | 'analysis' | 'generation' | 'management'
+  >('customer');
+  const [selectedCustomer, setSelectedCustomer] = useState<string>('');
+  const [workflowData, setWorkflowData] = useState({
+    customer: {
+      id: '',
+      name: '',
+      tier: '',
+      discountRate: 0,
+    },
+    load: {
+      origin: '',
+      destination: '',
+      weight: '',
+      equipment: '',
+      serviceType: '',
+    },
+    analysis: {
+      volumeDiscount: 0,
+      spotRateAdjustment: 0,
+      emergencyPremium: 0,
+      competitorPosition: 0,
+      riskFactors: [],
+      recommendations: [],
+    },
+    quote: {
+      baseRate: 0,
+      adjustments: [],
+      finalRate: 0,
+      alternatives: [],
+    },
   });
 
   // Load data from localStorage
@@ -867,6 +902,7 @@ export default function FreightFlowQuotingEngine() {
         {/* Navigation Tabs */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
           {[
+            { id: 'Workflow', label: '🎯 AI Workflow', icon: '🎯' },
             { id: 'LTL', label: '📦 LTL Freight', icon: '📦' },
             { id: 'FTL', label: '🚛 FTL Freight', icon: '🚛' },
             { id: 'Specialized', label: '⚡ Specialized', icon: '⚡' },
@@ -918,6 +954,506 @@ export default function FreightFlowQuotingEngine() {
             </button>
           ))}
         </div>
+
+        {/* AI Workflow Tab */}
+        {activeTab === 'Workflow' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '32px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {/* Workflow Header */}
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                🎯 AI-Powered Quoting Workflow
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                }}
+              >
+                Intelligent quote generation that combines customer context, market intelligence, and AI analysis
+              </p>
+            </div>
+
+            {/* Workflow Steps Navigation */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '8px',
+                marginBottom: '32px',
+              }}
+            >
+              {[
+                { id: 'customer', label: '👤 Customer & Load', icon: '👤' },
+                { id: 'analysis', label: '🧠 AI Analysis', icon: '🧠' },
+                { id: 'generation', label: '💎 Quote Generation', icon: '💎' },
+                { id: 'management', label: '📋 Management', icon: '📋' },
+              ].map((step) => (
+                <button
+                  key={step.id}
+                  onClick={() => setWorkflowStep(step.id as any)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    transition: 'all 0.2s ease',
+                    ...(workflowStep === step.id
+                      ? {
+                          background: 'rgba(255, 255, 255, 0.25)',
+                          color: 'white',
+                          boxShadow: '0 4px 16px rgba(255, 255, 255, 0.1)',
+                        }
+                      : {
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }),
+                  }}
+                >
+                  {step.icon} {step.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Workflow Content */}
+            {workflowStep === 'customer' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Step 1: Customer & Load Details
+                </h3>
+                
+                {/* Customer Selection */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                  }}
+                >
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Customer Selection</h4>
+                  <select
+                    value={selectedCustomer}
+                    onChange={(e) => setSelectedCustomer(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <option value="">Select Customer...</option>
+                    <option value="SHIP-2024-001">SHIP-2024-001 - Walmart Distribution Center</option>
+                    <option value="SHIP-2024-002">SHIP-2024-002 - Amazon Fulfillment</option>
+                    <option value="SHIP-2024-003">SHIP-2024-003 - Home Depot Supply Chain</option>
+                    <option value="SHIP-2024-004">SHIP-2024-004 - Target Logistics</option>
+                    <option value="SHIP-2024-005">SHIP-2024-005 - Costco Wholesale</option>
+                  </select>
+                </div>
+
+                {/* Load Details */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                  }}
+                >
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Load Details</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <input
+                      type="text"
+                      placeholder="Origin City, State"
+                      style={{
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Destination City, State"
+                      style={{
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Weight (lbs)"
+                      style={{
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <select
+                      style={{
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option value="">Select Equipment...</option>
+                      <option value="dry-van">Dry Van</option>
+                      <option value="reefer">Reefer</option>
+                      <option value="flatbed">Flatbed</option>
+                      <option value="step-deck">Step Deck</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setWorkflowStep('analysis')}
+                  style={{
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  🧠 Analyze with AI →
+                </button>
+              </div>
+            )}
+
+            {workflowStep === 'analysis' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Step 2: AI Analysis Engine
+                </h3>
+                
+                {/* Integrated Analysis Widgets */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                    }}
+                  >
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>💰 Volume Discount Analysis</h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                      Customer Tier: Gold (6% discount)<br/>
+                      Annual Volume: 30,000 loads<br/>
+                      Loyalty: 5 years
+                    </p>
+                  </div>
+                  
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                    }}
+                  >
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>📊 Spot Rate Intelligence</h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                      Market Demand: High (+12%)<br/>
+                      Route Competition: Moderate<br/>
+                      Fuel Trends: Stable
+                    </p>
+                  </div>
+                  
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                    }}
+                  >
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>🚨 Emergency Pricing</h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                      Urgency Level: Standard<br/>
+                      Premium: 0%<br/>
+                      Availability: Good
+                    </p>
+                  </div>
+                  
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                    }}
+                  >
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>🏆 Competitive Position</h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                      Market Position: 8% below avg<br/>
+                      Win Probability: 85%<br/>
+                      Recommendation: Competitive
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setWorkflowStep('generation')}
+                  style={{
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  💎 Generate Quotes →
+                </button>
+              </div>
+            )}
+
+            {workflowStep === 'generation' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Step 3: Quote Generation
+                </h3>
+                
+                {/* Quote Options */}
+                <div style={{ display: 'flex', gap: '24px' }}>
+                  {[
+                    { name: 'Standard', rate: 2450, timeline: '3-day delivery', color: '#3b82f6' },
+                    { name: 'Express', rate: 2850, timeline: 'Next-day delivery', color: '#f59e0b' },
+                    { name: 'Economy', rate: 2100, timeline: '5-day delivery', color: '#10b981' },
+                  ].map((option) => (
+                    <div
+                      key={option.name}
+                      style={{
+                        flex: 1,
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        border: `2px solid ${option.color}40`,
+                        textAlign: 'center',
+                      }}
+                    >
+                      <h4 style={{ color: 'white', marginBottom: '8px' }}>{option.name}</h4>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: option.color, marginBottom: '8px' }}>
+                        ${option.rate.toLocaleString()}
+                      </div>
+                      <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                        {option.timeline}
+                      </p>
+                      <button
+                        style={{
+                          marginTop: '16px',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          background: option.color,
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Select Quote
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setWorkflowStep('management')}
+                  style={{
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  📋 Manage & Send →
+                </button>
+              </div>
+            )}
+
+            {workflowStep === 'management' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Step 4: Quote Management
+                </h3>
+                
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                  }}
+                >
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Quote Actions</h4>
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                    <button
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: '#3b82f6',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📧 Send to Customer
+                    </button>
+                    <button
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: '#10b981',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      💾 Save Quote
+                    </button>
+                    <button
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: '#f59e0b',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📊 View Analytics
+                    </button>
+                    <button
+                      onClick={() => setWorkflowStep('customer')}
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: '#6b7280',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🔄 New Quote
+                    </button>
+                  </div>
+                </div>
+
+                {/* Advanced Analysis Tools */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                  }}
+                >
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Advanced Analysis Tools</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <EmergencyLoadPricingWidget />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <SpotRateOptimizationWidget />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <VolumeDiscountWidget />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* LTL Tab */}
         {activeTab === 'LTL' && (
