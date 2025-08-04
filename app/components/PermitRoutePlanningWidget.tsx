@@ -468,11 +468,11 @@ export default function PermitRoutePlanningWidget() {
     return (
       <div
         style={{
-          background: 'rgba(251, 191, 36, 0.15)',
+          background: 'rgba(59, 130, 246, 0.15)',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
           padding: '24px',
-          border: '1px solid rgba(251, 191, 36, 0.3)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -601,7 +601,7 @@ export default function PermitRoutePlanningWidget() {
                 activeTab === tab.id
                   ? 'rgba(255, 255, 255, 0.9)'
                   : 'rgba(255, 255, 255, 0.2)',
-              color: activeTab === tab.id ? '#4c1d95' : 'white',
+              color: activeTab === tab.id ? '#3b82f6' : 'white',
               transform:
                 activeTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
               boxShadow:
@@ -1399,7 +1399,7 @@ export default function PermitRoutePlanningWidget() {
                     backdropFilter: 'blur(10px)',
                     borderRadius: '16px',
                     padding: '24px',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
                     textAlign: 'center',
                     transition: 'all 0.3s ease',
                   }}
@@ -1417,7 +1417,7 @@ export default function PermitRoutePlanningWidget() {
                     style={{
                       fontSize: '32px',
                       fontWeight: 'bold',
-                      color: '#10b981',
+                      color: '#3b82f6',
                       marginBottom: '8px',
                     }}
                   >
@@ -1456,7 +1456,7 @@ export default function PermitRoutePlanningWidget() {
                     style={{
                       fontSize: '32px',
                       fontWeight: 'bold',
-                      color: '#f59e0b',
+                      color: '#3b82f6',
                       marginBottom: '8px',
                     }}
                   >
@@ -1611,13 +1611,13 @@ export default function PermitRoutePlanningWidget() {
                           ) : (
                             <div
                               style={{
-                                background: 'rgba(16, 185, 129, 0.2)',
-                                color: '#6ee7b7',
+                                background: 'rgba(59, 130, 246, 0.2)',
+                                color: '#93c5fd',
                                 padding: '6px 12px',
                                 borderRadius: '20px',
                                 fontSize: '12px',
                                 fontWeight: '600',
-                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                border: '1px solid rgba(59, 130, 246, 0.3)',
                               }}
                             >
                               No Permit
@@ -1698,7 +1698,7 @@ export default function PermitRoutePlanningWidget() {
                           style={{
                             fontSize: '18px',
                             fontWeight: 'bold',
-                            color: '#10b981',
+                            color: '#3b82f6',
                           }}
                         >
                           ${permit.cost}
@@ -1933,7 +1933,7 @@ export default function PermitRoutePlanningWidget() {
                       style={{
                         fontSize: '28px',
                         fontWeight: 'bold',
-                        color: '#f59e0b',
+                        color: '#3b82f6',
                         marginBottom: '8px',
                       }}
                     >
@@ -1953,7 +1953,7 @@ export default function PermitRoutePlanningWidget() {
                       style={{
                         fontSize: '28px',
                         fontWeight: 'bold',
-                        color: '#8b5cf6',
+                        color: '#3b82f6',
                         marginBottom: '8px',
                       }}
                     >
@@ -1973,7 +1973,7 @@ export default function PermitRoutePlanningWidget() {
                       style={{
                         fontSize: '28px',
                         fontWeight: 'bold',
-                        color: '#10b981',
+                        color: '#3b82f6',
                         marginBottom: '8px',
                       }}
                     >
@@ -2381,7 +2381,7 @@ export default function PermitRoutePlanningWidget() {
                       style={{
                         fontSize: '32px',
                         fontWeight: 'bold',
-                        color: '#10b981',
+                        color: '#3b82f6',
                         marginBottom: '8px',
                       }}
                     >
@@ -2483,7 +2483,7 @@ export default function PermitRoutePlanningWidget() {
                           width: '8px',
                           height: '8px',
                           borderRadius: '50%',
-                          background: '#10b981',
+                          background: '#3b82f6',
                           flexShrink: 0,
                         }}
                       ></div>
@@ -2519,7 +2519,7 @@ export default function PermitRoutePlanningWidget() {
                 <div
                   style={{
                     padding: '12px',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                     borderRadius: '12px',
                     color: 'white',
                   }}
@@ -2610,7 +2610,7 @@ export default function PermitRoutePlanningWidget() {
                       >
                         <span
                           style={{
-                            color: '#10b981',
+                            color: '#3b82f6',
                             fontWeight: '700',
                             fontSize: '16px',
                           }}
@@ -2678,7 +2678,7 @@ export default function PermitRoutePlanningWidget() {
                   </div>
                   <div
                     style={{
-                      color: '#10b981',
+                      color: '#3b82f6',
                       fontSize: '24px',
                       fontWeight: '700',
                     }}

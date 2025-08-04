@@ -103,6 +103,21 @@ interface PlanningTemplate {
 
 export default function SeasonalLoadPlanningWidget() {
   const isEnabled = useFeatureFlag('SEASONAL_LOAD_PLANNING');
+
+  // Debug logging
+  console.log('SeasonalLoadPlanningWidget - isEnabled:', isEnabled);
+  console.log(
+    'SeasonalLoadPlanningWidget - process.env.ENABLE_SEASONAL_LOAD_PLANNING:',
+    process.env.ENABLE_SEASONAL_LOAD_PLANNING
+  );
+  console.log(
+    'SeasonalLoadPlanningWidget - process.env.NEXT_PUBLIC_ENABLE_SEASONAL_LOAD_PLANNING:',
+    process.env.NEXT_PUBLIC_ENABLE_SEASONAL_LOAD_PLANNING
+  );
+
+  // Temporary force enable for debugging - remove this after fixing
+  const forceEnabled = true;
+
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<SeasonalLoadPlan | null>(null);
   const [templates, setTemplates] = useState<PlanningTemplate[]>([]);
@@ -136,10 +151,10 @@ export default function SeasonalLoadPlanningWidget() {
   });
 
   useEffect(() => {
-    if (isEnabled) {
+    if (forceEnabled) {
       loadTemplates();
     }
-  }, [isEnabled]);
+  }, [forceEnabled]);
 
   const loadTemplates = async () => {
     try {
@@ -251,16 +266,45 @@ export default function SeasonalLoadPlanningWidget() {
     return colors[season] || '#6b7280';
   };
 
-  if (!isEnabled) {
+  if (!forceEnabled) {
     return (
-      <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
-        <div className='flex items-center gap-3'>
-          <div className='text-2xl'>📅</div>
+      <div
+        style={{
+          background: 'rgba(251, 191, 36, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(251, 191, 36, 0.3)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              padding: '12px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+            }}
+          >
+            <span style={{ fontSize: '24px' }}>📅</span>
+          </div>
           <div>
-            <h3 className='font-semibold text-yellow-800'>
+            <h3
+              style={{
+                fontWeight: '600',
+                color: 'white',
+                fontSize: '18px',
+                margin: '0 0 8px 0',
+              }}
+            >
               Seasonal Load Planning
             </h3>
-            <p className='text-sm text-yellow-700'>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                margin: 0,
+              }}
+            >
               Enable ENABLE_SEASONAL_LOAD_PLANNING=true to access seasonal
               planning features
             </p>
@@ -271,15 +315,53 @@ export default function SeasonalLoadPlanningWidget() {
   }
 
   return (
-    <div className='rounded-lg bg-white p-6 shadow-lg'>
-      <div className='mb-6 flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
-          <div className='text-3xl'>📅</div>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        padding: '32px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <div
+        style={{
+          marginBottom: '32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              padding: '16px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+            }}
+          >
+            <span style={{ fontSize: '32px' }}>📅</span>
+          </div>
           <div>
-            <h2 className='text-xl font-bold text-gray-900'>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: 'white',
+                margin: '0 0 8px 0',
+                textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+              }}
+            >
               Seasonal Load Planning
             </h2>
-            <p className='text-sm text-gray-600'>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                margin: 0,
+              }}
+            >
               Optimize capacity and routes based on seasonal demand patterns
             </p>
           </div>
@@ -287,49 +369,118 @@ export default function SeasonalLoadPlanningWidget() {
       </div>
 
       {/* Tab Navigation */}
-      <div className='mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1'>
-        <button
-          onClick={() => setActiveTab('planner')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'planner'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Planning Tool
-        </button>
-        <button
-          onClick={() => setActiveTab('templates')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'templates'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Templates
-        </button>
-        <button
-          onClick={() => setActiveTab('analytics')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'analytics'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Analytics
-        </button>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '16px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          display: 'flex',
+          gap: '8px',
+        }}
+      >
+        {[
+          { id: 'planner', label: 'Planning Tool', icon: '📋' },
+          { id: 'templates', label: 'Templates', icon: '📋' },
+          { id: 'analytics', label: 'Analytics', icon: '📊' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            style={{
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '16px',
+              flex: 1,
+              background:
+                activeTab === tab.id
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.2)',
+              color: activeTab === tab.id ? '#4c1d95' : 'white',
+              transform:
+                activeTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
+              boxShadow:
+                activeTab === tab.id
+                  ? '0 8px 25px rgba(0, 0, 0, 0.15)'
+                  : 'none',
+            }}
+            onMouseOver={(e) => {
+              if (activeTab !== tab.id) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (activeTab !== tab.id) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }
+            }}
+          >
+            <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Planning Tool Tab */}
       {activeTab === 'planner' && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '32px',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr',
+              gap: '32px',
+            }}
+          >
             {/* Planning Period */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>Planning Period</h3>
-              <div className='grid grid-cols-2 gap-4'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h3
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '18px',
+                  margin: '0 0 16px 0',
+                }}
+              >
+                Planning Period
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Start Date
                   </label>
                   <input
@@ -344,11 +495,27 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     End Date
                   </label>
                   <input
@@ -363,11 +530,31 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   />
                 </div>
-                <div className='col-span-2'>
-                  <label className='block text-sm font-medium text-gray-700'>
+                <div
+                  style={{
+                    gridColumn: 'span 2',
+                  }}
+                >
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Season Type
                   </label>
                   <select
@@ -381,27 +568,64 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   >
                     <option value='spring'>Spring</option>
                     <option value='summer'>Summer</option>
                     <option value='fall'>Fall</option>
                     <option value='winter'>Winter</option>
                     <option value='holiday'>Holiday Season</option>
-                    <option value='custom'>Custom</option>
+                    <option value='custom'>Custom Period</option>
                   </select>
                 </div>
               </div>
             </div>
 
             {/* Capacity Constraints */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h3
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '18px',
+                  margin: '0 0 16px 0',
+                }}
+              >
                 Capacity Constraints
               </h3>
-              <div className='grid grid-cols-1 gap-4'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Max Drivers
                   </label>
                   <input
@@ -416,11 +640,27 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Max Vehicles
                   </label>
                   <input
@@ -435,11 +675,27 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Max Daily Miles
                   </label>
                   <input
@@ -454,7 +710,15 @@ export default function SeasonalLoadPlanningWidget() {
                         },
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
                   />
                 </div>
               </div>
@@ -462,13 +726,42 @@ export default function SeasonalLoadPlanningWidget() {
           </div>
 
           {/* Business Priorities */}
-          <div className='space-y-4'>
-            <h3 className='font-semibold text-gray-900'>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <h3
+              style={{
+                fontWeight: '600',
+                color: 'white',
+                fontSize: '18px',
+                margin: '0 0 16px 0',
+              }}
+            >
               Business Priorities (1-10 scale)
             </h3>
-            <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '16px',
+              }}
+            >
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
                   Profit Maximization
                 </label>
                 <input
@@ -485,14 +778,33 @@ export default function SeasonalLoadPlanningWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full'
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                  }}
                 />
-                <div className='text-center text-sm text-gray-600'>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginTop: '8px',
+                  }}
+                >
                   {planRequest.businessPriorities.profitMaximization}
                 </div>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
                   Customer Satisfaction
                 </label>
                 <input
@@ -509,14 +821,33 @@ export default function SeasonalLoadPlanningWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full'
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                  }}
                 />
-                <div className='text-center text-sm text-gray-600'>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginTop: '8px',
+                  }}
+                >
                   {planRequest.businessPriorities.customerSatisfaction}
                 </div>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
                   Driver Utilization
                 </label>
                 <input
@@ -533,14 +864,33 @@ export default function SeasonalLoadPlanningWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full'
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                  }}
                 />
-                <div className='text-center text-sm text-gray-600'>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginTop: '8px',
+                  }}
+                >
                   {planRequest.businessPriorities.driverUtilization}
                 </div>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
                   Fuel Efficiency
                 </label>
                 <input
@@ -557,27 +907,67 @@ export default function SeasonalLoadPlanningWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full'
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                  }}
                 />
-                <div className='text-center text-sm text-gray-600'>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginTop: '8px',
+                  }}
+                >
                   {planRequest.businessPriorities.fuelEfficiency}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className='flex gap-4'>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+            }}
+          >
             <button
               onClick={createSeasonalPlan}
               disabled={loading}
-              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+              style={{
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                fontSize: '16px',
+                border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                background: loading
+                  ? 'rgba(255, 255, 255, 0.3)'
+                  : 'rgba(59, 130, 246, 0.9)',
+                color: 'white',
+                opacity: loading ? 0.5 : 1,
+                transition: 'all 0.3s ease',
+              }}
             >
               {loading ? 'Creating Plan...' : 'Create Seasonal Plan'}
             </button>
           </div>
 
           {error && (
-            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: 'rgba(255, 255, 255, 0.95)',
+              }}
+            >
+              {error}
+            </div>
           )}
 
           {plan && (

@@ -114,6 +114,21 @@ interface HazmatClassification {
 
 export default function HazmatRouteComplianceWidget() {
   const isEnabled = useFeatureFlag('HAZMAT_ROUTE_COMPLIANCE');
+
+  // Debug logging
+  console.log('HazmatRouteComplianceWidget - isEnabled:', isEnabled);
+  console.log(
+    'HazmatRouteComplianceWidget - process.env.ENABLE_HAZMAT_ROUTE_COMPLIANCE:',
+    process.env.ENABLE_HAZMAT_ROUTE_COMPLIANCE
+  );
+  console.log(
+    'HazmatRouteComplianceWidget - process.env.NEXT_PUBLIC_ENABLE_HAZMAT_ROUTE_COMPLIANCE:',
+    process.env.NEXT_PUBLIC_ENABLE_HAZMAT_ROUTE_COMPLIANCE
+  );
+
+  // Temporary force enable for debugging - remove this after fixing
+  const forceEnabled = true;
+
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<HazmatRouteAnalysis | null>(null);
   const [classifications, setClassifications] = useState<
@@ -148,10 +163,10 @@ export default function HazmatRouteComplianceWidget() {
   });
 
   useEffect(() => {
-    if (isEnabled) {
+    if (forceEnabled) {
       loadClassifications();
     }
-  }, [isEnabled]);
+  }, [forceEnabled]);
 
   const loadClassifications = async () => {
     try {
@@ -284,16 +299,45 @@ export default function HazmatRouteComplianceWidget() {
     return colors[hazmatClass] || '#6b7280';
   };
 
-  if (!isEnabled) {
+  if (!forceEnabled) {
     return (
-      <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
-        <div className='flex items-center gap-3'>
-          <div className='text-2xl'>☢️</div>
+      <div
+        style={{
+          background: 'rgba(251, 191, 36, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(251, 191, 36, 0.3)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              padding: '12px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+            }}
+          >
+            <span style={{ fontSize: '24px' }}>☢️</span>
+          </div>
           <div>
-            <h3 className='font-semibold text-yellow-800'>
+            <h3
+              style={{
+                fontWeight: '600',
+                color: 'white',
+                fontSize: '18px',
+                margin: '0 0 8px 0',
+              }}
+            >
               Hazmat Route Compliance
             </h3>
-            <p className='text-sm text-yellow-700'>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                margin: 0,
+              }}
+            >
               Enable ENABLE_HAZMAT_ROUTE_COMPLIANCE=true to access hazmat
               routing features
             </p>
@@ -304,15 +348,53 @@ export default function HazmatRouteComplianceWidget() {
   }
 
   return (
-    <div className='rounded-lg bg-white p-6 shadow-lg'>
-      <div className='mb-6 flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
-          <div className='text-3xl'>☢️</div>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        padding: '32px',
+        border: '2px solid rgba(249, 115, 22, 0.6)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <div
+        style={{
+          marginBottom: '32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              padding: '16px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+            }}
+          >
+            <span style={{ fontSize: '32px' }}>☢️</span>
+          </div>
           <div>
-            <h2 className='text-xl font-bold text-gray-900'>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: 'white',
+                margin: '0 0 8px 0',
+                textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+              }}
+            >
               Hazmat Route Compliance
             </h2>
-            <p className='text-sm text-gray-600'>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                margin: 0,
+              }}
+            >
               Dangerous goods routing with regulatory compliance
             </p>
           </div>
@@ -320,49 +402,115 @@ export default function HazmatRouteComplianceWidget() {
       </div>
 
       {/* Tab Navigation */}
-      <div className='mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1'>
-        <button
-          onClick={() => setActiveTab('analyzer')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'analyzer'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Route Analyzer
-        </button>
-        <button
-          onClick={() => setActiveTab('classifications')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'classifications'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Hazmat Classes
-        </button>
-        <button
-          onClick={() => setActiveTab('regulations')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'regulations'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Regulations
-        </button>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '16px',
+          marginBottom: '32px',
+          border: '2px solid rgba(249, 115, 22, 0.4)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          display: 'flex',
+          gap: '8px',
+        }}
+      >
+        {[
+          { id: 'analyzer', label: 'Route Analyzer', icon: '📋' },
+          { id: 'classifications', label: 'Hazmat Classes', icon: '☢️' },
+          { id: 'regulations', label: 'Regulations', icon: '📋' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            style={{
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '16px',
+              flex: 1,
+              background:
+                activeTab === tab.id
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.2)',
+              color: activeTab === tab.id ? '#4c1d95' : 'white',
+              transform:
+                activeTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
+              boxShadow:
+                activeTab === tab.id
+                  ? '0 8px 25px rgba(0, 0, 0, 0.15)'
+                  : 'none',
+            }}
+            onMouseOver={(e) => {
+              if (activeTab !== tab.id) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (activeTab !== tab.id) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }
+            }}
+          >
+            <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Route Analyzer Tab */}
       {activeTab === 'analyzer' && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+              gap: '32px',
+            }}
+          >
             {/* Load Information */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>Load Information</h3>
-              <div className='grid grid-cols-2 gap-4'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '2px solid rgba(249, 115, 22, 0.4)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}
+            >
+              <h3
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '18px',
+                  margin: 0,
+                }}
+              >
+                Load Information
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Load ID
                   </label>
                   <input
@@ -371,12 +519,40 @@ export default function HazmatRouteComplianceWidget() {
                     onChange={(e) =>
                       setLoadRequest({ ...loadRequest, loadId: e.target.value })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
                     placeholder='e.g., HAZ-001'
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Hazmat Class
                   </label>
                   <select
@@ -387,21 +563,94 @@ export default function HazmatRouteComplianceWidget() {
                         hazmatClass: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   >
-                    <option value='1'>Class 1 - Explosives</option>
-                    <option value='2'>Class 2 - Gases</option>
-                    <option value='3'>Class 3 - Flammable Liquids</option>
-                    <option value='4'>Class 4 - Flammable Solids</option>
-                    <option value='5'>Class 5 - Oxidizers</option>
-                    <option value='6'>Class 6 - Toxic Substances</option>
-                    <option value='7'>Class 7 - Radioactive</option>
-                    <option value='8'>Class 8 - Corrosive</option>
-                    <option value='9'>Class 9 - Miscellaneous</option>
+                    <option
+                      value='1'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 1 - Explosives
+                    </option>
+                    <option
+                      value='2'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 2 - Gases
+                    </option>
+                    <option
+                      value='3'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 3 - Flammable Liquids
+                    </option>
+                    <option
+                      value='4'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 4 - Flammable Solids
+                    </option>
+                    <option
+                      value='5'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 5 - Oxidizers
+                    </option>
+                    <option
+                      value='6'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 6 - Toxic Substances
+                    </option>
+                    <option
+                      value='7'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 7 - Radioactive
+                    </option>
+                    <option
+                      value='8'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 8 - Corrosive
+                    </option>
+                    <option
+                      value='9'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Class 9 - Miscellaneous
+                    </option>
                   </select>
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     UN Number
                   </label>
                   <input
@@ -413,12 +662,40 @@ export default function HazmatRouteComplianceWidget() {
                         unNumber: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
                     placeholder='e.g., UN1203'
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Packing Group
                   </label>
                   <select
@@ -429,15 +706,58 @@ export default function HazmatRouteComplianceWidget() {
                         packingGroup: e.target.value as 'I' | 'II' | 'III',
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   >
-                    <option value='I'>Packing Group I (High Danger)</option>
-                    <option value='II'>Packing Group II (Medium Danger)</option>
-                    <option value='III'>Packing Group III (Low Danger)</option>
+                    <option
+                      value='I'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Packing Group I (High Danger)
+                    </option>
+                    <option
+                      value='II'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Packing Group II (Medium Danger)
+                    </option>
+                    <option
+                      value='III'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Packing Group III (Low Danger)
+                    </option>
                   </select>
                 </div>
-                <div className='col-span-2'>
-                  <label className='block text-sm font-medium text-gray-700'>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Proper Shipping Name
                   </label>
                   <input
@@ -449,21 +769,73 @@ export default function HazmatRouteComplianceWidget() {
                         properShippingName: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
                     placeholder='e.g., Gasoline'
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Route & Quantity Information */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '2px solid rgba(249, 115, 22, 0.4)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}
+            >
+              <h3
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '18px',
+                  margin: 0,
+                }}
+              >
                 Route & Quantity Information
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Origin
                   </label>
                   <input
@@ -472,12 +844,40 @@ export default function HazmatRouteComplianceWidget() {
                     onChange={(e) =>
                       setLoadRequest({ ...loadRequest, origin: e.target.value })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
                     placeholder='e.g., Houston, TX'
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Destination
                   </label>
                   <input
@@ -489,12 +889,40 @@ export default function HazmatRouteComplianceWidget() {
                         destination: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
                     placeholder='e.g., Miami, FL'
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Quantity
                   </label>
                   <input
@@ -506,11 +934,39 @@ export default function HazmatRouteComplianceWidget() {
                         quantity: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Unit of Measure
                   </label>
                   <select
@@ -521,16 +977,64 @@ export default function HazmatRouteComplianceWidget() {
                         unitOfMeasure: e.target.value as any,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   >
-                    <option value='lbs'>Pounds</option>
-                    <option value='kg'>Kilograms</option>
-                    <option value='gallons'>Gallons</option>
-                    <option value='liters'>Liters</option>
+                    <option
+                      value='lbs'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Pounds
+                    </option>
+                    <option
+                      value='kg'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Kilograms
+                    </option>
+                    <option
+                      value='gallons'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Gallons
+                    </option>
+                    <option
+                      value='liters'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Liters
+                    </option>
                   </select>
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Equipment Type
                   </label>
                   <select
@@ -541,16 +1045,64 @@ export default function HazmatRouteComplianceWidget() {
                         equipmentType: e.target.value as any,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   >
-                    <option value='dry-van'>Dry Van</option>
-                    <option value='tank'>Tank Trailer</option>
-                    <option value='flatbed'>Flatbed</option>
-                    <option value='specialized'>Specialized Equipment</option>
+                    <option
+                      value='dry-van'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Dry Van
+                    </option>
+                    <option
+                      value='tank'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Tank Trailer
+                    </option>
+                    <option
+                      value='flatbed'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Flatbed
+                    </option>
+                    <option
+                      value='specialized'
+                      style={{ background: '#1f2937', color: 'white' }}
+                    >
+                      Specialized Equipment
+                    </option>
                   </select>
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Required Delivery
                   </label>
                   <input
@@ -562,7 +1114,27 @@ export default function HazmatRouteComplianceWidget() {
                         requiredDeliveryDate: e.target.value,
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(59, 130, 246, 0.6)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border =
+                        '1px solid rgba(255, 255, 255, 0.3)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }}
                   />
                 </div>
               </div>
@@ -570,11 +1142,45 @@ export default function HazmatRouteComplianceWidget() {
           </div>
 
           {/* Emergency Contact */}
-          <div className='space-y-4'>
-            <h3 className='font-semibold text-gray-900'>Emergency Contact</h3>
-            <div className='grid grid-cols-3 gap-4'>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '2px solid rgba(249, 115, 22, 0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <h3
+              style={{
+                fontWeight: '600',
+                color: 'white',
+                fontSize: '18px',
+                margin: 0,
+              }}
+            >
+              Emergency Contact
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '16px',
+              }}
+            >
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'white',
+                    marginBottom: '8px',
+                  }}
+                >
                   Contact Name
                 </label>
                 <input
@@ -589,11 +1195,38 @@ export default function HazmatRouteComplianceWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '1px solid rgba(59, 130, 246, 0.6)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border =
+                      '1px solid rgba(255, 255, 255, 0.3)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'white',
+                    marginBottom: '8px',
+                  }}
+                >
                   Phone Number
                 </label>
                 <input
@@ -608,11 +1241,38 @@ export default function HazmatRouteComplianceWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '1px solid rgba(59, 130, 246, 0.6)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border =
+                      '1px solid rgba(255, 255, 255, 0.3)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'white',
+                    marginBottom: '8px',
+                  }}
+                >
                   Company
                 </label>
                 <input
@@ -627,74 +1287,292 @@ export default function HazmatRouteComplianceWidget() {
                       },
                     })
                   }
-                  className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '1px solid rgba(59, 130, 246, 0.6)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border =
+                      '1px solid rgba(255, 255, 255, 0.3)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
                 />
               </div>
             </div>
           </div>
 
-          <div className='flex gap-4'>
+          <div style={{ display: 'flex', gap: '16px' }}>
             <button
               onClick={analyzeHazmatRoute}
               disabled={loading}
-              className='rounded-lg bg-red-600 px-6 py-2 font-medium text-white hover:bg-red-700 disabled:opacity-50'
+              style={{
+                background: loading
+                  ? 'rgba(239, 68, 68, 0.5)'
+                  : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                transition: 'all 0.3s ease',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onMouseOver={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(0, 0, 0, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
               {loading ? 'Analyzing...' : 'Analyze Hazmat Route'}
             </button>
           </div>
 
           {error && (
-            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+                padding: '16px',
+                color: '#fca5a5',
+              }}
+            >
+              {error}
+            </div>
           )}
 
           {analysis && (
-            <div className='space-y-6'>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+            >
               {/* Compliance Status */}
-              <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-                <div className='rounded-lg bg-gray-50 p-4'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '2px solid rgba(59, 130, 246, 0.6)',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
                   <div
-                    className='text-2xl font-bold'
                     style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
                       color: getComplianceColor(analysis.complianceStatus),
+                      marginBottom: '8px',
                     }}
                   >
                     {analysis.complianceStatus.replace('_', ' ').toUpperCase()}
                   </div>
-                  <div className='text-sm text-gray-600'>Compliance Status</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                    }}
+                  >
+                    Compliance Status
+                  </div>
                 </div>
-                <div className='rounded-lg bg-blue-50 p-4'>
-                  <div className='text-2xl font-bold text-blue-600'>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '2px solid rgba(16, 185, 129, 0.6)',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
+                      color: '#10b981',
+                      marginBottom: '8px',
+                    }}
+                  >
                     {analysis.recommendedRoute.totalDistance}
                   </div>
-                  <div className='text-sm text-blue-600'>Total Miles</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                    }}
+                  >
+                    Total Miles
+                  </div>
                 </div>
-                <div className='rounded-lg bg-green-50 p-4'>
-                  <div className='text-2xl font-bold text-green-600'>
+                <div
+                  style={{
+                    background: 'rgba(251, 146, 60, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '2px solid rgba(251, 146, 60, 0.6)',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                      marginBottom: '8px',
+                    }}
+                  >
                     {analysis.recommendedRoute.totalTime.toFixed(1)}h
                   </div>
-                  <div className='text-sm text-green-600'>Travel Time</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                    }}
+                  >
+                    Travel Time
+                  </div>
                 </div>
-                <div className='rounded-lg bg-orange-50 p-4'>
-                  <div className='text-2xl font-bold text-orange-600'>
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
+                      color: '#8b5cf6',
+                      marginBottom: '8px',
+                    }}
+                  >
                     ${analysis.estimatedCosts.totalAdditional}
                   </div>
-                  <div className='text-sm text-orange-600'>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                    }}
+                  >
                     Additional Costs
                   </div>
                 </div>
               </div>
 
               {/* Risk Assessment */}
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(239, 68, 68, 0.6)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   Risk Assessment
                 </h3>
-                <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-                  <div className='text-center'>
-                    <div className='text-sm text-gray-600'>Environmental</div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                    gap: '24px',
+                  }}
+                >
+                  <div style={{ textAlign: 'center' }}>
                     <div
-                      className='text-lg font-bold'
                       style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Environmental
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
                         color: getRiskColor(
                           analysis.riskAssessment.environmentalRisk
                         ),
@@ -703,11 +1581,20 @@ export default function HazmatRouteComplianceWidget() {
                       {analysis.riskAssessment.environmentalRisk.toUpperCase()}
                     </div>
                   </div>
-                  <div className='text-center'>
-                    <div className='text-sm text-gray-600'>Public Safety</div>
+                  <div style={{ textAlign: 'center' }}>
                     <div
-                      className='text-lg font-bold'
                       style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Public Safety
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
                         color: getRiskColor(
                           analysis.riskAssessment.publicSafetyRisk
                         ),
@@ -716,11 +1603,20 @@ export default function HazmatRouteComplianceWidget() {
                       {analysis.riskAssessment.publicSafetyRisk.toUpperCase()}
                     </div>
                   </div>
-                  <div className='text-center'>
-                    <div className='text-sm text-gray-600'>Transportation</div>
+                  <div style={{ textAlign: 'center' }}>
                     <div
-                      className='text-lg font-bold'
                       style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Transportation
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
                         color: getRiskColor(
                           analysis.riskAssessment.transportationRisk
                         ),
@@ -729,11 +1625,20 @@ export default function HazmatRouteComplianceWidget() {
                       {analysis.riskAssessment.transportationRisk.toUpperCase()}
                     </div>
                   </div>
-                  <div className='text-center'>
-                    <div className='text-sm text-gray-600'>Overall Risk</div>
+                  <div style={{ textAlign: 'center' }}>
                     <div
-                      className='text-lg font-bold'
                       style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Overall Risk
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
                         color: getRiskColor(
                           analysis.riskAssessment.overallRisk
                         ),
@@ -746,17 +1651,52 @@ export default function HazmatRouteComplianceWidget() {
               </div>
 
               {/* Required Documents */}
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(59, 130, 246, 0.6)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   Required Documents
                 </h3>
-                <ul className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+                <ul
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
                   {analysis.requiredDocuments.map((doc, index) => (
                     <li
                       key={index}
-                      className='flex items-center gap-2 text-sm text-gray-600'
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                      }}
                     >
-                      <div className='h-2 w-2 rounded-full bg-red-500'></div>
+                      <div
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: '#ef4444',
+                          flexShrink: 0,
+                        }}
+                      ></div>
                       {doc}
                     </li>
                   ))}
@@ -764,44 +1704,113 @@ export default function HazmatRouteComplianceWidget() {
               </div>
 
               {/* Driver Requirements */}
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(16, 185, 129, 0.6)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   Driver Requirements
                 </h3>
-                <div className='space-y-2'>
-                  <div className='flex items-center gap-2'>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                    }}
+                  >
                     <div
-                      className={`h-3 w-3 rounded-full ${
-                        analysis.driverRequirements.hazmatEndorsement
-                          ? 'bg-red-500'
-                          : 'bg-gray-300'
-                      }`}
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        background: analysis.driverRequirements
+                          .hazmatEndorsement
+                          ? '#ef4444'
+                          : '#6b7280',
+                      }}
                     ></div>
-                    <span className='text-sm text-gray-600'>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                      }}
+                    >
                       Hazmat Endorsement Required
                     </span>
                   </div>
-                  <div className='flex items-center gap-2'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                    }}
+                  >
                     <div
-                      className={`h-3 w-3 rounded-full ${
-                        analysis.driverRequirements.medicalCertification
-                          ? 'bg-red-500'
-                          : 'bg-gray-300'
-                      }`}
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        background: analysis.driverRequirements
+                          .medicalCertification
+                          ? '#ef4444'
+                          : '#6b7280',
+                      }}
                     ></div>
-                    <span className='text-sm text-gray-600'>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                      }}
+                    >
                       Medical Certification Required
                     </span>
                   </div>
                   {analysis.driverRequirements.specialTraining.length > 0 && (
                     <div>
-                      <strong className='text-sm text-gray-700'>
+                      <strong
+                        style={{
+                          fontSize: '14px',
+                          color: 'white',
+                        }}
+                      >
                         Special Training Required:
                       </strong>
-                      <ul className='mt-1 space-y-1'>
+                      <ul
+                        style={{
+                          marginTop: '8px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                        }}
+                      >
                         {analysis.driverRequirements.specialTraining.map(
                           (training, index) => (
-                            <li key={index} className='text-xs text-gray-600'>
+                            <li
+                              key={index}
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.95)',
+                              }}
+                            >
                               • {training}
                             </li>
                           )
@@ -813,17 +1822,52 @@ export default function HazmatRouteComplianceWidget() {
               </div>
 
               {/* Compliance Checklist */}
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(139, 92, 246, 0.6)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   Compliance Checklist
                 </h3>
-                <ul className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+                <ul
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
                   {analysis.complianceChecklist.map((item, index) => (
                     <li
                       key={index}
-                      className='flex items-center gap-2 text-sm text-gray-600'
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                      }}
                     >
-                      <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                      <div
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: '#3b82f6',
+                          flexShrink: 0,
+                        }}
+                      ></div>
                       {item}
                     </li>
                   ))}
@@ -831,12 +1875,41 @@ export default function HazmatRouteComplianceWidget() {
               </div>
 
               {/* AI Analysis */}
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(20, 184, 166, 0.6)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   AI Analysis
                 </h3>
-                <p className='text-sm text-gray-600'>{analysis.reasoning}</p>
-                <div className='mt-3 text-xs text-gray-500'>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    lineHeight: '1.6',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {analysis.reasoning}
+                </p>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.85)',
+                  }}
+                >
                   Confidence: {analysis.confidence}%
                 </div>
               </div>
@@ -847,63 +1920,160 @@ export default function HazmatRouteComplianceWidget() {
 
       {/* Hazmat Classifications Tab */}
       {activeTab === 'classifications' && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+            }}
+          >
             {classifications.map((classification, index) => (
               <div
                 key={index}
-                className='rounded-lg border border-gray-200 p-4'
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '2px solid rgba(249, 115, 22, 0.4)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
-                <div className='mb-3 flex items-center gap-3'>
+                <div
+                  style={{
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
                   <div
-                    className='flex h-10 w-10 items-center justify-center rounded-full font-bold text-white'
                     style={{
-                      backgroundColor: getHazmatClassColor(
-                        classification.class
-                      ),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      fontSize: '16px',
+                      background: getHazmatClassColor(classification.class),
                     }}
                   >
                     {classification.class}
                   </div>
                   <div>
-                    <h3 className='font-semibold text-gray-900'>
+                    <h3
+                      style={{
+                        fontWeight: '600',
+                        color: 'white',
+                        fontSize: '18px',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
                       Class {classification.class}
                     </h3>
-                    <p className='text-sm text-gray-600'>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        margin: 0,
+                      }}
+                    >
                       {classification.description}
                     </p>
                   </div>
                 </div>
 
-                <div className='mb-3'>
-                  <h4 className='mb-1 text-sm font-medium text-gray-900'>
+                <div style={{ marginBottom: '16px' }}>
+                  <h4
+                    style={{
+                      marginBottom: '8px',
+                      fontWeight: '500',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  >
                     Examples:
                   </h4>
-                  <p className='text-xs text-gray-600'>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                    }}
+                  >
                     {classification.examples.join(', ')}
                   </p>
                 </div>
 
-                <div className='mb-3'>
-                  <h4 className='mb-1 text-sm font-medium text-gray-900'>
+                <div style={{ marginBottom: '16px' }}>
+                  <h4
+                    style={{
+                      marginBottom: '8px',
+                      fontWeight: '500',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  >
                     Special Requirements:
                   </h4>
-                  <ul className='space-y-1'>
+                  <ul
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
                     {classification.specialRequirements.map((req, reqIndex) => (
-                      <li key={reqIndex} className='text-xs text-gray-600'>
+                      <li
+                        key={reqIndex}
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.95)',
+                        }}
+                      >
                         • {req}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className='flex items-center gap-2 text-xs'>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
                   <span
-                    className={`rounded-full px-2 py-1 font-medium ${
-                      classification.packingGroupRequired
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
+                    style={{
+                      borderRadius: '20px',
+                      padding: '4px 12px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      background: classification.packingGroupRequired
+                        ? 'rgba(239, 68, 68, 0.2)'
+                        : 'rgba(107, 114, 128, 0.2)',
+                      color: classification.packingGroupRequired
+                        ? '#fca5a5'
+                        : 'rgba(255, 255, 255, 0.8)',
+                      border: `1px solid ${
+                        classification.packingGroupRequired
+                          ? 'rgba(239, 68, 68, 0.3)'
+                          : 'rgba(107, 114, 128, 0.3)'
+                      }`,
+                    }}
                   >
                     {classification.packingGroupRequired
                       ? 'Packing Group Required'
@@ -918,68 +2088,192 @@ export default function HazmatRouteComplianceWidget() {
 
       {/* Regulations Tab */}
       {activeTab === 'regulations' && (
-        <div className='space-y-6'>
-          <div className='flex gap-4'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', gap: '16px' }}>
             <button
               onClick={loadRegulations}
               disabled={loading}
-              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+              style={{
+                background: loading
+                  ? 'rgba(59, 130, 246, 0.5)'
+                  : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                transition: 'all 0.3s ease',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onMouseOver={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(0, 0, 0, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
               {loading ? 'Loading...' : 'Load Regulations'}
             </button>
           </div>
 
           {error && (
-            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+                padding: '16px',
+                color: '#fca5a5',
+              }}
+            >
+              {error}
+            </div>
           )}
 
           {regulations.length > 0 && (
-            <div className='space-y-4'>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+              }}
+            >
               {regulations.map((regulation, index) => (
                 <div
                   key={index}
-                  className='rounded-lg border border-gray-200 p-4'
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '2px solid rgba(249, 115, 22, 0.4)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
-                  <div className='mb-3 flex items-center justify-between'>
+                  <div
+                    style={{
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <div>
-                      <h3 className='font-semibold text-gray-900'>
+                      <h3
+                        style={{
+                          marginBottom: '4px',
+                          fontWeight: '600',
+                          color: 'white',
+                          fontSize: '18px',
+                        }}
+                      >
                         {regulation.authority}
                       </h3>
-                      <p className='text-sm text-gray-600'>
+                      <p
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.95)',
+                          margin: 0,
+                        }}
+                      >
                         {regulation.jurisdiction} - {regulation.regulationType}
                       </p>
                     </div>
                     <div
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${
-                        regulation.isRequired
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+                      style={{
+                        borderRadius: '20px',
+                        padding: '6px 12px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        background: regulation.isRequired
+                          ? 'rgba(239, 68, 68, 0.2)'
+                          : 'rgba(107, 114, 128, 0.2)',
+                        color: regulation.isRequired
+                          ? '#fca5a5'
+                          : 'rgba(255, 255, 255, 0.8)',
+                        border: `1px solid ${
+                          regulation.isRequired
+                            ? 'rgba(239, 68, 68, 0.3)'
+                            : 'rgba(107, 114, 128, 0.3)'
+                        }`,
+                      }}
                     >
                       {regulation.isRequired ? 'Required' : 'Optional'}
                     </div>
                   </div>
 
-                  <div className='mb-3'>
-                    <p className='text-sm text-gray-700'>
+                  <div style={{ marginBottom: '16px' }}>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        lineHeight: '1.6',
+                      }}
+                    >
                       {regulation.requirement}
                     </p>
                   </div>
 
-                  <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '16px',
+                    }}
+                  >
                     <div>
-                      <strong className='text-xs text-gray-600'>
+                      <strong
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
                         Reference:
                       </strong>
-                      <p className='text-xs text-gray-700'>
+                      <p
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.95)',
+                          margin: '4px 0 0 0',
+                        }}
+                      >
                         {regulation.referenceCode}
                       </p>
                     </div>
                     <div>
-                      <strong className='text-xs text-gray-600'>
+                      <strong
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
                         Penalty:
                       </strong>
-                      <p className='text-xs text-gray-700'>
+                      <p
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.95)',
+                          margin: '4px 0 0 0',
+                        }}
+                      >
                         {regulation.penalty}
                       </p>
                     </div>

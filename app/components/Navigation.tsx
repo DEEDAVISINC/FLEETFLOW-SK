@@ -750,6 +750,35 @@ export default function ProfessionalNavigation() {
                   📊 Reports & Analytics
                 </Link>
                 <Link
+                  href='/vendor-management'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🤝 Vendor Management
+                </Link>
+                <Link
+                  href='/vendor-portal'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px 10px 40px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '400',
+                    opacity: '0.8',
+                  }}
+                >
+                  🏢 Vendor/Shipper Portal
+                </Link>
+                <Link
                   href='/automation-demo'
                   onClick={handleDropdownClose}
                   style={{

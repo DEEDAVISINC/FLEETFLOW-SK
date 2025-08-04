@@ -18,6 +18,9 @@ export interface FeatureFlags {
   HAZMAT_ROUTE_COMPLIANCE: boolean;
   SEASONAL_LOAD_PLANNING: boolean;
   CROSS_DOCKING_OPTIMIZATION: boolean;
+  ADVANCED_WEATHER_INTEGRATION: boolean;
+  FORCE_MAJEURE_PLANNING: boolean;
+  CYBER_SECURITY_PROTOCOLS: boolean;
 
   // Business Intelligence
   NEW_MARKET_ENTRY: boolean;
@@ -27,7 +30,6 @@ export interface FeatureFlags {
 
   // Risk Management
   CYBER_SECURITY_PROTOCOL: boolean;
-  FORCE_MAJEURE_PLANNING: boolean;
   REGULATORY_RISK_ASSESSMENT: boolean;
 
   // Communication Enhancements
@@ -60,6 +62,9 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   HAZMAT_ROUTE_COMPLIANCE: false,
   SEASONAL_LOAD_PLANNING: false,
   CROSS_DOCKING_OPTIMIZATION: false,
+  ADVANCED_WEATHER_INTEGRATION: false,
+  FORCE_MAJEURE_PLANNING: false,
+  CYBER_SECURITY_PROTOCOLS: false,
 
   // Business Intelligence
   NEW_MARKET_ENTRY: false,
@@ -69,7 +74,6 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
 
   // Risk Management
   CYBER_SECURITY_PROTOCOL: false,
-  FORCE_MAJEURE_PLANNING: false,
   REGULATORY_RISK_ASSESSMENT: false,
 
   // Communication Enhancements
@@ -91,8 +95,13 @@ export function getFeatureFlags(): FeatureFlags {
   // Override with environment variables
   Object.keys(flags).forEach((key) => {
     const envKey = `ENABLE_${key}`;
-    if (process.env[envKey] !== undefined) {
-      flags[key as keyof FeatureFlags] = process.env[envKey] === 'true';
+    const publicEnvKey = `NEXT_PUBLIC_ENABLE_${key}`;
+
+    // Check for both regular and NEXT_PUBLIC_ prefixed environment variables
+    const envValue = process.env[envKey] || process.env[publicEnvKey];
+
+    if (envValue !== undefined) {
+      flags[key as keyof FeatureFlags] = envValue === 'true';
     }
   });
 

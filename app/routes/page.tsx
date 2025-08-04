@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import AdvancedWeatherIntegration from '../components/AdvancedWeatherIntegration';
 import HazmatRouteComplianceWidget from '../components/HazmatRouteComplianceWidget';
 import PermitRoutePlanningWidget from '../components/PermitRoutePlanningWidget';
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard';
@@ -11,8 +12,11 @@ import { OptimizedRoute } from '../services/route-optimization';
 
 export default function RoutesPage() {
   const [activeView, setActiveView] = useState<
-    'dashboard' | 'optimizer' | 'analytics'
+    'dashboard' | 'optimizer' | 'analytics' | 'specialized'
   >('dashboard');
+  const [specializedSubTab, setSpecializedSubTab] = useState<
+    'permits' | 'hazmat' | 'seasonal' | 'weather'
+  >('permits');
   const [routeStats, setRouteStats] = useState({
     activeRoutes: 12,
     totalMiles: 2847,
@@ -317,23 +321,33 @@ export default function RoutesPage() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              overflowX: 'auto',
+              paddingBottom: '4px',
+            }}
+          >
             {[
               { id: 'dashboard', label: 'Overview', icon: '📊' },
               { id: 'optimizer', label: 'AI Optimizer', icon: '⚡' },
               { id: 'analytics', label: 'Analytics', icon: '📈' },
+              { id: 'specialized', label: 'Specialized Routing', icon: '🛣️' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveView(tab.id as any)}
                 style={{
-                  padding: '12px 24px',
+                  padding: '8px 16px',
                   borderRadius: '12px',
                   fontWeight: '600',
                   transition: 'all 0.3s ease',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '16px',
+                  fontSize: '14px',
+                  whiteSpace: 'nowrap',
+                  minWidth: 'fit-content',
                   background:
                     activeView === tab.id
                       ? 'rgba(255, 255, 255, 0.9)'
@@ -1056,21 +1070,6 @@ export default function RoutesPage() {
                 </button>
               </div>
             </div>
-
-            {/* Permit Route Planning Widget */}
-            <div style={{ marginTop: '32px' }}>
-              <PermitRoutePlanningWidget />
-            </div>
-
-            {/* Hazmat Route Compliance Widget */}
-            <div style={{ marginTop: '32px' }}>
-              <HazmatRouteComplianceWidget />
-            </div>
-
-            {/* Seasonal Load Planning Widget */}
-            <div style={{ marginTop: '32px' }}>
-              <SeasonalLoadPlanningWidget />
-            </div>
           </div>
         )}
 
@@ -1540,6 +1539,72 @@ export default function RoutesPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Specialized Routing Tab */}
+        {activeView === 'specialized' && (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+          >
+            {/* Sub-Tab Navigation */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {[
+                  { id: 'permits', label: 'Permit Planning', icon: '📋' },
+                  { id: 'hazmat', label: 'Hazmat Compliance', icon: '☢️' },
+                  { id: 'seasonal', label: 'Seasonal Planning', icon: '🌦️' },
+                  { id: 'weather', label: 'Weather Integration', icon: '🌤️' },
+                ].map((subTab) => (
+                  <button
+                    key={subTab.id}
+                    onClick={() => setSpecializedSubTab(subTab.id as any)}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      whiteSpace: 'nowrap',
+                      background:
+                        specializedSubTab === subTab.id
+                          ? 'rgba(255, 255, 255, 0.9)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                      color:
+                        specializedSubTab === subTab.id ? '#4c1d95' : 'white',
+                      transform:
+                        specializedSubTab === subTab.id
+                          ? 'translateY(-2px)'
+                          : 'translateY(0)',
+                      boxShadow:
+                        specializedSubTab === subTab.id
+                          ? '0 8px 25px rgba(0, 0, 0, 0.15)'
+                          : 'none',
+                    }}
+                  >
+                    <span style={{ marginRight: '8px' }}>{subTab.icon}</span>
+                    {subTab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sub-Tab Content */}
+            {specializedSubTab === 'permits' && <PermitRoutePlanningWidget />}
+            {specializedSubTab === 'hazmat' && <HazmatRouteComplianceWidget />}
+            {specializedSubTab === 'seasonal' && <SeasonalLoadPlanningWidget />}
+            {specializedSubTab === 'weather' && <AdvancedWeatherIntegration />}
           </div>
         )}
       </div>
