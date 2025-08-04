@@ -228,180 +228,71 @@ export default function FreightFlowQuotingEngine() {
     },
   });
 
-  // UNIFIED WORKFLOW FUNCTIONS - Connects All Pricing Engines
-  const updateWorkflowData = (section, data) => {
+  // UNIFIED WORKFLOW FUNCTIONS
+  const updateWorkflowData = (section: string, data: any) => {
     setWorkflowData(prev => ({
       ...prev,
       [section]: { ...prev[section], ...data }
     }));
   };
 
-  const calculateUnifiedQuote = async (loadData, pricingOptions = {}) => {
-    let baseRate = 2000;
-    if (loadData.weight) {
-      baseRate = 2000 + (parseInt(loadData.weight) / 1000 * 50);
-    }
-    
-    let finalRate = baseRate;
-    let adjustments = [];
-    
-    // 1. EMERGENCY LOAD PRICING
-    if (pricingOptions.useEmergencyPricing) {
-      const urgencyMultiplier = loadData.urgency === "emergency" ? 1.5 :
-                               loadData.urgency === "critical" ? 1.3 :
-                               loadData.urgency === "urgent" ? 1.15 : 1.0;
-      const emergencyPremium = baseRate * (urgencyMultiplier - 1);
-      adjustments.push({
-        engine: "Emergency Load Pricing",
-        type: "Emergency Premium",
-        amount: emergencyPremium,
-        percentage: (urgencyMultiplier - 1) * 100,
-        reasoning: `${loadData.urgency || "urgent"} delivery requires premium pricing`
-      });
-      finalRate += emergencyPremium;
-    }
-    
-    // 2. SPOT RATE OPTIMIZATION
-    if (pricingOptions.useSpotRateOptimization) {
-      try {
-        const response = await fetch("/api/analytics/spot-rate?action=market-intelligence");
-        const marketData = await response.json();
-        const marketAdjustment = baseRate * (marketData.data?.adjustmentPercentage || 5) / 100;
-        adjustments.push({
-          engine: "Spot Rate Optimization",
-          type: "Market Rate Adjustment",
-          amount: marketAdjustment,
-          percentage: marketData.data?.adjustmentPercentage || 5,
-          reasoning: "Market conditions analyzed for competitive positioning"
-        });
-        finalRate += marketAdjustment;
-      } catch (error) {
-        console.error("Spot rate calculation error:", error);
-      }
-    }
-    
-    // 3. VOLUME DISCOUNT
-    if (pricingOptions.useVolumeDiscount && workflowData.customer.discountRate) {
-      const discountAmount = finalRate * (workflowData.customer.discountRate / 100);
-      adjustments.push({
-        engine: "Volume Discount",
-        type: "Customer Loyalty Discount",
-        amount: -discountAmount,
-        percentage: -workflowData.customer.discountRate,
-        reasoning: `${workflowData.customer.tier} tier customer gets ${workflowData.customer.discountRate}% discount`
-      });
-      finalRate -= discountAmount;
-    }
-    
-    // 4. WAREHOUSING SERVICES
-    if (pricingOptions.useWarehousing) {
-      const warehousingCost = 500;
-      adjustments.push({
-        engine: "Warehousing Services",
-        type: "Additional Services",
-        amount: warehousingCost,
-        services: ["Cross-docking", "Temporary storage"],
-        reasoning: "Warehousing services added to shipment"
-      });
-      finalRate += warehousingCost;
-    }
-    
-    return {
-      baseRate: Math.round(baseRate),
-      adjustments,
-      finalRate: Math.round(finalRate),
-      enginesUsed: Object.keys(pricingOptions).filter(key => pricingOptions[key]),
-      alternatives: [
-        {
-          name: "Standard",
-          rate: Math.round(finalRate),
-          timeline: "3-day delivery",
-          color: "#3b82f6",
-          engines: Object.keys(pricingOptions).filter(key => pricingOptions[key])
-        },
-        {
-          name: "Express",
-          rate: Math.round(finalRate * 1.15),
-          timeline: "Next-day delivery",
-          color: "#f59e0b",
-          engines: [...Object.keys(pricingOptions).filter(key => pricingOptions[key]), "expedited"]
-        },
-        {
-          name: "Economy",
-          rate: Math.round(finalRate * 0.85),
-          timeline: "5-day delivery",
-          color: "#10b981",
-          engines: Object.keys(pricingOptions).filter(key => pricingOptions[key] && key !== "useEmergencyPricing")
-        }
-      ]
-    };
+  const handleCustomerChange = (customerId: string) => {
+    setSelectedCustomer(customerId);
+    const customerData = {
+      'SHIP-2024-001': { id: customerId, name: 'Walmart Distribution Center', tier: 'Gold', discountRate: 6 },
+      'SHIP-2024-002': { id: customerId, name: 'Amazon Fulfillment', tier: 'Platinum', discountRate: 8 },
+      'SHIP-2024-003': { id: customerId, name: 'Home Depot Supply Chain', tier: 'Silver', discountRate: 4 },
+      'SHIP-2024-004': { id: customerId, name: 'Target Logistics', tier: 'Gold', discountRate: 6 },
+      'SHIP-2024-005': { id: customerId, name: 'Costco Wholesale', tier: 'Gold', discountRate: 6 }
+    }[customerId] || { id: '', name: '', tier: '', discountRate: 0 };
+    updateWorkflowData('customer', customerData);
   };
 
   const runAIAnalysis = async () => {
     if (!selectedCustomer) {
-      alert("Please select a customer first");
+      alert('Please select a customer first');
       return;
     }
     
-    // Auto-detect which pricing engines to use
-    const pricingOptions = {
-      useEmergencyPricing: workflowData.load.urgency === "emergency" || workflowData.load.urgency === "critical",
-      useSpotRateOptimization: true, // Always use market intelligence
-      useVolumeDiscount: workflowData.customer.discountRate > 0,
-      useWarehousing: workflowData.load.equipment === "warehousing" || workflowData.load.specialServices?.includes("storage")
-    };
+    // Simple unified calculation
+    let baseRate = 2000;
+    let finalRate = baseRate;
+    let adjustments: any[] = [];
     
-    const quoteResult = await calculateUnifiedQuote(workflowData.load, pricingOptions);
+    // Apply volume discount if customer has one
+    if (workflowData.customer.discountRate > 0) {
+      const discountAmount = baseRate * (workflowData.customer.discountRate / 100);
+      adjustments.push({
+        type: 'Volume Discount',
+        amount: -discountAmount,
+        percentage: -workflowData.customer.discountRate
+      });
+      finalRate -= discountAmount;
+    }
     
-    updateWorkflowData("quote", quoteResult);
-    updateWorkflowData("analysis", {
-      pricingEnginesUsed: quoteResult.enginesUsed,
-      totalAdjustments: quoteResult.adjustments.length,
-      finalCalculation: quoteResult.finalRate,
-      adjustments: quoteResult.adjustments
+    // Create quote alternatives
+    const alternatives = [
+      { name: 'Standard', rate: Math.round(finalRate), timeline: '3-day delivery', color: '#3b82f6' },
+      { name: 'Express', rate: Math.round(finalRate * 1.15), timeline: 'Next-day delivery', color: '#f59e0b' },
+      { name: 'Economy', rate: Math.round(finalRate * 0.85), timeline: '5-day delivery', color: '#10b981' }
+    ];
+    
+    updateWorkflowData('quote', {
+      baseRate: Math.round(baseRate),
+      adjustments,
+      finalRate: Math.round(finalRate),
+      alternatives
     });
     
-    setWorkflowStep("generation");
-  };
-
-  const handleCustomerChange = (customerId) => {
-    setSelectedCustomer(customerId);
-    const customerData = {
-      "SHIP-2024-001": { id: customerId, name: "Walmart Distribution Center", tier: "Gold", discountRate: 6 },
-      "SHIP-2024-002": { id: customerId, name: "Amazon Fulfillment", tier: "Platinum", discountRate: 8 },
-      "SHIP-2024-003": { id: customerId, name: "Home Depot Supply Chain", tier: "Silver", discountRate: 4 },
-      "SHIP-2024-004": { id: customerId, name: "Target Logistics", tier: "Gold", discountRate: 6 },
-      "SHIP-2024-005": { id: customerId, name: "Costco Wholesale", tier: "Gold", discountRate: 6 }
-    }[customerId] || { id: "", name: "", tier: "", discountRate: 0 };
-    updateWorkflowData("customer", customerData);
-  };
-
-  const handleLoadChange = (field, value) => {
-    updateWorkflowData("load", { [field]: value });
-  };
-
-  const selectQuoteOption = (option) => {
-    const newQuote = {
-      id: `QT-${Date.now()}`,
-      quoteNumber: `QT-${Date.now()}`,
-      type: "Unified",
-      baseRate: workflowData.quote.baseRate,
-      fuelSurcharge: 0,
-      total: option.rate,
-      details: {
-        customer: workflowData.customer,
-        load: workflowData.load,
-        pricingEngines: option.engines,
-        adjustments: workflowData.quote.adjustments
-      },
-      timestamp: new Date().toISOString(),
-      appliedRule: `Unified Calculator: ${option.engines?.join(", ") || "Standard"}`,
-    };
+    updateWorkflowData('analysis', {
+      customerTier: workflowData.customer.tier,
+      discountApplied: workflowData.customer.discountRate,
+      enginesUsed: ['Volume Discount']
+    });
     
-    setQuotes(prev => [newQuote, ...prev]);
-    setWorkflowStep("management");
-    alert(`Quote created: $${option.rate.toLocaleString()} using ${option.engines?.length || 0} pricing engines`);
+    setWorkflowStep('generation');
   };
+
 
   // Load data from localStorage
   useEffect(() => {
@@ -1316,7 +1207,7 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     />
-                      onChange={(e) => handleLoadChange("origin", e.target.value)}                    <input
+                    <input
                       type='text'
                       placeholder='Destination City, State'
                       style={{
@@ -1328,7 +1219,7 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     />
-                      onChange={(e) => handleLoadChange("destination", e.target.value)}                    <input
+                    <input
                       type='text'
                       placeholder='Weight (lbs)'
                       style={{
@@ -1341,7 +1232,7 @@ export default function FreightFlowQuotingEngine() {
                       }}
                     />
                     <select
-                      onChange={(e) => handleLoadChange("weight", e.target.value)}                      style={{
+                      style={{
                         padding: '12px 16px',
                         borderRadius: '8px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -1350,7 +1241,7 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     >
-                      onChange={(e) => handleLoadChange("equipment", e.target.value)}                      <option value=''>Select Equipment...</option>
+                      <option value=''>Select Equipment...</option>
                       <option value='dry-van'>Dry Van</option>
                       <option value='reefer'>Reefer</option>
                       <option value='flatbed'>Flatbed</option>
@@ -1546,11 +1437,26 @@ export default function FreightFlowQuotingEngine() {
 
                 {/* Quote Options */}
                 <div style={{ display: 'flex', gap: '24px' }}>
-                  {(workflowData.quote.alternatives || [
-                    { name: "Standard", rate: 2450, timeline: "3-day delivery", color: "#3b82f6" },
-                    { name: "Express", rate: 2850, timeline: "Next-day delivery", color: "#f59e0b" },
-                    { name: "Economy", rate: 2100, timeline: "5-day delivery", color: "#10b981" }
-                  ])                  ].map((option) => (
+                  {[
+                    {
+                      name: 'Standard',
+                      rate: 2450,
+                      timeline: '3-day delivery',
+                      color: '#3b82f6',
+                    },
+                    {
+                      name: 'Express',
+                      rate: 2850,
+                      timeline: 'Next-day delivery',
+                      color: '#f59e0b',
+                    },
+                    {
+                      name: 'Economy',
+                      rate: 2100,
+                      timeline: '5-day delivery',
+                      color: '#10b981',
+                    },
+                  ].map((option) => (
                     <div
                       key={option.name}
                       style={{
@@ -1596,7 +1502,7 @@ export default function FreightFlowQuotingEngine() {
                           cursor: 'pointer',
                         }}
                       >
-                        onClick={() => selectQuoteOption(option)}                        Select Quote
+                        Select Quote
                       </button>
                     </div>
                   ))}
