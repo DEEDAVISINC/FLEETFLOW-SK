@@ -55,7 +55,7 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   // Pricing Enhancements
   SPOT_RATE_OPTIMIZATION: false,
   VOLUME_DISCOUNT_STRUCTURE: false,
-  EMERGENCY_LOAD_PRICING: false,
+  EMERGENCY_LOAD_PRICING: true,
 
   // Specialized Routing
   PERMIT_ROUTE_PLANNING: true,
