@@ -189,11 +189,13 @@ export default function VolumeDiscountWidget() {
     return (
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '12px',
-          padding: '20px',
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          borderRadius: '16px',
+          padding: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          marginBottom: '32px',
         }}
       >
         <div
@@ -233,11 +235,13 @@ export default function VolumeDiscountWidget() {
   return (
     <div
       style={{
-        background: 'rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '12px',
-        padding: '24px',
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '16px',
+        padding: '32px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        marginBottom: '32px',
       }}
     >
       <div
@@ -283,12 +287,13 @@ export default function VolumeDiscountWidget() {
       <div
         style={{
           display: 'flex',
-          gap: '4px',
+          gap: '8px',
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(10px)',
           borderRadius: '12px',
-          padding: '4px',
-          marginBottom: '24px',
+          padding: '8px',
+          marginBottom: '32px',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
         }}
       >
         <button
@@ -304,12 +309,15 @@ export default function VolumeDiscountWidget() {
             cursor: 'pointer',
             ...(activeTab === 'analysis'
               ? {
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  background: 'rgba(255, 255, 255, 0.25)',
                   color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 16px rgba(255, 255, 255, 0.1)',
                 }
               : {
-                  background: 'transparent',
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }),
           }}
         >
@@ -328,12 +336,15 @@ export default function VolumeDiscountWidget() {
             cursor: 'pointer',
             ...(activeTab === 'structures'
               ? {
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  background: 'rgba(255, 255, 255, 0.25)',
                   color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 16px rgba(255, 255, 255, 0.1)',
                 }
               : {
-                  background: 'transparent',
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }),
           }}
         >
@@ -352,12 +363,15 @@ export default function VolumeDiscountWidget() {
             cursor: 'pointer',
             ...(activeTab === 'projection'
               ? {
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  background: 'rgba(255, 255, 255, 0.25)',
                   color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 16px rgba(255, 255, 255, 0.1)',
                 }
               : {
-                  background: 'transparent',
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }),
           }}
         >
@@ -367,26 +381,60 @@ export default function VolumeDiscountWidget() {
 
       {/* Customer Analysis Tab */}
       {activeTab === 'analysis' && (
-        <div className='space-y-6'>
-          <div className='flex gap-4'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             <input
               type='text'
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
               placeholder='Enter Customer ID'
-              className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none'
+              style={{
+                flex: 1,
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                padding: '12px 16px',
+                color: 'white',
+                fontSize: '14px',
+                outline: 'none',
+              }}
             />
             <button
               onClick={analyzeCustomer}
               disabled={loading}
-              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+              style={{
+                borderRadius: '12px',
+                background: 'rgba(59, 130, 246, 0.8)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
+                transition: 'all 0.2s ease',
+              }}
             >
               {loading ? 'Analyzing...' : 'Analyze'}
             </button>
             <button
               onClick={loadVolumeProjection}
               disabled={loading}
-              className='rounded-lg bg-green-600 px-6 py-2 font-medium text-white hover:bg-green-700 disabled:opacity-50'
+              style={{
+                borderRadius: '12px',
+                background: 'rgba(34, 197, 94, 0.8)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
+                transition: 'all 0.2s ease',
+              }}
             >
               {loading ? 'Loading...' : 'Project Volume'}
             </button>
