@@ -8,6 +8,7 @@ import PermitRoutePlanningWidget from '../components/PermitRoutePlanningWidget';
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard';
 import RouteSharing from '../components/RouteSharing';
 import SeasonalLoadPlanningWidget from '../components/SeasonalLoadPlanningWidget';
+import PortAuthorityAccessWidget from '../components/PortAuthorityAccessWidget';
 import { OptimizedRoute } from '../services/route-optimization';
 
 export default function RoutesPage() {
@@ -15,7 +16,7 @@ export default function RoutesPage() {
     'dashboard' | 'optimizer' | 'analytics' | 'specialized'
   >('dashboard');
   const [specializedSubTab, setSpecializedSubTab] = useState<
-    'permits' | 'hazmat' | 'seasonal' | 'weather'
+    'permits' | 'hazmat' | 'seasonal' | 'weather' | 'ports'
   >('permits');
   const [routeStats, setRouteStats] = useState({
     activeRoutes: 12,
@@ -1564,6 +1565,7 @@ export default function RoutesPage() {
                   { id: 'hazmat', label: 'Hazmat Compliance', icon: '☢️' },
                   { id: 'seasonal', label: 'Seasonal Planning', icon: '🌦️' },
                   { id: 'weather', label: 'Weather Integration', icon: '🌤️' },
+                  { id: 'ports', label: 'Port Authority Access', icon: '🏗️' },
                 ].map((subTab) => (
                   <button
                     key={subTab.id}
@@ -1605,6 +1607,7 @@ export default function RoutesPage() {
             {specializedSubTab === 'hazmat' && <HazmatRouteComplianceWidget />}
             {specializedSubTab === 'seasonal' && <SeasonalLoadPlanningWidget />}
             {specializedSubTab === 'weather' && <AdvancedWeatherIntegration />}
+            {specializedSubTab === 'ports' && <PortAuthorityAccessWidget />}
           </div>
         )}
       </div>

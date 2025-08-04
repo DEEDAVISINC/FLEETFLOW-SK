@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
 import TWICEscortService from '@/app/services/TWICEscortService';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * TWIC Escort Service API Route
- * 
+ *
  * Handles TWIC escort requests, assignments, and management
  * for drivers without TWIC cards at secure port facilities
  */
@@ -26,14 +26,26 @@ export async function POST(request: NextRequest) {
           chassisNumber,
           operationType,
           estimatedDuration,
-          specialInstructions
+          specialInstructions,
         } = data;
 
         // Validate required fields
-        if (!tenantId || !driverName || !driverLicense || !phoneNumber || 
-            !portCode || !terminalId || !appointmentTime || !operationType || !estimatedDuration) {
+        if (
+          !tenantId ||
+          !driverName ||
+          !driverLicense ||
+          !phoneNumber ||
+          !portCode ||
+          !terminalId ||
+          !appointmentTime ||
+          !operationType ||
+          !estimatedDuration
+        ) {
           return NextResponse.json(
-            { success: false, error: 'Missing required fields for escort request' },
+            {
+              success: false,
+              error: 'Missing required fields for escort request',
+            },
             { status: 400 }
           );
         }
@@ -50,18 +62,20 @@ export async function POST(request: NextRequest) {
           chassisNumber,
           operationType,
           estimatedDuration,
-          specialInstructions
+          specialInstructions,
         });
 
         return NextResponse.json({
           success: escortResult.success,
-          data: escortResult.success ? {
-            requestId: escortResult.requestId,
-            availableEscorts: escortResult.availableEscorts,
-            estimatedCost: escortResult.estimatedCost
-          } : null,
+          data: escortResult.success
+            ? {
+                requestId: escortResult.requestId,
+                availableEscorts: escortResult.availableEscorts,
+                estimatedCost: escortResult.estimatedCost,
+              }
+            : null,
           error: escortResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'assign_escort':
@@ -74,13 +88,16 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const assignmentResult = await TWICEscortService.assignEscort(requestId, escortId);
+        const assignmentResult = await TWICEscortService.assignEscort(
+          requestId,
+          escortId
+        );
 
         return NextResponse.json({
           success: assignmentResult.success,
           data: assignmentResult.assignment,
           error: assignmentResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'complete_request':
@@ -102,7 +119,7 @@ export async function POST(request: NextRequest) {
           success: completionResult.success,
           data: completionResult.summary,
           error: completionResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'update_escort_status':
@@ -115,11 +132,14 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const updateResult = await TWICEscortService.updateEscortStatus(updateEscortId, status);
+        const updateResult = await TWICEscortService.updateEscortStatus(
+          updateEscortId,
+          status
+        );
 
         return NextResponse.json({
           success: updateResult,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       default:
@@ -128,16 +148,15 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('TWIC Escort API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
@@ -152,7 +171,7 @@ export async function GET(request: NextRequest) {
     switch (type) {
       case 'request_status':
         const requestId = searchParams.get('requestId');
-        
+
         if (!requestId) {
           return NextResponse.json(
             { success: false, error: 'Missing requestId parameter' },
@@ -160,21 +179,24 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const statusResult = await TWICEscortService.getRequestStatus(requestId);
+        const statusResult =
+          await TWICEscortService.getRequestStatus(requestId);
 
         return NextResponse.json({
           success: statusResult.success,
-          data: statusResult.success ? {
-            request: statusResult.request,
-            escort: statusResult.escort
-          } : null,
+          data: statusResult.success
+            ? {
+                request: statusResult.request,
+                escort: statusResult.escort,
+              }
+            : null,
           error: statusResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'port_escorts':
         const portCode = searchParams.get('portCode');
-        
+
         if (!portCode) {
           return NextResponse.json(
             { success: false, error: 'Missing portCode parameter' },
@@ -187,12 +209,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: escorts,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'port_pricing':
         const pricingPortCode = searchParams.get('portCode');
-        
+
         if (!pricingPortCode) {
           return NextResponse.json(
             { success: false, error: 'Missing portCode parameter' },
@@ -205,12 +227,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           success: !!pricing,
           data: pricing,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'analytics':
         const analyticsPortCode = searchParams.get('portCode');
-        
+
         const analytics = await TWICEscortService.getEscortAnalytics(
           analyticsPortCode || undefined
         );
@@ -218,7 +240,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: analytics,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'available_escorts':
@@ -228,7 +250,10 @@ export async function GET(request: NextRequest) {
 
         if (!availPortCode || !appointmentTime || !duration) {
           return NextResponse.json(
-            { success: false, error: 'Missing required parameters for availability check' },
+            {
+              success: false,
+              error: 'Missing required parameters for availability check',
+            },
             { status: 400 }
           );
         }
@@ -242,7 +267,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: availability,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       default:
@@ -251,16 +276,15 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('TWIC Escort GET API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch escort data',
         details: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );

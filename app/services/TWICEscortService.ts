@@ -1,6 +1,6 @@
 /**
  * TWIC Escort Service
- * 
+ *
  * Provides TWIC escort services for drivers/companies without TWIC cards
  * at port facilities requiring security clearance
  */
@@ -90,7 +90,7 @@ class TWICEscortService {
         completedEscorts: 247,
         hourlyRate: 75,
         languages: ['English', 'Spanish'],
-        specializations: ['hazmat', 'oversized']
+        specializations: ['hazmat', 'oversized'],
       },
       {
         id: 'escort_002',
@@ -106,7 +106,7 @@ class TWICEscortService {
         completedEscorts: 189,
         hourlyRate: 80,
         languages: ['English', 'Mandarin'],
-        specializations: ['container', 'breakbulk']
+        specializations: ['container', 'breakbulk'],
       },
       {
         id: 'escort_003',
@@ -122,7 +122,7 @@ class TWICEscortService {
         completedEscorts: 312,
         hourlyRate: 85,
         languages: ['English'],
-        specializations: ['hazmat', 'refrigerated', 'oversized']
+        specializations: ['hazmat', 'refrigerated', 'oversized'],
       },
       {
         id: 'escort_004',
@@ -138,52 +138,56 @@ class TWICEscortService {
         completedEscorts: 156,
         hourlyRate: 70,
         languages: ['English', 'Spanish'],
-        specializations: ['container', 'automotive']
-      }
+        specializations: ['container', 'automotive'],
+      },
     ];
 
-    mockEscorts.forEach(escort => {
+    mockEscorts.forEach((escort) => {
       this.escorts.set(escort.id, escort);
     });
 
     // Mock Pricing by Port
     const mockPricing: { [portCode: string]: EscortPricing } = {
-      'USLAX': { // Port of Los Angeles
+      USLAX: {
+        // Port of Los Angeles
         baseRate: 75,
         minimumCharge: 2, // 2 hours minimum
         rushSurcharge: 25, // 25% surcharge for same-day
         hazmatSurcharge: 20, // $20/hour additional
         oversizeSurcharge: 15, // $15/hour additional
         waitingTimeRate: 50, // $50/hour for waiting
-        mileageRate: 0.75 // $0.75 per mile
+        mileageRate: 0.75, // $0.75 per mile
       },
-      'USLGB': { // Port of Long Beach
+      USLGB: {
+        // Port of Long Beach
         baseRate: 80,
         minimumCharge: 2,
         rushSurcharge: 30,
         hazmatSurcharge: 25,
         oversizeSurcharge: 20,
         waitingTimeRate: 55,
-        mileageRate: 0.80
+        mileageRate: 0.8,
       },
-      'USNYK': { // Port of NY/NJ
+      USNYK: {
+        // Port of NY/NJ
         baseRate: 85,
         minimumCharge: 3, // Higher minimum in NYC
         rushSurcharge: 35,
         hazmatSurcharge: 30,
         oversizeSurcharge: 25,
         waitingTimeRate: 65,
-        mileageRate: 1.00
+        mileageRate: 1.0,
       },
-      'USSAV': { // Port of Savannah
+      USSAV: {
+        // Port of Savannah
         baseRate: 70,
         minimumCharge: 2,
         rushSurcharge: 20,
         hazmatSurcharge: 15,
         oversizeSurcharge: 10,
         waitingTimeRate: 45,
-        mileageRate: 0.65
-      }
+        mileageRate: 0.65,
+      },
     };
 
     Object.entries(mockPricing).forEach(([portCode, pricing]) => {
@@ -194,7 +198,12 @@ class TWICEscortService {
   /**
    * Request TWIC escort service
    */
-  async requestEscort(request: Omit<TWICEscortRequest, 'id' | 'status' | 'createdAt' | 'updatedAt'>): Promise<{
+  async requestEscort(
+    request: Omit<
+      TWICEscortRequest,
+      'id' | 'status' | 'createdAt' | 'updatedAt'
+    >
+  ): Promise<{
     success: boolean;
     requestId?: string;
     availableEscorts?: EscortAvailability[];
@@ -203,13 +212,13 @@ class TWICEscortService {
   }> {
     try {
       const requestId = `escort_req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const escortRequest: TWICEscortRequest = {
         ...request,
         id: requestId,
         status: 'requested',
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       this.escortRequests.set(requestId, escortRequest);
@@ -232,14 +241,13 @@ class TWICEscortService {
         success: true,
         requestId,
         availableEscorts,
-        estimatedCost
+        estimatedCost,
       };
-
     } catch (error) {
       console.error('Error requesting escort:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -253,7 +261,7 @@ class TWICEscortService {
     duration: number
   ): Promise<EscortAvailability[]> {
     const availableEscorts: EscortAvailability[] = [];
-    
+
     for (const escort of this.escorts.values()) {
       // Check if escort is cleared for this port
       if (!escort.portClearances.includes(portCode)) {
@@ -268,14 +276,16 @@ class TWICEscortService {
           availableSlots: [
             {
               startTime: appointmentTime,
-              endTime: new Date(new Date(appointmentTime).getTime() + duration * 60000).toISOString(),
-              rate: escort.hourlyRate
-            }
+              endTime: new Date(
+                new Date(appointmentTime).getTime() + duration * 60000
+              ).toISOString(),
+              rate: escort.hourlyRate,
+            },
           ],
           estimatedArrival: Math.floor(Math.random() * 30) + 15, // 15-45 minutes
-          rating: escort.rating
+          rating: escort.rating,
         };
-        
+
         availableEscorts.push(availability);
       }
     }
@@ -287,7 +297,10 @@ class TWICEscortService {
   /**
    * Assign escort to request
    */
-  async assignEscort(requestId: string, escortId: string): Promise<{
+  async assignEscort(
+    requestId: string,
+    escortId: string
+  ): Promise<{
     success: boolean;
     assignment?: {
       escortName: string;
@@ -337,15 +350,14 @@ class TWICEscortService {
           escortName: escort.name,
           escortPhone: escort.phoneNumber,
           estimatedArrival,
-          totalCost
-        }
+          totalCost,
+        },
       };
-
     } catch (error) {
       console.error('Error assigning escort:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -395,7 +407,7 @@ class TWICEscortService {
   }> {
     try {
       const request = this.escortRequests.get(requestId);
-      
+
       if (!request) {
         return { success: false, error: 'Request not found' };
       }
@@ -408,14 +420,13 @@ class TWICEscortService {
       return {
         success: true,
         request,
-        escort
+        escort,
       };
-
     } catch (error) {
       console.error('Error getting request status:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -424,8 +435,8 @@ class TWICEscortService {
    * Get all escorts for a port
    */
   async getPortEscorts(portCode: string): Promise<TWICEscort[]> {
-    return Array.from(this.escorts.values()).filter(
-      escort => escort.portClearances.includes(portCode)
+    return Array.from(this.escorts.values()).filter((escort) =>
+      escort.portClearances.includes(portCode)
     );
   }
 
@@ -439,7 +450,10 @@ class TWICEscortService {
   /**
    * Update escort status
    */
-  async updateEscortStatus(escortId: string, status: 'available' | 'busy' | 'off_duty'): Promise<boolean> {
+  async updateEscortStatus(
+    escortId: string,
+    status: 'available' | 'busy' | 'off_duty'
+  ): Promise<boolean> {
     const escort = this.escorts.get(escortId);
     if (escort) {
       escort.currentStatus = status;
@@ -452,7 +466,10 @@ class TWICEscortService {
   /**
    * Complete escort request
    */
-  async completeEscortRequest(requestId: string, rating?: number): Promise<{
+  async completeEscortRequest(
+    requestId: string,
+    rating?: number
+  ): Promise<{
     success: boolean;
     summary?: {
       duration: number;
@@ -463,7 +480,7 @@ class TWICEscortService {
   }> {
     try {
       const request = this.escortRequests.get(requestId);
-      
+
       if (!request || !request.escortId) {
         return { success: false, error: 'Request or escort not found' };
       }
@@ -481,13 +498,15 @@ class TWICEscortService {
       // Update escort status and stats
       escort.currentStatus = 'available';
       escort.completedEscorts += 1;
-      
+
       if (rating && rating >= 1 && rating <= 5) {
         // Update escort rating (simplified average)
-        escort.rating = ((escort.rating * (escort.completedEscorts - 1)) + rating) / escort.completedEscorts;
+        escort.rating =
+          (escort.rating * (escort.completedEscorts - 1) + rating) /
+          escort.completedEscorts;
         escort.rating = Math.round(escort.rating * 10) / 10; // Round to 1 decimal
       }
-      
+
       this.escorts.set(request.escortId, escort);
 
       // Calculate final cost
@@ -502,15 +521,14 @@ class TWICEscortService {
         summary: {
           duration: request.estimatedDuration,
           finalCost,
-          escortRating: escort.rating
-        }
+          escortRating: escort.rating,
+        },
       };
-
     } catch (error) {
       console.error('Error completing escort request:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -527,30 +545,44 @@ class TWICEscortService {
     averageResponseTime: number;
   }> {
     const requests = Array.from(this.escortRequests.values());
-    const filteredRequests = portCode 
-      ? requests.filter(req => req.portCode === portCode)
+    const filteredRequests = portCode
+      ? requests.filter((req) => req.portCode === portCode)
       : requests;
 
-    const completedRequests = filteredRequests.filter(req => req.status === 'completed');
-    const escorts = portCode 
-      ? Array.from(this.escorts.values()).filter(escort => escort.portClearances.includes(portCode))
+    const completedRequests = filteredRequests.filter(
+      (req) => req.status === 'completed'
+    );
+    const escorts = portCode
+      ? Array.from(this.escorts.values()).filter((escort) =>
+          escort.portClearances.includes(portCode)
+        )
       : Array.from(this.escorts.values());
 
     const totalRevenue = completedRequests.reduce((sum, req) => {
-      return sum + this.calculateEscortCost(req.portCode, req.estimatedDuration, req.operationType);
+      return (
+        sum +
+        this.calculateEscortCost(
+          req.portCode,
+          req.estimatedDuration,
+          req.operationType
+        )
+      );
     }, 0);
 
-    const averageRating = escorts.length > 0 
-      ? escorts.reduce((sum, escort) => sum + escort.rating, 0) / escorts.length
-      : 0;
+    const averageRating =
+      escorts.length > 0
+        ? escorts.reduce((sum, escort) => sum + escort.rating, 0) /
+          escorts.length
+        : 0;
 
     return {
       totalRequests: filteredRequests.length,
       completedRequests: completedRequests.length,
       averageRating: Math.round(averageRating * 10) / 10,
       totalRevenue: Math.round(totalRevenue * 100) / 100,
-      activeEscorts: escorts.filter(e => e.currentStatus !== 'off_duty').length,
-      averageResponseTime: 25 // Mock average response time in minutes
+      activeEscorts: escorts.filter((e) => e.currentStatus !== 'off_duty')
+        .length,
+      averageResponseTime: 25, // Mock average response time in minutes
     };
   }
 }

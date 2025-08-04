@@ -977,17 +977,19 @@ export class PortAuthoritySystemsService {
       }
 
       // Import TWICEscortService dynamically to avoid circular imports
-      const { default: TWICEscortService } = await import('./TWICEscortService');
-      
+      const { default: TWICEscortService } = await import(
+        './TWICEscortService'
+      );
+
       const escortResult = await TWICEscortService.requestEscort({
         ...appointmentData,
-        portCode
+        portCode,
       });
 
       if (!escortResult.success) {
-        return { 
-          success: false, 
-          error: escortResult.error || 'Failed to request TWIC escort' 
+        return {
+          success: false,
+          error: escortResult.error || 'Failed to request TWIC escort',
         };
       }
 
@@ -996,15 +998,14 @@ export class PortAuthoritySystemsService {
         escortRequest: {
           requestId: escortResult.requestId!,
           availableEscorts: escortResult.availableEscorts || [],
-          estimatedCost: escortResult.estimatedCost || 0
-        }
+          estimatedCost: escortResult.estimatedCost || 0,
+        },
       };
-
     } catch (error) {
       console.error(`Error requesting TWIC escort for ${portCode}:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
