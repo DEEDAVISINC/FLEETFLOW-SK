@@ -42,35 +42,19 @@ export class FinancialMarketsService {
 
   async getDieselPrice(): Promise<FuelPriceData> {
     try {
-      // Get current diesel price from FRED (Federal Reserve Economic Data)
-      const response = await fetch(
-        `${this.baseUrl.fred}/series/observations?series_id=GASREGW&api_key=${this.fredApiKey}&limit=2&file_type=json`
-      );
+      const response = await fetch('/api/financial-markets?action=fuel-price');
       
       if (!response.ok) {
-        throw new Error(`FRED API error: ${response.status}`);
+        throw new Error(`API error: ${response.status}`);
       }
 
-      const data = await response.json();
-      const observations = data.observations;
+      const result = await response.json();
       
-      if (!observations || observations.length === 0) {
-        throw new Error('No diesel price data available');
+      if (result.success) {
+        return result.data;
+      } else {
+        throw new Error(result.error || 'Failed to fetch fuel price');
       }
-
-      const currentObs = observations[observations.length - 1];
-      const previousObs = observations[observations.length - 2];
-      
-      const currentPrice = parseFloat(currentObs.value);
-      const previousPrice = previousObs ? parseFloat(previousObs.value) : currentPrice;
-      const priceChange = currentPrice - previousPrice;
-
-      return {
-        currentPrice,
-        priceChange,
-        lastUpdated: currentObs.date,
-        source: 'US Energy Information Administration'
-      };
     } catch (error) {
       console.error('Error fetching diesel price:', error);
       // Return mock data if API fails
@@ -78,7 +62,7 @@ export class FinancialMarketsService {
         currentPrice: 3.45,
         priceChange: 0.05,
         lastUpdated: new Date().toISOString().split('T')[0],
-        source: 'Mock Data (API Unavailable)'
+        source: 'FleetFlow Market Intelligence (Demo)'
       };
     }
   }
@@ -206,25 +190,19 @@ export class FinancialMarketsService {
 
   async getMarketData(): Promise<MarketData> {
     try {
-      const [fuelPrice, futurePrice, exchangeRate] = await Promise.all([
-        this.getDieselPrice(),
-        this.getFuelFutures(),
-        this.getExchangeRate()
-      ]);
+      const response = await fetch('/api/financial-markets?action=market-data');
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
 
-      // Update fuel price with futures data
-      fuelPrice.futurePrice = futurePrice;
-
-      const hedgingRecommendation = this.calculateHedgingRecommendation(
-        fuelPrice.currentPrice,
-        futurePrice
-      );
-
-      return {
-        fuelPrice,
-        exchangeRate,
-        hedgingRecommendation
-      };
+      const result = await response.json();
+      
+      if (result.success) {
+        return result.data;
+      } else {
+        throw new Error(result.error || 'Failed to fetch market data');
+      }
     } catch (error) {
       console.error('Error fetching market data:', error);
       throw error;
