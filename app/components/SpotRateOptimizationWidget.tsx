@@ -1157,12 +1157,26 @@ export default function SpotRateOptimizationWidget() {
                   >
                     Risk Assessment
                   </h3>
-                  <div className='space-y-2'>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Rate Risk:</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <span
-                        className='font-medium'
                         style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Rate Risk:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
                           color: getRiskColor(
                             optimization.riskAssessment.rateRisk
                           ),
@@ -1171,11 +1185,25 @@ export default function SpotRateOptimizationWidget() {
                         {optimization.riskAssessment.rateRisk.toUpperCase()}
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Capacity Risk:</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <span
-                        className='font-medium'
                         style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Capacity Risk:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
                           color: getRiskColor(
                             optimization.riskAssessment.capacityRisk
                           ),
@@ -1184,11 +1212,25 @@ export default function SpotRateOptimizationWidget() {
                         {optimization.riskAssessment.capacityRisk.toUpperCase()}
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Market Risk:</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <span
-                        className='font-medium'
                         style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Market Risk:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
                           color: getRiskColor(
                             optimization.riskAssessment.marketRisk
                           ),
@@ -1201,14 +1243,42 @@ export default function SpotRateOptimizationWidget() {
                 </div>
               </div>
 
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  gridColumn: 'span 2',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   AI Analysis
                 </h3>
-                <p className='text-sm text-gray-600'>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginBottom: '12px',
+                  }}
+                >
                   {optimization.reasoning}
                 </p>
-                <div className='mt-3 text-xs text-gray-500'>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
                   Confidence: {optimization.confidence}%
                 </div>
               </div>
@@ -1219,63 +1289,228 @@ export default function SpotRateOptimizationWidget() {
 
       {/* Market Intelligence Tab */}
       {activeTab === 'market' && marketIntelligence && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-            <div className='rounded-lg bg-blue-50 p-4'>
-              <div className='text-2xl font-bold text-blue-600'>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+              marginBottom: '20px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#3b82f6',
+                  marginBottom: '4px',
+                }}
+              >
                 ${marketIntelligence.averageSpotRate}
               </div>
-              <div className='text-sm text-blue-600'>Avg Spot Rate</div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Avg Spot Rate
+              </div>
             </div>
-            <div className='rounded-lg bg-green-50 p-4'>
-              <div className='text-2xl font-bold text-green-600'>
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(34, 197, 94, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#22c55e',
+                  marginBottom: '4px',
+                }}
+              >
                 {(marketIntelligence.capacityAvailability * 100).toFixed(0)}%
               </div>
-              <div className='text-sm text-green-600'>Capacity Available</div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Capacity Available
+              </div>
             </div>
-            <div className='rounded-lg bg-orange-50 p-4'>
-              <div className='text-2xl font-bold text-orange-600'>
+            <div
+              style={{
+                background: 'rgba(249, 115, 22, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(249, 115, 22, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#f97316',
+                  marginBottom: '4px',
+                }}
+              >
                 {(marketIntelligence.demandForecast * 100).toFixed(0)}%
               </div>
-              <div className='text-sm text-orange-600'>Demand Forecast</div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Demand Forecast
+              </div>
             </div>
-            <div className='rounded-lg bg-red-50 p-4'>
-              <div className='text-2xl font-bold text-red-600'>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#ef4444',
+                  marginBottom: '4px',
+                }}
+              >
                 {(marketIntelligence.rateVolatility * 100).toFixed(1)}%
               </div>
-              <div className='text-sm text-red-600'>Rate Volatility</div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Rate Volatility
+              </div>
             </div>
           </div>
 
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            <div className='rounded-lg border border-gray-200 p-4'>
-              <h3 className='mb-3 font-semibold text-gray-900'>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
                 Hot Lanes (High Demand)
               </h3>
-              <ul className='space-y-1'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {marketIntelligence.hotLanes.map((lane, index) => (
                   <li
                     key={index}
-                    className='flex items-center gap-2 text-sm text-gray-600'
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
                   >
-                    <div className='h-2 w-2 rounded-full bg-red-500'></div>
+                    <div
+                      style={{
+                        height: '8px',
+                        width: '8px',
+                        borderRadius: '50%',
+                        background: '#ef4444',
+                      }}
+                    ></div>
                     {lane}
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className='rounded-lg border border-gray-200 p-4'>
-              <h3 className='mb-3 font-semibold text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
                 Cold Lanes (Low Demand)
               </h3>
-              <ul className='space-y-1'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {marketIntelligence.coldLanes.map((lane, index) => (
                   <li
                     key={index}
-                    className='flex items-center gap-2 text-sm text-gray-600'
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
                   >
-                    <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                    <div
+                      style={{
+                        height: '8px',
+                        width: '8px',
+                        borderRadius: '50%',
+                        background: '#3b82f6',
+                      }}
+                    ></div>
                     {lane}
                   </li>
                 ))}
