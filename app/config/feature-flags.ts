@@ -47,13 +47,13 @@ export interface FeatureFlags {
 // Default feature flags (all disabled initially)
 export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   // Market Intelligence Features
-  COMPETITOR_INTELLIGENCE: false,
-  CUSTOMER_RETENTION_ANALYSIS: false,
+  COMPETITOR_INTELLIGENCE: true,
+  CUSTOMER_RETENTION_ANALYSIS: true,
   ECONOMIC_IMPACT_ASSESSMENT: false,
   INDUSTRY_TREND_ANALYSIS: false,
 
   // Pricing Enhancements
-  SPOT_RATE_OPTIMIZATION: false,
+  SPOT_RATE_OPTIMIZATION: true,
   VOLUME_DISCOUNT_STRUCTURE: false,
   EMERGENCY_LOAD_PRICING: true,
 
