@@ -1,0 +1,1776 @@
+'use client';
+
+import React from 'react';
+import { useEffect, useState } from 'react';
+import AIAutomationDashboard from '../components/AIAutomationDashboard';
+import AIFlowPlatform from '../components/AIFlowPlatform';
+
+// Types for Strategic Acquisition Pipeline
+interface StrategicBuyer {
+  id: string;
+  companyName: string;
+  type: 'Primary' | 'Secondary' | 'Opportunistic';
+  strategicFit: number;
+  acquisitionLikelihood: number;
+  status:
+    | 'prospecting'
+    | 'contacted'
+    | 'engaged'
+    | 'demo_scheduled'
+    | 'evaluating'
+    | 'negotiating'
+    | 'closed';
+  lastActivity: string;
+  nextAction: string;
+  acquisitionBudget: string;
+  keyDecisionMakers: Array<{
+    name: string;
+    title: string;
+    email: string;
+    linkedIn?: string;
+  }>;
+  recentAcquisitions: string[];
+  notes: string;
+}
+
+interface AcquisitionMetrics {
+  totalTargets: number;
+  activeOutreach: number;
+  responseRate: number;
+  meetingsScheduled: number;
+  demosDeployed: number;
+  pipelineValue: string;
+  avgDealSize: string;
+  timeToClose: number;
+}
+
+interface AcquisitionData {
+  buyers: StrategicBuyer[];
+  metrics: AcquisitionMetrics;
+}
+
+export default function AIHubPage() {
+  const [currentPage, setCurrentPage] = useState<'ai-flow' | 'ai-hub'>(
+    'ai-hub'
+  );
+  const [acquisitionData, setAcquisitionData] =
+    useState<AcquisitionData | null>(null);
+  const [acquisitionLoading, setAcquisitionLoading] = useState(false);
+  const [shipperData, setShipperData] = useState<any>(null);
+  const [shipperLoading, setShipperLoading] = useState(false);
+
+  const flipPage = () => {
+    setCurrentPage(currentPage === 'ai-flow' ? 'ai-hub' : 'ai-flow');
+  };
+
+  // Load Strategic Acquisition data
+  useEffect(() => {
+    const loadAcquisitionData = async () => {
+      setAcquisitionLoading(true);
+      try {
+        const response = await fetch('/api/ai-flow/strategic-acquisition');
+        if (response.ok) {
+          const data = await response.json();
+          setAcquisitionData(data);
+        }
+      } catch (error) {
+        console.error('Failed to load acquisition data:', error);
+      } finally {
+        setAcquisitionLoading(false);
+      }
+    };
+
+    if (currentPage === 'ai-hub') {
+      loadAcquisitionData();
+    }
+  }, [currentPage]);
+
+  // Load Shipper Discovery data
+  useEffect(() => {
+    const loadShipperData = async () => {
+      setShipperLoading(true);
+      try {
+        const response = await fetch('/api/ai-flow/shipper-discovery?tenantId=tenant-demo-123&metrics=true');
+        if (response.ok) {
+          const data = await response.json();
+          setShipperData(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to load shipper discovery data:', error);
+      } finally {
+        setShipperLoading(false);
+      }
+    };
+
+    if (currentPage === 'ai-hub') {
+      loadShipperData();
+    }
+  }, [currentPage]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'prospecting':
+        return 'rgba(156, 163, 175, 0.2)';
+      case 'contacted':
+        return 'rgba(59, 130, 246, 0.2)';
+      case 'engaged':
+        return 'rgba(251, 191, 36, 0.2)';
+      case 'demo_scheduled':
+        return 'rgba(139, 92, 246, 0.2)';
+      case 'evaluating':
+        return 'rgba(249, 115, 22, 0.2)';
+      case 'negotiating':
+        return 'rgba(34, 197, 94, 0.2)';
+      case 'closed':
+        return 'rgba(16, 185, 129, 0.2)';
+      default:
+        return 'rgba(156, 163, 175, 0.2)';
+    }
+  };
+
+  const getStatusTextColor = (status: string) => {
+    switch (status) {
+      case 'prospecting':
+        return '#9ca3af';
+      case 'contacted':
+        return '#3b82f6';
+      case 'engaged':
+        return '#fbbf24';
+      case 'demo_scheduled':
+        return '#8b5cf6';
+      case 'evaluating':
+        return '#f97316';
+      case 'negotiating':
+        return '#22c55e';
+      case 'closed':
+        return '#10b981';
+      default:
+        return '#9ca3af';
+    }
+  };
+
+  const getBuyerTypeColor = (type: string) => {
+    switch (type) {
+      case 'Primary':
+        return 'rgba(239, 68, 68, 0.2)';
+      case 'Secondary':
+        return 'rgba(59, 130, 246, 0.2)';
+      case 'Opportunistic':
+        return 'rgba(34, 197, 94, 0.2)';
+      default:
+        return 'rgba(156, 163, 175, 0.2)';
+    }
+  };
+
+  const getBuyerTypeTextColor = (type: string) => {
+    switch (type) {
+      case 'Primary':
+        return '#ef4444';
+      case 'Secondary':
+        return '#3b82f6';
+      case 'Opportunistic':
+        return '#22c55e';
+      default:
+        return '#9ca3af';
+    }
+  };
+
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        paddingTop: '80px',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 24px 32px',
+        }}
+      >
+        {/* Flip Book Navigation */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '32px',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '12px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <div
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background:
+                      currentPage === 'ai-flow'
+                        ? '#ffffff'
+                        : 'rgba(255, 255, 255, 0.4)',
+                  }}
+                ></div>
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color:
+                      currentPage === 'ai-flow'
+                        ? '#ffffff'
+                        : 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  AI Flow
+                </span>
+              </div>
+              <button
+                onClick={flipPage}
+                style={{
+                  background: 'linear-gradient(135deg, #334155, #475569)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(30, 41, 59, 0.3)',
+                }}
+              >
+                {currentPage === 'ai-flow' ? 'Next Page →' : '← Previous Page'}
+              </button>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <div
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background:
+                      currentPage === 'ai-hub'
+                        ? '#ffffff'
+                        : 'rgba(255, 255, 255, 0.4)',
+                  }}
+                ></div>
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color:
+                      currentPage === 'ai-hub'
+                        ? '#ffffff'
+                        : 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  AI Hub
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Flow Page - Working Platform */}
+        {currentPage === 'ai-flow' && <AIFlowPlatform />}
+
+        {/* AI Hub Page */}
+        {currentPage === 'ai-hub' && (
+          <div>
+            {/* AI Hub Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                textAlign: 'center',
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: '48px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 16px 0',
+                  textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                }}
+              >
+                AI Hub - Intelligent Automation Center
+              </h1>
+              <p
+                style={{
+                  fontSize: '20px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                }}
+              >
+                Complete AI-powered freight operations with comprehensive
+                automation and intelligence
+              </p>
+            </div>
+
+            {/* Quick Stats */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#60a5fa',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  15
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                  }}
+                >
+                  AI Workflows
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#34d399',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  94%
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                  }}
+                >
+                  Automation Rate
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#a78bfa',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  $2.4M
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                  }}
+                >
+                  Cost Savings
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#fbbf24',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  24/7
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                  }}
+                >
+                  AI Monitoring
+                </div>
+              </div>
+            </div>
+
+            {/* AI Academy */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 24px 0',
+                  textAlign: 'center',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                }}
+              >
+                🎓 AI Academy
+              </h2>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    AI Fundamentals
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: 0,
+                      paddingLeft: '20px',
+                      lineHeight: '1.6',
+                    }}
+                  >
+                    <li>• Machine Learning Basics</li>
+                    <li>• Neural Networks in Logistics</li>
+                    <li>• Data Analytics for Freight</li>
+                    <li>• Predictive Modeling</li>
+                  </ul>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Advanced AI Applications
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: 0,
+                      paddingLeft: '20px',
+                      lineHeight: '1.6',
+                    }}
+                  >
+                    <li>• Route Optimization Algorithms</li>
+                    <li>• Dynamic Pricing Models</li>
+                    <li>• Carrier Matching Systems</li>
+                    <li>• Demand Forecasting</li>
+                  </ul>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Implementation Guide
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: 0,
+                      paddingLeft: '20px',
+                      lineHeight: '1.6',
+                    }}
+                  >
+                    <li>• API Integration</li>
+                    <li>• Workflow Automation</li>
+                    <li>• Performance Monitoring</li>
+                    <li>• ROI Analysis</li>
+                  </ul>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Best Practices
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: 0,
+                      paddingLeft: '20px',
+                      lineHeight: '1.6',
+                    }}
+                  >
+                    <li>• Data Quality Management</li>
+                    <li>• Model Training & Validation</li>
+                    <li>• Continuous Improvement</li>
+                    <li>• Compliance & Security</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Automation Dashboard */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 24px 0',
+                  textAlign: 'center',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                }}
+              >
+                🤖 AI Automation Dashboard
+              </h2>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <AIAutomationDashboard />
+              </div>
+            </div>
+
+            {/* Strategic Acquisition Pipeline */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              {/* Developer-Only Header */}
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+                  color: 'white',
+                  padding: '16px 24px',
+                  borderRadius: '12px',
+                  marginBottom: '24px',
+                  textAlign: 'center',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  🔒 Strategic Acquisition Pipeline
+                </h2>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    margin: 0,
+                    opacity: 0.9,
+                  }}
+                >
+                  Developer-Only System - Private Internal Tool for Strategic
+                  Exit Planning
+                </p>
+              </div>
+
+              {acquisitionLoading ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '60px 0',
+                  }}
+                >
+                  <div
+                    style={{
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        border: '4px solid rgba(255, 255, 255, 0.3)',
+                        borderTop: '4px solid white',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 16px',
+                      }}
+                    ></div>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        margin: 0,
+                      }}
+                    >
+                      Loading Strategic Acquisition Pipeline...
+                    </p>
+                  </div>
+                </div>
+              ) : acquisitionData ? (
+                <>
+                  {/* Pipeline Metrics */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {acquisitionData.metrics.totalTargets}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          opacity: 0.9,
+                        }}
+                      >
+                        Target Companies
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {acquisitionData.metrics.activeOutreach}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          opacity: 0.9,
+                        }}
+                      >
+                        Active Campaigns
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {acquisitionData.metrics.responseRate.toFixed(1)}%
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          opacity: 0.9,
+                        }}
+                      >
+                        Response Rate
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {acquisitionData.metrics.pipelineValue}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          opacity: 0.9,
+                        }}
+                      >
+                        Pipeline Value
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Strategic Buyers */}
+                  <div
+                    style={{
+                      marginBottom: '32px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        margin: '0 0 20px 0',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                      }}
+                    >
+                      🎯 Strategic Buyers
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gap: '16px',
+                      }}
+                    >
+                      {acquisitionData.buyers.map((buyer) => (
+                        <div
+                          key={buyer.id}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              marginBottom: '16px',
+                            }}
+                          >
+                            <div>
+                              <h4
+                                style={{
+                                  fontSize: '20px',
+                                  fontWeight: 'bold',
+                                  color: 'white',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                {buyer.companyName}
+                              </h4>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  gap: '8px',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    background: getBuyerTypeColor(buyer.type),
+                                    color: getBuyerTypeTextColor(buyer.type),
+                                    padding: '4px 12px',
+                                    borderRadius: '20px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {buyer.type}
+                                </span>
+                                <span
+                                  style={{
+                                    background: getStatusColor(buyer.status),
+                                    color: getStatusTextColor(buyer.status),
+                                    padding: '4px 12px',
+                                    borderRadius: '20px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {buyer.status.replace('_', ' ').toUpperCase()}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                textAlign: 'right',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                Strategic Fit
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '24px',
+                                  fontWeight: 'bold',
+                                  color: '#60a5fa',
+                                }}
+                              >
+                                {buyer.strategicFit}%
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(200px, 1fr))',
+                              gap: '16px',
+                              marginBottom: '16px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                Acquisition Budget
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  color: 'white',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {buyer.acquisitionBudget}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                Likelihood
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  color: '#34d399',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {buyer.acquisitionLikelihood}%
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                Key Decision Maker
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  color: 'white',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {buyer.keyDecisionMakers[0]?.name} -{' '}
+                                {buyer.keyDecisionMakers[0]?.title}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Next Action
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                color: 'rgba(255, 255, 255, 0.9)',
+                              }}
+                            >
+                              {buyer.nextAction}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            <span>
+                              Last Activity:{' '}
+                              {new Date(
+                                buyer.lastActivity
+                              ).toLocaleDateString()}
+                            </span>
+                            <span>→</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* AI-Powered Actions */}
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        margin: '0 0 20px 0',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                      }}
+                    >
+                      🚀 AI-Powered Acquisition Actions
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '16px',
+                      }}
+                    >
+                      <button
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.2)',
+                          border: '1px solid rgba(59, 130, 246, 0.3)',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          textAlign: 'left',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(59, 130, 246, 0.3)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(59, 130, 246, 0.2)';
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            marginBottom: '12px',
+                          }}
+                        >
+                          <span style={{ fontSize: '20px' }}>💬</span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Generate Outreach
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: 0,
+                          }}
+                        >
+                          AI-generated personalized emails and LinkedIn messages
+                          for strategic buyers
+                        </p>
+                      </button>
+
+                      <button
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.2)',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          textAlign: 'left',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(34, 197, 94, 0.3)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(34, 197, 94, 0.2)';
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            marginBottom: '12px',
+                          }}
+                        >
+                          <span style={{ fontSize: '20px' }}>📊</span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Analyze Buyers
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: 0,
+                          }}
+                        >
+                          Deep AI analysis of strategic fit, timing, and
+                          approach recommendations
+                        </p>
+                      </button>
+
+                      <button
+                        style={{
+                          background: 'rgba(139, 92, 246, 0.2)',
+                          border: '1px solid rgba(139, 92, 246, 0.3)',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          textAlign: 'left',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(139, 92, 246, 0.3)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(139, 92, 246, 0.2)';
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            marginBottom: '12px',
+                          }}
+                        >
+                          <span style={{ fontSize: '20px' }}>📅</span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Schedule Demos
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: 0,
+                          }}
+                        >
+                          Automated demo environment creation and meeting
+                          scheduling
+                        </p>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '60px 0',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  <p>Failed to load Strategic Acquisition Pipeline data</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Shipper & Manufacturer Discovery Department */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              marginTop: '32px',
+            }}
+          >
+            {/* Department Header */}
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                color: 'white',
+                padding: '24px',
+                borderRadius: '12px',
+                marginBottom: '24px',
+                textAlign: 'center',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                🏭 Shipper & Manufacturer Discovery
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  margin: 0,
+                  opacity: 0.9,
+                }}
+              >
+                High-Value B2B Prospect Intelligence - Fortune 500 & Enterprise Shippers
+              </p>
+            </div>
+
+            {shipperLoading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '60px 0',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      border: '3px solid rgba(59, 130, 246, 0.3)',
+                      borderTop: '3px solid #3b82f6',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                      margin: '0 auto 16px',
+                    }}
+                  ></div>
+                  <p>Loading Shipper Discovery Pipeline...</p>
+                </div>
+              </div>
+            ) : shipperData ? (
+              <>
+                {/* Pipeline Metrics */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      color: 'white',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+                      ${(shipperData.metrics?.totalPipelineValue || 42000000).toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Total Pipeline</div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
+                      color: 'white',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+                      {shipperData.metrics?.platinumProspects || 2}
+                    </div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Platinum Prospects</div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #047857)',
+                      color: 'white',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+                      ${(shipperData.metrics?.averageContractValue || 10500000).toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Avg Contract Value</div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: 'white',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+                      {shipperData.metrics?.qualificationRate || 35}%
+                    </div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Qualification Rate</div>
+                  </div>
+                </div>
+
+                {/* High-Value Prospects */}
+                <div style={{ marginBottom: '32px' }}>
+                  <h3
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    🎯 High-Value Shipper Prospects
+                  </h3>
+
+                  <div style={{ display: 'grid', gap: '20px' }}>
+                    {/* Tesla - Platinum Prospect */}
+                    <div
+                      style={{
+                        background: 'rgba(147, 51, 234, 0.1)',
+                        border: '2px solid rgba(147, 51, 234, 0.3)',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        color: 'white',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div>
+                          <h4 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 8px 0' }}>
+                            Tesla Manufacturing Inc
+                          </h4>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{
+                              background: 'rgba(147, 51, 234, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: 'bold'
+                            }}>
+                              💎 PLATINUM
+                            </span>
+                            <span style={{
+                              background: 'rgba(59, 130, 246, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px'
+                            }}>
+                              Fortune 500
+                            </span>
+                            <span style={{
+                              background: 'rgba(16, 185, 129, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px'
+                            }}>
+                              Electric Vehicles
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#a855f7' }}>$12.0M</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>Annual Contract Potential</div>
+                          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>Lead Score: 98/100</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Current Logistics Spend</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold' }}>$85M annually</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Estimated Volume</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold' }}>15,000 loads/year</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Growth Trend</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#10b981' }}>Rapid Growth</div>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>Key Opportunity Intel</div>
+                        <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                          • Mexico Gigafactory expansion creating massive logistics needs<br/>
+                          • Q3 2024 delivery targets increased 25% - capacity constraints<br/>
+                          • Direct-to-consumer model expanding nationwide<br/>
+                          • Sustainability initiative targeting carbon-neutral supply chain
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Key Contact</div>
+                          <div style={{ fontWeight: 'bold' }}>Sarah Chen - VP Global Logistics</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>sarah.chen@tesla.com</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Assigned Prospector</div>
+                          <div style={{ fontWeight: 'bold' }}>David Kim</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>Senior Enterprise Prospector</div>
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '16px', background: 'rgba(147, 51, 234, 0.2)', borderRadius: '8px', padding: '12px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#a855f7' }}>
+                          🎯 Next Action: Identify warm introduction through Austin Chamber of Commerce
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* P&G - Platinum Prospect */}
+                    <div
+                      style={{
+                        background: 'rgba(147, 51, 234, 0.1)',
+                        border: '2px solid rgba(147, 51, 234, 0.3)',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        color: 'white',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div>
+                          <h4 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 8px 0' }}>
+                            Procter & Gamble Manufacturing
+                          </h4>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{
+                              background: 'rgba(147, 51, 234, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: 'bold'
+                            }}>
+                              💎 PLATINUM
+                            </span>
+                            <span style={{
+                              background: 'rgba(59, 130, 246, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px'
+                            }}>
+                              Fortune 500
+                            </span>
+                            <span style={{
+                              background: 'rgba(249, 115, 22, 0.8)',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px'
+                            }}>
+                              Consumer Goods
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#a855f7' }}>$18.0M</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>Annual Contract Potential</div>
+                          <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>Lead Score: 94/100</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Current Logistics Spend</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold' }}>$140M annually</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Estimated Volume</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold' }}>25,000 loads/year</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Supply Chain Complexity</div>
+                          <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#f59e0b' }}>Highly Complex</div>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>Key Opportunity Intel</div>
+                        <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                          • $2B supply chain modernization initiative announced<br/>
+                          • New Texas distribution center for Southwest expansion<br/>
+                          • Q4 earnings highlighted transportation cost pressures<br/>
+                          • Partnership focus on sustainable packaging solutions
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Key Contact</div>
+                          <div style={{ fontWeight: 'bold' }}>Amanda Johnson - VP Transportation</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>johnson.a@pg.com</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', opacity: 0.7 }}>Assigned Prospector</div>
+                          <div style={{ fontWeight: 'bold' }}>Sarah Martinez</div>
+                          <div style={{ fontSize: '14px', opacity: 0.8 }}>Enterprise Prospector</div>
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '16px', background: 'rgba(147, 51, 234, 0.2)', borderRadius: '8px', padding: '12px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#a855f7' }}>
+                          🎯 Next Action: Deep dive research on current providers and recent RFP activity
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI-Powered Discovery Actions */}
+                <div>
+                  <h3
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    🚀 AI-Powered Discovery Engine
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <button
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        border: '2px solid rgba(59, 130, 246, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                      }}
+                    >
+                      <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                        🔍 Discover New Prospects
+                      </div>
+                      <p style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}>
+                        AI-powered prospect discovery from SEC filings, trade data, and industry intelligence
+                      </p>
+                    </button>
+
+                    <button
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        border: '2px solid rgba(16, 185, 129, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)';
+                        e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                      }}
+                    >
+                      <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                        ✉️ Generate Outreach
+                      </div>
+                      <p style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}>
+                        Personalized outreach emails based on company intelligence and pain points
+                      </p>
+                    </button>
+
+                    <button
+                      style={{
+                        background: 'rgba(147, 51, 234, 0.1)',
+                        border: '2px solid rgba(147, 51, 234, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(147, 51, 234, 0.2)';
+                        e.currentTarget.style.borderColor = 'rgba(147, 51, 234, 0.5)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(147, 51, 234, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(147, 51, 234, 0.3)';
+                      }}
+                    >
+                      <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                        📊 Competitive Analysis
+                      </div>
+                      <p style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}>
+                        Market research and competitive positioning for target prospects
+                      </p>
+                    </button>
+
+                    <button
+                      style={{
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        border: '2px solid rgba(249, 115, 22, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(249, 115, 22, 0.2)';
+                        e.currentTarget.style.borderColor = 'rgba(249, 115, 22, 0.5)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(249, 115, 22, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                      }}
+                    >
+                      <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                        📞 Schedule Meetings
+                      </div>
+                      <p style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}>
+                        Automated meeting scheduling with key decision makers
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '60px 0',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                <p>Failed to load Shipper Discovery data</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

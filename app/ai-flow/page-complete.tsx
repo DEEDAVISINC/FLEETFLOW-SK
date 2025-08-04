@@ -5,7 +5,6 @@ import {
   ArrowRight,
   BarChart3,
   Brain,
-  Briefcase,
   Building2,
   Calendar,
   Calendar as CalendarIcon,
@@ -31,8 +30,6 @@ import {
 import { useEffect, useState } from 'react';
 import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
-import CRMLeadManager from '../components/CRMLeadManager';
-import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -201,8 +198,6 @@ export default function AIFlowPage() {
     metrics: AcquisitionMetrics;
   } | null>(null);
   const [acquisitionLoading, setAcquisitionLoading] = useState(true);
-  const [servicesData, setServicesData] = useState<any>(null);
-  const [servicesLoading, setServicesLoading] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -244,27 +239,6 @@ export default function AIFlowPage() {
     };
 
     loadAcquisitionData();
-  }, []);
-
-  // Load Services Sales data
-  useEffect(() => {
-    const loadServicesData = async () => {
-      try {
-        const response = await fetch(
-          '/api/ai-flow/services-sales?tenantId=tenant-demo-123&metrics=true'
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setServicesData(data.data);
-        }
-      } catch (error) {
-        console.error('Failed to load services data:', error);
-      } finally {
-        setServicesLoading(false);
-      }
-    };
-
-    loadServicesData();
   }, []);
 
   const formatCurrency = (amount: number) => {
@@ -415,8 +389,8 @@ export default function AIFlowPage() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs value='overview' onValueChange={() => {}} className='space-y-6'>
-          <TabsList className='grid w-full grid-cols-12 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+        <Tabs defaultValue='overview' className='space-y-6'>
+          <TabsList className='grid w-full grid-cols-10 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -461,20 +435,6 @@ export default function AIFlowPage() {
             <TabsTrigger value='ai-review' className='flex items-center gap-2'>
               <CheckCircle className='h-4 w-4' />
               AI Review
-            </TabsTrigger>
-            <TabsTrigger
-              value='services-sales'
-              className='flex items-center gap-2'
-            >
-              <Briefcase className='h-4 w-4' />
-              Services Sales
-            </TabsTrigger>
-            <TabsTrigger
-              value='crm-manager'
-              className='flex items-center gap-2'
-            >
-              <Building2 className='h-4 w-4' />
-              CRM Manager
             </TabsTrigger>
             <TabsTrigger
               value='strategic-acquisition'
@@ -1120,16 +1080,6 @@ export default function AIFlowPage() {
                 AI Review Dashboard temporarily disabled for debugging
               </p>
             </div>
-          </TabsContent>
-
-          {/* Services Sales Tab - REVENUE ENGINE */}
-          <TabsContent value='services-sales' className='space-y-6'>
-            <ServicesSalesDashboard />
-          </TabsContent>
-
-          {/* CRM Lead Manager Tab - INTERACTIVE CRM */}
-          <TabsContent value='crm-manager' className='space-y-6'>
-            <CRMLeadManager />
           </TabsContent>
 
           {/* Strategic Acquisition Pipeline Tab */}

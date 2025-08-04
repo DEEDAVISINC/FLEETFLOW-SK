@@ -2,22 +2,14 @@
 
 import {
   Activity,
-  ArrowRight,
   BarChart3,
   Brain,
-  Briefcase,
-  Building2,
   Calendar,
-  Calendar as CalendarIcon,
   CheckCircle,
   DollarSign,
-  Eye,
   Gauge,
-  Globe,
   Headphones,
   Heart,
-  Mail,
-  MessageSquare,
   Navigation,
   Phone,
   Shield,
@@ -31,8 +23,7 @@ import {
 import { useEffect, useState } from 'react';
 import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
-import CRMLeadManager from '../components/CRMLeadManager';
-import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
+// import AIReviewDashboard from '../components/ai-review/AIReviewDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -47,77 +38,6 @@ import {
   TabsTrigger,
 } from '../components/ui/tabs';
 
-// Strategic Acquisition Pipeline interfaces
-interface StrategicBuyer {
-  id: string;
-  companyName: string;
-  type: 'Primary' | 'Secondary' | 'Opportunistic';
-  acquisitionBudget: string;
-  keyDecisionMakers: {
-    name: string;
-    title: string;
-    email: string;
-    linkedIn: string;
-    lastContact?: string;
-  }[];
-  strategicFit: number;
-  acquisitionLikelihood: number;
-  status:
-    | 'prospecting'
-    | 'contacted'
-    | 'engaged'
-    | 'demo_scheduled'
-    | 'evaluating'
-    | 'negotiating'
-    | 'closed';
-  lastActivity: string;
-  nextAction: string;
-  notes: string;
-}
-
-interface OutreachCampaign {
-  id: string;
-  name: string;
-  targetCompany: string;
-  type: 'email' | 'linkedin' | 'direct_mail' | 'phone';
-  status: 'draft' | 'active' | 'paused' | 'completed';
-  sentCount: number;
-  responseRate: number;
-  meetingsScheduled: number;
-  lastSent: string;
-  nextScheduled?: string;
-}
-
-interface DemoEnvironment {
-  id: string;
-  companyName: string;
-  environmentType:
-    | 'Strategic Buyer Sandbox'
-    | 'Executive Demo'
-    | 'Technical Evaluation';
-  accessUrl: string;
-  createdDate: string;
-  expiryDate: string;
-  usageStats: {
-    logins: number;
-    timeSpent: number;
-    featuresExplored: string[];
-    lastAccess: string;
-  };
-  status: 'active' | 'expired' | 'suspended';
-}
-
-interface AcquisitionMetrics {
-  totalTargets: number;
-  activeOutreach: number;
-  responseRate: number;
-  meetingsScheduled: number;
-  demosDeployed: number;
-  pipelineValue: string;
-  avgDealSize: string;
-  timeToClose: number;
-}
-
 interface AIMetrics {
   totalDecisions: number;
   systemEfficiency: number;
@@ -130,21 +50,16 @@ interface AIMetrics {
   };
   freightStats: {
     activeLoads: number;
-    avgRate: number;
-    efficiency: number;
     avgMargin: number;
     loadMatch: number;
   };
   dispatchStats: {
     driversActive: number;
     routeOptimization: number;
-    fuelSavings: number;
     deliveryTime: number;
   };
   recruitingStats: {
     leadsToday: number;
-    conversionRate: number;
-    activeRecruiters: number;
     qualificationRate: number;
     hireRate: number;
   };
@@ -155,55 +70,33 @@ interface AIMetrics {
   };
 }
 
-export default function AIFlowPage() {
+export default function FleetFlowAIPlatform() {
+  const [activeTab, setActiveTab] = useState('overview');
   const [aiMetrics, setAiMetrics] = useState<AIMetrics>({
-    totalDecisions: 15247,
-    systemEfficiency: 94.7,
-    dailyRevenue: 47350,
-    activeOperations: 'Online',
-    callCenterStats: {
-      activeCalls: 23,
-      totalAgents: 12,
-      avgWaitTime: 1.2,
-    },
-    freightStats: {
-      activeLoads: 156,
-      avgRate: 2.85,
-      efficiency: 91.3,
-      avgMargin: 18.5,
-      loadMatch: 94.2,
-    },
+    totalDecisions: 1247,
+    systemEfficiency: 97.3,
+    dailyRevenue: 47200,
+    activeOperations: '24/7',
+    callCenterStats: { activeCalls: 12, totalAgents: 8, avgWaitTime: 1.2 },
+    freightStats: { activeLoads: 156, avgMargin: 18.5, loadMatch: 94.2 },
     dispatchStats: {
       driversActive: 89,
-      routeOptimization: 96.2,
-      fuelSavings: 18.7,
-      deliveryTime: 95.8,
+      routeOptimization: 92.8,
+      deliveryTime: 98.1,
     },
     recruitingStats: {
-      leadsToday: 34,
-      conversionRate: 23.5,
-      activeRecruiters: 6,
-      qualificationRate: 78.3,
-      hireRate: 15.2,
+      leadsToday: 23,
+      qualificationRate: 67.4,
+      hireRate: 24.8,
     },
     customerStats: {
-      totalContacts: 2847,
-      pipelineValue: 1250000,
-      conversionRate: 28.4,
+      totalContacts: 847,
+      pipelineValue: 2400000,
+      conversionRate: 15.8,
     },
   });
 
-  // Strategic Acquisition Pipeline State
-  const [acquisitionData, setAcquisitionData] = useState<{
-    buyers: StrategicBuyer[];
-    campaigns: OutreachCampaign[];
-    demos: DemoEnvironment[];
-    metrics: AcquisitionMetrics;
-  } | null>(null);
-  const [acquisitionLoading, setAcquisitionLoading] = useState(true);
-  const [servicesData, setServicesData] = useState<any>(null);
-  const [servicesLoading, setServicesLoading] = useState(true);
-
+  // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       setAiMetrics((prev) => ({
@@ -227,46 +120,6 @@ export default function AIFlowPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Load Strategic Acquisition Pipeline data
-  useEffect(() => {
-    const loadAcquisitionData = async () => {
-      try {
-        const response = await fetch('/api/ai-flow/strategic-acquisition');
-        if (response.ok) {
-          const data = await response.json();
-          setAcquisitionData(data);
-        }
-      } catch (error) {
-        console.error('Failed to load acquisition data:', error);
-      } finally {
-        setAcquisitionLoading(false);
-      }
-    };
-
-    loadAcquisitionData();
-  }, []);
-
-  // Load Services Sales data
-  useEffect(() => {
-    const loadServicesData = async () => {
-      try {
-        const response = await fetch(
-          '/api/ai-flow/services-sales?tenantId=tenant-demo-123&metrics=true'
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setServicesData(data.data);
-        }
-      } catch (error) {
-        console.error('Failed to load services data:', error);
-      } finally {
-        setServicesLoading(false);
-      }
-    };
-
-    loadServicesData();
-  }, []);
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -274,40 +127,6 @@ export default function AIFlowPage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'prospecting':
-        return 'bg-gray-100 text-gray-800';
-      case 'contacted':
-        return 'bg-blue-100 text-blue-800';
-      case 'engaged':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'demo_scheduled':
-        return 'bg-purple-100 text-purple-800';
-      case 'evaluating':
-        return 'bg-orange-100 text-orange-800';
-      case 'negotiating':
-        return 'bg-green-100 text-green-800';
-      case 'closed':
-        return 'bg-emerald-100 text-emerald-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getBuyerTypeColor = (type: string) => {
-    switch (type) {
-      case 'Primary':
-        return 'bg-red-100 text-red-800';
-      case 'Secondary':
-        return 'bg-blue-100 text-blue-800';
-      case 'Opportunistic':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
   };
 
   return (
@@ -324,8 +143,7 @@ export default function AIFlowPage() {
                 FleetFlow™ AI Flow Platform
               </h1>
               <p className='text-xl text-gray-600'>
-                Complete AI-Powered Transportation & Strategic Acquisition
-                Center
+                Complete AI-Powered Transportation & Customer Management Center
               </p>
             </div>
           </div>
@@ -385,38 +203,41 @@ export default function AIFlowPage() {
                 <div className='flex items-center justify-between'>
                   <div>
                     <p className='text-sm font-medium text-orange-100'>
-                      Active Calls
-                    </p>
-                    <p className='text-2xl font-bold'>
-                      {aiMetrics.callCenterStats.activeCalls}
-                    </p>
-                  </div>
-                  <Phone className='h-8 w-8 text-orange-200' />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className='bg-gradient-to-r from-teal-500 to-teal-600 text-white'>
-              <CardContent className='p-4'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm font-medium text-teal-100'>
                       AI Decisions
                     </p>
                     <p className='text-2xl font-bold'>
                       {aiMetrics.totalDecisions.toLocaleString()}
                     </p>
                   </div>
-                  <Brain className='h-8 w-8 text-teal-200' />
+                  <Target className='h-8 w-8 text-orange-200' />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className='bg-gradient-to-r from-pink-500 to-pink-600 text-white'>
+              <CardContent className='p-4'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-sm font-medium text-pink-100'>
+                      CRM Pipeline
+                    </p>
+                    <p className='text-2xl font-bold'>
+                      {formatCurrency(aiMetrics.customerStats.pipelineValue)}
+                    </p>
+                  </div>
+                  <Heart className='h-8 w-8 text-pink-200' />
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Main Tabs */}
-        <Tabs value='overview' onValueChange={() => {}} className='space-y-6'>
-          <TabsList className='grid w-full grid-cols-12 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className='space-y-6'
+        >
+          <TabsList className='grid w-full grid-cols-9 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -461,27 +282,6 @@ export default function AIFlowPage() {
             <TabsTrigger value='ai-review' className='flex items-center gap-2'>
               <CheckCircle className='h-4 w-4' />
               AI Review
-            </TabsTrigger>
-            <TabsTrigger
-              value='services-sales'
-              className='flex items-center gap-2'
-            >
-              <Briefcase className='h-4 w-4' />
-              Services Sales
-            </TabsTrigger>
-            <TabsTrigger
-              value='crm-manager'
-              className='flex items-center gap-2'
-            >
-              <Building2 className='h-4 w-4' />
-              CRM Manager
-            </TabsTrigger>
-            <TabsTrigger
-              value='strategic-acquisition'
-              className='flex items-center gap-2'
-            >
-              <Target className='h-4 w-4' />
-              Acquisition Pipeline
             </TabsTrigger>
           </TabsList>
 
@@ -815,7 +615,6 @@ export default function AIFlowPage() {
               </Card>
             </div>
           </TabsContent>
-
           {/* Recruiting AI Tab */}
           <TabsContent value='recruiting' className='space-y-6'>
             <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
@@ -1120,395 +919,6 @@ export default function AIFlowPage() {
                 AI Review Dashboard temporarily disabled for debugging
               </p>
             </div>
-          </TabsContent>
-
-          {/* Services Sales Tab - REVENUE ENGINE */}
-          <TabsContent value='services-sales' className='space-y-6'>
-            <ServicesSalesDashboard />
-          </TabsContent>
-
-          {/* CRM Lead Manager Tab - INTERACTIVE CRM */}
-          <TabsContent value='crm-manager' className='space-y-6'>
-            <CRMLeadManager />
-          </TabsContent>
-
-          {/* Strategic Acquisition Pipeline Tab */}
-          <TabsContent value='strategic-acquisition' className='space-y-6'>
-            {acquisitionLoading ? (
-              <div className='flex items-center justify-center p-8'>
-                <div className='text-center'>
-                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
-                  <p className='text-gray-600'>
-                    Loading Strategic Acquisition Pipeline...
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Developer-Only Header */}
-                <div className='mb-6 rounded-lg bg-gradient-to-r from-red-500 to-red-600 p-4 text-white'>
-                  <div className='flex items-center gap-3'>
-                    <Shield className='h-6 w-6' />
-                    <div>
-                      <h3 className='text-lg font-bold'>
-                        🔒 Developer-Only System
-                      </h3>
-                      <p className='text-sm text-red-100'>
-                        Strategic Acquisition Pipeline Automation - Private
-                        Internal Tool
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Acquisition Metrics */}
-                {acquisitionData && (
-                  <div className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
-                    <Card className='bg-gradient-to-r from-blue-500 to-blue-600 text-white'>
-                      <CardContent className='p-4'>
-                        <div className='flex items-center justify-between'>
-                          <div>
-                            <p className='text-sm font-medium text-blue-100'>
-                              Target Companies
-                            </p>
-                            <p className='text-2xl font-bold'>
-                              {acquisitionData.metrics.totalTargets}
-                            </p>
-                          </div>
-                          <Building2 className='h-8 w-8 text-blue-200' />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className='bg-gradient-to-r from-green-500 to-green-600 text-white'>
-                      <CardContent className='p-4'>
-                        <div className='flex items-center justify-between'>
-                          <div>
-                            <p className='text-sm font-medium text-green-100'>
-                              Active Outreach
-                            </p>
-                            <p className='text-2xl font-bold'>
-                              {acquisitionData.metrics.activeOutreach}
-                            </p>
-                          </div>
-                          <Mail className='h-8 w-8 text-green-200' />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className='bg-gradient-to-r from-purple-500 to-purple-600 text-white'>
-                      <CardContent className='p-4'>
-                        <div className='flex items-center justify-between'>
-                          <div>
-                            <p className='text-sm font-medium text-purple-100'>
-                              Response Rate
-                            </p>
-                            <p className='text-2xl font-bold'>
-                              {acquisitionData.metrics.responseRate.toFixed(1)}%
-                            </p>
-                          </div>
-                          <MessageSquare className='h-8 w-8 text-purple-200' />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className='bg-gradient-to-r from-orange-500 to-orange-600 text-white'>
-                      <CardContent className='p-4'>
-                        <div className='flex items-center justify-between'>
-                          <div>
-                            <p className='text-sm font-medium text-orange-100'>
-                              Pipeline Value
-                            </p>
-                            <p className='text-2xl font-bold'>
-                              {acquisitionData.metrics.pipelineValue}
-                            </p>
-                          </div>
-                          <DollarSign className='h-8 w-8 text-orange-200' />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Strategic Buyers Dashboard */}
-                <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-                  {/* Strategic Buyers List */}
-                  <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                    <CardHeader>
-                      <CardTitle className='flex items-center gap-2'>
-                        <Target className='h-5 w-5 text-blue-600' />
-                        Strategic Buyers Pipeline
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className='space-y-4'>
-                        {acquisitionData?.buyers.map((buyer) => (
-                          <div
-                            key={buyer.id}
-                            className='rounded-lg border p-4 transition-colors hover:bg-gray-50'
-                          >
-                            <div className='mb-3 flex items-start justify-between'>
-                              <div>
-                                <h4 className='text-lg font-semibold'>
-                                  {buyer.companyName}
-                                </h4>
-                                <div className='mt-1 flex items-center gap-2'>
-                                  <Badge
-                                    className={getBuyerTypeColor(buyer.type)}
-                                  >
-                                    {buyer.type}
-                                  </Badge>
-                                  <Badge
-                                    className={getStatusColor(buyer.status)}
-                                  >
-                                    {buyer.status
-                                      .replace('_', ' ')
-                                      .toUpperCase()}
-                                  </Badge>
-                                </div>
-                              </div>
-                              <div className='text-right'>
-                                <div className='text-sm text-gray-600'>
-                                  Strategic Fit
-                                </div>
-                                <div className='text-lg font-bold text-blue-600'>
-                                  {buyer.strategicFit}%
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className='mb-3 grid grid-cols-2 gap-4'>
-                              <div>
-                                <div className='text-sm text-gray-600'>
-                                  Acquisition Budget
-                                </div>
-                                <div className='font-medium'>
-                                  {buyer.acquisitionBudget}
-                                </div>
-                              </div>
-                              <div>
-                                <div className='text-sm text-gray-600'>
-                                  Likelihood
-                                </div>
-                                <div className='font-medium text-green-600'>
-                                  {buyer.acquisitionLikelihood}%
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className='mb-3'>
-                              <div className='mb-1 text-sm text-gray-600'>
-                                Key Decision Maker
-                              </div>
-                              <div className='font-medium'>
-                                {buyer.keyDecisionMakers[0]?.name} -{' '}
-                                {buyer.keyDecisionMakers[0]?.title}
-                              </div>
-                            </div>
-
-                            <div className='mb-3'>
-                              <div className='mb-1 text-sm text-gray-600'>
-                                Next Action
-                              </div>
-                              <div className='text-sm'>{buyer.nextAction}</div>
-                            </div>
-
-                            <div className='flex items-center justify-between text-xs text-gray-500'>
-                              <span>
-                                Last Activity:{' '}
-                                {new Date(
-                                  buyer.lastActivity
-                                ).toLocaleDateString()}
-                              </span>
-                              <ArrowRight className='h-4 w-4' />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Outreach Campaigns & Demo Environments */}
-                  <div className='space-y-6'>
-                    {/* Active Outreach Campaigns */}
-                    <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                      <CardHeader>
-                        <CardTitle className='flex items-center gap-2'>
-                          <Mail className='h-5 w-5 text-green-600' />
-                          Active Outreach Campaigns
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className='space-y-3'>
-                          {acquisitionData?.campaigns.map((campaign) => (
-                            <div
-                              key={campaign.id}
-                              className='rounded-lg border p-3'
-                            >
-                              <div className='mb-2 flex items-start justify-between'>
-                                <div>
-                                  <h5 className='font-medium'>
-                                    {campaign.name}
-                                  </h5>
-                                  <p className='text-sm text-gray-600'>
-                                    {campaign.targetCompany}
-                                  </p>
-                                </div>
-                                <Badge
-                                  className={
-                                    campaign.status === 'active'
-                                      ? 'bg-green-100 text-green-800'
-                                      : 'bg-gray-100 text-gray-800'
-                                  }
-                                >
-                                  {campaign.status}
-                                </Badge>
-                              </div>
-
-                              <div className='grid grid-cols-3 gap-3 text-sm'>
-                                <div>
-                                  <div className='text-gray-600'>Sent</div>
-                                  <div className='font-medium'>
-                                    {campaign.sentCount}
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className='text-gray-600'>Response</div>
-                                  <div className='font-medium text-blue-600'>
-                                    {campaign.responseRate}%
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className='text-gray-600'>Meetings</div>
-                                  <div className='font-medium text-green-600'>
-                                    {campaign.meetingsScheduled}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Demo Environments */}
-                    <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                      <CardHeader>
-                        <CardTitle className='flex items-center gap-2'>
-                          <Globe className='h-5 w-5 text-purple-600' />
-                          Strategic Demo Environments
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className='space-y-3'>
-                          {acquisitionData?.demos.map((demo) => (
-                            <div
-                              key={demo.id}
-                              className='rounded-lg border p-3'
-                            >
-                              <div className='mb-2 flex items-start justify-between'>
-                                <div>
-                                  <h5 className='font-medium'>
-                                    {demo.companyName}
-                                  </h5>
-                                  <p className='text-sm text-gray-600'>
-                                    {demo.environmentType}
-                                  </p>
-                                </div>
-                                <Badge
-                                  className={
-                                    demo.status === 'active'
-                                      ? 'bg-green-100 text-green-800'
-                                      : 'bg-red-100 text-red-800'
-                                  }
-                                >
-                                  {demo.status}
-                                </Badge>
-                              </div>
-
-                              <div className='mb-2 grid grid-cols-2 gap-3 text-sm'>
-                                <div>
-                                  <div className='text-gray-600'>Logins</div>
-                                  <div className='font-medium'>
-                                    {demo.usageStats.logins}
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className='text-gray-600'>
-                                    Time Spent
-                                  </div>
-                                  <div className='font-medium'>
-                                    {demo.usageStats.timeSpent}h
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className='flex items-center justify-between text-xs text-gray-500'>
-                                <span>
-                                  Last Access:{' '}
-                                  {demo.usageStats.lastAccess
-                                    ? new Date(
-                                        demo.usageStats.lastAccess
-                                      ).toLocaleDateString()
-                                    : 'Never'}
-                                </span>
-                                <Eye className='h-4 w-4' />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-
-                {/* AI-Powered Actions */}
-                <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                  <CardHeader>
-                    <CardTitle className='flex items-center gap-2'>
-                      <Brain className='h-5 w-5 text-blue-600' />
-                      AI-Powered Acquisition Actions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-blue-50'>
-                        <div className='mb-2 flex items-center gap-3'>
-                          <MessageSquare className='h-5 w-5 text-blue-600' />
-                          <span className='font-medium'>Generate Outreach</span>
-                        </div>
-                        <p className='text-sm text-gray-600'>
-                          AI-generated personalized emails and LinkedIn messages
-                          for strategic buyers
-                        </p>
-                      </button>
-
-                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-green-50'>
-                        <div className='mb-2 flex items-center gap-3'>
-                          <BarChart3 className='h-5 w-5 text-green-600' />
-                          <span className='font-medium'>Analyze Buyers</span>
-                        </div>
-                        <p className='text-sm text-gray-600'>
-                          Deep AI analysis of strategic fit, timing, and
-                          approach recommendations
-                        </p>
-                      </button>
-
-                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-purple-50'>
-                        <div className='mb-2 flex items-center gap-3'>
-                          <CalendarIcon className='h-5 w-5 text-purple-600' />
-                          <span className='font-medium'>Schedule Demos</span>
-                        </div>
-                        <p className='text-sm text-gray-600'>
-                          Automated demo environment creation and meeting
-                          scheduling
-                        </p>
-                      </button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
           </TabsContent>
         </Tabs>
       </div>

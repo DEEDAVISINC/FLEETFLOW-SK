@@ -1265,11 +1265,8 @@ export default function AIFlowPlatform() {
                   background:
                     activeView === tab.id
                       ? getGradient(tab.color)
-                      : 'rgba(255, 255, 255, 0.1)',
-                  color:
-                    activeView === tab.id
-                      ? 'white'
-                      : 'rgba(255, 255, 255, 0.8)',
+                      : 'rgba(255, 255, 255, 0.2)',
+                  color: activeView === tab.id ? 'white' : '#ffffff',
                   border:
                     activeView === tab.id
                       ? `1px solid ${tab.borderColor}`
@@ -1289,14 +1286,14 @@ export default function AIFlowPlatform() {
                 onMouseOver={(e) => {
                   if (activeView !== tab.id) {
                     e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.2)';
+                      'rgba(255, 255, 255, 0.3)';
                     e.currentTarget.style.transform = 'translateY(-1px)';
                   }
                 }}
                 onMouseOut={(e) => {
                   if (activeView !== tab.id) {
                     e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.1)';
+                      'rgba(255, 255, 255, 0.2)';
                     e.currentTarget.style.transform = 'translateY(0)';
                   }
                 }}
