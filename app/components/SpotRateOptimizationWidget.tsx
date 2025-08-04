@@ -409,11 +409,34 @@ export default function SpotRateOptimizationWidget() {
 
       {/* Rate Optimization Tab */}
       {activeTab === 'optimize' && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+              gap: '24px',
+            }}
+          >
             {/* Load Parameters */}
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-gray-900'>Load Parameters</h3>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Load Parameters
+              </h3>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>

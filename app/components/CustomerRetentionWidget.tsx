@@ -447,7 +447,9 @@ export default function CustomerRetentionWidget() {
               >
                 Top Retention Factors
               </h3>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 {metrics.topRetentionFactors.map((factor, index) => (
                   <li
                     key={index}
@@ -492,7 +494,9 @@ export default function CustomerRetentionWidget() {
               >
                 Improvement Areas
               </h3>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 {metrics.improvementAreas.map((area, index) => (
                   <li
                     key={index}
@@ -581,7 +585,9 @@ export default function CustomerRetentionWidget() {
           )}
 
           {analysis && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+            >
               <div
                 style={{
                   display: 'grid',
@@ -608,7 +614,12 @@ export default function CustomerRetentionWidget() {
                   >
                     {analysis.result.customerName}
                   </div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
                     Customer
                   </div>
                 </div>
@@ -648,7 +659,12 @@ export default function CustomerRetentionWidget() {
                   >
                     {analysis.retentionRisk.toUpperCase()}
                   </div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
                     Risk Level
                   </div>
                 </div>
@@ -671,7 +687,12 @@ export default function CustomerRetentionWidget() {
                   >
                     {analysis.churnProbability}%
                   </div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
                     Churn Probability
                   </div>
                 </div>
@@ -694,41 +715,112 @@ export default function CustomerRetentionWidget() {
                   >
                     ${(analysis.lifetimeValue / 1000).toFixed(0)}K
                   </div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
                     Lifetime Value
                   </div>
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '12px',
+                    }}
+                  >
                     Retention Strategies
                   </h3>
-                  <ul className='space-y-2'>
+                  <ul
+                    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                  >
                     {analysis.retentionStrategies.map((strategy, index) => (
                       <li
                         key={index}
-                        className='flex items-center gap-2 text-sm text-gray-600'
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
                       >
-                        <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                        <div
+                          style={{
+                            height: '8px',
+                            width: '8px',
+                            borderRadius: '50%',
+                            background: '#3b82f6',
+                          }}
+                        ></div>
                         {strategy}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 font-semibold text-gray-900'>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '12px',
+                    }}
+                  >
                     Upsell Opportunities
                   </h3>
-                  <ul className='space-y-2'>
+                  <ul
+                    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                  >
                     {analysis.upsellOpportunities.map((opportunity, index) => (
                       <li
                         key={index}
-                        className='flex items-center gap-2 text-sm text-gray-600'
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
                       >
-                        <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                        <div
+                          style={{
+                            height: '8px',
+                            width: '8px',
+                            borderRadius: '50%',
+                            background: '#10b981',
+                          }}
+                        ></div>
                         {opportunity}
                       </li>
                     ))}
@@ -736,12 +828,41 @@ export default function CustomerRetentionWidget() {
                 </div>
               </div>
 
-              <div className='rounded-lg border border-gray-200 p-4'>
-                <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  background: 'rgba(107, 114, 128, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(107, 114, 128, 0.2)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '12px',
+                  }}
+                >
                   AI Analysis
                 </h3>
-                <p className='text-sm text-gray-600'>{analysis.reasoning}</p>
-                <div className='mt-3 text-xs text-gray-500'>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.5',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {analysis.reasoning}
+                </p>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
                   Confidence: {analysis.confidence}%
                 </div>
               </div>
@@ -752,51 +873,169 @@ export default function CustomerRetentionWidget() {
 
       {/* Segments Tab */}
       {activeTab === 'segments' && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '16px',
+            }}
+          >
             {segments.map((segment, index) => (
               <div
                 key={index}
-                className='rounded-lg border border-gray-200 p-4'
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                }}
               >
-                <div className='mb-3 flex items-center justify-between'>
-                  <h3 className='font-semibold text-gray-900'>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: 'white',
+                    }}
+                  >
                     {segment.segmentName}
                   </h3>
                   <div
-                    className='rounded-full px-2 py-1 text-xs font-medium text-white'
-                    style={{ backgroundColor: getRiskColor(segment.churnRisk) }}
+                    style={{
+                      background: getRiskColor(segment.churnRisk),
+                      color: 'white',
+                      borderRadius: '20px',
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      backdropFilter: 'blur(10px)',
+                    }}
                   >
                     {segment.churnRisk.toUpperCase()}
                   </div>
                 </div>
 
-                <div className='mb-4 space-y-2'>
-                  <div className='flex justify-between text-sm'>
-                    <span className='text-gray-600'>Customers:</span>
-                    <span className='font-medium'>{segment.customerCount}</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      Customers:
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: 'white',
+                      }}
+                    >
+                      {segment.customerCount}
+                    </span>
                   </div>
-                  <div className='flex justify-between text-sm'>
-                    <span className='text-gray-600'>Avg Revenue:</span>
-                    <span className='font-medium'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      Avg Revenue:
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: 'white',
+                      }}
+                    >
                       ${(segment.averageRevenue / 1000).toFixed(0)}K
                     </span>
                   </div>
-                  <div className='flex justify-between text-sm'>
-                    <span className='text-gray-600'>Retention Rate:</span>
-                    <span className='font-medium'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      Retention Rate:
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: 'white',
+                      }}
+                    >
                       {segment.retentionRate}%
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className='mb-2 text-sm font-medium text-gray-900'>
+                  <h4
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Recommended Actions:
                   </h4>
-                  <ul className='space-y-1'>
+                  <ul
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
                     {segment.recommendedActions.map((action, actionIndex) => (
-                      <li key={actionIndex} className='text-xs text-gray-600'>
+                      <li
+                        key={actionIndex}
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          paddingLeft: '8px',
+                        }}
+                      >
                         • {action}
                       </li>
                     ))}
