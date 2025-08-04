@@ -107,16 +107,64 @@ export default function PortAuthorityIntelligence() {
     });
   };
 
-    const getTabColors = (tabId: string) => {
+  const getTabColors = (tabId: string) => {
     const colors = {
-      overview: { primary: 'rgba(14, 165, 233, 0.4)', secondary: 'rgba(20, 184, 166, 0.4)', border: 'rgba(14, 165, 233, 0.6)', inactive: 'rgba(14, 165, 233, 0.15)', hover: 'rgba(14, 165, 233, 0.25)' }, // Blue-Teal
-      traffic: { primary: 'rgba(34, 197, 94, 0.4)', secondary: 'rgba(16, 185, 129, 0.4)', border: 'rgba(34, 197, 94, 0.6)', inactive: 'rgba(34, 197, 94, 0.15)', hover: 'rgba(34, 197, 94, 0.25)' }, // Green
-      cargo: { primary: 'rgba(251, 191, 36, 0.4)', secondary: 'rgba(245, 158, 11, 0.4)', border: 'rgba(251, 191, 36, 0.6)', inactive: 'rgba(251, 191, 36, 0.15)', hover: 'rgba(251, 191, 36, 0.25)' }, // Yellow/Amber
-      schedules: { primary: 'rgba(168, 85, 247, 0.4)', secondary: 'rgba(147, 51, 234, 0.4)', border: 'rgba(168, 85, 247, 0.6)', inactive: 'rgba(168, 85, 247, 0.15)', hover: 'rgba(168, 85, 247, 0.25)' }, // Purple
-      rates: { primary: 'rgba(239, 68, 68, 0.4)', secondary: 'rgba(220, 38, 38, 0.4)', border: 'rgba(239, 68, 68, 0.6)', inactive: 'rgba(239, 68, 68, 0.15)', hover: 'rgba(239, 68, 68, 0.25)' }, // Red
-      performance: { primary: 'rgba(249, 115, 22, 0.4)', secondary: 'rgba(234, 88, 12, 0.4)', border: 'rgba(249, 115, 22, 0.6)', inactive: 'rgba(249, 115, 22, 0.15)', hover: 'rgba(249, 115, 22, 0.25)' }, // Orange
-      insights: { primary: 'rgba(236, 72, 153, 0.4)', secondary: 'rgba(219, 39, 119, 0.4)', border: 'rgba(236, 72, 153, 0.6)', inactive: 'rgba(236, 72, 153, 0.15)', hover: 'rgba(236, 72, 153, 0.25)' }, // Pink
-      trends: { primary: 'rgba(99, 102, 241, 0.4)', secondary: 'rgba(79, 70, 229, 0.4)', border: 'rgba(99, 102, 241, 0.6)', inactive: 'rgba(99, 102, 241, 0.15)', hover: 'rgba(99, 102, 241, 0.25)' } // Indigo
+      overview: {
+        primary: 'rgba(14, 165, 233, 0.4)',
+        secondary: 'rgba(20, 184, 166, 0.4)',
+        border: 'rgba(14, 165, 233, 0.6)',
+        inactive: 'rgba(14, 165, 233, 0.15)',
+        hover: 'rgba(14, 165, 233, 0.25)',
+      }, // Blue-Teal
+      traffic: {
+        primary: 'rgba(34, 197, 94, 0.4)',
+        secondary: 'rgba(16, 185, 129, 0.4)',
+        border: 'rgba(34, 197, 94, 0.6)',
+        inactive: 'rgba(34, 197, 94, 0.15)',
+        hover: 'rgba(34, 197, 94, 0.25)',
+      }, // Green
+      cargo: {
+        primary: 'rgba(251, 191, 36, 0.4)',
+        secondary: 'rgba(245, 158, 11, 0.4)',
+        border: 'rgba(251, 191, 36, 0.6)',
+        inactive: 'rgba(251, 191, 36, 0.15)',
+        hover: 'rgba(251, 191, 36, 0.25)',
+      }, // Yellow/Amber
+      schedules: {
+        primary: 'rgba(168, 85, 247, 0.4)',
+        secondary: 'rgba(147, 51, 234, 0.4)',
+        border: 'rgba(168, 85, 247, 0.6)',
+        inactive: 'rgba(168, 85, 247, 0.15)',
+        hover: 'rgba(168, 85, 247, 0.25)',
+      }, // Purple
+      rates: {
+        primary: 'rgba(239, 68, 68, 0.4)',
+        secondary: 'rgba(220, 38, 38, 0.4)',
+        border: 'rgba(239, 68, 68, 0.6)',
+        inactive: 'rgba(239, 68, 68, 0.15)',
+        hover: 'rgba(239, 68, 68, 0.25)',
+      }, // Red
+      performance: {
+        primary: 'rgba(249, 115, 22, 0.4)',
+        secondary: 'rgba(234, 88, 12, 0.4)',
+        border: 'rgba(249, 115, 22, 0.6)',
+        inactive: 'rgba(249, 115, 22, 0.15)',
+        hover: 'rgba(249, 115, 22, 0.25)',
+      }, // Orange
+      insights: {
+        primary: 'rgba(236, 72, 153, 0.4)',
+        secondary: 'rgba(219, 39, 119, 0.4)',
+        border: 'rgba(236, 72, 153, 0.6)',
+        inactive: 'rgba(236, 72, 153, 0.15)',
+        hover: 'rgba(236, 72, 153, 0.25)',
+      }, // Pink
+      trends: {
+        primary: 'rgba(99, 102, 241, 0.4)',
+        secondary: 'rgba(79, 70, 229, 0.4)',
+        border: 'rgba(99, 102, 241, 0.6)',
+        inactive: 'rgba(99, 102, 241, 0.15)',
+        hover: 'rgba(99, 102, 241, 0.25)',
+      }, // Indigo
     };
     return colors[tabId as keyof typeof colors] || colors.overview;
   };
@@ -143,8 +191,8 @@ export default function PortAuthorityIntelligence() {
             ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
             : colors.inactive,
           border: active
-            ? `2px solid ${colors.border}`
-            : `1px solid ${colors.border.replace('0.6', '0.3')}`,
+            ? `3px solid ${colors.border}`
+            : `2px solid ${colors.border.replace('0.6', '0.4')}`,
           color: 'white',
           padding: '12px 18px',
           borderRadius: '12px',
@@ -155,8 +203,8 @@ export default function PortAuthorityIntelligence() {
           alignItems: 'center',
           gap: '8px',
           fontSize: '14px',
-          boxShadow: active 
-            ? `0 4px 16px ${colors.primary}` 
+          boxShadow: active
+            ? `0 4px 16px ${colors.primary}`
             : `0 2px 8px ${colors.inactive}`,
         }}
         onMouseEnter={(e) => {
@@ -180,14 +228,46 @@ export default function PortAuthorityIntelligence() {
 
   const getKPIColors = (tabId: string) => {
     const colors = {
-      overview: { bg: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))', border: 'rgba(14, 165, 233, 0.4)', shadow: 'rgba(14, 165, 233, 0.15)' }, // Blue-Teal
-      traffic: { bg: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.15))', border: 'rgba(34, 197, 94, 0.4)', shadow: 'rgba(34, 197, 94, 0.15)' }, // Green
-      cargo: { bg: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))', border: 'rgba(251, 191, 36, 0.4)', shadow: 'rgba(251, 191, 36, 0.15)' }, // Yellow/Amber
-      schedules: { bg: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.15))', border: 'rgba(168, 85, 247, 0.4)', shadow: 'rgba(168, 85, 247, 0.15)' }, // Purple
-      rates: { bg: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15))', border: 'rgba(239, 68, 68, 0.4)', shadow: 'rgba(239, 68, 68, 0.15)' }, // Red
-      performance: { bg: 'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(234, 88, 12, 0.15))', border: 'rgba(249, 115, 22, 0.4)', shadow: 'rgba(249, 115, 22, 0.15)' }, // Orange
-      insights: { bg: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.15))', border: 'rgba(236, 72, 153, 0.4)', shadow: 'rgba(236, 72, 153, 0.15)' }, // Pink
-      trends: { bg: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.15))', border: 'rgba(99, 102, 241, 0.4)', shadow: 'rgba(99, 102, 241, 0.15)' } // Indigo
+      overview: {
+        bg: 'rgba(14, 165, 233, 0.25)',
+        border: 'rgba(14, 165, 233, 0.6)',
+        shadow: 'rgba(14, 165, 233, 0.2)',
+      }, // Blue-Teal
+      traffic: {
+        bg: 'rgba(34, 197, 94, 0.25)',
+        border: 'rgba(34, 197, 94, 0.6)',
+        shadow: 'rgba(34, 197, 94, 0.2)',
+      }, // Green
+      cargo: {
+        bg: 'rgba(251, 191, 36, 0.25)',
+        border: 'rgba(251, 191, 36, 0.6)',
+        shadow: 'rgba(251, 191, 36, 0.2)',
+      }, // Yellow/Amber
+      schedules: {
+        bg: 'rgba(168, 85, 247, 0.25)',
+        border: 'rgba(168, 85, 247, 0.6)',
+        shadow: 'rgba(168, 85, 247, 0.2)',
+      }, // Purple
+      rates: {
+        bg: 'rgba(239, 68, 68, 0.25)',
+        border: 'rgba(239, 68, 68, 0.6)',
+        shadow: 'rgba(239, 68, 68, 0.2)',
+      }, // Red
+      performance: {
+        bg: 'rgba(249, 115, 22, 0.25)',
+        border: 'rgba(249, 115, 22, 0.6)',
+        shadow: 'rgba(249, 115, 22, 0.2)',
+      }, // Orange
+      insights: {
+        bg: 'rgba(236, 72, 153, 0.25)',
+        border: 'rgba(236, 72, 153, 0.6)',
+        shadow: 'rgba(236, 72, 153, 0.2)',
+      }, // Pink
+      trends: {
+        bg: 'rgba(99, 102, 241, 0.25)',
+        border: 'rgba(99, 102, 241, 0.6)',
+        shadow: 'rgba(99, 102, 241, 0.2)',
+      }, // Indigo
     };
     return colors[tabId as keyof typeof colors] || colors.overview;
   };
@@ -539,7 +619,7 @@ export default function PortAuthorityIntelligence() {
                   background: getKPIColors(activeTab).bg,
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `1px solid ${getKPIColors(activeTab).border}`,
+                  border: `2px solid ${getKPIColors(activeTab).border}`,
                   boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
                 }}
               >
@@ -573,7 +653,7 @@ export default function PortAuthorityIntelligence() {
                   background: getKPIColors(activeTab).bg,
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `1px solid ${getKPIColors(activeTab).border}`,
+                  border: `2px solid ${getKPIColors(activeTab).border}`,
                   boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
                 }}
               >
@@ -605,7 +685,7 @@ export default function PortAuthorityIntelligence() {
                   background: getKPIColors(activeTab).bg,
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `1px solid ${getKPIColors(activeTab).border}`,
+                  border: `2px solid ${getKPIColors(activeTab).border}`,
                   boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
                 }}
               >
