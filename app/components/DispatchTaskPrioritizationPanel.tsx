@@ -257,6 +257,8 @@ export default function DispatchTaskPrioritizationPanel() {
         },
       };
 
+      console.log('🎯 Starting task prioritization request...', prioritizationRequest);
+      
       const prioritizeResponse = await fetch(
         '/api/analytics/task-prioritization',
         {
@@ -269,7 +271,16 @@ export default function DispatchTaskPrioritizationPanel() {
         }
       );
 
+      console.log('🎯 API Response status:', prioritizeResponse.status);
+      
+      if (!prioritizeResponse.ok) {
+        const errorText = await prioritizeResponse.text();
+        console.error('🎯 API Error:', errorText);
+        throw new Error(`API request failed: ${prioritizeResponse.status} - ${errorText}`);
+      }
+
       const prioritizeData = await prioritizeResponse.json();
+      console.log('🎯 API Response data:', prioritizeData);
 
       if (prioritizeData.success) {
         // Enhance with dispatch-specific metrics
@@ -294,12 +305,14 @@ export default function DispatchTaskPrioritizationPanel() {
           },
         };
         setPrioritizedTasks(enhancedData);
+        console.log('🎯 Task prioritization completed successfully!');
       } else {
+        console.error('🎯 API returned error:', prioritizeData.error);
         setError(prioritizeData.error || 'Failed to prioritize dispatch tasks');
       }
     } catch (error) {
-      console.error('Error loading dispatch tasks:', error);
-      setError('Failed to load dispatch task prioritization');
+      console.error('🎯 Error loading dispatch tasks:', error);
+      setError(`Failed to load dispatch task prioritization: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
