@@ -753,7 +753,11 @@ export default function CustomerRetentionWidget() {
                     Retention Strategies
                   </h3>
                   <ul
-                    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
                   >
                     {analysis.retentionStrategies.map((strategy, index) => (
                       <li
@@ -800,7 +804,11 @@ export default function CustomerRetentionWidget() {
                     Upsell Opportunities
                   </h3>
                   <ul
-                    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
                   >
                     {analysis.upsellOpportunities.map((opportunity, index) => (
                       <li

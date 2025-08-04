@@ -1028,7 +1028,13 @@ export default function SpotRateOptimizationWidget() {
                   >
                     Pricing Factors
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
                     <div
                       style={{
                         display: 'flex',
@@ -1157,7 +1163,13 @@ export default function SpotRateOptimizationWidget() {
                   >
                     Risk Assessment
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
                     <div
                       style={{
                         display: 'flex',
@@ -1446,7 +1458,9 @@ export default function SpotRateOptimizationWidget() {
               >
                 Hot Lanes (High Demand)
               </h3>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 {marketIntelligence.hotLanes.map((lane, index) => (
                   <li
                     key={index}
@@ -1491,7 +1505,9 @@ export default function SpotRateOptimizationWidget() {
               >
                 Cold Lanes (Low Demand)
               </h3>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 {marketIntelligence.coldLanes.map((lane, index) => (
                   <li
                     key={index}
@@ -1663,7 +1679,13 @@ export default function SpotRateOptimizationWidget() {
                     >
                       Market Conditions:
                     </h4>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <ul
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
                       {strategy.marketConditions.map(
                         (condition, conditionIndex) => (
                           <li

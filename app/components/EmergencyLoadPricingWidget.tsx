@@ -116,25 +116,27 @@ export default function EmergencyLoadPricingWidget() {
   });
 
   // Pricing factors state
-  const [pricingFactors, setPricingFactors] = useState<EmergencyPricingFactors>({
-    baseRate: 2500,
-    urgencyMultiplier: 1.5,
-    timeConstraintMultiplier: 1.2,
-    availabilityMultiplier: 1.1,
-    specialRequirementsMultiplier: 1.0,
-    customerTierMultiplier: 1.0,
-    marketConditionsMultiplier: 1.0,
-    totalMultiplier: 1.98,
-    finalRate: 4950,
-    confidence: 85
-  });
+  const [pricingFactors, setPricingFactors] = useState<EmergencyPricingFactors>(
+    {
+      baseRate: 2500,
+      urgencyMultiplier: 1.5,
+      timeConstraintMultiplier: 1.2,
+      availabilityMultiplier: 1.1,
+      specialRequirementsMultiplier: 1.0,
+      customerTierMultiplier: 1.0,
+      marketConditionsMultiplier: 1.0,
+      totalMultiplier: 1.98,
+      finalRate: 4950,
+      confidence: 85,
+    }
+  );
 
   // Update pricing factors based on urgency level
   useEffect(() => {
     const updatePricingFactors = () => {
       let urgencyMultiplier = 1.0;
       let timeConstraintMultiplier = 1.0;
-      
+
       switch (loadRequest.urgencyLevel) {
         case 'standard':
           urgencyMultiplier = 1.0;
@@ -152,7 +154,10 @@ export default function EmergencyLoadPricingWidget() {
 
       // Calculate time constraint multiplier
       if (loadRequest.timeConstraint.requiredDelivery) {
-        const hoursRemaining = (new Date(loadRequest.timeConstraint.requiredDelivery).getTime() - new Date().getTime()) / (1000 * 60 * 60);
+        const hoursRemaining =
+          (new Date(loadRequest.timeConstraint.requiredDelivery).getTime() -
+            new Date().getTime()) /
+          (1000 * 60 * 60);
         if (hoursRemaining < 24) {
           timeConstraintMultiplier = 1.5;
         } else if (hoursRemaining < 48) {
@@ -162,15 +167,18 @@ export default function EmergencyLoadPricingWidget() {
         }
       }
 
-      const totalMultiplier = urgencyMultiplier * timeConstraintMultiplier * pricingFactors.availabilityMultiplier;
+      const totalMultiplier =
+        urgencyMultiplier *
+        timeConstraintMultiplier *
+        pricingFactors.availabilityMultiplier;
       const finalRate = pricingFactors.baseRate * totalMultiplier;
 
-      setPricingFactors(prev => ({
+      setPricingFactors((prev) => ({
         ...prev,
         urgencyMultiplier,
         timeConstraintMultiplier,
         totalMultiplier,
-        finalRate
+        finalRate,
       }));
     };
 
@@ -728,8 +736,8 @@ export default function EmergencyLoadPricingWidget() {
                 onClick={calculatePricing}
                 disabled={loading}
                 style={{
-                  background: loading 
-                    ? 'rgba(107, 114, 128, 0.5)' 
+                  background: loading
+                    ? 'rgba(107, 114, 128, 0.5)'
                     : 'linear-gradient(135deg, #f59e0b, #d97706)',
                   color: 'white',
                   border: 'none',
@@ -742,7 +750,9 @@ export default function EmergencyLoadPricingWidget() {
                   backdropFilter: 'blur(10px)',
                 }}
               >
-                {loading ? '⏳ Calculating...' : '🚨 Calculate Emergency Pricing'}
+                {loading
+                  ? '⏳ Calculating...'
+                  : '🚨 Calculate Emergency Pricing'}
               </button>
             </div>
           </div>
