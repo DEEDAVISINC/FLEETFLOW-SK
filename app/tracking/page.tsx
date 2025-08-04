@@ -62,7 +62,7 @@ interface Shipment {
   deliveryDate?: string;
   customerName?: string;
   miles?: number;
-  
+
   // NOAD Maritime Intelligence Integration
   vesselInfo?: {
     vesselName: string;
@@ -77,7 +77,7 @@ interface Shipment {
     berthAssignment?: string;
     shippingLine?: string;
   };
-  
+
   portIntelligence?: {
     originPortCode: string;
     destinationPortCode: string;
@@ -90,7 +90,7 @@ interface Shipment {
     averageWaitTime: number; // hours
     weatherImpact: 'none' | 'minor' | 'moderate' | 'severe';
   };
-  
+
   maritimeAlerts?: string[]; // NOAD-specific alerts
 }
 
@@ -154,7 +154,7 @@ export default function LiveTrackingPage() {
       deliveryDate: '2024-01-15',
       customerName: 'TechCorp Industries',
       miles: 2015,
-      
+
       // NOAD Maritime Intelligence Data
       vesselInfo: {
         vesselName: 'MSC GÜLSÜN',
@@ -167,9 +167,9 @@ export default function LiveTrackingPage() {
         scheduledDeparture: '2024-01-12 14:00',
         portCongestion: 'medium',
         berthAssignment: 'B-15',
-        shippingLine: 'MSC'
+        shippingLine: 'MSC',
       },
-      
+
       portIntelligence: {
         originPortCode: 'USLAX',
         destinationPortCode: 'USCHI',
@@ -180,10 +180,13 @@ export default function LiveTrackingPage() {
         cargoVolume: 45000,
         congestionLevel: 'medium',
         averageWaitTime: 4.2,
-        weatherImpact: 'minor'
+        weatherImpact: 'minor',
       },
-      
-      maritimeAlerts: ['Port congestion expected', 'Vessel arrived on schedule']
+
+      maritimeAlerts: [
+        'Port congestion expected',
+        'Vessel arrived on schedule',
+      ],
     },
     {
       id: 'SHP-002',

@@ -1,9 +1,9 @@
 /**
  * Enhanced Port Authority Maritime Intelligence Service
- * 
+ *
  * NOAD INTEGRATION - Real government maritime data
  * Provides comprehensive maritime shipping intelligence with USCG NVMC integration
- * 
+ *
  * Value Proposition:
  * - Real-time NOAD vessel tracking from 361 US ports
  * - Government-grade maritime intelligence
@@ -13,7 +13,7 @@
  * - Supply chain bottleneck identification
  * - Shipping rate intelligence
  * - Port efficiency benchmarking
- * 
+ *
  * Data Sources:
  * - USCG NVMC NOAD system (PRIMARY)
  * - Port Authority data feeds
@@ -21,11 +21,16 @@
  * - AIS vessel tracking systems
  * - Cargo manifest data
  * - Port performance metrics
- * 
+ *
  * Estimated Value Add: $2-5M (enhanced with NOAD)
  */
 
-import { NOADService, NOADVesselData, PortIntelligence, VesselSchedule } from './NOADService';
+import {
+  NOADService,
+  NOADVesselData,
+  PortIntelligence,
+  VesselSchedule,
+} from './NOADService';
 
 export interface PortTrafficData {
   port_code: string;
@@ -51,7 +56,13 @@ export interface PortTrafficData {
 
 export interface CargoVolume {
   port_code: string;
-  cargo_type: 'container' | 'bulk' | 'breakbulk' | 'liquid' | 'automotive' | 'other';
+  cargo_type:
+    | 'container'
+    | 'bulk'
+    | 'breakbulk'
+    | 'liquid'
+    | 'automotive'
+    | 'other';
   commodity: string;
   volume_teu?: number; // Twenty-foot Equivalent Units for containers
   volume_tons: number;
@@ -65,7 +76,12 @@ export interface CargoVolume {
 
 export interface VesselSchedule {
   vessel_name: string;
-  vessel_type: 'container' | 'bulk_carrier' | 'tanker' | 'roro' | 'general_cargo';
+  vessel_type:
+    | 'container'
+    | 'bulk_carrier'
+    | 'tanker'
+    | 'roro'
+    | 'general_cargo';
   vessel_size: string;
   arrival_time: string;
   departure_time: string;
@@ -130,7 +146,12 @@ export interface PortPerformance {
 }
 
 export interface SupplyChainInsight {
-  bottleneck_type: 'port_congestion' | 'vessel_shortage' | 'equipment_shortage' | 'labor_shortage' | 'weather_delay';
+  bottleneck_type:
+    | 'port_congestion'
+    | 'vessel_shortage'
+    | 'equipment_shortage'
+    | 'labor_shortage'
+    | 'weather_delay';
   affected_ports: string[];
   impact_severity: 'low' | 'medium' | 'high' | 'critical';
   estimated_delay_days: number;
@@ -142,7 +163,12 @@ export interface SupplyChainInsight {
 }
 
 export interface MaritimeMarketTrend {
-  trend_type: 'capacity_utilization' | 'freight_rates' | 'vessel_orders' | 'fuel_costs' | 'trade_volume';
+  trend_type:
+    | 'capacity_utilization'
+    | 'freight_rates'
+    | 'vessel_orders'
+    | 'fuel_costs'
+    | 'trade_volume';
   metric: string;
   current_value: number;
   historical_values: Array<{
@@ -166,7 +192,9 @@ export class PortAuthorityService {
 
   constructor() {
     this.noadService = new NOADService();
-    console.log('🚢 Enhanced Port Authority Maritime Intelligence Service initialized with NOAD integration');
+    console.log(
+      '🚢 Enhanced Port Authority Maritime Intelligence Service initialized with NOAD integration'
+    );
   }
 
   private isCacheValid(cacheKey: string): boolean {
@@ -183,7 +211,7 @@ export class PortAuthorityService {
   private setCache(cacheKey: string, data: any): void {
     this.cache.set(cacheKey, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -192,7 +220,7 @@ export class PortAuthorityService {
    */
   async getPortTrafficData(portCode?: string): Promise<PortTrafficData[]> {
     const cacheKey = `port_traffic_${portCode || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<PortTrafficData[]>(cacheKey)!;
     }
@@ -211,9 +239,12 @@ export class PortAuthorityService {
   /**
    * Get cargo volume data by port and commodity type
    */
-  async getCargoVolumeData(portCode?: string, cargoType?: string): Promise<CargoVolume[]> {
+  async getCargoVolumeData(
+    portCode?: string,
+    cargoType?: string
+  ): Promise<CargoVolume[]> {
     const cacheKey = `cargo_volume_${portCode || 'all'}_${cargoType || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<CargoVolume[]>(cacheKey)!;
     }
@@ -233,7 +264,7 @@ export class PortAuthorityService {
    */
   async getVesselSchedules(portCode?: string): Promise<VesselSchedule[]> {
     const cacheKey = `vessel_schedules_${portCode || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<VesselSchedule[]>(cacheKey)!;
     }
@@ -251,15 +282,21 @@ export class PortAuthorityService {
   /**
    * Get shipping rates and route analysis
    */
-  async getShippingRates(originPort?: string, destinationPort?: string): Promise<ShippingRate[]> {
+  async getShippingRates(
+    originPort?: string,
+    destinationPort?: string
+  ): Promise<ShippingRate[]> {
     const cacheKey = `shipping_rates_${originPort || 'all'}_${destinationPort || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<ShippingRate[]>(cacheKey)!;
     }
 
     try {
-      const mockData = this.generateMockShippingRates(originPort, destinationPort);
+      const mockData = this.generateMockShippingRates(
+        originPort,
+        destinationPort
+      );
       this.setCache(cacheKey, mockData);
       return mockData;
     } catch (error) {
@@ -273,7 +310,7 @@ export class PortAuthorityService {
    */
   async getPortPerformance(): Promise<PortPerformance[]> {
     const cacheKey = 'port_performance';
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<PortPerformance[]>(cacheKey)!;
     }
@@ -293,7 +330,7 @@ export class PortAuthorityService {
    */
   async getSupplyChainInsights(): Promise<SupplyChainInsight[]> {
     const cacheKey = 'supply_chain_insights';
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<SupplyChainInsight[]>(cacheKey)!;
     }
@@ -313,7 +350,7 @@ export class PortAuthorityService {
    */
   async getMaritimeMarketTrends(): Promise<MaritimeMarketTrend[]> {
     const cacheKey = 'maritime_market_trends';
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<MaritimeMarketTrend[]>(cacheKey)!;
     }
@@ -333,7 +370,7 @@ export class PortAuthorityService {
    */
   async getTopUSPorts(): Promise<PortTrafficData[]> {
     const cacheKey = 'top_us_ports';
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<PortTrafficData[]>(cacheKey)!;
     }
@@ -357,7 +394,7 @@ export class PortAuthorityService {
    */
   async getNOADVesselData(portCode?: string): Promise<NOADVesselData[]> {
     const cacheKey = `noad_vessels_${portCode || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<NOADVesselData[]>(cacheKey)!;
     }
@@ -375,9 +412,11 @@ export class PortAuthorityService {
   /**
    * Get enhanced port intelligence with NOAD data
    */
-  async getEnhancedPortIntelligence(portCode: string): Promise<PortIntelligence> {
+  async getEnhancedPortIntelligence(
+    portCode: string
+  ): Promise<PortIntelligence> {
     const cacheKey = `enhanced_port_intel_${portCode}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<PortIntelligence>(cacheKey)!;
     }
@@ -397,7 +436,7 @@ export class PortAuthorityService {
    */
   async getVesselSchedulesNOAD(portCode?: string): Promise<VesselSchedule[]> {
     const cacheKey = `noad_schedules_${portCode || 'all'}`;
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<VesselSchedule[]>(cacheKey)!;
     }
@@ -425,7 +464,7 @@ export class PortAuthorityService {
     criticalAlerts: string[];
   }> {
     const cacheKey = 'maritime_intelligence_summary';
-    
+
     if (this.isCacheValid(cacheKey)) {
       return this.getFromCache<any>(cacheKey)!;
     }
@@ -433,27 +472,44 @@ export class PortAuthorityService {
     try {
       // Get data from multiple ports
       const majorPorts = ['USLAX', 'USNYK', 'USMIA', 'USSAV', 'USSEA'];
-      const portIntelPromises = majorPorts.map(port => this.getEnhancedPortIntelligence(port));
-      const vesselDataPromises = majorPorts.map(port => this.getNOADVesselData(port));
-      
+      const portIntelPromises = majorPorts.map((port) =>
+        this.getEnhancedPortIntelligence(port)
+      );
+      const vesselDataPromises = majorPorts.map((port) =>
+        this.getNOADVesselData(port)
+      );
+
       const [portIntelData, vesselData] = await Promise.all([
         Promise.all(portIntelPromises),
-        Promise.all(vesselDataPromises)
+        Promise.all(vesselDataPromises),
       ]);
 
       const summary = {
         totalVessels: vesselData.flat().length,
-        activeArrivals: vesselData.flat().filter(v => v.noticeType === 'Arrival').length,
-        activeDepartures: vesselData.flat().filter(v => v.noticeType === 'Departure').length,
-        portsCongested: portIntelData.filter(p => p.congestionLevel === 'high' || p.congestionLevel === 'critical').length,
-        averageWaitTime: portIntelData.reduce((sum, p) => sum + p.averageWaitTime, 0) / portIntelData.length,
+        activeArrivals: vesselData
+          .flat()
+          .filter((v) => v.noticeType === 'Arrival').length,
+        activeDepartures: vesselData
+          .flat()
+          .filter((v) => v.noticeType === 'Departure').length,
+        portsCongested: portIntelData.filter(
+          (p) =>
+            p.congestionLevel === 'high' || p.congestionLevel === 'critical'
+        ).length,
+        averageWaitTime:
+          portIntelData.reduce((sum, p) => sum + p.averageWaitTime, 0) /
+          portIntelData.length,
         topCongestionPorts: portIntelData
-          .filter(p => p.congestionLevel === 'high' || p.congestionLevel === 'critical')
-          .map(p => p.portName),
-        criticalAlerts: vesselData.flat()
-          .filter(v => v.delayReasons && v.delayReasons.length > 0)
-          .map(v => `${v.vesselName} - ${v.delayReasons?.join(', ')}`)
-          .slice(0, 5)
+          .filter(
+            (p) =>
+              p.congestionLevel === 'high' || p.congestionLevel === 'critical'
+          )
+          .map((p) => p.portName),
+        criticalAlerts: vesselData
+          .flat()
+          .filter((v) => v.delayReasons && v.delayReasons.length > 0)
+          .map((v) => `${v.vesselName} - ${v.delayReasons?.join(', ')}`)
+          .slice(0, 5),
       };
 
       this.setCache(cacheKey, summary);
@@ -468,7 +524,7 @@ export class PortAuthorityService {
         portsCongested: 0,
         averageWaitTime: 0,
         topCongestionPorts: [],
-        criticalAlerts: []
+        criticalAlerts: [],
       };
     }
   }
@@ -476,26 +532,76 @@ export class PortAuthorityService {
   // Mock data generation methods
   private generateMockPortTrafficData(portCode?: string): PortTrafficData[] {
     const ports = [
-      { code: 'LAXLA', name: 'Port of Los Angeles', city: 'Los Angeles', state: 'CA', coords: [-118.2437, 34.0522] },
-      { code: 'NYNYK', name: 'Port of New York/New Jersey', city: 'New York', state: 'NY', coords: [-74.0060, 40.7128] },
-      { code: 'MIAFL', name: 'Port of Miami', city: 'Miami', state: 'FL', coords: [-80.1918, 25.7617] },
-      { code: 'SAVGA', name: 'Port of Savannah', city: 'Savannah', state: 'GA', coords: [-81.0912, 32.0835] },
-      { code: 'SEATL', name: 'Port of Seattle', city: 'Seattle', state: 'WA', coords: [-122.3321, 47.6062] },
-      { code: 'CHSSC', name: 'Port of Charleston', city: 'Charleston', state: 'SC', coords: [-79.9311, 32.7765] },
-      { code: 'HOUTX', name: 'Port of Houston', city: 'Houston', state: 'TX', coords: [-95.3698, 29.7604] },
-      { code: 'OAKCA', name: 'Port of Oakland', city: 'Oakland', state: 'CA', coords: [-122.2711, 37.8044] }
+      {
+        code: 'LAXLA',
+        name: 'Port of Los Angeles',
+        city: 'Los Angeles',
+        state: 'CA',
+        coords: [-118.2437, 34.0522],
+      },
+      {
+        code: 'NYNYK',
+        name: 'Port of New York/New Jersey',
+        city: 'New York',
+        state: 'NY',
+        coords: [-74.006, 40.7128],
+      },
+      {
+        code: 'MIAFL',
+        name: 'Port of Miami',
+        city: 'Miami',
+        state: 'FL',
+        coords: [-80.1918, 25.7617],
+      },
+      {
+        code: 'SAVGA',
+        name: 'Port of Savannah',
+        city: 'Savannah',
+        state: 'GA',
+        coords: [-81.0912, 32.0835],
+      },
+      {
+        code: 'SEATL',
+        name: 'Port of Seattle',
+        city: 'Seattle',
+        state: 'WA',
+        coords: [-122.3321, 47.6062],
+      },
+      {
+        code: 'CHSSC',
+        name: 'Port of Charleston',
+        city: 'Charleston',
+        state: 'SC',
+        coords: [-79.9311, 32.7765],
+      },
+      {
+        code: 'HOUTX',
+        name: 'Port of Houston',
+        city: 'Houston',
+        state: 'TX',
+        coords: [-95.3698, 29.7604],
+      },
+      {
+        code: 'OAKCA',
+        name: 'Port of Oakland',
+        city: 'Oakland',
+        state: 'CA',
+        coords: [-122.2711, 37.8044],
+      },
     ];
 
-    const filteredPorts = portCode ? ports.filter(p => p.code === portCode) : ports;
+    const filteredPorts = portCode
+      ? ports.filter((p) => p.code === portCode)
+      : ports;
 
-    return filteredPorts.map(port => ({
+    return filteredPorts.map((port) => ({
       port_code: port.code,
       port_name: port.name,
       location: {
         city: port.city,
         state: port.state,
         country: 'USA',
-        coordinates: port.coords as [number, number]
+        coordinates: port.coords as [number, number],
       },
       traffic_metrics: {
         total_vessels: Math.floor(Math.random() * 500) + 200,
@@ -503,46 +609,79 @@ export class PortAuthorityService {
         vessel_departures: Math.floor(Math.random() * 100) + 45,
         average_wait_time: Math.floor(Math.random() * 24) + 6,
         berth_utilization: Math.floor(Math.random() * 30) + 65,
-        throughput_efficiency: Math.floor(Math.random() * 20) + 75
+        throughput_efficiency: Math.floor(Math.random() * 20) + 75,
       },
       period: 'Monthly',
       year: 2024,
-      month: 11
+      month: 11,
     }));
   }
 
-  private generateMockCargoVolumeData(portCode?: string, cargoType?: string): CargoVolume[] {
+  private generateMockCargoVolumeData(
+    portCode?: string,
+    cargoType?: string
+  ): CargoVolume[] {
     const commodities = [
-      { type: 'container', commodities: ['Electronics', 'Textiles', 'Machinery', 'Auto Parts'] },
+      {
+        type: 'container',
+        commodities: ['Electronics', 'Textiles', 'Machinery', 'Auto Parts'],
+      },
       { type: 'bulk', commodities: ['Coal', 'Iron Ore', 'Grain', 'Soybeans'] },
-      { type: 'liquid', commodities: ['Crude Oil', 'Petroleum Products', 'Chemicals', 'LNG'] },
-      { type: 'automotive', commodities: ['Passenger Cars', 'Trucks', 'SUVs', 'Motorcycles'] }
+      {
+        type: 'liquid',
+        commodities: ['Crude Oil', 'Petroleum Products', 'Chemicals', 'LNG'],
+      },
+      {
+        type: 'automotive',
+        commodities: ['Passenger Cars', 'Trucks', 'SUVs', 'Motorcycles'],
+      },
     ];
 
-    const ports = ['LAXLA', 'NYNYK', 'MIAFL', 'SAVGA', 'SEATL', 'CHSSC', 'HOUTX', 'OAKCA'];
-    const countries = ['China', 'Japan', 'South Korea', 'Germany', 'Mexico', 'Canada', 'Brazil'];
+    const ports = [
+      'LAXLA',
+      'NYNYK',
+      'MIAFL',
+      'SAVGA',
+      'SEATL',
+      'CHSSC',
+      'HOUTX',
+      'OAKCA',
+    ];
+    const countries = [
+      'China',
+      'Japan',
+      'South Korea',
+      'Germany',
+      'Mexico',
+      'Canada',
+      'Brazil',
+    ];
 
     const data: CargoVolume[] = [];
 
-    commodities.forEach(category => {
+    commodities.forEach((category) => {
       if (cargoType && category.type !== cargoType) return;
 
-      category.commodities.forEach(commodity => {
-        ports.forEach(port => {
+      category.commodities.forEach((commodity) => {
+        ports.forEach((port) => {
           if (portCode && port !== portCode) return;
 
           data.push({
             port_code: port,
             cargo_type: category.type as any,
             commodity,
-            volume_teu: category.type === 'container' ? Math.floor(Math.random() * 100000) + 10000 : undefined,
+            volume_teu:
+              category.type === 'container'
+                ? Math.floor(Math.random() * 100000) + 10000
+                : undefined,
             volume_tons: Math.floor(Math.random() * 500000) + 50000,
             value_usd: Math.floor(Math.random() * 1000000000) + 100000000,
-            origin_country: countries[Math.floor(Math.random() * countries.length)],
+            origin_country:
+              countries[Math.floor(Math.random() * countries.length)],
             destination_country: 'USA',
-            growth_rate: (Math.random() * 20) - 10,
+            growth_rate: Math.random() * 20 - 10,
             market_share: Math.random() * 30 + 5,
-            period: '2024-Q3'
+            period: '2024-Q3',
           });
         });
       });
@@ -553,29 +692,79 @@ export class PortAuthorityService {
 
   private generateMockVesselSchedules(portCode?: string): VesselSchedule[] {
     const vessels = [
-      { name: 'MSC Gülsün', type: 'container', size: '23,756 TEU', line: 'MSC' },
-      { name: 'Ever Ace', type: 'container', size: '23,992 TEU', line: 'Evergreen' },
-      { name: 'COSCO Shipping Universe', type: 'container', size: '21,237 TEU', line: 'COSCO' },
-      { name: 'Maersk Madrid', type: 'container', size: '20,568 TEU', line: 'Maersk' },
-      { name: 'Atlantic Harmony', type: 'bulk_carrier', size: '180,000 DWT', line: 'Atlantic Shipping' },
-      { name: 'Pacific Pioneer', type: 'tanker', size: '300,000 DWT', line: 'Pacific Tankers' }
+      {
+        name: 'MSC Gülsün',
+        type: 'container',
+        size: '23,756 TEU',
+        line: 'MSC',
+      },
+      {
+        name: 'Ever Ace',
+        type: 'container',
+        size: '23,992 TEU',
+        line: 'Evergreen',
+      },
+      {
+        name: 'COSCO Shipping Universe',
+        type: 'container',
+        size: '21,237 TEU',
+        line: 'COSCO',
+      },
+      {
+        name: 'Maersk Madrid',
+        type: 'container',
+        size: '20,568 TEU',
+        line: 'Maersk',
+      },
+      {
+        name: 'Atlantic Harmony',
+        type: 'bulk_carrier',
+        size: '180,000 DWT',
+        line: 'Atlantic Shipping',
+      },
+      {
+        name: 'Pacific Pioneer',
+        type: 'tanker',
+        size: '300,000 DWT',
+        line: 'Pacific Tankers',
+      },
     ];
 
-    const ports = ['LAXLA', 'NYNYK', 'MIAFL', 'SAVGA', 'SEATL', 'CHSSC', 'HOUTX', 'OAKCA'];
-    const nextPorts = ['YOKOHAMA', 'BUSAN', 'SHANGHAI', 'HAMBURG', 'ROTTERDAM', 'SINGAPORE'];
+    const ports = [
+      'LAXLA',
+      'NYNYK',
+      'MIAFL',
+      'SAVGA',
+      'SEATL',
+      'CHSSC',
+      'HOUTX',
+      'OAKCA',
+    ];
+    const nextPorts = [
+      'YOKOHAMA',
+      'BUSAN',
+      'SHANGHAI',
+      'HAMBURG',
+      'ROTTERDAM',
+      'SINGAPORE',
+    ];
     const statuses = ['scheduled', 'arrived', 'loading', 'departed', 'delayed'];
 
     const schedules: VesselSchedule[] = [];
 
-    vessels.forEach(vessel => {
-      ports.forEach(port => {
+    vessels.forEach((vessel) => {
+      ports.forEach((port) => {
         if (portCode && port !== portCode) return;
 
         const arrivalDate = new Date();
-        arrivalDate.setDate(arrivalDate.getDate() + Math.floor(Math.random() * 30));
-        
+        arrivalDate.setDate(
+          arrivalDate.getDate() + Math.floor(Math.random() * 30)
+        );
+
         const departureDate = new Date(arrivalDate);
-        departureDate.setHours(departureDate.getHours() + Math.floor(Math.random() * 48) + 6);
+        departureDate.setHours(
+          departureDate.getHours() + Math.floor(Math.random() * 48) + 6
+        );
 
         schedules.push({
           vessel_name: vessel.name,
@@ -588,11 +777,11 @@ export class PortAuthorityService {
           cargo_operations: {
             loading_tons: Math.floor(Math.random() * 50000) + 10000,
             unloading_tons: Math.floor(Math.random() * 50000) + 10000,
-            estimated_duration: Math.floor(Math.random() * 36) + 12
+            estimated_duration: Math.floor(Math.random() * 36) + 12,
           },
           next_port: nextPorts[Math.floor(Math.random() * nextPorts.length)],
           shipping_line: vessel.line,
-          status: statuses[Math.floor(Math.random() * statuses.length)] as any
+          status: statuses[Math.floor(Math.random() * statuses.length)] as any,
         });
       });
     });
@@ -600,26 +789,40 @@ export class PortAuthorityService {
     return schedules.slice(0, 20); // Limit results
   }
 
-  private generateMockShippingRates(originPort?: string, destinationPort?: string): ShippingRate[] {
+  private generateMockShippingRates(
+    originPort?: string,
+    destinationPort?: string
+  ): ShippingRate[] {
     const routes = [
       { origin: 'LAXLA', destination: 'YOKOHAMA', distance: 5150 },
       { origin: 'NYNYK', destination: 'HAMBURG', distance: 3625 },
       { origin: 'MIAFL', destination: 'SANTOS', distance: 4200 },
       { origin: 'SEATL', destination: 'BUSAN', distance: 5200 },
       { origin: 'HOUTX', destination: 'ROTTERDAM', distance: 4850 },
-      { origin: 'SAVGA', destination: 'SHANGHAI', distance: 8100 }
+      { origin: 'SAVGA', destination: 'SHANGHAI', distance: 8100 },
     ];
 
-    const carriers = ['Maersk', 'MSC', 'COSCO', 'Evergreen', 'ONE', 'Hapag-Lloyd'];
-    const vesselTypes = ['Ultra Large Container Vessel', 'Large Container Vessel', 'Feeder Vessel'];
+    const carriers = [
+      'Maersk',
+      'MSC',
+      'COSCO',
+      'Evergreen',
+      'ONE',
+      'Hapag-Lloyd',
+    ];
+    const vesselTypes = [
+      'Ultra Large Container Vessel',
+      'Large Container Vessel',
+      'Feeder Vessel',
+    ];
 
     const rates: ShippingRate[] = [];
 
-    routes.forEach(route => {
+    routes.forEach((route) => {
       if (originPort && route.origin !== originPort) return;
       if (destinationPort && route.destination !== destinationPort) return;
 
-      carriers.forEach(carrier => {
+      carriers.forEach((carrier) => {
         const baseRate = Math.floor(Math.random() * 2000) + 800;
         const fuelSurcharge = Math.floor(baseRate * 0.15);
 
@@ -627,7 +830,7 @@ export class PortAuthorityService {
           route: {
             origin_port: route.origin,
             destination_port: route.destination,
-            distance_nautical_miles: route.distance
+            distance_nautical_miles: route.distance,
           },
           rate_type: 'spot',
           rate_usd_per_teu: baseRate,
@@ -636,12 +839,13 @@ export class PortAuthorityService {
           currency: 'USD',
           valid_period: {
             start: new Date().toISOString(),
-            end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           },
           carrier,
-          vessel_type: vesselTypes[Math.floor(Math.random() * vesselTypes.length)],
+          vessel_type:
+            vesselTypes[Math.floor(Math.random() * vesselTypes.length)],
           transit_time_days: Math.floor(route.distance / 500) + 5,
-          frequency: 'Weekly'
+          frequency: 'Weekly',
         });
       });
     });
@@ -657,7 +861,7 @@ export class PortAuthorityService {
       { code: 'SEATL', name: 'Port of Seattle', globalRank: 52 },
       { code: 'CHSSC', name: 'Port of Charleston', globalRank: 58 },
       { code: 'HOUTX', name: 'Port of Houston', globalRank: 35 },
-      { code: 'OAKCA', name: 'Port of Oakland', globalRank: 67 }
+      { code: 'OAKCA', name: 'Port of Oakland', globalRank: 67 },
     ];
 
     return ports.map((port, index) => ({
@@ -666,7 +870,7 @@ export class PortAuthorityService {
       ranking: {
         global_rank: port.globalRank,
         regional_rank: index + 1,
-        country_rank: index + 1
+        country_rank: index + 1,
       },
       metrics: {
         annual_throughput_teu: Math.floor(Math.random() * 10000000) + 1000000,
@@ -674,16 +878,16 @@ export class PortAuthorityService {
         average_dwell_time: Math.floor(Math.random() * 3) + 2,
         crane_productivity: Math.floor(Math.random() * 20) + 25,
         berth_productivity: Math.floor(Math.random() * 50) + 100,
-        gate_turn_time: Math.floor(Math.random() * 20) + 30
+        gate_turn_time: Math.floor(Math.random() * 20) + 30,
       },
       infrastructure: {
         berth_count: Math.floor(Math.random() * 20) + 10,
         crane_count: Math.floor(Math.random() * 50) + 20,
         yard_capacity_teu: Math.floor(Math.random() * 500000) + 100000,
         max_vessel_size: '24,000 TEU',
-        water_depth_meters: Math.floor(Math.random() * 10) + 12
+        water_depth_meters: Math.floor(Math.random() * 10) + 12,
       },
-      year: 2024
+      year: 2024,
     }));
   }
 
@@ -696,7 +900,7 @@ export class PortAuthorityService {
         estimated_delay_days: 7,
         affected_commodities: ['Electronics', 'Auto Parts'],
         cost_impact_usd: 45000000,
-        duration_estimate: '2-3 weeks'
+        duration_estimate: '2-3 weeks',
       },
       {
         bottleneck_type: 'equipment_shortage',
@@ -705,7 +909,7 @@ export class PortAuthorityService {
         estimated_delay_days: 3,
         affected_commodities: ['Textiles', 'Machinery'],
         cost_impact_usd: 12000000,
-        duration_estimate: '1-2 weeks'
+        duration_estimate: '1-2 weeks',
       },
       {
         bottleneck_type: 'weather_delay',
@@ -714,11 +918,11 @@ export class PortAuthorityService {
         estimated_delay_days: 2,
         affected_commodities: ['Agricultural Products'],
         cost_impact_usd: 5000000,
-        duration_estimate: '3-5 days'
-      }
+        duration_estimate: '3-5 days',
+      },
     ];
 
-    return insights.map(insight => ({
+    return insights.map((insight) => ({
       ...insight,
       bottleneck_type: insight.bottleneck_type as any,
       impact_severity: insight.impact_severity as any,
@@ -726,9 +930,9 @@ export class PortAuthorityService {
         'Reroute cargo to alternative ports',
         'Increase operational hours',
         'Deploy additional equipment',
-        'Implement priority processing'
+        'Implement priority processing',
       ],
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     }));
   }
 
@@ -739,38 +943,44 @@ export class PortAuthorityService {
         metric: 'Average Container Rate (USD/TEU)',
         current_value: 2450,
         trend_direction: 'increasing',
-        analysis: 'Container freight rates continue to rise due to strong demand and limited vessel capacity.'
+        analysis:
+          'Container freight rates continue to rise due to strong demand and limited vessel capacity.',
       },
       {
         trend_type: 'capacity_utilization',
         metric: 'Global Fleet Utilization (%)',
         current_value: 87.5,
         trend_direction: 'stable',
-        analysis: 'Fleet utilization remains high with steady demand across major trade routes.'
+        analysis:
+          'Fleet utilization remains high with steady demand across major trade routes.',
       },
       {
         trend_type: 'fuel_costs',
         metric: 'Marine Fuel Price (USD/MT)',
         current_value: 520,
         trend_direction: 'volatile',
-        analysis: 'Marine fuel prices showing volatility due to geopolitical factors and supply concerns.'
-      }
+        analysis:
+          'Marine fuel prices showing volatility due to geopolitical factors and supply concerns.',
+      },
     ];
 
-    return trends.map(trend => ({
+    return trends.map((trend) => ({
       ...trend,
       trend_type: trend.trend_type as any,
       trend_direction: trend.trend_direction as any,
       historical_values: Array.from({ length: 12 }, (_, i) => ({
         period: `2024-${String(i + 1).padStart(2, '0')}`,
-        value: trend.current_value + (Math.random() * 200 - 100)
+        value: trend.current_value + (Math.random() * 200 - 100),
       })),
       forecast_values: Array.from({ length: 6 }, (_, i) => {
-        const baseValue = trend.current_value + (i * 50);
+        const baseValue = trend.current_value + i * 50;
         return {
           period: `2025-${String(i + 1).padStart(2, '0')}`,
           predicted_value: baseValue,
-          confidence_interval: [baseValue - 100, baseValue + 100] as [number, number]
+          confidence_interval: [baseValue - 100, baseValue + 100] as [
+            number,
+            number,
+          ],
         };
       }),
       key_drivers: [
@@ -778,28 +988,58 @@ export class PortAuthorityService {
         'Vessel capacity constraints',
         'Fuel price volatility',
         'Port congestion levels',
-        'Economic growth patterns'
-      ]
+        'Economic growth patterns',
+      ],
     }));
   }
 
   private generateMockTopUSPorts(): PortTrafficData[] {
     const topPorts = [
-      { code: 'LAXLA', name: 'Port of Los Angeles', city: 'Los Angeles', state: 'CA', throughput: 9213000 },
-      { code: 'NYNYK', name: 'Port of New York/New Jersey', city: 'New York', state: 'NY', throughput: 7118000 },
-      { code: 'SAVGA', name: 'Port of Savannah', city: 'Savannah', state: 'GA', throughput: 4599000 },
-      { code: 'SEATL', name: 'Port of Seattle', city: 'Seattle', state: 'WA', throughput: 3417000 },
-      { code: 'HOUTX', name: 'Port of Houston', city: 'Houston', state: 'TX', throughput: 3180000 }
+      {
+        code: 'LAXLA',
+        name: 'Port of Los Angeles',
+        city: 'Los Angeles',
+        state: 'CA',
+        throughput: 9213000,
+      },
+      {
+        code: 'NYNYK',
+        name: 'Port of New York/New Jersey',
+        city: 'New York',
+        state: 'NY',
+        throughput: 7118000,
+      },
+      {
+        code: 'SAVGA',
+        name: 'Port of Savannah',
+        city: 'Savannah',
+        state: 'GA',
+        throughput: 4599000,
+      },
+      {
+        code: 'SEATL',
+        name: 'Port of Seattle',
+        city: 'Seattle',
+        state: 'WA',
+        throughput: 3417000,
+      },
+      {
+        code: 'HOUTX',
+        name: 'Port of Houston',
+        city: 'Houston',
+        state: 'TX',
+        throughput: 3180000,
+      },
     ];
 
-    return topPorts.map(port => ({
+    return topPorts.map((port) => ({
       port_code: port.code,
       port_name: port.name,
       location: {
         city: port.city,
         state: port.state,
         country: 'USA',
-        coordinates: [0, 0] as [number, number] // Simplified for demo
+        coordinates: [0, 0] as [number, number], // Simplified for demo
       },
       traffic_metrics: {
         total_vessels: Math.floor(port.throughput / 10000),
@@ -807,14 +1047,14 @@ export class PortAuthorityService {
         vessel_departures: Math.floor(Math.random() * 200) + 95,
         average_wait_time: Math.floor(Math.random() * 12) + 8,
         berth_utilization: Math.floor(Math.random() * 25) + 70,
-        throughput_efficiency: Math.floor(Math.random() * 15) + 80
+        throughput_efficiency: Math.floor(Math.random() * 15) + 80,
       },
       period: 'Annual',
-      year: 2024
+      year: 2024,
     }));
   }
 }
 
 // Export singleton instance
 export const portAuthorityService = new PortAuthorityService();
-export default portAuthorityService; 
+export default portAuthorityService;
