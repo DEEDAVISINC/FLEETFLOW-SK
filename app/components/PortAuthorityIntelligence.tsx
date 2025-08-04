@@ -335,17 +335,17 @@ export default function PortAuthorityIntelligence() {
                       <h6 style={{ color: 'white', fontSize: '14px', fontWeight: '600', margin: 0 }}>
                         #{index + 1} {port.port_name}
                       </h6>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '12px' }}>
                         {port.location.state}
                       </span>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
                       <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Total Vessels:</span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Total Vessels:</span>
                         <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(port.traffic_metrics.total_vessels)}</div>
                       </div>
                       <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Berth Utilization:</span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Berth Utilization:</span>
                         <div style={{ color: 'white', fontWeight: '600' }}>{port.traffic_metrics.berth_utilization}%</div>
                       </div>
                     </div>
@@ -362,7 +362,7 @@ export default function PortAuthorityIntelligence() {
                 borderRadius: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.2)'
               }}>
-                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', marginBottom: '8px' }}>
+                <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '14px', marginBottom: '8px' }}>
                   Total Cargo Volume
                 </div>
                 <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
@@ -375,7 +375,7 @@ export default function PortAuthorityIntelligence() {
                 borderRadius: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.2)'
               }}>
-                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', marginBottom: '8px' }}>
+                <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '14px', marginBottom: '8px' }}>
                   Active Vessels
                 </div>
                 <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
@@ -388,7 +388,7 @@ export default function PortAuthorityIntelligence() {
                 borderRadius: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.2)'
               }}>
-                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', marginBottom: '8px' }}>
+                <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '14px', marginBottom: '8px' }}>
                   Supply Chain Alerts
                 </div>
                 <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
@@ -417,29 +417,29 @@ export default function PortAuthorityIntelligence() {
                     <h5 style={{ color: 'white', fontSize: '16px', fontWeight: '600', margin: 0 }}>
                       {port.port_name}
                     </h5>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '12px' }}>
                       {port.location.city}, {port.location.state}
                     </span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px' }}>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Total Vessels:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Total Vessels:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(port.traffic_metrics.total_vessels)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Arrivals:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Arrivals:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(port.traffic_metrics.vessel_arrivals)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Avg Wait Time:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Avg Wait Time:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.traffic_metrics.average_wait_time}h</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Berth Utilization:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Berth Utilization:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.traffic_metrics.berth_utilization}%</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Throughput Efficiency:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Throughput Efficiency:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.traffic_metrics.throughput_efficiency}%</div>
                     </div>
                   </div>
@@ -479,20 +479,20 @@ export default function PortAuthorityIntelligence() {
                     </span>
                   </div>
                   <div style={{ fontSize: '14px', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Port: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Port: </span>
                     <span style={{ color: 'white', fontWeight: '600' }}>{cargo.port_code}</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Volume:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Volume:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(cargo.volume_tons)} tons</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Value:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Value:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatCurrency(cargo.value_usd)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Growth:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Growth:</span>
                       <div style={{ 
                         color: cargo.growth_rate > 0 ? '#10b981' : '#ef4444', 
                         fontWeight: '600' 
@@ -501,7 +501,7 @@ export default function PortAuthorityIntelligence() {
                       </div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Market Share:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Market Share:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{cargo.market_share.toFixed(1)}%</div>
                     </div>
                   </div>
@@ -542,33 +542,33 @@ export default function PortAuthorityIntelligence() {
                   </div>
                   <div style={{ fontSize: '14px', marginBottom: '16px' }}>
                     <div style={{ marginBottom: '8px' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Type: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Type: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{vessel.vessel_type.replace('_', ' ')}</span>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)', marginLeft: '16px' }}>Size: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)', marginLeft: '16px' }}>Size: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{vessel.vessel_size}</span>
                     </div>
                     <div style={{ marginBottom: '8px' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Port: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Port: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{vessel.port_code}</span>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)', marginLeft: '16px' }}>Berth: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)', marginLeft: '16px' }}>Berth: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{vessel.berth_assignment}</span>
                     </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Arrival:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Arrival:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatDate(vessel.arrival_time)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Departure:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Departure:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatDate(vessel.departure_time)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Loading:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Loading:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(vessel.cargo_operations.loading_tons)}t</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Unloading:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Unloading:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(vessel.cargo_operations.unloading_tons)}t</div>
                     </div>
                   </div>
@@ -596,30 +596,30 @@ export default function PortAuthorityIntelligence() {
                     <h5 style={{ color: 'white', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
                       {rate.route.origin_port} → {rate.route.destination_port}
                     </h5>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '14px' }}>
                       {formatNumber(rate.route.distance_nautical_miles)} nautical miles • {rate.transit_time_days} days
                     </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px' }}>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Rate (TEU):</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Rate (TEU):</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatCurrency(rate.rate_usd_per_teu || 0)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Fuel Surcharge:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Fuel Surcharge:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatCurrency(rate.fuel_surcharge)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Total Cost:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Total Cost:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatCurrency(rate.total_cost)}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Frequency:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Frequency:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{rate.frequency}</div>
                     </div>
                   </div>
                   <div style={{ marginTop: '12px', fontSize: '12px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Carrier: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Carrier: </span>
                     <span style={{ color: 'white', fontWeight: '600' }}>{rate.carrier}</span>
                   </div>
                 </div>
@@ -658,24 +658,24 @@ export default function PortAuthorityIntelligence() {
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px', marginBottom: '16px' }}>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Efficiency Score:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Efficiency Score:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.metrics.efficiency_score}</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Throughput:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Throughput:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{formatNumber(port.metrics.annual_throughput_teu)} TEU</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Dwell Time:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Dwell Time:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.metrics.average_dwell_time} days</div>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Crane Productivity:</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Crane Productivity:</span>
                       <div style={{ color: 'white', fontWeight: '600' }}>{port.metrics.crane_productivity}/hr</div>
                     </div>
                   </div>
                   <div style={{ fontSize: '12px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Infrastructure: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Infrastructure: </span>
                     <span style={{ color: 'white' }}>{port.infrastructure.berth_count} berths • {port.infrastructure.crane_count} cranes</span>
                   </div>
                 </div>
@@ -715,20 +715,20 @@ export default function PortAuthorityIntelligence() {
                   </div>
                   <div style={{ fontSize: '14px', marginBottom: '16px' }}>
                     <div style={{ marginBottom: '8px' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Affected Ports: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Affected Ports: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{insight.affected_ports.join(', ')}</span>
                     </div>
                     <div style={{ marginBottom: '8px' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Estimated Delay: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Estimated Delay: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{insight.estimated_delay_days} days</span>
                     </div>
                     <div style={{ marginBottom: '8px' }}>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Cost Impact: </span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Cost Impact: </span>
                       <span style={{ color: 'white', fontWeight: '600' }}>{formatCurrency(insight.cost_impact_usd)}</span>
                     </div>
                   </div>
                   <div style={{ fontSize: '12px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Commodities: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Commodities: </span>
                     <span style={{ color: 'white' }}>{insight.affected_commodities.join(', ')}</span>
                   </div>
                 </div>
@@ -775,7 +775,7 @@ export default function PortAuthorityIntelligence() {
                     {trend.analysis}
                   </div>
                   <div style={{ fontSize: '12px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Key Drivers: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Key Drivers: </span>
                     <span style={{ color: 'white' }}>{trend.key_drivers.slice(0, 3).join(', ')}</span>
                   </div>
                 </div>
