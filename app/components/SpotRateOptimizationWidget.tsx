@@ -245,14 +245,30 @@ export default function SpotRateOptimizationWidget() {
 
   if (!isEnabled) {
     return (
-      <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
-        <div className='flex items-center gap-3'>
-          <div className='text-2xl'>💰</div>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '20px',
+          marginBottom: '20px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontSize: '24px' }}>💰</div>
           <div>
-            <h3 className='font-semibold text-yellow-800'>
+            <h3
+              style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: 'white',
+                marginBottom: '4px',
+              }}
+            >
               Spot Rate Optimization
             </h3>
-            <p className='text-sm text-yellow-700'>
+            <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
               Enable ENABLE_SPOT_RATE_OPTIMIZATION=true to access rate
               optimization features
             </p>
@@ -263,15 +279,45 @@ export default function SpotRateOptimizationWidget() {
   }
 
   return (
-    <div className='rounded-lg bg-white p-6 shadow-lg'>
-      <div className='mb-6 flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
-          <div className='text-3xl'>💰</div>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '24px',
+        marginBottom: '20px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontSize: '32px' }}>💰</div>
           <div>
-            <h2 className='text-xl font-bold text-gray-900'>
+            <h2
+              style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: 'white',
+                margin: 0,
+                marginBottom: '4px',
+              }}
+            >
               Spot Rate Optimization
             </h2>
-            <p className='text-sm text-gray-600'>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                margin: 0,
+              }}
+            >
               Optimize rates based on market conditions
             </p>
           </div>
@@ -279,34 +325,74 @@ export default function SpotRateOptimizationWidget() {
       </div>
 
       {/* Tab Navigation */}
-      <div className='mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1'>
+      <div
+        style={{
+          display: 'flex',
+          gap: '4px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '4px',
+          marginBottom: '24px',
+        }}
+      >
         <button
           onClick={() => setActiveTab('optimize')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'optimize'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
+          style={{
+            flex: 1,
+            background: activeTab === 'optimize'
+              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+              : 'rgba(255, 255, 255, 0.05)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(10px)',
+          }}
         >
           Rate Optimization
         </button>
         <button
           onClick={() => setActiveTab('market')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'market'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
+          style={{
+            flex: 1,
+            background: activeTab === 'market'
+              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+              : 'rgba(255, 255, 255, 0.05)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(10px)',
+          }}
         >
           Market Intelligence
         </button>
         <button
           onClick={() => setActiveTab('strategies')}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'strategies'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
+          style={{
+            flex: 1,
+            background: activeTab === 'strategies'
+              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+              : 'rgba(255, 255, 255, 0.05)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(10px)',
+          }}
         >
           Pricing Strategies
         </button>

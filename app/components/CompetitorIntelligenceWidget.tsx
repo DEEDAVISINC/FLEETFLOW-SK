@@ -97,11 +97,20 @@ export default function CompetitorIntelligenceWidget() {
 
   if (!isEnabled) {
     return (
-      <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
-        <div className='flex items-center'>
-          <div className='flex-shrink-0'>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '20px',
+          marginBottom: '20px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ flexShrink: 0 }}>
             <svg
-              className='h-5 w-5 text-yellow-400'
+              style={{ height: '20px', width: '20px', color: '#fbbf24' }}
               viewBox='0 0 20 20'
               fill='currentColor'
             >
@@ -112,11 +121,18 @@ export default function CompetitorIntelligenceWidget() {
               />
             </svg>
           </div>
-          <div className='ml-3'>
-            <h3 className='text-sm font-medium text-yellow-800'>
+          <div style={{ marginLeft: '12px' }}>
+            <h3
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: 'white',
+                marginBottom: '8px',
+              }}
+            >
               Competitor Intelligence Feature Disabled
             </h3>
-            <div className='mt-2 text-sm text-yellow-700'>
+            <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
               <p>
                 Enable this feature by setting
                 ENABLE_COMPETITOR_INTELLIGENCE=true in your environment
@@ -130,69 +146,185 @@ export default function CompetitorIntelligenceWidget() {
   }
 
   return (
-    <div className='rounded-lg bg-white p-6 shadow-lg'>
-      <div className='mb-6 flex items-center justify-between'>
-        <h2 className='text-xl font-semibold text-gray-900'>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '24px',
+        marginBottom: '20px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+        }}
+      >
+        <h2
+          style={{
+            fontSize: '20px',
+            fontWeight: '600',
+            color: 'white',
+            margin: 0,
+          }}
+        >
           🎯 Competitor Intelligence
         </h2>
-        <div className='flex items-center space-x-2'>
-          <div className='h-2 w-2 rounded-full bg-green-400'></div>
-          <span className='text-sm text-gray-500'>Active</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              height: '8px',
+              width: '8px',
+              borderRadius: '50%',
+              background: '#10b981',
+            }}
+          ></div>
+          <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+            Active
+          </span>
         </div>
       </div>
 
       {/* Market Intelligence Overview */}
       {marketIntelligence && (
-        <div className='mb-6 rounded-lg bg-blue-50 p-4'>
-          <h3 className='mb-3 text-lg font-medium text-blue-900'>
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            padding: '16px',
+            marginBottom: '24px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '12px',
+            }}
+          >
             📊 Market Overview
           </h3>
-          <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '16px',
+            }}
+          >
             <div>
-              <div className='text-2xl font-bold text-blue-600'>
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#3b82f6',
+                }}
+              >
                 ${(marketIntelligence.totalMarketSize / 1000000000).toFixed(1)}B
               </div>
-              <div className='text-sm text-blue-700'>Total Market Size</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Total Market Size
+              </div>
             </div>
             <div>
-              <div className='text-2xl font-bold text-green-600'>
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#10b981',
+                }}
+              >
                 {(marketIntelligence.marketGrowth * 100).toFixed(1)}%
               </div>
-              <div className='text-sm text-green-700'>Market Growth</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Market Growth
+              </div>
             </div>
             <div>
-              <div className='text-2xl font-bold text-purple-600'>
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#8b5cf6',
+                }}
+              >
                 {marketIntelligence.keyTrends.length}
               </div>
-              <div className='text-sm text-purple-700'>Key Trends</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Key Trends
+              </div>
             </div>
             <div>
-              <div className='text-2xl font-bold text-orange-600'>
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#f97316',
+                }}
+              >
                 {marketIntelligence.emergingTechnologies.length}
               </div>
-              <div className='text-sm text-orange-700'>Emerging Tech</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Emerging Tech
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* Competitor Analysis */}
-      <div className='mb-6'>
-        <h3 className='mb-3 text-lg font-medium text-gray-900'>
+      <div style={{ marginBottom: '24px' }}>
+        <h3
+          style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: 'white',
+            marginBottom: '12px',
+          }}
+        >
           🔍 Competitor Analysis
         </h3>
-        <div className='flex space-x-2'>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <input
             type='text'
             value={competitorName}
             onChange={(e) => setCompetitorName(e.target.value)}
             placeholder='Enter competitor name...'
-            className='flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+            style={{
+              flex: 1,
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '12px',
+              color: 'white',
+              fontSize: '14px',
+              outline: 'none',
+            }}
           />
           <button
             onClick={analyzeCompetitor}
             disabled={loading}
-            className='rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50'
+            style={{
+              background: loading
+                ? 'rgba(107, 114, 128, 0.5)'
+                : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)',
+            }}
           >
             {loading ? 'Analyzing...' : 'Analyze'}
           </button>
@@ -201,11 +333,20 @@ export default function CompetitorIntelligenceWidget() {
 
       {/* Error Display */}
       {error && (
-        <div className='mb-4 rounded-md border border-red-200 bg-red-50 p-3'>
-          <div className='flex'>
-            <div className='flex-shrink-0'>
+        <div
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '12px',
+            padding: '12px',
+            marginBottom: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ flexShrink: 0 }}>
               <svg
-                className='h-5 w-5 text-red-400'
+                style={{ height: '20px', width: '20px', color: '#ef4444' }}
                 viewBox='0 0 20 20'
                 fill='currentColor'
               >
@@ -216,8 +357,10 @@ export default function CompetitorIntelligenceWidget() {
                 />
               </svg>
             </div>
-            <div className='ml-3'>
-              <p className='text-sm text-red-700'>{error}</p>
+            <div style={{ marginLeft: '12px' }}>
+              <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>
+                {error}
+              </p>
             </div>
           </div>
         </div>
@@ -225,18 +368,47 @@ export default function CompetitorIntelligenceWidget() {
 
       {/* Analysis Results */}
       {analysis && (
-        <div className='space-y-4'>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '16px',
+            }}
+          >
             {/* Competitor Overview */}
-            <div className='rounded-lg bg-gray-50 p-4'>
-              <h4 className='mb-2 font-medium text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(107, 114, 128, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(107, 114, 128, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '8px',
+                }}
+              >
                 {analysis.result.name}
               </h4>
-              <div className='space-y-2'>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {analysis.result.marketShare && (
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Market Share:</span>
-                    <span className='text-sm font-medium'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                      Market Share:
+                    </span>
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: 'white' }}>
                       {analysis.result.marketShare.toFixed(1)}%
                     </span>
                   </div>
@@ -281,28 +453,58 @@ export default function CompetitorIntelligenceWidget() {
             </div>
 
             {/* Strengths & Weaknesses */}
-            <div className='space-y-3'>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <h5 className='mb-1 text-sm font-medium text-green-700'>
+                <h5
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                    marginBottom: '4px',
+                  }}
+                >
                   Strengths
                 </h5>
-                <ul className='space-y-1 text-sm text-gray-600'>
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {analysis.result.strengths.map((strength, index) => (
-                    <li key={index} className='flex items-start'>
-                      <span className='mr-2 text-green-500'>✓</span>
+                    <li
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      <span style={{ marginRight: '8px', color: '#10b981' }}>✓</span>
                       {strength}
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <h5 className='mb-1 text-sm font-medium text-red-700'>
+                <h5
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#ef4444',
+                    marginBottom: '4px',
+                  }}
+                >
                   Weaknesses
                 </h5>
-                <ul className='space-y-1 text-sm text-gray-600'>
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {analysis.result.weaknesses.map((weakness, index) => (
-                    <li key={index} className='flex items-start'>
-                      <span className='mr-2 text-red-500'>✗</span>
+                    <li
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      <span style={{ marginRight: '8px', color: '#ef4444' }}>✗</span>
                       {weakness}
                     </li>
                   ))}
@@ -313,14 +515,37 @@ export default function CompetitorIntelligenceWidget() {
 
           {/* Recommendations */}
           {analysis.recommendedActions.length > 0 && (
-            <div className='rounded-lg bg-blue-50 p-4'>
-              <h4 className='mb-2 font-medium text-blue-900'>
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '8px',
+                }}
+              >
                 💡 Recommended Actions
               </h4>
-              <ul className='space-y-1 text-sm text-blue-800'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {analysis.recommendedActions.map((action, index) => (
-                  <li key={index} className='flex items-start'>
-                    <span className='mr-2 text-blue-500'>→</span>
+                  <li
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    <span style={{ marginRight: '8px', color: '#3b82f6' }}>→</span>
                     {action}
                   </li>
                 ))}
@@ -330,14 +555,37 @@ export default function CompetitorIntelligenceWidget() {
 
           {/* Market Opportunities */}
           {analysis.marketOpportunities.length > 0 && (
-            <div className='rounded-lg bg-green-50 p-4'>
-              <h4 className='mb-2 font-medium text-green-900'>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '8px',
+                }}
+              >
                 🎯 Market Opportunities
               </h4>
-              <ul className='space-y-1 text-sm text-green-800'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {analysis.marketOpportunities.map((opportunity, index) => (
-                  <li key={index} className='flex items-start'>
-                    <span className='mr-2 text-green-500'>→</span>
+                  <li
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    <span style={{ marginRight: '8px', color: '#10b981' }}>→</span>
                     {opportunity}
                   </li>
                 ))}
