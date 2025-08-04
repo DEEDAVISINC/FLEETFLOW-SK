@@ -1686,6 +1686,316 @@ export default function SchedulingDashboard() {
               </div>
             )}
 
+            {viewMode === 'timeline' && (
+              <div>
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                  }}
+                >
+                  📅 Schedule Timeline View
+                </h2>
+                
+                {/* Timeline Container */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  {/* Timeline Header */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '20px',
+                      paddingBottom: '16px',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <div>
+                      <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600', margin: 0 }}>
+                        Daily Schedule Timeline
+                      </h3>
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', margin: '4px 0 0 0' }}>
+                        Chronological view of all scheduled activities
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>Filter by:</span>
+                      <select
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '6px',
+                          color: 'white',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                        }}
+                        onChange={(e) => {
+                          // Could implement timeline filtering here
+                        }}
+                      >
+                        <option value="all">All Activities</option>
+                        <option value="high">High Priority</option>
+                        <option value="urgent">Urgent Only</option>
+                        <option value="today">Today Only</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Timeline Content */}
+                  <div style={{ position: 'relative' }}>
+                    {/* Timeline Line */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: '20px',
+                        top: '0',
+                        bottom: '0',
+                        width: '2px',
+                        background: 'linear-gradient(to bottom, #3b82f6, #1e40af)',
+                        borderRadius: '1px',
+                      }}
+                    />
+
+                    {/* Timeline Items */}
+                    {filteredSchedules
+                      .sort((a, b) => {
+                        const dateA = new Date(`${a.startDate} ${a.startTime}`);
+                        const dateB = new Date(`${b.startDate} ${b.startTime}`);
+                        return dateA.getTime() - dateB.getTime();
+                      })
+                      .map((schedule, index) => {
+                        const statusColor = {
+                          'Scheduled': '#3b82f6',
+                          'In Progress': '#f59e0b',
+                          'Completed': '#10b981',
+                          'Cancelled': '#ef4444',
+                          'Delayed': '#f97316',
+                        }[schedule.status];
+
+                        const priorityColor = {
+                          'Low': '#6b7280',
+                          'Medium': '#f59e0b',
+                          'High': '#f97316',
+                          'Urgent': '#ef4444',
+                        }[schedule.priority];
+
+                        return (
+                          <div
+                            key={schedule.id}
+                            style={{
+                              position: 'relative',
+                              marginLeft: '50px',
+                              marginBottom: '24px',
+                              paddingLeft: '20px',
+                            }}
+                          >
+                            {/* Timeline Dot */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                left: '-35px',
+                                top: '8px',
+                                width: '12px',
+                                height: '12px',
+                                borderRadius: '50%',
+                                background: statusColor,
+                                border: '3px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: `0 0 10px ${statusColor}40`,
+                              }}
+                            />
+
+                            {/* Timeline Card */}
+                            <div
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.08)',
+                                borderRadius: '12px',
+                                padding: '16px',
+                                border: `1px solid ${statusColor}40`,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                              }}
+                              onClick={() => setSelectedSchedule(schedule)}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                                e.currentTarget.style.transform = 'translateX(4px)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                                e.currentTarget.style.transform = 'translateX(0)';
+                              }}
+                            >
+                              {/* Card Header */}
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'flex-start',
+                                  marginBottom: '12px',
+                                }}
+                              >
+                                <div>
+                                  <h4
+                                    style={{
+                                      color: 'white',
+                                      fontSize: '16px',
+                                      fontWeight: '600',
+                                      margin: '0 0 4px 0',
+                                    }}
+                                  >
+                                    {schedule.title}
+                                  </h4>
+                                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <span
+                                      style={{
+                                        background: statusColor,
+                                        color: 'white',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        fontSize: '11px',
+                                        fontWeight: '500',
+                                      }}
+                                    >
+                                      {schedule.status}
+                                    </span>
+                                    <span
+                                      style={{
+                                        background: priorityColor,
+                                        color: 'white',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        fontSize: '11px',
+                                        fontWeight: '500',
+                                      }}
+                                    >
+                                      {schedule.priority}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                  <div
+                                    style={{
+                                      color: 'white',
+                                      fontSize: '14px',
+                                      fontWeight: '600',
+                                    }}
+                                  >
+                                    {schedule.startTime} - {schedule.endTime}
+                                  </div>
+                                  <div
+                                    style={{
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      fontSize: '12px',
+                                    }}
+                                  >
+                                    {new Date(schedule.startDate).toLocaleDateString()}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Card Content */}
+                              <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                    <span style={{ fontSize: '12px' }}>🚛</span>
+                                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px' }}>
+                                      {schedule.driverName || 'Unassigned'}
+                                    </span>
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span style={{ fontSize: '12px' }}>📍</span>
+                                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                                      {schedule.origin} → {schedule.destination}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                  <div
+                                    style={{
+                                      color: schedule.fmcsaCompliant ? '#10b981' : '#ef4444',
+                                      fontSize: '12px',
+                                      fontWeight: '500',
+                                    }}
+                                  >
+                                    {schedule.fmcsaCompliant ? '✅ HOS Compliant' : '⚠️ HOS Warning'}
+                                  </div>
+                                  {schedule.estimatedHours && (
+                                    <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '11px' }}>
+                                      Est. {schedule.estimatedHours}h
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Card Footer */}
+                              {schedule.reason && (
+                                <div
+                                  style={{
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    fontSize: '12px',
+                                    fontStyle: 'italic',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                                    paddingTop: '8px',
+                                  }}
+                                >
+                                  {schedule.reason}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  {/* Timeline Summary */}
+                  <div
+                    style={{
+                      marginTop: '24px',
+                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#3b82f6', fontSize: '24px', fontWeight: 'bold' }}>
+                        {filteredSchedules.filter(s => s.status === 'Scheduled').length}
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Scheduled</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#f59e0b', fontSize: '24px', fontWeight: 'bold' }}>
+                        {filteredSchedules.filter(s => s.status === 'In Progress').length}
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>In Progress</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#10b981', fontSize: '24px', fontWeight: 'bold' }}>
+                        {filteredSchedules.filter(s => s.status === 'Completed').length}
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Completed</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ color: '#ef4444', fontSize: '24px', fontWeight: 'bold' }}>
+                        {filteredSchedules.filter(s => s.priority === 'Urgent').length}
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>Urgent</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {viewMode === 'task-priority' && (
               <div>
                 <h2

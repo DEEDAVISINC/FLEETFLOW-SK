@@ -562,7 +562,24 @@ export default function SchedulingTaskPrioritizationPanel() {
         </button>
       </div>
 
-      {prioritizedTasks && (
+      {!prioritizedTasks ? (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '12px',
+            padding: '32px',
+            textAlign: 'center',
+            color: 'rgba(255, 255, 255, 0.7)',
+          }}
+        >
+          <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📅</div>
+          <h4 style={{ marginBottom: '8px', color: 'white' }}>No Scheduling Data Available</h4>
+          <p style={{ fontSize: '0.9rem', opacity: 0.8, margin: 0 }}>
+            Click 'Refresh' to load scheduling task prioritization
+          </p>
+        </div>
+      ) : (
+        prioritizedTasks && (
         <>
           {/* Scheduling Metrics */}
           <div
@@ -589,9 +606,9 @@ export default function SchedulingTaskPrioritizationPanel() {
                 }}
               >
                 {
-                  prioritizedTasks.tasks.filter(
+                  prioritizedTasks?.tasks?.filter(
                     (t) => t.riskLevel === 'critical'
-                  ).length
+                  )?.length || 0
                 }
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Critical</div>
@@ -612,7 +629,7 @@ export default function SchedulingTaskPrioritizationPanel() {
                   color: '#ef4444',
                 }}
               >
-                {prioritizedTasks.optimizationMetrics.hosComplianceImpact}%
+                {prioritizedTasks?.optimizationMetrics?.hosComplianceImpact || 0}%
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>HOS Impact</div>
             </div>
@@ -632,7 +649,7 @@ export default function SchedulingTaskPrioritizationPanel() {
                   color: '#f59e0b',
                 }}
               >
-                {prioritizedTasks.optimizationMetrics.conflictResolutionRate}%
+                {prioritizedTasks?.optimizationMetrics?.conflictResolutionRate || 0}%
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Conflicts</div>
             </div>
@@ -652,7 +669,7 @@ export default function SchedulingTaskPrioritizationPanel() {
                   color: '#8b5cf6',
                 }}
               >
-                {prioritizedTasks.optimizationMetrics.timeToCompletion}h
+                {prioritizedTasks?.optimizationMetrics?.timeToCompletion || 0}h
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Time Est.</div>
             </div>
@@ -662,7 +679,7 @@ export default function SchedulingTaskPrioritizationPanel() {
           <div
             style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
           >
-            {prioritizedTasks.tasks.slice(0, 5).map((task, index) => (
+            {(prioritizedTasks?.tasks || []).slice(0, 5).map((task, index) => (
               <div
                 key={task.id}
                 style={{
@@ -806,7 +823,7 @@ export default function SchedulingTaskPrioritizationPanel() {
           </div>
 
           {/* AI Insights */}
-          {prioritizedTasks.recommendations.length > 0 && (
+          {(prioritizedTasks?.recommendations?.length || 0) > 0 && (
             <div
               style={{
                 background: 'rgba(139, 92, 246, 0.1)',
@@ -830,7 +847,7 @@ export default function SchedulingTaskPrioritizationPanel() {
                 </span>
               </div>
               <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                {prioritizedTasks.recommendations.slice(0, 3).map((rec, i) => (
+                {(prioritizedTasks?.recommendations || []).slice(0, 3).map((rec, i) => (
                   <div key={i} style={{ marginBottom: '4px' }}>
                     • {rec}
                   </div>
@@ -839,6 +856,7 @@ export default function SchedulingTaskPrioritizationPanel() {
             </div>
           )}
         </>
+        )
       )}
     </div>
   );
