@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import EmergencyLoadPricingWidget from '../components/EmergencyLoadPricingWidget';
 import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
+import VolumeDiscountWidget from '../components/VolumeDiscountWidget';
 
 // Quote interface
 interface Quote {
@@ -3933,6 +3934,11 @@ export default function FreightFlowQuotingEngine() {
         {/* Spot Rate Optimization Widget */}
         <div style={{ marginTop: '32px' }}>
           <SpotRateOptimizationWidget />
+        </div>
+
+        {/* Volume Discount Structure Widget */}
+        <div style={{ marginTop: '32px' }}>
+          <VolumeDiscountWidget />
         </div>
       </div>
     </div>

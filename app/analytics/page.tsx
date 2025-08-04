@@ -27,7 +27,7 @@ import GovernmentContractIntelligence from '../components/GovernmentContractInte
 import PortAuthorityIntelligence from '../components/PortAuthorityIntelligence';
 import SmartTaskPrioritizationWidget from '../components/SmartTaskPrioritizationWidget';
 
-import VolumeDiscountWidget from '../components/VolumeDiscountWidget';
+
 
 // Register Chart.js components
 ChartJS.register(
@@ -1966,10 +1966,7 @@ export default function AnalyticsPage() {
             <SmartTaskPrioritizationWidget />
           </div>
 
-          {/* Volume Discount Widget */}
-          <div style={{ marginBottom: '32px' }}>
-            <VolumeDiscountWidget />
-          </div>
+
         </div>
       </div>
     </div>
