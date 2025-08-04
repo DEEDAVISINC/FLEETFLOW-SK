@@ -1,0 +1,4767 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Ports>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Aberdeen</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Aberdeen-Hoquiam</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Adak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ADAK ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ADAK STRAIT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ADMIRALTY ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Afognak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Akhiok</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Akutan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>AKUTAN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>AKUTAN PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Alabaster</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Alakeiki</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Alameda</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>ALAMEDA PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Albany</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Alenuihaha</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Alexandria</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Alexandria Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Algiers</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Algonac</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Alitak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Alliance</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Alpena</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Alsea</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Alsen</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Ama</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>AMAK ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Ambrose</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>AMBROSE LV</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>AMCHITKA IS.</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>AMCHITKA PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Amelia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>American Samoa</State_Name>
+		<Port_Name>American Samoa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Amukta Pass</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Anacortes</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>ANACORTES PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Anchor Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ANDERSON BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Angoon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Annapolis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Annisquam</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Antioch</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Apalachicola</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Guam</State_Name>
+		<Port_Name>APRA (AGANA)</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Arabi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Aransas Pass</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Arecibo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Arkansas City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Ashland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Tennessee</State_Name>
+		<Port_Name>Ashport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Ashtabula</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Astoria</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Astoria</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>ASTORIA PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Atka</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>ATLANTIC BEACH</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Atlantic City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Atreco</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Attu Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Auau</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Augusta</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Auke Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>AVALON (CATALINA ISLAND)</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Avila</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Avon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Avon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Avondale</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>BAKER ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Bakers Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Baltimore</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>BALTIMORE PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Bandon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Bangor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Bangor/Brewer</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Bar Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>BARALOF BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Barbers Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Barbours Cut</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Barneget</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Barrow</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Bartlett Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Bath</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Baton Rouge</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Bay City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Bay City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Bay Shipbuilding</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Bayfield</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Bayfield County</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Bayonne</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Bayou Cosotte</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Bayport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Baytown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Bayway</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Beaufort</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Beaufort</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Beaumont</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Beaver Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Belfast</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Belhaven</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Belle Chasse</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Belle River Fleeting</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Bellingham</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Beluga</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Benicia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Benton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Benton Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Bering</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Berkeley</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Berkley</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Berwick</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>BESBORO ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Bethel</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Beverly</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Bienville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Big Bend/Redwing</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Big Stone</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Biloxi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Black Bayou</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Blaine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>BLIGH REEF</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Block Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>BLOODSWORTH ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Blount Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Blue Circle Ravena</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>BLUNTS REEF LIGHT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Blytheville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Bodega Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Boggy Bayou</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Bolivar Roads</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Bonnet Carre</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>BOOTHBAY HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Boothville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Bordentown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Boston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Bourne</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Brabazos</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Braintree</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Braithwaite</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Brandenburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Brayton Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Brazos Bar</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>BRAZOS LIGHT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Breakwater Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Bremerton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>BRENTON REEF</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Brevig Mission</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Brevort</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Bridesburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Bridgeport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>Bridgeport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>Bridgeport Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Bristol</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Bristol</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Bromley</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Bronx</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Brookings Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Brooklyn</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Brownsville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>Brunswick</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Buchannan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Bucksport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Buffalo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Buffington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Buras</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Burlington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Burns Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Burns Waterway Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Burnside</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Buzzards Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>BUZZARDS LT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CABRAS ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Calcite</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Calumet City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Calvert City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Camas-Eashougal</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Cambridge</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Camden</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Camden</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Cameron</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>CAPE BLANCO</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Cape Canaveral</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Cape Charles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>CAPE COD CANAL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE DECISION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Cape Disappointment</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>CAPE ELIZABETH, OREGON</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE ESPENBERG</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Cape Flattery</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>CAPE HATTERAS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>CAPE HENRY PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE HINCHINBROOK</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE LAZAREF</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE LISBURNE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>CAPE LOOKOUT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Cape May</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE OMMANEY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE SPENCER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPE UYAK</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Cape Vincent</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Cape Yakataga</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CAPTAINS BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Carlsbad</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Carpinteria </Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Carquinez Strait</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Carrabelle</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Carrollton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Carteret</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Missouri</State_Name>
+		<Port_Name>Caruthersville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>CARVERS HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Carylss</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>CASCADE LOCKS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>CASCO BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Castine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Castle Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Catano</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Catlettsburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oklahoma</State_Name>
+		<Port_Name>Catoosa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>CC BUOY LAKE CHARLES P.S.</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Cedarville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Cementon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Chalmette</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Channel View</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Chapel Roads</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Charleston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>West Virginia</State_Name>
+		<Port_Name>Charleston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Charlestown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Charlevoix</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Chatham</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CHATHAM STRAIT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>CHEATHAM ANNEX</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Cheboygan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Chelsea</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>CHERRY POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>CHERRY POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Chesapeake</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Chesapeake City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>CHESAPEAKE ENTRANCE BUOY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>CHESAPEAKE LV</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Chester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>CHESTER PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Chicago</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CHICAGOF ISLANDS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Chignik</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CHIGNIK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Chincoteague</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>CHISIK Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Chocolate Bayou</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>Christiansted</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Chrome</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Cincinnati</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Saint Lawrence Seaway - Transit</State_Name>
+		<Port_Name>CIP2</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>CLALLAM BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Claremont</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Clarks Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Clarkston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Clarksville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Clarksville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Claymont</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Clayton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Cleveland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>CLEVELAND LEDGE LT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Clifton Ridge</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Clute</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Cofman Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Cohasset</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Cold Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>COLLEGE FJORD</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Colts Neck</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Columbia </Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Columbia Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>COLUMBIA GLACIER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>COLUMBIA RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Concord</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>West Virginia</State_Name>
+		<Port_Name>Congo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Conneaut</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>CONSTABLE HOOK</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Convent</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>COOK INLET</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Coon Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Coos Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>Coral Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Cordova</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>COREA HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Coronado</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Corpus Christi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Cove Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Covington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Craig</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Crescent City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Crisfield</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Crockett</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>Cruz Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Culebra</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Curtis Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Cuttyhunk Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Dalton Cache</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Dames Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Dania</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Daranella</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Darrow</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alabama</State_Name>
+		<Port_Name>DAUPHIN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Davant</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Davisville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Daytona Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Dearborn</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Deepwater</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Deer Park</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Deering</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>DELAWARE BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Delaware City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>DELAWARE PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>DELAWARE RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Destrehan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Detour</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Detroit</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>DIAMOND SHOALS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Dickinson</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Dillingham</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>DISCOVERER BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>DIXON ENTRANCE (BC)</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Dodge Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Donaldsonville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>DORA BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>DRAKES BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Drift River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Drummond Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>DRY TORTUGAS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Minnesota</State_Name>
+		<Port_Name>Duluth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Dundalk</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Dunkirk</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Dupont</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Dutch Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Duxbury</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Eagle Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Earle</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>East Boston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>EAST CHUGACH I</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>EAST FORELAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Eastern/Rockport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Easton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Eastport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Ecorse</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Eddystone</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Edenton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Edgartown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Edgewater</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>EDIZ HOOK</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Edmonds</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>El Segundo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Ellwood</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Empire</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Encinitas</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Encino</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Erie</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Escanaba</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Essexville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>ESTERO BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ETIENNE BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Eureka</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Everett</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Everett</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>EXCURSION INLET</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Fairless Hills</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Fairport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Fairport Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Fajardo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Fall River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Falmouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>FALSE PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>FARALLON ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>FENIMORE PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Fernandina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Fernandina Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Ferndale</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Ferrysburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Fields Landing</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Fish Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Flint</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Floyd Bennett</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>FORRESTER ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>FORT BRAGG</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Fort Carrol</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Fort Lauderdale</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Fort Mifflin</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Fort Myers Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Fort Pierce</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Fort Smith</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Fourchon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>FOWEY ROCKS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Fox River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Frankfort</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>Frederiksted</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Freeport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Freeport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Freshwater City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Friars Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Friday Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>FRYING PAN LV</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>FUEL SUPPORT POINT OZOL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Galena Park</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Galveston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON BAR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON BAY ENTR BOUY 'EB'</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON BAY ENTR BOUY 'GA'</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON BAY ENTR LB 'GB'</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON LIGHT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON LIGHTERAGE AREA</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>GALVESTON LIGHTERING ZONE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Garibaldi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Gary</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Garyville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Gaviota</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Geismar</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Georgetown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>GERTRUDE COVE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Gibbstown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>GIBSON ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Girard Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>GLACIER BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Gladstone</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Gloucester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Gloucester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Gloucester City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Gold Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>GOLDEN GATE BRIDGE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Good Hope</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>GRACE HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Gramercy</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Grand Haven</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Grasselli</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>GRAVESEND BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Grays Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>GREAT LAKES</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>GREAT SITKIN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Green Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Green Cove Springs</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Green Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Greens Bayou</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Greenville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Gregory</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Gretna</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>Groton/New London</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Guam</State_Name>
+		<Port_Name>GUAM</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Guanica</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>GUARD ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Guayama</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Guayanilla</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Gulfmex No. 2 Lightering</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Gulfport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Gulfport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Gustavus</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Haines</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Tennessee</State_Name>
+		<Port_Name>Hales Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Hampshire</State_Name>
+		<Port_Name>Hampton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Hampton Roads</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Harahan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Harbor Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Harbor Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>HARRIET POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>HATTERAS INLET</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>HAWK INLET</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Hawkins Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Hearld Bank</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Helena</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Hempstead</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Henderson</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Henry</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Hercules</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>HETTA INLET</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>High Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Highlands</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Hilo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>HINCHINBROOK ENTRANCE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>HOBART BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Hoboken</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Hog Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Holland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Hollis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Homer</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Honolulu</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Hood River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Hoonah</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Hooper Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Hopewell</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Hoquiam</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Horn Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>HORN ISLAND PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Houghton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Houghton/Hancock</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Houma</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Houston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>HOUSTON PILOT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Howland Hook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>U.S. Minor Outlying Islands</State_Name>
+		<Port_Name>HOWLAND ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Hudson</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Humacao</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Humboldt</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Humboldt</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Humboldt Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Huntington Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Huron</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Hyannis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Hydaburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Hyder</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Icy Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ICY STRAITS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>ILIULIUK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Indiana Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Ingleside</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>West Virginia</State_Name>
+		<Port_Name>Institute</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Intercoastal City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Irvington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Isla de Desecheo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Isla de Mona</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Jacintoport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Jacksonville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Jamestown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Jamestown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Jefferson</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Jersey City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Jobos</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>U.S. Minor Outlying Islands</State_Name>
+		<Port_Name>JOHNSTON ATOLL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Jonesport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Juneau</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Jupiter</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KACHEMAK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kahului</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kailua</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kailua-Kona</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kake</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kaktovik</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Kalama</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kalohi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KAMISHAK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kanaga</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kaneohe</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kasaan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kauai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kaumalapau, Lanai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kaunakakai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kawaihae</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kawaihae Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KAZAKOF BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Kearny</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Kelleys Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Kemah</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kenai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Kenner</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Kenosha</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Ketchikan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Kewaunee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Key West</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Keyport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>KEYPORT PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kina Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>King Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>Kings Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Kingsbay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Kingsland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>Kingsland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Kingston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Kinnickinnic River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kiska</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KISKA HARBOUR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kivilina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Klawock</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Klickitat</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Knight Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Knik</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Knowles head Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kodiak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Kona</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Kotzebue</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KULUK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KULUKAK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KUSKOKWIM BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>KVICHAK BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>La Jolla</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>La Place</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>La Pointe</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>La Porte</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Lahaina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Lake Calumet Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Lake Charles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Lake Providence</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>LAKE SUPERIOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Lanai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Larsen Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Lemont</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>LENARD HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Leonardo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Lewes</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>Limetree Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Linden</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Little Creek</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Little Diomede</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Little Rock</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Locus Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Long Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>LONG ISLAND SOUND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Longview</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>LOOP</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>LOOP PLATFORM</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Lorain</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Los Angeles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>LOST HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Louisville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Ludington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Lummus Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Lutak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Lynchburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Lynn</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>LYNN CANAL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>LYNNHAVEN ANCHORAGE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Mackinac</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Mackinaw City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Magpetco</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Makushin</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Manchester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Manchester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Manchester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>MANCHESTER PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>MANDALAY ST. BEACH</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Manistee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Manistique</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Manitowoc</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Marblehead</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Marblehead</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>March Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Marcus Hook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Mare Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Marine City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Marinette</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>MARMOT BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Marquette</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Marrero</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Martha's Vineyard</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Martinez</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Marysville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>MASSACRE BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Massena</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Matagorda</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Matinicus</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Mattapoisett</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Maui</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Mayaguez</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Mayport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Mekoryuk</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Melbourne</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Mellville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Tennessee</State_Name>
+		<Port_Name>Memphis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Mendocina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Menominee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>MENOMINEE RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Meraux</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Metlakatla</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Miami</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>MIAMI RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Michigan City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>U.S. Minor Outlying Islands</State_Name>
+		<Port_Name>MIDWAY ISLANDS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>MILE ROCKS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Milwaukee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>MILWAUKEE RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>MISS-GULF LGHT HORN BUOY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Mission Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alabama</State_Name>
+		<Port_Name>Mobile</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alabama</State_Name>
+		<Port_Name>MOBILE BAR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Mock Harbour</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Molokai</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>MONAHEGAN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Monroe</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Monrow</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Mont Belvieu</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>MONTAUK POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Monterey</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Monterey Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Montique</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Morehead City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Morgan City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Morgan's Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Morgantown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Morrilton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Morrisville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Morro Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Moss Landing</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>MOT Concord</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Mount Vernon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Mukilteo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Munising</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Muskegon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oklahoma</State_Name>
+		<Port_Name>Muskogee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Myrtle Grove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>N.E. PROVIDENCE CHANNEL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Naknek</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Nantucket</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Narragansett Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Nashville Ave</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Natchez</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>National City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Nawiliwili</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>NAZAN BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Neah Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Nederland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Neets Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>New Bedford</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>New Castle</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>New Haven</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>New Haven Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>New Orleans</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>New Smyrna Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>New York City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Newark</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Newburgh</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Newburyport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Hampshire</State_Name>
+		<Port_Name>Newington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Newport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Newport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>NEWPORT BAY HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>NEWPORT BEACH</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Newport News</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Newport/Yaquina Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Hampshire</State_Name>
+		<Port_Name>Newton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Nikishka</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Nikiski</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Nikolski</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Ninilchik</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Nome</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Norco</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Norfolk</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>North Bend</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>North Bend</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>North Kingstown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>North Little Rock</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>North Weymouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Northeast Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Northport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Northport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Northport Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Northville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>NORTON SOUND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>NUNIVAK ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Nushagak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Oahu</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Oakbluffs</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Oakland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Ocean City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Ocean City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Oceanside</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Offshore Lightering Area</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Ogdensburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Old Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Old Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Oleum</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Olympia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>ONSLOW BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Ontonagon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Orange</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Orca</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Osceola</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Ostrica</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Oswego</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Ottawa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Ouzinkie</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>OVERFALLS LV</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Owensboro</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Oyster Creek</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Ozol</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Pacific City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Paducah</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>American Samoa</State_Name>
+		<Port_Name>Pago Pago</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Palm Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>U.S. Minor Outlying Islands</State_Name>
+		<Port_Name>PALMYRA ATOLL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Panama City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Pasadena</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Pascagoula</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Pass Christian</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Patuxent</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>PATUXENT RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>PAUL ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Paulina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Paulsboro</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>PAULSBORO PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Pearl Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Pekin</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Pelican</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Penn Manor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Penns Grove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Pennsauken</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Pensacola</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Pentwater</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Perryville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Perth Amboy</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Peru</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Petersburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Petit Mana</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Petoskey</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Petty Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Phelps Dodge</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Philadelphia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>PHILADELPHIA - DEL BAY ENT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Pilot Town</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Pine Bluff</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Piney Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Pittsburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Plaquemine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>PLEASANT ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Plymouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>POINT ARENA</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Arguello</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Point Breeze</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Point Comfort</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Point Gore</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Point Hope</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Point Judith</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Loma</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Molate</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>POINT MUGU</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Orient</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>West Virginia</State_Name>
+		<Port_Name>Point Pleasant</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Reyes</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Point Richmond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>POINT VICENTE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Poling Terminal</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Ponce</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Port Allen</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port Allen</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Port Angeles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Aransas</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Arthur</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Bailey</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Bolivar</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port Canaveral</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Port Chicago</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Clarence</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Conclusion</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Port Costa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Port Covington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Port Dolomite</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port Everglades</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port Fourchon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Port Gamble</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Graham</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Port Gypsum</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Port Hadlock (Indian Island)</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Heiden</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Port Hueneme</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Port Huron</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Port Inland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Port Inlet</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Isabel</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Port Jefferson</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port Laudania</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Lavaca</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Lions</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Lyons</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port Manatee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Mansfield</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port Moller</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Port Neches</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Port Newark</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Port of Elizabeth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port of Madison Parish</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port of New Iberia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port of Plaquemines</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port of South Louisiana</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port of West St. Mary</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Port Orford</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Port Reading</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Port Richmond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Port Royal</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Port San Luis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Port Socony</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port St. Joe</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Port Sulphur</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Port Sutton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Port Townsend</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Port Washington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Port William</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Portland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Portland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>PORTLAND PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Portsmouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Hampshire</State_Name>
+		<Port_Name>Portsmouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Portsmouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Possession</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Poughkeepsie</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Poydras</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Presque Isle</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>PRIBILOF ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>PRINCE WILLIAM SOUND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Providence</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Provincetown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Pruhdoe Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>PUALE BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>PUGET SOUND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Put-In-Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Quanset</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>QUANSET POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Quantico</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Quincy</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Racine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Rainier</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>RAT ISLANDS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Rattlesnake</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Raymond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Red Hook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Redondo Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Redwood City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Renseelaer</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Reserve</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Revere</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Richmond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Richmond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Richmond</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Ridgefield</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Ridley</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>RIVER ROUGE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Riverhead</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Riverhead Anchorage</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Rochester</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Rockland</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Rockport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Rockport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Rockport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Rockport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Rodeo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Rogers City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Rondout</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Rosedale</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Roseton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Rosey Roads</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Commonwealth Northern Mariana Islands</State_Name>
+		<Port_Name>ROTA ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Russellville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Sabine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Sabine Lighterage Area</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Sabine Lightering Zone</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>SABINE PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>SABINE RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Sacramento</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SACRAMENTO PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Sag Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Saginaw</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Saint Bernard</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Commonwealth Northern Mariana Islands</State_Name>
+		<Port_Name>Saipan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Salem</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Salem</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oklahoma</State_Name>
+		<Port_Name>Salisaw</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Salisbury</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Samoa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>San Benito Navigation District</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Carlos</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SAN CLEMENTE ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Diego</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Francisco</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SAN FRANCISCO BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SAN FRANCISCO PILOT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Joaquin River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>San Juan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>San Leon</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SAN LUIS OBISPO</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Pablo Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>San Pedro</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SAN PEDRO HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SANAK ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alabama</State_Name>
+		<Port_Name>SAND ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Sand Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Sandusky</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Sandwich</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Sandy Hook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Sandy Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Sandy Point </Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Sandy Point </Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Santa Barbara</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Santa Catalina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Santa Cruz</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Santa Monica</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SANTA ROSA ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Sarasota</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Sault Ste. Marie</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>Savannah</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Scituate</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Seabrook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SEAL BEACH</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Searsport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Seattle</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>SEATTLE PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Seguam</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SEGUAM PASS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Selby</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Seldovia</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Seward</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Sewaren</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>SEWELL POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Sheboygan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SHELIKOF STRAIT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SHEMYA ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Shore Acres</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SHUMAGIN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Minnesota</State_Name>
+		<Port_Name>Silver Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Sitka</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Siuslaw</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Skagway</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Smackover</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Somerset</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>South Amboy</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>South Bend</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>South Boston</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>South Brewer</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>South Bristol</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>South Haven</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>South Locust Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>SOUTH MANITOU</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>SOUTH SANTA CATALINA ISL</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>South Vallejo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Southport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Southwest Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>SOUTHWEST PASS LIGHTERING AREA</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>SPARROWS POINT</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SQUAW HARBOR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>ST ANDREWS BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>St Helens</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>ST JOHNS BAR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>St, Michael</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>St. Augustine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>St. Charles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>St. Clair</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>St. Croix</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>St. Elmo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>St. Gabriel</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>St. George</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>St. Ignace</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>St. James</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>St. James</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>St. James Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>St. John</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>St. Joseph</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>St. Michaels</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>St. Michaels Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>St. Paul</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>St. PAUL ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>St. Petersburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>St. Rose</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>ST. SIMONS ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virgin Islands</State_Name>
+		<Port_Name>St. Thomas</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Connecticut</State_Name>
+		<Port_Name>Stamford</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Stapleton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Star Lake</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>STATEN ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Sterlington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Stockton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Stoneport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Stoney Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Stonington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>STRAIT OF JUAN DE FUCA</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Stuart</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Sturgeon Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Suisan Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Sunny Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Sunshine</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Superior</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Surfside</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>SWEEPER COVE</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Tacoma</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>TACOMA PILOT STATION</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Minnesota</State_Name>
+		<Port_Name>Taconite Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Taft</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Tallaboa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Tampa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tanaga</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tanaga Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Tarrytown</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>TATITLEK</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>TATOOSH ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Teller</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tenakee Springs</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Terminal Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Texas City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>The Dalles</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>THIMBLE SHOALS</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Tilghman Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Tillamook Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tin City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Commonwealth Northern Mariana Islands</State_Name>
+		<Port_Name>Tinian</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Tiverton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Togiak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Toksook</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Toledo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Toledo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tolstoi</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Tompkinsville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>TRACY ARM</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>TRACY ARMFJORD</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Trading Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Pennsylvania</State_Name>
+		<Port_Name>Trainer</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Traverse City</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Tremley Point</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Trenton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Trenton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Trocadero Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Trumbell Asphalt</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Tuckerton</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Tunica</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tuxedni Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Minnesota</State_Name>
+		<Port_Name>Two Harbors</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>TWO MOON BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Georgia</State_Name>
+		<Port_Name>TYBEE BAR</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Tyee</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Uganik</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Uganik Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Umatilla</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Umnak Pass</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Umpqua</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Unalakleet</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Unalaska</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Unimak</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Valdez</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Vallejo</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Van Buren</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Vancouver</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Venice</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Ventura</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>Verdigris</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Mississippi</State_Name>
+		<Port_Name>Vicksburg</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Texas</State_Name>
+		<Port_Name>Victoria Barge Canal</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maryland</State_Name>
+		<Port_Name>Vienna</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Viequez</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Vineyard Haven</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Violet</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>VIRGINIA BEACH</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Waggaman</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oklahoma</State_Name>
+		<Port_Name>Wagner</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Wainwright</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Hawaii</State_Name>
+		<Port_Name>Waipio</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>U.S. Minor Outlying Islands</State_Name>
+		<Port_Name>WAKE ISLAND</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Wales</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Walla Walla</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Wanchese</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Wando</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Ward Cove</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Wareham</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Warwick</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Washburn</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Wisconsin</State_Name>
+		<Port_Name>Washburn County</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Washington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>District of Columbia</State_Name>
+		<Port_Name>Washington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Waterfall</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Waukegan</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oklahoma</State_Name>
+		<Port_Name>Webbers Falls</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>Weedon Island</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Weehawken</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Wellfleet</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Arkansas</State_Name>
+		<Port_Name>West Memphis</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Florida</State_Name>
+		<Port_Name>West Palm Beach</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Westminster</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Westpoint</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Westport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Westport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New Jersey</State_Name>
+		<Port_Name>Westville</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Louisiana</State_Name>
+		<Port_Name>Westwego</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Weymouth</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Indiana</State_Name>
+		<Port_Name>Whiting</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Whittier</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Kentucky</State_Name>
+		<Port_Name>Wickcliffe</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Rhode Island</State_Name>
+		<Port_Name>Wickford</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Willapa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>WILLAPA RIVER</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Willbridge</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Willow Run Airport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>North Carolina</State_Name>
+		<Port_Name>Wilmington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Delaware</State_Name>
+		<Port_Name>Wilmington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>California</State_Name>
+		<Port_Name>Wilmington</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Winslow</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Winter Harbor</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Winterport</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>South Carolina</State_Name>
+		<Port_Name>Winyah Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Maine</State_Name>
+		<Port_Name>Wiscasset</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Womens Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Illinois</State_Name>
+		<Port_Name>Wood River</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Massachusetts</State_Name>
+		<Port_Name>Woods Hole</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Wrangell</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Ohio</State_Name>
+		<Port_Name>Wyandot</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Michigan</State_Name>
+		<Port_Name>Wyandotte</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Puerto Rico</State_Name>
+		<Port_Name>Yabucoa</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>Yakutat</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Alaska</State_Name>
+		<Port_Name>YAKUTAT BAY</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Washington</State_Name>
+		<Port_Name>Yaquina</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Oregon</State_Name>
+		<Port_Name>Yaquina Bay</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>New York</State_Name>
+		<Port_Name>Yonkers</Port_Name>
+	</Port>
+	<Port>
+		<State_Name>Virginia</State_Name>
+		<Port_Name>Yorktown</Port_Name>
+	</Port>
+</Ports>

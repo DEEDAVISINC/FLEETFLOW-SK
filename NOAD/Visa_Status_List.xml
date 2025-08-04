@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<VisaStatuses>
+	<Visa_Status>
+		<Status>A-1</Status>
+		<Description>Foreign Diplomats</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>A-2</Status>
+		<Description>Foreign Diplomatic Personnel or Dependents</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>A-3</Status>
+		<Description>Other Foreign Diplomatic Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>B-1</Status>
+		<Description>Visitor for Business</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>B-2</Status>
+		<Description>Visitor for Tourism</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>B-2</Status>
+		<Description>Prospective Student or Scholar</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>BCC</Status>
+		<Description>Border Crossing Card: Mexico</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>C-1</Status>
+		<Description>Alien in Transit</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>C-2</Status>
+		<Description>Foreign Government Official in Transit</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>C-3</Status>
+		<Description>Foreign Government Official in Transit</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>D-1</Status>
+		<Description>Alien Crewman (Vessel)</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>D-2</Status>
+		<Description>Alien Crewman (Aircraft)</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>DV-1</Status>
+		<Description>Green Card Lottery</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>E-1</Status>
+		<Description>Treaty Trader</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>E-2</Status>
+		<Description>Treaty Investor</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>E-3</Status>
+		<Description>Australian Professional Specialty</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>EB-1</Status>
+		<Description>Foreign Nationals of Extraordinary Ability, Outstanding Professors/Researchers, Multinational Executives/Managers</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>EB-2</Status>
+		<Description>Workers with Advanced Degrees or Exceptional Ability in the Sciences, Arts or Business</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>EB-3</Status>
+		<Description>Skilled Workers and Professionals</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>EB-4</Status>
+		<Description>Special Immigrant Visas for Religious Workers</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>EB-5</Status>
+		<Description>Investor/Employment Creation Visas</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>F-1</Status>
+		<Description>Foreign Academic Student [when certain conditions are met]</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>F-2</Status>
+		<Description>Dependents of F-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>G-1</Status>
+		<Description>Representatives (and their dependents) of International Organizations</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>G-2</Status>
+		<Description>Representatives (and their dependents) of International Organizations</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>G-3</Status>
+		<Description>Representatives (and their dependents) of International Organizations</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>G-4</Status>
+		<Description>Representatives (and their dependents) of International Organizations</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>G-5</Status>
+		<Description>Personal Employees of G-1, G-2, G-3 or G-4 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-1B</Status>
+		<Description>Temporary Worker in a Specialty Occupation</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-1C</Status>
+		<Description>Foreign Trained Nurses</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-2A</Status>
+		<Description>Agricultural Worker</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-2B</Status>
+		<Description>Skilled or Unskilled Worker</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-3</Status>
+		<Description>Trainee</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>H-4</Status>
+		<Description>Dependents of 'H' Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>I</Status>
+		<Description>Representative of Foreign Information Media</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>J-1</Status>
+		<Description>Exchange Visitor [Student]</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>J-1</Status>
+		<Description>Exchange Visitor [Scholar, Professor or Researcher]</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>J-1</Status>
+		<Description>Exchange Visitor [Au pair]</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>J-2</Status>
+		<Description>Dependents of J-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>K-1</Status>
+		<Description>Fiance[e] Visas</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>K-3</Status>
+		<Description>Dependents of K-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>L-1</Status>
+		<Description>Intracompany Transfee</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>L-2</Status>
+		<Description>Dependents of L-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>M-1</Status>
+		<Description>Foreign Vocational Student</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>M-2</Status>
+		<Description>Dependents of M-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-1</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-2</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-3</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-4</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-5</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>NATO-6</Status>
+		<Description>NATO Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>O-1</Status>
+		<Description>Persons of Extraordinary Ability in the Sciences, Arts, Education, Business, or Athletics</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>O-2</Status>
+		<Description>Accompanying Personnel of O-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>O-3</Status>
+		<Description>Dependents of O-1 and O-2 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>P-1</Status>
+		<Description>Internationally Recognized Athletes or Entertainment Groups and Members of their Essential Support Personnel</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>P-2</Status>
+		<Description>Artist or Entertainer Under a Reciprocal Exchange Program</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>P-3</Status>
+		<Description>Artist or Entertainer in a Culturally Unique Program</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>P-4</Status>
+		<Description>Dependents of P-1, P-2, or P-3 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>Q</Status>
+		<Description>Participant in an International Cultural Exchange Program</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>R-1</Status>
+		<Description>Religious Worker with a Non-profit Organization</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>R-2</Status>
+		<Description>Dependents of R-1 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>S-5</Status>
+		<Description>Alien Assisting in Law Enforcement</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>S-6</Status>
+		<Description>Alien Assisting in Law Enforcement</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>S-7</Status>
+		<Description>Dependents of S-5 or S-6 Visa Holders</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>TC</Status>
+		<Description>Professional business worker admitted under U.S.-Canada Free Trade Act [NAFTA]</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>TN</Status>
+		<Description>Professional business worker admitted under NAFTA</Description>
+	</Visa_Status>
+	<Visa_Status>
+		<Status>VWB</Status>
+		<Description>Visa Waiver for Business</Description>
+	</Visa_Status>
+</VisaStatuses>

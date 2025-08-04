@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Crew_Type_List>
+	<Crew_Type>Able Seaman</Crew_Type>
+	<Crew_Type>Agent</Crew_Type>
+	<Crew_Type>Asst Food &amp; Beverage Manager</Crew_Type>
+	<Crew_Type>Audit Manager</Crew_Type>
+	<Crew_Type>Ballast Control Tech</Crew_Type>
+	<Crew_Type>Bar Manager</Crew_Type>
+	<Crew_Type>Bar Service</Crew_Type>
+	<Crew_Type>Barge Engineer</Crew_Type>
+	<Crew_Type>Bookkeeper</Crew_Type>
+	<Crew_Type>Bosun</Crew_Type>
+	<Crew_Type>Budget Planning Analyst or Cost Control</Crew_Type>
+	<Crew_Type>Business Development</Crew_Type>
+	<Crew_Type>CAD or CAM</Crew_Type>
+	<Crew_Type>Cadet</Crew_Type>
+	<Crew_Type>Captain</Crew_Type>
+	<Crew_Type>Cargo Technician</Crew_Type>
+	<Crew_Type>Casino Staff</Crew_Type>
+	<Crew_Type>Catering</Crew_Type>
+	<Crew_Type>Cementing</Crew_Type>
+	<Crew_Type>Chemical Engineering</Crew_Type>
+	<Crew_Type>Chief Cook</Crew_Type>
+	<Crew_Type>Chief Electrician</Crew_Type>
+	<Crew_Type>Chief Engineer</Crew_Type>
+	<Crew_Type>Chief Housekeeper</Crew_Type>
+	<Crew_Type>Chief Master</Crew_Type>
+	<Crew_Type>Chief Mate</Crew_Type>
+	<Crew_Type>Chief Officer</Crew_Type>
+	<Crew_Type>Chief Purser</Crew_Type>
+	<Crew_Type>Chief Steward</Crew_Type>
+	<Crew_Type>Civil Engineering</Crew_Type>
+	<Crew_Type>Coil Tubing</Crew_Type>
+	<Crew_Type>Communications Specialist</Crew_Type>
+	<Crew_Type>Contracts Administration</Crew_Type>
+	<Crew_Type>Cook</Crew_Type>
+	<Crew_Type>Corrosion Engineering</Crew_Type>
+	<Crew_Type>Crane Operator</Crew_Type>
+	<Crew_Type>Crew Member</Crew_Type>
+	<Crew_Type>Cruise Director</Crew_Type>
+	<Crew_Type>Cruise Staff</Crew_Type>
+	<Crew_Type>Deck Officer</Crew_Type>
+	<Crew_Type>Deckhand</Crew_Type>
+	<Crew_Type>Derrickman</Crew_Type>
+	<Crew_Type>Design Engineer</Crew_Type>
+	<Crew_Type>Directional Driller</Crew_Type>
+	<Crew_Type>Dispatcher</Crew_Type>
+	<Crew_Type>Diving</Crew_Type>
+	<Crew_Type>Doctor</Crew_Type>
+	<Crew_Type>Donkeyman</Crew_Type>
+	<Crew_Type>Drafting</Crew_Type>
+	<Crew_Type>Driller</Crew_Type>
+	<Crew_Type>Drilling Consultant</Crew_Type>
+	<Crew_Type>Drilling Engineering</Crew_Type>
+	<Crew_Type>Drilling Foreman</Crew_Type>
+	<Crew_Type>Drilling Superintendent</Crew_Type>
+	<Crew_Type>Dynamic Position Officer</Crew_Type>
+	<Crew_Type>Editor</Crew_Type>
+	<Crew_Type>Electrical Engineer</Crew_Type>
+	<Crew_Type>Electrician</Crew_Type>
+	<Crew_Type>Electronics Tech</Crew_Type>
+	<Crew_Type>Emergency Response or Paramedic</Crew_Type>
+	<Crew_Type>Engineer Cadet</Crew_Type>
+	<Crew_Type>Engineering Crew</Crew_Type>
+	<Crew_Type>Entertainment</Crew_Type>
+	<Crew_Type>Entry Rig Roustabout</Crew_Type>
+	<Crew_Type>Environmental Engineer</Crew_Type>
+	<Crew_Type>Environmental Safety and Training</Crew_Type>
+	<Crew_Type>Executive</Crew_Type>
+	<Crew_Type>Facilities Crew</Crew_Type>
+	<Crew_Type>Facilities Manager</Crew_Type>
+	<Crew_Type>Field Development</Crew_Type>
+	<Crew_Type>Field Service Tech</Crew_Type>
+	<Crew_Type>Financial Controller</Crew_Type>
+	<Crew_Type>Fire Fighting</Crew_Type>
+	<Crew_Type>First Assistant Engineer</Crew_Type>
+	<Crew_Type>First Mate</Crew_Type>
+	<Crew_Type>First Officer</Crew_Type>
+	<Crew_Type>Fishing</Crew_Type>
+	<Crew_Type>Fitter</Crew_Type>
+	<Crew_Type>Floating Systems</Crew_Type>
+	<Crew_Type>Floorhand</Crew_Type>
+	<Crew_Type>Food &amp; Beverage Manager</Crew_Type>
+	<Crew_Type>Food Service</Crew_Type>
+	<Crew_Type>Fourth Assistant Engineer</Crew_Type>
+	<Crew_Type>FPSO or FPU</Crew_Type>
+	<Crew_Type>Galleyhand</Crew_Type>
+	<Crew_Type>Gas Plant Operations</Crew_Type>
+	<Crew_Type>Geochemist</Crew_Type>
+	<Crew_Type>Geologist</Crew_Type>
+	<Crew_Type>Geophysicist</Crew_Type>
+	<Crew_Type>Geoscientist</Crew_Type>
+	<Crew_Type>Geotechnical Engineer</Crew_Type>
+	<Crew_Type>Graphics Designer</Crew_Type>
+	<Crew_Type>Greaser</Crew_Type>
+	<Crew_Type>Heavy Lift or Pipelay</Crew_Type>
+	<Crew_Type>Heavy Machinery Operator</Crew_Type>
+	<Crew_Type>Hospitality</Crew_Type>
+	<Crew_Type>Hotel Director</Crew_Type>
+	<Crew_Type>Hotel Staff</Crew_Type>
+	<Crew_Type>Housekeeping Staff</Crew_Type>
+	<Crew_Type>Human Resources</Crew_Type>
+	<Crew_Type>HVAC</Crew_Type>
+	<Crew_Type>Information Technology</Crew_Type>
+	<Crew_Type>Instructor</Crew_Type>
+	<Crew_Type>Instrument Engineer</Crew_Type>
+	<Crew_Type>Instrument Tech</Crew_Type>
+	<Crew_Type>Instrumentation Technologist</Crew_Type>
+	<Crew_Type>Insurance Adjuster</Crew_Type>
+	<Crew_Type>Inventory Control</Crew_Type>
+	<Crew_Type>Landman</Crew_Type>
+	<Crew_Type>Laundry Master</Crew_Type>
+	<Crew_Type>Lease Analyst</Crew_Type>
+	<Crew_Type>Legal</Crew_Type>
+	<Crew_Type>Lifeboatman</Crew_Type>
+	<Crew_Type>Logging</Crew_Type>
+	<Crew_Type>Machinist</Crew_Type>
+	<Crew_Type>Maintenance Roustabout</Crew_Type>
+	<Crew_Type>Maintenance Supervisor</Crew_Type>
+	<Crew_Type>Maitre'd</Crew_Type>
+	<Crew_Type>Marine Crew</Crew_Type>
+	<Crew_Type>Marine Engineering</Crew_Type>
+	<Crew_Type>Marine Surveyor</Crew_Type>
+	<Crew_Type>Marketing &amp; Revenue Manager</Crew_Type>
+	<Crew_Type>Master</Crew_Type>
+	<Crew_Type>Master First Class Pilot</Crew_Type>
+	<Crew_Type>Mate First Class Pilot</Crew_Type>
+	<Crew_Type>Materials man-woman aka Storeman-woman</Crew_Type>
+	<Crew_Type>Materials Management</Crew_Type>
+	<Crew_Type>Mechanic</Crew_Type>
+	<Crew_Type>Mechanical Engineering</Crew_Type>
+	<Crew_Type>Medic</Crew_Type>
+	<Crew_Type>Medical Staff</Crew_Type>
+	<Crew_Type>Messman</Crew_Type>
+	<Crew_Type>Modeling</Crew_Type>
+	<Crew_Type>Motorman</Crew_Type>
+	<Crew_Type>Mud Engineer</Crew_Type>
+	<Crew_Type>MWD or LWD</Crew_Type>
+	<Crew_Type>Naval Architect</Crew_Type>
+	<Crew_Type>Noise and Vibration Control</Crew_Type>
+	<Crew_Type>NOT PROVIDED</Crew_Type>
+	<Crew_Type>Offshore Crane Operator</Crew_Type>
+	<Crew_Type>Offshore Installation Manager</Crew_Type>
+	<Crew_Type>Offshore Position Surveyor</Crew_Type>
+	<Crew_Type>Oiler</Crew_Type>
+	<Crew_Type>OIM</Crew_Type>
+	<Crew_Type>Operations Manager</Crew_Type>
+	<Crew_Type>Operator</Crew_Type>
+	<Crew_Type>Ordinary Seaman</Crew_Type>
+	<Crew_Type>Other</Crew_Type>
+	<Crew_Type>Owner</Crew_Type>
+	<Crew_Type>Painter</Crew_Type>
+	<Crew_Type>Payroll</Crew_Type>
+	<Crew_Type>Petroleum Engineering</Crew_Type>
+	<Crew_Type>Petrophysicist</Crew_Type>
+	<Crew_Type>Pipe Inspection</Crew_Type>
+	<Crew_Type>Pipeline Engineering</Crew_Type>
+	<Crew_Type>Porter</Crew_Type>
+	<Crew_Type>Preventive Maintenance Engineer</Crew_Type>
+	<Crew_Type>Process Control</Crew_Type>
+	<Crew_Type>Process Engineer</Crew_Type>
+	<Crew_Type>Production Engineering</Crew_Type>
+	<Crew_Type>Production Operator</Crew_Type>
+	<Crew_Type>Production Technologist</Crew_Type>
+	<Crew_Type>Production Testing</Crew_Type>
+	<Crew_Type>Programmer</Crew_Type>
+	<Crew_Type>Project Management</Crew_Type>
+	<Crew_Type>Provision</Crew_Type>
+	<Crew_Type>Provision Master</Crew_Type>
+	<Crew_Type>Pumpman</Crew_Type>
+	<Crew_Type>Purchasing or Supply Chain</Crew_Type>
+	<Crew_Type>QA\QC Inspection</Crew_Type>
+	<Crew_Type>QMED</Crew_Type>
+	<Crew_Type>Radio Officer</Crew_Type>
+	<Crew_Type>Radio Operator</Crew_Type>
+	<Crew_Type>Reeferman</Crew_Type>
+	<Crew_Type>Refinery Operations</Crew_Type>
+	<Crew_Type>Reservoir Engineering</Crew_Type>
+	<Crew_Type>Rig Electrician</Crew_Type>
+	<Crew_Type>Rig File Clerk</Crew_Type>
+	<Crew_Type>Rig Manager</Crew_Type>
+	<Crew_Type>Rig Mechanic</Crew_Type>
+	<Crew_Type>Rig Mover</Crew_Type>
+	<Crew_Type>Rig Safety and Training Co-ordinator</Crew_Type>
+	<Crew_Type>Rig Welder</Crew_Type>
+	<Crew_Type>Rigger</Crew_Type>
+	<Crew_Type>Riser Engineering</Crew_Type>
+	<Crew_Type>Risk Management</Crew_Type>
+	<Crew_Type>Roughneck</Crew_Type>
+	<Crew_Type>Roustabout</Crew_Type>
+	<Crew_Type>ROV TechorPilot</Crew_Type>
+	<Crew_Type>Safety and Security</Crew_Type>
+	<Crew_Type>Safety Engineering</Crew_Type>
+	<Crew_Type>Safety Officer</Crew_Type>
+	<Crew_Type>Safety Training Rep</Crew_Type>
+	<Crew_Type>Sales and Marketing</Crew_Type>
+	<Crew_Type>Scaffolders</Crew_Type>
+	<Crew_Type>Second Assistant Engineer</Crew_Type>
+	<Crew_Type>Second Mate</Crew_Type>
+	<Crew_Type>Second Officer</Crew_Type>
+	<Crew_Type>Secretarial or Administrative</Crew_Type>
+	<Crew_Type>Seismic</Crew_Type>
+	<Crew_Type>Ships Engineer</Crew_Type>
+	<Crew_Type>Ships Mate</Crew_Type>
+	<Crew_Type>Shipyard</Crew_Type>
+	<Crew_Type>Slickline Operator</Crew_Type>
+	<Crew_Type>Snubbing</Crew_Type>
+	<Crew_Type>Software Development</Crew_Type>
+	<Crew_Type>Software Specialist</Crew_Type>
+	<Crew_Type>Staff Captain</Crew_Type>
+	<Crew_Type>Steward</Crew_Type>
+	<Crew_Type>Stimulation</Crew_Type>
+	<Crew_Type>Storeman</Crew_Type>
+	<Crew_Type>Structural Engineering</Crew_Type>
+	<Crew_Type>Student Summer Intern</Crew_Type>
+	<Crew_Type>Subsea Engineer</Crew_Type>
+	<Crew_Type>Subsea Engineering</Crew_Type>
+	<Crew_Type>Supernumerary</Crew_Type>
+	<Crew_Type>Tankerman</Crew_Type>
+	<Crew_Type>Technical Sales</Crew_Type>
+	<Crew_Type>Technical Writing</Crew_Type>
+	<Crew_Type>Third Assistant Engineer</Crew_Type>
+	<Crew_Type>Third Mate</Crew_Type>
+	<Crew_Type>Third Officer</Crew_Type>
+	<Crew_Type>Toolpusher</Crew_Type>
+	<Crew_Type>Tunnelman</Crew_Type>
+	<Crew_Type>Utility Person</Crew_Type>
+	<Crew_Type>Welder</Crew_Type>
+	<Crew_Type>Welding Superintendent</Crew_Type>
+	<Crew_Type>Well Control</Crew_Type>
+	<Crew_Type>Wiper</Crew_Type>
+	<Crew_Type>Wireline Operator</Crew_Type>
+	<Crew_Type>Workover or Completion</Crew_Type>
+</Crew_Type_List>

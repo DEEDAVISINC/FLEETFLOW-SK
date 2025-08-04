@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<INA_Exemptions>
+	<INA_Exemption>
+		<Code>258(b)</Code>
+		<Description>Safety/Environmental Protection (Hazmat) Exception</Description>
+	</INA_Exemption>
+	<INA_Exemption>
+		<Code>258(c)</Code>
+		<Description>Prevailing Practice Exception</Description>
+	</INA_Exemption>
+	<INA_Exemption>
+		<Code>258(d)</Code>
+		<Description>State of Alaska Exception</Description>
+	</INA_Exemption>
+	<INA_Exemption>
+		<Code>258(e)</Code>
+		<Description>Reciprocity Exception</Description>
+	</INA_Exemption>
+</INA_Exemptions>

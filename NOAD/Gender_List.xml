@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Gender_List>
+  <Gender>
+    <Gender_Desc>Male</Gender_Desc>
+  </Gender>
+  <Gender>
+    <Gender_Desc>Female</Gender_Desc>
+  </Gender>
+  <Gender>
+    <Gender_Desc>Other</Gender_Desc>
+  </Gender>
+</Gender_List>

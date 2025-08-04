@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Measure_List>
+	<Measure>
+		<Measure_Name>Bbl</Measure_Name>
+		<Measure_Desc>Barrel</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>Each</Measure_Name>
+		<Measure_Desc>Individual Items</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>Gal</Measure_Name>
+		<Measure_Desc>Gallon</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>Kg</Measure_Name>
+		<Measure_Desc>Kilograms</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>LB</Measure_Name>
+		<Measure_Desc>Pounds</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>LT</Measure_Name>
+		<Measure_Desc>Long Tons</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>MT</Measure_Name>
+		<Measure_Desc>Metric Tons</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>Residue</Measure_Name>
+		<Measure_Desc>Remaining in pipes etc.</Measure_Desc>
+	</Measure>
+	<Measure>
+		<Measure_Name>ST</Measure_Name>
+		<Measure_Desc>Short Tons</Measure_Desc>
+	</Measure>
+</Measure_List>

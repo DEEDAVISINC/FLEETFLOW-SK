@@ -1,0 +1,527 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Vessel_Types>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Bulk Liquefied Gas Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Bulk Liquid Cargo (Tank) Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Container Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Cutter/Dredger Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Deck Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Dry Cargo Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Industrial Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Integrated Tug and Barge (Barge)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>LASH/SEABEE Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Barge</VesselClassification>
+		<Description>Passenger Barge</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Bulk Carrier</VesselClassification>
+		<Description>Cement Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Bulk Carrier</VesselClassification>
+		<Description>Combination Carrier (e.g. OBO)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Bulk Carrier</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Bulk Carrier</VesselClassification>
+		<Description>Ore Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Bulk Carrier</VesselClassification>
+		<Description>Woodchips Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Fishing Vessel</VesselClassification>
+		<Description>Fish Catching Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Fishing Vessel</VesselClassification>
+		<Description>Fishing Catching/Processing Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Fishing Vessel</VesselClassification>
+		<Description>Fishing Support Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>Barge Carrier (e.g. LASH)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>Container Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>Heavy Load Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>Livestock Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>General Dry Cargo Ship</VesselClassification>
+		<Description>Pallets Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Aircraft (while navigating)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Buoy/Lighthouse Tender</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Cable laying Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Cutter/Dredger</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Drydock, Floating</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Factory Ship (other than fishing)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Firefighting Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Hospital Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Ice Breaker</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Incinerator Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Law Enforcement (Non-military) Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Living Quarters</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Oil Recovery Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Orbital Launch Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Patrol Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Permanently Moored Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Pilot Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Pipe laying</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Primitive Build</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Radio Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Repair Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Rescue/Standby Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Salvage Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Seabed Mining Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Search and Rescue Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Ship Structure</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Supply Vessel (not OSV)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Work Boat</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Work Float</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Miscellaneous Vessel</VesselClassification>
+		<Description>Work Platform</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Commercial Dive Support Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Floating Production Storage Offloading Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Floating Production System</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Floating Storage Offloading Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Lift Boat</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>MODU</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Offshore</VesselClassification>
+		<Description>Offshore Supply Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Amphibious Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Amphibious Vessel (DUKW, etc.)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Attraction Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Balloon Support  Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Charter Fishing Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Crew Boat</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Cruise Ship Launch/Tender</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Diving Vessel (Recreational)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Excursion/Tour Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Ferry</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Gaming Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Harbor Cruise Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Ocean Cruise Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Parasailing Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Party/Head Boat (other than fish</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>River Cruise Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Sailing Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Special Purpose Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Submersible</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Water Taxi</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Passenger Ship</VesselClassification>
+		<Description>Waterskiing Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Recreational</VesselClassification>
+		<Description>Motor Propelled Vessels</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Recreational</VesselClassification>
+		<Description>Sailing Vessels</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Recreational</VesselClassification>
+		<Description>Small Watercraft</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Recreational</VesselClassification>
+		<Description>Submersible</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Refrigerated Cargo Ship</VesselClassification>
+		<Description>Container Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Refrigerated Cargo Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>Cable Layer</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>Fishing</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>Military Survey Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>Oceanographic</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Research Ship</VesselClassification>
+		<Description>Seismographic</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Ro-Ro Cargo Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Ro-Ro Cargo Ship</VesselClassification>
+		<Description>Ro-Ro/Container</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Ro-Ro Cargo Ship</VesselClassification>
+		<Description>Vehicle Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>School Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>School Ship</VesselClassification>
+		<Description>Research</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>School Ship</VesselClassification>
+		<Description>Sailing School</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>School Ship</VesselClassification>
+		<Description>Training</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Tank Ship</VesselClassification>
+		<Description>Chemical Tank Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Tank Ship</VesselClassification>
+		<Description>Gas Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Tank Ship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Tank Ship</VesselClassification>
+		<Description>Petroleum Oil Tank Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Tank Ship</VesselClassification>
+		<Description>Vegetable Oil Tank Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Articulated Tug and Barge (Tug)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Emergency Assist Tow Vessel</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Harbor/Ship Assist (Tug)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Integrated Tug and Barge (Tug)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Log Bronc</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Pushing Ahead (Towboat)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Salvage Tug</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Towing Vessel</VesselClassification>
+		<Description>Towing Behind (Tug)</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Aircraft Carrier</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Amphibious Assault</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Battleship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Corvette</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Cruiser</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Destroyer</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Frigate</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>General</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Minesweeper</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Patrol Ship</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Special Operations Craft</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Submarine</Description>
+	</Vessel_Type>
+	<Vessel_Type>
+		<VesselClassification>Warship</VesselClassification>
+		<Description>Surveillance</Description>
+	</Vessel_Type>
+</Vessel_Types>

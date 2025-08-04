@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Vessel_Classifications>
+	<Classification>
+		<Description>Barge</Description>
+	</Classification>
+	<Classification>
+		<Description>Bulk Carrier</Description>
+	</Classification>
+	<Classification>
+		<Description>Fishing Vessel</Description>
+	</Classification>
+	<Classification>
+		<Description>General Dry Cargo Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Miscellaneous Vessel</Description>
+	</Classification>
+	<Classification>
+		<Description>Offshore</Description>
+	</Classification>
+	<Classification>
+		<Description>Passenger Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Recreational</Description>
+	</Classification>
+	<Classification>
+		<Description>Refrigerated Cargo Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Research Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Ro-Ro Cargo Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>School Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Tank Ship</Description>
+	</Classification>
+	<Classification>
+		<Description>Towing Vessel</Description>
+	</Classification>
+	<Classification>
+		<Description>Warship</Description>
+	</Classification>
+</Vessel_Classifications>

@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import MaritimeIntelligenceView from './components/MaritimeIntelligenceView';
 
 // Dynamically import map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./components/LiveTrackingMap'), {
@@ -61,6 +62,36 @@ interface Shipment {
   deliveryDate?: string;
   customerName?: string;
   miles?: number;
+  
+  // NOAD Maritime Intelligence Integration
+  vesselInfo?: {
+    vesselName: string;
+    vesselType: string;
+    mmsi: string;
+    imo: string;
+    arrivalPort: string;
+    departurePort: string;
+    scheduledArrival: string;
+    scheduledDeparture: string;
+    portCongestion: 'low' | 'medium' | 'high' | 'critical';
+    berthAssignment?: string;
+    shippingLine?: string;
+  };
+  
+  portIntelligence?: {
+    originPortCode: string;
+    destinationPortCode: string;
+    originPortName: string;
+    destinationPortName: string;
+    portDelays: number; // hours
+    berthAvailability: boolean;
+    cargoVolume: number; // tons
+    congestionLevel: 'low' | 'medium' | 'high' | 'critical';
+    averageWaitTime: number; // hours
+    weatherImpact: 'none' | 'minor' | 'moderate' | 'severe';
+  };
+  
+  maritimeAlerts?: string[]; // NOAD-specific alerts
 }
 
 interface FilterPreset {
@@ -89,7 +120,7 @@ interface MapFeatures {
 export default function LiveTrackingPage() {
   const router = useRouter();
   const [activeView, setActiveView] = useState<
-    'overview' | 'tracking' | 'analytics'
+    'overview' | 'tracking' | 'analytics' | 'maritime'
   >('overview');
 
   // ... existing code ...
@@ -123,6 +154,36 @@ export default function LiveTrackingPage() {
       deliveryDate: '2024-01-15',
       customerName: 'TechCorp Industries',
       miles: 2015,
+      
+      // NOAD Maritime Intelligence Data
+      vesselInfo: {
+        vesselName: 'MSC GÜLSÜN',
+        vesselType: 'Container Vessel',
+        mmsi: '636019825',
+        imo: '9811000',
+        arrivalPort: 'Port of Los Angeles',
+        departurePort: 'Port of Long Beach',
+        scheduledArrival: '2024-01-12 08:00',
+        scheduledDeparture: '2024-01-12 14:00',
+        portCongestion: 'medium',
+        berthAssignment: 'B-15',
+        shippingLine: 'MSC'
+      },
+      
+      portIntelligence: {
+        originPortCode: 'USLAX',
+        destinationPortCode: 'USCHI',
+        originPortName: 'Port of Los Angeles',
+        destinationPortName: 'Port of Chicago',
+        portDelays: 3.5,
+        berthAvailability: true,
+        cargoVolume: 45000,
+        congestionLevel: 'medium',
+        averageWaitTime: 4.2,
+        weatherImpact: 'minor'
+      },
+      
+      maritimeAlerts: ['Port congestion expected', 'Vessel arrived on schedule']
     },
     {
       id: 'SHP-002',
@@ -884,6 +945,7 @@ export default function LiveTrackingPage() {
             { id: 'overview', label: 'Overview', icon: '📊' },
             { id: 'tracking', label: 'Live Tracking', icon: '🗺️' },
             { id: 'analytics', label: 'Analytics', icon: '📈' },
+            { id: 'maritime', label: 'Maritime Intelligence', icon: '🚢' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -2406,6 +2468,11 @@ export default function LiveTrackingPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Maritime Intelligence Tab */}
+        {activeView === 'maritime' && (
+          <MaritimeIntelligenceView shipments={filteredShipments} />
         )}
       </div>
     </div>

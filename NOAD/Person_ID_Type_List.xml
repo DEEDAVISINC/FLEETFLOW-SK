@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Person_ID_Type_List>
+	<ID_Type>Birth Certificate</ID_Type>
+	<ID_Type>Certificate of Naturalization</ID_Type>
+	<ID_Type>Consular Report of Birth Abroad</ID_Type>
+	<ID_Type>EDL (BC)</ID_Type>
+	<ID_Type>EDL (MB)</ID_Type>
+	<ID_Type>EDL (MI)</ID_Type>
+	<ID_Type>EDL (NY)</ID_Type>
+	<ID_Type>EDL (ON)</ID_Type>
+	<ID_Type>EDL (QC)</ID_Type>
+	<ID_Type>EDL (VT)</ID_Type>
+	<ID_Type>EDL (WA)</ID_Type>
+	<ID_Type>FAST</ID_Type>
+	<ID_Type>Foreign Mariner Document</ID_Type>
+	<ID_Type>Global Entry</ID_Type>
+	<ID_Type>Govt Issued Picture ID(Canada)</ID_Type>
+	<ID_Type>Govt Issued Picture ID(US)</ID_Type>
+	<ID_Type>Native American</ID_Type>
+	<ID_Type>Nexus</ID_Type>
+	<ID_Type>Passport Card</ID_Type>
+	<ID_Type>Passport Number</ID_Type>
+	<ID_Type>Seafarer's Identification Document</ID_Type>
+	<ID_Type>SENTRI</ID_Type>
+	<ID_Type>TP - Refugee Travel Document</ID_Type>
+	<ID_Type>TR - Permit to Re-enter</ID_Type>
+	<ID_Type>Transportation Worker Identification Credential</ID_Type>
+	<ID_Type>Tribal Card (IC)</ID_Type>
+	<ID_Type>Tribal Card (II)</ID_Type>
+	<ID_Type>U.S. Alien Registration Card</ID_Type>
+	<ID_Type>U.S. Merchant Mariner Credential</ID_Type>
+	<ID_Type>U.S. Merchant Mariner Document</ID_Type>
+	<ID_Type>U.S. Permanent Resident Card</ID_Type>
+</Person_ID_Type_List>

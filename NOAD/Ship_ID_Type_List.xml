@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Ship_ID_Type_List>
+	<ID_Type>IMO Number</ID_Type>
+	<ID_Type>Official Number</ID_Type>
+</Ship_ID_Type_List>

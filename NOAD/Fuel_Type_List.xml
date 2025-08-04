@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Fuel_Type_List>
+	<Fuel_Type>
+		<Fuel_Type_Desc>Electric</Fuel_Type_Desc>
+	</Fuel_Type>
+	<Fuel_Type>
+		<Fuel_Type_Desc>Low Flash Point Fuel (Below 60C)</Fuel_Type_Desc>
+	</Fuel_Type>
+	<Fuel_Type>
+		<Fuel_Type_Desc>Oil</Fuel_Type_Desc>
+	</Fuel_Type>
+</Fuel_Type_List>
