@@ -132,7 +132,9 @@ export default function CompetitorIntelligenceWidget() {
             >
               Competitor Intelligence Feature Disabled
             </h3>
-            <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
               <p>
                 Enable this feature by setting
                 ENABLE_COMPETITOR_INTELLIGENCE=true in your environment
@@ -228,7 +230,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 ${(marketIntelligence.totalMarketSize / 1000000000).toFixed(1)}B
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Total Market Size
               </div>
             </div>
@@ -242,7 +246,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 {(marketIntelligence.marketGrowth * 100).toFixed(1)}%
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Market Growth
               </div>
             </div>
@@ -256,7 +262,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 {marketIntelligence.keyTrends.length}
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Key Trends
               </div>
             </div>
@@ -270,7 +278,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 {marketIntelligence.emergingTechnologies.length}
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Emerging Tech
               </div>
             </div>
@@ -358,7 +368,13 @@ export default function CompetitorIntelligenceWidget() {
               </svg>
             </div>
             <div style={{ marginLeft: '12px' }}>
-              <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: 0,
+                }}
+              >
                 {error}
               </p>
             </div>
@@ -396,7 +412,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 {analysis.result.name}
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 {analysis.result.marketShare && (
                   <div
                     style={{
@@ -405,47 +423,147 @@ export default function CompetitorIntelligenceWidget() {
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
                       Market Share:
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: '600', color: 'white' }}>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: 'white',
+                      }}
+                    >
                       {analysis.result.marketShare.toFixed(1)}%
                     </span>
                   </div>
                 )}
-                <div className='flex justify-between'>
-                  <span className='text-sm text-gray-600'>Position:</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
                   <span
-                    className={`rounded px-2 py-1 text-sm font-medium capitalize ${
-                      analysis.competitivePosition === 'leader'
-                        ? 'bg-green-100 text-green-800'
-                        : analysis.competitivePosition === 'challenger'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : analysis.competitivePosition === 'follower'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
-                    }`}
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Position:
+                  </span>
+                  <span
+                    style={{
+                      background:
+                        analysis.competitivePosition === 'leader'
+                          ? 'rgba(16, 185, 129, 0.2)'
+                          : analysis.competitivePosition === 'challenger'
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : analysis.competitivePosition === 'follower'
+                              ? 'rgba(59, 130, 246, 0.2)'
+                              : 'rgba(107, 114, 128, 0.2)',
+                      color:
+                        analysis.competitivePosition === 'leader'
+                          ? '#10b981'
+                          : analysis.competitivePosition === 'challenger'
+                            ? '#f59e0b'
+                            : analysis.competitivePosition === 'follower'
+                              ? '#3b82f6'
+                              : '#6b7280',
+                      borderRadius: '6px',
+                      padding: '4px 8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      textTransform: 'capitalize',
+                      backdropFilter: 'blur(10px)',
+                      border: `1px solid ${
+                        analysis.competitivePosition === 'leader'
+                          ? 'rgba(16, 185, 129, 0.3)'
+                          : analysis.competitivePosition === 'challenger'
+                            ? 'rgba(245, 158, 11, 0.3)'
+                            : analysis.competitivePosition === 'follower'
+                              ? 'rgba(59, 130, 246, 0.3)'
+                              : 'rgba(107, 114, 128, 0.3)'
+                      }`,
+                    }}
                   >
                     {analysis.competitivePosition}
                   </span>
                 </div>
-                <div className='flex justify-between'>
-                  <span className='text-sm text-gray-600'>Threat Level:</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
                   <span
-                    className={`rounded px-2 py-1 text-sm font-medium ${
-                      analysis.threatLevel === 'high'
-                        ? 'bg-red-100 text-red-800'
-                        : analysis.threatLevel === 'medium'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-green-100 text-green-800'
-                    }`}
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Threat Level:
+                  </span>
+                  <span
+                    style={{
+                      background:
+                        analysis.threatLevel === 'high'
+                          ? 'rgba(239, 68, 68, 0.2)'
+                          : analysis.threatLevel === 'medium'
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(16, 185, 129, 0.2)',
+                      color:
+                        analysis.threatLevel === 'high'
+                          ? '#ef4444'
+                          : analysis.threatLevel === 'medium'
+                            ? '#f59e0b'
+                            : '#10b981',
+                      borderRadius: '6px',
+                      padding: '4px 8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      textTransform: 'capitalize',
+                      backdropFilter: 'blur(10px)',
+                      border: `1px solid ${
+                        analysis.threatLevel === 'high'
+                          ? 'rgba(239, 68, 68, 0.3)'
+                          : analysis.threatLevel === 'medium'
+                            ? 'rgba(245, 158, 11, 0.3)'
+                            : 'rgba(16, 185, 129, 0.3)'
+                      }`,
+                    }}
                   >
                     {analysis.threatLevel}
                   </span>
                 </div>
-                <div className='flex justify-between'>
-                  <span className='text-sm text-gray-600'>Confidence:</span>
-                  <span className='text-sm font-medium'>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Confidence:
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                    }}
+                  >
                     {(analysis.confidence * 100).toFixed(0)}%
                   </span>
                 </div>
@@ -453,7 +571,9 @@ export default function CompetitorIntelligenceWidget() {
             </div>
 
             {/* Strengths & Weaknesses */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+            >
               <div>
                 <h5
                   style={{
@@ -465,7 +585,13 @@ export default function CompetitorIntelligenceWidget() {
                 >
                   Strengths
                 </h5>
-                <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <ul
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                  }}
+                >
                   {analysis.result.strengths.map((strength, index) => (
                     <li
                       key={index}
@@ -476,7 +602,9 @@ export default function CompetitorIntelligenceWidget() {
                         color: 'rgba(255, 255, 255, 0.8)',
                       }}
                     >
-                      <span style={{ marginRight: '8px', color: '#10b981' }}>✓</span>
+                      <span style={{ marginRight: '8px', color: '#10b981' }}>
+                        ✓
+                      </span>
                       {strength}
                     </li>
                   ))}
@@ -493,7 +621,13 @@ export default function CompetitorIntelligenceWidget() {
                 >
                   Weaknesses
                 </h5>
-                <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <ul
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                  }}
+                >
                   {analysis.result.weaknesses.map((weakness, index) => (
                     <li
                       key={index}
@@ -504,7 +638,9 @@ export default function CompetitorIntelligenceWidget() {
                         color: 'rgba(255, 255, 255, 0.8)',
                       }}
                     >
-                      <span style={{ marginRight: '8px', color: '#ef4444' }}>✗</span>
+                      <span style={{ marginRight: '8px', color: '#ef4444' }}>
+                        ✗
+                      </span>
                       {weakness}
                     </li>
                   ))}
@@ -534,7 +670,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 💡 Recommended Actions
               </h4>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              >
                 {analysis.recommendedActions.map((action, index) => (
                   <li
                     key={index}
@@ -545,7 +683,9 @@ export default function CompetitorIntelligenceWidget() {
                       color: 'rgba(255, 255, 255, 0.9)',
                     }}
                   >
-                    <span style={{ marginRight: '8px', color: '#3b82f6' }}>→</span>
+                    <span style={{ marginRight: '8px', color: '#3b82f6' }}>
+                      →
+                    </span>
                     {action}
                   </li>
                 ))}
@@ -574,7 +714,9 @@ export default function CompetitorIntelligenceWidget() {
               >
                 🎯 Market Opportunities
               </h4>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              >
                 {analysis.marketOpportunities.map((opportunity, index) => (
                   <li
                     key={index}
@@ -585,7 +727,9 @@ export default function CompetitorIntelligenceWidget() {
                       color: 'rgba(255, 255, 255, 0.9)',
                     }}
                   >
-                    <span style={{ marginRight: '8px', color: '#10b981' }}>→</span>
+                    <span style={{ marginRight: '8px', color: '#10b981' }}>
+                      →
+                    </span>
                     {opportunity}
                   </li>
                 ))}

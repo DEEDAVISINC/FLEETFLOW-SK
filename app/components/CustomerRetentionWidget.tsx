@@ -170,7 +170,13 @@ export default function CustomerRetentionWidget() {
             >
               Customer Retention Analysis
             </h3>
-            <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                margin: 0,
+              }}
+            >
               Enable ENABLE_CUSTOMER_RETENTION_ANALYSIS=true to access customer
               retention insights
             </p>
@@ -242,9 +248,10 @@ export default function CustomerRetentionWidget() {
           onClick={() => setActiveTab('overview')}
           style={{
             flex: 1,
-            background: activeTab === 'overview'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'overview'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -262,9 +269,10 @@ export default function CustomerRetentionWidget() {
           onClick={() => setActiveTab('analysis')}
           style={{
             flex: 1,
-            background: activeTab === 'analysis'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'analysis'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -282,9 +290,10 @@ export default function CustomerRetentionWidget() {
           onClick={() => setActiveTab('segments')}
           style={{
             flex: 1,
-            background: activeTab === 'segments'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'segments'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -302,31 +311,105 @@ export default function CustomerRetentionWidget() {
 
       {/* Overview Tab */}
       {activeTab === 'overview' && metrics && (
-        <div className='space-y-6'>
-          <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-            <div className='rounded-lg bg-blue-50 p-4'>
-              <div className='text-2xl font-bold text-blue-600'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#3b82f6',
+                  marginBottom: '4px',
+                }}
+              >
                 {metrics.overallRetentionRate}%
               </div>
-              <div className='text-sm text-blue-600'>Retention Rate</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Retention Rate
+              </div>
             </div>
-            <div className='rounded-lg bg-green-50 p-4'>
-              <div className='text-2xl font-bold text-green-600'>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#10b981',
+                  marginBottom: '4px',
+                }}
+              >
                 {metrics.averageCustomerLifetime} years
               </div>
-              <div className='text-sm text-green-600'>Avg. Lifetime</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Avg. Lifetime
+              </div>
             </div>
-            <div className='rounded-lg bg-red-50 p-4'>
-              <div className='text-2xl font-bold text-red-600'>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#ef4444',
+                  marginBottom: '4px',
+                }}
+              >
                 {metrics.churnRate}%
               </div>
-              <div className='text-sm text-red-600'>Churn Rate</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Churn Rate
+              </div>
             </div>
-            <div className='rounded-lg bg-orange-50 p-4'>
-              <div className='text-2xl font-bold text-orange-600'>
+            <div
+              style={{
+                background: 'rgba(249, 115, 22, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(249, 115, 22, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#f97316',
+                  marginBottom: '4px',
+                }}
+              >
                 ${(metrics.revenueAtRisk / 1000).toFixed(0)}K
               </div>
-              <div className='text-sm text-orange-600'>Revenue at Risk</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Revenue at Risk
+              </div>
             </div>
           </div>
 
