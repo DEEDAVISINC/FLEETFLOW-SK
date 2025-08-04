@@ -614,13 +614,14 @@ export default function PortAuthorityIntelligence() {
                 gap: '16px',
               }}
             >
+              {/* Total Cargo Volume - Green */}
               <div
                 style={{
-                  background: getKPIColors(activeTab).bg,
+                  background: 'rgba(34, 197, 94, 0.25)',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `2px solid ${getKPIColors(activeTab).border}`,
-                  boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
+                  border: '2px solid rgba(34, 197, 94, 0.6)',
+                  boxShadow: '0 4px 12px rgba(34, 197, 94, 0.2)',
                 }}
               >
                 <div
@@ -648,13 +649,14 @@ export default function PortAuthorityIntelligence() {
                   tons
                 </div>
               </div>
+              {/* Active Vessels - Orange */}
               <div
                 style={{
-                  background: getKPIColors(activeTab).bg,
+                  background: 'rgba(249, 115, 22, 0.25)',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `2px solid ${getKPIColors(activeTab).border}`,
-                  boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
+                  border: '2px solid rgba(249, 115, 22, 0.6)',
+                  boxShadow: '0 4px 12px rgba(249, 115, 22, 0.2)',
                 }}
               >
                 <div
@@ -680,13 +682,14 @@ export default function PortAuthorityIntelligence() {
                   }
                 </div>
               </div>
+              {/* Supply Chain Alerts - Red */}
               <div
                 style={{
-                  background: getKPIColors(activeTab).bg,
+                  background: 'rgba(239, 68, 68, 0.25)',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: `2px solid ${getKPIColors(activeTab).border}`,
-                  boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
+                  border: '2px solid rgba(239, 68, 68, 0.6)',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
                 }}
               >
                 <div
