@@ -338,7 +338,9 @@ export default function CustomerRetentionWidget() {
               >
                 {metrics.overallRetentionRate}%
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Retention Rate
               </div>
             </div>
@@ -361,7 +363,9 @@ export default function CustomerRetentionWidget() {
               >
                 {metrics.averageCustomerLifetime} years
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Avg. Lifetime
               </div>
             </div>
@@ -384,7 +388,9 @@ export default function CustomerRetentionWidget() {
               >
                 {metrics.churnRate}%
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Churn Rate
               </div>
             </div>
@@ -407,41 +413,105 @@ export default function CustomerRetentionWidget() {
               >
                 ${(metrics.revenueAtRisk / 1000).toFixed(0)}K
               </div>
-              <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <div
+                style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+              >
                 Revenue at Risk
               </div>
             </div>
           </div>
 
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            <div className='rounded-lg border border-gray-200 p-4'>
-              <h3 className='mb-3 font-semibold text-gray-900'>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '12px',
+                }}
+              >
                 Top Retention Factors
               </h3>
-              <ul className='space-y-2'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {metrics.topRetentionFactors.map((factor, index) => (
                   <li
                     key={index}
-                    className='flex items-center gap-2 text-sm text-gray-600'
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
                   >
-                    <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                    <div
+                      style={{
+                        height: '8px',
+                        width: '8px',
+                        borderRadius: '50%',
+                        background: '#10b981',
+                      }}
+                    ></div>
                     {factor}
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className='rounded-lg border border-gray-200 p-4'>
-              <h3 className='mb-3 font-semibold text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(249, 115, 22, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(249, 115, 22, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '12px',
+                }}
+              >
                 Improvement Areas
               </h3>
-              <ul className='space-y-2'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {metrics.improvementAreas.map((area, index) => (
                   <li
                     key={index}
-                    className='flex items-center gap-2 text-sm text-gray-600'
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
                   >
-                    <div className='h-2 w-2 rounded-full bg-orange-500'></div>
+                    <div
+                      style={{
+                        height: '8px',
+                        width: '8px',
+                        borderRadius: '50%',
+                        background: '#f97316',
+                      }}
+                    ></div>
                     {area}
                   </li>
                 ))}
@@ -511,31 +581,122 @@ export default function CustomerRetentionWidget() {
           )}
 
           {analysis && (
-            <div className='space-y-6'>
-              <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='text-lg font-bold text-gray-900'>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(107, 114, 128, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(107, 114, 128, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
                     {analysis.result.customerName}
                   </div>
-                  <div className='text-sm text-gray-600'>Customer</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    Customer
+                  </div>
                 </div>
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='text-lg font-bold text-gray-900'>
+                <div
+                  style={{
+                    background:
+                      analysis.retentionRisk === 'high'
+                        ? 'rgba(239, 68, 68, 0.1)'
+                        : analysis.retentionRisk === 'medium'
+                          ? 'rgba(245, 158, 11, 0.1)'
+                          : 'rgba(16, 185, 129, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: `1px solid ${
+                      analysis.retentionRisk === 'high'
+                        ? 'rgba(239, 68, 68, 0.2)'
+                        : analysis.retentionRisk === 'medium'
+                          ? 'rgba(245, 158, 11, 0.2)'
+                          : 'rgba(16, 185, 129, 0.2)'
+                    }`,
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color:
+                        analysis.retentionRisk === 'high'
+                          ? '#ef4444'
+                          : analysis.retentionRisk === 'medium'
+                            ? '#f59e0b'
+                            : '#10b981',
+                      marginBottom: '4px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     {analysis.retentionRisk.toUpperCase()}
                   </div>
-                  <div className='text-sm text-gray-600'>Risk Level</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    Risk Level
+                  </div>
                 </div>
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='text-lg font-bold text-gray-900'>
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#ef4444',
+                      marginBottom: '4px',
+                    }}
+                  >
                     {analysis.churnProbability}%
                   </div>
-                  <div className='text-sm text-gray-600'>Churn Probability</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    Churn Probability
+                  </div>
                 </div>
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='text-lg font-bold text-gray-900'>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                      marginBottom: '4px',
+                    }}
+                  >
                     ${(analysis.lifetimeValue / 1000).toFixed(0)}K
                   </div>
-                  <div className='text-sm text-gray-600'>Lifetime Value</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    Lifetime Value
+                  </div>
                 </div>
               </div>
 
