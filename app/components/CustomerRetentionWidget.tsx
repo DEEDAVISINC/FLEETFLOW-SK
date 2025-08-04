@@ -453,26 +453,61 @@ export default function CustomerRetentionWidget() {
 
       {/* Customer Analysis Tab */}
       {activeTab === 'analysis' && (
-        <div className='space-y-6'>
-          <div className='flex gap-4'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px' }}>
             <input
               type='text'
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
               placeholder='Enter Customer ID'
-              className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none'
+              style={{
+                flex: 1,
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                color: 'white',
+                fontSize: '14px',
+                outline: 'none',
+              }}
             />
             <button
               onClick={analyzeCustomer}
               disabled={loading}
-              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+              style={{
+                background: loading
+                  ? 'rgba(107, 114, 128, 0.5)'
+                  : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                backdropFilter: 'blur(10px)',
+              }}
             >
               {loading ? 'Analyzing...' : 'Analyze'}
             </button>
           </div>
 
           {error && (
-            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '14px',
+              }}
+            >
+              {error}
+            </div>
           )}
 
           {analysis && (

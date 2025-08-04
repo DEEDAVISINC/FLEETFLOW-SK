@@ -268,7 +268,13 @@ export default function SpotRateOptimizationWidget() {
             >
               Spot Rate Optimization
             </h3>
-            <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                margin: 0,
+              }}
+            >
               Enable ENABLE_SPOT_RATE_OPTIMIZATION=true to access rate
               optimization features
             </p>
@@ -340,9 +346,10 @@ export default function SpotRateOptimizationWidget() {
           onClick={() => setActiveTab('optimize')}
           style={{
             flex: 1,
-            background: activeTab === 'optimize'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'optimize'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -360,9 +367,10 @@ export default function SpotRateOptimizationWidget() {
           onClick={() => setActiveTab('market')}
           style={{
             flex: 1,
-            background: activeTab === 'market'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'market'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -380,9 +388,10 @@ export default function SpotRateOptimizationWidget() {
           onClick={() => setActiveTab('strategies')}
           style={{
             flex: 1,
-            background: activeTab === 'strategies'
-              ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-              : 'rgba(255, 255, 255, 0.05)',
+            background:
+              activeTab === 'strategies'
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(255, 255, 255, 0.05)',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
@@ -572,25 +581,63 @@ export default function SpotRateOptimizationWidget() {
             </div>
           </div>
 
-          <div className='flex gap-4'>
+          <div style={{ display: 'flex', gap: '16px' }}>
             <button
               onClick={optimizeRate}
               disabled={loading}
-              className='rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+              style={{
+                background: loading
+                  ? 'rgba(107, 114, 128, 0.5)'
+                  : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                backdropFilter: 'blur(10px)',
+              }}
             >
               {loading ? 'Optimizing...' : 'Optimize Rate'}
             </button>
             <button
               onClick={generateStrategies}
               disabled={loading}
-              className='rounded-lg bg-green-600 px-6 py-2 font-medium text-white hover:bg-green-700 disabled:opacity-50'
+              style={{
+                background: loading
+                  ? 'rgba(107, 114, 128, 0.5)'
+                  : 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                backdropFilter: 'blur(10px)',
+              }}
             >
               {loading ? 'Generating...' : 'Generate Strategies'}
             </button>
           </div>
 
           {error && (
-            <div className='rounded-lg bg-red-50 p-4 text-red-600'>{error}</div>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '14px',
+              }}
+            >
+              {error}
+            </div>
           )}
 
           {optimization && (
