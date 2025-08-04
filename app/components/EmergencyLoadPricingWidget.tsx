@@ -115,6 +115,68 @@ export default function EmergencyLoadPricingWidget() {
     temperatureControlled: false,
   });
 
+  // Pricing factors state
+  const [pricingFactors, setPricingFactors] = useState<EmergencyPricingFactors>({
+    baseRate: 2500,
+    urgencyMultiplier: 1.5,
+    timeConstraintMultiplier: 1.2,
+    availabilityMultiplier: 1.1,
+    specialRequirementsMultiplier: 1.0,
+    customerTierMultiplier: 1.0,
+    marketConditionsMultiplier: 1.0,
+    totalMultiplier: 1.98,
+    finalRate: 4950,
+    confidence: 85
+  });
+
+  // Update pricing factors based on urgency level
+  useEffect(() => {
+    const updatePricingFactors = () => {
+      let urgencyMultiplier = 1.0;
+      let timeConstraintMultiplier = 1.0;
+      
+      switch (loadRequest.urgencyLevel) {
+        case 'standard':
+          urgencyMultiplier = 1.0;
+          break;
+        case 'urgent':
+          urgencyMultiplier = 1.5;
+          break;
+        case 'critical':
+          urgencyMultiplier = 2.0;
+          break;
+        case 'emergency':
+          urgencyMultiplier = 2.5;
+          break;
+      }
+
+      // Calculate time constraint multiplier
+      if (loadRequest.timeConstraint.requiredDelivery) {
+        const hoursRemaining = (new Date(loadRequest.timeConstraint.requiredDelivery).getTime() - new Date().getTime()) / (1000 * 60 * 60);
+        if (hoursRemaining < 24) {
+          timeConstraintMultiplier = 1.5;
+        } else if (hoursRemaining < 48) {
+          timeConstraintMultiplier = 1.3;
+        } else {
+          timeConstraintMultiplier = 1.1;
+        }
+      }
+
+      const totalMultiplier = urgencyMultiplier * timeConstraintMultiplier * pricingFactors.availabilityMultiplier;
+      const finalRate = pricingFactors.baseRate * totalMultiplier;
+
+      setPricingFactors(prev => ({
+        ...prev,
+        urgencyMultiplier,
+        timeConstraintMultiplier,
+        totalMultiplier,
+        finalRate
+      }));
+    };
+
+    updatePricingFactors();
+  }, [loadRequest.urgencyLevel, loadRequest.timeConstraint.requiredDelivery]);
+
   useEffect(() => {
     if (isEnabled) {
       loadMetrics();
@@ -257,32 +319,45 @@ export default function EmergencyLoadPricingWidget() {
   }
 
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.08)',
-      backdropFilter: 'blur(20px)',
-      borderRadius: '16px',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      padding: '24px',
-      marginBottom: '30px'
-    }}>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '24px',
+        marginBottom: '30px',
+      }}
+    >
       {/* Header */}
-      <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ fontSize: '2rem' }}>🚨</div>
           <div>
-            <h2 style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              color: 'white',
-              margin: '0 0 4px 0'
-            }}>
+            <h2
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: 'white',
+                margin: '0 0 4px 0',
+              }}
+            >
               Emergency Load Pricing
             </h2>
-            <p style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.7)',
-              margin: '0'
-            }}>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                margin: '0',
+              }}
+            >
               Dynamic pricing for urgent shipments
             </p>
           </div>
@@ -290,15 +365,17 @@ export default function EmergencyLoadPricingWidget() {
       </div>
 
       {/* Tab Navigation */}
-      <div style={{
-        marginBottom: '24px',
-        display: 'flex',
-        gap: '8px',
-        background: 'rgba(255, 255, 255, 0.05)',
-        padding: '4px',
-        borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
-      }}>
+      <div
+        style={{
+          marginBottom: '24px',
+          display: 'flex',
+          gap: '8px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          padding: '4px',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
         <button
           onClick={() => setActiveTab('calculator')}
           style={{
@@ -310,11 +387,12 @@ export default function EmergencyLoadPricingWidget() {
             fontWeight: '500',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            background: activeTab === 'calculator' 
-              ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
-              : 'rgba(255, 255, 255, 0.1)',
+            background:
+              activeTab === 'calculator'
+                ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                : 'rgba(255, 255, 255, 0.1)',
             color: 'white',
-            backdropFilter: activeTab === 'calculator' ? 'blur(10px)' : 'none'
+            backdropFilter: activeTab === 'calculator' ? 'blur(10px)' : 'none',
           }}
         >
           🧮 Pricing Calculator
@@ -330,11 +408,12 @@ export default function EmergencyLoadPricingWidget() {
             fontWeight: '500',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            background: activeTab === 'metrics' 
-              ? 'linear-gradient(135deg, #10b981, #059669)' 
-              : 'rgba(255, 255, 255, 0.1)',
+            background:
+              activeTab === 'metrics'
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : 'rgba(255, 255, 255, 0.1)',
             color: 'white',
-            backdropFilter: activeTab === 'metrics' ? 'blur(10px)' : 'none'
+            backdropFilter: activeTab === 'metrics' ? 'blur(10px)' : 'none',
           }}
         >
           📊 Performance Metrics
@@ -350,11 +429,12 @@ export default function EmergencyLoadPricingWidget() {
             fontWeight: '500',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            background: activeTab === 'strategies' 
-              ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' 
-              : 'rgba(255, 255, 255, 0.1)',
+            background:
+              activeTab === 'strategies'
+                ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                : 'rgba(255, 255, 255, 0.1)',
             color: 'white',
-            backdropFilter: activeTab === 'strategies' ? 'blur(10px)' : 'none'
+            backdropFilter: activeTab === 'strategies' ? 'blur(10px)' : 'none',
           }}
         >
           🎯 Pricing Strategies
@@ -365,91 +445,147 @@ export default function EmergencyLoadPricingWidget() {
       {activeTab === 'calculator' && (
         <div style={{ display: 'grid', gap: '24px' }}>
           {/* Quick Stats */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px',
-            marginBottom: '20px'
-          }}>
-            <div style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              padding: '16px',
-              borderRadius: '12px',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fbbf24' }}>
-                ${(pricingFactors.baseRate * pricingFactors.urgencyMultiplier).toFixed(0)}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+              marginBottom: '20px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.2)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#fbbf24',
+                }}
+              >
+                $
+                {(
+                  pricingFactors.baseRate * pricingFactors.urgencyMultiplier
+                ).toFixed(0)}
               </div>
-              <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+              <div
+                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
                 Emergency Rate
               </div>
             </div>
-            <div style={{
-              background: 'rgba(239, 68, 68, 0.2)',
-              padding: '16px',
-              borderRadius: '12px',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f87171' }}>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.2)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#f87171',
+                }}
+              >
                 {pricingFactors.urgencyMultiplier.toFixed(1)}x
               </div>
-              <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+              <div
+                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
                 Urgency Multiplier
               </div>
             </div>
-            <div style={{
-              background: 'rgba(16, 185, 129, 0.2)',
-              padding: '16px',
-              borderRadius: '12px',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#34d399' }}>
-                {Math.round((new Date(loadRequest.timeConstraint.requiredDelivery).getTime() - new Date().getTime()) / (1000 * 60 * 60))}h
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#34d399',
+                }}
+              >
+                {Math.round(
+                  (new Date(
+                    loadRequest.timeConstraint.requiredDelivery
+                  ).getTime() -
+                    new Date().getTime()) /
+                    (1000 * 60 * 60)
+                )}
+                h
               </div>
-              <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+              <div
+                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+              >
                 Time Remaining
               </div>
             </div>
           </div>
 
           {/* Load Input Form */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '20px'
-          }}>
-            <h3 style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: 'white',
-              marginBottom: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: 'white',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               📦 Load Details
             </h3>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px',
+              }}
+            >
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  marginBottom: '6px'
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '6px',
+                  }}
+                >
                   Load ID
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={loadRequest.loadId}
-                  onChange={(e) => setLoadRequest({ ...loadRequest, loadId: e.target.value })}
+                  onChange={(e) =>
+                    setLoadRequest({ ...loadRequest, loadId: e.target.value })
+                  }
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -458,25 +594,32 @@ export default function EmergencyLoadPricingWidget() {
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
                     fontSize: '14px',
-                    backdropFilter: 'blur(10px)'
+                    backdropFilter: 'blur(10px)',
                   }}
-                  placeholder="e.g., EML-001"
+                  placeholder='e.g., EML-001'
                 />
               </div>
-              
+
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  marginBottom: '6px'
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '6px',
+                  }}
+                >
                   Urgency Level
                 </label>
                 <select
                   value={loadRequest.urgencyLevel}
-                  onChange={(e) => setLoadRequest({ ...loadRequest, urgencyLevel: e.target.value as any })}
+                  onChange={(e) =>
+                    setLoadRequest({
+                      ...loadRequest,
+                      urgencyLevel: e.target.value as any,
+                    })
+                  }
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -485,29 +628,56 @@ export default function EmergencyLoadPricingWidget() {
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
                     fontSize: '14px',
-                    backdropFilter: 'blur(10px)'
+                    backdropFilter: 'blur(10px)',
                   }}
                 >
-                  <option value="standard" style={{ background: '#1a1b2e', color: 'white' }}>Standard</option>
-                  <option value="urgent" style={{ background: '#1a1b2e', color: 'white' }}>Urgent</option>
-                  <option value="critical" style={{ background: '#1a1b2e', color: 'white' }}>Critical</option>
-                  <option value="emergency" style={{ background: '#1a1b2e', color: 'white' }}>Emergency</option>
+                  <option
+                    value='standard'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Standard
+                  </option>
+                  <option
+                    value='urgent'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Urgent
+                  </option>
+                  <option
+                    value='critical'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Critical
+                  </option>
+                  <option
+                    value='emergency'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Emergency
+                  </option>
                 </select>
               </div>
-              
+
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  marginBottom: '6px'
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '6px',
+                  }}
+                >
                   Equipment Type
                 </label>
                 <select
                   value={loadRequest.equipmentType}
-                  onChange={(e) => setLoadRequest({ ...loadRequest, equipmentType: e.target.value })}
+                  onChange={(e) =>
+                    setLoadRequest({
+                      ...loadRequest,
+                      equipmentType: e.target.value,
+                    })
+                  }
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -516,34 +686,63 @@ export default function EmergencyLoadPricingWidget() {
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
                     fontSize: '14px',
-                    backdropFilter: 'blur(10px)'
+                    backdropFilter: 'blur(10px)',
                   }}
                 >
-                  <option value="Dry Van" style={{ background: '#1a1b2e', color: 'white' }}>Dry Van</option>
-                  <option value="Reefer" style={{ background: '#1a1b2e', color: 'white' }}>Reefer</option>
-                  <option value="Flatbed" style={{ background: '#1a1b2e', color: 'white' }}>Flatbed</option>
-                  <option value="Step Deck" style={{ background: '#1a1b2e', color: 'white' }}>Step Deck</option>
+                  <option
+                    value='Dry Van'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Dry Van
+                  </option>
+                  <option
+                    value='Reefer'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Reefer
+                  </option>
+                  <option
+                    value='Flatbed'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Flatbed
+                  </option>
+                  <option
+                    value='Step Deck'
+                    style={{ background: '#1a1b2e', color: 'white' }}
+                  >
+                    Step Deck
+                  </option>
                 </select>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '20px',
+              }}
+            >
               <button
-                onClick={calculateEmergencyPricing}
+                onClick={calculatePricing}
+                disabled={loading}
                 style={{
-                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  background: loading 
+                    ? 'rgba(107, 114, 128, 0.5)' 
+                    : 'linear-gradient(135deg, #f59e0b, #d97706)',
                   color: 'white',
                   border: 'none',
                   padding: '12px 24px',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer',
+                  cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(10px)'
+                  backdropFilter: 'blur(10px)',
                 }}
               >
-                🚨 Calculate Emergency Pricing
+                {loading ? '⏳ Calculating...' : '🚨 Calculate Emergency Pricing'}
               </button>
             </div>
           </div>
@@ -551,33 +750,43 @@ export default function EmergencyLoadPricingWidget() {
       )}
 
       {activeTab === 'metrics' && (
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ color: 'white', marginBottom: '16px' }}>📊 Performance Metrics</h3>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '20px',
+            textAlign: 'center',
+          }}
+        >
+          <h3 style={{ color: 'white', marginBottom: '16px' }}>
+            📊 Performance Metrics
+          </h3>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-            Emergency load performance analytics and historical data will be displayed here.
+            Emergency load performance analytics and historical data will be
+            displayed here.
           </p>
         </div>
       )}
 
       {activeTab === 'strategies' && (
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ color: 'white', marginBottom: '16px' }}>🎯 Pricing Strategies</h3>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '20px',
+            textAlign: 'center',
+          }}
+        >
+          <h3 style={{ color: 'white', marginBottom: '16px' }}>
+            🎯 Pricing Strategies
+          </h3>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-            Advanced pricing strategies and market analysis tools will be available here.
+            Advanced pricing strategies and market analysis tools will be
+            available here.
           </p>
         </div>
       )}
