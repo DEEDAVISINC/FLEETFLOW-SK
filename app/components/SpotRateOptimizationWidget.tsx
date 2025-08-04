@@ -1522,21 +1522,58 @@ export default function SpotRateOptimizationWidget() {
 
       {/* Pricing Strategies Tab */}
       {activeTab === 'strategies' && (
-        <div className='space-y-6'>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
           {strategies.length > 0 ? (
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px',
+              }}
+            >
               {strategies.map((strategy, index) => (
                 <div
                   key={index}
-                  className='rounded-lg border border-gray-200 p-4'
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                  }}
                 >
-                  <div className='mb-3 flex items-center justify-between'>
-                    <h3 className='font-semibold text-gray-900'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                      }}
+                    >
                       {strategy.strategyName}
                     </h3>
                     <div
-                      className='rounded-full px-2 py-1 text-xs font-medium text-white'
                       style={{
+                        borderRadius: '20px',
+                        padding: '4px 12px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: 'white',
                         backgroundColor: getRiskColor(strategy.riskLevel),
                       }}
                     >
@@ -1544,35 +1581,97 @@ export default function SpotRateOptimizationWidget() {
                     </div>
                   </div>
 
-                  <p className='mb-3 text-sm text-gray-600'>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: '1.6',
+                      marginBottom: '16px',
+                    }}
+                  >
                     {strategy.description}
                   </p>
 
-                  <div className='mb-4 space-y-2'>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Target Rate:</span>
-                      <span className='font-medium'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Target Rate:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         ${strategy.targetRate}
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Expected Margin:</span>
-                      <span className='font-medium'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Expected Margin:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {(strategy.expectedMargin * 100).toFixed(1)}%
                       </span>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className='mb-2 text-sm font-medium text-gray-900'>
+                    <h4
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '12px',
+                      }}
+                    >
                       Market Conditions:
                     </h4>
-                    <ul className='space-y-1'>
+                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {strategy.marketConditions.map(
                         (condition, conditionIndex) => (
                           <li
                             key={conditionIndex}
-                            className='text-xs text-gray-600'
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                            }}
                           >
                             • {condition}
                           </li>
@@ -1584,7 +1683,14 @@ export default function SpotRateOptimizationWidget() {
               ))}
             </div>
           ) : (
-            <div className='text-center text-gray-500'>
+            <div
+              style={{
+                textAlign: 'center',
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: '16px',
+                padding: '40px 20px',
+              }}
+            >
               Click "Generate Strategies" to see pricing strategies for your
               load
             </div>
