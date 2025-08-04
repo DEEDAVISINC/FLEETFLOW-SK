@@ -9,6 +9,7 @@ import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard';
 import RouteSharing from '../components/RouteSharing';
 import SeasonalLoadPlanningWidget from '../components/SeasonalLoadPlanningWidget';
 import PortAuthorityAccessWidget from '../components/PortAuthorityAccessWidget';
+import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
 import { OptimizedRoute } from '../services/route-optimization';
 
 export default function RoutesPage() {

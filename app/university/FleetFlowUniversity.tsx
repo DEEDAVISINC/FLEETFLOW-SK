@@ -149,6 +149,19 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
       thumbnail: '💼',
     },
     {
+      id: 'freightflow-quoting-engine-mastery',
+      title: 'FreightFlow Quoting Engine Mastery',
+      description:
+        'Comprehensive training on the unified AI-powered quoting system. Master all four pricing engines: Emergency Load Pricing, Spot Rate Optimization, Volume Discounts, and Warehousing Services. Includes workflow management, broker integration, and professional quote generation.',
+      duration: '90 minutes',
+      difficulty: 'Intermediate',
+      category: 'Business',
+      certification: true,
+      enrolledCount: 1456,
+      rating: 4.9,
+      thumbnail: '💰',
+    },
+    {
       id: 'technology-integration-mastery',
       title: 'FleetFlow Technology Mastery',
       description:

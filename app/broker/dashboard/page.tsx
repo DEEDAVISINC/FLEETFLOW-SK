@@ -503,13 +503,15 @@ export default function BrokerDashboard() {
           const parsedQuotes = JSON.parse(unifiedQuotes);
           // Merge unified quotes with existing broker quotes
           setQuotes((prevQuotes) => {
-            const existingIds = prevQuotes.map(q => q.id);
-            const newQuotes = parsedQuotes.filter((q: any) => !existingIds.includes(q.id));
+            const existingIds = prevQuotes.map((q) => q.id);
+            const newQuotes = parsedQuotes.filter(
+              (q: any) => !existingIds.includes(q.id)
+            );
             return [...newQuotes, ...prevQuotes];
           });
           console.log('🎯 Loaded unified quotes for broker:', {
             broker: brokerSession.brokerName,
-            count: parsedQuotes.length
+            count: parsedQuotes.length,
           });
         } catch (error) {
           console.error('Error loading unified quotes:', error);
@@ -2827,18 +2829,20 @@ export default function BrokerDashboard() {
                                   Customer: {quote.customer}
                                 </p>
                               )}
-                              {quote.details?.engines && quote.details.engines.length > 0 && (
-                                <p
-                                  style={{
-                                    margin: '0',
-                                    color: 'rgba(99, 102, 241, 0.8)',
-                                    fontSize: '12px',
-                                    fontWeight: '500'
-                                  }}
-                                >
-                                  🤖 AI Engines: {quote.details.engines.join(', ')}
-                                </p>
-                              )}
+                              {quote.details?.engines &&
+                                quote.details.engines.length > 0 && (
+                                  <p
+                                    style={{
+                                      margin: '0',
+                                      color: 'rgba(99, 102, 241, 0.8)',
+                                      fontSize: '12px',
+                                      fontWeight: '500',
+                                    }}
+                                  >
+                                    🤖 AI Engines:{' '}
+                                    {quote.details.engines.join(', ')}
+                                  </p>
+                                )}
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <div
@@ -2854,18 +2858,19 @@ export default function BrokerDashboard() {
                                 style={{
                                   fontSize: '12px',
                                   color: 'rgba(255, 255, 255, 0.6)',
-                                  marginBottom: '4px'
+                                  marginBottom: '4px',
                                 }}
                               >
-                                Base: ${quote.rate?.toLocaleString() || quote.baseRate} + Fuel: $
-                                {quote.fuelSurcharge}
+                                Base: $
+                                {quote.rate?.toLocaleString() || quote.baseRate}{' '}
+                                + Fuel: ${quote.fuelSurcharge}
                               </div>
                               {quote.appliedRule && (
                                 <div
                                   style={{
                                     fontSize: '11px',
                                     color: 'rgba(34, 197, 94, 0.7)',
-                                    fontStyle: 'italic'
+                                    fontStyle: 'italic',
                                   }}
                                 >
                                   ✨ {quote.appliedRule}

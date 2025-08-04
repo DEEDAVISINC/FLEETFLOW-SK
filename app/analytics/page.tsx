@@ -27,8 +27,6 @@ import GovernmentContractIntelligence from '../components/GovernmentContractInte
 import PortAuthorityIntelligence from '../components/PortAuthorityIntelligence';
 import SmartTaskPrioritizationWidget from '../components/SmartTaskPrioritizationWidget';
 
-
-
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -1965,8 +1963,6 @@ export default function AnalyticsPage() {
           <div style={{ marginBottom: '32px' }}>
             <SmartTaskPrioritizationWidget />
           </div>
-
-
         </div>
       </div>
     </div>

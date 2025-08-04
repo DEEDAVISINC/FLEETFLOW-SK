@@ -2218,6 +2218,286 @@ System_Logs (audit trails, monitoring)
 **Course Enrollment**: Available 24/7 through FleetFlow University portal
 **Support**: university@fleetflow.com | **Certification**: certification@fleetflow.com`;
           break;
+        case 'freightflow-quoting-engine-training':
+          documentContent = `# 💰 FreightFlow Quoting Engine - Complete Training Guide
+*FleetFlow University℠ Professional Training Module*
+
+## 🎯 Course Overview
+
+### Course Details
+- **Duration**: 90 minutes
+- **Difficulty**: Intermediate  
+- **Category**: Business Operations
+- **Prerequisites**: Basic FleetFlow navigation
+- **Certification**: Professional Quoting Specialist
+- **Target Audience**: Brokers, Dispatchers, Sales Teams, Management
+
+### Learning Objectives
+By completing this course, you will be able to:
+1. Navigate the unified FreightFlow Quoting Engine with confidence
+2. Utilize all four AI-powered pricing engines effectively
+3. Generate professional quotes using the workflow system
+4. Understand quote synchronization with broker dashboards
+5. Optimize pricing strategies for maximum profitability
+6. Handle emergency loads and specialized services
+
+## 📚 Training Modules
+
+### Module 1: Introduction to FreightFlow Quoting Engine (10 min)
+**What is the FreightFlow Quoting Engine?**
+The FreightFlow Quoting Engine is a revolutionary unified pricing system that combines four intelligent pricing engines to generate the most accurate and competitive freight quotes in the industry.
+
+**Key Features:**
+- 🧠 **AI-Powered Analysis**: Four distinct pricing engines working together
+- 🔄 **Unified Workflow**: Streamlined quote generation process  
+- 📊 **Real-Time Intelligence**: Market data and competitive positioning
+- 🎯 **Customer-Specific Pricing**: Tier-based discounts and preferences
+- 🔗 **Broker Integration**: Seamless sync with broker dashboards
+
+**The Four Pricing Engines:**
+1. **🚨 Emergency Load Pricing**: Premium rates for urgent deliveries
+2. **📊 Spot Rate Optimization**: Market intelligence and competitive positioning
+3. **💰 Volume Discount Structure**: Customer loyalty and tier-based pricing
+4. **🏢 Warehousing Services**: Cross-docking and storage solutions
+
+### Module 2: Accessing the Quoting System (8 min)
+
+**Navigation Paths:**
+
+**Method 1: Direct Access**
+1. Navigate to \`http://localhost:3000/quoting\`
+2. Select the "🎯 AI Workflow" tab
+3. Begin the unified quoting process
+
+**Method 2: From Broker Dashboard**
+1. Login to Broker Portal
+2. Go to "Freight Quotes" section
+3. Click "🚀 Open Full Quoting System"
+4. Access complete unified workflow
+
+**Method 3: Quick Links**
+- Main navigation → "FreightFlow RFx℠" → "Quoting Engine"
+- Search bar → Type "quoting" → Select "Freight Quoting"
+
+### Module 3: The Unified AI Workflow (20 min)
+
+**Step 1: Customer Selection**
+The workflow begins with customer selection, which determines pricing tiers and discounts.
+
+**Customer Tiers and Discounts:**
+- 🥈 **Silver Tier**: 4% discount (Standard customers)
+- 🥇 **Gold Tier**: 6% discount (Preferred customers)  
+- 💎 **Platinum Tier**: 8% discount (Premium customers)
+
+**Available Demo Customers:**
+1. **SHIP-2024-001**: Walmart Distribution Center (Gold - 6%)
+2. **SHIP-2024-002**: Amazon Fulfillment (Platinum - 8%)
+3. **SHIP-2024-003**: Home Depot Supply Chain (Silver - 4%)
+4. **SHIP-2024-004**: Target Logistics (Gold - 6%)
+5. **SHIP-2024-005**: Costco Wholesale (Gold - 6%)
+
+**Step 2: Load Details Entry**
+Enter comprehensive load information to trigger appropriate pricing engines.
+
+**Required Information:**
+- **Origin City, State**: Pickup location
+- **Destination City, State**: Delivery location
+- **Weight (lbs)**: Total shipment weight
+- **Equipment Type**: Van, Reefer, Flatbed, Step Deck, Expedited, Warehousing
+- **Urgency Level**: Standard, Urgent, Critical, Emergency
+
+**Engine Triggers:**
+- **Emergency Pricing**: Triggered by "Critical" or "Emergency" urgency, or "Expedited" equipment
+- **Spot Rate**: Always enabled for market intelligence
+- **Volume Discount**: Automatically applied based on customer tier
+- **Warehousing**: Triggered by "Warehousing" or "Cross-Dock" equipment selection
+
+**Step 3: AI Analysis**
+Click "🧠 Analyze with AI" to run the unified calculation.
+
+**Sample Calculation:**
+\`\`\`
+Base Rate: $2,000
++ Weight Adjustment: +$250 (25,000 lbs)
++ Emergency Premium: +$562 (25% for critical urgency)
++ Market Adjustment: +$112 (5% spot rate intelligence)
+- Volume Discount: -$233 (8% Platinum customer)
+= FINAL RATE: $2,691
+\`\`\`
+
+**Step 4: Quote Generation**
+The system generates three professional quote options:
+
+- **Standard Quote**: Base calculation with all applicable engines, 3-day delivery
+- **Express Quote**: 15% premium over standard, Next-day delivery
+- **Economy Quote**: 15% discount from standard, 5-day delivery
+
+**Step 5: Quote Selection**
+Click "🎯 Select Quote" on your preferred option to create the official quote.
+
+### Module 4: Understanding the Four Pricing Engines (25 min)
+
+**🚨 Engine 1: Emergency Load Pricing**
+- **Purpose**: Premium pricing for time-sensitive and critical deliveries
+- **Activation**: "Critical"/"Emergency" urgency or "Expedited" equipment
+- **Pricing**: 25% premium above standard rate
+- **Best Practice**: Use for immediate pickup/delivery requirements
+
+**📊 Engine 2: Spot Rate Optimization**
+- **Purpose**: Market intelligence and competitive positioning
+- **Always Active**: Runs on every quote for market positioning
+- **Pricing**: 5% adjustment based on current market conditions
+- **Benefits**: Ensures competitive pricing and maximizes profit margins
+
+**💰 Engine 3: Volume Discount Structure**
+- **Purpose**: Customer loyalty and tier-based pricing rewards
+- **Tiers**: Silver (4%), Gold (6%), Platinum (8%) discounts
+- **Application**: Applied to final calculated rate automatically
+- **Considerations**: Annual volume, payment history, relationship duration
+
+**🏢 Engine 4: Warehousing Services**
+- **Purpose**: Cross-docking, storage, and distribution services
+- **Services**: Cross-docking, temporary storage, distribution, specialized handling
+- **Pricing**: $500 base fee plus duration and handling charges
+- **Triggers**: "Warehousing" or "Cross-Dock" equipment selection
+
+### Module 5: Quote Management and Broker Integration (12 min)
+
+**Quote Synchronization**
+FreightFlow's bidirectional sync ensures quotes flow seamlessly between systems:
+
+1. **Quote Creation**: Generated in unified system
+2. **Broker Detection**: System identifies current broker session
+3. **Dual Storage**: Saved to both systems simultaneously
+4. **Dashboard Update**: Appears in broker's history immediately
+5. **Real-Time Sync**: Available across all platforms instantly
+
+**Broker Dashboard Integration**
+Quotes appear with enhanced information:
+- Customer details and tier information
+- AI engine breakdown showing which engines were used
+- Applied rules and unified analysis summary
+- Professional display with base rate, fuel surcharge, and total
+
+### Module 6: Advanced Features and Best Practices (10 min)
+
+**Optimization Strategies:**
+
+**Customer Tier Management**
+- Regular quarterly performance assessments
+- Tier adjustments for high-performing customers
+- Volume analysis and relationship building
+
+**Emergency Load Optimization**
+- Maintain emergency equipment availability
+- Clear premium justification and communication
+- Accurate delivery time estimates
+
+**Market Intelligence Usage**
+- Monitor spot rate engine recommendations
+- Adjust strategies based on market data
+- Seasonal planning and lane optimization
+
+**Common Scenarios:**
+
+1. **High-Value Customer Emergency Load**
+   - Customer: Amazon Fulfillment (Platinum - 8%)
+   - Load: 25,000 lbs, Critical urgency
+   - Result: Premium pricing with loyalty discount
+
+2. **Standard Load with Warehousing**
+   - Customer: Walmart Distribution (Gold - 6%)
+   - Load: Cross-docking required
+   - Result: Competitive rate with service premium
+
+3. **Economy Load for Price-Sensitive Customer**
+   - Customer: Home Depot (Silver - 4%)
+   - Load: Standard timing, flexible delivery
+   - Result: Competitive economy pricing
+
+### Module 7: Troubleshooting and Performance Metrics (5 min)
+
+**Common Issues and Solutions:**
+
+**Quote Not Syncing to Broker Dashboard**
+- Check browser session and localStorage settings
+- Refresh dashboard by navigating away and back
+- Clear browser cache and reload
+
+**Pricing Engines Not Triggering**
+- Verify all required fields are complete
+- Confirm urgency and equipment selections
+- Check customer selection for volume discounts
+
+**Performance Metrics:**
+- **Quote Acceptance Rate**: Target 85%+
+- **Customer Satisfaction**: Target 4.5/5.0
+- **Profit Margin Optimization**: Target 15%+ improvement
+- **Quote Generation Speed**: Target <60 seconds
+
+## 🏆 Certification Assessment
+
+**Assessment Structure:**
+- **Multiple Choice Questions**: 25 questions (80% passing score)
+- **Practical Scenarios**: 5 real-world quote scenarios
+- **Best Practices**: 10 optimization strategy questions
+
+**Sample Questions:**
+
+**Q1**: Which combination triggers all four pricing engines?
+**Answer**: Emergency urgency, Warehousing equipment, Platinum customer
+
+**Q2**: A Platinum customer (8% discount) has a rate of $2,500. Final discounted rate?
+**Answer**: $2,300 ($2,500 - $200 discount)
+
+**Q3**: Where do unified quotes appear after selection?
+**Answer**: Both quoting system and broker dashboard
+
+## 📞 Support and Resources
+
+**Training Support:**
+- **Email**: university@fleetflow.com
+- **Live Chat**: Available during training sessions
+- **Phone**: 1-800-FLEETFLOW (8 AM - 6 PM EST)
+
+**Quick Reference Materials:**
+- Cheat Sheet: One-page workflow summary
+- Engine Reference: Pricing engine triggers and logic
+- Customer Tier Guide: Discount rates and qualifications
+- Troubleshooting Guide: Common issues and solutions
+
+**Additional Resources:**
+- Video Tutorials: Step-by-step workflow demonstrations
+- Best Practices Library: Industry success stories
+- API Documentation: Technical integration guides
+- System Updates: Regular feature announcements
+
+## 🎓 Professional Certification
+
+**Professional Quoting Specialist Certification**
+Upon successful completion:
+- Digital Certificate with professional credentials
+- FleetFlow University Badge for professional profiles
+- Access to advanced quoting strategies
+- Ongoing success metrics and improvement recommendations
+
+**Advanced Learning Paths:**
+- Advanced Pricing Strategies
+- Customer Relationship Management
+- Financial Analysis and Profit Optimization
+- Technology Integration and API Usage
+
+---
+
+*This training guide is part of FleetFlow University's comprehensive professional development program. Access the interactive training modules at \`/university\` for hands-on learning and certification.*
+
+**Training Module**: FreightFlow Quoting Engine Mastery
+**Version**: 1.0
+**Last Updated**: ${new Date().toLocaleDateString()}
+**Certification Valid**: 24 months with annual refresher
+**Enrollment**: Available 24/7 through FleetFlow University portal
+**Support**: university@fleetflow.com`;
+          break;
         default:
           documentContent = `# 📄 Document Not Found
 The requested document "${params.slug}" could not be found.
@@ -2230,6 +2510,7 @@ The requested document "${params.slug}" could not be found.
 - **DOT Compliance Guide** - Complete regulatory compliance procedures
 - **Implementation Guide** - Rapid deployment and setup procedures
 - **Training Checklists** - Certification requirements and progress tracking
+- **FreightFlow Quoting Engine Training** - Complete AI-powered quoting system guide
 - **Marketing Strategy** - Customer acquisition and growth strategy
 - **Quick Reference Cards** - Daily workflow checklists and guides
 - **Executive Summary** - Business overview and investment opportunity
@@ -2257,6 +2538,7 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
       'compliance-guide': '⚖️ DOT Compliance Guide',
       'implementation-guide': '� Implementation Guide',
       'marketing-strategy': '📈 Marketing Strategy',
+      'freightflow-quoting-engine-training': '💰 FreightFlow Quoting Engine Training',
     };
     return titles[slug] || 'Document';
   };
