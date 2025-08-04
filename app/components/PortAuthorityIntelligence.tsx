@@ -124,11 +124,11 @@ export default function PortAuthorityIntelligence() {
       onClick={onClick}
       style={{
         background: active
-          ? 'rgba(255, 255, 255, 0.25)'
-          : 'rgba(255, 255, 255, 0.1)',
+          ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.4), rgba(20, 184, 166, 0.4))'
+          : 'rgba(14, 165, 233, 0.15)',
         border: active
-          ? '2px solid rgba(255, 255, 255, 0.4)'
-          : '1px solid rgba(255, 255, 255, 0.2)',
+          ? '2px solid rgba(14, 165, 233, 0.6)'
+          : '1px solid rgba(14, 165, 233, 0.3)',
         color: 'white',
         padding: '12px 18px',
         borderRadius: '12px',
@@ -139,6 +139,21 @@ export default function PortAuthorityIntelligence() {
         alignItems: 'center',
         gap: '8px',
         fontSize: '14px',
+        boxShadow: active 
+          ? '0 4px 16px rgba(14, 165, 233, 0.3)' 
+          : '0 2px 8px rgba(14, 165, 233, 0.1)',
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'rgba(14, 165, 233, 0.25)';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'rgba(14, 165, 233, 0.15)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }
       }}
     >
       <span style={{ fontSize: '16px' }}>{icon}</span>
@@ -197,7 +212,8 @@ export default function PortAuthorityIntelligence() {
     return (
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(20, 184, 166, 0.15), rgba(59, 130, 246, 0.1))',
+          background:
+            'linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(20, 184, 166, 0.15), rgba(59, 130, 246, 0.1))',
           backdropFilter: 'blur(20px)',
           borderRadius: '16px',
           padding: '40px',
@@ -227,7 +243,8 @@ export default function PortAuthorityIntelligence() {
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(20, 184, 166, 0.15), rgba(59, 130, 246, 0.1))',
+        background:
+          'linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(20, 184, 166, 0.15), rgba(59, 130, 246, 0.1))',
         backdropFilter: 'blur(20px)',
         borderRadius: '16px',
         padding: '32px',
@@ -281,10 +298,10 @@ export default function PortAuthorityIntelligence() {
         </div>
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
+            background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
             padding: '8px 16px',
             borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(14, 165, 233, 0.4)',
           }}
         >
           <span
@@ -369,10 +386,10 @@ export default function PortAuthorityIntelligence() {
       {/* Tab Content */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.1)',
+          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
           borderRadius: '12px',
           padding: '24px',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
+          border: '1px solid rgba(14, 165, 233, 0.2)',
         }}
       >
         {/* Overview Tab */}
@@ -412,10 +429,10 @@ export default function PortAuthorityIntelligence() {
                   <div
                     key={port.port_code}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                       padding: '16px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(14, 165, 233, 0.4)',
                     }}
                   >
                     <div
@@ -485,10 +502,11 @@ export default function PortAuthorityIntelligence() {
             >
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(14, 165, 233, 0.4)',
+                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.15)',
                 }}
               >
                 <div
@@ -518,10 +536,11 @@ export default function PortAuthorityIntelligence() {
               </div>
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(14, 165, 233, 0.4)',
+                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.15)',
                 }}
               >
                 <div
@@ -549,10 +568,11 @@ export default function PortAuthorityIntelligence() {
               </div>
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                   padding: '16px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(14, 165, 233, 0.4)',
+                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.15)',
                 }}
               >
                 <div
@@ -602,10 +622,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={port.port_code}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '20px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div
@@ -714,10 +734,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={`${cargo.port_code}-${cargo.commodity}-${index}`}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '16px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div
@@ -838,10 +858,10 @@ export default function PortAuthorityIntelligence() {
                   <div
                     key={`${vessel.vessel_name}-${index}`}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                       padding: '20px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(14, 165, 233, 0.4)',
                     }}
                   >
                     <div
@@ -987,10 +1007,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={`${rate.route.origin_port}-${rate.route.destination_port}-${index}`}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '20px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div style={{ marginBottom: '16px' }}>
@@ -1093,10 +1113,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={port.port_code}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '20px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div
@@ -1210,10 +1230,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={index}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '20px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div
@@ -1312,10 +1332,10 @@ export default function PortAuthorityIntelligence() {
                 <div
                   key={index}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
                     padding: '20px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                   }}
                 >
                   <div
