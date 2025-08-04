@@ -612,9 +612,24 @@ export default function SpotRateOptimizationWidget() {
                     outline: 'none',
                   }}
                 >
-                  <option value='standard' style={{ background: '#1f2937', color: 'white' }}>Standard</option>
-                  <option value='expedited' style={{ background: '#1f2937', color: 'white' }}>Expedited</option>
-                  <option value='rush' style={{ background: '#1f2937', color: 'white' }}>Rush</option>
+                  <option
+                    value='standard'
+                    style={{ background: '#1f2937', color: 'white' }}
+                  >
+                    Standard
+                  </option>
+                  <option
+                    value='expedited'
+                    style={{ background: '#1f2937', color: 'white' }}
+                  >
+                    Expedited
+                  </option>
+                  <option
+                    value='rush'
+                    style={{ background: '#1f2937', color: 'white' }}
+                  >
+                    Rush
+                  </option>
                 </select>
               </div>
             </div>
@@ -639,9 +654,23 @@ export default function SpotRateOptimizationWidget() {
               >
                 Market Conditions
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Fuel Price ($/gal)
                   </label>
                   <input
@@ -654,11 +683,29 @@ export default function SpotRateOptimizationWidget() {
                         currentFuelPrice: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Capacity Utilization
                   </label>
                   <input
@@ -673,11 +720,29 @@ export default function SpotRateOptimizationWidget() {
                         capacityUtilization: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Seasonal Demand
                   </label>
                   <input
@@ -690,11 +755,29 @@ export default function SpotRateOptimizationWidget() {
                         seasonalDemand: Number(e.target.value),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                   />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Competitor Rates
                   </label>
                   <input
@@ -709,7 +792,17 @@ export default function SpotRateOptimizationWidget() {
                           .filter((x) => !isNaN(x)),
                       })
                     }
-                    className='mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none'
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
                     placeholder='2800, 2900, 2850'
                   />
                 </div>
@@ -777,83 +870,291 @@ export default function SpotRateOptimizationWidget() {
           )}
 
           {optimization && (
-            <div className='space-y-6'>
-              <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-                <div className='rounded-lg bg-blue-50 p-4'>
-                  <div className='text-2xl font-bold text-blue-600'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                      marginBottom: '4px',
+                    }}
+                  >
                     ${optimization.recommendedRate}
                   </div>
-                  <div className='text-sm text-blue-600'>Recommended Rate</div>
-                </div>
-                <div className='rounded-lg bg-gray-50 p-4'>
                   <div
-                    className='text-lg font-bold'
                     style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Recommended Rate
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
                       color: getPositionColor(optimization.marketPosition),
+                      marginBottom: '4px',
                     }}
                   >
                     {optimization.marketPosition.toUpperCase()}
                   </div>
-                  <div className='text-sm text-gray-600'>Market Position</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Market Position
+                  </div>
                 </div>
-                <div className='rounded-lg bg-green-50 p-4'>
-                  <div className='text-2xl font-bold text-green-600'>
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#22c55e',
+                      marginBottom: '4px',
+                    }}
+                  >
                     {optimization.confidenceLevel}%
                   </div>
-                  <div className='text-sm text-green-600'>Confidence</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Confidence
+                  </div>
                 </div>
-                <div className='rounded-lg bg-orange-50 p-4'>
-                  <div className='text-lg font-bold text-orange-600'>
+                <div
+                  style={{
+                    background: 'rgba(249, 115, 22, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(249, 115, 22, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#f97316',
+                      marginBottom: '4px',
+                    }}
+                  >
                     ${optimization.rateRange.min} - $
                     {optimization.rateRange.max}
                   </div>
-                  <div className='text-sm text-orange-600'>Rate Range</div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  >
+                    Rate Range
+                  </div>
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 font-semibold text-gray-900'>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
                     Pricing Factors
                   </h3>
-                  <div className='space-y-2'>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Fuel Cost:</span>
-                      <span className='font-medium'>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Fuel Cost:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         ${optimization.pricingFactors.fuelCost.toFixed(0)}
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Capacity Pressure:</span>
-                      <span className='font-medium'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Capacity Pressure:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {(
                           optimization.pricingFactors.capacityPressure * 100
                         ).toFixed(0)}
                         %
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
                         Seasonal Adjustment:
                       </span>
-                      <span className='font-medium'>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {(
                           optimization.pricingFactors.seasonalAdjustment * 100
                         ).toFixed(0)}
                         %
                       </span>
                     </div>
-                    <div className='flex justify-between text-sm'>
-                      <span className='text-gray-600'>Urgency Multiplier:</span>
-                      <span className='font-medium'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Urgency Multiplier:
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {optimization.pricingFactors.urgencyMultiplier}x
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 font-semibold text-gray-900'>
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
                     Risk Assessment
                   </h3>
                   <div className='space-y-2'>
