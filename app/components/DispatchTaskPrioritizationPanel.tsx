@@ -257,8 +257,11 @@ export default function DispatchTaskPrioritizationPanel() {
         },
       };
 
-      console.log('🎯 Starting task prioritization request...', prioritizationRequest);
-      
+      console.log(
+        '🎯 Starting task prioritization request...',
+        prioritizationRequest
+      );
+
       const prioritizeResponse = await fetch(
         '/api/analytics/task-prioritization',
         {
@@ -272,11 +275,13 @@ export default function DispatchTaskPrioritizationPanel() {
       );
 
       console.log('🎯 API Response status:', prioritizeResponse.status);
-      
+
       if (!prioritizeResponse.ok) {
         const errorText = await prioritizeResponse.text();
         console.error('🎯 API Error:', errorText);
-        throw new Error(`API request failed: ${prioritizeResponse.status} - ${errorText}`);
+        throw new Error(
+          `API request failed: ${prioritizeResponse.status} - ${errorText}`
+        );
       }
 
       const prioritizeData = await prioritizeResponse.json();
@@ -312,7 +317,9 @@ export default function DispatchTaskPrioritizationPanel() {
       }
     } catch (error) {
       console.error('🎯 Error loading dispatch tasks:', error);
-      setError(`Failed to load dispatch task prioritization: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setError(
+        `Failed to load dispatch task prioritization: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     } finally {
       setLoading(false);
     }
@@ -512,7 +519,24 @@ export default function DispatchTaskPrioritizationPanel() {
         </button>
       </div>
 
-      {prioritizedTasks && (
+      {!prioritizedTasks ? (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '12px',
+            padding: '32px',
+            textAlign: 'center',
+            color: 'rgba(255, 255, 255, 0.7)',
+          }}
+        >
+          <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📊</div>
+          <h4 style={{ marginBottom: '8px', color: 'white' }}>No Task Data Available</h4>
+          <p style={{ fontSize: '0.9rem', opacity: 0.8, margin: 0 }}>
+            Click 'Refresh' to load dispatch task prioritization
+          </p>
+        </div>
+      ) : (
+        prioritizedTasks && (
         <>
           {/* Dispatch Metrics */}
           <div
@@ -539,9 +563,9 @@ export default function DispatchTaskPrioritizationPanel() {
                 }}
               >
                 {
-                  prioritizedTasks.tasks.filter(
+                  prioritizedTasks?.tasks?.filter(
                     (t) => t.riskLevel === 'critical'
-                  ).length
+                  )?.length || 0
                 }
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Critical</div>
@@ -564,7 +588,7 @@ export default function DispatchTaskPrioritizationPanel() {
               >
                 $
                 {(
-                  prioritizedTasks.optimizationMetrics.totalRevenue / 1000
+                  (prioritizedTasks?.optimizationMetrics?.totalRevenue || 0) / 1000
                 ).toFixed(0)}
                 K
               </div>
@@ -588,7 +612,7 @@ export default function DispatchTaskPrioritizationPanel() {
                   color: '#3b82f6',
                 }}
               >
-                {prioritizedTasks.optimizationMetrics.averageUrgency}%
+                {prioritizedTasks?.optimizationMetrics?.averageUrgency || 0}%
               </div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Urgency</div>
             </div>
@@ -609,8 +633,8 @@ export default function DispatchTaskPrioritizationPanel() {
                 }}
               >
                 {
-                  prioritizedTasks.optimizationMetrics
-                    .customerSatisfactionImpact
+                  prioritizedTasks?.optimizationMetrics
+                    ?.customerSatisfactionImpact || 0
                 }
                 %
               </div>
@@ -624,7 +648,7 @@ export default function DispatchTaskPrioritizationPanel() {
           <div
             style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
           >
-            {prioritizedTasks.tasks.slice(0, 5).map((task, index) => (
+            {(prioritizedTasks?.tasks || []).slice(0, 5).map((task, index) => (
               <div
                 key={task.id}
                 style={{
@@ -756,7 +780,7 @@ export default function DispatchTaskPrioritizationPanel() {
           </div>
 
           {/* AI Insights */}
-          {prioritizedTasks.recommendations.length > 0 && (
+          {(prioritizedTasks?.recommendations?.length || 0) > 0 && (
             <div
               style={{
                 background: 'rgba(59, 130, 246, 0.1)',
@@ -780,7 +804,7 @@ export default function DispatchTaskPrioritizationPanel() {
                 </span>
               </div>
               <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                {prioritizedTasks.recommendations.slice(0, 3).map((rec, i) => (
+                {(prioritizedTasks?.recommendations || []).slice(0, 3).map((rec, i) => (
                   <div key={i} style={{ marginBottom: '4px' }}>
                     • {rec}
                   </div>
@@ -789,6 +813,7 @@ export default function DispatchTaskPrioritizationPanel() {
             </div>
           )}
         </>
+        )
       )}
     </div>
   );
