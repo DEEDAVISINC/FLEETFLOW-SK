@@ -773,16 +773,19 @@ export class PortAuthoritySystemsService {
   /**
    * Book a truck appointment at a specific port terminal
    */
-  async bookTruckAppointment(portCode: string, appointmentData: {
-    terminalId: string;
-    containerNumber?: string;
-    chassisNumber?: string;
-    driverLicense: string;
-    twicCard: string;
-    appointmentTime: string;
-    operationType: 'pickup' | 'delivery' | 'empty_return';
-    hazmat?: boolean;
-  }): Promise<{
+  async bookTruckAppointment(
+    portCode: string,
+    appointmentData: {
+      terminalId: string;
+      containerNumber?: string;
+      chassisNumber?: string;
+      driverLicense: string;
+      twicCard: string;
+      appointmentTime: string;
+      operationType: 'pickup' | 'delivery' | 'empty_return';
+      hazmat?: boolean;
+    }
+  ): Promise<{
     success: boolean;
     appointmentId?: string;
     confirmationNumber?: string;
@@ -802,9 +805,9 @@ export class PortAuthoritySystemsService {
       // In production, this would make real API calls
       // For now, simulate the booking process
       const appointmentId = `APT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       console.log(`Booking appointment at ${authority.name}:`, appointmentData);
-      
+
       return {
         success: true,
         appointmentId,
@@ -816,11 +819,10 @@ export class PortAuthoritySystemsService {
             'Arrive 15 minutes before appointment time',
             'Have TWIC card and driver license ready',
             'Follow terminal safety protocols',
-            'Check in at gate office upon arrival'
-          ]
-        }
+            'Check in at gate office upon arrival',
+          ],
+        },
       };
-
     } catch (error) {
       console.error(`Error booking appointment at ${portCode}:`, error);
       return { success: false, error: 'Failed to book appointment' };
@@ -830,7 +832,10 @@ export class PortAuthoritySystemsService {
   /**
    * Cancel a truck appointment
    */
-  async cancelTruckAppointment(portCode: string, appointmentId: string): Promise<{
+  async cancelTruckAppointment(
+    portCode: string,
+    appointmentId: string
+  ): Promise<{
     success: boolean;
     cancellationFee?: number;
     refundAmount?: number;
@@ -843,14 +848,15 @@ export class PortAuthoritySystemsService {
 
     try {
       // In production, this would make real API calls to cancel
-      console.log(`Cancelling appointment ${appointmentId} at ${authority.name}`);
-      
+      console.log(
+        `Cancelling appointment ${appointmentId} at ${authority.name}`
+      );
+
       return {
         success: true,
         cancellationFee: 0, // Most ports don't charge for cancellations with 2+ hours notice
-        refundAmount: 0
+        refundAmount: 0,
       };
-
     } catch (error) {
       console.error(`Error cancelling appointment:`, error);
       return { success: false, error: 'Failed to cancel appointment' };
@@ -860,11 +866,19 @@ export class PortAuthoritySystemsService {
   /**
    * Track container status and location
    */
-  async trackContainer(portCode: string, containerNumber: string): Promise<{
+  async trackContainer(
+    portCode: string,
+    containerNumber: string
+  ): Promise<{
     success: boolean;
     containerInfo?: {
       containerNumber: string;
-      status: 'available' | 'on_vessel' | 'discharged' | 'delivered' | 'customs_hold';
+      status:
+        | 'available'
+        | 'on_vessel'
+        | 'discharged'
+        | 'delivered'
+        | 'customs_hold';
       location: string;
       availableForPickup: boolean;
       estimatedAvailability?: string;
@@ -882,9 +896,21 @@ export class PortAuthoritySystemsService {
 
     try {
       // In production, this would query the real container tracking API
-      const statuses = ['available', 'on_vessel', 'discharged', 'delivered', 'customs_hold'];
-      const locations = ['Yard Block A-15', 'Berth 12', 'Gate 3', 'Customs Area', 'Rail Yard'];
-      
+      const statuses = [
+        'available',
+        'on_vessel',
+        'discharged',
+        'delivered',
+        'customs_hold',
+      ];
+      const locations = [
+        'Yard Block A-15',
+        'Berth 12',
+        'Gate 3',
+        'Customs Area',
+        'Rail Yard',
+      ];
+
       return {
         success: true,
         containerInfo: {
@@ -892,14 +918,25 @@ export class PortAuthoritySystemsService {
           status: statuses[Math.floor(Math.random() * statuses.length)] as any,
           location: locations[Math.floor(Math.random() * locations.length)],
           availableForPickup: Math.random() > 0.3,
-          estimatedAvailability: new Date(Date.now() + Math.random() * 48 * 60 * 60 * 1000).toISOString(),
-          lastFreeDay: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-          demurrageCharges: Math.random() > 0.7 ? Math.floor(Math.random() * 500) + 100 : 0,
-          customsStatus: Math.random() > 0.8 ? 'pending' : 'cleared' as 'cleared' | 'pending',
-          requiredDocuments: ['Bill of Lading', 'Customs Release', 'Delivery Order']
-        }
+          estimatedAvailability: new Date(
+            Date.now() + Math.random() * 48 * 60 * 60 * 1000
+          ).toISOString(),
+          lastFreeDay: new Date(
+            Date.now() + 5 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+          demurrageCharges:
+            Math.random() > 0.7 ? Math.floor(Math.random() * 500) + 100 : 0,
+          customsStatus:
+            Math.random() > 0.8
+              ? 'pending'
+              : ('cleared' as 'cleared' | 'pending'),
+          requiredDocuments: [
+            'Bill of Lading',
+            'Customs Release',
+            'Delivery Order',
+          ],
+        },
       };
-
     } catch (error) {
       console.error(`Error tracking container:`, error);
       return { success: false, error: 'Failed to track container' };
@@ -909,7 +946,11 @@ export class PortAuthoritySystemsService {
   /**
    * Get available appointment slots
    */
-  async getAvailableAppointmentSlots(portCode: string, terminalId: string, date: string): Promise<{
+  async getAvailableAppointmentSlots(
+    portCode: string,
+    terminalId: string,
+    date: string
+  ): Promise<{
     success: boolean;
     availableSlots?: {
       time: string;
@@ -923,7 +964,7 @@ export class PortAuthoritySystemsService {
       const slots = [];
       const startHour = 6; // 6 AM
       const endHour = 22; // 10 PM
-      
+
       for (let hour = startHour; hour < endHour; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
           const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -931,16 +972,18 @@ export class PortAuthoritySystemsService {
             time: timeString,
             available: Math.random() > 0.3, // 70% availability simulation
             estimatedProcessingTime: Math.floor(Math.random() * 30) + 15, // 15-45 minutes
-            gateNumber: Math.random() > 0.5 ? `Gate ${Math.floor(Math.random() * 8) + 1}` : undefined
+            gateNumber:
+              Math.random() > 0.5
+                ? `Gate ${Math.floor(Math.random() * 8) + 1}`
+                : undefined,
           });
         }
       }
 
       return {
         success: true,
-        availableSlots: slots
+        availableSlots: slots,
       };
-
     } catch (error) {
       console.error('Error fetching appointment slots:', error);
       return { success: false, error: 'Failed to fetch available slots' };

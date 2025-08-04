@@ -3,7 +3,9 @@
 ## Complete Guide to Accessing Individual Port Authority APIs for Load Operations
 
 ### 🎯 **OVERVIEW**
-This guide provides step-by-step instructions for obtaining API access to major US port authorities for freight pickup/delivery operations, truck appointments, and container tracking.
+
+This guide provides step-by-step instructions for obtaining API access to major US port authorities
+for freight pickup/delivery operations, truck appointments, and container tracking.
 
 ---
 
@@ -11,10 +13,11 @@ This guide provides step-by-step instructions for obtaining API access to major 
 
 ### **1. PORT AUTHORITY OF NEW YORK & NEW JERSEY (PANYNJ)**
 
-**API Program:** Port Authority API Gateway
-**Website:** https://www.panynj.gov/port/en/business/trucking.html
+**API Program:** Port Authority API Gateway **Website:**
+https://www.panynj.gov/port/en/business/trucking.html
 
 **Requirements:**
+
 - Valid TWIC Card for all drivers
 - DOT Number registration
 - Port Authority Trucking License
@@ -22,6 +25,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 - Clean safety record (CSA scores)
 
 **API Access Process:**
+
 1. **Business Registration:** https://www.panynj.gov/port/en/business/registration.html
 2. **Complete Port Authority Trucking Application**
 3. **Submit Insurance & DOT Documentation**
@@ -30,6 +34,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 6. **Production Access Approval**
 
 **Available APIs:**
+
 - Terminal Gate Appointments
 - Container Status & Location
 - Truck Queue Management
@@ -42,16 +47,18 @@ This guide provides step-by-step instructions for obtaining API access to major 
 
 ### **2. PORT OF LOS ANGELES (POLA)**
 
-**API Program:** PierPASS Appointment System API
-**Website:** https://www.portoflosangeles.org/business/supply-chain
+**API Program:** PierPASS Appointment System API **Website:**
+https://www.portoflosangeles.org/business/supply-chain
 
 **Requirements:**
+
 - Motor Carrier Permit
 - CARB Compliant Trucks (California requirement)
 - PierPASS Registration
 - Terminal-specific registrations
 
 **API Access Process:**
+
 1. **PierPASS Registration:** https://www.pierpass.org/
 2. **Terminal Operator Agreements** (APM, TraPac, Everport, etc.)
 3. **API Access Application:** api-access@portla.org
@@ -60,6 +67,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 6. **Production Certification**
 
 **Available APIs:**
+
 - Appointment Booking System
 - Container Availability
 - Terminal Equipment Status
@@ -72,16 +80,18 @@ This guide provides step-by-step instructions for obtaining API access to major 
 
 ### **3. PORT OF LONG BEACH (POLB)**
 
-**API Program:** Long Beach Container Terminal API
-**Website:** https://www.polb.com/business/cargo-services
+**API Program:** Long Beach Container Terminal API **Website:**
+https://www.polb.com/business/cargo-services
 
 **Requirements:**
+
 - Business License in California
 - Motor Carrier Authority
 - Terminal Access Agreements
 - Environmental Compliance Certification
 
 **API Access Process:**
+
 1. **Port Business Registration**
 2. **Terminal Operator Partnerships** (LBCT, TTI, ITS)
 3. **API Developer Application:** developers@polb.com
@@ -90,6 +100,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 6. **Go-Live Certification**
 
 **Available APIs:**
+
 - Container Tracking & Status
 - Truck Appointment System
 - Terminal Capacity Information
@@ -102,16 +113,17 @@ This guide provides step-by-step instructions for obtaining API access to major 
 
 ### **4. GEORGIA PORTS AUTHORITY (SAVANNAH)**
 
-**API Program:** Garden City Terminal API Gateway
-**Website:** https://gaports.com/doing-business/
+**API Program:** Garden City Terminal API Gateway **Website:** https://gaports.com/doing-business/
 
 **Requirements:**
+
 - Federal Motor Carrier Registration
 - Georgia Business License
 - Port Security Clearance
 - Insurance Requirements ($2M+)
 
 **API Access Process:**
+
 1. **GPA Business Registration**
 2. **Security Threat Assessment**
 3. **API Access Request:** it-support@gaports.com
@@ -120,6 +132,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 6. **Full API Access Approval**
 
 **Available APIs:**
+
 - Container Location Services
 - Gate Appointment Scheduling
 - Vessel Berthing Information
@@ -132,16 +145,18 @@ This guide provides step-by-step instructions for obtaining API access to major 
 
 ### **5. PORT OF SEATTLE**
 
-**API Program:** Terminal Operating System Integration
-**Website:** https://www.portseattle.org/maritime/doing-business
+**API Program:** Terminal Operating System Integration **Website:**
+https://www.portseattle.org/maritime/doing-business
 
 **Requirements:**
+
 - Washington State Business License
 - DOT Registration
 - Terminal Access Agreements
 - Environmental Compliance
 
 **API Access Process:**
+
 1. **Port of Seattle Business Registration**
 2. **Terminal Partnerships** (T5, T18, T30, T46)
 3. **API Developer Portal:** api@portseattle.org
@@ -150,6 +165,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 6. **Production Access**
 
 **Available APIs:**
+
 - Appointment Management
 - Container Status Tracking
 - Terminal Equipment Availability
@@ -163,6 +179,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 ## 🔐 **UNIVERSAL REQUIREMENTS FOR ALL PORTS**
 
 ### **Business Documentation Needed:**
+
 ```
 ✅ DOT Number (US Department of Transportation)
 ✅ MC Number (Motor Carrier Authority) - for brokers
@@ -175,6 +192,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
 ```
 
 ### **Technical Requirements:**
+
 ```
 ✅ HTTPS/TLS 1.2+ encryption
 ✅ OAuth 2.0 or API Key authentication
@@ -190,12 +208,14 @@ This guide provides step-by-step instructions for obtaining API access to major 
 ## 🚀 **FLEETFLOW INTEGRATION STRATEGY**
 
 ### **Phase 1: Foundation (Completed ✅)**
+
 - Mock API integration for all major ports
 - Comprehensive data models and interfaces
 - Real-time dashboard integration
 - Testing framework established
 
 ### **Phase 2: Production API Integration (Next Steps)**
+
 1. **Business Registration Completion**
    - Obtain all required DOT/MC numbers
    - Secure appropriate insurance coverage
@@ -213,6 +233,7 @@ This guide provides step-by-step instructions for obtaining API access to major 
    - Set up webhook endpoints
 
 ### **Phase 3: Advanced Features**
+
 - Real-time load matching with port capacity
 - Automated appointment scheduling
 - Container tracking integration
@@ -223,18 +244,21 @@ This guide provides step-by-step instructions for obtaining API access to major 
 ## 💰 **TOTAL ESTIMATED COSTS**
 
 ### **Initial Setup Costs:**
+
 - Port registrations: $1,650 (across 5 major ports)
 - Insurance & bonding: $5,000-$15,000/year
 - Legal & compliance: $3,000-$5,000
 - **Total Initial:** $9,650-$21,650
 
 ### **Monthly Operational Costs:**
+
 - API access fees: $335/month (all ports)
 - Insurance premiums: $800-$1,200/month
 - Compliance monitoring: $200/month
 - **Total Monthly:** $1,335-$1,735
 
 ### **ROI Projection:**
+
 - Direct port API access enables premium pricing
 - Estimated 15-25% revenue increase
 - Payback period: 3-6 months
@@ -245,15 +269,17 @@ This guide provides step-by-step instructions for obtaining API access to major 
 ## 📞 **KEY CONTACTS FOR API ACCESS**
 
 ### **Port Authority Contacts:**
+
 ```
 PANYNJ: developer-portal@panynj.gov
-POLA: api-access@portla.org  
+POLA: api-access@portla.org
 POLB: developers@polb.com
 GPA: it-support@gaports.com
 Seattle: api@portseattle.org
 ```
 
 ### **Industry Associations:**
+
 ```
 American Association of Port Authorities (AAPA)
 National Association of Waterfront Employers (NAWE)
@@ -265,21 +291,25 @@ Intermodal Association of North America (IANA)
 ## 🔧 **IMPLEMENTATION TIMELINE**
 
 ### **Week 1-2: Business Setup**
+
 - Complete DOT/MC registrations
 - Secure insurance coverage
 - Gather required documentation
 
 ### **Week 3-4: Port Applications**
+
 - Submit API access applications
 - Begin security clearance processes
 - Establish initial port contacts
 
 ### **Week 5-8: Technical Integration**
+
 - API testing and integration
 - Security implementation
 - Performance optimization
 
 ### **Week 9-12: Production Rollout**
+
 - Go-live with first port
 - Monitor and optimize
 - Scale to additional ports
@@ -289,12 +319,14 @@ Intermodal Association of North America (IANA)
 ## 🎯 **SUCCESS METRICS**
 
 ### **Operational KPIs:**
+
 - API uptime: 99.9%+
 - Response time: <500ms
 - Error rate: <0.1%
 - Appointment success rate: 95%+
 
 ### **Business KPIs:**
+
 - Revenue increase: 15-25%
 - Customer satisfaction: 90%+
 - Operational efficiency: 30% improvement
@@ -312,4 +344,5 @@ Intermodal Association of North America (IANA)
 
 ---
 
-*This guide positions FleetFlow as the industry leader in port authority integration, providing unprecedented access to real-time port operations data and automated load management capabilities.*
+_This guide positions FleetFlow as the industry leader in port authority integration, providing
+unprecedented access to real-time port operations data and automated load management capabilities._

@@ -1,12 +1,12 @@
 /**
  * Port Appointment Booking API Route
- * 
+ *
  * Handles truck appointment booking, cancellation, and management
  * for major US port authorities
- * 
+ *
  * Endpoints:
  * POST /api/port-appointments - Book new appointment
- * PUT /api/port-appointments - Update existing appointment  
+ * PUT /api/port-appointments - Update existing appointment
  * DELETE /api/port-appointments - Cancel appointment
  * GET /api/port-appointments - Get appointment status
  */
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     switch (action) {
       case 'book_appointment':
         const { portCode, appointmentData } = data;
-        
+
         // Validate required fields
         if (!portCode || !appointmentData) {
           return NextResponse.json(
@@ -31,7 +31,13 @@ export async function POST(request: Request) {
         }
 
         // Validate appointment data
-        const requiredFields = ['terminalId', 'driverLicense', 'twicCard', 'appointmentTime', 'operationType'];
+        const requiredFields = [
+          'terminalId',
+          'driverLicense',
+          'twicCard',
+          'appointmentTime',
+          'operationType',
+        ];
         for (const field of requiredFields) {
           if (!appointmentData[field]) {
             return NextResponse.json(
@@ -41,48 +47,55 @@ export async function POST(request: Request) {
           }
         }
 
-        const bookingResult = await portAuthoritySystemsService.bookTruckAppointment(
-          portCode,
-          appointmentData
-        );
+        const bookingResult =
+          await portAuthoritySystemsService.bookTruckAppointment(
+            portCode,
+            appointmentData
+          );
 
         return NextResponse.json({
           success: bookingResult.success,
-          data: bookingResult.success ? {
-            appointmentId: bookingResult.appointmentId,
-            confirmationNumber: bookingResult.confirmationNumber,
-            gateInfo: bookingResult.gateInfo
-          } : null,
+          data: bookingResult.success
+            ? {
+                appointmentId: bookingResult.appointmentId,
+                confirmationNumber: bookingResult.confirmationNumber,
+                gateInfo: bookingResult.gateInfo,
+              }
+            : null,
           error: bookingResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'get_available_slots':
         const { portCode: slotPortCode, terminalId, date } = data;
-        
+
         if (!slotPortCode || !terminalId || !date) {
           return NextResponse.json(
-            { success: false, error: 'Missing required fields for slot availability' },
+            {
+              success: false,
+              error: 'Missing required fields for slot availability',
+            },
             { status: 400 }
           );
         }
 
-        const slotsResult = await portAuthoritySystemsService.getAvailableAppointmentSlots(
-          slotPortCode,
-          terminalId,
-          date
-        );
+        const slotsResult =
+          await portAuthoritySystemsService.getAvailableAppointmentSlots(
+            slotPortCode,
+            terminalId,
+            date
+          );
 
         return NextResponse.json({
           success: slotsResult.success,
           data: slotsResult.availableSlots,
           error: slotsResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'track_container':
         const { portCode: trackPortCode, containerNumber } = data;
-        
+
         if (!trackPortCode || !containerNumber) {
           return NextResponse.json(
             { success: false, error: 'Missing port code or container number' },
@@ -99,7 +112,7 @@ export async function POST(request: Request) {
           success: trackingResult.success,
           data: trackingResult.containerInfo,
           error: trackingResult.error,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       default:
@@ -108,16 +121,15 @@ export async function POST(request: Request) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Port Appointments API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
@@ -137,30 +149,32 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const cancellationResult = await portAuthoritySystemsService.cancelTruckAppointment(
-      portCode,
-      appointmentId
-    );
+    const cancellationResult =
+      await portAuthoritySystemsService.cancelTruckAppointment(
+        portCode,
+        appointmentId
+      );
 
     return NextResponse.json({
       success: cancellationResult.success,
-      data: cancellationResult.success ? {
-        cancellationFee: cancellationResult.cancellationFee,
-        refundAmount: cancellationResult.refundAmount
-      } : null,
+      data: cancellationResult.success
+        ? {
+            cancellationFee: cancellationResult.cancellationFee,
+            refundAmount: cancellationResult.refundAmount,
+          }
+        : null,
       error: cancellationResult.error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Port Appointment Cancellation Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to cancel appointment',
         details: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
@@ -175,7 +189,7 @@ export async function GET(request: Request) {
     switch (action) {
       case 'port_operations':
         const portCode = searchParams.get('portCode');
-        
+
         if (!portCode) {
           return NextResponse.json(
             { success: false, error: 'Missing port code' },
@@ -183,18 +197,19 @@ export async function GET(request: Request) {
           );
         }
 
-        const operations = await portAuthoritySystemsService.getPortOperations(portCode);
-        
+        const operations =
+          await portAuthoritySystemsService.getPortOperations(portCode);
+
         return NextResponse.json({
           success: !!operations,
           data: operations,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'truck_appointments':
         const apptPortCode = searchParams.get('portCode');
         const terminalId = searchParams.get('terminalId');
-        
+
         if (!apptPortCode) {
           return NextResponse.json(
             { success: false, error: 'Missing port code' },
@@ -202,20 +217,21 @@ export async function GET(request: Request) {
           );
         }
 
-        const appointments = await portAuthoritySystemsService.getTruckAppointments(
-          apptPortCode,
-          terminalId || undefined
-        );
-        
+        const appointments =
+          await portAuthoritySystemsService.getTruckAppointments(
+            apptPortCode,
+            terminalId || undefined
+          );
+
         return NextResponse.json({
           success: true,
           data: appointments,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       case 'container_tracking':
         const containerPortCode = searchParams.get('portCode');
-        
+
         if (!containerPortCode) {
           return NextResponse.json(
             { success: false, error: 'Missing port code' },
@@ -223,12 +239,15 @@ export async function GET(request: Request) {
           );
         }
 
-        const containerData = await portAuthoritySystemsService.getContainerTracking(containerPortCode);
-        
+        const containerData =
+          await portAuthoritySystemsService.getContainerTracking(
+            containerPortCode
+          );
+
         return NextResponse.json({
           success: !!containerData,
           data: containerData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
       default:
@@ -237,16 +256,15 @@ export async function GET(request: Request) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Port Appointments GET API Error:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch port data',
         details: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
