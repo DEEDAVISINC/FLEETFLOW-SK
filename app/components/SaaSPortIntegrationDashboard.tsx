@@ -25,7 +25,9 @@ interface PortPartnership {
 }
 
 export default function SaaSPortIntegrationDashboard() {
-  const [platformRequirements, setPlatformRequirements] = useState<PlatformRequirement[]>([
+  const [platformRequirements, setPlatformRequirements] = useState<
+    PlatformRequirement[]
+  >([
     {
       id: 'business_entity',
       title: 'Business Entity Setup',
@@ -35,7 +37,7 @@ export default function SaaSPortIntegrationDashboard() {
       timeline: '1-2 weeks',
       cost: '$2,000-$5,000',
       category: 'business',
-      nextAction: 'File Delaware C-Corp incorporation documents'
+      nextAction: 'File Delaware C-Corp incorporation documents',
     },
     {
       id: 'professional_insurance',
@@ -46,7 +48,7 @@ export default function SaaSPortIntegrationDashboard() {
       timeline: '1-2 weeks',
       cost: '$15,000-$25,000/year',
       category: 'business',
-      nextAction: 'Contact tech insurance brokers for quotes'
+      nextAction: 'Contact tech insurance brokers for quotes',
     },
     {
       id: 'soc2_compliance',
@@ -57,7 +59,7 @@ export default function SaaSPortIntegrationDashboard() {
       timeline: '6 months',
       cost: '$50,000-$100,000',
       category: 'compliance',
-      nextAction: 'Engage SOC 2 auditing firm (Deloitte, PwC, EY)'
+      nextAction: 'Engage SOC 2 auditing firm (Deloitte, PwC, EY)',
     },
     {
       id: 'api_platform',
@@ -68,7 +70,7 @@ export default function SaaSPortIntegrationDashboard() {
       timeline: '4-6 weeks',
       cost: '$25,000-$50,000',
       category: 'technical',
-      nextAction: 'Complete tenant credential validation system'
+      nextAction: 'Complete tenant credential validation system',
     },
     {
       id: 'cloud_infrastructure',
@@ -79,8 +81,8 @@ export default function SaaSPortIntegrationDashboard() {
       timeline: '2-3 weeks',
       cost: '$5,000-$15,000/month',
       category: 'technical',
-      nextAction: 'Design multi-tenant architecture on AWS'
-    }
+      nextAction: 'Design multi-tenant architecture on AWS',
+    },
   ]);
 
   const [portPartnerships, setPortPartnerships] = useState<PortPartnership[]>([
@@ -91,7 +93,7 @@ export default function SaaSPortIntegrationDashboard() {
       status: 'not_started',
       monthlyRevenue: '$75K-$150K',
       tenantCount: 0,
-      apiCallsPerMonth: 0
+      apiCallsPerMonth: 0,
     },
     {
       code: 'USNYK',
@@ -100,7 +102,7 @@ export default function SaaSPortIntegrationDashboard() {
       status: 'not_started',
       monthlyRevenue: '$60K-$125K',
       tenantCount: 0,
-      apiCallsPerMonth: 0
+      apiCallsPerMonth: 0,
     },
     {
       code: 'USSAV',
@@ -109,7 +111,7 @@ export default function SaaSPortIntegrationDashboard() {
       status: 'not_started',
       monthlyRevenue: '$40K-$90K',
       tenantCount: 0,
-      apiCallsPerMonth: 0
+      apiCallsPerMonth: 0,
     },
     {
       code: 'USLGB',
@@ -118,7 +120,7 @@ export default function SaaSPortIntegrationDashboard() {
       status: 'not_started',
       monthlyRevenue: '$50K-$100K',
       tenantCount: 0,
-      apiCallsPerMonth: 0
+      apiCallsPerMonth: 0,
     },
     {
       code: 'USSEA',
@@ -127,8 +129,8 @@ export default function SaaSPortIntegrationDashboard() {
       status: 'not_started',
       monthlyRevenue: '$30K-$60K',
       tenantCount: 0,
-      apiCallsPerMonth: 0
-    }
+      apiCallsPerMonth: 0,
+    },
   ]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -138,30 +140,46 @@ export default function SaaSPortIntegrationDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': case 'live': return '#10b981';
-      case 'in_progress': case 'testing': return '#f59e0b';
-      case 'blocked': return '#ef4444';
-      case 'negotiating': return '#8b5cf6';
-      default: return '#6b7280';
+      case 'completed':
+      case 'live':
+        return '#10b981';
+      case 'in_progress':
+      case 'testing':
+        return '#f59e0b';
+      case 'blocked':
+        return '#ef4444';
+      case 'negotiating':
+        return '#8b5cf6';
+      default:
+        return '#6b7280';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return '#dc2626';
-      case 'high': return '#ea580c';
-      case 'medium': return '#ca8a04';
-      default: return '#65a30d';
+      case 'urgent':
+        return '#dc2626';
+      case 'high':
+        return '#ea580c';
+      case 'medium':
+        return '#ca8a04';
+      default:
+        return '#65a30d';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'business': return '#3b82f6';
-      case 'technical': return '#10b981';
-      case 'compliance': return '#f59e0b';
-      case 'partnerships': return '#8b5cf6';
-      default: return '#6b7280';
+      case 'business':
+        return '#3b82f6';
+      case 'technical':
+        return '#10b981';
+      case 'compliance':
+        return '#f59e0b';
+      case 'partnerships':
+        return '#8b5cf6';
+      default:
+        return '#6b7280';
     }
   };
 
@@ -169,22 +187,27 @@ export default function SaaSPortIntegrationDashboard() {
     reqId: string,
     newStatus: 'pending' | 'in_progress' | 'completed' | 'blocked'
   ) => {
-    setPlatformRequirements(prev =>
-      prev.map(req =>
+    setPlatformRequirements((prev) =>
+      prev.map((req) =>
         req.id === reqId ? { ...req, status: newStatus } : req
       )
     );
   };
 
-  const filteredRequirements = selectedCategory === 'all' 
-    ? platformRequirements 
-    : platformRequirements.filter(req => req.category === selectedCategory);
+  const filteredRequirements =
+    selectedCategory === 'all'
+      ? platformRequirements
+      : platformRequirements.filter((req) => req.category === selectedCategory);
 
-  const completedRequirements = platformRequirements.filter(req => req.status === 'completed').length;
+  const completedRequirements = platformRequirements.filter(
+    (req) => req.status === 'completed'
+  ).length;
   const totalRequirements = platformRequirements.length;
   const progressPercentage = (completedRequirements / totalRequirements) * 100;
 
-  const livePartnerships = portPartnerships.filter(port => port.status === 'live').length;
+  const livePartnerships = portPartnerships.filter(
+    (port) => port.status === 'live'
+  ).length;
   const totalPartnerships = portPartnerships.length;
 
   useEffect(() => {
@@ -192,9 +215,11 @@ export default function SaaSPortIntegrationDashboard() {
     let investment = 100000; // Base platform development
     let monthlyRevenue = 0;
 
-    portPartnerships.forEach(port => {
+    portPartnerships.forEach((port) => {
       if (port.status === 'live') {
-        const avgRevenue = parseInt(port.monthlyRevenue.split('-')[0].replace(/[^0-9]/g, ''));
+        const avgRevenue = parseInt(
+          port.monthlyRevenue.split('-')[0].replace(/[^0-9]/g, '')
+        );
         monthlyRevenue += avgRevenue;
       }
     });
@@ -204,10 +229,10 @@ export default function SaaSPortIntegrationDashboard() {
 
     // Calculate estimated completion
     const urgentIncomplete = platformRequirements.filter(
-      req => req.priority === 'urgent' && req.status !== 'completed'
+      (req) => req.priority === 'urgent' && req.status !== 'completed'
     ).length;
     const highIncomplete = platformRequirements.filter(
-      req => req.priority === 'high' && req.status !== 'completed'
+      (req) => req.priority === 'high' && req.status !== 'completed'
     ).length;
 
     let weeks = 0;
@@ -243,7 +268,8 @@ export default function SaaSPortIntegrationDashboard() {
           🚀 FleetFlow SaaS Port Integration Platform
         </h1>
         <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '18px' }}>
-          Multi-tenant software platform connecting trucking companies to port authorities
+          Multi-tenant software platform connecting trucking companies to port
+          authorities
         </p>
       </div>
 
@@ -264,10 +290,18 @@ export default function SaaSPortIntegrationDashboard() {
             border: '1px solid rgba(59, 130, 246, 0.3)',
           }}
         >
-          <div style={{ fontSize: '14px', color: '#60a5fa', marginBottom: '8px' }}>
+          <div
+            style={{ fontSize: '14px', color: '#60a5fa', marginBottom: '8px' }}
+          >
             Platform Progress
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: 'bold',
+              marginBottom: '8px',
+            }}
+          >
             {completedRequirements}/{totalRequirements}
           </div>
           <div
@@ -298,10 +332,18 @@ export default function SaaSPortIntegrationDashboard() {
             border: '1px solid rgba(139, 92, 246, 0.3)',
           }}
         >
-          <div style={{ fontSize: '14px', color: '#a78bfa', marginBottom: '8px' }}>
+          <div
+            style={{ fontSize: '14px', color: '#a78bfa', marginBottom: '8px' }}
+          >
             Port Partnerships
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: 'bold',
+              marginBottom: '8px',
+            }}
+          >
             {livePartnerships}/{totalPartnerships}
           </div>
           <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -317,10 +359,18 @@ export default function SaaSPortIntegrationDashboard() {
             border: '1px solid rgba(16, 185, 129, 0.3)',
           }}
         >
-          <div style={{ fontSize: '14px', color: '#34d399', marginBottom: '8px' }}>
+          <div
+            style={{ fontSize: '14px', color: '#34d399', marginBottom: '8px' }}
+          >
             Projected Revenue
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              marginBottom: '8px',
+            }}
+          >
             ${projectedRevenue.toLocaleString()}/year
           </div>
           <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -336,10 +386,18 @@ export default function SaaSPortIntegrationDashboard() {
             border: '1px solid rgba(245, 158, 11, 0.3)',
           }}
         >
-          <div style={{ fontSize: '14px', color: '#fbbf24', marginBottom: '8px' }}>
+          <div
+            style={{ fontSize: '14px', color: '#fbbf24', marginBottom: '8px' }}
+          >
             Platform Investment
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              marginBottom: '8px',
+            }}
+          >
             ${totalInvestment.toLocaleString()}
           </div>
           <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -351,28 +409,31 @@ export default function SaaSPortIntegrationDashboard() {
       {/* Category Filter */}
       <div style={{ marginBottom: '24px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {['all', 'business', 'technical', 'compliance', 'partnerships'].map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              style={{
-                background: selectedCategory === category 
-                  ? getCategoryColor(category) 
-                  : 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                textTransform: 'capitalize',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              {category === 'all' ? 'All Requirements' : category}
-            </button>
-          ))}
+          {['all', 'business', 'technical', 'compliance', 'partnerships'].map(
+            (category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                style={{
+                  background:
+                    selectedCategory === category
+                      ? getCategoryColor(category)
+                      : 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  textTransform: 'capitalize',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {category === 'all' ? 'All Requirements' : category}
+              </button>
+            )
+          )}
         </div>
       </div>
 
@@ -425,7 +486,9 @@ export default function SaaSPortIntegrationDashboard() {
                     marginBottom: '8px',
                   }}
                 >
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+                  <h3
+                    style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}
+                  >
                     {req.title}
                   </h3>
                   <span
@@ -472,11 +535,15 @@ export default function SaaSPortIntegrationDashboard() {
                   }}
                 >
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Timeline: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Timeline:{' '}
+                    </span>
                     <span style={{ color: 'white' }}>{req.timeline}</span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Cost: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Cost:{' '}
+                    </span>
                     <span style={{ color: 'white' }}>{req.cost}</span>
                   </div>
                 </div>
@@ -494,17 +561,22 @@ export default function SaaSPortIntegrationDashboard() {
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
+              <div
+                style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}
+              >
                 {req.status !== 'completed' && (
                   <button
                     onClick={() =>
                       updateRequirementStatus(
                         req.id,
-                        req.status === 'in_progress' ? 'completed' : 'in_progress'
+                        req.status === 'in_progress'
+                          ? 'completed'
+                          : 'in_progress'
                       )
                     }
                     style={{
-                      background: req.status === 'in_progress' ? '#10b981' : '#3b82f6',
+                      background:
+                        req.status === 'in_progress' ? '#10b981' : '#3b82f6',
                       color: 'white',
                       border: 'none',
                       padding: '8px 16px',
@@ -515,7 +587,9 @@ export default function SaaSPortIntegrationDashboard() {
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    {req.status === 'in_progress' ? 'Mark Complete' : 'Start Task'}
+                    {req.status === 'in_progress'
+                      ? 'Mark Complete'
+                      : 'Start Task'}
                   </button>
                 )}
                 {req.status === 'completed' && (
@@ -568,7 +642,14 @@ export default function SaaSPortIntegrationDashboard() {
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '8px',
+                  }}
+                >
                   <div
                     style={{
                       width: '12px',
@@ -579,16 +660,18 @@ export default function SaaSPortIntegrationDashboard() {
                   />
                   <span
                     style={{
-                      background: port.priority <= 2 
-                        ? 'rgba(220, 38, 38, 0.2)' 
-                        : port.priority <= 4 
-                        ? 'rgba(245, 158, 11, 0.2)' 
-                        : 'rgba(34, 197, 94, 0.2)',
-                      color: port.priority <= 2 
-                        ? '#fca5a5' 
-                        : port.priority <= 4 
-                        ? '#fbbf24' 
-                        : '#4ade80',
+                      background:
+                        port.priority <= 2
+                          ? 'rgba(220, 38, 38, 0.2)'
+                          : port.priority <= 4
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(34, 197, 94, 0.2)',
+                      color:
+                        port.priority <= 2
+                          ? '#fca5a5'
+                          : port.priority <= 4
+                            ? '#fbbf24'
+                            : '#4ade80',
                       padding: '4px 8px',
                       borderRadius: '6px',
                       fontSize: '12px',
@@ -597,33 +680,62 @@ export default function SaaSPortIntegrationDashboard() {
                   >
                     Priority {port.priority}
                   </span>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+                  <h3
+                    style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}
+                  >
                     {port.name}
                   </h3>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', fontSize: '14px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '16px',
+                    fontSize: '14px',
+                  }}
+                >
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Status: </span>
-                    <span style={{ color: 'white', textTransform: 'capitalize' }}>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Status:{' '}
+                    </span>
+                    <span
+                      style={{ color: 'white', textTransform: 'capitalize' }}
+                    >
                       {port.status.replace('_', ' ')}
                     </span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Revenue: </span>
-                    <span style={{ color: 'white' }}>{port.monthlyRevenue}/month</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Revenue:{' '}
+                    </span>
+                    <span style={{ color: 'white' }}>
+                      {port.monthlyRevenue}/month
+                    </span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Tenants: </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Tenants:{' '}
+                    </span>
                     <span style={{ color: 'white' }}>{port.tenantCount}</span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>API Calls: </span>
-                    <span style={{ color: 'white' }}>{port.apiCallsPerMonth.toLocaleString()}/month</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      API Calls:{' '}
+                    </span>
+                    <span style={{ color: 'white' }}>
+                      {port.apiCallsPerMonth.toLocaleString()}/month
+                    </span>
                   </div>
                 </div>
               </div>
               <div style={{ fontSize: '24px' }}>
-                {port.priority === 1 ? '🥇' : port.priority === 2 ? '🥈' : port.priority <= 4 ? '🥉' : '⭐'}
+                {port.priority === 1
+                  ? '🥇'
+                  : port.priority === 2
+                    ? '🥈'
+                    : port.priority <= 4
+                      ? '🥉'
+                      : '⭐'}
               </div>
             </div>
           ))}

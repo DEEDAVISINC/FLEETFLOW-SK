@@ -115,6 +115,30 @@ export async function POST(request: Request) {
           timestamp: new Date().toISOString(),
         });
 
+      case 'request_twic_escort':
+        const { portCode: escortPortCode, ...escortData } = data;
+
+        if (!escortPortCode || !escortData.tenantId || !escortData.driverName || 
+            !escortData.driverLicense || !escortData.phoneNumber || !escortData.terminalId ||
+            !escortData.appointmentTime || !escortData.operationType || !escortData.estimatedDuration) {
+          return NextResponse.json(
+            { success: false, error: 'Missing required fields for TWIC escort request' },
+            { status: 400 }
+          );
+        }
+
+        const escortResult = await portAuthoritySystemsService.requestTWICEscort(
+          escortPortCode,
+          escortData
+        );
+
+        return NextResponse.json({
+          success: escortResult.success,
+          data: escortResult.escortRequest,
+          error: escortResult.error,
+          timestamp: new Date().toISOString(),
+        });
+
       default:
         return NextResponse.json(
           { success: false, error: 'Invalid action' },

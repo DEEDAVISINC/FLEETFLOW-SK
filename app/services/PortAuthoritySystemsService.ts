@@ -944,6 +944,72 @@ export class PortAuthoritySystemsService {
   }
 
   /**
+   * Request TWIC escort service for appointment
+   */
+  async requestTWICEscort(
+    portCode: string,
+    appointmentData: {
+      tenantId: string;
+      driverName: string;
+      driverLicense: string;
+      phoneNumber: string;
+      terminalId: string;
+      appointmentTime: string;
+      containerNumber?: string;
+      chassisNumber?: string;
+      operationType: 'pickup' | 'delivery' | 'empty_return';
+      estimatedDuration: number;
+      specialInstructions?: string;
+    }
+  ): Promise<{
+    success: boolean;
+    escortRequest?: {
+      requestId: string;
+      availableEscorts: any[];
+      estimatedCost: number;
+    };
+    error?: string;
+  }> {
+    try {
+      const authority = this.PORT_AUTHORITIES.get(portCode);
+      if (!authority) {
+        return { success: false, error: 'Port not found or not supported' };
+      }
+
+      // Import TWICEscortService dynamically to avoid circular imports
+      const { default: TWICEscortService } = await import('./TWICEscortService');
+      
+      const escortResult = await TWICEscortService.requestEscort({
+        ...appointmentData,
+        portCode
+      });
+
+      if (!escortResult.success) {
+        return { 
+          success: false, 
+          error: escortResult.error || 'Failed to request TWIC escort' 
+        };
+      }
+
+      return {
+        success: true,
+        escortRequest: {
+          requestId: escortResult.requestId!,
+          availableEscorts: escortResult.availableEscorts || [],
+          estimatedCost: escortResult.estimatedCost || 0
+        }
+      };
+
+    } catch (error) {
+      console.error(`Error requesting TWIC escort for ${portCode}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
    * Get available appointment slots
    */
   async getAvailableAppointmentSlots(
