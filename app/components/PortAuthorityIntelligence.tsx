@@ -542,11 +542,11 @@ export default function PortAuthorityIntelligence() {
                   <div
                     key={port.port_code}
                     style={{
-                      background:
-                        'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(20, 184, 166, 0.15))',
+                      background: getKPIColors(activeTab).bg,
                       padding: '16px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(14, 165, 233, 0.4)',
+                      border: `2px solid ${getKPIColors(activeTab).border}`,
+                      boxShadow: `0 4px 12px ${getKPIColors(activeTab).shadow}`,
                     }}
                   >
                     <div
