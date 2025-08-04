@@ -66,7 +66,13 @@ interface VirtualWarehouseQuote {
 
 export default function FreightFlowQuotingEngine() {
   const [activeTab, setActiveTab] = useState<
-    'LTL' | 'FTL' | 'Specialized' | 'Warehousing' | 'History' | 'Rules' | 'Workflow'
+    | 'LTL'
+    | 'FTL'
+    | 'Specialized'
+    | 'Warehousing'
+    | 'History'
+    | 'Rules'
+    | 'Workflow'
   >('Workflow');
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [priceRules, setPriceRules] = useState<PriceRule[]>([]);
@@ -221,6 +227,181 @@ export default function FreightFlowQuotingEngine() {
       alternatives: [],
     },
   });
+
+  // UNIFIED WORKFLOW FUNCTIONS - Connects All Pricing Engines
+  const updateWorkflowData = (section, data) => {
+    setWorkflowData(prev => ({
+      ...prev,
+      [section]: { ...prev[section], ...data }
+    }));
+  };
+
+  const calculateUnifiedQuote = async (loadData, pricingOptions = {}) => {
+    let baseRate = 2000;
+    if (loadData.weight) {
+      baseRate = 2000 + (parseInt(loadData.weight) / 1000 * 50);
+    }
+    
+    let finalRate = baseRate;
+    let adjustments = [];
+    
+    // 1. EMERGENCY LOAD PRICING
+    if (pricingOptions.useEmergencyPricing) {
+      const urgencyMultiplier = loadData.urgency === "emergency" ? 1.5 :
+                               loadData.urgency === "critical" ? 1.3 :
+                               loadData.urgency === "urgent" ? 1.15 : 1.0;
+      const emergencyPremium = baseRate * (urgencyMultiplier - 1);
+      adjustments.push({
+        engine: "Emergency Load Pricing",
+        type: "Emergency Premium",
+        amount: emergencyPremium,
+        percentage: (urgencyMultiplier - 1) * 100,
+        reasoning: `${loadData.urgency || "urgent"} delivery requires premium pricing`
+      });
+      finalRate += emergencyPremium;
+    }
+    
+    // 2. SPOT RATE OPTIMIZATION
+    if (pricingOptions.useSpotRateOptimization) {
+      try {
+        const response = await fetch("/api/analytics/spot-rate?action=market-intelligence");
+        const marketData = await response.json();
+        const marketAdjustment = baseRate * (marketData.data?.adjustmentPercentage || 5) / 100;
+        adjustments.push({
+          engine: "Spot Rate Optimization",
+          type: "Market Rate Adjustment",
+          amount: marketAdjustment,
+          percentage: marketData.data?.adjustmentPercentage || 5,
+          reasoning: "Market conditions analyzed for competitive positioning"
+        });
+        finalRate += marketAdjustment;
+      } catch (error) {
+        console.error("Spot rate calculation error:", error);
+      }
+    }
+    
+    // 3. VOLUME DISCOUNT
+    if (pricingOptions.useVolumeDiscount && workflowData.customer.discountRate) {
+      const discountAmount = finalRate * (workflowData.customer.discountRate / 100);
+      adjustments.push({
+        engine: "Volume Discount",
+        type: "Customer Loyalty Discount",
+        amount: -discountAmount,
+        percentage: -workflowData.customer.discountRate,
+        reasoning: `${workflowData.customer.tier} tier customer gets ${workflowData.customer.discountRate}% discount`
+      });
+      finalRate -= discountAmount;
+    }
+    
+    // 4. WAREHOUSING SERVICES
+    if (pricingOptions.useWarehousing) {
+      const warehousingCost = 500;
+      adjustments.push({
+        engine: "Warehousing Services",
+        type: "Additional Services",
+        amount: warehousingCost,
+        services: ["Cross-docking", "Temporary storage"],
+        reasoning: "Warehousing services added to shipment"
+      });
+      finalRate += warehousingCost;
+    }
+    
+    return {
+      baseRate: Math.round(baseRate),
+      adjustments,
+      finalRate: Math.round(finalRate),
+      enginesUsed: Object.keys(pricingOptions).filter(key => pricingOptions[key]),
+      alternatives: [
+        {
+          name: "Standard",
+          rate: Math.round(finalRate),
+          timeline: "3-day delivery",
+          color: "#3b82f6",
+          engines: Object.keys(pricingOptions).filter(key => pricingOptions[key])
+        },
+        {
+          name: "Express",
+          rate: Math.round(finalRate * 1.15),
+          timeline: "Next-day delivery",
+          color: "#f59e0b",
+          engines: [...Object.keys(pricingOptions).filter(key => pricingOptions[key]), "expedited"]
+        },
+        {
+          name: "Economy",
+          rate: Math.round(finalRate * 0.85),
+          timeline: "5-day delivery",
+          color: "#10b981",
+          engines: Object.keys(pricingOptions).filter(key => pricingOptions[key] && key !== "useEmergencyPricing")
+        }
+      ]
+    };
+  };
+
+  const runAIAnalysis = async () => {
+    if (!selectedCustomer) {
+      alert("Please select a customer first");
+      return;
+    }
+    
+    // Auto-detect which pricing engines to use
+    const pricingOptions = {
+      useEmergencyPricing: workflowData.load.urgency === "emergency" || workflowData.load.urgency === "critical",
+      useSpotRateOptimization: true, // Always use market intelligence
+      useVolumeDiscount: workflowData.customer.discountRate > 0,
+      useWarehousing: workflowData.load.equipment === "warehousing" || workflowData.load.specialServices?.includes("storage")
+    };
+    
+    const quoteResult = await calculateUnifiedQuote(workflowData.load, pricingOptions);
+    
+    updateWorkflowData("quote", quoteResult);
+    updateWorkflowData("analysis", {
+      pricingEnginesUsed: quoteResult.enginesUsed,
+      totalAdjustments: quoteResult.adjustments.length,
+      finalCalculation: quoteResult.finalRate,
+      adjustments: quoteResult.adjustments
+    });
+    
+    setWorkflowStep("generation");
+  };
+
+  const handleCustomerChange = (customerId) => {
+    setSelectedCustomer(customerId);
+    const customerData = {
+      "SHIP-2024-001": { id: customerId, name: "Walmart Distribution Center", tier: "Gold", discountRate: 6 },
+      "SHIP-2024-002": { id: customerId, name: "Amazon Fulfillment", tier: "Platinum", discountRate: 8 },
+      "SHIP-2024-003": { id: customerId, name: "Home Depot Supply Chain", tier: "Silver", discountRate: 4 },
+      "SHIP-2024-004": { id: customerId, name: "Target Logistics", tier: "Gold", discountRate: 6 },
+      "SHIP-2024-005": { id: customerId, name: "Costco Wholesale", tier: "Gold", discountRate: 6 }
+    }[customerId] || { id: "", name: "", tier: "", discountRate: 0 };
+    updateWorkflowData("customer", customerData);
+  };
+
+  const handleLoadChange = (field, value) => {
+    updateWorkflowData("load", { [field]: value });
+  };
+
+  const selectQuoteOption = (option) => {
+    const newQuote = {
+      id: `QT-${Date.now()}`,
+      quoteNumber: `QT-${Date.now()}`,
+      type: "Unified",
+      baseRate: workflowData.quote.baseRate,
+      fuelSurcharge: 0,
+      total: option.rate,
+      details: {
+        customer: workflowData.customer,
+        load: workflowData.load,
+        pricingEngines: option.engines,
+        adjustments: workflowData.quote.adjustments
+      },
+      timestamp: new Date().toISOString(),
+      appliedRule: `Unified Calculator: ${option.engines?.join(", ") || "Standard"}`,
+    };
+    
+    setQuotes(prev => [newQuote, ...prev]);
+    setWorkflowStep("management");
+    alert(`Quote created: $${option.rate.toLocaleString()} using ${option.engines?.length || 0} pricing engines`);
+  };
 
   // Load data from localStorage
   useEffect(() => {
@@ -989,7 +1170,8 @@ export default function FreightFlowQuotingEngine() {
                   lineHeight: '1.6',
                 }}
               >
-                Intelligent quote generation that combines customer context, market intelligence, and AI analysis
+                Intelligent quote generation that combines customer context,
+                market intelligence, and AI analysis
               </p>
             </div>
 
@@ -1041,7 +1223,13 @@ export default function FreightFlowQuotingEngine() {
 
             {/* Workflow Content */}
             {workflowStep === 'customer' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
                 <h3
                   style={{
                     fontSize: '20px',
@@ -1052,7 +1240,7 @@ export default function FreightFlowQuotingEngine() {
                 >
                   Step 1: Customer & Load Details
                 </h3>
-                
+
                 {/* Customer Selection */}
                 <div
                   style={{
@@ -1062,10 +1250,12 @@ export default function FreightFlowQuotingEngine() {
                     border: '1px solid rgba(255, 255, 255, 0.15)',
                   }}
                 >
-                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Customer Selection</h4>
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                    Customer Selection
+                  </h4>
                   <select
                     value={selectedCustomer}
-                    onChange={(e) => setSelectedCustomer(e.target.value)}
+                    onChange={(e) => handleCustomerChange(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '12px 16px',
@@ -1076,12 +1266,22 @@ export default function FreightFlowQuotingEngine() {
                       fontSize: '14px',
                     }}
                   >
-                    <option value="">Select Customer...</option>
-                    <option value="SHIP-2024-001">SHIP-2024-001 - Walmart Distribution Center</option>
-                    <option value="SHIP-2024-002">SHIP-2024-002 - Amazon Fulfillment</option>
-                    <option value="SHIP-2024-003">SHIP-2024-003 - Home Depot Supply Chain</option>
-                    <option value="SHIP-2024-004">SHIP-2024-004 - Target Logistics</option>
-                    <option value="SHIP-2024-005">SHIP-2024-005 - Costco Wholesale</option>
+                    <option value=''>Select Customer...</option>
+                    <option value='SHIP-2024-001'>
+                      SHIP-2024-001 - Walmart Distribution Center
+                    </option>
+                    <option value='SHIP-2024-002'>
+                      SHIP-2024-002 - Amazon Fulfillment
+                    </option>
+                    <option value='SHIP-2024-003'>
+                      SHIP-2024-003 - Home Depot Supply Chain
+                    </option>
+                    <option value='SHIP-2024-004'>
+                      SHIP-2024-004 - Target Logistics
+                    </option>
+                    <option value='SHIP-2024-005'>
+                      SHIP-2024-005 - Costco Wholesale
+                    </option>
                   </select>
                 </div>
 
@@ -1094,11 +1294,19 @@ export default function FreightFlowQuotingEngine() {
                     border: '1px solid rgba(255, 255, 255, 0.15)',
                   }}
                 >
-                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Load Details</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                    Load Details
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '16px',
+                    }}
+                  >
                     <input
-                      type="text"
-                      placeholder="Origin City, State"
+                      type='text'
+                      placeholder='Origin City, State'
                       style={{
                         padding: '12px 16px',
                         borderRadius: '8px',
@@ -1108,9 +1316,9 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     />
-                    <input
-                      type="text"
-                      placeholder="Destination City, State"
+                      onChange={(e) => handleLoadChange("origin", e.target.value)}                    <input
+                      type='text'
+                      placeholder='Destination City, State'
                       style={{
                         padding: '12px 16px',
                         borderRadius: '8px',
@@ -1120,9 +1328,9 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     />
-                    <input
-                      type="text"
-                      placeholder="Weight (lbs)"
+                      onChange={(e) => handleLoadChange("destination", e.target.value)}                    <input
+                      type='text'
+                      placeholder='Weight (lbs)'
                       style={{
                         padding: '12px 16px',
                         borderRadius: '8px',
@@ -1133,7 +1341,7 @@ export default function FreightFlowQuotingEngine() {
                       }}
                     />
                     <select
-                      style={{
+                      onChange={(e) => handleLoadChange("weight", e.target.value)}                      style={{
                         padding: '12px 16px',
                         borderRadius: '8px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -1142,17 +1350,17 @@ export default function FreightFlowQuotingEngine() {
                         fontSize: '14px',
                       }}
                     >
-                      <option value="">Select Equipment...</option>
-                      <option value="dry-van">Dry Van</option>
-                      <option value="reefer">Reefer</option>
-                      <option value="flatbed">Flatbed</option>
-                      <option value="step-deck">Step Deck</option>
+                      onChange={(e) => handleLoadChange("equipment", e.target.value)}                      <option value=''>Select Equipment...</option>
+                      <option value='dry-van'>Dry Van</option>
+                      <option value='reefer'>Reefer</option>
+                      <option value='flatbed'>Flatbed</option>
+                      <option value='step-deck'>Step Deck</option>
                     </select>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => setWorkflowStep('analysis')}
+                  onClick={runAIAnalysis}
                   style={{
                     padding: '16px 32px',
                     borderRadius: '12px',
@@ -1171,7 +1379,13 @@ export default function FreightFlowQuotingEngine() {
             )}
 
             {workflowStep === 'analysis' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
                 <h3
                   style={{
                     fontSize: '20px',
@@ -1182,9 +1396,15 @@ export default function FreightFlowQuotingEngine() {
                 >
                   Step 2: AI Analysis Engine
                 </h3>
-                
+
                 {/* Integrated Analysis Widgets */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '24px',
+                  }}
+                >
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
@@ -1193,14 +1413,23 @@ export default function FreightFlowQuotingEngine() {
                       border: '1px solid rgba(255, 255, 255, 0.15)',
                     }}
                   >
-                    <h4 style={{ color: 'white', marginBottom: '12px' }}>💰 Volume Discount Analysis</h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                      Customer Tier: Gold (6% discount)<br/>
-                      Annual Volume: 30,000 loads<br/>
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>
+                      💰 Volume Discount Analysis
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Customer Tier: {workflowData.customer.tier || "Not Selected"} ({workflowData.customer.discountRate || 0}% discount)
+                      <br />
+                      Annual Volume: 30,000 loads
+                      <br />
                       Loyalty: 5 years
                     </p>
                   </div>
-                  
+
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
@@ -1209,14 +1438,23 @@ export default function FreightFlowQuotingEngine() {
                       border: '1px solid rgba(255, 255, 255, 0.15)',
                     }}
                   >
-                    <h4 style={{ color: 'white', marginBottom: '12px' }}>📊 Spot Rate Intelligence</h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                      Market Demand: High (+12%)<br/>
-                      Route Competition: Moderate<br/>
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>
+                      📊 Spot Rate Intelligence
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Market Demand: High (+12%)
+                      <br />
+                      Route Competition: Moderate
+                      <br />
                       Fuel Trends: Stable
                     </p>
                   </div>
-                  
+
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
@@ -1225,14 +1463,23 @@ export default function FreightFlowQuotingEngine() {
                       border: '1px solid rgba(255, 255, 255, 0.15)',
                     }}
                   >
-                    <h4 style={{ color: 'white', marginBottom: '12px' }}>🚨 Emergency Pricing</h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                      Urgency Level: Standard<br/>
-                      Premium: 0%<br/>
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>
+                      🚨 Emergency Pricing
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Urgency Level: Standard
+                      <br />
+                      Premium: 0%
+                      <br />
                       Availability: Good
                     </p>
                   </div>
-                  
+
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
@@ -1241,10 +1488,19 @@ export default function FreightFlowQuotingEngine() {
                       border: '1px solid rgba(255, 255, 255, 0.15)',
                     }}
                   >
-                    <h4 style={{ color: 'white', marginBottom: '12px' }}>🏆 Competitive Position</h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                      Market Position: 8% below avg<br/>
-                      Win Probability: 85%<br/>
+                    <h4 style={{ color: 'white', marginBottom: '12px' }}>
+                      🏆 Competitive Position
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Market Position: 8% below avg
+                      <br />
+                      Win Probability: 85%
+                      <br />
                       Recommendation: Competitive
                     </p>
                   </div>
@@ -1270,7 +1526,13 @@ export default function FreightFlowQuotingEngine() {
             )}
 
             {workflowStep === 'generation' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
                 <h3
                   style={{
                     fontSize: '20px',
@@ -1281,14 +1543,14 @@ export default function FreightFlowQuotingEngine() {
                 >
                   Step 3: Quote Generation
                 </h3>
-                
+
                 {/* Quote Options */}
                 <div style={{ display: 'flex', gap: '24px' }}>
-                  {[
-                    { name: 'Standard', rate: 2450, timeline: '3-day delivery', color: '#3b82f6' },
-                    { name: 'Express', rate: 2850, timeline: 'Next-day delivery', color: '#f59e0b' },
-                    { name: 'Economy', rate: 2100, timeline: '5-day delivery', color: '#10b981' },
-                  ].map((option) => (
+                  {(workflowData.quote.alternatives || [
+                    { name: "Standard", rate: 2450, timeline: "3-day delivery", color: "#3b82f6" },
+                    { name: "Express", rate: 2850, timeline: "Next-day delivery", color: "#f59e0b" },
+                    { name: "Economy", rate: 2100, timeline: "5-day delivery", color: "#10b981" }
+                  ])                  ].map((option) => (
                     <div
                       key={option.name}
                       style={{
@@ -1300,11 +1562,25 @@ export default function FreightFlowQuotingEngine() {
                         textAlign: 'center',
                       }}
                     >
-                      <h4 style={{ color: 'white', marginBottom: '8px' }}>{option.name}</h4>
-                      <div style={{ fontSize: '24px', fontWeight: '700', color: option.color, marginBottom: '8px' }}>
+                      <h4 style={{ color: 'white', marginBottom: '8px' }}>
+                        {option.name}
+                      </h4>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: option.color,
+                          marginBottom: '8px',
+                        }}
+                      >
                         ${option.rate.toLocaleString()}
                       </div>
-                      <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '14px',
+                        }}
+                      >
                         {option.timeline}
                       </p>
                       <button
@@ -1320,7 +1596,7 @@ export default function FreightFlowQuotingEngine() {
                           cursor: 'pointer',
                         }}
                       >
-                        Select Quote
+                        onClick={() => selectQuoteOption(option)}                        Select Quote
                       </button>
                     </div>
                   ))}
@@ -1346,7 +1622,13 @@ export default function FreightFlowQuotingEngine() {
             )}
 
             {workflowStep === 'management' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
                 <h3
                   style={{
                     fontSize: '20px',
@@ -1357,7 +1639,7 @@ export default function FreightFlowQuotingEngine() {
                 >
                   Step 4: Quote Management
                 </h3>
-                
+
                 <div
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
@@ -1366,8 +1648,12 @@ export default function FreightFlowQuotingEngine() {
                     border: '1px solid rgba(255, 255, 255, 0.15)',
                   }}
                 >
-                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Quote Actions</h4>
-                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                    Quote Actions
+                  </h4>
+                  <div
+                    style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}
+                  >
                     <button
                       style={{
                         padding: '12px 24px',
@@ -1437,8 +1723,16 @@ export default function FreightFlowQuotingEngine() {
                     border: '1px solid rgba(255, 255, 255, 0.15)',
                   }}
                 >
-                  <h4 style={{ color: 'white', marginBottom: '16px' }}>Advanced Analysis Tools</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                    Advanced Analysis Tools
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr',
+                      gap: '16px',
+                    }}
+                  >
                     <div style={{ textAlign: 'center' }}>
                       <EmergencyLoadPricingWidget />
                     </div>
