@@ -493,6 +493,31 @@ export default function BrokerDashboard() {
     }
   }, [router]);
 
+  // 🔗 LOAD UNIFIED QUOTES: Load quotes generated from the unified quoting system
+  useEffect(() => {
+    if (brokerSession?.id) {
+      const brokerQuotesKey = `broker-quotes-${brokerSession.id}`;
+      const unifiedQuotes = localStorage.getItem(brokerQuotesKey);
+      if (unifiedQuotes) {
+        try {
+          const parsedQuotes = JSON.parse(unifiedQuotes);
+          // Merge unified quotes with existing broker quotes
+          setQuotes((prevQuotes) => {
+            const existingIds = prevQuotes.map(q => q.id);
+            const newQuotes = parsedQuotes.filter((q: any) => !existingIds.includes(q.id));
+            return [...newQuotes, ...prevQuotes];
+          });
+          console.log('🎯 Loaded unified quotes for broker:', {
+            broker: brokerSession.brokerName,
+            count: parsedQuotes.length
+          });
+        } catch (error) {
+          console.error('Error loading unified quotes:', error);
+        }
+      }
+    }
+  }, [brokerSession]);
+
   const handleLogout = () => {
     localStorage.removeItem('brokerSession');
     router.push('/broker');
@@ -2783,7 +2808,7 @@ export default function BrokerDashboard() {
                               </h4>
                               <p
                                 style={{
-                                  margin: '0',
+                                  margin: '0 0 4px 0',
                                   color: 'rgba(255, 255, 255, 0.7)',
                                   fontSize: '14px',
                                 }}
@@ -2791,6 +2816,29 @@ export default function BrokerDashboard() {
                                 Generated:{' '}
                                 {new Date(quote.timestamp).toLocaleString()}
                               </p>
+                              {quote.customer && (
+                                <p
+                                  style={{
+                                    margin: '0 0 4px 0',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    fontSize: '12px',
+                                  }}
+                                >
+                                  Customer: {quote.customer}
+                                </p>
+                              )}
+                              {quote.details?.engines && quote.details.engines.length > 0 && (
+                                <p
+                                  style={{
+                                    margin: '0',
+                                    color: 'rgba(99, 102, 241, 0.8)',
+                                    fontSize: '12px',
+                                    fontWeight: '500'
+                                  }}
+                                >
+                                  🤖 AI Engines: {quote.details.engines.join(', ')}
+                                </p>
+                              )}
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <div
@@ -2806,11 +2854,23 @@ export default function BrokerDashboard() {
                                 style={{
                                   fontSize: '12px',
                                   color: 'rgba(255, 255, 255, 0.6)',
+                                  marginBottom: '4px'
                                 }}
                               >
-                                Base: ${quote.baseRate} + Fuel: $
+                                Base: ${quote.rate?.toLocaleString() || quote.baseRate} + Fuel: $
                                 {quote.fuelSurcharge}
                               </div>
+                              {quote.appliedRule && (
+                                <div
+                                  style={{
+                                    fontSize: '11px',
+                                    color: 'rgba(34, 197, 94, 0.7)',
+                                    fontStyle: 'italic'
+                                  }}
+                                >
+                                  ✨ {quote.appliedRule}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -2848,22 +2908,37 @@ export default function BrokerDashboard() {
                   <SpotRateOptimizationWidget />
                 </div>
               )}
-              
+
               {/* Navigation to Full Quotes Page */}
-              <div style={{ 
-                marginTop: '32px', 
-                padding: '24px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                textAlign: 'center'
-              }}>
-                <h3 style={{ color: 'white', marginBottom: '16px', fontSize: '18px' }}>
+              <div
+                style={{
+                  marginTop: '32px',
+                  padding: '24px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  textAlign: 'center',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    marginBottom: '16px',
+                    fontSize: '18px',
+                  }}
+                >
                   🎯 Advanced Quote Management
                 </h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '20px', fontSize: '14px' }}>
-                  Access the complete unified quoting system with AI-powered pricing engines,
-                  emergency load pricing, spot rate optimization, and volume discounts.
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '20px',
+                    fontSize: '14px',
+                  }}
+                >
+                  Access the complete unified quoting system with AI-powered
+                  pricing engines, emergency load pricing, spot rate
+                  optimization, and volume discounts.
                 </p>
                 <button
                   onClick={() => router.push('/quoting')}
@@ -2881,11 +2956,13 @@ export default function BrokerDashboard() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+                    e.target.style.boxShadow =
+                      '0 6px 20px rgba(99, 102, 241, 0.4)';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = 'translateY(0px)';
-                    e.target.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.3)';
+                    e.target.style.boxShadow =
+                      '0 4px 16px rgba(99, 102, 241, 0.3)';
                   }}
                 >
                   🚀 Open Full Quoting System
