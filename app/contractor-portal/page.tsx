@@ -281,13 +281,37 @@ const ContractorPortal = () => {
   const getStepStatus = (step: any) => {
     switch (step.status) {
       case 'completed':
-        return { color: '#10b981', icon: '✅', text: 'Completed', bgColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 0.4)' };
+        return {
+          color: '#10b981',
+          icon: '✅',
+          text: 'Completed',
+          bgColor: 'rgba(16, 185, 129, 0.2)',
+          borderColor: 'rgba(16, 185, 129, 0.4)',
+        };
       case 'in_progress':
-        return { color: '#f59e0b', icon: '⏳', text: 'In Progress', bgColor: 'rgba(245, 158, 11, 0.2)', borderColor: 'rgba(245, 158, 11, 0.4)' };
+        return {
+          color: '#f59e0b',
+          icon: '⏳',
+          text: 'In Progress',
+          bgColor: 'rgba(245, 158, 11, 0.2)',
+          borderColor: 'rgba(245, 158, 11, 0.4)',
+        };
       case 'pending':
-        return { color: '#ef4444', icon: '⭕', text: 'Pending', bgColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.4)' };
+        return {
+          color: '#ef4444',
+          icon: '⭕',
+          text: 'Pending',
+          bgColor: 'rgba(239, 68, 68, 0.2)',
+          borderColor: 'rgba(239, 68, 68, 0.4)',
+        };
       default:
-        return { color: '#6b7280', icon: '⭕', text: 'Unknown', bgColor: 'rgba(107, 114, 128, 0.2)', borderColor: 'rgba(107, 114, 128, 0.4)' };
+        return {
+          color: '#6b7280',
+          icon: '⭕',
+          text: 'Unknown',
+          bgColor: 'rgba(107, 114, 128, 0.2)',
+          borderColor: 'rgba(107, 114, 128, 0.4)',
+        };
     }
   };
 

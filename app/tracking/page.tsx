@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import CanadaCrossBorderView from './components/CanadaCrossBorderView';
 import MaritimeIntelligenceView from './components/MaritimeIntelligenceView';
 import MexicoCrossBorderView from './components/MexicoCrossBorderView';
-import CanadaCrossBorderView from './components/CanadaCrossBorderView';
 
 // Dynamically import map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./components/LiveTrackingMap'), {

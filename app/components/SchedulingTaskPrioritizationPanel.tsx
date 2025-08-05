@@ -573,192 +573,187 @@ export default function SchedulingTaskPrioritizationPanel() {
           }}
         >
           <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📅</div>
-          <h4 style={{ marginBottom: '8px', color: 'white' }}>No Scheduling Data Available</h4>
+          <h4 style={{ marginBottom: '8px', color: 'white' }}>
+            No Scheduling Data Available
+          </h4>
           <p style={{ fontSize: '0.9rem', opacity: 0.8, margin: 0 }}>
             Click 'Refresh' to load scheduling task prioritization
           </p>
         </div>
       ) : (
         prioritizedTasks && (
-        <>
-          {/* Scheduling Metrics */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '12px',
-              marginBottom: '20px',
-            }}
-          >
+          <>
+            {/* Scheduling Metrics */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                padding: '12px',
-                textAlign: 'center',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                gap: '12px',
+                marginBottom: '20px',
               }}
             >
               <div
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#dc2626',
-                }}
-              >
-                {
-                  prioritizedTasks?.tasks?.filter(
-                    (t) => t.riskLevel === 'critical'
-                  )?.length || 0
-                }
-              </div>
-              <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Critical</div>
-            </div>
-
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                padding: '12px',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#ef4444',
-                }}
-              >
-                {prioritizedTasks?.optimizationMetrics?.hosComplianceImpact || 0}%
-              </div>
-              <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>HOS Impact</div>
-            </div>
-
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                padding: '12px',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#f59e0b',
-                }}
-              >
-                {prioritizedTasks?.optimizationMetrics?.conflictResolutionRate || 0}%
-              </div>
-              <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Conflicts</div>
-            </div>
-
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                padding: '12px',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#8b5cf6',
-                }}
-              >
-                {prioritizedTasks?.optimizationMetrics?.timeToCompletion || 0}h
-              </div>
-              <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Time Est.</div>
-            </div>
-          </div>
-
-          {/* Prioritized Scheduling Tasks */}
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-          >
-            {(prioritizedTasks?.tasks || []).slice(0, 5).map((task, index) => (
-              <div
-                key={task.id}
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',
-                  border: `1px solid ${getRiskColor(task.riskLevel)}40`,
                   borderRadius: '8px',
-                  padding: '16px',
-                  transition: 'all 0.3s ease',
+                  padding: '12px',
+                  textAlign: 'center',
                 }}
               >
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: '8px',
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#dc2626',
                   }}
                 >
+                  {prioritizedTasks?.tasks?.filter(
+                    (t) => t.riskLevel === 'critical'
+                  )?.length || 0}
+                </div>
+                <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Critical</div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#ef4444',
+                  }}
+                >
+                  {prioritizedTasks?.optimizationMetrics?.hosComplianceImpact ||
+                    0}
+                  %
+                </div>
+                <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                  HOS Impact
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#f59e0b',
+                  }}
+                >
+                  {prioritizedTasks?.optimizationMetrics
+                    ?.conflictResolutionRate || 0}
+                  %
+                </div>
+                <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                  Conflicts
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#8b5cf6',
+                  }}
+                >
+                  {prioritizedTasks?.optimizationMetrics?.timeToCompletion || 0}
+                  h
+                </div>
+                <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                  Time Est.
+                </div>
+              </div>
+            </div>
+
+            {/* Prioritized Scheduling Tasks */}
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+            >
+              {(prioritizedTasks?.tasks || [])
+                .slice(0, 5)
+                .map((task, index) => (
                   <div
+                    key={task.id}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: `1px solid ${getRiskColor(task.riskLevel)}40`,
+                      borderRadius: '8px',
+                      padding: '16px',
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    <span style={{ fontSize: '1.2rem' }}>
-                      {getTaskTypeIcon(task.type)}
-                    </span>
-                    <span
+                    <div
                       style={{
-                        background: '#8b5cf6',
-                        color: 'white',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        fontSize: '0.7rem',
-                        fontWeight: 'bold',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '8px',
                       }}
                     >
-                      #{index + 1}
-                    </span>
-                    <h4
-                      style={{
-                        margin: 0,
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {task.title}
-                    </h4>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '6px',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: getRiskColor(task.riskLevel),
-                        color: 'white',
-                        padding: '3px 6px',
-                        borderRadius: '4px',
-                        fontSize: '0.6rem',
-                        fontWeight: 'bold',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {task.riskLevel}
-                    </span>
-
-                    {task.metadata.hosImpact &&
-                      task.metadata.hosImpact !== 'none' && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <span style={{ fontSize: '1.2rem' }}>
+                          {getTaskTypeIcon(task.type)}
+                        </span>
                         <span
                           style={{
-                            background: getHosImpactColor(
-                              task.metadata.hosImpact
-                            ),
+                            background: '#8b5cf6',
+                            color: 'white',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          #{index + 1}
+                        </span>
+                        <h4
+                          style={{
+                            margin: 0,
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {task.title}
+                        </h4>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '6px',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            background: getRiskColor(task.riskLevel),
                             color: 'white',
                             padding: '3px 6px',
                             borderRadius: '4px',
@@ -767,95 +762,116 @@ export default function SchedulingTaskPrioritizationPanel() {
                             textTransform: 'uppercase',
                           }}
                         >
-                          HOS
+                          {task.riskLevel}
                         </span>
-                      )}
 
-                    <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>
-                      ⏰ {formatTimeUntilDeadline(task.deadline)}
-                    </span>
-                  </div>
-                </div>
+                        {task.metadata.hosImpact &&
+                          task.metadata.hosImpact !== 'none' && (
+                            <span
+                              style={{
+                                background: getHosImpactColor(
+                                  task.metadata.hosImpact
+                                ),
+                                color: 'white',
+                                padding: '3px 6px',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              HOS
+                            </span>
+                          )}
 
-                <p
-                  style={{
-                    margin: '0 0 10px 0',
-                    fontSize: '0.8rem',
-                    opacity: 0.8,
-                  }}
-                >
-                  {task.description}
-                </p>
+                        <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                          ⏰ {formatTimeUntilDeadline(task.deadline)}
+                        </span>
+                      </div>
+                    </div>
 
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
-                    gap: '8px',
-                    fontSize: '0.7rem',
-                  }}
-                >
-                  <div>
-                    <strong>Type:</strong> {task.metadata.scheduleType}
-                  </div>
-                  <div>
-                    <strong>Duration:</strong> {task.estimatedDuration}min
-                  </div>
-                  <div>
-                    <strong>Conflict:</strong>{' '}
-                    <span
+                    <p
                       style={{
-                        color: getConflictSeverityColor(
-                          task.metadata.conflictSeverity
-                        ),
+                        margin: '0 0 10px 0',
+                        fontSize: '0.8rem',
+                        opacity: 0.8,
                       }}
                     >
-                      {task.metadata.conflictSeverity}
-                    </span>
-                  </div>
-                  <div>
-                    <strong>Resources:</strong>{' '}
-                    {task.metadata.resourcesNeeded?.length || 0}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                      {task.description}
+                    </p>
 
-          {/* AI Insights */}
-          {(prioritizedTasks?.recommendations?.length || 0) > 0 && (
-            <div
-              style={{
-                background: 'rgba(139, 92, 246, 0.1)',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                borderRadius: '8px',
-                padding: '16px',
-                marginTop: '16px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '8px',
-                }}
-              >
-                <span style={{ fontSize: '1.2rem' }}>🧠</span>
-                <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>
-                  AI Scheduling Recommendations
-                </span>
-              </div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                {(prioritizedTasks?.recommendations || []).slice(0, 3).map((rec, i) => (
-                  <div key={i} style={{ marginBottom: '4px' }}>
-                    • {rec}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(100px, 1fr))',
+                        gap: '8px',
+                        fontSize: '0.7rem',
+                      }}
+                    >
+                      <div>
+                        <strong>Type:</strong> {task.metadata.scheduleType}
+                      </div>
+                      <div>
+                        <strong>Duration:</strong> {task.estimatedDuration}min
+                      </div>
+                      <div>
+                        <strong>Conflict:</strong>{' '}
+                        <span
+                          style={{
+                            color: getConflictSeverityColor(
+                              task.metadata.conflictSeverity
+                            ),
+                          }}
+                        >
+                          {task.metadata.conflictSeverity}
+                        </span>
+                      </div>
+                      <div>
+                        <strong>Resources:</strong>{' '}
+                        {task.metadata.resourcesNeeded?.length || 0}
+                      </div>
+                    </div>
                   </div>
                 ))}
-              </div>
             </div>
-          )}
-        </>
+
+            {/* AI Insights */}
+            {(prioritizedTasks?.recommendations?.length || 0) > 0 && (
+              <div
+                style={{
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginTop: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '1.2rem' }}>🧠</span>
+                  <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>
+                    AI Scheduling Recommendations
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
+                  {(prioritizedTasks?.recommendations || [])
+                    .slice(0, 3)
+                    .map((rec, i) => (
+                      <div key={i} style={{ marginBottom: '4px' }}>
+                        • {rec}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </>
         )
       )}
     </div>

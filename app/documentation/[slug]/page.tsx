@@ -2226,7 +2226,7 @@ System_Logs (audit trails, monitoring)
 
 ### Course Details
 - **Duration**: 90 minutes
-- **Difficulty**: Intermediate  
+- **Difficulty**: Intermediate
 - **Category**: Business Operations
 - **Prerequisites**: Basic FleetFlow navigation
 - **Certification**: Professional Quoting Specialist
@@ -2249,7 +2249,7 @@ The FreightFlow Quoting Engine is a revolutionary unified pricing system that co
 
 **Key Features:**
 - 🧠 **AI-Powered Analysis**: Four distinct pricing engines working together
-- 🔄 **Unified Workflow**: Streamlined quote generation process  
+- 🔄 **Unified Workflow**: Streamlined quote generation process
 - 📊 **Real-Time Intelligence**: Market data and competitive positioning
 - 🎯 **Customer-Specific Pricing**: Tier-based discounts and preferences
 - 🔗 **Broker Integration**: Seamless sync with broker dashboards
@@ -2286,7 +2286,7 @@ The workflow begins with customer selection, which determines pricing tiers and 
 
 **Customer Tiers and Discounts:**
 - 🥈 **Silver Tier**: 4% discount (Standard customers)
-- 🥇 **Gold Tier**: 6% discount (Preferred customers)  
+- 🥇 **Gold Tier**: 6% discount (Preferred customers)
 - 💎 **Platinum Tier**: 8% discount (Premium customers)
 
 **Available Demo Customers:**
@@ -2538,7 +2538,8 @@ Return to [Documentation Hub](/documentation) to browse all available resources.
       'compliance-guide': '⚖️ DOT Compliance Guide',
       'implementation-guide': '� Implementation Guide',
       'marketing-strategy': '📈 Marketing Strategy',
-      'freightflow-quoting-engine-training': '💰 FreightFlow Quoting Engine Training',
+      'freightflow-quoting-engine-training':
+        '💰 FreightFlow Quoting Engine Training',
     };
     return titles[slug] || 'Document';
   };

@@ -8,7 +8,9 @@ import GlobalNotificationBell from './GlobalNotificationBell';
 // Enhanced Navigation Component with Role-Based Admin Profile Dropdown
 export default function EnhancedNavigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(null);
+  const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
+    null
+  );
   const [isManager, setIsManager] = useState(false);
   const [isBrokerAgent, setIsBrokerAgent] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -23,14 +25,15 @@ export default function EnhancedNavigation() {
     department: 'Management',
     permissions: ['all'],
     lastLogin: 'Current session',
-    avatar: 'FM'
+    avatar: 'FM',
   });
 
   // Check user role on component mount
   useEffect(() => {
     const checkUserRole = () => {
       const managerStatus = ManagerAccessControlService.isCurrentUserManager();
-      const brokerAgentStatus = ManagerAccessControlService.isCurrentUserBrokerAgent();
+      const brokerAgentStatus =
+        ManagerAccessControlService.isCurrentUserBrokerAgent();
       setIsManager(managerStatus);
       setIsBrokerAgent(brokerAgentStatus);
     };
@@ -41,26 +44,96 @@ export default function EnhancedNavigation() {
   // Role-based menu configuration
   const getProfileMenuItems = () => {
     const baseItems = [
-      { icon: '👤', label: 'Profile Settings', href: '/profile', category: 'profile' },
-      { icon: '🔔', label: 'Notification Settings', href: '/notifications', category: 'profile' },
-      { icon: '📚', label: 'FleetFlow University℠', href: '/training', category: 'profile' },
-      { icon: '🎯', label: 'Quick Actions', href: '/quick-actions', category: 'profile' },
+      {
+        icon: '👤',
+        label: 'Profile Settings',
+        href: '/profile',
+        category: 'profile',
+      },
+      {
+        icon: '🔔',
+        label: 'Notification Settings',
+        href: '/notifications',
+        category: 'profile',
+      },
+      {
+        icon: '📚',
+        label: 'FleetFlow University℠',
+        href: '/training',
+        category: 'profile',
+      },
+      {
+        icon: '🎯',
+        label: 'Quick Actions',
+        href: '/quick-actions',
+        category: 'profile',
+      },
     ];
 
     const managerItems = [
-      { icon: '🏢', label: 'Portal Management', href: '/admin/portals', category: 'management' },
-      { icon: '💰', label: 'Billing & Subscriptions', href: '/admin/billing', category: 'management' },
-      { icon: '👥', label: 'User Management', href: '/user-management', category: 'management' },
-      { icon: '📊', label: 'System Analytics', href: '/admin/analytics', category: 'management' },
-      { icon: '🎛️', label: 'Admin Dashboard', href: '/admin/dashboard', category: 'management' },
+      {
+        icon: '🏢',
+        label: 'Portal Management',
+        href: '/admin/portals',
+        category: 'management',
+      },
+      {
+        icon: '💰',
+        label: 'Billing & Subscriptions',
+        href: '/admin/billing',
+        category: 'management',
+      },
+      {
+        icon: '👥',
+        label: 'User Management',
+        href: '/user-management',
+        category: 'management',
+      },
+      {
+        icon: '📊',
+        label: 'System Analytics',
+        href: '/admin/analytics',
+        category: 'management',
+      },
+      {
+        icon: '🎛️',
+        label: 'Admin Dashboard',
+        href: '/admin/dashboard',
+        category: 'management',
+      },
     ];
 
     const adminItems = [
-      { icon: '⚙️', label: 'System Settings', href: '/settings', category: 'admin' },
-      { icon: '🔧', label: 'Feature Flags', href: '/admin/features', category: 'admin' },
-      { icon: '🔌', label: 'API Management', href: '/admin/api', category: 'admin' },
-      { icon: '📝', label: 'Audit Logs', href: '/admin/logs', category: 'admin' },
-      { icon: '🔐', label: 'Security Center', href: '/admin/security', category: 'admin' },
+      {
+        icon: '⚙️',
+        label: 'System Settings',
+        href: '/settings',
+        category: 'admin',
+      },
+      {
+        icon: '🔧',
+        label: 'Feature Flags',
+        href: '/admin/features',
+        category: 'admin',
+      },
+      {
+        icon: '🔌',
+        label: 'API Management',
+        href: '/admin/api',
+        category: 'admin',
+      },
+      {
+        icon: '📝',
+        label: 'Audit Logs',
+        href: '/admin/logs',
+        category: 'admin',
+      },
+      {
+        icon: '🔐',
+        label: 'Security Center',
+        href: '/admin/security',
+        category: 'admin',
+      },
     ];
 
     if (currentUser.role === 'Fleet Manager' || isManager) {
@@ -98,7 +171,9 @@ export default function EnhancedNavigation() {
   };
 
   const handleSubDropdownToggle = (subDropdown: string) => {
-    setActiveSubDropdown(activeSubDropdown === subDropdown ? null : subDropdown);
+    setActiveSubDropdown(
+      activeSubDropdown === subDropdown ? null : subDropdown
+    );
   };
 
   const handleDropdownClose = () => {
@@ -107,7 +182,12 @@ export default function EnhancedNavigation() {
     setShowProfileDropdown(false);
   };
 
-  console.log('Navigation render - activeDropdown:', activeDropdown, 'activeSubDropdown:', activeSubDropdown);
+  console.log(
+    'Navigation render - activeDropdown:',
+    activeDropdown,
+    'activeSubDropdown:',
+    activeSubDropdown
+  );
 
   return (
     <nav
@@ -133,7 +213,7 @@ export default function EnhancedNavigation() {
         >
           {/* Logo */}
           <Link
-            href="/"
+            href='/'
             onClick={handleDropdownClose}
             style={{
               fontSize: '24px',
@@ -186,19 +266,69 @@ export default function EnhancedNavigation() {
                     zIndex: 1001,
                   }}
                 >
-                  <Link href="/dispatch" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/dispatch'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     📋 Dispatch Central
                   </Link>
-                  <Link href="/broker" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/broker'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     📦 Broker Box
                   </Link>
-                  <Link href="/quoting" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/quoting'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     💰 Freight Quoting
                   </Link>
-                  <Link href="/carriers" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#3b82f6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/carriers'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     🚛 Carrier Portal
                   </Link>
-                  <Link href="/tracking" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/tracking'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#14b8a6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     📍 Live Load Tracking
                   </Link>
                 </div>
@@ -240,16 +370,56 @@ export default function EnhancedNavigation() {
                     zIndex: 1001,
                   }}
                 >
-                  <Link href="/vehicles" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/vehicles'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#14b8a6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     🚚 Vehicles
                   </Link>
-                  <Link href="/drivers" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/drivers'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#14b8a6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     👥 Drivers
                   </Link>
-                  <Link href="/routes" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/routes'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#14b8a6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     🗺️ Routes
                   </Link>
-                  <Link href="/maintenance" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#14b8a6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/maintenance'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#14b8a6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     🔧 Maintenance
                   </Link>
                 </div>
@@ -291,13 +461,43 @@ export default function EnhancedNavigation() {
                     zIndex: 1001,
                   }}
                 >
-                  <Link href="/analytics" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8b5cf6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/analytics'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#8b5cf6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     📈 Analytics Dashboard
                   </Link>
-                  <Link href="/reports" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8b5cf6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/reports'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#8b5cf6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     📋 Reports
                   </Link>
-                  <Link href="/performance" onClick={handleDropdownClose} style={{ display: 'block', padding: '10px 20px', color: '#8b5cf6', textDecoration: 'none', fontSize: '0.85rem' }}>
+                  <Link
+                    href='/performance'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#8b5cf6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                    }}
+                  >
                     🎯 Performance
                   </Link>
                 </div>
@@ -306,7 +506,7 @@ export default function EnhancedNavigation() {
 
             {/* AI Flow */}
             <Link
-              href="/ai-flow"
+              href='/ai-flow'
               onClick={handleDropdownClose}
               style={{
                 background: 'linear-gradient(145deg, #F59E0B, #D97706)',
@@ -347,8 +547,8 @@ export default function EnhancedNavigation() {
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   marginLeft: '10px',
-                  boxShadow: showProfileDropdown 
-                    ? '0 8px 25px rgba(14, 165, 233, 0.4)' 
+                  boxShadow: showProfileDropdown
+                    ? '0 8px 25px rgba(14, 165, 233, 0.4)'
                     : '0 4px 12px rgba(14, 165, 233, 0.25)',
                   transform: showProfileDropdown ? 'scale(1.05)' : 'scale(1)',
                   transition: 'all 0.3s ease',
@@ -381,7 +581,13 @@ export default function EnhancedNavigation() {
                       color: 'white',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
                       <div
                         style={{
                           width: '50px',
@@ -414,115 +620,169 @@ export default function EnhancedNavigation() {
                   {/* Menu Items by Category */}
                   <div style={{ padding: '8px 0' }}>
                     {/* Profile Section */}
-                    <div style={{ padding: '8px 20px', fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <div
+                      style={{
+                        padding: '8px 20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
                       Profile
                     </div>
-                    {getProfileMenuItems().filter(item => item.category === 'profile').map((item, index) => (
-                      <Link
-                        key={index}
-                        href={item.href}
-                        onClick={() => setShowProfileDropdown(false)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          padding: '12px 20px',
-                          textDecoration: 'none',
-                          color: '#374151',
-                          transition: 'all 0.2s ease',
-                          borderLeft: '3px solid transparent',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#f3f4f6';
-                          e.currentTarget.style.borderLeftColor = '#0EA5E9';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.borderLeftColor = 'transparent';
-                        }}
-                      >
-                        <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                        <span style={{ fontSize: '14px', fontWeight: '500' }}>
-                          {item.label}
-                        </span>
-                      </Link>
-                    ))}
+                    {getProfileMenuItems()
+                      .filter((item) => item.category === 'profile')
+                      .map((item, index) => (
+                        <Link
+                          key={index}
+                          href={item.href}
+                          onClick={() => setShowProfileDropdown(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '12px 20px',
+                            textDecoration: 'none',
+                            color: '#374151',
+                            transition: 'all 0.2s ease',
+                            borderLeft: '3px solid transparent',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f3f4f6';
+                            e.currentTarget.style.borderLeftColor = '#0EA5E9';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.borderLeftColor =
+                              'transparent';
+                          }}
+                        >
+                          <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                          <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                            {item.label}
+                          </span>
+                        </Link>
+                      ))}
 
                     {/* Management Section */}
                     {(currentUser.role === 'Fleet Manager' || isManager) && (
                       <>
-                        <div style={{ padding: '8px 20px', fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '8px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+                        <div
+                          style={{
+                            padding: '8px 20px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: '#6b7280',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginTop: '8px',
+                            borderTop: '1px solid #e5e7eb',
+                            paddingTop: '16px',
+                          }}
+                        >
                           Management
                         </div>
-                        {getProfileMenuItems().filter(item => item.category === 'management').map((item, index) => (
-                          <Link
-                            key={index}
-                            href={item.href}
-                            onClick={() => setShowProfileDropdown(false)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              padding: '12px 20px',
-                              textDecoration: 'none',
-                              color: '#374151',
-                              transition: 'all 0.2s ease',
-                              borderLeft: '3px solid transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = '#f3f4f6';
-                              e.currentTarget.style.borderLeftColor = '#f59e0b';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = 'transparent';
-                              e.currentTarget.style.borderLeftColor = 'transparent';
-                            }}
-                          >
-                            <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                            <span style={{ fontSize: '14px', fontWeight: '500' }}>
-                              {item.label}
-                            </span>
-                          </Link>
-                        ))}
+                        {getProfileMenuItems()
+                          .filter((item) => item.category === 'management')
+                          .map((item, index) => (
+                            <Link
+                              key={index}
+                              href={item.href}
+                              onClick={() => setShowProfileDropdown(false)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '12px 20px',
+                                textDecoration: 'none',
+                                color: '#374151',
+                                transition: 'all 0.2s ease',
+                                borderLeft: '3px solid transparent',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f3f4f6';
+                                e.currentTarget.style.borderLeftColor =
+                                  '#f59e0b';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  'transparent';
+                                e.currentTarget.style.borderLeftColor =
+                                  'transparent';
+                              }}
+                            >
+                              <span style={{ fontSize: '16px' }}>
+                                {item.icon}
+                              </span>
+                              <span
+                                style={{ fontSize: '14px', fontWeight: '500' }}
+                              >
+                                {item.label}
+                              </span>
+                            </Link>
+                          ))}
                       </>
                     )}
 
                     {/* Admin Section */}
                     {currentUser.role === 'Fleet Manager' && (
                       <>
-                        <div style={{ padding: '8px 20px', fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '8px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+                        <div
+                          style={{
+                            padding: '8px 20px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: '#6b7280',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginTop: '8px',
+                            borderTop: '1px solid #e5e7eb',
+                            paddingTop: '16px',
+                          }}
+                        >
                           Administration
                         </div>
-                        {getProfileMenuItems().filter(item => item.category === 'admin').map((item, index) => (
-                          <Link
-                            key={index}
-                            href={item.href}
-                            onClick={() => setShowProfileDropdown(false)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              padding: '12px 20px',
-                              textDecoration: 'none',
-                              color: '#374151',
-                              transition: 'all 0.2s ease',
-                              borderLeft: '3px solid transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = '#f3f4f6';
-                              e.currentTarget.style.borderLeftColor = '#dc2626';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = 'transparent';
-                              e.currentTarget.style.borderLeftColor = 'transparent';
-                            }}
-                          >
-                            <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                            <span style={{ fontSize: '14px', fontWeight: '500' }}>
-                              {item.label}
-                            </span>
-                          </Link>
-                        ))}
+                        {getProfileMenuItems()
+                          .filter((item) => item.category === 'admin')
+                          .map((item, index) => (
+                            <Link
+                              key={index}
+                              href={item.href}
+                              onClick={() => setShowProfileDropdown(false)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '12px 20px',
+                                textDecoration: 'none',
+                                color: '#374151',
+                                transition: 'all 0.2s ease',
+                                borderLeft: '3px solid transparent',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f3f4f6';
+                                e.currentTarget.style.borderLeftColor =
+                                  '#dc2626';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  'transparent';
+                                e.currentTarget.style.borderLeftColor =
+                                  'transparent';
+                              }}
+                            >
+                              <span style={{ fontSize: '16px' }}>
+                                {item.icon}
+                              </span>
+                              <span
+                                style={{ fontSize: '14px', fontWeight: '500' }}
+                              >
+                                {item.label}
+                              </span>
+                            </Link>
+                          ))}
                       </>
                     )}
                   </div>

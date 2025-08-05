@@ -457,20 +457,30 @@ export async function POST(request: NextRequest) {
         });
 
       case 'submit-pars':
-        const { shipmentId, borderCrossing, businessNumber, customsBroker } = manifestData;
-        
+        const { shipmentId, borderCrossing, businessNumber, customsBroker } =
+          manifestData;
+
         // Validate required fields
-        if (!shipmentId || !borderCrossing || !businessNumber || !customsBroker) {
-          return NextResponse.json({
-            success: false,
-            error: 'Missing required fields for PARS submission',
-            details: 'Shipment ID, border crossing, business number, and customs broker are required'
-          }, { status: 400 });
+        if (
+          !shipmentId ||
+          !borderCrossing ||
+          !businessNumber ||
+          !customsBroker
+        ) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Missing required fields for PARS submission',
+              details:
+                'Shipment ID, border crossing, business number, and customs broker are required',
+            },
+            { status: 400 }
+          );
         }
 
         // Generate PARS number
         const parsNumber = `PARS-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        
+
         return NextResponse.json({
           success: true,
           data: {
@@ -484,30 +494,59 @@ export async function POST(request: NextRequest) {
             businessNumber,
             customsBroker,
             processSteps: [
-              { step: 1, title: 'Submit Request', status: 'completed', time: '24-48h before' },
-              { step: 2, title: 'Broker Processing', status: 'in-progress', time: '2-4 hours' },
-              { step: 3, title: 'CBSA Review', status: 'pending', time: '1-2 hours' },
-              { step: 4, title: 'PARS Approval', status: 'pending', time: '30 minutes' },
-              { step: 5, title: 'Label Generation', status: 'pending', time: '15 minutes' }
+              {
+                step: 1,
+                title: 'Submit Request',
+                status: 'completed',
+                time: '24-48h before',
+              },
+              {
+                step: 2,
+                title: 'Broker Processing',
+                status: 'in-progress',
+                time: '2-4 hours',
+              },
+              {
+                step: 3,
+                title: 'CBSA Review',
+                status: 'pending',
+                time: '1-2 hours',
+              },
+              {
+                step: 4,
+                title: 'PARS Approval',
+                status: 'pending',
+                time: '30 minutes',
+              },
+              {
+                step: 5,
+                title: 'Label Generation',
+                status: 'pending',
+                time: '15 minutes',
+              },
             ],
-            nextAction: 'Customs broker will process your PARS request within 2-4 hours',
+            nextAction:
+              'Customs broker will process your PARS request within 2-4 hours',
             requiredDocuments: [
               'Commercial invoice',
               'Bill of lading',
               'Import permits (if applicable)',
-              'Certificate of origin (if applicable)'
-            ]
+              'Certificate of origin (if applicable)',
+            ],
           },
         });
 
       case 'generate-pars-labels':
         const { parsNumber } = manifestData;
-        
+
         if (!parsNumber) {
-          return NextResponse.json({
-            success: false,
-            error: 'PARS number is required for label generation'
-          }, { status: 400 });
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'PARS number is required for label generation',
+            },
+            { status: 400 }
+          );
         }
 
         return NextResponse.json({
@@ -521,25 +560,28 @@ export async function POST(request: NextRequest) {
                 labelType: 'PARS Barcode Label',
                 printFormat: 'PDF',
                 downloadUrl: `/api/tracking/canada-border/labels/${parsNumber}`,
-                instructions: 'Affix to shipment documentation and present at border'
-              }
+                instructions:
+                  'Affix to shipment documentation and present at border',
+              },
             ],
             generatedAt: new Date().toISOString(),
-            validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+            validUntil: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString(), // 30 days
             instructions: [
               'Print labels on standard 4x6 shipping labels',
               'Affix PARS barcode label to bill of lading',
               'Present to CBSA officer at border crossing',
-              'Keep copy for your records'
-            ]
-          }
+              'Keep copy for your records',
+            ],
+          },
         });
 
       case 'check-status':
         const { manifestId } = manifestData;
         const isACI = manifestId.startsWith('ACI-');
         const isPARS = manifestId.startsWith('PARS-');
-        
+
         let statuses: string[];
         if (isACI) {
           statuses = ['submitted', 'accepted', 'rejected'];
@@ -549,7 +591,8 @@ export async function POST(request: NextRequest) {
           statuses = ['submitted', 'processing', 'approved', 'rejected'];
         }
 
-        const currentStatus = statuses[Math.floor(Math.random() * statuses.length)];
+        const currentStatus =
+          statuses[Math.floor(Math.random() * statuses.length)];
 
         return NextResponse.json({
           success: true,
@@ -561,12 +604,13 @@ export async function POST(request: NextRequest) {
             notes: isACI
               ? 'ACI eManifest processed by CBSA'
               : isPARS
-              ? 'PARS processed by customs broker'
-              : 'Manifest processed by border services',
-            ...(isPARS && currentStatus === 'approved' && {
-              labelsAvailable: true,
-              labelGenerationUrl: `/api/tracking/canada-border?action=generate-pars-labels&parsNumber=${manifestId}`
-            })
+                ? 'PARS processed by customs broker'
+                : 'Manifest processed by border services',
+            ...(isPARS &&
+              currentStatus === 'approved' && {
+                labelsAvailable: true,
+                labelGenerationUrl: `/api/tracking/canada-border?action=generate-pars-labels&parsNumber=${manifestId}`,
+              }),
           },
         });
 
