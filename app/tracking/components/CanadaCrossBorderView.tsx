@@ -768,23 +768,222 @@ export default function CanadaCrossBorderView({
       {activeTab === 'manifest' && (
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'grid',
+            gap: '24px',
           }}
         >
-          <h3
+          {/* PARS Request System */}
+          <div
             style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              marginBottom: '16px',
-              color: 'white',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '24px',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
             }}
           >
-            📄 Active Canada Cross-Border Manifests
-          </h3>
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                marginBottom: '16px',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              🇨🇦 PARS Request System
+            </h3>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                  Shipment ID
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter shipment ID"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                  Border Crossing
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value="">Select crossing</option>
+                  <option value="AMB">Ambassador Bridge/Windsor</option>
+                  <option value="PEA">Peace Bridge/Fort Erie</option>
+                  <option value="RBW">Rainbow Bridge/Niagara Falls</option>
+                  <option value="TIB">Thousand Islands Bridge</option>
+                  <option value="PAC">Pacific Highway/Surrey</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                  Canadian Business Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="123456789RT0001"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                  Customs Broker
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value="">Select broker</option>
+                  <option value="pacific">Pacific Customs Brokers</option>
+                  <option value="livingston">Livingston International</option>
+                  <option value="customs-house">Customs House Brokerage</option>
+                  <option value="cole">Cole International</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                📝 Submit PARS Request
+              </button>
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                🔍 Check PARS Status
+              </button>
+              <button
+                style={{
+                  background: 'rgba(251, 191, 36, 0.8)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                🏷️ Generate PARS Labels
+              </button>
+            </div>
+
+            {/* PARS Process Steps */}
+            <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: 'white' }}>
+                📋 PARS Process Timeline
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                {[
+                  { step: '1', title: 'Submit Request', time: '24-48h before', status: 'completed' },
+                  { step: '2', title: 'Broker Processing', time: '2-4 hours', status: 'in-progress' },
+                  { step: '3', title: 'CBSA Review', time: '1-2 hours', status: 'pending' },
+                  { step: '4', title: 'PARS Approval', time: '30 minutes', status: 'pending' },
+                  { step: '5', title: 'Label Generation', time: '15 minutes', status: 'pending' },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: item.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' : 
+                                 item.status === 'in-progress' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                      border: `1px solid ${item.status === 'completed' ? '#10b981' : 
+                                          item.status === 'in-progress' ? '#fbbf24' : 'rgba(255, 255, 255, 0.2)'}`,
+                      padding: '12px',
+                      borderRadius: '6px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>
+                      {item.status === 'completed' ? '✅' : item.status === 'in-progress' ? '⏳' : '⏸️'}
+                    </div>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: 'white' }}>{item.title}</div>
+                    <div style={{ fontSize: '10px', opacity: 0.8, color: 'white' }}>{item.time}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Active Manifests */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '24px',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                marginBottom: '16px',
+                color: 'white',
+              }}
+            >
+              📄 Active Canada Cross-Border Manifests
+            </h3>
           <div style={{ display: 'grid', gap: '16px' }}>
             {crossBorderShipments.slice(0, 5).map((shipment, index) => (
               <div
@@ -885,6 +1084,7 @@ export default function CanadaCrossBorderView({
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       )}

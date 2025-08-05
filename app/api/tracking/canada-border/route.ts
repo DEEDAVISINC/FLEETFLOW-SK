@@ -98,11 +98,7 @@ const MAJOR_BORDER_CROSSINGS: CanadaBorderCrossing[] = [
     coordinates: [44.3469, -75.9294],
     usPort: 'Alexandria Bay, NY',
     canadianPort: 'Lansdowne, ON',
-    specialRequirements: [
-      'Scenic Route',
-      'Limited Hours',
-      'Toll Bridge',
-    ],
+    specialRequirements: ['Scenic Route', 'Limited Hours', 'Toll Bridge'],
   },
   {
     name: 'Pacific Highway/Surrey',
@@ -147,7 +143,8 @@ function generatePARSManifests(count: number = 50): PARSManifest[] {
       customsBroker: brokers[Math.floor(Math.random() * brokers.length)],
       businessNumber: `${(123456789 + i).toString()}RT0001`,
       customsValue: Math.floor(Math.random() * 300000) + 5000,
-      releaseType: releaseTypes[Math.floor(Math.random() * releaseTypes.length)],
+      releaseType:
+        releaseTypes[Math.floor(Math.random() * releaseTypes.length)],
     };
 
     if (status === 'rejected') {
@@ -173,7 +170,8 @@ function generateACIManifests(count: number = 50): ACIManifest[] {
 
   for (let i = 0; i < count; i++) {
     const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const carrierCode = carrierCodes[Math.floor(Math.random() * carrierCodes.length)];
+    const carrierCode =
+      carrierCodes[Math.floor(Math.random() * carrierCodes.length)];
     const manifest: ACIManifest = {
       manifestId: `ACI-${Date.now()}-${i.toString().padStart(3, '0')}`,
       shipmentId: `CA-${(25000 + i).toString()}`,
@@ -373,9 +371,7 @@ export async function GET(request: NextRequest) {
                 title: 'Weather Advisory - Pacific Highway',
                 message:
                   'Snow and ice conditions expected at Pacific Highway crossing - reduced speeds and delays anticipated',
-                timestamp: new Date(
-                  Date.now() - 30 * 60 * 1000
-                ).toISOString(),
+                timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
                 affectedCrossings: ['PAC'],
               },
             ],
@@ -461,36 +457,116 @@ export async function POST(request: NextRequest) {
         });
 
       case 'submit-pars':
+        const { shipmentId, borderCrossing, businessNumber, customsBroker } = manifestData;
+        
+        // Validate required fields
+        if (!shipmentId || !borderCrossing || !businessNumber || !customsBroker) {
+          return NextResponse.json({
+            success: false,
+            error: 'Missing required fields for PARS submission',
+            details: 'Shipment ID, border crossing, business number, and customs broker are required'
+          }, { status: 400 });
+        }
+
+        // Generate PARS number
+        const parsNumber = `PARS-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
         return NextResponse.json({
           success: true,
           data: {
-            manifestId: `PARS-${Date.now()}-${Math.random()
-              .toString(36)
-              .substr(2, 9)}`,
-            status: 'processing',
-            estimatedProcessingTime: '15-30 minutes',
+            parsNumber,
+            shipmentId,
+            status: 'submitted',
+            estimatedProcessingTime: '2-4 hours',
             customsBrokerRequired: true,
             submissionTime: new Date().toISOString(),
+            borderCrossing,
+            businessNumber,
+            customsBroker,
+            processSteps: [
+              { step: 1, title: 'Submit Request', status: 'completed', time: '24-48h before' },
+              { step: 2, title: 'Broker Processing', status: 'in-progress', time: '2-4 hours' },
+              { step: 3, title: 'CBSA Review', status: 'pending', time: '1-2 hours' },
+              { step: 4, title: 'PARS Approval', status: 'pending', time: '30 minutes' },
+              { step: 5, title: 'Label Generation', status: 'pending', time: '15 minutes' }
+            ],
+            nextAction: 'Customs broker will process your PARS request within 2-4 hours',
+            requiredDocuments: [
+              'Commercial invoice',
+              'Bill of lading',
+              'Import permits (if applicable)',
+              'Certificate of origin (if applicable)'
+            ]
           },
+        });
+
+      case 'generate-pars-labels':
+        const { parsNumber } = manifestData;
+        
+        if (!parsNumber) {
+          return NextResponse.json({
+            success: false,
+            error: 'PARS number is required for label generation'
+          }, { status: 400 });
+        }
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            parsNumber,
+            labels: [
+              {
+                labelId: `LABEL-${parsNumber}-001`,
+                barcodeData: `*${parsNumber}*`,
+                labelType: 'PARS Barcode Label',
+                printFormat: 'PDF',
+                downloadUrl: `/api/tracking/canada-border/labels/${parsNumber}`,
+                instructions: 'Affix to shipment documentation and present at border'
+              }
+            ],
+            generatedAt: new Date().toISOString(),
+            validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+            instructions: [
+              'Print labels on standard 4x6 shipping labels',
+              'Affix PARS barcode label to bill of lading',
+              'Present to CBSA officer at border crossing',
+              'Keep copy for your records'
+            ]
+          }
         });
 
       case 'check-status':
         const { manifestId } = manifestData;
         const isACI = manifestId.startsWith('ACI-');
-        const statuses = isACI
-          ? ['submitted', 'accepted', 'rejected']
-          : ['submitted', 'processing', 'approved', 'rejected'];
+        const isPARS = manifestId.startsWith('PARS-');
+        
+        let statuses: string[];
+        if (isACI) {
+          statuses = ['submitted', 'accepted', 'rejected'];
+        } else if (isPARS) {
+          statuses = ['submitted', 'processing', 'approved', 'rejected'];
+        } else {
+          statuses = ['submitted', 'processing', 'approved', 'rejected'];
+        }
+
+        const currentStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
         return NextResponse.json({
           success: true,
           data: {
             manifestId,
-            status: statuses[Math.floor(Math.random() * statuses.length)],
+            status: currentStatus,
             lastUpdated: new Date().toISOString(),
             processingTime: Math.floor(Math.random() * 90) + 15, // 15-105 minutes
             notes: isACI
               ? 'ACI eManifest processed by CBSA'
-              : 'PARS processed by customs broker',
+              : isPARS
+              ? 'PARS processed by customs broker'
+              : 'Manifest processed by border services',
+            ...(isPARS && currentStatus === 'approved' && {
+              labelsAvailable: true,
+              labelGenerationUrl: `/api/tracking/canada-border?action=generate-pars-labels&parsNumber=${manifestId}`
+            })
           },
         });
 
