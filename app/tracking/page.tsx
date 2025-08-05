@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import MaritimeIntelligenceView from './components/MaritimeIntelligenceView';
+import MexicoCrossBorderView from './components/MexicoCrossBorderView';
 
 // Dynamically import map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./components/LiveTrackingMap'), {
@@ -120,7 +121,7 @@ interface MapFeatures {
 export default function LiveTrackingPage() {
   const router = useRouter();
   const [activeView, setActiveView] = useState<
-    'overview' | 'tracking' | 'analytics' | 'maritime'
+    'overview' | 'tracking' | 'analytics' | 'maritime' | 'mexico'
   >('overview');
 
   // ... existing code ...
@@ -949,6 +950,7 @@ export default function LiveTrackingPage() {
             { id: 'tracking', label: 'Live Tracking', icon: '🗺️' },
             { id: 'analytics', label: 'Analytics', icon: '📈' },
             { id: 'maritime', label: 'Maritime Intelligence', icon: '🚢' },
+            { id: 'mexico', label: 'Mexico Cross-Border', icon: '🇲🇽' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -2476,6 +2478,11 @@ export default function LiveTrackingPage() {
         {/* Maritime Intelligence Tab */}
         {activeView === 'maritime' && (
           <MaritimeIntelligenceView shipments={filteredShipments} />
+        )}
+
+        {/* Mexico Cross-Border Intelligence Tab */}
+        {activeView === 'mexico' && (
+          <MexicoCrossBorderView shipments={filteredShipments} />
         )}
       </div>
     </div>
