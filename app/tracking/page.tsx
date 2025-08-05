@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import MaritimeIntelligenceView from './components/MaritimeIntelligenceView';
 import MexicoCrossBorderView from './components/MexicoCrossBorderView';
+import CanadaCrossBorderView from './components/CanadaCrossBorderView';
 
 // Dynamically import map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./components/LiveTrackingMap'), {
@@ -121,7 +122,7 @@ interface MapFeatures {
 export default function LiveTrackingPage() {
   const router = useRouter();
   const [activeView, setActiveView] = useState<
-    'overview' | 'tracking' | 'analytics' | 'maritime' | 'mexico'
+    'overview' | 'tracking' | 'analytics' | 'maritime' | 'canada' | 'mexico'
   >('overview');
 
   // ... existing code ...
@@ -950,6 +951,7 @@ export default function LiveTrackingPage() {
             { id: 'tracking', label: 'Live Tracking', icon: '🗺️' },
             { id: 'analytics', label: 'Analytics', icon: '📈' },
             { id: 'maritime', label: 'Maritime Intelligence', icon: '🚢' },
+            { id: 'canada', label: 'Canada Cross-Border', icon: '🇨🇦' },
             { id: 'mexico', label: 'Mexico Cross-Border', icon: '🇲🇽' },
           ].map((tab) => (
             <button
@@ -2478,6 +2480,11 @@ export default function LiveTrackingPage() {
         {/* Maritime Intelligence Tab */}
         {activeView === 'maritime' && (
           <MaritimeIntelligenceView shipments={filteredShipments} />
+        )}
+
+        {/* Canada Cross-Border Intelligence Tab */}
+        {activeView === 'canada' && (
+          <CanadaCrossBorderView shipments={filteredShipments} />
         )}
 
         {/* Mexico Cross-Border Intelligence Tab */}
