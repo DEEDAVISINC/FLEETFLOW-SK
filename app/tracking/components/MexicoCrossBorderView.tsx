@@ -795,15 +795,29 @@ export default function MexicoCrossBorderView({
             >
               🇲🇽 SAAI-M & ACE Request System
             </h3>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '16px',
+                marginBottom: '16px',
+              }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    marginBottom: '4px',
+                    color: 'white',
+                  }}
+                >
                   Shipment ID
                 </label>
                 <input
-                  type="text"
-                  placeholder="Enter shipment ID"
+                  type='text'
+                  placeholder='Enter shipment ID'
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -816,7 +830,14 @@ export default function MexicoCrossBorderView({
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    marginBottom: '4px',
+                    color: 'white',
+                  }}
+                >
                   Border Crossing
                 </label>
                 <select
@@ -830,21 +851,28 @@ export default function MexicoCrossBorderView({
                     fontSize: '14px',
                   }}
                 >
-                  <option value="">Select crossing</option>
-                  <option value="LAR">Laredo/Nuevo Laredo</option>
-                  <option value="ELP">El Paso/Ciudad Juárez</option>
-                  <option value="OTM">Otay Mesa/Tijuana</option>
-                  <option value="CAL">Calexico/Mexicali</option>
-                  <option value="NOG">Nogales/Nogales</option>
+                  <option value=''>Select crossing</option>
+                  <option value='LAR'>Laredo/Nuevo Laredo</option>
+                  <option value='ELP'>El Paso/Ciudad Juárez</option>
+                  <option value='OTM'>Otay Mesa/Tijuana</option>
+                  <option value='CAL'>Calexico/Mexicali</option>
+                  <option value='NOG'>Nogales/Nogales</option>
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    marginBottom: '4px',
+                    color: 'white',
+                  }}
+                >
                   Mexican RFC Number
                 </label>
                 <input
-                  type="text"
-                  placeholder="ABCD123456ABC"
+                  type='text'
+                  placeholder='ABCD123456ABC'
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -857,7 +885,14 @@ export default function MexicoCrossBorderView({
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    marginBottom: '4px',
+                    color: 'white',
+                  }}
+                >
                   Customs Broker
                 </label>
                 <select
@@ -871,11 +906,13 @@ export default function MexicoCrossBorderView({
                     fontSize: '14px',
                   }}
                 >
-                  <option value="">Select broker</option>
-                  <option value="agencia-lopez">Agencia Aduanal López</option>
-                  <option value="customs-hernandez">Customs Broker Hernández</option>
-                  <option value="sat-solutions">SAT Solutions</option>
-                  <option value="mexico-trade">Mexico Trade Partners</option>
+                  <option value=''>Select broker</option>
+                  <option value='agencia-lopez'>Agencia Aduanal López</option>
+                  <option value='customs-hernandez'>
+                    Customs Broker Hernández
+                  </option>
+                  <option value='sat-solutions'>SAT Solutions</option>
+                  <option value='mexico-trade'>Mexico Trade Partners</option>
                 </select>
               </div>
             </div>
@@ -944,18 +981,74 @@ export default function MexicoCrossBorderView({
             </div>
 
             {/* SAAI-M & ACE Process Steps */}
-            <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: 'white' }}>
+            <div
+              style={{
+                marginTop: '20px',
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  color: 'white',
+                }}
+              >
                 📋 Cross-Border Process Timeline
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  gap: '12px',
+                }}
+              >
                 {[
-                  { step: '1', title: 'ACE Manifest', time: '2-4h before', status: 'completed', system: 'US' },
-                  { step: '2', title: 'SAAI-M Submit', time: '1-2h before', status: 'in-progress', system: 'MX' },
-                  { step: '3', title: 'QR Code Gen', time: '30 minutes', status: 'pending', system: 'US' },
-                  { step: '4', title: 'Pedimento', time: '1 hour', status: 'pending', system: 'MX' },
-                  { step: '5', title: 'Border Crossing', time: '15-45 min', status: 'pending', system: 'Both' },
-                  { step: '6', title: 'Final Clearance', time: '10 minutes', status: 'pending', system: 'Both' },
+                  {
+                    step: '1',
+                    title: 'ACE Manifest',
+                    time: '2-4h before',
+                    status: 'completed',
+                    system: 'US',
+                  },
+                  {
+                    step: '2',
+                    title: 'SAAI-M Submit',
+                    time: '1-2h before',
+                    status: 'in-progress',
+                    system: 'MX',
+                  },
+                  {
+                    step: '3',
+                    title: 'QR Code Gen',
+                    time: '30 minutes',
+                    status: 'pending',
+                    system: 'US',
+                  },
+                  {
+                    step: '4',
+                    title: 'Pedimento',
+                    time: '1 hour',
+                    status: 'pending',
+                    system: 'MX',
+                  },
+                  {
+                    step: '5',
+                    title: 'Border Crossing',
+                    time: '15-45 min',
+                    status: 'pending',
+                    system: 'Both',
+                  },
+                  {
+                    step: '6',
+                    title: 'Final Clearance',
+                    time: '10 minutes',
+                    status: 'pending',
+                    system: 'Both',
+                  },
                 ].map((item, index) => (
                   <div
                     key={index}
@@ -985,18 +1078,39 @@ export default function MexicoCrossBorderView({
                           ? '⏳'
                           : '⏸️'}
                     </div>
-                    <div style={{ fontSize: '11px', fontWeight: '600', color: 'white', marginBottom: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '2px',
+                      }}
+                    >
                       {item.title}
                     </div>
-                    <div style={{ fontSize: '9px', opacity: 0.8, color: 'white', marginBottom: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: '9px',
+                        opacity: 0.8,
+                        color: 'white',
+                        marginBottom: '2px',
+                      }}
+                    >
                       {item.time}
                     </div>
-                    <div style={{ 
-                      fontSize: '8px', 
-                      opacity: 0.7, 
-                      color: item.system === 'US' ? '#3b82f6' : item.system === 'MX' ? '#10b981' : '#f59e0b',
-                      fontWeight: '600'
-                    }}>
+                    <div
+                      style={{
+                        fontSize: '8px',
+                        opacity: 0.7,
+                        color:
+                          item.system === 'US'
+                            ? '#3b82f6'
+                            : item.system === 'MX'
+                              ? '#10b981'
+                              : '#f59e0b',
+                        fontWeight: '600',
+                      }}
+                    >
                       {item.system}
                     </div>
                   </div>
@@ -1074,7 +1188,9 @@ export default function MexicoCrossBorderView({
                     </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '12px', opacity: 0.8 }}>Crossing</div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Crossing
+                    </div>
                     <div style={{ fontWeight: '600', fontSize: '12px' }}>
                       {shipment.crossBorderInfo?.borderCrossing || 'Laredo'}
                     </div>

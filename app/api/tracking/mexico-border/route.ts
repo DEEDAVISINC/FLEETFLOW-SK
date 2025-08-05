@@ -481,17 +481,22 @@ export async function POST(request: NextRequest) {
                 code: `ACE-${manifestData.shipmentId}-${Date.now()}`,
                 barcodeData: `*ACE${manifestData.shipmentId}${Date.now()}*`,
                 downloadUrl: '/api/documents/qr-code-ace.pdf',
-                validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
-                instructions: 'Print and attach to lead vehicle windshield'
+                validUntil: new Date(
+                  Date.now() + 24 * 60 * 60 * 1000
+                ).toISOString(), // 24 hours
+                instructions: 'Print and attach to lead vehicle windshield',
               },
               {
                 type: 'PAPS Number',
                 code: `PAPS-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
                 barcodeData: `*PAPS${Math.random().toString(36).substr(2, 8).toUpperCase()}*`,
                 downloadUrl: '/api/documents/qr-code-paps.pdf',
-                validUntil: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours
-                instructions: 'Required for Laredo crossing - mandatory QR code'
-              }
+                validUntil: new Date(
+                  Date.now() + 72 * 60 * 60 * 1000
+                ).toISOString(), // 72 hours
+                instructions:
+                  'Required for Laredo crossing - mandatory QR code',
+              },
             ],
             generatedAt: new Date().toISOString(),
             crossingRequirements: {
@@ -499,8 +504,8 @@ export async function POST(request: NextRequest) {
               elPaso: 'QR code recommended for faster processing',
               otayMesa: 'Standard ACE manifest sufficient',
               calexico: 'FAST lane available with QR code',
-              nogales: 'Enhanced inspection protocols - QR code recommended'
-            }
+              nogales: 'Enhanced inspection protocols - QR code recommended',
+            },
           },
         });
 
