@@ -795,7 +795,7 @@ export default function CanadaCrossBorderView({
             >
               🇨🇦 PARS Request System
             </h3>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
@@ -944,9 +944,9 @@ export default function CanadaCrossBorderView({
                   <div
                     key={index}
                     style={{
-                      background: item.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' : 
+                      background: item.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' :
                                  item.status === 'in-progress' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                      border: `1px solid ${item.status === 'completed' ? '#10b981' : 
+                      border: `1px solid ${item.status === 'completed' ? '#10b981' :
                                           item.status === 'in-progress' ? '#fbbf24' : 'rgba(255, 255, 255, 0.2)'}`,
                       padding: '12px',
                       borderRadius: '6px',
@@ -1084,7 +1084,6 @@ export default function CanadaCrossBorderView({
                 </div>
               </div>
             ))}
-          </div>
           </div>
         </div>
       )}
