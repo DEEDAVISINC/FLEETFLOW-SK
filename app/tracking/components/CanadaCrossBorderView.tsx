@@ -326,7 +326,7 @@ export default function CanadaCrossBorderView({
           { id: 'overview', label: 'Overview', icon: '📊' },
           { id: 'crossings', label: 'Border Crossings', icon: '🌉' },
           { id: 'compliance', label: 'Compliance', icon: '📋' },
-          { id: 'manifest', label: 'Manifest Tracking', icon: '📄' },
+          { id: 'manifest', label: 'PARS Request', icon: '📄' },
           { id: 'alerts', label: 'Alerts', icon: '🚨' },
         ].map((tab) => {
           const colors = getTabColors(tab.id);
@@ -795,7 +795,7 @@ export default function CanadaCrossBorderView({
             >
               🇨🇦 PARS Request System
             </h3>
-
+            
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: 'white' }}>
@@ -944,9 +944,9 @@ export default function CanadaCrossBorderView({
                   <div
                     key={index}
                     style={{
-                      background: item.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' :
+                      background: item.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' : 
                                  item.status === 'in-progress' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                      border: `1px solid ${item.status === 'completed' ? '#10b981' :
+                      border: `1px solid ${item.status === 'completed' ? '#10b981' : 
                                           item.status === 'in-progress' ? '#fbbf24' : 'rgba(255, 255, 255, 0.2)'}`,
                       padding: '12px',
                       borderRadius: '6px',
@@ -984,62 +984,63 @@ export default function CanadaCrossBorderView({
             >
               📄 Active Canada Cross-Border Manifests
             </h3>
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {crossBorderShipments.slice(0, 5).map((shipment, index) => (
-              <div
-                key={shipment.id}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  display: 'grid',
-                  gridTemplateColumns: '2fr 1fr 1fr 1fr',
-                  gap: '16px',
-                  alignItems: 'center',
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: '600', marginBottom: '4px' }}>
-                    {shipment.id}
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {crossBorderShipments.slice(0, 5).map((shipment, index) => (
+                <div
+                  key={shipment.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    display: 'grid',
+                    gridTemplateColumns: '2fr 1fr 1fr 1fr',
+                    gap: '16px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>
+                      {shipment.id}
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      {shipment.origin} → {shipment.destination}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', opacity: 0.8 }}>
-                    {shipment.origin} → {shipment.destination}
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Manifest Type
+                    </div>
+                    <div style={{ fontWeight: '600' }}>
+                      {shipment.crossBorderInfo?.manifestType || 'ACI'}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>Status</div>
+                    <div
+                      style={{
+                        background:
+                          shipment.crossBorderInfo?.crossingStatus === 'cleared'
+                            ? '#10b981'
+                            : '#f59e0b',
+                        color: 'white',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {shipment.crossBorderInfo?.crossingStatus || 'pending'}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>Crossing</div>
+                    <div style={{ fontWeight: '600', fontSize: '12px' }}>
+                      {shipment.crossBorderInfo?.borderCrossing || 'Ambassador'}
+                    </div>
                   </div>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '12px', opacity: 0.8 }}>
-                    Manifest Type
-                  </div>
-                  <div style={{ fontWeight: '600' }}>
-                    {shipment.crossBorderInfo?.manifestType || 'ACI'}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '12px', opacity: 0.8 }}>Status</div>
-                  <div
-                    style={{
-                      background:
-                        shipment.crossBorderInfo?.crossingStatus === 'cleared'
-                          ? '#10b981'
-                          : '#f59e0b',
-                      color: 'white',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {shipment.crossBorderInfo?.crossingStatus || 'pending'}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '12px', opacity: 0.8 }}>Crossing</div>
-                  <div style={{ fontWeight: '600', fontSize: '12px' }}>
-                    {shipment.crossBorderInfo?.borderCrossing || 'Ambassador'}
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
