@@ -1137,7 +1137,7 @@ export default function DriverPortal() {
                                 width: `${progress}%`,
                                 transition: 'width 0.3s ease',
                               }}
-                            ></div>
+                             />
                           </div>
                           {nextStep && (
                             <div

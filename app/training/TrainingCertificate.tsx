@@ -334,7 +334,7 @@ export const TrainingCertificate: React.FC<TrainingCertificateProps> = ({
                   background: '#1e40af',
                   margin: '0 auto 8px',
                 }}
-              ></div>
+               />
               <p
                 style={{
                   fontSize: '1rem',
@@ -364,7 +364,7 @@ export const TrainingCertificate: React.FC<TrainingCertificateProps> = ({
                   background: '#1e40af',
                   margin: '0 auto 8px',
                 }}
-              ></div>
+               />
               <p
                 style={{
                   fontSize: '1rem',

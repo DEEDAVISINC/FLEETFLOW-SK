@@ -119,7 +119,7 @@ export default function AIHubPage() {
                         ? '#ffffff'
                         : 'rgba(255, 255, 255, 0.4)',
                   }}
-                ></div>
+                 />
                 <span
                   style={{
                     fontSize: '14px',
@@ -163,7 +163,7 @@ export default function AIHubPage() {
                         ? '#ffffff'
                         : 'rgba(255, 255, 255, 0.4)',
                   }}
-                ></div>
+                 />
                 <span
                   style={{
                     fontSize: '14px',

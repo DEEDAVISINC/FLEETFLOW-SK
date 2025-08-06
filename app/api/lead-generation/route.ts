@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiLeadTrainer } from '../../services/AILeadGenerationTrainer';
 import { leadGenerationService } from '../../services/LeadGenerationService';
+import { logger } from '../../utils/logger';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -48,7 +49,13 @@ export async function GET(request: NextRequest) {
 }
 
 async function handleGenerateLeads(searchParams: URLSearchParams) {
-  console.log('🎯 Starting AI-powered lead generation...');
+  logger.info(
+    'AI-powered lead generation started',
+    {
+      action: 'generate',
+    },
+    'LeadGenerationAPI'
+  );
 
   // Parse filters from query parameters
   const filters = {
@@ -102,7 +109,13 @@ async function handleGenerateLeads(searchParams: URLSearchParams) {
 }
 
 async function handleAITraining() {
-  console.log('🎓 Starting AI training session...');
+  logger.info(
+    'AI training session started',
+    {
+      action: 'train',
+    },
+    'LeadGenerationAPI'
+  );
 
   // Run comprehensive AI training
   await aiLeadTrainer.runTrainingDemo();
@@ -136,7 +149,13 @@ async function handleAITraining() {
 }
 
 async function handleFullDemo() {
-  console.log('🚀 Running complete AI lead generation demonstration...');
+  logger.info(
+    'Complete AI lead generation demonstration started',
+    {
+      action: 'demo',
+    },
+    'LeadGenerationAPI'
+  );
 
   // Start learning session
   const sessionId = await aiLeadTrainer.startLearningSession();
@@ -212,7 +231,13 @@ async function handleFullDemo() {
 }
 
 async function handleAIInsights() {
-  console.log('🧠 Gathering AI insights and recommendations...');
+  logger.info(
+    'AI insights and recommendations gathering started',
+    {
+      action: 'insights',
+    },
+    'LeadGenerationAPI'
+  );
 
   const aiInsights = await aiLeadTrainer.getAIInsights();
   const leadInsights = await leadGenerationService.getAIInsights();
@@ -294,7 +319,13 @@ async function handleLeadFeedback(data: {
     notes: string[];
   };
 }) {
-  console.log('📝 Processing lead feedback for AI learning...');
+  logger.info(
+    'Lead feedback processing for AI learning started',
+    {
+      action: 'feedback',
+    },
+    'LeadGenerationAPI'
+  );
 
   // Update AI patterns based on feedback
   const successfulLeads = data.leads.filter((lead) =>
@@ -323,7 +354,13 @@ async function handleRFxIntegration(data: {
     minimumConfidence: number;
   };
 }) {
-  console.log('🔗 Integrating leads with FreightFlow RFx system...');
+  logger.info(
+    'FreightFlow RFx system integration started',
+    {
+      action: 'integrate',
+    },
+    'LeadGenerationAPI'
+  );
 
   // Filter leads based on criteria
   const qualifiedLeads = data.leads.filter(

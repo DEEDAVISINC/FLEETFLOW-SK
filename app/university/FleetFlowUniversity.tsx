@@ -40,6 +40,71 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
   // INTEGRATED ROLE-BASED COURSES (Main Section)
   const integratedCourses: Course[] = [
     {
+      id: 'go-with-the-flow-occupational',
+      title: 'Go with the Flow Occupational Training',
+      description:
+        'Foundational FleetFlow operations training covering workflow optimization, system navigation, cross-departmental coordination, productivity enhancement, and professional development within the transportation ecosystem.',
+      duration: '240 minutes',
+      difficulty: 'Beginner',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 2847,
+      rating: 4.9,
+      thumbnail: '🌊',
+    },
+    {
+      id: 'broker-operations-relationship-building',
+      title: 'Broker Operations Management - Relationship Building',
+      description:
+        'Advanced broker operations focusing on strategic relationship building with shippers and manufacturers. Covers trust development, long-term partnership strategies, communication excellence, account management, and revenue growth through relationship optimization.',
+      duration: '200 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      certification: true,
+      enrolledCount: 1847,
+      rating: 4.8,
+      thumbnail: '🤝',
+    },
+    {
+      id: 'manufacturer-shipper-partnerships',
+      title: 'Manufacturer & Shipper Partnership Excellence',
+      description:
+        'Specialized training for building and maintaining strategic partnerships with manufacturers and shippers. Includes supply chain understanding, manufacturing logistics, shipper needs analysis, contract negotiations, and long-term partnership development.',
+      duration: '180 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      certification: true,
+      enrolledCount: 1456,
+      rating: 4.7,
+      thumbnail: '🏭',
+    },
+    {
+      id: 'dispatch-relationship-mastery',
+      title: 'Dispatch Central Relationship Mastery',
+      description:
+        'Comprehensive dispatcher relationship training covering carrier acquisition, loadboard expertise (DAT, Truckstop, 123LoadBoard), broker networking, carrier onboarding documentation, and becoming the go-to dispatcher for various brokers and clients.',
+      duration: '305 minutes',
+      difficulty: 'Advanced',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 1247,
+      rating: 4.9,
+      thumbnail: '📋',
+    },
+    {
+      id: 'dispatch-central-operations',
+      title: 'Dispatch Central Operations',
+      description:
+        'Complete training on dispatch operations including load board management, carrier assignment, route optimization, real-time tracking, communication protocols, and emergency procedures.',
+      duration: '195 minutes',
+      difficulty: 'Intermediate',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 1247,
+      rating: 4.7,
+      thumbnail: '📋',
+    },
+    {
       id: 'dispatcher-operations-mastery',
       title: 'Dispatcher Operations Mastery',
       description:
@@ -50,7 +115,20 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
       certification: true,
       enrolledCount: 856,
       rating: 4.8,
-      thumbnail: '📋',
+      thumbnail: '📊',
+    },
+    {
+      id: 'broker-operations-management',
+      title: 'Broker Operations Management',
+      description:
+        'Advanced broker operations including load posting strategies, carrier sourcing, rate negotiations, market analysis, risk management, and performance metrics.',
+      duration: '225 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      certification: true,
+      enrolledCount: 1534,
+      rating: 4.8,
+      thumbnail: '🏢',
     },
     {
       id: 'broker-business-mastery',
@@ -96,6 +174,47 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
   // INDIVIDUAL SPECIALIZED COURSES (Locked Section)
   const courses: Course[] = [
     {
+      id: 'go-with-flow-foundations',
+      title: 'Go with the Flow - Foundations',
+      description:
+        'Essential FleetFlow workflow training covering system fundamentals, navigation mastery, productivity optimization, cross-departmental communication, and professional development within the transportation industry.',
+      duration: '120 minutes',
+      difficulty: 'Beginner',
+      category: 'Operations',
+      certification: true,
+      enrolledCount: 3247,
+      rating: 4.9,
+      thumbnail: '🌊',
+    },
+    {
+      id: 'broker-relationship-mastery',
+      title: 'Broker Relationship Building Mastery',
+      description:
+        'Advanced relationship building strategies for brokers working with shippers and manufacturers. Covers trust development, communication excellence, account management, partnership strategies, and long-term revenue optimization through relationship management.',
+      duration: '150 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      prerequisite: ['business-operations-excellence'],
+      certification: true,
+      enrolledCount: 1847,
+      rating: 4.8,
+      thumbnail: '🤝',
+    },
+    {
+      id: 'manufacturer-logistics-partnerships',
+      title: 'Manufacturer & Logistics Partnerships',
+      description:
+        'Specialized training for developing strategic partnerships with manufacturers and logistics providers. Includes supply chain analysis, manufacturing logistics understanding, shipper relationship development, contract optimization, and partnership growth strategies.',
+      duration: '135 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      prerequisite: ['broker-relationship-mastery'],
+      certification: true,
+      enrolledCount: 1456,
+      rating: 4.7,
+      thumbnail: '🏭',
+    },
+    {
       id: 'carrier-management-complete',
       title: 'Complete Carrier Management',
       description:
@@ -123,6 +242,34 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
       thumbnail: '⚖️',
     },
     {
+      id: 'dispatch-relationship-professional',
+      title: 'Professional Dispatch Relationship Building',
+      description:
+        'Master carrier acquisition strategies, loadboard navigation (DAT, Truckstop, 123LoadBoard), broker communication techniques, carrier onboarding documentation management, and relationship management to become the preferred dispatcher for brokers and carriers.',
+      duration: '220 minutes',
+      difficulty: 'Advanced',
+      category: 'Operations',
+      prerequisite: ['carrier-management-complete'],
+      certification: true,
+      enrolledCount: 1247,
+      rating: 4.9,
+      thumbnail: '📋',
+    },
+    {
+      id: 'dispatch-central-detailed',
+      title: 'Dispatch Central Operations - Detailed',
+      description:
+        'Comprehensive dispatch operations training covering load board management, carrier assignment, route optimization, real-time tracking, communication protocols, and emergency procedures.',
+      duration: '195 minutes',
+      difficulty: 'Intermediate',
+      category: 'Operations',
+      prerequisite: ['carrier-management-complete'],
+      certification: true,
+      enrolledCount: 1247,
+      rating: 4.7,
+      thumbnail: '📋',
+    },
+    {
       id: 'dispatch-operations-mastery',
       title: 'Complete Dispatch Mastery',
       description:
@@ -134,6 +281,20 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
       enrolledCount: 856,
       rating: 4.8,
       thumbnail: '📊',
+    },
+    {
+      id: 'broker-operations-detailed',
+      title: 'Advanced Broker Operations',
+      description:
+        'Detailed broker operations training covering load posting strategies, carrier sourcing techniques, rate negotiation mastery, market analysis, risk management protocols, and performance metrics tracking.',
+      duration: '225 minutes',
+      difficulty: 'Advanced',
+      category: 'Business',
+      prerequisite: ['business-operations-excellence'],
+      certification: true,
+      enrolledCount: 856,
+      rating: 4.8,
+      thumbnail: '🏢',
     },
     {
       id: 'business-operations-excellence',

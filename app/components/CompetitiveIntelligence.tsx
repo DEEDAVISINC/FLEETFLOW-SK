@@ -217,7 +217,7 @@ const CompetitiveIntelligence: React.FC<CompetitiveIntelligenceProps> = ({
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Competitive Intelligence</h3>
             <p className="text-gray-600">Analyzing market data and competitor information...</p>
           </div>
@@ -334,7 +334,7 @@ const CompetitiveIntelligence: React.FC<CompetitiveIntelligenceProps> = ({
                     {competitors.map((competitor) => (
                       <div key={competitor.id} className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                          <div className="w-3 h-3 bg-blue-500 rounded-full" />
                           <span className="font-medium">{competitor.name}</span>
                         </div>
                         <span className={`font-bold ${getMarketShareColor(competitor.marketShare)}`}>

@@ -950,7 +950,7 @@ const BrokerOperationsPage: React.FC = () => {
                   🔗 Full Quoting System
                 </button>
                 <div className='flex items-center gap-2 rounded-lg bg-green-100 px-3 py-2 text-sm font-semibold text-green-800'>
-                  <span className='h-2 w-2 animate-pulse rounded-full bg-green-500'></span>
+                  <span className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                   Live Integration
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '../../../utils/logger';
 
 interface LeadConversion {
   id: string;
@@ -203,8 +204,15 @@ export async function PUT(request: NextRequest) {
       leadConversions = leadConversions.slice(0, 100);
     }
 
-    console.log(
-      `✅ AI Flow Lead Conversion processed: ${action} for ${data.customerName}`
+    logger.info(
+      'AI Flow lead conversion processed',
+      {
+        action,
+        customerName: data.customerName,
+        conversionType: newConversion.conversionType,
+        potentialValue: newConversion.potentialValue,
+      },
+      'AIFlowLeadConversionAPI'
     );
 
     return NextResponse.json({

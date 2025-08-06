@@ -45,7 +45,7 @@ export default function RoutesPageRedesigned() {
                 <p className="text-blue-100 text-lg drop-shadow-md">AI-powered intelligent route planning & real-time optimization</p>
                 <div className="flex items-center space-x-6 mt-3">
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
                     <span className="text-sm">Live Optimization Active</span>
                   </div>
                   <div className="text-sm opacity-90">Last updated: {new Date().toLocaleTimeString()}</div>
@@ -355,15 +355,15 @@ export default function RoutesPageRedesigned() {
                 <h3 className="font-bold text-lg text-gray-900 mb-4">🎯 AI Insights & Recommendations</h3>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2" />
                     <p className="text-gray-700"><strong>High Performance:</strong> Route efficiency has improved by 12.5% this month due to AI optimization.</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2" />
                     <p className="text-gray-700"><strong>Opportunity:</strong> Consider optimizing morning departure times to avoid peak traffic.</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
                     <p className="text-gray-700"><strong>Trend:</strong> Fuel costs decreased by 8% through better route planning and traffic avoidance.</p>
                   </div>
                 </div>

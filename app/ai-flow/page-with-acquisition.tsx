@@ -426,7 +426,7 @@ export default function AIFlowPage() {
             {acquisitionLoading ? (
               <div className='flex items-center justify-center p-8'>
                 <div className='text-center'>
-                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
                   <p className='text-gray-600'>
                     Loading Strategic Acquisition Pipeline...
                   </p>

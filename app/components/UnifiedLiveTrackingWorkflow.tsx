@@ -505,7 +505,7 @@ export default function UnifiedLiveTrackingWorkflow({
   if (isLoading) {
     return (
       <div className='flex h-64 items-center justify-center'>
-        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
       </div>
     );
   }
@@ -586,7 +586,7 @@ export default function UnifiedLiveTrackingWorkflow({
                 height: '40px',
                 background: 'rgba(255, 255, 255, 0.2)',
               }}
-            ></div>
+             />
             <div style={{ textAlign: 'center' }}>
               <div
                 style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}

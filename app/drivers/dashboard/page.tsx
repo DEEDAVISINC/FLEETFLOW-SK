@@ -449,7 +449,7 @@ export default function DriverDashboard() {
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px'
-          }}></div>
+          }} />
           <div style={{ color: 'white', fontSize: '18px', fontWeight: '600' }}>
             Loading Driver Dashboard...
           </div>
@@ -602,7 +602,7 @@ export default function DriverDashboard() {
                       background: '#4ade80',
                       borderRadius: '50%',
                       animation: 'pulse 2s infinite'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
                       GPS Tracking Active
                     </span>

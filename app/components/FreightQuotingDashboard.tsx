@@ -521,7 +521,7 @@ export default function FreightQuotingDashboard() {
                 >
                   {loading ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                       Generating Quote...
                     </>
                   ) : (
@@ -574,7 +574,7 @@ export default function FreightQuotingDashboard() {
                         <div 
                           className={`h-2 rounded-full ${getWinProbabilityColor(quote.winProbability)}`}
                           style={{ width: `${quote.winProbability * 100}%` }}
-                        ></div>
+                         />
                       </div>
                     </div>
                     <div className="text-center">

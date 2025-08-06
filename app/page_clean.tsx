@@ -157,7 +157,7 @@ export default function Dashboard() {
             <span>🕒 {currentTime.toLocaleTimeString()}</span>
             <span>📅 {currentTime.toLocaleDateString()}</span>
             <span className='flex items-center space-x-1'>
-              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
               <span>System Operational</span>
             </span>
           </div>

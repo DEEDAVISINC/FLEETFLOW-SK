@@ -184,7 +184,7 @@ export default function CompetitorIntelligenceWidget() {
               borderRadius: '50%',
               background: '#10b981',
             }}
-          ></div>
+           />
           <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
             Active
           </span>

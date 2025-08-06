@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SmartTaskPrioritizationService } from '../../../services/smart-task-prioritization';
+import { logger } from '../../../utils/logger';
 
 const taskPrioritizationService = new SmartTaskPrioritizationService();
 
@@ -274,7 +275,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, ...data } = body;
 
-    console.log(`[TaskPrioritization] ${action} request received`);
+    logger.info(
+      'Task prioritization request received',
+      { action },
+      'TaskPrioritizationAPI'
+    );
 
     switch (action) {
       case 'prioritize-tasks': {
@@ -315,7 +320,15 @@ export async function POST(request: NextRequest) {
           businessContext: { ...defaultBusinessContext, ...businessContext },
         };
 
-        console.log(`[TaskPrioritization] Prioritizing ${tasks.length} tasks`);
+        logger.info(
+          'Task prioritization started',
+          {
+            taskCount: tasks.length,
+            hasConstraints: !!constraints,
+            hasBusinessContext: !!businessContext,
+          },
+          'TaskPrioritizationAPI'
+        );
 
         const result = await taskPrioritizationService.prioritizeTasks(
           prioritizationRequest
@@ -325,8 +338,13 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(result, { status: 400 });
         }
 
-        console.log(
-          `[TaskPrioritization] Prioritization completed with score: ${result.data.prioritizationScore}`
+        logger.info(
+          'Task prioritization completed',
+          {
+            prioritizationScore: result.data.prioritizationScore,
+            taskCount: result.data.prioritizedTasks?.length || 0,
+          },
+          'TaskPrioritizationAPI'
         );
 
         return NextResponse.json(result);
@@ -346,8 +364,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        console.log(
-          `[TaskPrioritization] Analyzing workflow bottlenecks for ${tasks.length} tasks`
+        logger.info(
+          'Workflow bottleneck analysis started',
+          {
+            taskCount: tasks.length,
+          },
+          'TaskPrioritizationAPI'
         );
 
         const result =
@@ -357,7 +379,13 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(result, { status: 400 });
         }
 
-        console.log(`[TaskPrioritization] Bottleneck analysis completed`);
+        logger.info(
+          'Bottleneck analysis completed',
+          {
+            bottleneckCount: result.data.bottlenecks?.length || 0,
+          },
+          'TaskPrioritizationAPI'
+        );
 
         return NextResponse.json(result);
       }
@@ -376,8 +404,13 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        console.log(
-          `[TaskPrioritization] Prioritizing ${loads.length} driver loads for driver ${driverId}`
+        logger.info(
+          'Driver load prioritization started',
+          {
+            loadCount: loads.length,
+            driverId: driverId,
+          },
+          'TaskPrioritizationAPI'
         );
 
         // Convert loads to tasks for prioritization
@@ -511,8 +544,13 @@ export async function POST(request: NextRequest) {
           rec.replace('task', 'load').replace('Task', 'Load')
         );
 
-        console.log(
-          `[TaskPrioritization] Driver load prioritization completed for ${prioritizedLoads.length} loads`
+        logger.info(
+          'Driver load prioritization completed',
+          {
+            prioritizedLoadCount: prioritizedLoads.length,
+            driverId: driverId,
+          },
+          'TaskPrioritizationAPI'
         );
 
         return NextResponse.json({

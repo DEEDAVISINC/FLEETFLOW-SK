@@ -468,7 +468,7 @@ export default function CustomerRetentionWidget() {
                         borderRadius: '50%',
                         background: '#10b981',
                       }}
-                    ></div>
+                     />
                     {factor}
                   </li>
                 ))}
@@ -515,7 +515,7 @@ export default function CustomerRetentionWidget() {
                         borderRadius: '50%',
                         background: '#f97316',
                       }}
-                    ></div>
+                     />
                     {area}
                   </li>
                 ))}
@@ -777,7 +777,7 @@ export default function CustomerRetentionWidget() {
                             borderRadius: '50%',
                             background: '#3b82f6',
                           }}
-                        ></div>
+                         />
                         {strategy}
                       </li>
                     ))}
@@ -828,7 +828,7 @@ export default function CustomerRetentionWidget() {
                             borderRadius: '50%',
                             background: '#10b981',
                           }}
-                        ></div>
+                         />
                         {opportunity}
                       </li>
                     ))}

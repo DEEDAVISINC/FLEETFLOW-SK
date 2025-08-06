@@ -189,7 +189,7 @@ export default function AITaskPrioritizationPanel({
   if (loading) {
     return (
       <div className='rounded-xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-sm'>
-        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-purple-400 border-t-transparent'></div>
+        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-purple-400 border-t-transparent' />
         <h3 className='mb-2 text-lg font-semibold text-white'>
           AI Processing...
         </h3>

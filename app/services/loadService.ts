@@ -1,6 +1,7 @@
 // Load Management Service - Centralized load operations with unified flow
 import { getCurrentUser } from '../config/access';
 import { DispatchCommunicationIntegration } from '../utils/DispatchCommunicationIntegration';
+import { logger } from '../utils/logger';
 import { EDIService } from './EDIService';
 import { LoadIdentificationService } from './LoadIdentificationService';
 
@@ -96,7 +97,7 @@ export interface Load {
 }
 
 // Mock database - in production this would be a real database
-let LOADS_DB: Load[] = [
+const LOADS_DB: Load[] = [
   {
     id: 'FL-2025-001',
     brokerId: 'broker-001',
@@ -514,7 +515,8 @@ export const createLoad = (
 
 // Initialize tracking for a load
 const initializeLoadTracking = (load: Load) => {
-  console.log(`🛰️ Initializing real-time tracking for load ${load.id}`, {
+  logger.info('Initializing real-time tracking', {
+    loadId: load.id,
     origin: load.origin,
     destination: load.destination,
     trackingEnabled: load.trackingEnabled,
@@ -587,7 +589,11 @@ const handleLoadStatusChangeWithCommunication = async (
   loadData: Load
 ) => {
   try {
-    console.log(`🚛 Load ${loadId}: ${oldStatus} → ${newStatus}`);
+    logger.info(
+      'Load status updated',
+      { loadId, oldStatus, newStatus },
+      'LoadService'
+    );
 
     // Prepare load data for communication
     const communicationData = {
@@ -617,7 +623,7 @@ const handleLoadStatusChangeWithCommunication = async (
       communicationData
     );
 
-    console.log(`✅ Automated communication triggered for load ${loadId}`);
+    logger.info('Automated communication triggered', { loadId }, 'LoadService');
   } catch (error) {
     console.error(
       `❌ Failed to trigger automated communication for load ${loadId}:`,

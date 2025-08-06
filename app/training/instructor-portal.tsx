@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { quizGenerator } from '../utils/quizGenerator';
 import {
-  getUserTrainingAccess,
-  hasModuleAccess,
+    getUserTrainingAccess,
+    hasModuleAccess,
 } from '../utils/trainingAccess';
 import { progressManager } from '../utils/trainingProgress';
 
@@ -58,6 +58,29 @@ export default function TrainingPage() {
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [showQuiz, setShowQuiz] = useState<string | null>(null);
+
+  // Initialize user progress - must be at top level
+  useEffect(() => {
+    // Initialize user progress with their actual info
+    if (user) {
+      progressManager.initializeUserProgress(user.id, user.role, user.name);
+    }
+
+    // Load progress for allowed modules only
+    const allowedModules = trainingAccess.allowedModules;
+    allowedModules.forEach(moduleId => {
+      const progress = progressManager.getModuleProgress(user?.id || 'guest', moduleId);
+      if (!progress) {
+        progressManager.updateModuleProgress(user?.id || 'guest', moduleId, {
+          completed: false,
+          progress: 0,
+          timeSpent: 0,
+          lastAccessed: new Date().toISOString(),
+          quizScores: {},
+        });
+      }
+    });
+  }, [user, trainingAccess.allowedModules]);
   const [certificates, setCertificates] = useState<any[]>([]);
   const [moduleProgress, setModuleProgress] = useState<{
     [key: string]: number;
@@ -301,13 +324,8 @@ export default function TrainingPage() {
     );
   }
 
-  useEffect(() => {
-    // Initialize user progress with their actual info
-    if (user) {
-      progressManager.initializeUserProgress(user.id, user.role, user.name);
-    }
-
-    // Load progress for allowed modules only
+  // Component render logic starts here
+  if (!trainingAccess.hasAccess) {
     const progress: { [key: string]: number } = {};
 
     trainingAccess.allowedModules.forEach((moduleId) => {

@@ -343,7 +343,7 @@ export default function PortAuthorityIntelligence() {
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px',
           }}
-        ></div>
+         />
         <div style={{ color: 'white', fontSize: '16px' }}>
           Loading Port Authority Intelligence...
         </div>

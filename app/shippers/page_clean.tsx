@@ -14,7 +14,7 @@ export default function ShippersPage() {
 
   // Filter and sort shippers
   const filteredAndSortedShippers = useMemo(() => {
-    let filtered = shippers.filter(shipper => 
+    const filtered = shippers.filter(shipper => 
       shipper.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipper.contacts.some(contact => 
         contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -72,19 +72,72 @@ export default function StickyNote({
   >('note');
   const [assignedTo, setAssignedTo] = useState<string[]>([]);
   const [dueDate, setDueDate] = useState('');
-  const [filter, setFilter] = useState<'all' | 'unread' | 'tasks' | 'urgent'>(
-    'all'
+  const [filter, setFilter] = useState<
+    'all' | 'unread' | 'tasks' | 'urgent' | 'today' | 'overdue'
+  >('all');
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'date' | 'priority' | 'category'>(
+    'date'
   );
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // Available team members for assignment
+  // Available team members and departments for assignment
   const teamMembers = [
     'dispatch@fleetflow.com',
     'operations@fleetflow.com',
     'admin@fleetflow.com',
+    'safety@fleetflow.com',
+    'maintenance@fleetflow.com',
+    'finance@fleetflow.com',
     'john.smith@fleetflow.com',
     'sarah.wilson@fleetflow.com',
     'mike.johnson@fleetflow.com',
+    'emily.davis@fleetflow.com',
+    'alex.rodriguez@fleetflow.com',
   ];
+
+  // Department-specific notification templates
+  const notificationTemplates = {
+    fleet: [
+      'Vehicle maintenance required',
+      'Fuel level critical',
+      'Driver assignment needed',
+      'Route optimization alert',
+      'Compliance check due',
+      'Insurance renewal reminder',
+      'DOT inspection scheduled',
+      'Performance metrics review',
+    ],
+    dispatch: [
+      'Load assignment pending',
+      'Driver availability update',
+      'Route delay notification',
+      'Customer communication required',
+      'Emergency dispatch needed',
+      'Load status update',
+    ],
+    maintenance: [
+      'Scheduled maintenance due',
+      'Emergency repair needed',
+      'Parts order required',
+      'Inspection overdue',
+      'Service reminder',
+    ],
+    safety: [
+      'Safety violation reported',
+      'Training certification due',
+      'Accident report filed',
+      'Compliance audit scheduled',
+    ],
+    finance: [
+      'Invoice payment due',
+      'Expense report submitted',
+      'Budget variance alert',
+      'Contract renewal notice',
+    ],
+  };
 
   // Load notes from localStorage (in production, this would be from your backend)
   useEffect(() => {
@@ -202,21 +255,134 @@ export default function StickyNote({
     });
   };
 
-  const filteredNotes = notes.filter((note) => {
-    switch (filter) {
-      case 'unread':
-        return !note.isRead;
-      case 'tasks':
-        return note.category === 'task';
-      case 'urgent':
-        return note.priority === 'urgent';
-      default:
-        return true;
-    }
-  });
+  // Auto-refresh functionality
+  useEffect(() => {
+    if (!autoRefresh || !isNotificationHub) return;
+
+    const interval = setInterval(() => {
+      // Simulate receiving new notifications
+      const shouldAddNotification = Math.random() < 0.1; // 10% chance every 30 seconds
+      if (shouldAddNotification && notes.length < 20) {
+        const templates =
+          notificationTemplates[
+            section as keyof typeof notificationTemplates
+          ] || notificationTemplates.fleet;
+        const randomTemplate =
+          templates[Math.floor(Math.random() * templates.length)];
+
+        const systemNotification: StickyNote = {
+          id: Date.now().toString(),
+          content: `System Alert: ${randomTemplate}`,
+          section,
+          entityId,
+          entityType,
+          createdBy: 'FleetFlow System',
+          createdAt: new Date().toISOString(),
+          isShared: true,
+          priority: Math.random() > 0.7 ? 'urgent' : 'medium',
+          isNotification: true,
+          isRead: false,
+          category: 'notification',
+        };
+
+        const updatedNotes = [systemNotification, ...notes];
+        saveNotes(updatedNotes);
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [
+    autoRefresh,
+    isNotificationHub,
+    notes.length,
+    section,
+    entityId,
+    entityType,
+  ]);
+
+  const filteredNotes = notes
+    .filter((note) => {
+      // Text search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        if (
+          !note.content.toLowerCase().includes(searchLower) &&
+          !note.createdBy.toLowerCase().includes(searchLower) &&
+          !note.category.toLowerCase().includes(searchLower)
+        ) {
+          return false;
+        }
+      }
+
+      // Category/status filter
+      switch (filter) {
+        case 'unread':
+          return !note.isRead;
+        case 'tasks':
+          return note.category === 'task';
+        case 'urgent':
+          return note.priority === 'urgent';
+        case 'today':
+          const today = new Date().toDateString();
+          return new Date(note.createdAt).toDateString() === today;
+        case 'overdue':
+          if (!note.dueDate) return false;
+          return (
+            new Date(note.dueDate) < new Date() && note.category === 'task'
+          );
+        default:
+          return true;
+      }
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'priority':
+          const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+          return (
+            priorityOrder[b.priority as keyof typeof priorityOrder] -
+            priorityOrder[a.priority as keyof typeof priorityOrder]
+          );
+        case 'category':
+          return a.category.localeCompare(b.category);
+        case 'date':
+        default:
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+      }
+    });
 
   const unreadCount = notes.filter((note) => !note.isRead).length;
   const urgentCount = notes.filter((note) => note.priority === 'urgent').length;
+  const todayCount = notes.filter((note) => {
+    const today = new Date().toDateString();
+    return new Date(note.createdAt).toDateString() === today;
+  }).length;
+  const overdueCount = notes.filter((note) => {
+    if (!note.dueDate) return false;
+    return new Date(note.dueDate) < new Date() && note.category === 'task';
+  }).length;
+
+  // Generate summary statistics
+  const getNotificationSummary = () => {
+    const total = notes.length;
+    const byCategory = notes.reduce(
+      (acc, note) => {
+        acc[note.category] = (acc[note.category] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    return {
+      total,
+      unread: unreadCount,
+      urgent: urgentCount,
+      today: todayCount,
+      overdue: overdueCount,
+      byCategory,
+    };
+  };
 
   return (
     <div className='sticky-note-container'>
@@ -276,270 +442,620 @@ export default function StickyNote({
 
       {isExpanded && (
         <div
-          className='space-y-3 rounded-lg border p-3'
+          className='space-y-4 rounded-lg border p-4 shadow-lg'
           style={{
-            background: 'linear-gradient(135deg, #fef3c7, #fef3c7)',
-            borderColor: '#f59e0b',
-            borderWidth: '2px',
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            minWidth: '400px',
+            maxWidth: '500px',
+            color: '#ffffff',
           }}
         >
-          {/* Filter Tabs */}
+          {/* FleetFlow Header */}
+          <div
+            className='flex items-center justify-between pb-3'
+            style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.2)' }}
+          >
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#ffffff',
+                margin: 0,
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              }}
+            >
+              {isNotificationHub ? '🔔 Notification Hub' : '📝 Notes'}
+            </h3>
+            {isNotificationHub && (
+              <div className='flex items-center gap-2'>
+                <button
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                  style={{
+                    background: autoRefresh
+                      ? 'linear-gradient(135deg, #10b981, #059669)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '8px 12px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                  title={`Auto-refresh: ${autoRefresh ? 'ON' : 'OFF'}`}
+                >
+                  {autoRefresh ? '🔄 ON' : '⏸️ OFF'}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* FleetFlow Stats Cards */}
+          {isNotificationHub && notes.length > 0 && (
+            <div className='grid grid-cols-4 gap-3'>
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#60a5fa',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {notes.length}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Total
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#f87171',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {unreadCount}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Unread
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#fbbf24',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {urgentCount}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Urgent
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(168, 85, 247, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#c084fc',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {todayCount}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Today
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* FleetFlow Filter Tabs */}
           {isNotificationHub && (
-            <div className='mb-3 flex gap-2'>
+            <div className='flex gap-2'>
               {[
-                { key: 'all', label: 'All', icon: '📋' },
+                {
+                  key: 'all',
+                  label: 'All',
+                  bg: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                },
                 {
                   key: 'unread',
                   label: 'Unread',
-                  icon: '🔔',
-                  count: unreadCount,
+                  bg: 'linear-gradient(135deg, #ef4444, #dc2626)',
                 },
-                { key: 'tasks', label: 'Tasks', icon: '✅' },
                 {
                   key: 'urgent',
                   label: 'Urgent',
-                  icon: '⚠️',
-                  count: urgentCount,
+                  bg: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                },
+                {
+                  key: 'tasks',
+                  label: 'Tasks',
+                  bg: 'linear-gradient(135deg, #10b981, #059669)',
                 },
               ].map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setFilter(tab.key as any)}
-                  className={`flex items-center gap-1 rounded-md px-3 py-1 text-xs font-medium transition-all ${
-                    filter === tab.key
-                      ? 'bg-yellow-600 text-white shadow-sm'
-                      : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                  }`}
+                  style={{
+                    background:
+                      filter === tab.key ? tab.bg : 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease',
+                  }}
                 >
-                  <span>{tab.icon}</span>
                   {tab.label}
-                  {tab.count && tab.count > 0 && (
-                    <span className='rounded-full bg-red-500 px-1.5 py-0.5 text-xs text-white'>
-                      {tab.count}
-                    </span>
-                  )}
                 </button>
               ))}
             </div>
           )}
 
-          {/* Add New Note/Notification */}
-          <div className='space-y-2 rounded-lg border border-yellow-300 bg-white p-2'>
-            <div className='mb-1 flex items-center gap-2'>
-              <span className='text-sm font-semibold text-gray-700'>
-                {isNotificationHub
-                  ? '📢 Create Notification/Note'
-                  : '📝 Add Note'}
+          {/* FleetFlow Create Section */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '20px',
+            }}
+          >
+            <div className='mb-3 flex items-center gap-2'>
+              <span
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#ffffff',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                }}
+              >
+                {isNotificationHub ? '✏️ Create New' : '📝 Add Note'}
               </span>
             </div>
 
-            <textarea
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              placeholder={`Add a ${category} about ${entityName || 'this item'}...`}
-              className='w-full resize-none rounded-lg border border-gray-300 p-2 text-sm focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500'
-              rows={2}
-            />
+            <div className='space-y-3'>
+              <textarea
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder={`Write your ${category}...`}
+                style={{
+                  width: '100%',
+                  resize: 'none',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  padding: '12px',
+                  fontSize: '14px',
+                  color: '#ffffff',
+                  outline: 'none',
+                }}
+                rows={3}
+              />
 
-            <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
-              {/* Left Column */}
-              <div className='space-y-1'>
-                <div>
-                  <label className='mb-1 block text-xs font-medium text-gray-700'>
-                    Category
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as any)}
-                    className='w-full rounded border border-gray-300 px-2 py-1 text-xs focus:ring-1 focus:ring-yellow-500'
+              <div className='flex items-center gap-3'>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as any)}
+                  style={{
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '8px 12px',
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    outline: 'none',
+                  }}
+                >
+                  <option
+                    value='note'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
                   >
-                    <option value='note'>📝 Note</option>
-                    <option value='task'>✅ Task</option>
-                    <option value='notification'>🔔 Notification</option>
-                    <option value='communication'>💬 Communication</option>
-                    <option value='alert'>⚠️ Alert</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className='mb-1 block text-xs font-medium text-gray-700'>
-                    Priority
-                  </label>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
-                    className='w-full rounded border border-gray-300 px-2 py-1 text-xs focus:ring-1 focus:ring-yellow-500'
+                    📝 Note
+                  </option>
+                  <option
+                    value='task'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
                   >
-                    <option value='low'>🟢 Low Priority</option>
-                    <option value='medium'>🟡 Medium Priority</option>
-                    <option value='high'>🟠 High Priority</option>
-                    <option value='urgent'>🔴 Urgent</option>
-                  </select>
-                </div>
-              </div>
+                    ✅ Task
+                  </option>
+                  <option
+                    value='notification'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    🔔 Notification
+                  </option>
+                  <option
+                    value='alert'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    ⚠️ Alert
+                  </option>
+                </select>
 
-              {/* Right Column */}
-              <div className='space-y-1'>
-                {category === 'task' && (
-                  <div>
-                    <label className='mb-1 block text-xs font-medium text-gray-700'>
-                      Due Date
-                    </label>
-                    <input
-                      type='datetime-local'
-                      value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className='w-full rounded border border-gray-300 px-2 py-1 text-xs focus:ring-1 focus:ring-yellow-500'
-                    />
-                  </div>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value as any)}
+                  style={{
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '8px 12px',
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    outline: 'none',
+                  }}
+                >
+                  <option
+                    value='low'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    🟢 Low
+                  </option>
+                  <option
+                    value='medium'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    🟡 Medium
+                  </option>
+                  <option
+                    value='high'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    🟠 High
+                  </option>
+                  <option
+                    value='urgent'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    🔴 Urgent
+                  </option>
+                </select>
+
+                {isNotificationHub && (
+                  <button
+                    type='button'
+                    onClick={() => setShowTemplates(!showTemplates)}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: '#ffffff',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      padding: '8px 12px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    📝 Templates
+                  </button>
                 )}
 
-                <div className='flex items-center gap-2 pt-1'>
-                  <label className='flex items-center gap-1 text-xs text-gray-600'>
-                    <input
-                      type='checkbox'
-                      checked={isShared}
-                      onChange={(e) => setIsShared(e.target.checked)}
-                      className='text-xs'
-                    />
-                    📢 Notify team
-                  </label>
+                <button
+                  onClick={addNote}
+                  disabled={!newNote.trim()}
+                  style={{
+                    background: !newNote.trim()
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: !newNote.trim() ? 'not-allowed' : 'pointer',
+                    opacity: !newNote.trim() ? 0.5 : 1,
+                  }}
+                >
+                  Add {category}
+                </button>
+              </div>
+            </div>
 
-                  <div className='text-xs text-gray-500'>
-                    Entity: {entityType}
-                  </div>
+            {/* FleetFlow Templates */}
+            {showTemplates && isNotificationHub && (
+              <div
+                style={{
+                  marginTop: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(10px)',
+                  padding: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#ffffff',
+                  }}
+                >
+                  Quick Templates
+                </div>
+                <div className='grid grid-cols-1 gap-2'>
+                  {(
+                    notificationTemplates[
+                      section as keyof typeof notificationTemplates
+                    ] || notificationTemplates.fleet
+                  )
+                    .slice(0, 4)
+                    .map((template, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setNewNote(template);
+                          setShowTemplates(false);
+                        }}
+                        style={{
+                          borderRadius: '8px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '8px 12px',
+                          textAlign: 'left',
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(59, 130, 246, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(255, 255, 255, 0.1)';
+                        }}
+                      >
+                        {template}
+                      </button>
+                    ))}
                 </div>
               </div>
-            </div>
-
-            <div className='flex items-center justify-between pt-1'>
-              <div className='text-xs text-gray-600'>
-                {isNotificationHub
-                  ? `Creating ${category} for ${entityType}: ${entityName || entityId}`
-                  : `Adding ${category} to ${section}`}
-              </div>
-
-              <button
-                onClick={addNote}
-                disabled={!newNote.trim()}
-                className='rounded-lg bg-yellow-500 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-yellow-600 disabled:cursor-not-allowed disabled:bg-gray-300'
-              >
-                {category === 'notification' ? '📢 Send' : '➕ Add'} {category}
-              </button>
-            </div>
+            )}
           </div>
 
-          {/* Display Notes */}
-          <div className='max-h-48 space-y-3 overflow-y-auto'>
+          {/* FleetFlow Notes Display */}
+          <div className='max-h-80 space-y-3 overflow-y-auto'>
             {filteredNotes.length === 0 ? (
-              <div className='py-4 text-center text-gray-500'>
-                <div className='mb-1 text-2xl'>📝</div>
-                <p className='text-sm'>
+              <div className='py-8 text-center'>
+                <div className='mb-3 text-4xl'>📝</div>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '8px',
+                  }}
+                >
                   {filter === 'all'
-                    ? 'No notes yet. Create one above!'
-                    : `No ${filter} items found.`}
+                    ? 'No notifications yet'
+                    : `No ${filter} items found`}
+                </p>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
+                  {filter === 'all'
+                    ? 'Create your first notification above'
+                    : 'Try a different filter or search term'}
                 </p>
               </div>
             ) : (
               filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className={`rounded-lg border-l-4 p-2 transition-all hover:shadow-md ${
-                    note.isRead ? 'bg-white' : 'bg-yellow-50'
-                  } ${getPriorityColor(note.priority)}`}
+                  style={{
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: note.isRead
+                      ? 'rgba(255, 255, 255, 0.05)'
+                      : 'rgba(59, 130, 246, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '16px',
+                    transition: 'all 0.3s ease',
+                  }}
                 >
                   <div className='flex items-start justify-between'>
                     <div className='flex-1'>
-                      <div className='mb-1 flex items-center gap-2'>
-                        <span className='text-sm'>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <span className='text-base'>
                           {getCategoryIcon(note.category)}
                         </span>
                         <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${getCategoryColor(note.category)}`}
+                          style={{
+                            borderRadius: '8px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            color: '#ffffff',
+                          }}
                         >
                           {note.category}
                         </span>
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${getPriorityColor(note.priority)}`}
-                        >
-                          {note.priority}
-                        </span>
+                        {note.priority === 'urgent' && (
+                          <span
+                            style={{
+                              borderRadius: '8px',
+                              background: 'rgba(239, 68, 68, 0.3)',
+                              padding: '4px 8px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: '#f87171',
+                            }}
+                          >
+                            🔴 Urgent
+                          </span>
+                        )}
                         {!note.isRead && (
-                          <span className='rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white'>
+                          <span
+                            style={{
+                              borderRadius: '8px',
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              padding: '4px 8px',
+                              fontSize: '12px',
+                              fontWeight: '700',
+                              color: '#ffffff',
+                            }}
+                          >
                             NEW
                           </span>
                         )}
                       </div>
 
-                      <p className='mb-1 text-sm leading-relaxed text-gray-800'>
+                      <p
+                        style={{
+                          marginBottom: '8px',
+                          fontSize: '14px',
+                          lineHeight: '1.5',
+                          color: '#ffffff',
+                        }}
+                      >
                         {note.content}
                       </p>
 
-                      <div className='flex flex-wrap items-center gap-2 text-xs text-gray-600'>
-                        <span className='font-medium'>{note.createdBy}</span>
-                        <span>•</span>
+                      <div
+                        className='flex items-center gap-3'
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        <span style={{ fontWeight: '500' }}>
+                          {note.createdBy}
+                        </span>
                         <span>{formatDate(note.createdAt)}</span>
                         {note.dueDate && (
-                          <>
-                            <span>•</span>
-                            <span className='font-medium text-orange-600'>
-                              Due: {formatDate(note.dueDate)}
-                            </span>
-                          </>
+                          <span
+                            style={{
+                              fontWeight: '500',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            Due: {formatDate(note.dueDate)}
+                          </span>
                         )}
-                        {note.isShared && (
-                          <>
-                            <span>•</span>
-                            <span className='text-blue-600'>👥 Team</span>
-                          </>
-                        )}
-                        <span>•</span>
-                        <span className='text-purple-600 capitalize'>
-                          {note.entityType}
-                        </span>
                       </div>
                     </div>
 
-                    <div className='ml-2 flex items-center gap-1'>
+                    <div className='ml-3 flex items-center gap-2'>
                       {!note.isRead && (
                         <button
                           onClick={() => markAsRead(note.id)}
-                          className='rounded p-1 text-green-600 hover:text-green-800'
+                          style={{
+                            borderRadius: '8px',
+                            background: 'rgba(16, 185, 129, 0.2)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            padding: '6px',
+                            color: '#10b981',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                          }}
                           title='Mark as read'
                         >
-                          <svg
-                            className='h-3 w-3'
-                            fill='none'
-                            stroke='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M5 13l4 4L19 7'
-                            />
-                          </svg>
+                          ✓
                         </button>
                       )}
                       <button
                         onClick={() => deleteNote(note.id)}
-                        className='rounded p-1 text-red-500 hover:text-red-700'
-                        title='Delete note'
+                        style={{
+                          borderRadius: '8px',
+                          background: 'rgba(239, 68, 68, 0.2)',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          padding: '6px',
+                          color: '#ef4444',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                        title='Delete'
                       >
-                        <svg
-                          className='h-3 w-3'
-                          fill='none'
-                          stroke='currentColor'
-                          viewBox='0 0 24 24'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth={2}
-                            d='M6 18L18 6M6 6l12 12'
-                          />
-                        </svg>
+                        ×
                       </button>
                     </div>
                   </div>
@@ -548,10 +1064,21 @@ export default function StickyNote({
             )}
           </div>
 
-          {isNotificationHub && filteredNotes.length > 0 && (
-            <div className='flex items-center justify-between border-t border-yellow-300 pt-2'>
-              <div className='text-xs text-gray-600'>
-                Showing {filteredNotes.length} of {notes.length} items
+          {/* FleetFlow Bottom Actions */}
+          {isNotificationHub && notes.length > 0 && (
+            <div
+              className='flex items-center justify-between pt-3'
+              style={{
+                borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                {filteredNotes.length} of {notes.length} items
               </div>
               <button
                 onClick={() => {
@@ -561,9 +1088,23 @@ export default function StickyNote({
                   }));
                   saveNotes(allRead);
                 }}
-                className='text-xs font-medium text-yellow-700 hover:text-yellow-900'
+                style={{
+                  background:
+                    unreadCount === 0
+                      ? 'rgba(255, 255, 255, 0.05)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  color:
+                    unreadCount === 0 ? 'rgba(255, 255, 255, 0.4)' : '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: unreadCount === 0 ? 'not-allowed' : 'pointer',
+                }}
+                disabled={unreadCount === 0}
               >
-                Mark all as read
+                Mark all read
               </button>
             </div>
           )}

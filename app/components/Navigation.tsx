@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import GlobalNotificationBell from './GlobalNotificationBell';
+import Logo from './Logo';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
@@ -29,25 +30,17 @@ export default function ProfessionalNavigation() {
   }, []);
 
   const handleDropdownClick = (dropdownName: string) => {
-    console.log(
-      'Dropdown clicked:',
-      dropdownName,
-      'Current active:',
-      activeDropdown
-    );
     setActiveDropdown(activeDropdown === dropdownName ? null : dropdownName);
     setActiveSubDropdown(null); // Close any sub-dropdowns when main dropdown changes
   };
 
   const handleSubDropdownClick = (subDropdownName: string) => {
-    console.log('Sub-dropdown clicked:', subDropdownName);
     setActiveSubDropdown(
       activeSubDropdown === subDropdownName ? null : subDropdownName
     );
   };
 
   const handleDropdownClose = () => {
-    console.log('Closing dropdown');
     setActiveDropdown(null);
     setActiveSubDropdown(null);
   };
@@ -68,7 +61,6 @@ export default function ProfessionalNavigation() {
         navRef.current &&
         !navRef.current.contains(target)
       ) {
-        console.log('Clicked outside, closing dropdown');
         setActiveDropdown(null);
         setActiveSubDropdown(null);
       }
@@ -79,13 +71,6 @@ export default function ProfessionalNavigation() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [activeDropdown, activeSubDropdown]);
-
-  console.log(
-    'Navigation render - activeDropdown:',
-    activeDropdown,
-    'activeSubDropdown:',
-    activeSubDropdown
-  );
 
   return (
     <nav
@@ -115,16 +100,12 @@ export default function ProfessionalNavigation() {
         <Link
           href='/'
           style={{
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
             textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          🚛 FleetFlow™
+          <Logo size='large' variant='gradient' showText={true} />
         </Link>
 
         <div
@@ -659,6 +640,22 @@ export default function ProfessionalNavigation() {
                       💰 Company Financial Management
                     </Link>
                     <Link
+                      href='/subscription-management/subscription-dashboard'
+                      onClick={handleDropdownClose}
+                      style={{
+                        display: 'block',
+                        padding: '10px 20px',
+                        color: '#8B5CF6',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        fontWeight: '500',
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderLeft: '3px solid #8B5CF6',
+                      }}
+                    >
+                      💳 Subscription Plans & Billing
+                    </Link>
+                    <Link
                       href='/billing'
                       onClick={handleDropdownClose}
                       style={{
@@ -672,7 +669,7 @@ export default function ProfessionalNavigation() {
                         borderLeft: '3px solid #8B5CF6',
                       }}
                     >
-                      💳 Company Billing & Payments
+                      💰 Billing & Pricing
                     </Link>
                     <div
                       style={{

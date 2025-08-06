@@ -2302,7 +2302,7 @@ export default function BusinessIntelligencePage() {
                 background: '#10b981',
                 borderRadius: '2px',
               }}
-            ></div>
+             />
           </div>
         </div>
 
@@ -2371,7 +2371,7 @@ export default function BusinessIntelligencePage() {
                         background: item.color,
                         borderRadius: '3px',
                       }}
-                    ></div>
+                     />
                   </div>
                 </div>
                 <div
@@ -2604,7 +2604,7 @@ export default function BusinessIntelligencePage() {
                   background: idx === 6 ? '#10b981' : 'rgba(59, 130, 246, 0.6)',
                   borderRadius: '2px',
                 }}
-              ></div>
+               />
             ))}
           </div>
           <div
@@ -2852,7 +2852,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#10b981',
                   }}
-                ></div>
+                 />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
@@ -2872,7 +2872,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#f59e0b',
                   }}
-                ></div>
+                 />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
@@ -2892,7 +2892,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#ef4444',
                   }}
-                ></div>
+                 />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',

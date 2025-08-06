@@ -36,7 +36,7 @@ export default function ShipperDataTablePage() {
 
   // Filter shippers based on user role
   const filteredShippers = useMemo(() => {
-    let filtered = shippers.filter((shipper: Shipper) => {
+    const filtered = shippers.filter((shipper: Shipper) => {
       // Role-based filtering
       if (currentUser.role === 'broker' && currentUser.brokerId) {
         if (shipper.assignedBrokerId !== currentUser.brokerId) return false

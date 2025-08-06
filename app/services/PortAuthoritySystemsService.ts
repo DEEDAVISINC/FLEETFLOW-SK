@@ -424,7 +424,7 @@ export class PortAuthoritySystemsService {
       return { availableBerths: 0, nextAvailable: '', berths: [] };
     }
 
-    let availableBerths = operations.berths.filter((berth) => {
+    const availableBerths = operations.berths.filter((berth) => {
       if (berth.status !== 'available') return false;
       if (vesselLength && berth.maxLength < vesselLength) return false;
       if (vesselDraft && berth.maxDraft < vesselDraft) return false;

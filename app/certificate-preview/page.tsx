@@ -132,7 +132,7 @@ export default function CertificatePreview() {
                                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px)`,
                 backgroundSize: '50px 50px',
               }}
-            ></div>
+             />
 
             {/* Certificate Content */}
             <div
@@ -225,7 +225,7 @@ export default function CertificatePreview() {
                   width: '200px',
                   borderRadius: '2px',
                 }}
-              ></div>
+               />
 
               {/* Main Content */}
               <div style={{ margin: '30px 0' }}>
@@ -354,7 +354,7 @@ export default function CertificatePreview() {
                     width: '150px',
                     margin: '0 auto 8px auto',
                   }}
-                ></div>
+                 />
                 <div
                   style={{
                     fontSize: '12px',

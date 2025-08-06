@@ -2177,7 +2177,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                         background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                         animation: 'loading 2s infinite',
                       }}
-                    ></div>
+                     />
                   </div>
                 </div>
               )}

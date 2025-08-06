@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '../../../utils/logger';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -32,7 +33,12 @@ interface NotificationRequest {
   loadData: LoadData;
   recipients: Recipient[];
   notificationType: 'sms' | 'app' | 'both';
-  messageTemplate?: 'new-load' | 'load-update' | 'pickup-reminder' | 'delivery-reminder' | 'custom';
+  messageTemplate?:
+    | 'new-load'
+    | 'load-update'
+    | 'pickup-reminder'
+    | 'delivery-reminder'
+    | 'custom';
   customMessage?: string;
   urgency?: 'low' | 'normal' | 'high' | 'urgent';
 }
@@ -98,7 +104,7 @@ Almost there! 🏁`,
 export async function POST(request: NextRequest) {
   try {
     const body: NotificationRequest = await request.json();
-    
+
     // Validate request
     if (!body.loadData || !body.recipients || body.recipients.length === 0) {
       return NextResponse.json(
@@ -108,27 +114,32 @@ export async function POST(request: NextRequest) {
     }
 
     const results: NotificationResult[] = [];
-    
+
     // Process each recipient
     for (const recipient of body.recipients) {
       if (body.notificationType === 'sms' && recipient.phone) {
         // Send SMS notification
         try {
-          const message = generateSMSMessage(body.loadData, body.messageTemplate, body.customMessage);
-          
+          const message = generateSMSMessage(
+            body.loadData,
+            body.messageTemplate,
+            body.customMessage
+          );
+
           // Check if Twilio is configured
-          if (process.env.TWILIO_ACCOUNT_SID && 
-              process.env.TWILIO_AUTH_TOKEN && 
-              process.env.TWILIO_PHONE_NUMBER &&
-              process.env.TWILIO_ACCOUNT_SID !== 'your_twilio_account_sid_here') {
-            
+          if (
+            process.env.TWILIO_ACCOUNT_SID &&
+            process.env.TWILIO_AUTH_TOKEN &&
+            process.env.TWILIO_PHONE_NUMBER &&
+            process.env.TWILIO_ACCOUNT_SID !== 'your_twilio_account_sid_here'
+          ) {
             // Send real SMS via Twilio
             const smsResult = await sendTwilioSMS(
               recipient.phone,
               message,
               body.urgency || 'normal'
             );
-            
+
             results.push({
               recipientId: recipient.id,
               type: 'sms',
@@ -136,14 +147,21 @@ export async function POST(request: NextRequest) {
               messageId: smsResult.messageId,
               error: smsResult.error,
               timestamp: new Date().toISOString(),
-              cost: smsResult.cost
+              cost: smsResult.cost,
             });
           } else {
             // Mock SMS for demo/development
-            console.log(`[MOCK SMS] To: ${recipient.phone} (${recipient.name})`);
-            console.log(`[MOCK SMS] Message: ${message}`);
-            console.log(`[MOCK SMS] Urgency: ${body.urgency || 'normal'}`);
-            
+            logger.debug(
+              'Mock SMS notification',
+              {
+                to: recipient.phone,
+                name: recipient.name,
+                message: message.substring(0, 100) + '...',
+                urgency: body.urgency || 'normal',
+              },
+              'NotificationAPI'
+            );
+
             // Simulate success with mock data
             results.push({
               recipientId: recipient.id,
@@ -151,7 +169,7 @@ export async function POST(request: NextRequest) {
               status: 'sent',
               messageId: `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
               timestamp: new Date().toISOString(),
-              cost: 0.01 // Mock cost
+              cost: 0.01, // Mock cost
             });
           }
         } catch (error) {
@@ -161,31 +179,46 @@ export async function POST(request: NextRequest) {
             type: 'sms',
             status: 'failed',
             error: error instanceof Error ? error.message : 'Unknown SMS error',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
       }
-      
+
       // Handle app notifications (future implementation)
       if (body.notificationType === 'app' || body.notificationType === 'both') {
         // For now, just log app notifications
-        console.log(`[APP NOTIFICATION] To: ${recipient.name} (${recipient.id})`);
+        logger.debug(
+          'App notification placeholder',
+          {
+            recipientName: recipient.name,
+            recipientId: recipient.id,
+          },
+          'NotificationAPI'
+        );
         results.push({
           recipientId: recipient.id,
           type: 'app',
           status: 'sent',
           messageId: `app_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     }
 
     // Log summary
-    const successCount = results.filter(r => r.status === 'sent').length;
-    const failCount = results.filter(r => r.status === 'failed').length;
-    
-    console.log(`📊 SMS Summary: ${successCount} sent, ${failCount} failed`);
-    
+    const successCount = results.filter((r) => r.status === 'sent').length;
+    const failCount = results.filter((r) => r.status === 'failed').length;
+
+    logger.info(
+      'Notification summary',
+      {
+        successCount,
+        failCount,
+        totalRecipients: body.recipients.length,
+      },
+      'NotificationAPI'
+    );
+
     return NextResponse.json({
       success: true,
       message: `Sent ${successCount} notifications, ${failCount} failed`,
@@ -194,16 +227,15 @@ export async function POST(request: NextRequest) {
         total: results.length,
         sent: successCount,
         failed: failCount,
-        totalCost: results.reduce((sum, r) => sum + (r.cost || 0), 0)
-      }
+        totalCost: results.reduce((sum, r) => sum + (r.cost || 0), 0),
+      },
     });
-
   } catch (error) {
     console.error('Notification API Error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -212,19 +244,19 @@ export async function POST(request: NextRequest) {
 
 // Generate SMS message based on template
 function generateSMSMessage(
-  loadData: LoadData, 
-  template: string = 'new-load', 
+  loadData: LoadData,
+  template: string = 'new-load',
   customMessage?: string
 ): string {
   if (customMessage) {
     return customMessage;
   }
-  
+
   const templateFunc = SMS_TEMPLATES[template as keyof typeof SMS_TEMPLATES];
   if (templateFunc) {
     return templateFunc(loadData);
   }
-  
+
   // Fallback to new-load template
   return SMS_TEMPLATES['new-load'](loadData);
 }
@@ -238,44 +270,43 @@ async function sendTwilioSMS(
   try {
     // Import Twilio (install if needed)
     const twilio = require('twilio');
-    
+
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-    
+
     if (!accountSid || !authToken || !fromNumber) {
       throw new Error('Twilio credentials not configured');
     }
-    
+
     const client = twilio(accountSid, authToken);
-    
+
     // Set message options based on urgency
     const messageOptions: any = {
       body: message,
       from: fromNumber,
-      to: to
+      to: to,
     };
-    
+
     // Add urgency-based features
     if (urgency === 'urgent') {
       messageOptions.statusCallback = `${process.env.NEXT_PUBLIC_APP_URL}/api/sms/status`;
       messageOptions.statusCallbackMethod = 'POST';
     }
-    
+
     const result = await client.messages.create(messageOptions);
-    
+
     return {
       success: true,
       messageId: result.sid,
       status: result.status,
-      cost: parseFloat(result.price || '0.01') // Twilio returns price as string
+      cost: parseFloat(result.price || '0.01'), // Twilio returns price as string
     };
-    
   } catch (error) {
     console.error('Twilio SMS Error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown Twilio error'
+      error: error instanceof Error ? error.message : 'Unknown Twilio error',
     };
   }
 }
@@ -283,17 +314,17 @@ async function sendTwilioSMS(
 // GET endpoint for health check
 export async function GET() {
   const isConfigured = !!(
-    process.env.TWILIO_ACCOUNT_SID && 
-    process.env.TWILIO_AUTH_TOKEN && 
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
     process.env.TWILIO_PHONE_NUMBER &&
     process.env.TWILIO_ACCOUNT_SID !== 'your_twilio_account_sid_here'
   );
-  
+
   return NextResponse.json({
     service: 'FleetFlow SMS Notifications',
     status: 'online',
     twilioConfigured: isConfigured,
     availableTemplates: Object.keys(SMS_TEMPLATES),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }

@@ -1,4 +1,5 @@
 // Shipper Management Service - Centralized shipper operations with CORRECT 9-CHARACTER IDENTIFIERS
+import { logger } from '../utils/logger';
 import { ShipperInfo } from './loadService';
 
 // Generate proper 9-character freight industry identifiers for shippers
@@ -32,7 +33,7 @@ const generateShipperIdentifier = (
 };
 
 // Mock shipper database - NOW USING CORRECT 9-CHARACTER IDENTIFIERS
-let SHIPPERS_DB: ShipperInfo[] = [
+const SHIPPERS_DB: ShipperInfo[] = [
   {
     id: 'ABC-204-070', // ABC Manufacturing Corp - Manufacturing
     companyName: 'ABC Manufacturing Corp',
@@ -194,7 +195,7 @@ export interface ShipperPortalCredentials {
 }
 
 // Mock portal credentials database - UPDATED WITH CORRECT 9-CHARACTER IDs
-let SHIPPER_PORTAL_CREDENTIALS: ShipperPortalCredentials[] = [
+const SHIPPER_PORTAL_CREDENTIALS: ShipperPortalCredentials[] = [
   {
     shipperId: 'ABC-204-070', // ABC Manufacturing Corp
     username: 'abcmfg',
@@ -270,9 +271,17 @@ const sendWelcomeEmail = (
   credentials: ShipperPortalCredentials
 ) => {
   // In production, integrate with email service (SendGrid, AWS SES, etc.)
-  console.log(`📧 Welcome Email Sent to ${shipper.email}:
+  logger.info(
+    'Welcome email sent to shipper',
+    {
+      shipperEmail: shipper.email,
+      companyName: shipper.companyName,
+    },
+    'ShipperService'
+  );
 
-  🚚 Welcome to FleetFlow Shipper Portal!
+  // Email template logged for development
+  const emailContent = `🚚 Welcome to FleetFlow Shipper Portal!
 
   Dear ${shipper.contactName},
 
@@ -292,8 +301,9 @@ const sendWelcomeEmail = (
   Please log in and change your password on first use.
 
   Best regards,
-  FleetFlow Team
-  `);
+  FleetFlow Team`;
+
+  // In production, send actual email using emailContent
 };
 
 // ========================================
@@ -313,7 +323,7 @@ export interface ShipperInvitation {
 }
 
 // Mock invitation database
-let SHIPPER_INVITATIONS: ShipperInvitation[] = [];
+const SHIPPER_INVITATIONS: ShipperInvitation[] = [];
 
 // Generate secure invitation token
 const generateSecureToken = (): string => {

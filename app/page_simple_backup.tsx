@@ -160,17 +160,17 @@ export default function Dashboard() {
     <div className='relative min-h-screen overflow-hidden bg-black'>
       {/* Dynamic Animated Background */}
       <div className='absolute inset-0'>
-        <div className='absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black'></div>
+        <div className='absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black' />
         <div className='absolute top-0 left-0 h-full w-full'>
-          <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl'></div>
+          <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl' />
           <div
             className='absolute top-3/4 right-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/10 blur-3xl'
             style={{ animationDelay: '1s' }}
-          ></div>
+           />
           <div
             className='absolute top-1/2 left-1/2 h-96 w-96 animate-pulse rounded-full bg-cyan-500/5 blur-3xl'
             style={{ animationDelay: '2s' }}
-          ></div>
+           />
         </div>
         {/* Animated Moving Elements */}
         <div className='absolute inset-0'>
@@ -184,7 +184,7 @@ export default function Dashboard() {
                 animationDelay: `${Math.random() * 3}s`,
                 animationDuration: `${2 + Math.random() * 2}s`,
               }}
-            ></div>
+             />
           ))}
         </div>
       </div>
@@ -192,12 +192,12 @@ export default function Dashboard() {
       <main className='relative z-10 space-y-8 p-8'>
         {/* Command Center Header */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-8'>
                 <div className='relative'>
-                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-75 blur-lg'></div>
+                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-75 blur-lg' />
                   <div className='relative rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 p-4'>
                     <FleetFlowLogo size='large' variant='light' />
                   </div>
@@ -213,7 +213,7 @@ export default function Dashboard() {
                     <span>🕒 {currentTime.toLocaleTimeString()}</span>
                     <span>📅 {currentTime.toLocaleDateString()}</span>
                     <span className='flex items-center space-x-1'>
-                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                       <span>System Operational</span>
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export default function Dashboard() {
             <div key={index} className='group relative'>
               <div
                 className={`absolute inset-0 bg-gradient-to-r ${metric.gradient} rounded-2xl opacity-25 blur-lg transition-opacity duration-300 group-hover:opacity-40`}
-              ></div>
+               />
               <div className='relative transform rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:bg-white/10'>
                 <div className='mb-4 flex items-center justify-between'>
                   <div
@@ -300,12 +300,12 @@ export default function Dashboard() {
         {/* Critical Alerts Command Panel */}
         {activeAlerts.length > 0 && (
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-red-600/20 via-orange-600/20 to-yellow-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-red-600/20 via-orange-600/20 to-yellow-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-red-500/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center justify-between'>
                 <div className='flex items-center space-x-4'>
                   <div className='relative'>
-                    <div className='absolute inset-0 animate-pulse rounded-xl bg-red-500 opacity-50 blur-lg'></div>
+                    <div className='absolute inset-0 animate-pulse rounded-xl bg-red-500 opacity-50 blur-lg' />
                     <div className='relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-2xl'>
                       🚨
                     </div>
@@ -385,7 +385,7 @@ export default function Dashboard() {
 
         {/* Advanced Action Command Center */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 via-blue-600/20 to-purple-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 via-blue-600/20 to-purple-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
             <div className='mb-6 flex items-center space-x-4'>
               <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-green-500 to-blue-500 text-2xl'>
@@ -434,7 +434,7 @@ export default function Dashboard() {
                 >
                   <div
                     className={`absolute inset-0 bg-gradient-to-r ${action.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-20`}
-                  ></div>
+                   />
                   <div className='relative'>
                     <div
                       className={`h-12 w-12 bg-gradient-to-r ${action.gradient} mb-4 flex items-center justify-center rounded-xl text-2xl shadow-lg transition-transform duration-300 group-hover:scale-110`}
@@ -458,7 +458,7 @@ export default function Dashboard() {
         <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
           {/* Today's Metrics */}
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-indigo-600/20 to-purple-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-indigo-600/20 to-purple-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center space-x-3'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-xl'>
@@ -474,7 +474,7 @@ export default function Dashboard() {
 
           {/* Fleet Status */}
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 to-teal-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 to-teal-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center space-x-3'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-green-500 to-teal-500 text-xl'>
@@ -490,7 +490,7 @@ export default function Dashboard() {
 
           {/* Recent Activity */}
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 to-cyan-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 to-cyan-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center space-x-3'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-xl'>
@@ -509,7 +509,7 @@ export default function Dashboard() {
         <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
           {/* Fleet Map */}
           <div className='relative lg:col-span-2'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-600/20 to-green-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-600/20 to-green-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center justify-between'>
                 <div className='flex items-center space-x-3'>
@@ -530,7 +530,7 @@ export default function Dashboard() {
 
           {/* Sticky Notes */}
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-600/20 to-orange-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-600/20 to-orange-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center space-x-3'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-xl'>
@@ -551,7 +551,7 @@ export default function Dashboard() {
 
         {/* Performance Analytics */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-600/20 to-purple-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-600/20 to-purple-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl'>
             <div className='mb-8 flex items-center space-x-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-2xl'>

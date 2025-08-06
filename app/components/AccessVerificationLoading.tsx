@@ -81,7 +81,7 @@ const AccessVerificationLoading: React.FC = () => {
               animation: 'bounce 1.4s infinite ease-in-out both',
               animationDelay: '-0.32s',
             }}
-          ></div>
+           />
           <div
             style={{
               width: '8px',
@@ -91,7 +91,7 @@ const AccessVerificationLoading: React.FC = () => {
               animation: 'bounce 1.4s infinite ease-in-out both',
               animationDelay: '-0.16s',
             }}
-          ></div>
+           />
           <div
             style={{
               width: '8px',
@@ -100,7 +100,7 @@ const AccessVerificationLoading: React.FC = () => {
               background: '#3b82f6',
               animation: 'bounce 1.4s infinite ease-in-out both',
             }}
-          ></div>
+           />
         </div>
 
         {/* Security Notice */}

@@ -175,7 +175,7 @@ export default function VehiclesPage() {
                       background: '#4ade80',
                       borderRadius: '50%',
                       animation: 'pulse 2s infinite'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
                       Live Fleet Tracking
                     </span>
@@ -473,7 +473,7 @@ export default function VehiclesPage() {
                       width: `${vehicle.fuelLevel}%`,
                       transition: 'width 0.5s ease',
                       borderRadius: '4px'
-                    }}></div>
+                    }} />
                   </div>
                 </div>
 

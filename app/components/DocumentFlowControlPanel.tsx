@@ -358,7 +358,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
               {['MC123456', 'MC789012', 'MC345678'].map((mcNumber) => (
                 <div key={mcNumber} className="bg-white rounded-lg p-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full" />
                     <div>
                       <div className="font-medium text-gray-900">{mcNumber}</div>
                       <div className="text-xs text-gray-500">Last update: 2 minutes ago</div>

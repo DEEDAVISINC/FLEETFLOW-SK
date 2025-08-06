@@ -108,7 +108,7 @@ export default function SMSTestPage() {
               </div>
             ) : (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto" />
                 <p className="mt-2">Checking service status...</p>
               </div>
             )}
@@ -138,7 +138,7 @@ export default function SMSTestPage() {
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                       Sending...
                     </span>
                   ) : (

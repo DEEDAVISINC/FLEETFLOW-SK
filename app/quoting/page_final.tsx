@@ -176,7 +176,7 @@ export default function QuotingPage() {
       return null;
     }
 
-    let baseRate = 2500 + (Math.random() * 3000);
+    const baseRate = 2500 + (Math.random() * 3000);
     let accessorialsCost = 0;
 
     specializedForm.services.forEach(service => {

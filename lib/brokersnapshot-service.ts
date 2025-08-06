@@ -1,5 +1,4 @@
-import puppeteer from 'puppeteer';
-import { Browser, Page } from 'puppeteer';
+import puppeteer, { Browser, Page } from 'puppeteer';
 
 interface BrokerSnapshotCredentials {
   username: string;

@@ -211,7 +211,7 @@ function optimizeVehicleRouteMock(vehicle: any, availableStops: any[], constrain
 
   // Priority-based stop selection
   const priorityWeights: Record<string, number> = { urgent: 4, high: 3, medium: 2, low: 1 }
-  let sortedStops = [...availableStops].sort((a, b) => 
+  const sortedStops = [...availableStops].sort((a, b) => 
     (priorityWeights[b.priority] || 1) - (priorityWeights[a.priority] || 1)
   )
 

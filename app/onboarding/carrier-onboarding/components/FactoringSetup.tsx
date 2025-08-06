@@ -108,7 +108,7 @@ export const FactoringSetup: React.FC<FactoringSetupProps> = ({ onFactoringSetup
   };
 
   const handleSubmit = () => {
-    let finalData: FactoringSetupData = { ...factorData };
+    const finalData: FactoringSetupData = { ...factorData };
 
     if (setupType === 'existing' && selectedCompanyId) {
       const selectedCompany = factoringCompanies.find(c => c.id === selectedCompanyId);

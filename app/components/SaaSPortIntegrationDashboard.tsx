@@ -212,7 +212,7 @@ export default function SaaSPortIntegrationDashboard() {
 
   useEffect(() => {
     // Calculate investment and revenue projections
-    let investment = 100000; // Base platform development
+    const investment = 100000; // Base platform development
     let monthlyRevenue = 0;
 
     portPartnerships.forEach((port) => {

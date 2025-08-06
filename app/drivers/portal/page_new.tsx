@@ -34,7 +34,7 @@ export default function DriversPortalPage() {
         background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
         opacity: 0.3,
         zIndex: 1
-      }}></div>
+      }} />
       <div style={{
         position: 'absolute',
         top: 'calc(40% + 30px)',
@@ -44,7 +44,7 @@ export default function DriversPortalPage() {
         background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
         opacity: 0.3,
         zIndex: 1
-      }}></div>
+      }} />
       <div style={{
         position: 'absolute',
         top: '60%',
@@ -54,7 +54,7 @@ export default function DriversPortalPage() {
         background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
         opacity: 0.3,
         zIndex: 1
-      }}></div>
+      }} />
       <div style={{
         position: 'absolute',
         top: 'calc(60% + 30px)',
@@ -64,7 +64,7 @@ export default function DriversPortalPage() {
         background: 'repeating-linear-gradient(90deg, #000000 0px, #000000 60px, transparent 60px, transparent 120px)',
         opacity: 0.3,
         zIndex: 1
-      }}></div>
+      }} />
 
       <main style={{
         maxWidth: '1200px',

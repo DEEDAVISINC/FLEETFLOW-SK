@@ -222,7 +222,7 @@ export default function SmartTaskPrioritizationWidget() {
             fontSize: '1.5rem',
             fontWeight: 'bold',
             marginBottom: '8px',
-            color: '#8b5cf6',
+            color: '#6d28d9',
           }}
         >
           🧠 Smart Task Prioritization Engine
@@ -254,12 +254,12 @@ export default function SmartTaskPrioritizationWidget() {
             style={{
               background:
                 activeTab === tab.id
-                  ? 'rgba(139, 92, 246, 0.3)'
+                  ? 'rgba(109, 40, 217, 0.3)'
                   : 'transparent',
               color: 'white',
               border:
                 activeTab === tab.id
-                  ? '1px solid #8b5cf6'
+                  ? '1px solid #6d28d9'
                   : '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '8px',
               padding: '8px 16px',
@@ -285,7 +285,7 @@ export default function SmartTaskPrioritizationWidget() {
               marginBottom: '20px',
             }}
           >
-            <h3 style={{ marginBottom: '16px', color: '#8b5cf6' }}>
+            <h3 style={{ marginBottom: '16px', color: '#6d28d9' }}>
               ⚙️ Prioritization Settings
             </h3>
 
@@ -408,7 +408,7 @@ export default function SmartTaskPrioritizationWidget() {
               style={{
                 background: loading
                   ? '#6b7280'
-                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  : 'linear-gradient(135deg, #6d28d9, #5b21b6)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -515,7 +515,7 @@ export default function SmartTaskPrioritizationWidget() {
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 'bold',
-                        color: '#8b5cf6',
+                        color: '#6d28d9',
                       }}
                     >
                       {prioritizedTasks.optimizationMetrics.timeToCompletion}h
@@ -530,7 +530,7 @@ export default function SmartTaskPrioritizationWidget() {
                   style={{
                     marginTop: '16px',
                     padding: '12px',
-                    background: 'rgba(139, 92, 246, 0.1)',
+                    background: 'rgba(109, 40, 217, 0.1)',
                     borderRadius: '8px',
                   }}
                 >
@@ -546,7 +546,7 @@ export default function SmartTaskPrioritizationWidget() {
                   padding: '20px',
                 }}
               >
-                <h3 style={{ marginBottom: '16px', color: '#8b5cf6' }}>
+                <h3 style={{ marginBottom: '16px', color: '#6d28d9' }}>
                   📋 Prioritized Tasks
                 </h3>
 
@@ -788,7 +788,7 @@ export default function SmartTaskPrioritizationWidget() {
               <button
                 onClick={() => setActiveTab('prioritize')}
                 style={{
-                  background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  background: 'linear-gradient(135deg, #6d28d9, #5b21b6)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',

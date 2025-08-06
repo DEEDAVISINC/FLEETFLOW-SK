@@ -111,7 +111,7 @@ export default function DriversPortalPage() {
           opacity: 0.8,
           zIndex: 1,
         }}
-      ></div>
+       />
       <div
         style={{
           position: 'absolute',
@@ -124,7 +124,7 @@ export default function DriversPortalPage() {
           opacity: 0.8,
           zIndex: 1,
         }}
-      ></div>
+       />
       <div
         style={{
           position: 'absolute',
@@ -137,7 +137,7 @@ export default function DriversPortalPage() {
           opacity: 0.8,
           zIndex: 1,
         }}
-      ></div>
+       />
       <div
         style={{
           position: 'absolute',
@@ -150,7 +150,7 @@ export default function DriversPortalPage() {
           opacity: 0.8,
           zIndex: 1,
         }}
-      ></div>
+       />
 
       <main
         style={{

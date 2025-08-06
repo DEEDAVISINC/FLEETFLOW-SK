@@ -839,7 +839,7 @@ export default function VolumeDiscountWidget() {
                         key={index}
                         className='flex items-center gap-2 text-sm text-gray-600'
                       >
-                        <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                        <div className='h-2 w-2 rounded-full bg-blue-500' />
                         {factor}
                       </li>
                     ))}

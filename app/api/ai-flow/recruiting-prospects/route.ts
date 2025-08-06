@@ -58,7 +58,7 @@ interface OnboardingNotification {
 }
 
 // In-memory storage for demo purposes
-let carrierProspects: CarrierProspect[] = [
+const carrierProspects: CarrierProspect[] = [
   {
     id: 'CP-001',
     companyName: 'Elite Freight Solutions LLC',
@@ -205,7 +205,7 @@ let carrierProspects: CarrierProspect[] = [
   }
 ];
 
-let onboardingNotifications: OnboardingNotification[] = [
+const onboardingNotifications: OnboardingNotification[] = [
   {
     id: 'ON-001',
     prospectId: 'CP-001',

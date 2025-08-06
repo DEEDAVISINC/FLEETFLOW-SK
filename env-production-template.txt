@@ -52,7 +52,7 @@ NEXT_PUBLIC_FRED_API_KEY=your_fred_api_key_here
 NEXT_PUBLIC_ALPHA_VANTAGE_KEY=your_alpha_vantage_key_here
 
 # 📍 MAPPING & GEOCODING ($50-100/month)
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 HERE_MAPS_API_KEY=your_here_maps_api_key_here
 
 # 🔔 COMMUNICATIONS ($30-80/month)

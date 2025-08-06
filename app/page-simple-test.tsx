@@ -82,7 +82,7 @@ export default function SimpleDashboard() {
               backgroundColor: '#10B981', 
               borderRadius: '50%',
               animation: 'pulse 2s infinite'
-            }}></div>
+            }} />
             <span>All Systems Operational</span>
           </div>
         </div>

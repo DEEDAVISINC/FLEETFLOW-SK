@@ -15,6 +15,7 @@ import {
   generateUniversalPickupDocument,
 } from '../../src/route-generator/templates/route-generators.js';
 import { SchedulingService } from '../scheduling/service';
+import { logger } from '../utils/logger';
 import { AIDispatcher } from './ai-dispatcher';
 import { AIAutomationEngine } from './automation';
 import { DocumentFlowService } from './document-flow-service';
@@ -187,7 +188,11 @@ export class FleetFlowSystemOrchestrator {
     this.taskPrioritization = new SmartTaskPrioritizationService();
     this.config = config;
 
-    console.log('🔗 FleetFlow System Orchestrator initialized');
+    logger.info(
+      'FleetFlow System Orchestrator initialized',
+      undefined,
+      'SystemOrchestrator'
+    );
   }
 
   /**
@@ -196,7 +201,11 @@ export class FleetFlowSystemOrchestrator {
    */
   async processLoad(loadData: any): Promise<IntegratedWorkflow> {
     const workflowId = `WF-${Date.now()}`;
-    console.log(`🚀 Starting integrated workflow for load ${loadData.id}`);
+    logger.info(
+      'Starting integrated workflow',
+      { loadId: loadData.id },
+      'SystemOrchestrator'
+    );
 
     // Initialize workflow
     const workflow: IntegratedWorkflow = {
@@ -254,10 +263,18 @@ export class FleetFlowSystemOrchestrator {
         await this.sendIntegratedNotifications(workflow);
       }
 
-      console.log(`✅ Integrated workflow completed for load ${loadData.id}`);
+      logger.info(
+        'Integrated workflow completed',
+        { loadId: loadData.id, workflowId },
+        'SystemOrchestrator'
+      );
       return workflow;
     } catch (error) {
-      console.error(`❌ Workflow failed for load ${loadData.id}:`, error);
+      logger.error(
+        'Integrated workflow failed',
+        { loadId: loadData.id, error: error.message },
+        'SystemOrchestrator'
+      );
       workflow.status = 'pending';
       throw error;
     }
@@ -1761,9 +1778,7 @@ export class HeavyHaulPermitService {
   /**
    * Submit a permit application
    */
-  async submitHeavyHaulPermitApp(
-    application: HeavyHaulPermitApp
-  ): Promise<{
+  async submitHeavyHaulPermitApp(application: HeavyHaulPermitApp): Promise<{
     success: boolean;
     message?: string;
     confirmationNumber?: string;
@@ -1784,9 +1799,7 @@ export class HeavyHaulPermitService {
   /**
    * Track the status of a permit application
    */
-  async trackPermitStatus(
-    application: HeavyHaulPermitApp
-  ): Promise<{
+  async trackPermitStatus(application: HeavyHaulPermitApp): Promise<{
     status: 'pending' | 'approved' | 'rejected';
     lastUpdate?: string;
     estimatedApproval?: string;

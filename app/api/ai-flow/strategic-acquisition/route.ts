@@ -72,7 +72,7 @@ interface AcquisitionMetrics {
 }
 
 // In-memory storage for demo purposes - Developer Only System
-let strategicBuyers: StrategicBuyer[] = [
+const strategicBuyers: StrategicBuyer[] = [
   {
     id: 'SB-001',
     companyName: 'Microsoft Corporation',
@@ -213,7 +213,7 @@ let strategicBuyers: StrategicBuyer[] = [
   },
 ];
 
-let outreachCampaigns: OutreachCampaign[] = [
+const outreachCampaigns: OutreachCampaign[] = [
   {
     id: 'OC-001',
     name: 'Microsoft Azure Integration Pitch',
@@ -251,7 +251,7 @@ let outreachCampaigns: OutreachCampaign[] = [
   },
 ];
 
-let demoEnvironments: DemoEnvironment[] = [
+const demoEnvironments: DemoEnvironment[] = [
   {
     id: 'DE-001',
     companyName: 'Microsoft Corporation',

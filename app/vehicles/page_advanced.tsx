@@ -216,17 +216,17 @@ export default function VehiclesPage() {
     <div className='relative min-h-screen overflow-hidden bg-black'>
       {/* Advanced Animated Background */}
       <div className='absolute inset-0'>
-        <div className='absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black'></div>
+        <div className='absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black' />
         <div className='absolute top-0 left-0 h-full w-full'>
-          <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-500/10 blur-3xl'></div>
+          <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-500/10 blur-3xl' />
           <div
             className='absolute top-3/4 right-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl'
             style={{ animationDelay: '1s' }}
-          ></div>
+           />
           <div
             className='absolute top-1/2 left-1/2 h-96 w-96 animate-pulse rounded-full bg-teal-500/5 blur-3xl'
             style={{ animationDelay: '2s' }}
-          ></div>
+           />
         </div>
         {/* Moving Data Points */}
         <div className='absolute inset-0'>
@@ -240,7 +240,7 @@ export default function VehiclesPage() {
                 animationDelay: `${Math.random() * 4}s`,
                 animationDuration: `${1 + Math.random() * 2}s`,
               }}
-            ></div>
+             />
           ))}
         </div>
       </div>
@@ -248,12 +248,12 @@ export default function VehiclesPage() {
       <div className='relative z-10 space-y-8 p-8'>
         {/* Advanced Header */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 via-teal-600/20 to-blue-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-green-600/20 via-teal-600/20 to-blue-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-8'>
                 <div className='relative'>
-                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-green-400 to-teal-400 opacity-75 blur-lg'></div>
+                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-green-400 to-teal-400 opacity-75 blur-lg' />
                   <div className='relative rounded-2xl bg-gradient-to-r from-green-500 to-teal-500 p-4'>
                     <div className='flex h-16 w-16 items-center justify-center text-4xl'>
                       🚛
@@ -269,21 +269,21 @@ export default function VehiclesPage() {
                   </p>
                   <div className='mt-3 flex items-center space-x-6 text-sm text-gray-400'>
                     <span className='flex items-center space-x-2'>
-                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                       <span>
                         {vehicles.filter((v) => v.status === 'active').length}{' '}
                         Active
                       </span>
                     </span>
                     <span className='flex items-center space-x-2'>
-                      <div className='h-2 w-2 animate-pulse rounded-full bg-yellow-500'></div>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-yellow-500' />
                       <span>
                         {vehicles.filter((v) => v.status === 'warning').length}{' '}
                         Warnings
                       </span>
                     </span>
                     <span className='flex items-center space-x-2'>
-                      <div className='h-2 w-2 animate-pulse rounded-full bg-red-500'></div>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-red-500' />
                       <span>
                         {vehicles.filter((v) => v.status === 'critical').length}{' '}
                         Critical
@@ -351,7 +351,7 @@ export default function VehiclesPage() {
             <div key={index} className='group relative'>
               <div
                 className={`absolute inset-0 bg-gradient-to-r ${stat.gradient} rounded-2xl opacity-25 blur-lg transition-opacity duration-300 group-hover:opacity-40`}
-              ></div>
+               />
               <div className='relative transform rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:bg-white/10'>
                 <div className='mb-4 flex items-center justify-between'>
                   <div
@@ -371,7 +371,7 @@ export default function VehiclesPage() {
 
         {/* Advanced Search and View Controls */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
             <div className='mb-6 flex items-center justify-between'>
               <div className='flex items-center space-x-4'>
@@ -475,7 +475,7 @@ export default function VehiclesPage() {
               <div key={vehicle.id} className='group relative'>
                 <div
                   className={`absolute inset-0 bg-gradient-to-r ${getStatusColor(vehicle.status)} rounded-2xl opacity-20 blur-lg transition-opacity duration-300 group-hover:opacity-30`}
-                ></div>
+                 />
                 <div className='relative transform rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:bg-white/10'>
                   {/* Vehicle Header */}
                   <div className='mb-4 flex items-center justify-between'>
@@ -528,7 +528,7 @@ export default function VehiclesPage() {
                         <div
                           className={`h-full bg-gradient-to-r ${getFuelLevelColor(vehicle.fuelLevel)} transition-all duration-500`}
                           style={{ width: `${vehicle.fuelLevel}%` }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -549,7 +549,7 @@ export default function VehiclesPage() {
                           style={{
                             width: `${(vehicle.currentLoad / vehicle.loadCapacity) * 100}%`,
                           }}
-                        ></div>
+                         />
                       </div>
                     </div>
                   </div>
@@ -626,7 +626,7 @@ export default function VehiclesPage() {
         <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
           {/* Real-time Fleet Map */}
           <div className='relative lg:col-span-2'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-600/20 to-green-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-600/20 to-green-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center justify-between'>
                 <div className='flex items-center space-x-3'>
@@ -653,7 +653,7 @@ export default function VehiclesPage() {
 
           {/* Command Notes */}
           <div className='relative'>
-            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-600/20 to-orange-600/20 blur-xl'></div>
+            <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-600/20 to-orange-600/20 blur-xl' />
             <div className='relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl'>
               <div className='mb-6 flex items-center space-x-3'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-xl'>
@@ -674,7 +674,7 @@ export default function VehiclesPage() {
 
         {/* Fleet Performance Analytics */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl'>
             <div className='mb-8 flex items-center space-x-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-2xl'>

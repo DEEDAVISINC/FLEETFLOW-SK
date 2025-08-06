@@ -21,7 +21,7 @@ export class DispatchCommunicationIntegration {
 
     // Determine communication trigger based on status change
     let triggerType = '';
-    let context = {
+    const context = {
       loadId,
       oldStatus,
       newStatus,
@@ -97,7 +97,7 @@ export class DispatchCommunicationIntegration {
     console.log(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
 
     let triggerType = '';
-    let context = {
+    const context = {
       loadId,
       eventType,
       driverName: eventData.driverName,
@@ -161,7 +161,7 @@ export class DispatchCommunicationIntegration {
     console.log(`📞 Customer inquiry: ${inquiryType}`);
 
     let triggerType = '';
-    let context = {
+    const context = {
       customerId,
       inquiryType,
       customerName: inquiryData.customerName,
@@ -395,8 +395,8 @@ export class BrokerCommunicationIntegration {
   ) {
     console.log(`💰 Rate negotiation: ${negotiationType}`);
 
-    let triggerType = 'financial_dispute';
-    let context = {
+    const triggerType = 'financial_dispute';
+    const context = {
       customerId,
       negotiationType,
       customerName: negotiationData.customerName,
@@ -427,7 +427,7 @@ export class BrokerCommunicationIntegration {
     console.log(`🤝 Customer relationship event: ${eventType}`);
 
     let triggerType = '';
-    let context = {
+    const context = {
       customerId,
       eventType,
       customerName: eventData.customerName,

@@ -24,7 +24,7 @@ export default function Loading() {
             borderRadius: '8px',
             marginBottom: '12px',
             animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-          }}></div>
+          }} />
           <div style={{
             height: '20px',
             background: 'rgba(255, 255, 255, 0.2)',
@@ -32,7 +32,7 @@ export default function Loading() {
             width: '60%',
             margin: '0 auto',
             animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-          }}></div>
+          }} />
         </div>
 
         {/* Stats Dashboard Skeleton */}
@@ -57,13 +57,13 @@ export default function Loading() {
                 borderRadius: '12px',
                 marginBottom: '16px',
                 animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-              }}></div>
+              }} />
               <div style={{
                 height: '14px',
                 background: '#e5e7eb',
                 borderRadius: '4px',
                 animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-              }}></div>
+              }} />
             </div>
           ))}
         </div>
@@ -82,7 +82,7 @@ export default function Loading() {
             background: '#e5e7eb',
             borderRadius: '12px',
             animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-          }}></div>
+          }} />
         </div>
 
         {/* Table Skeleton */}
@@ -101,7 +101,7 @@ export default function Loading() {
               borderRadius: '4px',
               marginBottom: '16px',
               animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-            }}></div>
+            }} />
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} style={{
                 display: 'grid',
@@ -116,7 +116,7 @@ export default function Loading() {
                     background: '#e5e7eb',
                     borderRadius: '4px',
                     animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                  }}></div>
+                  }} />
                 ))}
               </div>
             ))}

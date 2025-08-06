@@ -1696,7 +1696,7 @@ export default function HazmatRouteComplianceWidget() {
                           background: '#ef4444',
                           flexShrink: 0,
                         }}
-                      ></div>
+                       />
                       {doc}
                     </li>
                   ))}
@@ -1747,7 +1747,7 @@ export default function HazmatRouteComplianceWidget() {
                           ? '#ef4444'
                           : '#6b7280',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         fontSize: '14px',
@@ -1774,7 +1774,7 @@ export default function HazmatRouteComplianceWidget() {
                           ? '#ef4444'
                           : '#6b7280',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         fontSize: '14px',
@@ -1867,7 +1867,7 @@ export default function HazmatRouteComplianceWidget() {
                           background: '#3b82f6',
                           flexShrink: 0,
                         }}
-                      ></div>
+                       />
                       {item}
                     </li>
                   ))}

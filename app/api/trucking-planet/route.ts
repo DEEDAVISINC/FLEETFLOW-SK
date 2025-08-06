@@ -138,7 +138,7 @@ async function handleAdvancedShipperSearch(data: any) {
   const { filters, convertToLeads = true } = data;
 
   const shippers = await truckingPlanetService.searchShippers(filters);
-  let result: any = {
+  const result: any = {
     shippers,
     totalFound: shippers.length,
     searchFilters: filters,

@@ -537,9 +537,9 @@ export async function POST(request: NextRequest) {
         });
 
       case 'generate-pars-labels':
-        const { parsNumber } = manifestData;
+        const { parsNumber: labelParsNumber } = manifestData;
 
-        if (!parsNumber) {
+        if (!labelParsNumber) {
           return NextResponse.json(
             {
               success: false,
@@ -552,14 +552,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: {
-            parsNumber,
+            parsNumber: labelParsNumber,
             labels: [
               {
-                labelId: `LABEL-${parsNumber}-001`,
-                barcodeData: `*${parsNumber}*`,
+                labelId: `LABEL-${labelParsNumber}-001`,
+                barcodeData: `*${labelParsNumber}*`,
                 labelType: 'PARS Barcode Label',
                 printFormat: 'PDF',
-                downloadUrl: `/api/tracking/canada-border/labels/${parsNumber}`,
+                downloadUrl: `/api/tracking/canada-border/labels/${labelParsNumber}`,
                 instructions:
                   'Affix to shipment documentation and present at border',
               },

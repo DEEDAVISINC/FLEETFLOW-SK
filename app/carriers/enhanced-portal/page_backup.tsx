@@ -400,7 +400,7 @@ export default function EnhancedCarrierPortal() {
                       background: '#4ade80',
                       borderRadius: '50%',
                       animation: 'pulse 2s infinite'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
                       Live Onboarding Active
                     </span>
@@ -1666,7 +1666,7 @@ export default function EnhancedCarrierPortal() {
                       borderRadius: '50%',
                       marginTop: '8px',
                       flexShrink: 0
-                    }}></div>
+                    }} />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>High Performance:</strong> Onboarding completion rate has improved by 18% this quarter through workflow optimization.
                     </p>
@@ -1679,7 +1679,7 @@ export default function EnhancedCarrierPortal() {
                       borderRadius: '50%',
                       marginTop: '8px',
                       flexShrink: 0
-                    }}></div>
+                    }} />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Opportunity:</strong> Document upload process can be streamlined to reduce average completion time by 2-3 days.
                     </p>
@@ -1692,7 +1692,7 @@ export default function EnhancedCarrierPortal() {
                       borderRadius: '50%',
                       marginTop: '8px',
                       flexShrink: 0
-                    }}></div>
+                    }} />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Trend:</strong> Portal adoption rate increased by 12% with the new mobile-friendly interface.
                     </p>

@@ -266,6 +266,42 @@ export default function SeasonalLoadPlanningWidget() {
     return colors[season] || '#6b7280';
   };
 
+  const getSeasonGradient = (season: string) => {
+    const gradients: { [key: string]: string } = {
+      spring: 'linear-gradient(135deg, #10b981, #059669)', // Green gradient
+      summer: 'linear-gradient(135deg, #f59e0b, #d97706)', // Orange gradient
+      fall: 'linear-gradient(135deg, #ef4444, #dc2626)', // Red gradient
+      winter: 'linear-gradient(135deg, #3b82f6, #2563eb)', // Blue gradient
+      holiday: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Purple gradient
+      custom: 'linear-gradient(135deg, #6b7280, #4b5563)', // Gray gradient
+    };
+    return gradients[season] || gradients.custom;
+  };
+
+  const getSeasonBackground = (season: string) => {
+    const backgrounds: { [key: string]: string } = {
+      spring: 'rgba(16, 185, 129, 0.15)', // Green background
+      summer: 'rgba(245, 158, 11, 0.15)', // Orange background
+      fall: 'rgba(239, 68, 68, 0.15)', // Red background
+      winter: 'rgba(59, 130, 246, 0.15)', // Blue background
+      holiday: 'rgba(139, 92, 246, 0.15)', // Purple background
+      custom: 'rgba(107, 114, 128, 0.15)', // Gray background
+    };
+    return backgrounds[season] || backgrounds.custom;
+  };
+
+  const getSeasonBorder = (season: string) => {
+    const borders: { [key: string]: string } = {
+      spring: 'rgba(16, 185, 129, 0.3)', // Green border
+      summer: 'rgba(245, 158, 11, 0.3)', // Orange border
+      fall: 'rgba(239, 68, 68, 0.3)', // Red border
+      winter: 'rgba(59, 130, 246, 0.3)', // Blue border
+      holiday: 'rgba(139, 92, 246, 0.3)', // Purple border
+      custom: 'rgba(107, 114, 128, 0.3)', // Gray border
+    };
+    return borders[season] || borders.custom;
+  };
+
   if (!forceEnabled) {
     return (
       <div
@@ -317,11 +353,11 @@ export default function SeasonalLoadPlanningWidget() {
   return (
     <div
       style={{
-        background: 'rgba(255, 255, 255, 0.15)',
+        background: getSeasonBackground(planRequest.planningPeriod.season),
         backdropFilter: 'blur(10px)',
-        borderRadius: '16px',
+        borderRadius: '20px',
         padding: '32px',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
+        border: `2px solid ${getSeasonBorder(planRequest.planningPeriod.season)}`,
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
       }}
     >
@@ -337,11 +373,19 @@ export default function SeasonalLoadPlanningWidget() {
           <div
             style={{
               padding: '16px',
-              background: 'rgba(255, 255, 255, 0.2)',
-              borderRadius: '12px',
+              background: getSeasonGradient(planRequest.planningPeriod.season),
+              borderRadius: '16px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
             }}
           >
-            <span style={{ fontSize: '32px' }}>📅</span>
+            <span style={{ fontSize: '32px' }}>
+              {planRequest.planningPeriod.season === 'spring' && '🌸'}
+              {planRequest.planningPeriod.season === 'summer' && '☀️'}
+              {planRequest.planningPeriod.season === 'fall' && '🍂'}
+              {planRequest.planningPeriod.season === 'winter' && '❄️'}
+              {planRequest.planningPeriod.season === 'holiday' && '🎄'}
+              {planRequest.planningPeriod.season === 'custom' && '📅'}
+            </span>
           </div>
           <div>
             <h2
@@ -371,12 +415,12 @@ export default function SeasonalLoadPlanningWidget() {
       {/* Tab Navigation */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.15)',
+          background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
           padding: '16px',
           marginBottom: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: `1px solid ${getSeasonBorder(planRequest.planningPeriod.season)}`,
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           display: 'flex',
           gap: '8px',
@@ -401,9 +445,9 @@ export default function SeasonalLoadPlanningWidget() {
               flex: 1,
               background:
                 activeTab === tab.id
-                  ? 'rgba(255, 255, 255, 0.9)'
-                  : 'rgba(255, 255, 255, 0.2)',
-              color: activeTab === tab.id ? '#4c1d95' : 'white',
+                  ? getSeasonGradient(planRequest.planningPeriod.season)
+                  : 'rgba(255, 255, 255, 0.1)',
+              color: '#ffffff',
               transform:
                 activeTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
               boxShadow:
@@ -451,7 +495,8 @@ export default function SeasonalLoadPlanningWidget() {
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
                 padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: `2px solid ${getSeasonBorder(planRequest.planningPeriod.season)}`,
+                boxShadow: `0 4px 20px ${getSeasonColor(planRequest.planningPeriod.season)}20`,
               }}
             >
               <h3
@@ -596,7 +641,8 @@ export default function SeasonalLoadPlanningWidget() {
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
                 padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: `2px solid ${getSeasonBorder(planRequest.planningPeriod.season)}`,
+                boxShadow: `0 4px 20px ${getSeasonColor(planRequest.planningPeriod.season)}20`,
               }}
             >
               <h3
@@ -781,7 +827,9 @@ export default function SeasonalLoadPlanningWidget() {
                   style={{
                     width: '100%',
                     marginTop: '8px',
-                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                    accentColor: getSeasonColor(
+                      planRequest.planningPeriod.season
+                    ),
                   }}
                 />
                 <div
@@ -824,7 +872,9 @@ export default function SeasonalLoadPlanningWidget() {
                   style={{
                     width: '100%',
                     marginTop: '8px',
-                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                    accentColor: getSeasonColor(
+                      planRequest.planningPeriod.season
+                    ),
                   }}
                 />
                 <div
@@ -867,7 +917,9 @@ export default function SeasonalLoadPlanningWidget() {
                   style={{
                     width: '100%',
                     marginTop: '8px',
-                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                    accentColor: getSeasonColor(
+                      planRequest.planningPeriod.season
+                    ),
                   }}
                 />
                 <div
@@ -910,7 +962,9 @@ export default function SeasonalLoadPlanningWidget() {
                   style={{
                     width: '100%',
                     marginTop: '8px',
-                    accentColor: 'rgba(59, 130, 246, 0.8)',
+                    accentColor: getSeasonColor(
+                      planRequest.planningPeriod.season
+                    ),
                   }}
                 />
                 <div
@@ -945,7 +999,7 @@ export default function SeasonalLoadPlanningWidget() {
                 cursor: loading ? 'not-allowed' : 'pointer',
                 background: loading
                   ? 'rgba(255, 255, 255, 0.3)'
-                  : 'rgba(59, 130, 246, 0.9)',
+                  : getSeasonGradient(planRequest.planningPeriod.season),
                 color: 'white',
                 opacity: loading ? 0.5 : 1,
                 transition: 'all 0.3s ease',
@@ -1107,7 +1161,7 @@ export default function SeasonalLoadPlanningWidget() {
                       key={index}
                       className='flex items-center gap-2 text-sm text-gray-600'
                     >
-                      <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                      <div className='h-2 w-2 rounded-full bg-blue-500' />
                       {item}
                     </li>
                   ))}
@@ -1136,49 +1190,119 @@ export default function SeasonalLoadPlanningWidget() {
             {templates.map((template, index) => (
               <div
                 key={index}
-                className='rounded-lg border border-gray-200 p-4'
+                style={{
+                  borderRadius: '16px',
+                  border: `2px solid ${getSeasonBorder(template.season)}`,
+                  background: getSeasonBackground(template.season),
+                  backdropFilter: 'blur(10px)',
+                  padding: '20px',
+                  boxShadow: `0 4px 20px ${getSeasonColor(template.season)}20`,
+                }}
               >
                 <div className='mb-3 flex items-center gap-3'>
                   <div
-                    className='flex h-10 w-10 items-center justify-center rounded-full font-bold text-white'
                     style={{
-                      backgroundColor: getSeasonColor(template.season),
+                      display: 'flex',
+                      height: '48px',
+                      width: '48px',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '16px',
+                      fontWeight: 'bold',
+                      color: '#ffffff',
+                      background: getSeasonGradient(template.season),
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
                     }}
                   >
                     {template.season.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className='font-semibold text-gray-900'>
+                    <h3
+                      style={{
+                        fontWeight: '600',
+                        color: '#ffffff',
+                        fontSize: '18px',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
                       {template.name}
                     </h3>
-                    <p className='text-sm text-gray-600'>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        margin: 0,
+                      }}
+                    >
                       {template.description}
                     </p>
                   </div>
                 </div>
 
-                <div className='mb-4 space-y-2'>
-                  <div className='flex justify-between text-sm'>
-                    <span className='text-gray-600'>Capacity Increase:</span>
-                    <span className='font-medium'>
+                <div
+                  style={{
+                    marginBottom: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Capacity Increase:
+                    </span>
+                    <span style={{ fontWeight: '600', color: '#ffffff' }}>
                       +{template.capacityIncrease}%
                     </span>
                   </div>
-                  <div className='flex justify-between text-sm'>
-                    <span className='text-gray-600'>Pricing Adjustment:</span>
-                    <span className='font-medium'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Pricing Adjustment:
+                    </span>
+                    <span style={{ fontWeight: '600', color: '#ffffff' }}>
                       +{template.pricingAdjustment}%
                     </span>
                   </div>
                 </div>
 
-                <div className='mb-4'>
-                  <h4 className='mb-2 text-sm font-medium text-gray-900'>
+                <div style={{ marginBottom: '16px' }}>
+                  <h4
+                    style={{
+                      marginBottom: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#ffffff',
+                    }}
+                  >
                     Focus Routes:
                   </h4>
-                  <ul className='space-y-1'>
+                  <ul
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
                     {template.focusRoutes.map((route, routeIndex) => (
-                      <li key={routeIndex} className='text-xs text-gray-600'>
+                      <li
+                        key={routeIndex}
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
                         • {route}
                       </li>
                     ))}
@@ -1187,7 +1311,29 @@ export default function SeasonalLoadPlanningWidget() {
 
                 <button
                   onClick={() => applyTemplate(template)}
-                  className='w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'
+                  style={{
+                    width: '100%',
+                    borderRadius: '12px',
+                    background: getSeasonGradient(template.season),
+                    padding: '12px 16px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 6px 20px rgba(0, 0, 0, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 4px 12px rgba(0, 0, 0, 0.2)';
+                  }}
                 >
                   Apply Template
                 </button>

@@ -2037,7 +2037,7 @@ export default function PermitRoutePlanningWidget() {
                           background: '#3b82f6',
                           flexShrink: 0,
                         }}
-                      ></div>
+                       />
                       {item}
                     </li>
                   ))}
@@ -2486,7 +2486,7 @@ export default function PermitRoutePlanningWidget() {
                           background: '#3b82f6',
                           flexShrink: 0,
                         }}
-                      ></div>
+                       />
                       {rec}
                     </li>
                   ))}

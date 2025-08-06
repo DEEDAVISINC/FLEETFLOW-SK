@@ -231,7 +231,7 @@ class OfflineModeServiceClass {
         return false;
       }
 
-      let offlineData = this.offlineData[driverId];
+      const offlineData = this.offlineData[driverId];
       if (!offlineData) {
         return false;
       }

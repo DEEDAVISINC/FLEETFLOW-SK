@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 // Simple in-memory store for automation status (in production, use a database)
-let automationStatus: {
+const automationStatus: {
   isRunning: boolean;
   lastUpdate: string | null;
   tasksRunning: string[];

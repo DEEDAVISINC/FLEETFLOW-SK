@@ -247,7 +247,7 @@ export default function RouteOptimizerDashboard({ onOptimizationComplete }: Rout
                 borderTop: '2px solid white',
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite'
-              }}></div>
+              }} />
               Optimizing...
             </>
           ) : (

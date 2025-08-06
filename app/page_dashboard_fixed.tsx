@@ -56,20 +56,20 @@ export default function Dashboard() {
     >
       {/* Animated Background */}
       <div className='absolute inset-0'>
-        <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl'></div>
-        <div className='absolute top-3/4 right-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/10 blur-3xl delay-1000'></div>
-        <div className='absolute top-1/2 left-1/2 h-96 w-96 animate-pulse rounded-full bg-cyan-500/5 blur-3xl delay-2000'></div>
+        <div className='absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl' />
+        <div className='absolute top-3/4 right-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/10 blur-3xl delay-1000' />
+        <div className='absolute top-1/2 left-1/2 h-96 w-96 animate-pulse rounded-full bg-cyan-500/5 blur-3xl delay-2000' />
       </div>
 
       <main className='relative z-10 space-y-8 p-8'>
         {/* Command Center Header */}
         <div className='relative'>
-          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 blur-xl'></div>
+          <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 blur-xl' />
           <div className='relative rounded-3xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-8'>
                 <div className='relative'>
-                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-75 blur-lg'></div>
+                  <div className='absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-75 blur-lg' />
                   <div className='relative rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 p-4'>
                     <div className='text-3xl font-bold text-white'>🚛</div>
                   </div>
@@ -85,7 +85,7 @@ export default function Dashboard() {
                     <span>🕒 {currentTime.toLocaleTimeString()}</span>
                     <span>📅 {currentTime.toLocaleDateString()}</span>
                     <span className='flex items-center space-x-1'>
-                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                       <span>System Online</span>
                     </span>
                   </div>

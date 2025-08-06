@@ -863,7 +863,7 @@ export default function LiveTrackingPage() {
                         boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                         animation: 'pulse 2s infinite',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.9)',

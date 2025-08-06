@@ -336,7 +336,7 @@ export default function FleetAnalyticsPage() {
                           borderRadius: '50%',
                           animation: 'pulse 2s infinite',
                         }}
-                      ></div>
+                       />
                       <span
                         style={{
                           fontSize: '14px',

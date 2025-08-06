@@ -99,7 +99,7 @@ function getFallbackRecommendation(load: any, carriers: any[]) {
   // Rule-based fallback algorithm
   const scoredCarriers = carriers.map(carrier => {
     let score = 0;
-    let reasoning = [];
+    const reasoning = [];
 
     // Capacity check (40% weight)
     const capacityRatio = load.weight / (carrier.capacity || 1);

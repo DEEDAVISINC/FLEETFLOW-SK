@@ -1,36 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '../../utils/logger';
 
 // Configure this route for dynamic rendering
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 // Mock database for development
 const mockDatabase: {
   loads: Array<{
-    id: string
-    posterId: string
-    posterCompany: string
-    posterRating: number
-    title: string
-    origin: string
-    destination: string
-    pickupDate: string
-    deliveryDate: string
-    weight: number
-    loadType: string
-    rate: number
-    distance: number
-    specialRequirements: string[]
-    isUrgent: boolean
-    networkStatus: string
-    bids: any[]
-    assignedCarrierId?: string
-    createdAt: string
-    updatedAt: string
-  }>
-  capacity: any[]
-  partners: any[]
-  transactions: any[]
-  metrics: any
+    id: string;
+    posterId: string;
+    posterCompany: string;
+    posterRating: number;
+    title: string;
+    origin: string;
+    destination: string;
+    pickupDate: string;
+    deliveryDate: string;
+    weight: number;
+    loadType: string;
+    rate: number;
+    distance: number;
+    specialRequirements: string[];
+    isUrgent: boolean;
+    networkStatus: string;
+    bids: any[];
+    assignedCarrierId?: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  capacity: any[];
+  partners: any[];
+  transactions: any[];
+  metrics: any;
 } = {
   loads: [
     {
@@ -52,7 +53,7 @@ const mockDatabase: {
       networkStatus: 'available',
       bids: [],
       createdAt: '2025-07-09T10:00:00Z',
-      updatedAt: '2025-07-09T10:00:00Z'
+      updatedAt: '2025-07-09T10:00:00Z',
     },
     {
       id: 'NL002',
@@ -83,11 +84,11 @@ const mockDatabase: {
           equipment: 'Refrigerated Trailer',
           message: 'Specialized in fresh produce transport',
           status: 'pending',
-          submittedAt: '2025-07-09T14:30:00Z'
-        }
+          submittedAt: '2025-07-09T14:30:00Z',
+        },
       ],
       createdAt: '2025-07-09T09:15:00Z',
-      updatedAt: '2025-07-09T14:30:00Z'
+      updatedAt: '2025-07-09T14:30:00Z',
     },
     {
       id: 'NL003',
@@ -108,8 +109,8 @@ const mockDatabase: {
       networkStatus: 'available',
       bids: [],
       createdAt: '2025-07-09T11:30:00Z',
-      updatedAt: '2025-07-09T11:30:00Z'
-    }
+      updatedAt: '2025-07-09T11:30:00Z',
+    },
   ],
   capacity: [
     {
@@ -124,9 +125,9 @@ const mockDatabase: {
       destination: 'Miami, FL',
       capacity: 40000,
       specializations: ['dry_van', 'electronics'],
-      ratePerMile: 2.20,
+      ratePerMile: 2.2,
       isAvailable: true,
-      createdAt: '2025-07-09T11:00:00Z'
+      createdAt: '2025-07-09T11:00:00Z',
     },
     {
       id: 'NC002',
@@ -139,10 +140,10 @@ const mockDatabase: {
       availableDate: '2025-07-13T00:00:00Z',
       capacity: 12000,
       specializations: ['expedited', 'small_packages'],
-      ratePerMile: 2.80,
+      ratePerMile: 2.8,
       isAvailable: true,
-      createdAt: '2025-07-09T13:45:00Z'
-    }
+      createdAt: '2025-07-09T13:45:00Z',
+    },
   ],
   partners: [
     {
@@ -160,8 +161,8 @@ const mockDatabase: {
       specializations: ['oil_field', 'heavy_haul', 'oversized'],
       verificationStatus: 'verified',
       joinedAt: '2024-03-15T00:00:00Z',
-      lastActive: '2025-07-09T08:30:00Z'
-    }
+      lastActive: '2025-07-09T08:30:00Z',
+    },
   ],
   transactions: [],
   metrics: {
@@ -172,45 +173,52 @@ const mockDatabase: {
     onTimePercentage: 96.5,
     networkUtilization: 78.3,
     revenueGrowth: 23.7,
-    carrierSatisfaction: 4.6
-  }
-}
+    carrierSatisfaction: 4.6,
+  },
+};
 
 // GET - Fetch network loads
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const type = searchParams.get('type') || 'loads'
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') || 'loads';
 
-    console.log(`🌐 Fetching freight network ${type}...`)
+    logger.info(
+      'Freight network fetch request',
+      {
+        type,
+        action: 'fetch',
+      },
+      'FreightNetworkAPI'
+    );
 
     switch (type) {
       case 'loads':
         return NextResponse.json({
           success: true,
           data: mockDatabase.loads,
-          total: mockDatabase.loads.length
-        })
+          total: mockDatabase.loads.length,
+        });
 
       case 'capacity':
         return NextResponse.json({
           success: true,
           data: mockDatabase.capacity,
-          total: mockDatabase.capacity.length
-        })
+          total: mockDatabase.capacity.length,
+        });
 
       case 'partners':
         return NextResponse.json({
           success: true,
           data: mockDatabase.partners,
-          total: mockDatabase.partners.length
-        })
+          total: mockDatabase.partners.length,
+        });
 
       case 'metrics':
         return NextResponse.json({
           success: true,
-          data: mockDatabase.metrics
-        })
+          data: mockDatabase.metrics,
+        });
 
       case 'analytics':
         const analyticsData = {
@@ -225,43 +233,59 @@ export async function GET(request: NextRequest) {
             { date: '2025-07-06', revenue: 19500 },
             { date: '2025-07-07', revenue: 17300 },
             { date: '2025-07-08', revenue: 21600 },
-            { date: '2025-07-09', revenue: 14200 }
+            { date: '2025-07-09', revenue: 14200 },
           ],
           topPerformingRoutes: [
-            { route: 'Los Angeles, CA → Phoenix, AZ', revenue: 45600, count: 24 },
+            {
+              route: 'Los Angeles, CA → Phoenix, AZ',
+              revenue: 45600,
+              count: 24,
+            },
             { route: 'Chicago, IL → Detroit, MI', revenue: 38900, count: 18 },
-            { route: 'Dallas, TX → Houston, TX', revenue: 32400, count: 21 }
-          ]
-        }
+            { route: 'Dallas, TX → Houston, TX', revenue: 32400, count: 21 },
+          ],
+        };
         return NextResponse.json({
           success: true,
-          data: analyticsData
-        })
+          data: analyticsData,
+        });
 
       default:
-        return NextResponse.json({
-          success: false,
-          error: 'Invalid type parameter'
-        }, { status: 400 })
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid type parameter',
+          },
+          { status: 400 }
+        );
     }
-
   } catch (error) {
-    console.error('❌ Failed to fetch freight network data:', error)
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch data',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    console.error('❌ Failed to fetch freight network data:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to fetch data',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // POST - Create new network items
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { type, data } = body
+    const body = await request.json();
+    const { type, data } = body;
 
-    console.log(`🌐 Creating new freight network ${type}...`)
+    logger.info(
+      'Freight network creation request',
+      {
+        type,
+        action: 'create',
+      },
+      'FreightNetworkAPI'
+    );
 
     switch (type) {
       case 'load':
@@ -271,139 +295,171 @@ export async function POST(request: NextRequest) {
           bids: [],
           networkStatus: 'available',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-        mockDatabase.loads.push(newLoad)
+          updatedAt: new Date().toISOString(),
+        };
+        mockDatabase.loads.push(newLoad);
 
         return NextResponse.json({
           success: true,
           data: newLoad,
-          message: 'Load posted to network successfully'
-        })
+          message: 'Load posted to network successfully',
+        });
 
       case 'capacity':
         const newCapacity = {
           id: `NC${String(mockDatabase.capacity.length + 1).padStart(3, '0')}`,
           ...data,
           isAvailable: true,
-          createdAt: new Date().toISOString()
-        }
-        mockDatabase.capacity.push(newCapacity)
+          createdAt: new Date().toISOString(),
+        };
+        mockDatabase.capacity.push(newCapacity);
 
         return NextResponse.json({
           success: true,
           data: newCapacity,
-          message: 'Capacity shared to network successfully'
-        })
+          message: 'Capacity shared to network successfully',
+        });
 
       case 'bid':
-        const { loadId, bid } = data
-        const load = mockDatabase.loads.find(l => l.id === loadId)
-        
+        const { loadId, bid } = data;
+        const load = mockDatabase.loads.find((l) => l.id === loadId);
+
         if (!load) {
-          return NextResponse.json({
-            success: false,
-            error: 'Load not found'
-          }, { status: 404 })
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Load not found',
+            },
+            { status: 404 }
+          );
         }
 
         const newBid = {
           id: `BID${String(Date.now()).slice(-3)}`,
           ...bid,
           status: 'pending',
-          submittedAt: new Date().toISOString()
-        }
+          submittedAt: new Date().toISOString(),
+        };
 
-        load.bids.push(newBid)
-        load.networkStatus = 'bidding'
-        load.updatedAt = new Date().toISOString()
+        load.bids.push(newBid);
+        load.networkStatus = 'bidding';
+        load.updatedAt = new Date().toISOString();
 
         return NextResponse.json({
           success: true,
           data: newBid,
-          message: 'Bid submitted successfully'
-        })
+          message: 'Bid submitted successfully',
+        });
 
       case 'partner_invite':
-        const inviteId = `INV${Date.now()}`
-        
+        const inviteId = `INV${Date.now()}`;
+
         // In real implementation, send email here
-        console.log(`📧 Sending partner invitation to ${data.email}`)
-        
+        logger.info(
+          'Partner invitation sent',
+          {
+            email: data.email,
+            action: 'invite',
+          },
+          'FreightNetworkAPI'
+        );
+
         return NextResponse.json({
           success: true,
           data: { inviteId },
-          message: 'Partner invitation sent successfully'
-        })
+          message: 'Partner invitation sent successfully',
+        });
 
       default:
-        return NextResponse.json({
-          success: false,
-          error: 'Invalid type parameter'
-        }, { status: 400 })
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid type parameter',
+          },
+          { status: 400 }
+        );
     }
-
   } catch (error) {
-    console.error('❌ Failed to create freight network item:', error)
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create item',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    console.error('❌ Failed to create freight network item:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to create item',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 // PUT - Update network items
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { type, id, data } = body
+    const body = await request.json();
+    const { type, id, data } = body;
 
-    console.log(`🌐 Updating freight network ${type} ${id}...`)
+    logger.info(
+      'Freight network update request',
+      {
+        type,
+        id,
+        action: 'update',
+      },
+      'FreightNetworkAPI'
+    );
 
     switch (type) {
       case 'load_status':
-        const load = mockDatabase.loads.find(l => l.id === id)
+        const load = mockDatabase.loads.find((l) => l.id === id);
         if (!load) {
-          return NextResponse.json({
-            success: false,
-            error: 'Load not found'
-          }, { status: 404 })
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Load not found',
+            },
+            { status: 404 }
+          );
         }
 
-        load.networkStatus = data.status
-        load.updatedAt = new Date().toISOString()
+        load.networkStatus = data.status;
+        load.updatedAt = new Date().toISOString();
 
         if (data.assignedCarrierId) {
-          load.assignedCarrierId = data.assignedCarrierId
+          load.assignedCarrierId = data.assignedCarrierId;
         }
 
         return NextResponse.json({
           success: true,
           data: load,
-          message: 'Load status updated successfully'
-        })
+          message: 'Load status updated successfully',
+        });
 
       case 'bid_status':
-        const { loadId, bidId, status } = data
-        const targetLoad = mockDatabase.loads.find(l => l.id === loadId)
-        
+        const { loadId, bidId, status } = data;
+        const targetLoad = mockDatabase.loads.find((l) => l.id === loadId);
+
         if (!targetLoad) {
-          return NextResponse.json({
-            success: false,
-            error: 'Load not found'
-          }, { status: 404 })
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Load not found',
+            },
+            { status: 404 }
+          );
         }
 
-        const bid = targetLoad.bids.find(b => b.id === bidId)
+        const bid = targetLoad.bids.find((b) => b.id === bidId);
         if (!bid) {
-          return NextResponse.json({
-            success: false,
-            error: 'Bid not found'
-          }, { status: 404 })
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Bid not found',
+            },
+            { status: 404 }
+          );
         }
 
-        bid.status = status
+        bid.status = status;
 
         if (status === 'accepted') {
           // Create transaction
@@ -417,39 +473,44 @@ export async function PUT(request: NextRequest) {
             platformFee: Math.round(bid.bidAmount * 0.04), // 4% commission
             platformFeePercentage: 4,
             paymentStatus: 'pending',
-            createdAt: new Date().toISOString()
-          }
+            createdAt: new Date().toISOString(),
+          };
 
-          mockDatabase.transactions.push(transaction)
-          targetLoad.networkStatus = 'assigned'
-          targetLoad.assignedCarrierId = bid.carrierId
+          mockDatabase.transactions.push(transaction);
+          targetLoad.networkStatus = 'assigned';
+          targetLoad.assignedCarrierId = bid.carrierId;
 
           return NextResponse.json({
             success: true,
             data: { bid, transaction },
-            message: 'Bid accepted and transaction created'
-          })
+            message: 'Bid accepted and transaction created',
+          });
         }
 
         return NextResponse.json({
           success: true,
           data: bid,
-          message: 'Bid status updated successfully'
-        })
+          message: 'Bid status updated successfully',
+        });
 
       default:
-        return NextResponse.json({
-          success: false,
-          error: 'Invalid type parameter'
-        }, { status: 400 })
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid type parameter',
+          },
+          { status: 400 }
+        );
     }
-
   } catch (error) {
-    console.error('❌ Failed to update freight network item:', error)
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to update item',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    console.error('❌ Failed to update freight network item:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to update item',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

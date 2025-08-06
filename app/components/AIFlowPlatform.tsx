@@ -792,7 +792,7 @@ export default function AIFlowPlatform() {
                     background: '#ffffff',
                     animation: 'pulse 2s infinite',
                   }}
-                ></div>
+                 />
               </div>
               <div
                 style={{
@@ -1585,7 +1585,7 @@ export default function AIFlowPlatform() {
                         marginTop: '4px',
                         boxShadow: `0 0 8px ${insight.priority === 'high' ? '#ef4444' : insight.priority === 'medium' ? '#f59e0b' : '#10b981'}40`,
                       }}
-                    ></div>
+                     />
                     <div style={{ flex: 1 }}>
                       <div
                         style={{

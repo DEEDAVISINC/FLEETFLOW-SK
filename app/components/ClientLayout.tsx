@@ -2,6 +2,7 @@
 
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
+import FleetFlowFooter from './FleetFlowFooter';
 import Navigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 
@@ -20,9 +21,12 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               paddingTop: '70px',
               minHeight: '100vh',
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {children}
+            <div style={{ flex: 1 }}>{children}</div>
+            <FleetFlowFooter variant='transparent' />
           </main>
         </LoadProvider>
       </ShipperProvider>

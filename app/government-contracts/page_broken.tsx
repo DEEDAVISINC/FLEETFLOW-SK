@@ -126,7 +126,7 @@ export default function GovernmentContractsPage() {
 
   // Filter and sort contracts
   const filteredAndSortedContracts = React.useMemo(() => {
-    let filtered = contracts.filter((contract) => {
+    const filtered = contracts.filter((contract) => {
       const matchesSearch =
         contract.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         contract.agency.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -1479,7 +1479,7 @@ export default function SpotRateOptimizationWidget() {
                         borderRadius: '50%',
                         background: '#ef4444',
                       }}
-                    ></div>
+                     />
                     {lane}
                   </li>
                 ))}
@@ -1526,7 +1526,7 @@ export default function SpotRateOptimizationWidget() {
                         borderRadius: '50%',
                         background: '#3b82f6',
                       }}
-                    ></div>
+                     />
                     {lane}
                   </li>
                 ))}

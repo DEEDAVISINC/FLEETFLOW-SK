@@ -55,7 +55,7 @@ export default function FleetFlowLogo({
         <div
           className={`relative ${size === 'large' ? 'h-14 w-14' : size === 'medium' ? 'h-10 w-10' : 'h-8 w-8'}`}
         >
-          <div className='absolute inset-0 rotate-3 transform rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 shadow-lg'></div>
+          <div className='absolute inset-0 rotate-3 transform rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 shadow-lg' />
           <div className='absolute inset-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-700 to-blue-800'>
             <svg
               width={currentSize.width * 0.6}

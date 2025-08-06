@@ -81,7 +81,7 @@ const VehicleStatusChart = () => {
                 backgroundColor: '#10b981', 
                 borderRadius: '50%' 
               }}
-            ></div>
+             />
             <span className="text-gray-600">Active (134)</span>
           </div>
           <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ const VehicleStatusChart = () => {
                 backgroundColor: '#f59e0b', 
                 borderRadius: '50%' 
               }}
-            ></div>
+             />
             <span className="text-gray-600">Maintenance (22)</span>
           </div>
           <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ const VehicleStatusChart = () => {
                 backgroundColor: '#ef4444', 
                 borderRadius: '50%' 
               }}
-            ></div>
+             />
             <span className="text-gray-600">Inactive (8)</span>
           </div>
         </div>

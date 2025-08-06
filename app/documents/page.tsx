@@ -383,7 +383,7 @@ export default function DocumentsPage() {
                       borderRadius: '50%',
                       boxShadow: '0 0 0 0 rgba(74, 222, 128, 0.7)',
                       animation: 'pulse 2s infinite'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
                       Auto-Population Active
                     </span>

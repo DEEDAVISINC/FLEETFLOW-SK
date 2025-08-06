@@ -175,7 +175,7 @@ export default function CertificateColorsPage() {
                       borderRadius: '8px',
                       flexShrink: 0,
                     }}
-                  ></div>
+                   />
                   <div>
                     <div
                       style={{
@@ -255,7 +255,7 @@ export default function CertificateColorsPage() {
                 `,
                   backgroundSize: '20px 20px',
                 }}
-              ></div>
+               />
 
               {/* Certificate Content */}
               <div
@@ -342,7 +342,7 @@ export default function CertificateColorsPage() {
                     background: colors.gradient,
                     marginBottom: '8px',
                   }}
-                ></div>
+                 />
 
                 <div
                   style={{

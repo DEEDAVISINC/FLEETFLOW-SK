@@ -263,7 +263,7 @@ export default function RoutesPage() {
                         borderRadius: '50%',
                         animation: 'pulse 2s infinite',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         fontSize: '14px',
@@ -1488,7 +1488,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                    ></div>
+                     />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>High Performance:</strong> Route efficiency has
                       improved by 12.5% this month due to AI optimization.
@@ -1510,7 +1510,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                    ></div>
+                     />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Opportunity:</strong> Consider optimizing morning
                       departure times to avoid peak traffic.
@@ -1532,7 +1532,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                    ></div>
+                     />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Trend:</strong> Fuel costs decreased by 8% through
                       better route planning and traffic avoidance.

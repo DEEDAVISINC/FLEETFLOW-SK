@@ -661,7 +661,7 @@ export default function VehiclesPage() {
                           borderRadius: '50%',
                           animation: 'pulse 2s infinite',
                         }}
-                      ></div>
+                      />
                       <span
                         style={{
                           fontSize: '14px',
@@ -2041,7 +2041,7 @@ export default function VehiclesPage() {
                                 borderRadius: '3px',
                                 transition: 'all 0.3s ease',
                               }}
-                            ></div>
+                            />
                           </div>
                           <span
                             style={{
@@ -2236,6 +2236,9 @@ export default function VehiclesPage() {
                     section='vehicles'
                     entityId='fleet'
                     entityName='Fleet Management'
+                    entityType='vehicle'
+                    showUnreadCount={true}
+                    isNotificationHub={true}
                   />
                 </div>
               </div>

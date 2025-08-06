@@ -211,7 +211,7 @@ export default function AIOperationsCenter() {
                   height: '8px',
                   borderRadius: '50%',
                   backgroundColor: '#10b981'
-                }}></div>
+                }} />
                 <span style={{ color: 'white', fontSize: '14px' }}>{agent.name}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -256,7 +256,7 @@ export default function AIOperationsCenter() {
                   borderRadius: '50%',
                   backgroundColor: activity.type === 'dispatch' ? '#3b82f6' : 
                                     activity.type === 'recruiting' ? '#10b981' : '#f59e0b'
-                }}></div>
+                }} />
                 <span style={{ color: 'white', fontSize: '13px' }}>{activity.action}</span>
               </div>
               <span style={{ color: '#9ca3af', fontSize: '12px' }}>{activity.time}</span>

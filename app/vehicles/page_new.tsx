@@ -116,7 +116,7 @@ export default function VehiclesPage() {
       <div className="p-6 space-y-8">
         {/* Header with Logo */}
         <div className="relative overflow-hidden bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 rounded-2xl shadow-2xl">
-          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute inset-0 bg-black/10" />
           <div className="relative p-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-6">
@@ -138,8 +138,8 @@ export default function VehiclesPage() {
               </button>
             </div>
           </div>
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-          <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 bg-teal-400/20 rounded-full blur-lg"></div>
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-white/10 rounded-full blur-xl" />
+          <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 bg-teal-400/20 rounded-full blur-lg" />
         </div>
 
         {/* Fleet Statistics */}

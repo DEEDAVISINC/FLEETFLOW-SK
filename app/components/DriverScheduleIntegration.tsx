@@ -105,7 +105,7 @@ const DriverScheduleIntegration = ({
       }}>
         {/* Enhanced Header with Navigation */}
         <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 px-8 py-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20" />
           <div className="relative flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-4">
@@ -231,36 +231,36 @@ const DriverScheduleIntegration = ({
                   <div className="space-y-6">
                     <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
                       <div className="flex items-center space-x-4">
-                        <div className="w-4 h-4 bg-green-500 rounded-full shadow-lg"></div>
+                        <div className="w-4 h-4 bg-green-500 rounded-full shadow-lg" />
                         <span className="text-base font-semibold text-slate-700">On Duty</span>
                       </div>
                       <div className="flex items-center space-x-4">
                         <div className="w-32 bg-gray-200 rounded-full h-3 shadow-inner">
-                          <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full shadow-lg" style={{ width: `${(onDutyDrivers / totalDrivers) * 100}%` }}></div>
+                          <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full shadow-lg" style={{ width: `${(onDutyDrivers / totalDrivers) * 100}%` }} />
                         </div>
                         <span className="text-lg font-bold text-slate-800 min-w-[3rem]">{onDutyDrivers}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
                       <div className="flex items-center space-x-4">
-                        <div className="w-4 h-4 bg-blue-500 rounded-full shadow-lg"></div>
+                        <div className="w-4 h-4 bg-blue-500 rounded-full shadow-lg" />
                         <span className="text-base font-semibold text-slate-700">Active</span>
                       </div>
                       <div className="flex items-center space-x-4">
                         <div className="w-32 bg-gray-200 rounded-full h-3 shadow-inner">
-                          <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full shadow-lg" style={{ width: `${(activeDrivers / totalDrivers) * 100}%` }}></div>
+                          <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full shadow-lg" style={{ width: `${(activeDrivers / totalDrivers) * 100}%` }} />
                         </div>
                         <span className="text-lg font-bold text-slate-800 min-w-[3rem]">{activeDrivers}</span>
                   </div>
                 </div>
                     <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-200">
                       <div className="flex items-center space-x-4">
-                        <div className="w-4 h-4 bg-gray-500 rounded-full shadow-lg"></div>
+                        <div className="w-4 h-4 bg-gray-500 rounded-full shadow-lg" />
                         <span className="text-base font-semibold text-slate-700">Off Duty</span>
                       </div>
                       <div className="flex items-center space-x-4">
                         <div className="w-32 bg-gray-200 rounded-full h-3 shadow-inner">
-                          <div className="bg-gradient-to-r from-gray-500 to-slate-500 h-3 rounded-full shadow-lg" style={{ width: `${(offDutyDrivers / totalDrivers) * 100}%` }}></div>
+                          <div className="bg-gradient-to-r from-gray-500 to-slate-500 h-3 rounded-full shadow-lg" style={{ width: `${(offDutyDrivers / totalDrivers) * 100}%` }} />
             </div>
                         <span className="text-lg font-bold text-slate-800 min-w-[3rem]">{offDutyDrivers}</span>
         </div>
@@ -864,7 +864,7 @@ const DriverScheduleIntegration = ({
                         width: 1,
                         height: 8,
                         background: '#d1d5db'
-                      }}></div>
+                      }} />
                     )}
                     
                     <div style={{ fontWeight: '600', color: '#374151' }}>

@@ -4,6 +4,7 @@
 import { createSupabaseAdminClient } from '@/lib/supabase-config';
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '../../../utils/logger';
 
 interface LoadStatusWebhookPayload {
   event: 'load.status_changed';
@@ -48,7 +49,17 @@ const verifyWebhookAuth = (request: NextRequest): boolean => {
 // ================================================================
 
 const handleLoadStatusChange = async (payload: LoadStatusWebhookPayload) => {
-  console.log('📦 Processing load status change:', payload);
+  logger.info(
+    'Load status change received',
+    {
+      loadId: payload.load_id,
+      loadNumber: payload.load_number,
+      oldStatus: payload.old_status,
+      newStatus: payload.new_status,
+      companyId: payload.company_id,
+    },
+    'LoadStatusWebhook'
+  );
 
   const supabase = createSupabaseAdminClient();
 
@@ -92,7 +103,14 @@ const handleLoadStatusChange = async (payload: LoadStatusWebhookPayload) => {
     // Trigger external integrations
     await triggerExternalIntegrations(payload, load);
 
-    console.log('✅ Load status change processed successfully');
+    logger.info(
+      'Load status change processed successfully',
+      {
+        loadId: payload.load_id,
+        newStatus: payload.new_status,
+      },
+      'LoadStatusWebhook'
+    );
 
     return {
       success: true,
@@ -140,9 +158,24 @@ const sendStatusNotifications = async (
       .insert(notifications);
 
     if (error) {
-      console.error('❌ Failed to create notifications:', error);
+      logger.error(
+        'Failed to create notifications',
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          loadId: payload.load_id,
+        },
+        'LoadStatusWebhook'
+      );
     } else {
-      console.log(`✅ Created ${notifications.length} notifications`);
+      logger.info(
+        'Status notifications created',
+        {
+          notificationCount: notifications.length,
+          loadId: payload.load_id,
+          status: payload.new_status,
+        },
+        'LoadStatusWebhook'
+      );
     }
   }
 
@@ -259,7 +292,14 @@ const triggerExternalIntegrations = async (
 
 const notifyCustomer = async (payload: LoadStatusWebhookPayload, load: any) => {
   // Implementation for customer notification
-  console.log('📧 Triggering customer notification for delivery');
+  logger.info(
+    'Customer notification triggered',
+    {
+      loadId: payload.load_id,
+      eventType: 'delivery_complete',
+    },
+    'LoadStatusWebhook'
+  );
 };
 
 const updateELDSystem = async (
@@ -267,7 +307,15 @@ const updateELDSystem = async (
   load: any
 ) => {
   // Implementation for ELD system update
-  console.log('🚛 Updating ELD system with status change');
+  logger.info(
+    'ELD system update triggered',
+    {
+      loadId: payload.load_id,
+      status: payload.new_status,
+      driverId: payload.driver_id,
+    },
+    'LoadStatusWebhook'
+  );
 };
 
 const triggerInvoicing = async (
@@ -275,7 +323,15 @@ const triggerInvoicing = async (
   load: any
 ) => {
   // Implementation for automatic invoicing
-  console.log('💰 Triggering automatic invoicing for completed load');
+  logger.info(
+    'Automatic invoicing triggered',
+    {
+      loadId: payload.load_id,
+      loadNumber: payload.load_number,
+      companyId: payload.company_id,
+    },
+    'LoadStatusWebhook'
+  );
 };
 
 const sendPushNotifications = async (
@@ -283,7 +339,14 @@ const sendPushNotifications = async (
   payload: LoadStatusWebhookPayload
 ) => {
   // Implementation for push notifications
-  console.log('📱 Sending push notifications to mobile devices');
+  logger.info(
+    'Push notifications sent',
+    {
+      notificationCount: notifications.length,
+      loadId: payload.load_id,
+    },
+    'LoadStatusWebhook'
+  );
 };
 
 // ================================================================

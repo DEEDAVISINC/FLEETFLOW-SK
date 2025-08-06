@@ -188,10 +188,12 @@ class TrainingProgressManager {
     userId?: string
   ): void {
     const progress = this.getProgress(userId);
-    const module = progress.modules.find((m) => m.moduleId === moduleId);
+    const trainingModule = progress.modules.find(
+      (m) => m.moduleId === moduleId
+    );
 
-    if (module) {
-      const existingLesson = module.lessons.find(
+    if (trainingModule) {
+      const existingLesson = trainingModule.lessons.find(
         (l) => l.lessonId === lessonId
       );
       if (existingLesson) {
@@ -199,7 +201,7 @@ class TrainingProgressManager {
         existingLesson.completedAt = new Date().toISOString();
         if (timeSpent > 0) existingLesson.timeSpent = timeSpent;
       } else {
-        module.lessons.push({
+        trainingModule.lessons.push({
           lessonId,
           completed: true,
           completedAt: new Date().toISOString(),
@@ -207,7 +209,7 @@ class TrainingProgressManager {
         });
       }
 
-      module.totalTimeSpent += timeSpent;
+      trainingModule.totalTimeSpent += timeSpent;
       this.checkModuleCompletion(moduleId, userId);
       this.saveProgress(progress, userId);
     }
@@ -216,23 +218,28 @@ class TrainingProgressManager {
   // Check if module is completed and eligible for certification
   checkModuleCompletion(moduleId: string, userId?: string): void {
     const progress = this.getProgress(userId);
-    const module = progress.modules.find((m) => m.moduleId === moduleId);
+    const trainingModule = progress.modules.find(
+      (m) => m.moduleId === moduleId
+    );
 
-    if (module) {
+    if (trainingModule) {
       // Define required lessons for each module
       const moduleRequirements = this.getModuleRequirements(moduleId);
 
       // Check if all required lessons are completed
-      const completedLessons = module.lessons.filter((l) => l.completed).length;
+      const completedLessons = trainingModule.lessons.filter(
+        (l) => l.completed
+      ).length;
       const isCompleted =
         completedLessons >= moduleRequirements.requiredLessons;
 
-      module.isCompleted = isCompleted;
-      module.certificateEligible =
-        isCompleted && module.totalTimeSpent >= moduleRequirements.minimumTime;
+      trainingModule.isCompleted = isCompleted;
+      trainingModule.certificateEligible =
+        isCompleted &&
+        trainingModule.totalTimeSpent >= moduleRequirements.minimumTime;
 
-      if (isCompleted && !module.completedAt) {
-        module.completedAt = new Date().toISOString();
+      if (isCompleted && !trainingModule.completedAt) {
+        trainingModule.completedAt = new Date().toISOString();
       }
     }
   }
@@ -260,19 +267,25 @@ class TrainingProgressManager {
   // Check if user is eligible for certification
   isCertificationEligible(moduleId: string, userId?: string): boolean {
     const progress = this.getProgress(userId);
-    const module = progress.modules.find((m) => m.moduleId === moduleId);
+    const trainingModule = progress.modules.find(
+      (m) => m.moduleId === moduleId
+    );
     return module?.certificateEligible || false;
   }
 
   // Get module completion percentage
   getModuleCompletionPercentage(moduleId: string, userId?: string): number {
     const progress = this.getProgress(userId);
-    const module = progress.modules.find((m) => m.moduleId === moduleId);
+    const trainingModule = progress.modules.find(
+      (m) => m.moduleId === moduleId
+    );
 
     if (!module) return 0;
 
     const requirements = this.getModuleRequirements(moduleId);
-    const completedLessons = module.lessons.filter((l) => l.completed).length;
+    const completedLessons = trainingModule.lessons.filter(
+      (l) => l.completed
+    ).length;
 
     return Math.min(
       100,

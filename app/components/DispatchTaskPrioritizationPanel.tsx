@@ -424,7 +424,7 @@ export default function DispatchTaskPrioritizationPanel() {
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px',
           }}
-        ></div>
+         />
         <h3 style={{ marginBottom: '8px' }}>AI Processing Dispatch Tasks...</h3>
         <p style={{ opacity: 0.8 }}>
           Analyzing loads, drivers, and operational priorities

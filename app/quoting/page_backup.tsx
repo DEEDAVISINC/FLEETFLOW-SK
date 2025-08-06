@@ -183,8 +183,8 @@ export default function FreightFlowQuotingEngine() {
     if (!ltlData.weight || !ltlData.pallets) return
 
     const rule = findApplicableRule('LTL', ltlData)
-    let baseRate = rule?.baseRate || 250
-    let fuelSurcharge = rule?.fuelSurcharge || 18
+    const baseRate = rule?.baseRate || 250
+    const fuelSurcharge = rule?.fuelSurcharge || 18
 
     const weight = parseInt(ltlData.weight)
     const pallets = parseInt(ltlData.pallets)
@@ -234,8 +234,8 @@ export default function FreightFlowQuotingEngine() {
     if (!ftlData.miles) return
 
     const rule = findApplicableRule('FTL', ftlData)
-    let baseRate = rule?.baseRate || 1800
-    let fuelSurcharge = rule?.fuelSurcharge || 22
+    const baseRate = rule?.baseRate || 1800
+    const fuelSurcharge = rule?.fuelSurcharge || 22
 
     const miles = parseInt(ftlData.miles)
 
@@ -283,8 +283,8 @@ export default function FreightFlowQuotingEngine() {
     if (!specializedData.miles) return
 
     const rule = findApplicableRule('Specialized', specializedData)
-    let baseRate = rule?.baseRate || 2500
-    let fuelSurcharge = rule?.fuelSurcharge || 25
+    const baseRate = rule?.baseRate || 2500
+    const fuelSurcharge = rule?.fuelSurcharge || 25
 
     const miles = parseInt(specializedData.miles)
 
@@ -476,7 +476,7 @@ export default function FreightFlowQuotingEngine() {
                       background: '#4ade80',
                       borderRadius: '50%',
                       boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)' }}>
                       Live Pricing Active
                     </span>

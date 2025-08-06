@@ -20,6 +20,9 @@ export interface SubscriptionPlan {
   interval: 'month' | 'year';
   features: string[];
   category: 'TMS' | 'CONSORTIUM' | 'COMPLIANCE' | 'ADDON';
+  priceType?: 'fixed' | 'starts_at' | 'custom';
+  maxPrice?: number;
+  priceDescription?: string;
 }
 
 export interface UsageRecord {
@@ -606,6 +609,9 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     price: 299,
     interval: 'month',
     category: 'TMS',
+    priceType: 'starts_at',
+    maxPrice: 999,
+    priceDescription: 'Pricing scales based on team size and feature usage',
     features: [
       'Complete enterprise platform access',
       'Unlimited users & drivers',
@@ -766,6 +772,10 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     price: 899,
     interval: 'month',
     category: 'CONSORTIUM',
+    priceType: 'starts_at',
+    maxPrice: 2999,
+    priceDescription:
+      'Pricing scales with data volume and API usage requirements',
     features: [
       'Full API access (all data streams)',
       'Custom analytics & modeling',
@@ -789,6 +799,10 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     price: 2499,
     interval: 'month',
     category: 'TMS',
+    priceType: 'starts_at',
+    maxPrice: 9999,
+    priceDescription:
+      'Enterprise pricing varies by implementation scope and strategic requirements',
     features: [
       'Complete platform suite',
       'Fortune 500 partnership access',
@@ -809,6 +823,9 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     price: 4999,
     interval: 'month',
     category: 'TMS',
+    priceType: 'custom',
+    priceDescription:
+      'Custom enterprise pricing - Contact for personalized quote',
     features: [
       'Full enterprise ecosystem access',
       'Multi-billion dollar contract access',
@@ -867,6 +884,10 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     price: 799,
     interval: 'month',
     category: 'COMPLIANCE',
+    priceType: 'starts_at',
+    maxPrice: 1999,
+    priceDescription:
+      'Pricing varies based on fleet size and compliance complexity',
     features: [
       'Dedicated compliance officer',
       'Full service management',

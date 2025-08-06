@@ -2,6 +2,8 @@
 // Handles business workflows like quote acceptance, contract generation, invoice approval
 // Complements the existing operational workflow system for driver/load operations
 
+import { logger } from '../utils/logger';
+
 export interface BusinessWorkflowStep {
   id: string;
   name: string;
@@ -232,7 +234,11 @@ class BusinessWorkflowManager {
     };
 
     this.workflows.set(workflow.id, workflow);
-    console.log(`🔄 Quote Acceptance Workflow initialized: ${workflow.id}`);
+    logger.info(
+      'Quote Acceptance Workflow initialized',
+      { workflowId: workflow.id },
+      'BusinessWorkflowManager'
+    );
     return workflow;
   }
 
@@ -288,8 +294,14 @@ class BusinessWorkflowManager {
     // Trigger notifications
     await this.triggerBusinessStepNotifications(workflowId, stepId, workflow);
 
-    console.log(
-      `✅ Business workflow step completed: ${stepId} for ${workflowId}`
+    logger.info(
+      'Business workflow step completed',
+      {
+        stepId,
+        workflowId,
+        completedBy: userId,
+      },
+      'BusinessWorkflowManager'
     );
     return { success: true, workflow };
   }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '../../../utils/logger';
 
 interface SecurityAlert {
   id: string;
@@ -304,7 +305,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const action = searchParams.get('action');
 
-    console.log('[CyberSecurity] GET request received', { action });
+    logger.info('Security monitoring GET request', { action }, 'SecurityAPI');
 
     // Simulate API processing time
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -318,7 +319,7 @@ export async function GET(request: NextRequest) {
       compliance: mockComplianceFrameworks,
     };
 
-    console.log('[CyberSecurity] Returning security data', {
+    logger.debug('Security monitoring data returned', {
       alertsCount: response.alerts.length,
       policiesCount: response.policies.length,
       complianceCount: response.compliance.length,
@@ -326,7 +327,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('[CyberSecurity] Error in GET request:', error);
+    logger.error(
+      'Security monitoring GET error',
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      'SecurityAPI'
+    );
     return NextResponse.json(
       {
         success: false,
@@ -343,17 +350,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, alertId, policyId, frameworkId } = body;
 
-    console.log('[CyberSecurity] POST request received', {
-      action,
-      alertId,
-      policyId,
-      frameworkId,
-    });
+    logger.info(
+      'Security monitoring POST request',
+      {
+        action,
+        alertId,
+        policyId,
+        frameworkId,
+      },
+      'SecurityAPI'
+    );
 
     // Simulate API processing time
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    let response: any = {
+    const response: any = {
       success: true,
       timestamp: new Date().toISOString(),
       action,
@@ -443,11 +454,24 @@ export async function POST(request: NextRequest) {
         break;
     }
 
-    console.log('[CyberSecurity] POST response:', response);
+    logger.debug(
+      'Security monitoring POST response',
+      {
+        success: response.success,
+        action: response.action,
+      },
+      'SecurityAPI'
+    );
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('[CyberSecurity] Error in POST request:', error);
+    logger.error(
+      'Security monitoring POST error',
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      'SecurityAPI'
+    );
     return NextResponse.json(
       {
         success: false,

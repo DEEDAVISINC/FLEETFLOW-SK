@@ -30,7 +30,7 @@ export default function ShippersPage() {
 
   // Filter and sort shippers based on search and user permissions
   const filteredAndSortedShippers = useMemo(() => {
-    let filtered = userFilteredShippers.filter(shipper => 
+    const filtered = userFilteredShippers.filter(shipper => 
       shipper.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipper.contacts.some(contact => 
         contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

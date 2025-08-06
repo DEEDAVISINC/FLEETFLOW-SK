@@ -285,8 +285,8 @@ export default function FreightFlowQuotingEngine() {
       baseRate = 2000 + (parseInt(workflowData.load.weight) / 1000) * 50;
     }
     let finalRate = baseRate;
-    let adjustments: any[] = [];
-    let enginesUsed: string[] = [];
+    const adjustments: any[] = [];
+    const enginesUsed: string[] = [];
 
     try {
       // 🚨 ENGINE 1: EMERGENCY LOAD PRICING
@@ -641,8 +641,8 @@ export default function FreightFlowQuotingEngine() {
     if (!ltlData.weight || !ltlData.pallets) return;
 
     const rule = findApplicableRule('LTL', ltlData);
-    let baseRate = rule?.baseRate || 250;
-    let fuelSurcharge = rule?.fuelSurcharge || 18;
+    const baseRate = rule?.baseRate || 250;
+    const fuelSurcharge = rule?.fuelSurcharge || 18;
 
     const weight = parseInt(ltlData.weight);
     const pallets = parseInt(ltlData.pallets);
@@ -707,8 +707,8 @@ export default function FreightFlowQuotingEngine() {
     if (!ftlData.miles) return;
 
     const rule = findApplicableRule('FTL', ftlData);
-    let baseRate = rule?.baseRate || 1800;
-    let fuelSurcharge = rule?.fuelSurcharge || 22;
+    const baseRate = rule?.baseRate || 1800;
+    const fuelSurcharge = rule?.fuelSurcharge || 22;
 
     const miles = parseInt(ftlData.miles);
 
@@ -756,8 +756,8 @@ export default function FreightFlowQuotingEngine() {
     if (!specializedData.miles) return;
 
     const rule = findApplicableRule('Specialized', specializedData);
-    let baseRate = rule?.baseRate || 2500;
-    let fuelSurcharge = rule?.fuelSurcharge || 25;
+    const baseRate = rule?.baseRate || 2500;
+    const fuelSurcharge = rule?.fuelSurcharge || 25;
 
     const miles = parseInt(specializedData.miles);
 
@@ -804,8 +804,8 @@ export default function FreightFlowQuotingEngine() {
     if (!warehousingData.duration || !warehousingData.palletCount) return;
 
     const rule = findApplicableRule('Warehousing' as any, warehousingData);
-    let baseRate = rule?.baseRate || 150; // Base rate per pallet per month
-    let fuelSurcharge = rule?.fuelSurcharge || 5;
+    const baseRate = rule?.baseRate || 150; // Base rate per pallet per month
+    const fuelSurcharge = rule?.fuelSurcharge || 5;
 
     const duration = parseInt(warehousingData.duration);
     const palletCount = parseInt(warehousingData.palletCount);
@@ -1149,7 +1149,7 @@ export default function FreightFlowQuotingEngine() {
                         borderRadius: '50%',
                         boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         fontSize: '14px',

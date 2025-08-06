@@ -485,7 +485,7 @@ export default function AIAutomationDashboard() {
                             ? '#10b981'
                             : '#6b7280',
                         }}
-                      ></div>
+                       />
                       <span
                         style={{
                           fontWeight: '600',
@@ -561,7 +561,7 @@ export default function AIAutomationDashboard() {
                               borderRadius: '50%',
                               animation: 'pulse 2s infinite',
                             }}
-                          ></div>
+                           />
                           <span>{task}</span>
                         </div>
                       ))}

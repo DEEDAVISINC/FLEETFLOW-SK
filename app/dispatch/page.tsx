@@ -2667,20 +2667,22 @@ export default function DispatchCentral() {
             >
               <p
                 style={{
-                  color: '#2563eb',
+                  color: '#1e40af',
                   fontSize: '16px',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   margin: '0 0 8px 0',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                 }}
               >
                 💡 Real-Time Tracking Available
               </p>
               <p
                 style={{
-                  color: '#6b7280',
+                  color: '#1e293b',
                   fontSize: '14px',
                   margin: 0,
                   lineHeight: 1.4,
+                  fontWeight: '500',
                 }}
               >
                 Click "Open Full Tracking Dashboard" to access the interactive

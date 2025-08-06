@@ -24,7 +24,7 @@ export default function Dashboard() {
             <span>{currentTime.toLocaleTimeString()}</span>
             <span>{currentTime.toLocaleDateString()}</span>
             <span className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full" />
               System Online
             </span>
           </div>

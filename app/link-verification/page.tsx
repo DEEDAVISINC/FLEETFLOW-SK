@@ -173,7 +173,7 @@ export default function LinkVerificationPage() {
         {/* Loading State */}
         {isLoading && (
           <div className='rounded-lg bg-white p-8 text-center'>
-            <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+            <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
             <p className='text-lg text-gray-600'>
               Running comprehensive link verification...
             </p>
@@ -223,7 +223,7 @@ export default function LinkVerificationPage() {
                       style={{
                         width: `${(verificationData.summary.validExternalLinks / verificationData.summary.totalExternalLinks) * 100}%`,
                       }}
-                    ></div>
+                     />
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function LinkVerificationPage() {
                       style={{
                         width: `${(verificationData.summary.validInternalLinks / verificationData.summary.totalInternalLinks) * 100}%`,
                       }}
-                    ></div>
+                     />
                   </div>
                 </div>
               </div>
@@ -410,7 +410,7 @@ export default function LinkVerificationPage() {
                                 style={{
                                   width: `${(verificationData.summary.validExternalLinks / verificationData.summary.totalExternalLinks) * 100}%`,
                                 }}
-                              ></div>
+                               />
                             </div>
                           </div>
                           <div>
@@ -434,7 +434,7 @@ export default function LinkVerificationPage() {
                                 style={{
                                   width: `${(verificationData.summary.validInternalLinks / verificationData.summary.totalInternalLinks) * 100}%`,
                                 }}
-                              ></div>
+                               />
                             </div>
                           </div>
                         </div>

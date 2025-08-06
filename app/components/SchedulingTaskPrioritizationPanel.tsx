@@ -465,7 +465,7 @@ export default function SchedulingTaskPrioritizationPanel() {
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px',
           }}
-        ></div>
+         />
         <h3 style={{ marginBottom: '8px' }}>
           AI Processing Scheduling Tasks...
         </h3>

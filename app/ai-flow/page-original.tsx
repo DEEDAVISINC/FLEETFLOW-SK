@@ -299,7 +299,7 @@ export default function FleetFlowAIPlatform() {
                   <div className='space-y-4'>
                     <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                         <span className='font-medium'>
                           All Systems Operational
                         </span>
@@ -414,7 +414,7 @@ export default function FleetFlowAIPlatform() {
                   <div className='space-y-4'>
                     <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                         <span className='font-medium'>FreeSWITCH Active</span>
                       </div>
                       <Badge className='bg-green-100 text-green-800'>

@@ -373,7 +373,7 @@ export default function NotesAndCommunicationsHub() {
         background: 'rgba(0, 0, 0, 0.35)',
         pointerEvents: 'none',
         zIndex: 1
-      }}></div>
+      }} />
       
       {/* Back Button */}
       <div style={{ padding: '24px', position: 'relative', zIndex: 10 }}>
@@ -458,7 +458,7 @@ export default function NotesAndCommunicationsHub() {
                       background: '#fbbf24',
                       borderRadius: '50%',
                       animation: 'pulse 2s infinite'
-                    }}></div>
+                    }} />
                     <span style={{ fontSize: '14px', color: '#fbbf24' }}>
                       Real-time Updates Active
                     </span>
@@ -809,7 +809,7 @@ export default function NotesAndCommunicationsHub() {
                               height: '8px',
                               background: '#ef4444',
                               borderRadius: '50%'
-                            }}></span>
+                            }} />
                           )}
                           {notification.title}
                         </h3>

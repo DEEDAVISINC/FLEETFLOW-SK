@@ -158,7 +158,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-      ></div>
+       />
       <div
         style={{
           position: 'absolute',
@@ -171,7 +171,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-      ></div>
+       />
 
       <main
         style={{

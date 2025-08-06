@@ -315,7 +315,7 @@ export default function MaintenancePage() {
                         borderRadius: '50%',
                         animation: 'pulse 2s infinite',
                       }}
-                    ></div>
+                     />
                     <span
                       style={{
                         fontSize: '14px',

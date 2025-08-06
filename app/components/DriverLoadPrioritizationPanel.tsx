@@ -404,7 +404,7 @@ export default function DriverLoadPrioritizationPanel({
                                 width: `${load.workflowProgress}%`,
                                 transition: 'width 0.3s ease',
                               }}
-                            ></div>
+                             />
                           </div>
                         </div>
 

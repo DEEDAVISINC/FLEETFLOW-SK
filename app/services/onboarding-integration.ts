@@ -2,6 +2,7 @@
 // Handles the flow of onboarding data into carrier and driver portals
 
 import ServiceErrorHandler from '../utils/errorHandler';
+import { logger } from '../utils/logger';
 import { CarrierData } from './enhanced-carrier-service';
 
 export interface OnboardingRecord {
@@ -729,9 +730,11 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
     (service as any).driverProfiles.set(driver.driverId, driver);
   });
 
-  console.log(
-    '✅ Demo driver data initialized:',
-    demoDrivers.length,
-    'drivers loaded'
+  logger.info(
+    'Demo driver data initialized',
+    {
+      driverCount: demoDrivers.length,
+    },
+    'OnboardingIntegrationService'
   );
 })();

@@ -274,7 +274,7 @@ export default function LiveTrackingMap({
             </div>
           </div>
           <div className='flex items-center space-x-2'>
-            <div className='h-3 w-3 animate-pulse rounded-full bg-green-400'></div>
+            <div className='h-3 w-3 animate-pulse rounded-full bg-green-400' />
             <span className='text-sm'>Live Updates</span>
           </div>
         </div>
@@ -478,7 +478,7 @@ export default function LiveTrackingMap({
             <div className='mb-4 space-y-2.5'>
               <div className='flex items-center justify-between gap-3'>
                 <div className='flex items-center space-x-2'>
-                  <div className='h-3 w-3 rounded-full border border-white bg-green-500 shadow-sm'></div>
+                  <div className='h-3 w-3 rounded-full border border-white bg-green-500 shadow-sm' />
                   <span className='text-xs font-medium text-gray-700'>
                     Pickup Location
                   </span>
@@ -489,7 +489,7 @@ export default function LiveTrackingMap({
               </div>
               <div className='flex items-center justify-between gap-3'>
                 <div className='flex items-center space-x-2'>
-                  <div className='h-3 w-3 rounded-full border border-white bg-red-500 shadow-sm'></div>
+                  <div className='h-3 w-3 rounded-full border border-white bg-red-500 shadow-sm' />
                   <span className='text-xs font-medium text-gray-700'>
                     Delivery Location
                   </span>
@@ -498,7 +498,7 @@ export default function LiveTrackingMap({
               </div>
               <div className='flex items-center justify-between gap-3'>
                 <div className='flex items-center space-x-2'>
-                  <div className='h-3 w-3 animate-pulse rounded-full border border-white bg-blue-600 shadow-sm'></div>
+                  <div className='h-3 w-3 animate-pulse rounded-full border border-white bg-blue-600 shadow-sm' />
                   <span className='text-xs font-medium text-gray-700'>
                     Driver Position
                   </span>
@@ -514,7 +514,7 @@ export default function LiveTrackingMap({
                     background:
                       'repeating-linear-gradient(to right, #3b82f6 0, #3b82f6 4px, transparent 4px, transparent 8px)',
                   }}
-                ></div>
+                 />
                 <span className='text-xs font-medium text-gray-700'>
                   Planned Route
                 </span>
@@ -556,7 +556,7 @@ export default function LiveTrackingMap({
 
             <div className='mt-3 border-t border-gray-200 pt-2'>
               <div className='flex items-center justify-center gap-1'>
-                <div className='h-2 w-2 animate-pulse rounded-full bg-green-400'></div>
+                <div className='h-2 w-2 animate-pulse rounded-full bg-green-400' />
                 <span className='text-xs font-medium text-gray-600'>
                   Real-time Updates
                 </span>
@@ -693,7 +693,7 @@ export default function LiveTrackingMap({
                     </span>
                     <span>{getStatusLabel(selectedDriverData.status)}</span>
                     {selectedDriverData.status === 'en_route' && (
-                      <div className='ml-1 h-2 w-2 animate-pulse rounded-full bg-green-400'></div>
+                      <div className='ml-1 h-2 w-2 animate-pulse rounded-full bg-green-400' />
                     )}
                   </div>
                 </div>

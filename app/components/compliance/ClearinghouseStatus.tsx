@@ -156,9 +156,9 @@ export default function ClearinghouseStatus({
           DOT Clearinghouse Status
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '75%' }}></div>
-          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '50%' }}></div>
-          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '65%' }}></div>
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '75%' }} />
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '50%' }} />
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '65%' }} />
         </div>
       </div>
     );

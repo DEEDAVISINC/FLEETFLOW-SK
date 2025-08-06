@@ -306,7 +306,7 @@ export class AITemplateEngine {
     const startTime = Date.now();
     const errors: string[] = [];
     let result = '';
-    let variables = {};
+    const variables = {};
 
     try {
       const processed = await this.processTemplate(templateId, testContext);

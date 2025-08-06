@@ -397,7 +397,10 @@ export class ManagerAccessControlService {
    */
   static isCurrentUserManager(): boolean {
     const { user } = getCurrentUser();
-    return user.role === 'manager' && user.departmentCode === 'MGR';
+    return (
+      (user.role === 'manager' || user.role === 'admin') &&
+      user.departmentCode === 'MGR'
+    );
   }
 
   /**

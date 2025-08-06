@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AIAgentAnalyticsService } from '../../services/AIAgentAnalyticsService';
 import { AIAgentOrchestrator } from '../../services/AIAgentOrchestrator';
 import { AITemplateEngine } from '../../services/AITemplateEngine';
+import { logger } from '../../utils/logger';
 
 // GET /api/ai-agent - Get agent configuration or list all agents for tenant
 export async function GET(request: NextRequest) {
@@ -316,24 +317,52 @@ async function processAgentMessage(agentId: string, messageData: any) {
 // Placeholder communication functions (to be implemented)
 async function sendEmail(params: any) {
   // Implementation would use Gmail API, SMTP, or email service
-  console.log('Sending email:', params);
+  logger.debug(
+    'Email send request',
+    {
+      recipient: params.to,
+      subject: params.subject,
+    },
+    'AIAgentAPI'
+  );
   return { success: true, messageId: 'email_' + Date.now() };
 }
 
 async function sendSMS(params: any) {
   // Implementation would use Twilio SMS API
-  console.log('Sending SMS:', params);
+  logger.debug(
+    'SMS send request',
+    {
+      recipient: params.to,
+      messageLength: params.message?.length,
+    },
+    'AIAgentAPI'
+  );
   return { success: true, messageId: 'sms_' + Date.now() };
 }
 
 async function makeCall(params: any) {
   // Implementation would use Twilio Voice or FreeSWITCH
-  console.log('Making call:', params);
+  logger.debug(
+    'Voice call request',
+    {
+      recipient: params.to,
+      callType: params.type,
+    },
+    'AIAgentAPI'
+  );
   return { success: true, callId: 'call_' + Date.now() };
 }
 
 async function postToSocialMedia(params: any) {
   // Implementation would use social media APIs (Facebook, LinkedIn, Twitter)
-  console.log('Posting to social media:', params);
+  logger.debug(
+    'Social media post request',
+    {
+      platform: params.platform,
+      contentLength: params.content?.length,
+    },
+    'AIAgentAPI'
+  );
   return { success: true, postId: 'post_' + Date.now() };
 }

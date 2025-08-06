@@ -883,7 +883,7 @@ export default function WarehouseShipmentFlow({
                           borderTop: '5px solid transparent',
                           borderBottom: '5px solid transparent',
                         }}
-                      ></div>
+                       />
                     </div>
                   )}
                 </div>
@@ -1314,7 +1314,7 @@ export default function WarehouseShipmentFlow({
                               : 'rgba(255, 255, 255, 0.2)',
                             marginLeft: '8px',
                           }}
-                        ></div>
+                         />
                       )}
                     </div>
                   ))}

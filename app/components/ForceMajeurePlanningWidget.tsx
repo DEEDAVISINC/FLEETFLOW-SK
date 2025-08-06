@@ -440,7 +440,7 @@ export default function ForceMajeurePlanningWidget() {
                 borderRadius: '50%',
                 animation: 'pulse 2s infinite',
               }}
-            ></div>
+             />
             <span
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >

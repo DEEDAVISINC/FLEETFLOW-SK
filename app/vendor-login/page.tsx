@@ -1,9 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { extendedShipperService } from '../services/shipperService';
-import React from 'react'; // Added missing import for React.useEffect
 
 export default function VendorLoginPage() {
   const [credentials, setCredentials] = useState({
@@ -22,7 +21,7 @@ export default function VendorLoginPage() {
     console.log('🚀 FORM SUBMISSION STARTED');
     console.log('Event:', e);
     console.log('Event type:', e.type);
-    
+
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -30,7 +29,7 @@ export default function VendorLoginPage() {
     try {
       console.log('🔐 Attempting login with:', credentials.username);
       console.log('🔐 Current credentials state:', credentials);
-      
+
       const result = extendedShipperService.authenticateShipper(
         credentials.username,
         credentials.password
@@ -40,14 +39,14 @@ export default function VendorLoginPage() {
 
       if (result.success && result.shipper) {
         console.log('✅ Login successful for:', result.shipper.companyName);
-        
+
         // Store shipper info in session/localStorage for demo
         const sessionData = {
           shipperId: result.shipper.id,
           companyName: result.shipper.companyName,
           loginTime: new Date().toISOString(),
         };
-        
+
         localStorage.setItem('vendorSession', JSON.stringify(sessionData));
         console.log('💾 Session stored:', sessionData);
 
@@ -111,32 +110,40 @@ export default function VendorLoginPage() {
   // Debug function to test authentication
   const testAuthentication = () => {
     console.log('🧪 Testing authentication service...');
-    demoCredentials.forEach(cred => {
-      const result = extendedShipperService.authenticateShipper(cred.username, cred.password);
+    demoCredentials.forEach((cred) => {
+      const result = extendedShipperService.authenticateShipper(
+        cred.username,
+        cred.password
+      );
       console.log(`🧪 Test ${cred.username}:`, result);
     });
   };
 
   // Simple test function that shows results on page
   const testAuthAndShowResults = () => {
-    const results = demoCredentials.map(cred => {
-      const result = extendedShipperService.authenticateShipper(cred.username, cred.password);
+    const results = demoCredentials.map((cred) => {
+      const result = extendedShipperService.authenticateShipper(
+        cred.username,
+        cred.password
+      );
       return { credential: cred, result };
     });
-    
+
     console.log('🧪 All authentication test results:', results);
-    
+
     // Show results in an alert for easy viewing
-    const successCount = results.filter(r => r.result.success).length;
+    const successCount = results.filter((r) => r.result.success).length;
     const totalCount = results.length;
-    alert(`🧪 Authentication Test Results:\n\nSuccess: ${successCount}/${totalCount}\n\nCheck console for detailed results.`);
+    alert(
+      `🧪 Authentication Test Results:\n\nSuccess: ${successCount}/${totalCount}\n\nCheck console for detailed results.`
+    );
   };
 
   // Test login without redirect
   const testLoginWithoutRedirect = async () => {
     try {
       console.log('🧪 Testing login without redirect...');
-      
+
       const result = extendedShipperService.authenticateShipper(
         credentials.username,
         credentials.password
@@ -145,9 +152,13 @@ export default function VendorLoginPage() {
       console.log('🧪 Test login result:', result);
 
       if (result.success && result.shipper) {
-        alert(`✅ Login Test Successful!\n\nCompany: ${result.shipper.companyName}\nShipper ID: ${result.shipper.id}\n\nAuthentication is working correctly.`);
+        alert(
+          `✅ Login Test Successful!\n\nCompany: ${result.shipper.companyName}\nShipper ID: ${result.shipper.id}\n\nAuthentication is working correctly.`
+        );
       } else {
-        alert(`❌ Login Test Failed!\n\nError: ${result.error}\n\nAuthentication is not working.`);
+        alert(
+          `❌ Login Test Failed!\n\nError: ${result.error}\n\nAuthentication is not working.`
+        );
       }
     } catch (err) {
       console.error('🚨 Test login error:', err);
@@ -335,7 +346,7 @@ export default function VendorLoginPage() {
             )}
 
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading}
               onClick={(e) => {
                 // Backup click handler in case form submission doesn't work
@@ -361,7 +372,7 @@ export default function VendorLoginPage() {
             </button>
 
             <button
-              type="button"
+              type='button'
               onClick={testLoginWithoutRedirect}
               style={{
                 width: '100%',
@@ -380,14 +391,16 @@ export default function VendorLoginPage() {
             </button>
 
             <button
-              type="button"
+              type='button'
               onClick={() => {
                 console.log('🧪 Current form state:');
                 console.log('Username:', credentials.username);
                 console.log('Password:', credentials.password);
                 console.log('Is loading:', isLoading);
                 console.log('Error:', error);
-                alert(`Current Form State:\n\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nCheck console for details.`);
+                alert(
+                  `Current Form State:\n\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nCheck console for details.`
+                );
               }}
               style={{
                 width: '100%',
@@ -406,41 +419,48 @@ export default function VendorLoginPage() {
             </button>
 
             <button
-              type="button"
+              type='button'
               onClick={() => {
                 console.log('🧪 STEP-BY-STEP LOGIN TEST');
                 console.log('Step 1: Current credentials:', credentials);
-                
+
                 // Test authentication directly
                 const result = extendedShipperService.authenticateShipper(
                   credentials.username,
                   credentials.password
                 );
-                
+
                 console.log('Step 2: Authentication result:', result);
-                
+
                 if (result.success && result.shipper) {
                   console.log('Step 3: Authentication successful');
                   console.log('Step 4: Shipper data:', result.shipper);
-                  
+
                   // Test session storage
                   const sessionData = {
                     shipperId: result.shipper.id,
                     companyName: result.shipper.companyName,
                     loginTime: new Date().toISOString(),
                   };
-                  
-                  localStorage.setItem('vendorSession', JSON.stringify(sessionData));
+
+                  localStorage.setItem(
+                    'vendorSession',
+                    JSON.stringify(sessionData)
+                  );
                   console.log('Step 5: Session stored:', sessionData);
-                  
+
                   // Test session read
                   const testSession = localStorage.getItem('vendorSession');
                   console.log('Step 6: Session read test:', testSession);
-                  
-                  alert(`✅ STEP-BY-STEP TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nShipper: ${result.shipper.companyName}\n\nCheck console for detailed steps.`);
+
+                  alert(
+                    `✅ STEP-BY-STEP TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nShipper: ${result.shipper.companyName}\n\nCheck console for detailed steps.`
+                  );
                 } else {
                   console.log('Step 3: Authentication failed');
-                  alert(`❌ STEP-BY-STEP TEST FAILED!\n\nError: ${result.error}\n\nCheck console for details.`);
+                  alert(
+                    `❌ STEP-BY-STEP TEST FAILED!\n\nError: ${result.error}\n\nCheck console for details.`
+                  );
                 }
               }}
               style={{
@@ -460,40 +480,54 @@ export default function VendorLoginPage() {
             </button>
 
             <button
-              type="button"
+              type='button'
               onClick={() => {
                 console.log('🧪 TESTING REDIRECT FUNCTIONALITY');
-                
+
                 // First authenticate
                 const result = extendedShipperService.authenticateShipper(
                   credentials.username,
                   credentials.password
                 );
-                
+
                 if (result.success && result.shipper) {
-                  console.log('✅ Authentication successful, testing redirect...');
-                  
+                  console.log(
+                    '✅ Authentication successful, testing redirect...'
+                  );
+
                   // Set up session
                   const sessionData = {
                     shipperId: result.shipper.id,
                     companyName: result.shipper.companyName,
                     loginTime: new Date().toISOString(),
                   };
-                  
-                  localStorage.setItem('vendorSession', JSON.stringify(sessionData));
+
+                  localStorage.setItem(
+                    'vendorSession',
+                    JSON.stringify(sessionData)
+                  );
                   console.log('💾 Session stored, attempting redirect...');
-                  
+
                   // Test redirect
                   try {
                     router.push('/vendor-portal');
                     console.log('✅ Redirect initiated successfully');
-                    alert('✅ REDIRECT TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nRedirect: INITIATED\n\nYou should be redirected to the vendor portal.');
+                    alert(
+                      '✅ REDIRECT TEST SUCCESSFUL!\n\nAuthentication: SUCCESS\nSession Storage: SUCCESS\nRedirect: INITIATED\n\nYou should be redirected to the vendor portal.'
+                    );
                   } catch (error) {
                     console.error('❌ Redirect failed:', error);
-                    alert('❌ REDIRECT TEST FAILED!\n\nError: ' + error + '\n\nCheck console for details.');
+                    alert(
+                      '❌ REDIRECT TEST FAILED!\n\nError: ' +
+                        error +
+                        '\n\nCheck console for details.'
+                    );
                   }
                 } else {
-                  alert('❌ REDIRECT TEST FAILED!\n\nAuthentication failed: ' + result.error);
+                  alert(
+                    '❌ REDIRECT TEST FAILED!\n\nAuthentication failed: ' +
+                      result.error
+                  );
                 }
               }}
               style={{
@@ -685,8 +719,22 @@ export default function VendorLoginPage() {
         )}
 
         {/* Demo Credentials Section */}
-        <div style={{ marginTop: '32px', padding: '20px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-          <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '16px' }}>
+        <div
+          style={{
+            marginTop: '32px',
+            padding: '20px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+          }}
+        >
+          <h3
+            style={{
+              color: 'white',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              marginBottom: '16px',
+            }}
+          >
             🧪 Demo Credentials
           </h3>
           <div style={{ display: 'grid', gap: '12px' }}>
@@ -694,7 +742,10 @@ export default function VendorLoginPage() {
               <button
                 key={index}
                 onClick={() => {
-                  setCredentials({ username: cred.username, password: cred.password });
+                  setCredentials({
+                    username: cred.username,
+                    password: cred.password,
+                  });
                   console.log('🧪 Testing credentials:', cred);
                 }}
                 style={{
@@ -705,17 +756,25 @@ export default function VendorLoginPage() {
                   color: 'white',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  fontSize: '0.9rem'
+                  fontSize: '0.9rem',
                 }}
               >
-                <div style={{ fontWeight: '600', marginBottom: '4px' }}>{cred.company}</div>
+                <div style={{ fontWeight: '600', marginBottom: '4px' }}>
+                  {cred.company}
+                </div>
                 <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
                   Username: {cred.username} | Password: {cred.password}
                 </div>
               </button>
             ))}
           </div>
-          <div style={{ marginTop: '12px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+          <div
+            style={{
+              marginTop: '12px',
+              fontSize: '0.8rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}
+          >
             Click any credential above to auto-fill the login form
           </div>
           <button
@@ -729,7 +788,7 @@ export default function VendorLoginPage() {
               marginTop: '12px',
               cursor: 'pointer',
               fontSize: '0.9rem',
-              fontWeight: '600'
+              fontWeight: '600',
             }}
           >
             🧪 Test All Credentials

@@ -18,7 +18,7 @@ export default function FreightBrokerDashboardPage() {
         background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.10) 50%, rgba(6, 182, 212, 0.08) 100%)',
         pointerEvents: 'none',
         zIndex: 1
-      }}></div>
+      }} />
       
       {/* Content wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>

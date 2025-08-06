@@ -499,7 +499,7 @@ export default function AIFlowPage() {
                   <div className='space-y-4'>
                     <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                         <span className='font-medium'>
                           All Systems Operational
                         </span>
@@ -614,7 +614,7 @@ export default function AIFlowPage() {
                   <div className='space-y-4'>
                     <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                         <span className='font-medium'>FreeSWITCH Active</span>
                       </div>
                       <Badge className='bg-green-100 text-green-800'>
@@ -1137,7 +1137,7 @@ export default function AIFlowPage() {
             {acquisitionLoading ? (
               <div className='flex items-center justify-center p-8'>
                 <div className='text-center'>
-                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
                   <p className='text-gray-600'>
                     Loading Strategic Acquisition Pipeline...
                   </p>

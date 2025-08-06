@@ -306,7 +306,7 @@ const LiveMarketIntelligence: React.FC = () => {
                         <div 
                           className="bg-red-500 h-2 rounded-full"
                           style={{ width: `${lane.demandScore}%` }}
-                        ></div>
+                         />
                       </div>
                     </div>
                   </td>
@@ -396,7 +396,7 @@ const LiveMarketIntelligence: React.FC = () => {
                             'bg-green-500'
                           }`}
                           style={{ width: `${condition.capacityTightness}%` }}
-                        ></div>
+                         />
                       </div>
                     </div>
                   </td>

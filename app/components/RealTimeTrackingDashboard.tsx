@@ -194,7 +194,7 @@ export default function RealTimeTrackingDashboard({
   if (isLoading) {
     return (
       <div className='flex h-64 items-center justify-center'>
-        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
       </div>
     );
   }
@@ -313,7 +313,7 @@ export default function RealTimeTrackingDashboard({
             <div
               className='h-2 rounded-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500'
               style={{ width: `${calculateProgress()}%` }}
-            ></div>
+             />
           </div>
         </div>
 
@@ -406,7 +406,7 @@ export default function RealTimeTrackingDashboard({
                         ? 'bg-red-500'
                         : 'bg-gray-300'
                   }`}
-                ></div>
+                 />
                 <div className='flex-1'>
                   <div className='font-medium text-gray-900'>
                     {milestone.type === 'pickup'

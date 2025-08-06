@@ -217,7 +217,7 @@ export default function GovernmentContractIntelligence() {
               borderRadius: '50%',
               animation: 'spin 1s linear infinite',
               margin: '0 auto 16px'
-            }}></div>
+            }} />
             <p>Loading government contract data...</p>
           </div>
         </div>
