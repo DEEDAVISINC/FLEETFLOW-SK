@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -5,23 +7,21 @@ interface LogoProps {
   size?: 'small' | 'medium' | 'large';
   variant?: 'light' | 'dark' | 'gradient';
   showText?: boolean;
-  useCustomLogo?: boolean;
 }
 
-export default function FleetFlowLogo({
+export default function Logo({
   size = 'medium',
   variant = 'gradient',
-  showText = true,
-  useCustomLogo = true,
+  showText = false,
 }: LogoProps) {
   const [imageError, setImageError] = useState(false);
+  const [useCustomLogo] = useState(true);
 
-  // Debug logging
   console.log('FleetFlowLogo render:', { useCustomLogo, imageError, size });
   const sizes = {
-    small: { width: 32, height: 32, text: 'text-lg' },
-    medium: { width: 40, height: 40, text: 'text-xl' },
-    large: { width: 56, height: 56, text: 'text-2xl' },
+    small: { width: 32, height: 32, text: 'text-sm' },
+    medium: { width: 40, height: 40, text: 'text-base' },
+    large: { width: 56, height: 56, text: 'text-lg' },
   };
 
   const currentSize = sizes[size];
@@ -34,63 +34,44 @@ export default function FleetFlowLogo({
   };
 
   return (
-    <div className='flex items-center space-x-3'>
+    <div className='flex w-auto items-center' style={{ maxWidth: '320px' }}>
       {/* Custom Logo Image or Icon */}
       {useCustomLogo && !imageError ? (
         <div
-          className={`relative ${size === 'large' ? 'h-14 w-14' : size === 'medium' ? 'h-10 w-10' : 'h-8 w-8'}`}
+          style={{
+            width: '280px',
+            height: '56px',
+            position: 'relative',
+          }}
         >
           <Image
-            src='/images/new fleetflow logo.png'
+            src='/images/fleetflow logo tms.jpg?v=13'
             alt='FleetFlow Logo'
-            width={currentSize.width}
-            height={currentSize.height}
-            className='object-contain'
+            width={280}
+            height={56}
             onError={() => setImageError(true)}
             priority
+            style={{
+              width: '280px',
+              height: '56px',
+              objectFit: 'contain',
+            }}
           />
         </div>
       ) : (
-        /* Fallback Logo Icon */
+        /* Fallback Icon */
         <div
-          className={`relative ${size === 'large' ? 'h-14 w-14' : size === 'medium' ? 'h-10 w-10' : 'h-8 w-8'}`}
+          className={`relative ${
+            size === 'large'
+              ? 'h-14 w-56'
+              : size === 'medium'
+                ? 'h-12 w-48'
+                : 'h-10 w-40'
+          }`}
         >
-          <div className='absolute inset-0 rotate-3 transform rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 shadow-lg' />
-          <div className='absolute inset-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-700 to-blue-800'>
-            <svg
-              width={currentSize.width * 0.6}
-              height={currentSize.height * 0.6}
-              viewBox='0 0 24 24'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              className='text-white'
-            >
-              {/* Truck Icon */}
-              <path
-                d='M20 8h-3V4a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v11a3 3 0 0 0 6 0h6a3 3 0 0 0 6 0h1a1 1 0 0 0 1-1v-3a3 3 0 0 0-3-3zM6 18a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm12 0a1 1 0 1 1 1-1 1 1 0 0 1-1 1z'
-                fill='currentColor'
-              />
-              {/* Speed lines for "Flow" */}
-              <path
-                d='M1 6h4m-3 2h3m-2 2h2'
-                stroke='currentColor'
-                strokeWidth='1.5'
-                strokeLinecap='round'
-                opacity='0.8'
-              />
-            </svg>
+          <div className='flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg'>
+            <div className='text-3xl font-bold text-white'>🚛</div>
           </div>
-        </div>
-      )}
-
-      {/* Logo Text */}
-      {showText && (
-        <div className='flex flex-col'>
-          <span
-            className={`leading-tight font-bold ${currentSize.text} ${logoColors[variant]}`}
-          >
-            FleetFlow™
-          </span>
         </div>
       )}
     </div>
