@@ -3,7 +3,11 @@
 
 export interface AgreementDocument {
   id: string;
-  type: 'broker_carrier' | 'dispatcher_carrier';
+  type:
+    | 'broker_carrier'
+    | 'dispatcher_carrier'
+    | 'broker_ai_flow'
+    | 'dispatcher_ai_flow';
   title: string;
   content: string;
   signedBy: string;
@@ -40,10 +44,13 @@ class DocumentService {
   /**
    * Generate comprehensive broker-carrier agreement
    */
-  public generateBrokerCarrierAgreement(carrierData: any, signerData: any): AgreementDocument {
+  public generateBrokerCarrierAgreement(
+    carrierData: any,
+    signerData: any
+  ): AgreementDocument {
     const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
-    
+
     const content = `
 COMPREHENSIVE BROKER/DISPATCH/CARRIER AGREEMENT
 
@@ -59,9 +66,9 @@ Preparation Location: FleetFlow Operations Center
 
 ABOUT THIS AGREEMENT:
 
-This transportation agreement has been designed to establish a clear, professional working 
-relationship between freight brokers/dispatch companies and motor carriers. The document 
-incorporates current industry standards and federal transportation regulations to ensure 
+This transportation agreement has been designed to establish a clear, professional working
+relationship between freight brokers/dispatch companies and motor carriers. The document
+incorporates current industry standards and federal transportation regulations to ensure
 both parties understand their rights, responsibilities, and expectations.
 
 Agreement Date: ${currentDate}
@@ -94,44 +101,44 @@ ARTICLE 1: DEFINITIONS AND INTERPRETATIONS
 
 1.1 Primary Entity Definitions
 
-1.1.1 Broker/Dispatch Company means FleetFlow Logistics LLC, the entity licensed and 
-authorized by the Federal Motor Carrier Safety Administration (FMCSA) under 49 USC 13904 
+1.1.1 Broker/Dispatch Company means FleetFlow Logistics LLC, the entity licensed and
+authorized by the Federal Motor Carrier Safety Administration (FMCSA) under 49 USC 13904
 to arrange for the transportation of property by motor carriers for compensation.
 
-1.1.2 Brokerage refers to the business operations, services, and activities conducted by 
+1.1.2 Brokerage refers to the business operations, services, and activities conducted by
 FleetFlow Logistics in arranging transportation services.
 
-1.1.3 Carrier means ${carrierData.legalName || '[Carrier Name]'}, the motor carrier entity 
-authorized by FMCSA under 49 USC 13902 to provide for-hire transportation services under 
+1.1.3 Carrier means ${carrierData.legalName || '[Carrier Name]'}, the motor carrier entity
+authorized by FMCSA under 49 USC 13902 to provide for-hire transportation services under
 its own operating authority.
 
-1.1.4 Services means all transportation and transportation-related services to be provided 
+1.1.4 Services means all transportation and transportation-related services to be provided
 by Carrier pursuant to this Agreement.
 
-1.1.5 Shipment means any individual load, cargo, freight, or consignment to be transported 
+1.1.5 Shipment means any individual load, cargo, freight, or consignment to be transported
 under this Agreement.
 
-1.1.6 Equipment means all tractors, trailers, trucks, vehicles, and other transportation 
+1.1.6 Equipment means all tractors, trailers, trucks, vehicles, and other transportation
 equipment owned, leased, or operated by Carrier.
 
 1.2 Financial and Insurance Definitions
 
-1.2.1 Gross Transportation Revenue means the total amount charged for transportation 
+1.2.1 Gross Transportation Revenue means the total amount charged for transportation
 services before deduction of any fees, taxes, or expenses.
 
-1.2.2 Dispatch Fee means the service fee charged by Brokerage for arranging transportation 
+1.2.2 Dispatch Fee means the service fee charged by Brokerage for arranging transportation
 services, load coordination, and related administrative services.
 
-1.2.3 Primary Insurance means insurance coverage that pays first in case of loss, before 
+1.2.3 Primary Insurance means insurance coverage that pays first in case of loss, before
 any other applicable insurance coverage.
 
 1.3 Regulatory Definitions
 
-1.3.1 FMCSA means the Federal Motor Carrier Safety Administration within the U.S. 
+1.3.1 FMCSA means the Federal Motor Carrier Safety Administration within the U.S.
 Department of Transportation.
 
-1.3.2 Applicable Law means all federal, state, provincial, territorial, and local laws, 
-statutes, regulations, rules, and ordinances applicable to the performance of Services 
+1.3.2 Applicable Law means all federal, state, provincial, territorial, and local laws,
+statutes, regulations, rules, and ordinances applicable to the performance of Services
 under this Agreement.
 
 ARTICLE 2: SCOPE OF SERVICES
@@ -145,7 +152,7 @@ Carrier agrees to provide transportation services for shipments arranged by Brok
 - Proper cargo securement and handling
 
 2.2 Geographic Coverage
-Services shall be provided within the continental United States and Canada, unless 
+Services shall be provided within the continental United States and Canada, unless
 otherwise specified in writing.
 
 2.3 Equipment Requirements
@@ -216,18 +223,18 @@ ARTICLE 5: PAYMENT TERMS AND DISPATCH FEES
 5.2 Dispatch Fee Structure
 
 5.2.1 Standard Dispatch Fee
-- Carrier agrees to pay Brokerage a dispatch fee of ten percent (10%) of the gross 
+- Carrier agrees to pay Brokerage a dispatch fee of ten percent (10%) of the gross
   transportation revenue for each load
 - Dispatch fee applies to all loads arranged by Brokerage under this Agreement
-- Dispatch fees will be automatically deducted from gross transportation charges 
+- Dispatch fees will be automatically deducted from gross transportation charges
   before payment to Carrier
 
 5.2.2 Management Override Authority
-- Brokerage's authorized management personnel may modify the standard 10% dispatch 
+- Brokerage's authorized management personnel may modify the standard 10% dispatch
   fee on a case-by-case basis
-- Fee modifications must be approved in writing by management with title of 
+- Fee modifications must be approved in writing by management with title of
   Operations Manager or higher
-- All fee modifications must be documented and communicated to Carrier in writing 
+- All fee modifications must be documented and communicated to Carrier in writing
   before load execution
 
 5.2.3 Volume Incentive Program
@@ -244,7 +251,7 @@ ARTICLE 5: PAYMENT TERMS AND DISPATCH FEES
 - All dispatch fee invoices are due and payable by Wednesday at 11:59 PM EST of the same week
 
 5.3.2 Overdue Payment Consequences
-If dispatch fee payment is not received by Thursday 12:01 AM EST, Dispatch Department 
+If dispatch fee payment is not received by Thursday 12:01 AM EST, Dispatch Department
 will immediately cease:
 - Route optimization and planning
 - Load scheduling coordination
@@ -298,7 +305,7 @@ Carrier shall not disclose:
 ARTICLE 8: INDEMNIFICATION
 
 8.1 Carrier Indemnification
-Carrier shall defend, indemnify, and hold harmless Brokerage and its customers from all 
+Carrier shall defend, indemnify, and hold harmless Brokerage and its customers from all
 claims, damages, losses, and expenses arising from:
 - Carrier's performance or breach of this Agreement
 - Acts or omissions of Carrier's employees, agents, or contractors
@@ -328,14 +335,14 @@ Carrier agrees to use Brokerage's preferred EDI, TMS, or load tracking systems a
 
 ARTICLE 11: FORCE MAJEURE
 
-Neither party shall be liable for delays or failures in performance due to causes beyond 
-reasonable control, including acts of God, government actions, natural disasters, or other 
+Neither party shall be liable for delays or failures in performance due to causes beyond
+reasonable control, including acts of God, government actions, natural disasters, or other
 unforeseeable events.
 
 ARTICLE 12: TERMINATION
 
 12.1 Term
-This Agreement shall remain in effect for one (1) year from the Effective Date and 
+This Agreement shall remain in effect for one (1) year from the Effective Date and
 automatically renew for successive one-year terms unless terminated.
 
 12.2 Termination Rights
@@ -345,7 +352,7 @@ Either party may terminate this Agreement:
 - Immediately if Carrier's authority is suspended or revoked
 
 12.3 Surviving Obligations
-Termination shall not relieve either party of obligations incurred prior to termination. 
+Termination shall not relieve either party of obligations incurred prior to termination.
 Carrier must complete in-transit shipments.
 
 ARTICLE 13: DISPUTE RESOLUTION
@@ -362,7 +369,7 @@ Disputes shall be resolved through:
 ARTICLE 14: GENERAL PROVISIONS
 
 14.1 Entire Agreement
-This Agreement constitutes the entire agreement between the parties and supersedes all 
+This Agreement constitutes the entire agreement between the parties and supersedes all
 prior agreements.
 
 14.2 Amendments
@@ -396,12 +403,12 @@ IP Address: ${signerData.ipAddress || 'N/A'}
 
 This electronic signature has the same legal effect as a handwritten signature.
 
-By signing above, Carrier acknowledges that it has read, understood, and agrees to be 
-bound by all terms and conditions of this Agreement, including the 10% dispatch fee 
+By signing above, Carrier acknowledges that it has read, understood, and agrees to be
+bound by all terms and conditions of this Agreement, including the 10% dispatch fee
 structure and all payment terms specified herein.
 
-This agreement has been prepared in compliance with current FMCSA regulations and 
-industry best practices as of 2025. This document was generated through FleetFlow's 
+This agreement has been prepared in compliance with current FMCSA regulations and
+industry best practices as of 2025. This document was generated through FleetFlow's
 digital onboarding system and constitutes a legally binding agreement between the parties.
     `.trim();
 
@@ -418,15 +425,18 @@ digital onboarding system and constitutes a legally binding agreement between th
         carrierInfo: carrierData,
         brokerInfo: { name: 'FleetFlow Logistics LLC', mc: 'MC-123456' },
         ipAddress: signerData.ipAddress || '192.168.1.100',
-        userAgent: navigator.userAgent || 'Unknown'
-      }
+        userAgent: navigator.userAgent || 'Unknown',
+      },
     };
   }
 
   /**
    * Generate comprehensive dispatcher-carrier agreement with 10% fee
    */
-  public generateDispatcherCarrierAgreement(carrierData: any, signerData: any): AgreementDocument {
+  public generateDispatcherCarrierAgreement(
+    carrierData: any,
+    signerData: any
+  ): AgreementDocument {
     const content = `
 DISPATCHER-CARRIER SERVICE AGREEMENT
 
@@ -514,8 +524,8 @@ This electronic signature has the same legal effect as a handwritten signature.
         carrierInfo: carrierData,
         brokerInfo: { name: 'FleetFlow Logistics', mc: 'MC-123456' },
         ipAddress: signerData.ipAddress || '192.168.1.100',
-        userAgent: navigator.userAgent || 'Unknown'
-      }
+        userAgent: navigator.userAgent || 'Unknown',
+      },
     };
   }
 
@@ -523,8 +533,8 @@ This electronic signature has the same legal effect as a handwritten signature.
    * Distribute signed agreement to all parties
    */
   public async distributeSignedAgreement(
-    document: AgreementDocument, 
-    carrierEmail: string, 
+    document: AgreementDocument,
+    carrierEmail: string,
     requesterEmail: string
   ): Promise<DocumentDistribution[]> {
     const distributions: DocumentDistribution[] = [];
@@ -538,40 +548,43 @@ This electronic signature has the same legal effect as a handwritten signature.
     return distributions;
   }
 
-  private async sendToCarrier(document: AgreementDocument, email: string): Promise<DocumentDistribution> {
+  private async sendToCarrier(
+    document: AgreementDocument,
+    email: string
+  ): Promise<DocumentDistribution> {
     try {
       // In production, this would integrate with email service
       console.log(`📧 Sending signed ${document.title} to carrier: ${email}`);
-      
+
       const emailSubject = `Signed Agreement: ${document.title}`;
       const emailBody = `
         Dear ${document.signedBy},
-        
-        Thank you for completing the digital signature process. Please find your signed copy of the 
+
+        Thank you for completing the digital signature process. Please find your signed copy of the
         ${document.title} attached to this email.
-        
+
         Agreement Details:
         - Document ID: ${document.id}
         - Signed Date: ${new Date(document.signedDate).toLocaleDateString()}
         - Effective Date: ${new Date().toLocaleDateString()}
-        
+
         This agreement is now in effect. Please retain this copy for your records.
-        
+
         If you have any questions, please contact our operations team.
-        
+
         Best regards,
         FleetFlow Logistics Operations Team
       `;
 
       // Mock email sending
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return {
         recipient: document.signedBy,
         recipientType: 'carrier',
         status: 'sent',
         sentAt: new Date().toISOString(),
-        emailAddress: email
+        emailAddress: email,
       };
     } catch (error) {
       console.error('Failed to send to carrier:', error);
@@ -579,46 +592,51 @@ This electronic signature has the same legal effect as a handwritten signature.
         recipient: document.signedBy,
         recipientType: 'carrier',
         status: 'failed',
-        emailAddress: email
+        emailAddress: email,
       };
     }
   }
 
-  private async sendToRequester(document: AgreementDocument, email: string): Promise<DocumentDistribution> {
+  private async sendToRequester(
+    document: AgreementDocument,
+    email: string
+  ): Promise<DocumentDistribution> {
     try {
-      console.log(`📧 Sending signed ${document.title} copy to requester: ${email}`);
-      
+      console.log(
+        `📧 Sending signed ${document.title} copy to requester: ${email}`
+      );
+
       const emailSubject = `New Signed Agreement: ${document.title}`;
       const emailBody = `
         New Agreement Signed - Action Required
-        
+
         A new ${document.title} has been digitally signed and executed.
-        
+
         Carrier Information:
         - Carrier: ${document.metadata.carrierInfo.legalName || 'Unknown'}
         - MC Number: ${document.metadata.carrierInfo.mcNumber || 'Unknown'}
         - Signed By: ${document.signedBy}
-        
+
         Agreement Details:
         - Document ID: ${document.id}
         - Signed Date: ${new Date(document.signedDate).toLocaleDateString()}
         - IP Address: ${document.metadata.ipAddress}
-        
+
         Please file this agreement in the carrier records and update the carrier status
         to "Agreement Signed" in the system.
-        
+
         Operations Team
       `;
 
       // Mock email sending
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return {
         recipient: 'Operations Team',
         recipientType: 'broker',
         status: 'sent',
         sentAt: new Date().toISOString(),
-        emailAddress: email
+        emailAddress: email,
       };
     } catch (error) {
       console.error('Failed to send to requester:', error);
@@ -626,9 +644,196 @@ This electronic signature has the same legal effect as a handwritten signature.
         recipient: 'Operations Team',
         recipientType: 'broker',
         status: 'failed',
-        emailAddress: email
+        emailAddress: email,
       };
     }
+  }
+
+  /**
+   * Generate broker AI Flow lead generation agreement
+   */
+  public generateBrokerAIFlowAgreement(
+    carrierData: any,
+    signerData: any
+  ): AgreementDocument {
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+
+    const content = `
+COMPREHENSIVE BROKER AI FLOW LEAD GENERATION AND REVENUE SHARING AGREEMENT
+
+AGREEMENT PREPARATION INFORMATION
+═══════════════════════════════════════════════════════════════════════════════════
+
+Document Type: AI Flow Lead Generation Agreement (Broker)
+Preparation Date: ${currentDate}
+Preparation Time: ${currentTime}
+Agreement Status: ELECTRONICALLY SIGNED
+Digital Signature Platform: FleetFlow DocuSign Integration
+
+CONTRACTING PARTIES
+═══════════════════════════════════════════════════════════════════════════════════
+
+FLEETFLOW TECHNOLOGIES, INC. (Lead Generator)
+Principal Place of Business: 1234 Technology Drive, Suite 100, Atlanta, GA 30309
+Federal Tax ID: 88-1234567
+FMCSA MC Number: MC-123456
+
+BROKER INFORMATION
+Company Name: ${carrierData.legalName}
+MC Number: ${carrierData.mcNumber}
+DOT Number: ${carrierData.dotNumber}
+Primary Contact: ${signerData.signerName}
+Title: ${signerData.signerTitle}
+
+AI FLOW LEAD GENERATION TERMS
+═══════════════════════════════════════════════════════════════════════════════════
+
+COMMISSION STRUCTURE: 50% revenue sharing on all AI-generated leads
+PAYMENT TERMS: Monthly invoicing with 15-day payment schedule
+REPORTING: Detailed monthly reports due by 5th of each month
+AUDIT RIGHTS: Comprehensive audit authority with surprise audits
+PENALTIES: 100% to 500% penalties for underreporting
+CONFIDENTIALITY: Complete non-disclosure of AI methods required
+POST-TERMINATION: 24-month commission payments required
+
+ELECTRONIC SIGNATURE ACKNOWLEDGMENT
+═══════════════════════════════════════════════════════════════════════════════════
+
+By signing below, the broker acknowledges:
+✓ Full understanding of 50% revenue sharing structure
+✓ Agreement to comprehensive audit and reporting requirements
+✓ Acceptance of penalty provisions for non-compliance
+✓ Commitment to confidentiality of AI Flow methods
+✓ Understanding of post-termination obligations
+
+DIGITAL SIGNATURE BLOCK
+═══════════════════════════════════════════════════════════════════════════════════
+
+Broker Representative: ${signerData.signerName}
+Title: ${signerData.signerTitle}
+Digital Signature Date: ${currentDate}
+Digital Signature Time: ${currentTime}
+IP Address: ${signerData.ipAddress}
+Agreement Accepted: YES
+
+This document constitutes a legally binding agreement for AI Flow lead generation services.
+All terms and conditions are governed by Georgia state law.
+
+Document ID: AIFLOW-BROKER-${Date.now()}
+FleetFlow Technologies, Inc. - AI Flow Platform Division
+    `;
+
+    return {
+      id: `aiflow-broker-${Date.now()}`,
+      type: 'broker_ai_flow',
+      title: 'Broker AI Flow Lead Generation Agreement',
+      content: content.trim(),
+      signedBy: signerData.signerName,
+      signedDate: currentDate,
+      signerTitle: signerData.signerTitle,
+      distributionList: [carrierData.email, 'contracts@fleetflow.com'],
+      metadata: {
+        carrierInfo: carrierData,
+        brokerInfo: signerData,
+        ipAddress: signerData.ipAddress,
+        userAgent: navigator?.userAgent || 'Unknown',
+      },
+    };
+  }
+
+  /**
+   * Generate dispatcher AI Flow lead generation agreement
+   */
+  public generateDispatcherAIFlowAgreement(
+    carrierData: any,
+    signerData: any
+  ): AgreementDocument {
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+
+    const content = `
+COMPREHENSIVE DISPATCHER AI FLOW LEAD GENERATION AND REVENUE SHARING AGREEMENT
+
+AGREEMENT PREPARATION INFORMATION
+═══════════════════════════════════════════════════════════════════════════════════
+
+Document Type: AI Flow Lead Generation Agreement (Dispatcher)
+Preparation Date: ${currentDate}
+Preparation Time: ${currentTime}
+Agreement Status: ELECTRONICALLY SIGNED
+Digital Signature Platform: FleetFlow DocuSign Integration
+
+CONTRACTING PARTIES
+═══════════════════════════════════════════════════════════════════════════════════
+
+FLEETFLOW TECHNOLOGIES, INC. (Lead Generator)
+Principal Place of Business: 1234 Technology Drive, Suite 100, Atlanta, GA 30309
+Federal Tax ID: 88-1234567
+FMCSA MC Number: MC-123456
+
+DISPATCHER INFORMATION
+Company Name: ${carrierData.legalName}
+Operations Manager: ${signerData.signerName}
+Title: ${signerData.signerTitle}
+FMCSA Authority: ${carrierData.mcNumber || 'As Applicable'}
+
+AI FLOW LEAD GENERATION TERMS
+═══════════════════════════════════════════════════════════════════════════════════
+
+COMMISSION STRUCTURE: 25% revenue sharing on all AI-generated leads
+PERFORMANCE TIERS: Standard (25%), Volume (20% at $500K+), Elite (15% at $1M+)
+PAYMENT TERMS: Monthly invoicing with 15-day payment schedule
+REPORTING: Comprehensive monthly reports due by 5th of each month
+AUDIT RIGHTS: Extensive audit authority with 24-hour notice
+PENALTIES: 200% to 1000% penalties for underreporting
+CONFIDENTIALITY: Strict non-disclosure of AI algorithms required
+POST-TERMINATION: 36-month commission payments required
+
+ELECTRONIC SIGNATURE ACKNOWLEDGMENT
+═══════════════════════════════════════════════════════════════════════════════════
+
+By signing below, the dispatcher acknowledges:
+✓ Full understanding of 25% revenue sharing structure
+✓ Awareness of performance tier opportunities
+✓ Agreement to extensive audit and reporting requirements
+✓ Acceptance of penalty provisions for non-compliance
+✓ Commitment to confidentiality of AI Flow methods
+✓ Understanding of post-termination obligations
+
+DIGITAL SIGNATURE BLOCK
+═══════════════════════════════════════════════════════════════════════════════════
+
+Dispatcher Representative: ${signerData.signerName}
+Title: ${signerData.signerTitle}
+Digital Signature Date: ${currentDate}
+Digital Signature Time: ${currentTime}
+IP Address: ${signerData.ipAddress}
+Agreement Accepted: YES
+
+This document constitutes a legally binding agreement for AI Flow lead generation services.
+All terms and conditions are governed by Georgia state law.
+
+Document ID: AIFLOW-DISPATCHER-${Date.now()}
+FleetFlow Technologies, Inc. - AI Flow Platform Division
+    `;
+
+    return {
+      id: `aiflow-dispatcher-${Date.now()}`,
+      type: 'dispatcher_ai_flow',
+      title: 'Dispatcher AI Flow Lead Generation Agreement',
+      content: content.trim(),
+      signedBy: signerData.signerName,
+      signedDate: currentDate,
+      signerTitle: signerData.signerTitle,
+      distributionList: [carrierData.email, 'contracts@fleetflow.com'],
+      metadata: {
+        carrierInfo: carrierData,
+        brokerInfo: signerData,
+        ipAddress: signerData.ipAddress,
+        userAgent: navigator?.userAgent || 'Unknown',
+      },
+    };
   }
 
   /**

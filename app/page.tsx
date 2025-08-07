@@ -534,7 +534,10 @@ export default function HomePage() {
           >
             🌐 Management Load Overview - All Brokers
           </h2>
-          <Link href='/dispatch' style={{ textDecoration: 'none' }}>
+          <Link
+            href='/dispatch#task-priority'
+            style={{ textDecoration: 'none' }}
+          >
             <button
               style={{
                 background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -548,7 +551,7 @@ export default function HomePage() {
                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
               }}
             >
-              View Dispatch Central
+              Task Priority
             </button>
           </Link>
         </div>

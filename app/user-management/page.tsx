@@ -251,6 +251,19 @@ const mockUsers = [
     role: 'Independent Contractor - Dispatcher',
     status: 'active',
     lastActive: '2024-01-15T09:45:00Z',
+    aiFlowStatus: {
+      isOptedIn: true,
+      optInDate: '2024-01-12',
+      agreementSigned: true,
+      agreementNumber: 'AIFLG-2025-SJ001',
+      leadCount: 23,
+      conversionRate: '21.7%',
+      monthlyRevenue: '$89,200',
+      commissionOwed: '$22,300',
+      lastLeadDate: '2024-01-14',
+      performanceTier: 'Standard (25%)',
+      status: 'active',
+    },
     systemAccess: {
       level: 'Dispatch Operations',
       accessCode: 'ACC-SJ-DC',
@@ -402,6 +415,19 @@ const mockUsers = [
     role: 'Independent Contractor - Broker',
     status: 'active',
     lastActive: '2024-01-15T11:20:00Z',
+    aiFlowStatus: {
+      isOptedIn: true,
+      optInDate: '2024-01-10',
+      agreementSigned: true,
+      agreementNumber: 'AIFLG-2025-MW001',
+      leadCount: 47,
+      conversionRate: '18.2%',
+      monthlyRevenue: '$127,500',
+      commissionOwed: '$63,750',
+      lastLeadDate: '2024-01-14',
+      performanceTier: 'Standard (50%)',
+      status: 'active',
+    },
     systemAccess: {
       level: 'Broker Operations',
       accessCode: 'ACC-MW-BB',
@@ -541,6 +567,14 @@ const mockUsers = [
     role: 'Independent Contractor - Dispatcher',
     status: 'active',
     lastActive: '2024-01-15T14:15:00Z',
+    aiFlowStatus: {
+      isOptedIn: false,
+      optOutDate: '2024-01-08',
+      agreementSigned: false,
+      reason: 'Prefers traditional lead sources',
+      lastContactDate: '2024-01-10',
+      status: 'opted_out',
+    },
     systemAccess: {
       level: 'Senior Dispatch',
       accessCode: 'ACC-JD-DC',
@@ -2498,8 +2532,7 @@ export default function UserManagement() {
                       fontWeight: '500',
                     }}
                   >
-                    Enterprise Access Control & Permissions Intelligence
-                    Platform
+                    Access Control & Permissions Intelligence Platform
                   </p>
                   <div
                     style={{
@@ -3637,6 +3670,390 @@ export default function UserManagement() {
                 </div>
               )}
             </div>
+
+            {/* AI Flow Lead Generation Status - For Brokers and Dispatchers */}
+            {(currentUser?.departmentCode === 'BB' ||
+              currentUser?.departmentCode === 'DC') && (
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginBottom: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    margin: '0 0 12px 0',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                  }}
+                >
+                  🤖 AI Flow Lead Generation{' '}
+                  {currentUser?.departmentCode === 'DC'
+                    ? '(Dispatcher)'
+                    : '(Broker)'}
+                </h4>
+
+                {/* Check if user has AI Flow status data */}
+                {currentUser.aiFlowStatus ? (
+                  <div
+                    style={{
+                      background: currentUser.aiFlowStatus.isOptedIn
+                        ? 'rgba(16, 185, 129, 0.1)'
+                        : 'rgba(239, 68, 68, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: `1px solid ${currentUser.aiFlowStatus.isOptedIn ? '#10b981' : '#ef4444'}`,
+                      position: 'relative',
+                    }}
+                  >
+                    {/* Status Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: currentUser.aiFlowStatus.isOptedIn
+                          ? '12px'
+                          : '0',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            background: currentUser.aiFlowStatus.isOptedIn
+                              ? 'linear-gradient(135deg, #10b981, #059669)'
+                              : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {currentUser.aiFlowStatus.isOptedIn ? '✅' : '❌'}
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              color: currentUser.aiFlowStatus.isOptedIn
+                                ? '#10b981'
+                                : '#ef4444',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.isOptedIn
+                              ? 'OPTED IN'
+                              : 'OPTED OUT'}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '11px',
+                            }}
+                          >
+                            Status:{' '}
+                            {currentUser.aiFlowStatus.status?.toUpperCase()}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Toggle Button */}
+                      <button
+                        onClick={() => {
+                          const newStatus = !currentUser.aiFlowStatus.isOptedIn;
+                          // Update user status
+                          setUsers((prevUsers) =>
+                            prevUsers.map((user) =>
+                              user.id === currentUser.id
+                                ? {
+                                    ...user,
+                                    aiFlowStatus: {
+                                      ...user.aiFlowStatus,
+                                      isOptedIn: newStatus,
+                                      status: newStatus ? 'active' : 'inactive',
+                                      optInDate: newStatus
+                                        ? new Date().toISOString().split('T')[0]
+                                        : user.aiFlowStatus?.optInDate,
+                                    },
+                                  }
+                                : user
+                            )
+                          );
+                          alert(
+                            `AI Flow Lead Generation ${newStatus ? 'enabled' : 'disabled'} for ${currentUser.name}`
+                          );
+                        }}
+                        style={{
+                          background: currentUser.aiFlowStatus.isOptedIn
+                            ? '#ef4444'
+                            : '#10b981',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          border: 'none',
+                          fontSize: '11px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        {currentUser.aiFlowStatus.isOptedIn
+                          ? 'Opt Out'
+                          : 'Opt In'}
+                      </button>
+                    </div>
+
+                    {/* Opted In Performance Details */}
+                    {currentUser.aiFlowStatus.isOptedIn && (
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(120px, 1fr))',
+                          gap: '8px',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '6px',
+                          padding: '8px',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '9px',
+                              fontWeight: 'bold',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            AGREEMENT
+                          </div>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.agreementNumber}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '8px',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.optInDate}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '9px',
+                              fontWeight: 'bold',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            LEADS
+                          </div>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.leadCount}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '8px',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.conversionRate} conversion
+                          </div>
+                        </div>
+
+                        <div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '9px',
+                              fontWeight: 'bold',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            REVENUE
+                          </div>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.monthlyRevenue}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '8px',
+                            }}
+                          >
+                            Commission:{' '}
+                            {currentUser.aiFlowStatus.commissionOwed}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '9px',
+                              fontWeight: 'bold',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            TIER
+                          </div>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {currentUser.aiFlowStatus.performanceTier}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '8px',
+                            }}
+                          >
+                            Last: {currentUser.aiFlowStatus.lastLeadDate}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Opted Out Message */}
+                    {!currentUser.aiFlowStatus.isOptedIn && (
+                      <div
+                        style={{
+                          color: '#dc2626',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          marginTop: '8px',
+                        }}
+                      >
+                        ⚠️ Not receiving AI-generated leads or subject to{' '}
+                        {currentUser?.departmentCode === 'DC' ? '25%' : '50%'}
+                        revenue sharing agreement.
+                      </div>
+                    )}
+
+                    {/* Performance Alert */}
+                    {currentUser.aiFlowStatus.isOptedIn &&
+                      parseFloat(currentUser.aiFlowStatus.conversionRate) <
+                        15 && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '-4px',
+                            right: '8px',
+                            background: '#fbbf24',
+                            color: '#92400e',
+                            padding: '2px 6px',
+                            borderRadius: '8px',
+                            fontSize: '8px',
+                            fontWeight: 'bold',
+                            boxShadow: '0 2px 8px rgba(251, 191, 36, 0.3)',
+                          }}
+                        >
+                          ⚠️ LOW CONVERSION
+                        </div>
+                      )}
+                  </div>
+                ) : (
+                  // No AI Flow data - show setup option
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#60a5fa',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      📋 AI Flow Lead Generation Not Configured
+                    </div>
+                    <button
+                      onClick={() => {
+                        // Initialize AI Flow status for this broker
+                        setUsers((prevUsers) =>
+                          prevUsers.map((user) =>
+                            user.id === currentUser.id
+                              ? {
+                                  ...user,
+                                  aiFlowStatus: {
+                                    isOptedIn: false,
+                                    optInDate: null,
+                                    agreementSigned: false,
+                                    agreementNumber: null,
+                                    leadCount: 0,
+                                    conversionRate: '0%',
+                                    monthlyRevenue: '$0',
+                                    commissionOwed: '$0',
+                                    lastLeadDate: null,
+                                    performanceTier: 'Not Active',
+                                    status: 'inactive',
+                                  },
+                                }
+                              : user
+                          )
+                        );
+                      }}
+                      style={{
+                        background: '#3b82f6',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Set Up AI Flow
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Portal Invitation Status */}
             <div

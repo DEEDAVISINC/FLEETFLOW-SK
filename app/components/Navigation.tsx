@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import GlobalNotificationBell from './GlobalNotificationBell';
 import Logo from './Logo';
@@ -15,6 +16,10 @@ export default function ProfessionalNavigation() {
   const [isManager, setIsManager] = useState(false);
   const [isBrokerAgent, setIsBrokerAgent] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Get current user data
+  const { user, permissions } = getCurrentUser();
 
   // Check user role on component mount
   useEffect(() => {
@@ -29,20 +34,101 @@ export default function ProfessionalNavigation() {
     checkUserRole();
   }, []);
 
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      clearDropdownTimer();
+    };
+  }, []);
+
+  // Helper function to get user display info
+  const getUserDisplayInfo = () => {
+    const roleDisplayMap = {
+      admin: {
+        title: 'System Administrator',
+        badges: ['Manager Access', 'Full Permissions'],
+      },
+      dispatcher: {
+        title: 'Dispatch Operations',
+        badges: ['Dispatch Access', 'Operations'],
+      },
+      broker: { title: 'Freight Broker', badges: ['Broker Access', 'Sales'] },
+      driver: {
+        title: 'Professional Driver',
+        badges: ['Driver Access', 'Mobile'],
+      },
+      manager: {
+        title: 'Operations Manager',
+        badges: ['Manager Access', 'Oversight'],
+      },
+    };
+
+    return (
+      roleDisplayMap[user.role] || {
+        title: 'FleetFlow User',
+        badges: ['User Access'],
+      }
+    );
+  };
+
+  const userInfo = getUserDisplayInfo();
+  const userInitials = user.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase();
+
+  const clearDropdownTimer = () => {
+    if (dropdownTimerRef.current) {
+      clearTimeout(dropdownTimerRef.current);
+      dropdownTimerRef.current = null;
+    }
+  };
+
+  const startDropdownTimer = () => {
+    clearDropdownTimer();
+    dropdownTimerRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+      setActiveSubDropdown(null);
+    }, 3000); // Auto-close after 3 seconds
+  };
+
   const handleDropdownClick = (dropdownName: string) => {
+    const isOpening = activeDropdown !== dropdownName;
     setActiveDropdown(activeDropdown === dropdownName ? null : dropdownName);
     setActiveSubDropdown(null); // Close any sub-dropdowns when main dropdown changes
+
+    if (isOpening) {
+      startDropdownTimer(); // Start auto-close timer when opening
+    } else {
+      clearDropdownTimer(); // Clear timer when manually closing
+    }
   };
 
   const handleSubDropdownClick = (subDropdownName: string) => {
     setActiveSubDropdown(
       activeSubDropdown === subDropdownName ? null : subDropdownName
     );
+    // Restart timer when interacting with sub-dropdowns
+    startDropdownTimer();
   };
 
   const handleDropdownClose = () => {
     setActiveDropdown(null);
     setActiveSubDropdown(null);
+    clearDropdownTimer();
+  };
+
+  // Handle mouse enter to pause auto-close
+  const handleDropdownMouseEnter = () => {
+    clearDropdownTimer();
+  };
+
+  // Handle mouse leave to restart auto-close
+  const handleDropdownMouseLeave = () => {
+    if (activeDropdown) {
+      startDropdownTimer();
+    }
   };
 
   // Close dropdown when clicking outside
@@ -140,6 +226,8 @@ export default function ProfessionalNavigation() {
             </button>
             {activeDropdown === 'operations' && (
               <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
                   position: 'absolute',
                   background: 'white',
@@ -221,6 +309,8 @@ export default function ProfessionalNavigation() {
             </button>
             {activeDropdown === 'drivers' && (
               <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
                   position: 'absolute',
                   background: 'white',
@@ -302,6 +392,8 @@ export default function ProfessionalNavigation() {
             </button>
             {activeDropdown === 'fleet' && (
               <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
                   position: 'absolute',
                   background: 'white',
@@ -371,6 +463,20 @@ export default function ProfessionalNavigation() {
                 >
                   🗺️ Live Load Tracking
                 </Link>
+                <Link
+                  href='/insurance-partnerships'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ Insurance Partnerships
+                </Link>
               </div>
             )}
           </div>
@@ -439,6 +545,8 @@ export default function ProfessionalNavigation() {
             </button>
             {activeDropdown === 'resources' && (
               <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
                   position: 'absolute',
                   background: 'white',
@@ -522,6 +630,20 @@ export default function ProfessionalNavigation() {
                 >
                   📋 Documents Hub
                 </Link>
+                <Link
+                  href='/insurance-partnerships'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ Insurance Partnerships
+                </Link>
               </div>
             )}
           </div>
@@ -548,6 +670,8 @@ export default function ProfessionalNavigation() {
             </button>
             {activeDropdown === 'settings' && (
               <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
                   position: 'absolute',
                   background: 'white',
@@ -733,6 +857,35 @@ export default function ProfessionalNavigation() {
                   💰 Accounting & Finance
                 </Link>
                 <Link
+                  href='/billing'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💳 Subscriptions
+                </Link>
+                <Link
+                  href='/billing-invoices'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🧾 Billing & Invoices
+                </Link>
+
+                <Link
                   href='/reports'
                   onClick={handleDropdownClose}
                   style={{
@@ -796,24 +949,413 @@ export default function ProfessionalNavigation() {
           {/* Notification Bell */}
           <GlobalNotificationBell department='admin' />
 
-          {/* User Avatar */}
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'linear-gradient(45deg, #0EA5E9, #2DD4BF)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginLeft: '10px',
-              boxShadow: '0 4px 12px rgba(14, 165, 233, 0.25)',
-            }}
-          >
-            A
+          {/* User Profile Dropdown */}
+          <div style={{ position: 'relative', marginLeft: '10px' }}>
+            <div
+              onClick={() => handleDropdownClick('userprofile')}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'linear-gradient(45deg, #14b8a6, #0d9488)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(20, 184, 166, 0.25)',
+                transition: 'all 0.2s ease',
+                transform:
+                  activeDropdown === 'userprofile' ? 'scale(1.05)' : 'scale(1)',
+                border:
+                  activeDropdown === 'userprofile'
+                    ? '2px solid #10b981'
+                    : '2px solid transparent',
+              }}
+            >
+              {userInitials}
+            </div>
+
+            {/* User Profile Dropdown Menu */}
+            {activeDropdown === 'userprofile' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
+                style={{
+                  position: 'absolute',
+                  background: 'white',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '16px 0',
+                  top: '100%',
+                  right: 0,
+                  minWidth: '320px',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
+                  marginTop: '8px',
+                }}
+              >
+                {/* User Info Header */}
+                <div
+                  style={{
+                    padding: '0 20px 16px 20px',
+                    borderBottom: '1px solid rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(45deg, #14b8a6, #0d9488)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {userInitials}
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: '#111827',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {user.name}
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: '14px' }}>
+                        {userInfo.title}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <span
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        color: '#059669',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      {userInfo.badges[0]}
+                    </span>
+                    {userInfo.badges[1] && (
+                      <span
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          color: '#2563eb',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                        }}
+                      >
+                        {userInfo.badges[1]}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quick Access Items */}
+                <div style={{ padding: '8px 0' }}>
+                  <Link
+                    href='/user-management'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      color: '#374151',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor =
+                        'rgba(20, 184, 166, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = 'transparent')
+                    }
+                  >
+                    <span style={{ fontSize: '16px' }}>👤</span>
+                    My Profile & Access
+                  </Link>
+
+                  <Link
+                    href='/settings'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      color: '#374151',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor =
+                        'rgba(20, 184, 166, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = 'transparent')
+                    }
+                  >
+                    <span style={{ fontSize: '16px' }}>⚙️</span>
+                    Account Settings
+                  </Link>
+
+                  <Link
+                    href='/notifications'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      color: '#374151',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor =
+                        'rgba(20, 184, 166, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = 'transparent')
+                    }
+                  >
+                    <span style={{ fontSize: '16px' }}>🔔</span>
+                    Notifications
+                  </Link>
+                </div>
+
+                {/* Access Summary */}
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    borderTop: '1px solid rgba(0,0,0,0.1)',
+                    borderBottom: '1px solid rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#6b7280',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Current Access Level
+                  </div>
+                  <div style={{ display: 'grid', gap: '6px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span style={{ color: '#374151', fontSize: '13px' }}>
+                        Operations
+                      </span>
+                      <span
+                        style={{
+                          color: permissions.canEditLoads
+                            ? '#10b981'
+                            : '#ef4444',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {permissions.canEditLoads ? '✓ Full' : '✗ Limited'}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span style={{ color: '#374151', fontSize: '13px' }}>
+                        Analytics
+                      </span>
+                      <span
+                        style={{
+                          color: permissions.canViewAllLoads
+                            ? '#10b981'
+                            : '#ef4444',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {permissions.canViewAllLoads ? '✓ Full' : '✗ Limited'}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span style={{ color: '#374151', fontSize: '13px' }}>
+                        User Management
+                      </span>
+                      <span
+                        style={{
+                          color: permissions.hasManagementAccess
+                            ? '#10b981'
+                            : '#ef4444',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {permissions.hasManagementAccess
+                          ? '✓ Admin'
+                          : '✗ No Access'}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span style={{ color: '#374151', fontSize: '13px' }}>
+                        Financial
+                      </span>
+                      <span
+                        style={{
+                          color: permissions.canViewFinancials
+                            ? '#10b981'
+                            : '#ef4444',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {permissions.canViewFinancials
+                          ? '✓ Manager'
+                          : '✗ No Access'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* System Info */}
+                <div
+                  style={{
+                    padding: '12px 20px',
+                    borderBottom: '1px solid rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#6b7280',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '6px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Session Info
+                  </div>
+                  <div style={{ display: 'grid', gap: '4px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <span style={{ color: '#6b7280' }}>Last Login:</span>
+                      <span style={{ color: '#374151' }}>Today 9:15 AM</span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <span style={{ color: '#6b7280' }}>Session:</span>
+                      <span style={{ color: '#10b981', fontWeight: '500' }}>
+                        Active
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <span style={{ color: '#6b7280' }}>IP Address:</span>
+                      <span style={{ color: '#374151' }}>192.168.1.100</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logout */}
+                <div style={{ padding: '8px 0' }}>
+                  <button
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      width: '100%',
+                      border: 'none',
+                      background: 'transparent',
+                      color: '#dc2626',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor =
+                        'rgba(220, 38, 38, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = 'transparent')
+                    }
+                  >
+                    <span style={{ fontSize: '16px' }}>🚪</span>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

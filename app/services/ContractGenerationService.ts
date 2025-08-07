@@ -655,155 +655,363 @@ Date: _________________________
     data: DispatcherLeadContractData
   ): string {
     const contractText = `
-# DISPATCHER LEAD GENERATION AND REVENUE SHARING AGREEMENT
+# COMPREHENSIVE DISPATCHER AI FLOW LEAD GENERATION AND REVENUE SHARING AGREEMENT
 
 **Contract Number:** ${contract.contractNumber}
 **Effective Date:** ${new Date(contract.metadata.effectiveDate).toLocaleDateString()}
 **Expiration Date:** ${new Date(contract.metadata.expirationDate).toLocaleDateString()}
-
-## PARTIES
-
-**FleetFlow Technologies, Inc.** ("FleetFlow")
-${contract.parties.fleetflow.address}
-
-**${contract.parties.dispatcher!.company}** ("Dispatcher")
-Represented by: ${contract.parties.dispatcher!.name}
-
-**${contract.parties.carrier!.company}** ("Carrier")
-Represented by: ${contract.parties.carrier!.name}
-
-## RECITALS
-
-WHEREAS, FleetFlow generated a qualified lead for Dispatcher through its AI-powered lead generation platform (Source: ${data.source});
-
-WHEREAS, Dispatcher has accepted this lead and converted it into a business relationship with Carrier;
-
-WHEREAS, the parties wish to establish a revenue-sharing arrangement for all business generated from this lead;
-
-NOW, THEREFORE, the parties agree as follows:
-
-## 1. COMMISSION STRUCTURE
-
-### 1.1 Commission Rate
-Dispatcher agrees to pay FleetFlow a commission of **5% (five percent)** of the gross revenue generated from all business transactions with Carrier, including but not limited to:
-- Freight transportation services
-- Warehousing services
-- 3PL services
-- Any additional services provided to Carrier
-- Renewals, extensions, or modifications of existing contracts
-
-### 1.2 Revenue Definition
-"Gross Revenue" means the total amount invoiced to Carrier before any deductions, credits, or adjustments, regardless of payment status.
-
-## 2. PAYMENT TERMS
-
-### 2.1 Payment Schedule
-- Commission payments are due within **10 days** of invoice date
-- Late payments will incur interest at **1.5% per month (18% annually)**
-- All payments must be made via wire transfer or certified check
-
-### 2.2 Reporting Requirements
-- Bi-weekly dispatch reports due by the **15th and last day of each month**
-- Reports must include: invoice numbers, dates, amounts, and payment status
-- Failure to report will result in penalties as outlined in Section 4
-
-## 3. AUDIT RIGHTS
-
-### 3.1 FleetFlow Audit Rights
-FleetFlow reserves the right to:
-- Audit Dispatcher's books and records at any time
-- Request supporting documentation for all revenue reported
-- Conduct surprise audits with 48-hour notice
-- Engage third-party auditors at Dispatcher's expense if discrepancies exceed 5%
-
-### 3.2 Dispatcher Cooperation
-Dispatcher must:
-- Provide full access to all relevant records
-- Respond to audit requests within 10 business days
-- Maintain all records for 7 years following contract termination
-
-## 4. PENALTY PROVISIONS
-
-### 4.1 Late Payment Penalties
-- 1-15 days late: 1.5% per month interest
-- 16-30 days late: 2% per month interest + $500 penalty
-- 31+ days late: Contract termination + legal action
-
-### 4.2 Underreporting Penalties
-- 1-5% underreporting: 100% penalty on underreported amount
-- 6-10% underreporting: 200% penalty on underreported amount
-- 11%+ underreporting: 500% penalty + immediate termination
-
-### 4.3 Concealment Penalties
-Any attempt to conceal revenue or create false documentation will result in:
-- Immediate contract termination
-- 500% penalty on all commissions owed
-- Legal action for fraud and damages
-- Reporting to relevant authorities
-
-### 4.4 Non-Compliance Penalties
-- Late reports: $500 per occurrence
-- Audit resistance: $10,000 + 100% of commissions for audit period
-- Contract violations: 300% penalty on all commissions during violation
-
-## 5. TERMINATION
-
-### 5.1 Immediate Termination
-FleetFlow may terminate immediately for:
-- Non-payment exceeding 30 days
-- Underreporting exceeding 10%
-- Any fraudulent activity
-- Violation of exclusivity or territory restrictions
-- Failure to provide required documentation
-
-### 5.2 Post-Termination Obligations
-Upon termination, Dispatcher must:
-- Pay all outstanding commissions for 24 months
-- Provide monthly reports for 12 months
-- Cooperate with audits for 36 months
-- Maintain records for 7 years
-
-## 6. CONFIDENTIALITY
-
-### 6.1 Confidential Information
-All terms of this agreement, revenue data, and business information are confidential and may not be disclosed to third parties without written consent.
-
-### 6.2 Non-Disclosure
-Dispatcher agrees not to disclose FleetFlow's lead generation methods, pricing, or business practices to competitors.
-
-## 7. GOVERNING LAW
-
-This agreement is governed by the laws of the State of Georgia. Any disputes will be resolved in the courts of Fulton County, Georgia.
-
-## 8. ENTIRE AGREEMENT
-
-This document constitutes the entire agreement between the parties and supersedes all prior agreements or understandings.
-
-## 9. SIGNATURES
-
-**FleetFlow Technologies, Inc.**
-
-By: ___________________________
-Title: _________________________
-Date: _________________________
-
-**${contract.parties.dispatcher!.company}**
-
-By: ___________________________
-Title: _________________________
-Date: _________________________
-
-**${contract.parties.carrier!.company}**
-
-By: ___________________________
-Title: _________________________
-Date: _________________________
+**Agreement Type:** AI-Powered Dispatch Lead Generation Revenue Sharing Contract
 
 ---
 
-**IMPORTANT NOTICE:** This contract contains legally binding obligations. Please review carefully before signing. Consult with legal counsel if you have any questions.
+## ARTICLE I: PARTIES AND DEFINITIONS
 
-**AI LEAD GENERATION NOTICE:** This contract specifically covers revenue generated from carriers introduced through FleetFlow's proprietary AI lead generation system. Violations of carrier contact restrictions will result in substantial penalties and legal action.
+### Section 1.1: Contracting Parties
+
+**FLEETFLOW TECHNOLOGIES, INC.** ("FleetFlow" or "Lead Generator")
+A Delaware Corporation
+Principal Place of Business: 1234 Technology Drive, Suite 100, Atlanta, GA 30309
+Federal Tax ID: 88-1234567
+FMCSA MC Number: MC-123456
+Contact: Chief Revenue Officer
+Email: contracts@fleetflow.com
+Phone: (555) 123-4567
+
+**${contract.parties.dispatcher!.company}** ("Dispatcher" or "Service Provider")
+Represented by: ${contract.parties.dispatcher!.name}
+Title: Operations Manager
+Address: [Dispatcher Address]
+Phone: [Dispatcher Phone]
+Email: [Dispatcher Email]
+FMCSA Authority: [If Applicable]
+
+**${contract.parties.carrier!.company}** ("Carrier" or "Client")
+Represented by: ${contract.parties.carrier!.name}
+Title: Fleet Manager
+Address: [Carrier Address]
+DOT Number: [DOT Number]
+MC Number: [MC Number]
+
+### Section 1.2: Definitions
+
+**"AI Flow Platform"** means FleetFlow's proprietary artificial intelligence-powered lead generation, matching, and business development system.
+
+**"Qualified Lead"** means a carrier prospect that meets predetermined criteria established by Dispatcher and has been verified by FleetFlow's AI system.
+
+**"Conversion"** means the successful establishment of a business relationship between Dispatcher and Carrier resulting in revenue generation.
+
+**"Gross Revenue"** means the total amount invoiced by Dispatcher to Carrier before any deductions, credits, or adjustments.
+
+## ARTICLE II: RECITALS AND PURPOSE
+
+### Section 2.1: Background
+WHEREAS, FleetFlow has developed and operates a sophisticated AI-powered lead generation platform specifically designed for the transportation and logistics industry;
+
+WHEREAS, FleetFlow generated a qualified carrier lead for Dispatcher through its AI Flow platform (Source: ${data.source});
+
+WHEREAS, Dispatcher has successfully converted this AI-generated lead into an active business relationship with Carrier;
+
+WHEREAS, the parties wish to establish a comprehensive revenue-sharing arrangement for all current and future business generated from this AI Flow lead;
+
+WHEREAS, this agreement establishes the terms for ongoing commission payments, performance tracking, and business relationship management;
+
+NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, the parties agree as follows:
+
+## ARTICLE III: COMMISSION STRUCTURE AND REVENUE SHARING
+
+### Section 3.1: Commission Rate
+Dispatcher agrees to pay FleetFlow a commission of **25% (twenty-five percent)** of the gross revenue generated from all business transactions with Carrier, including but not limited to:
+- Freight transportation services
+- Warehousing services
+- 3PL services
+- Logistics coordination services
+- Load planning and optimization
+- Driver management services
+- Any additional services provided to Carrier
+- Renewals, extensions, or modifications of existing contracts
+- Spot market transactions
+- Dedicated contract services
+
+### Section 3.2: Revenue Definition and Calculation
+**"Gross Revenue"** means the total amount invoiced by Dispatcher to Carrier before any deductions, credits, or adjustments, regardless of payment status, including:
+- Base transportation rates
+- Fuel surcharges
+- Accessorial charges (detention, layover, etc.)
+- Equipment rental fees
+- Administrative fees
+- Insurance premiums charged to Carrier
+- Any other charges or fees
+
+### Section 3.3: Commission Calculation Examples
+- **Scenario A:** Monthly gross revenue of $100,000 = FleetFlow commission of $25,000
+- **Scenario B:** Quarterly gross revenue of $300,000 = FleetFlow commission of $75,000
+- **Scenario C:** Annual gross revenue of $1,200,000 = FleetFlow commission of $300,000
+
+### Section 3.4: Performance Tiers and Incentives
+**Standard Tier (25%):** Default commission rate for all dispatchers
+**Volume Tier (20%):** Available when monthly gross revenue exceeds $500,000
+**Elite Tier (15%):** Available when monthly gross revenue exceeds $1,000,000
+
+## ARTICLE IV: PAYMENT TERMS AND PROCEDURES
+
+### Section 4.1: Payment Schedule
+- Commission payments are due within **15 days** of invoice date
+- Late payments will incur interest at **2% per month (24% annually)**
+- All payments must be made via:
+  - Wire transfer (preferred)
+  - Certified check
+  - ACH transfer
+  - Electronic funds transfer
+
+### Section 4.2: Invoicing Procedures
+FleetFlow will provide detailed monthly invoices including:
+- Invoice number and date
+- Reporting period covered
+- Detailed revenue breakdown by carrier and load
+- Commission calculation
+- Payment due date
+- Wire transfer instructions
+
+### Section 4.3: Reporting Requirements
+Dispatcher must provide comprehensive monthly reports by the **5th of each month** including:
+- Detailed revenue reports with invoice numbers, dates, and amounts
+- Load-by-load breakdown for the Carrier relationship
+- Payment status and collection information
+- Carrier performance metrics
+- Any disputes or adjustments
+- Future revenue projections
+
+## ARTICLE V: AUDIT RIGHTS AND FINANCIAL OVERSIGHT
+
+### Section 5.1: Comprehensive Audit Authority
+FleetFlow reserves extensive audit rights including:
+- **Unlimited Access:** Full access to Dispatcher's books, records, and financial systems
+- **Real-Time Monitoring:** Integration with Dispatcher's billing and dispatch systems
+- **Surprise Audits:** Unscheduled audits with 24-hour notice
+- **Third-Party Auditors:** Professional accounting firms at Dispatcher's expense if discrepancies exceed 3%
+- **Electronic Records:** Access to all digital communications, load confirmations, and rate sheets
+- **Carrier Verification:** Direct contact with Carrier to verify revenue and services
+
+### Section 5.2: Dispatcher Cooperation Requirements
+Dispatcher must maintain complete cooperation including:
+- **Immediate Access:** Provide full access to all relevant records within 24 hours
+- **Digital Integration:** Allow FleetFlow API access to dispatch and billing systems
+- **Document Retention:** Maintain all records for 7 years following contract termination
+- **Witness Cooperation:** Make personnel available for audit interviews
+- **Translation Services:** Provide English translations of any foreign language documents
+
+### Section 5.3: Audit Frequency and Scope
+- **Monthly Reviews:** Automated system audits of reported revenue
+- **Quarterly Audits:** Comprehensive review of all Carrier transactions
+- **Annual Audits:** Full financial audit including tax returns and bank statements
+- **Triggered Audits:** Immediate audit if revenue patterns suggest underreporting
+
+## ARTICLE VI: PENALTY PROVISIONS AND ENFORCEMENT
+
+### Section 6.1: Late Payment Penalty Structure
+**Tier 1 (1-15 days late):**
+- 2% per month interest (24% annually)
+- $250 administrative fee
+
+**Tier 2 (16-30 days late):**
+- 3% per month interest (36% annually)
+- $1,000 penalty fee
+- Suspension of new lead generation
+
+**Tier 3 (31+ days late):**
+- Immediate contract termination
+- Legal action for collection
+- 5% per month interest (60% annually)
+- All legal fees and collection costs
+
+### Section 6.2: Underreporting Penalty Matrix
+**Minor Underreporting (1-5%):**
+- 200% penalty on underreported amount
+- Mandatory monthly audits for 12 months
+- $2,500 administrative penalty
+
+**Moderate Underreporting (6-15%):**
+- 400% penalty on underreported amount
+- Bi-weekly reporting requirement
+- $10,000 administrative penalty
+- 6-month probationary period
+
+**Major Underreporting (16%+):**
+- 1000% penalty on underreported amount
+- Immediate contract termination
+- Legal action for fraud
+- Industry blacklist reporting
+
+### Section 6.3: Concealment and Fraud Penalties
+Any attempt to conceal revenue, create false documentation, or defraud FleetFlow will result in:
+- **Immediate Termination:** Contract void with no cure period
+- **Maximum Penalties:** 2000% penalty on all concealed revenue
+- **Legal Action:** Civil and criminal fraud prosecution
+- **Industry Reporting:** Notification to FMCSA, DOT, and industry associations
+- **Asset Recovery:** Seizure of assets to satisfy penalties
+- **Professional Consequences:** Reporting to professional licensing boards
+
+### Section 6.4: Compliance Violation Penalties
+**Administrative Violations:**
+- Late reports: $1,000 per occurrence
+- Missing documentation: $500 per missing document
+- System access denial: $5,000 per occurrence
+
+**Operational Violations:**
+- Audit resistance: $25,000 + 200% of commissions for audit period
+- Carrier interference: $50,000 + immediate termination
+- Contract violations: 500% penalty on all commissions during violation period
+
+## ARTICLE VII: TERMINATION AND POST-TERMINATION OBLIGATIONS
+
+### Section 7.1: Immediate Termination Events
+FleetFlow may terminate this agreement immediately without notice for:
+- Non-payment exceeding 30 days
+- Underreporting exceeding 15%
+- Any fraudulent activity or concealment
+- Violation of confidentiality or non-disclosure provisions
+- Failure to provide required documentation after 10-day cure period
+- Interference with Carrier relationships
+- Criminal activity related to transportation operations
+- Loss of operating authority or business license
+
+### Section 7.2: Termination with Notice
+Either party may terminate this agreement with 90 days written notice for:
+- Material breach of contract terms (with 30-day cure period)
+- Change in business structure or ownership
+- Regulatory changes affecting operations
+- Mutual agreement of parties
+
+### Section 7.3: Post-Termination Obligations
+Upon termination, Dispatcher must fulfill the following obligations:
+- **Commission Payments:** Pay all outstanding commissions for 36 months
+- **Reporting Requirements:** Provide detailed monthly reports for 18 months
+- **Audit Cooperation:** Cooperate with audits for 60 months
+- **Record Maintenance:** Maintain all records for 10 years
+- **Carrier Relationship:** Transfer Carrier relationship management to FleetFlow
+- **Non-Compete:** 24-month non-compete period for similar AI lead generation services
+
+### Section 7.4: Survival Provisions
+The following provisions survive termination indefinitely:
+- Confidentiality and non-disclosure obligations
+- Audit rights and record retention requirements
+- Penalty and collection provisions
+- Governing law and dispute resolution
+- Indemnification obligations
+
+## ARTICLE VIII: CONFIDENTIALITY AND NON-DISCLOSURE
+
+### Section 8.1: Confidential Information Definition
+Confidential information includes but is not limited to:
+- All terms and conditions of this agreement
+- Revenue data and financial information
+- AI Flow platform algorithms and methodologies
+- Lead generation techniques and sources
+- Carrier and shipper contact information
+- Pricing strategies and rate structures
+- Business processes and operational procedures
+- Performance metrics and analytics
+
+### Section 8.2: Non-Disclosure Obligations
+Dispatcher agrees to:
+- Maintain strict confidentiality of all FleetFlow proprietary information
+- Not disclose lead generation methods, pricing, or business practices to competitors
+- Implement appropriate security measures to protect confidential data
+- Limit access to confidential information to essential personnel only
+- Execute separate NDAs for all personnel with access to confidential information
+
+### Section 8.3: Permitted Disclosures
+Confidential information may be disclosed only:
+- As required by law or court order (with advance notice to FleetFlow)
+- To professional advisors bound by confidentiality obligations
+- With prior written consent from FleetFlow
+- To the extent information becomes publicly available through no breach of this agreement
+
+## ARTICLE IX: INDEMNIFICATION AND LIABILITY
+
+### Section 9.1: Dispatcher Indemnification
+Dispatcher agrees to indemnify and hold harmless FleetFlow from:
+- All claims arising from Dispatcher's operations with Carrier
+- DOT, FMCSA, or other regulatory violations
+- Cargo damage, loss, or delay claims
+- Driver-related accidents or incidents
+- Insurance coverage gaps or lapses
+- Third-party claims related to Dispatcher's services
+
+### Section 9.2: FleetFlow Indemnification
+FleetFlow agrees to indemnify Dispatcher from claims arising from:
+- Defects in AI Flow platform technology
+- Errors in lead generation or qualification
+- Breach of FleetFlow's confidentiality obligations
+- Misrepresentation of Carrier information
+
+### Section 9.3: Limitation of Liability
+Neither party shall be liable for consequential, indirect, or punitive damages, except in cases of fraud, willful misconduct, or breach of confidentiality obligations.
+
+## ARTICLE X: GOVERNING LAW AND DISPUTE RESOLUTION
+
+### Section 10.1: Governing Law
+This agreement is governed by the laws of the State of Georgia, without regard to conflict of law principles.
+
+### Section 10.2: Dispute Resolution Process
+**Step 1:** Direct negotiation between parties (30 days)
+**Step 2:** Mediation through American Arbitration Association (60 days)
+**Step 3:** Binding arbitration in Atlanta, Georgia
+**Step 4:** Final resort to courts of Fulton County, Georgia
+
+### Section 10.3: Legal Fees and Costs
+The prevailing party in any legal proceeding shall be entitled to recovery of reasonable attorney's fees, court costs, and expenses.
+
+## ARTICLE XI: MISCELLANEOUS PROVISIONS
+
+### Section 11.1: Entire Agreement
+This document constitutes the entire agreement between the parties and supersedes all prior agreements, understandings, or representations.
+
+### Section 11.2: Amendment and Modification
+This agreement may only be amended by written agreement signed by all parties.
+
+### Section 11.3: Severability
+If any provision is deemed invalid or unenforceable, the remainder of the agreement shall remain in full force and effect.
+
+### Section 11.4: Force Majeure
+Neither party shall be liable for delays or failures due to circumstances beyond their reasonable control.
+
+## ARTICLE XII: SIGNATURES AND EXECUTION
+
+**FleetFlow Technologies, Inc.**
+
+By: _________________________________
+Name: [Name]
+Title: Chief Revenue Officer
+Date: _______________________________
+
+**${contract.parties.dispatcher!.company}**
+
+By: _________________________________
+Name: ${contract.parties.dispatcher!.name}
+Title: Operations Manager
+Date: _______________________________
+
+**${contract.parties.carrier!.company}** (Acknowledgment)
+
+By: _________________________________
+Name: ${contract.parties.carrier!.name}
+Title: Fleet Manager
+Date: _______________________________
+
+---
+
+## IMPORTANT LEGAL NOTICES
+
+**BINDING AGREEMENT:** This contract contains legally binding obligations with significant financial consequences. All parties should review carefully and consult with legal counsel before signing.
+
+**AI LEAD GENERATION NOTICE:** This agreement specifically governs revenue generated from carriers introduced through FleetFlow's proprietary AI Flow lead generation system. Unauthorized contact or solicitation of these carriers outside this agreement will result in substantial penalties and legal action.
+
+**REGULATORY COMPLIANCE:** All parties must maintain appropriate operating authority, insurance coverage, and regulatory compliance throughout the term of this agreement.
+
+**CONTRACT NUMBER:** ${contract.contractNumber}
+**EFFECTIVE DATE:** ${new Date(contract.metadata.effectiveDate).toLocaleDateString()}
+**FLEETFLOW AI FLOW PLATFORM VERSION:** 2025.1
     `;
 
     return contractText;

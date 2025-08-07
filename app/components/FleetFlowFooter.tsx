@@ -28,7 +28,7 @@ export default function FleetFlowFooter({
           {showLogo && (
             <div className='flex items-center gap-3'>
               <img
-                src='/images/new fleetflow logo.png'
+                src='/images/fleetflow logo tms.jpg'
                 alt='FleetFlow Logo'
                 style={{
                   width: '28px',
@@ -36,7 +36,7 @@ export default function FleetFlowFooter({
                   objectFit: 'contain',
                 }}
                 onError={(e) => {
-                  e.currentTarget.src = '/images/fleet-flow-logo.png';
+                  e.currentTarget.src = '/images/fleetflow logo tms.jpg';
                 }}
               />
               <span
