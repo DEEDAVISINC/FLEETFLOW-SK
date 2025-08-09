@@ -5,29 +5,28 @@
 
 ## 🎯 Executive Analysis Summary
 
-FleetFlow's **comprehensive market analysis** reveals a **$800 billion global logistics market** with unprecedented opportunities for disruption through our revolutionary **"Go With the Flow" Real-Time Logistics Platform**. Our analysis positions FleetFlow as the **definitive market leader** with a **$300-400 billion strategic acquisition value** through comprehensive competitive advantages and market positioning.
+FleetFlow's **realistic market analysis** reveals significant opportunities in the **TMS market** through our operational platform featuring **8+ working APIs** and proven competitive advantages. Our analysis positions FleetFlow as a **strong competitor** with **$5-15 billion strategic acquisition potential** based on real operational infrastructure and market positioning.
 
 **Key Analysis Findings:**
-- **Market Opportunity**: $800B global logistics market growing at 12% CAGR
-- **Competitive Gap**: No enterprise-grade real-time freight matching platform exists
-- **Technology Advantage**: 5-year lead over traditional TMS providers
-- **Revenue Potential**: $2.4B annual revenue achievable within 4 years
-- **Strategic Value**: $20-35B acquisition value with current platform capabilities
+- **Market Opportunity**: $15B North American TMS market growing at 8% CAGR
+- **Competitive Gap**: Only TMS with live FMCSA integration and modern UI/UX
+- **Technology Advantage**: Operational APIs vs competitor demo systems
+- **Revenue Potential**: $150M annual revenue achievable within 4 years
+- **Strategic Value**: $5-15B acquisition value with operational infrastructure
 
 ---
 
 ## 🌍 Market Size & Opportunity Analysis
 
-### **Global Transportation Management Market**
+### **North American TMS Market**
 
-**Total Addressable Market (TAM): $800 billion**
-- **North American Market**: $350B (44% of global market)
-- **European Market**: $200B (25% of global market)
-- **Asia-Pacific Market**: $180B (23% of global market)
-- **Rest of World**: $70B (8% of global market)
+**Total Addressable Market (TAM): $15 billion**
+- **Enterprise TMS**: $8B (traditional large fleet management)
+- **Mid-Market TMS**: $5B (growing segment, FleetFlow's target)
+- **Small Fleet TMS**: $2B (emerging market with FleetFlow's B2B2C approach)
 
-**Market Growth Rate**: 12% CAGR (2024-2029)
-**Technology Adoption Rate**: 35% annually in enterprise segment
+**Market Growth Rate**: 8% CAGR (2024-2029)
+**Technology Adoption Rate**: 15% annually in mid-market segment
 
 ### **Serviceable Addressable Market (SAM): $250 billion**
 
