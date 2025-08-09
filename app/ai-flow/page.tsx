@@ -477,6 +477,18 @@ export default function AIFlowPage() {
               CRM Manager
             </TabsTrigger>
             <TabsTrigger
+              value='pharmaceutical-leads'
+              className='flex items-center gap-2'
+            >
+              💊 Pharmaceutical Leads
+            </TabsTrigger>
+            <TabsTrigger
+              value='medical-courier-leads'
+              className='flex items-center gap-2'
+            >
+              🏥 Medical Courier Leads
+            </TabsTrigger>
+            <TabsTrigger
               value='strategic-acquisition'
               className='flex items-center gap-2'
             >
@@ -1130,6 +1142,490 @@ export default function AIFlowPage() {
           {/* CRM Lead Manager Tab - INTERACTIVE CRM */}
           <TabsContent value='crm-manager' className='space-y-6'>
             <CRMLeadManager />
+          </TabsContent>
+
+          {/* Pharmaceutical Leads Tab */}
+          <TabsContent value='pharmaceutical-leads' className='space-y-6'>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              {/* Pharmaceutical Lead Discovery */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    💊 Pharmaceutical Lead Discovery
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='grid grid-cols-2 gap-4'>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-blue-600'>
+                          47
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Active Pharma Leads
+                        </div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-green-600'>
+                          12
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Converted This Month
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-2'>
+                      <div className='text-sm font-medium'>Lead Sources:</div>
+                      <div className='space-y-1 text-xs'>
+                        <div className='flex justify-between'>
+                          <span>🏥 Hospital Networks</span>
+                          <span className='font-medium'>18 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>🧪 Pharmaceutical Manufacturers</span>
+                          <span className='font-medium'>15 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>💊 Pharmacy Chains</span>
+                          <span className='font-medium'>9 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>🔬 Clinical Research Organizations</span>
+                          <span className='font-medium'>5 leads</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button className='w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'>
+                      🔍 Discover New Pharma Leads
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Lead Conversion Pipeline */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    🎯 Pharmaceutical Conversion Pipeline
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>Cold Chain Prospects</span>
+                        <Badge className='bg-blue-100 text-blue-800'>
+                          23 active
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-blue-600'
+                          style={{ width: '65%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>Temperature Controlled</span>
+                        <Badge className='bg-green-100 text-green-800'>
+                          18 qualified
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-green-600'
+                          style={{ width: '78%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>FDA Compliance</span>
+                        <Badge className='bg-purple-100 text-purple-800'>
+                          12 negotiating
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-purple-600'
+                          style={{ width: '45%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>
+                          Clinical Trial Logistics
+                        </span>
+                        <Badge className='bg-orange-100 text-orange-800'>
+                          8 closing
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-orange-600'
+                          style={{ width: '85%' }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Active Pharmaceutical Leads Table */}
+            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  📋 Active Pharmaceutical Leads
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-4'>
+                  {/* Header */}
+                  <div className='grid grid-cols-6 gap-4 text-xs font-medium tracking-wide text-gray-600 uppercase'>
+                    <div>Company</div>
+                    <div>Service Type</div>
+                    <div>Temperature Req.</div>
+                    <div>Compliance</div>
+                    <div>Value</div>
+                    <div>Status</div>
+                  </div>
+
+                  {/* Lead Rows */}
+                  {[
+                    {
+                      company: 'Pfizer Global Supply',
+                      service: 'Cold Chain Distribution',
+                      temperature: '2-8°C',
+                      compliance: 'FDA, GMP',
+                      value: '$2.4M',
+                      status: 'qualified',
+                      urgency: 'high',
+                    },
+                    {
+                      company: 'Johnson & Johnson',
+                      service: 'Clinical Trial Transport',
+                      temperature: '-20°C',
+                      compliance: 'FDA, GCP',
+                      value: '$1.8M',
+                      status: 'negotiating',
+                      urgency: 'medium',
+                    },
+                    {
+                      company: 'Moderna Logistics',
+                      service: 'Vaccine Distribution',
+                      temperature: '-70°C',
+                      compliance: 'FDA, CDC',
+                      value: '$3.2M',
+                      status: 'proposal',
+                      urgency: 'critical',
+                    },
+                    {
+                      company: 'Merck Sharp & Dohme',
+                      service: 'Hospital Direct Delivery',
+                      temperature: '15-25°C',
+                      compliance: 'FDA, USP',
+                      value: '$950K',
+                      status: 'discovery',
+                      urgency: 'low',
+                    },
+                  ].map((lead, index) => (
+                    <div
+                      key={index}
+                      className='grid grid-cols-6 items-center gap-4 rounded-lg border border-gray-100 p-3 hover:bg-gray-50'
+                    >
+                      <div className='font-medium'>{lead.company}</div>
+                      <div className='text-sm text-gray-600'>
+                        {lead.service}
+                      </div>
+                      <div>
+                        <Badge className='bg-blue-100 text-xs text-blue-800'>
+                          {lead.temperature}
+                        </Badge>
+                      </div>
+                      <div>
+                        <Badge className='bg-green-100 text-xs text-green-800'>
+                          {lead.compliance}
+                        </Badge>
+                      </div>
+                      <div className='font-medium text-green-600'>
+                        {lead.value}
+                      </div>
+                      <div>
+                        <Badge
+                          className={
+                            lead.status === 'qualified'
+                              ? 'bg-green-100 text-green-800'
+                              : lead.status === 'negotiating'
+                                ? 'bg-blue-100 text-blue-800'
+                                : lead.status === 'proposal'
+                                  ? 'bg-orange-100 text-orange-800'
+                                  : 'bg-gray-100 text-gray-800'
+                          }
+                        >
+                          {lead.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Medical Courier Leads Tab */}
+          <TabsContent value='medical-courier-leads' className='space-y-6'>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              {/* Medical Courier Lead Discovery */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    🏥 Medical Courier Lead Discovery
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='grid grid-cols-2 gap-4'>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-red-600'>
+                          32
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Active Medical Leads
+                        </div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-green-600'>
+                          8
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Converted This Month
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-2'>
+                      <div className='text-sm font-medium'>Lead Sources:</div>
+                      <div className='space-y-1 text-xs'>
+                        <div className='flex justify-between'>
+                          <span>🏥 Hospitals & Medical Centers</span>
+                          <span className='font-medium'>14 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>🧪 Clinical Laboratories</span>
+                          <span className='font-medium'>8 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>💊 Pharmacy Chains</span>
+                          <span className='font-medium'>6 leads</span>
+                        </div>
+                        <div className='flex justify-between'>
+                          <span>🔬 Research Facilities</span>
+                          <span className='font-medium'>4 leads</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button className='w-full rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700'>
+                      🔍 Discover New Medical Courier Leads
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Medical Courier Conversion Pipeline */}
+              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    🎯 Medical Courier Conversion Pipeline
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>STAT Delivery Prospects</span>
+                        <Badge className='bg-red-100 text-red-800'>
+                          16 active
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-red-600'
+                          style={{ width: '72%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>
+                          Medical Equipment Transport
+                        </span>
+                        <Badge className='bg-blue-100 text-blue-800'>
+                          12 qualified
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-blue-600'
+                          style={{ width: '68%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>
+                          Clinical Trial Logistics
+                        </span>
+                        <Badge className='bg-purple-100 text-purple-800'>
+                          9 negotiating
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-purple-600'
+                          style={{ width: '55%' }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm'>
+                          Emergency Medical Transport
+                        </span>
+                        <Badge className='bg-orange-100 text-orange-800'>
+                          6 closing
+                        </Badge>
+                      </div>
+                      <div className='h-2 rounded-full bg-gray-200'>
+                        <div
+                          className='h-2 rounded-full bg-orange-600'
+                          style={{ width: '88%' }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Active Medical Courier Leads Table */}
+            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  📋 Active Medical Courier Leads
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-4'>
+                  {/* Header */}
+                  <div className='grid grid-cols-6 gap-4 text-xs font-medium tracking-wide text-gray-600 uppercase'>
+                    <div>Medical Facility</div>
+                    <div>Service Type</div>
+                    <div>Urgency Level</div>
+                    <div>Compliance</div>
+                    <div>Value</div>
+                    <div>Status</div>
+                  </div>
+
+                  {/* Lead Rows */}
+                  {[
+                    {
+                      facility: 'Mayo Clinic',
+                      service: 'STAT Lab Transport',
+                      urgency: 'Critical',
+                      compliance: 'HIPAA, DOT',
+                      value: '$850K',
+                      status: 'qualified',
+                      urgencyLevel: 'critical',
+                    },
+                    {
+                      facility: 'Johns Hopkins Hospital',
+                      service: 'Medical Equipment Delivery',
+                      urgency: 'High',
+                      compliance: 'HIPAA, OSHA',
+                      value: '$640K',
+                      status: 'negotiating',
+                      urgencyLevel: 'high',
+                    },
+                    {
+                      facility: 'Cleveland Clinic',
+                      service: 'Clinical Trial Logistics',
+                      urgency: 'Medium',
+                      compliance: 'FDA, GCP',
+                      value: '$1.2M',
+                      status: 'proposal',
+                      urgencyLevel: 'medium',
+                    },
+                    {
+                      facility: 'Mass General Hospital',
+                      service: 'Emergency Organ Transport',
+                      urgency: 'Critical',
+                      compliance: 'HIPAA, UNOS',
+                      value: '$2.1M',
+                      status: 'discovery',
+                      urgencyLevel: 'critical',
+                    },
+                  ].map((lead, index) => (
+                    <div
+                      key={index}
+                      className='grid grid-cols-6 items-center gap-4 rounded-lg border border-gray-100 p-3 hover:bg-gray-50'
+                    >
+                      <div className='font-medium'>{lead.facility}</div>
+                      <div className='text-sm text-gray-600'>
+                        {lead.service}
+                      </div>
+                      <div>
+                        <Badge
+                          className={
+                            lead.urgencyLevel === 'critical'
+                              ? 'bg-red-100 text-red-800'
+                              : lead.urgencyLevel === 'high'
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                          }
+                        >
+                          {lead.urgency}
+                        </Badge>
+                      </div>
+                      <div>
+                        <Badge className='bg-blue-100 text-xs text-blue-800'>
+                          {lead.compliance}
+                        </Badge>
+                      </div>
+                      <div className='font-medium text-green-600'>
+                        {lead.value}
+                      </div>
+                      <div>
+                        <Badge
+                          className={
+                            lead.status === 'qualified'
+                              ? 'bg-green-100 text-green-800'
+                              : lead.status === 'negotiating'
+                                ? 'bg-blue-100 text-blue-800'
+                                : lead.status === 'proposal'
+                                  ? 'bg-orange-100 text-orange-800'
+                                  : 'bg-gray-100 text-gray-800'
+                          }
+                        >
+                          {lead.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Strategic Acquisition Pipeline Tab */}

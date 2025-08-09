@@ -3,8 +3,14 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import EmergencyLoadPricingWidget from '../components/EmergencyLoadPricingWidget';
+import MultiStateQuoteBuilder from '../components/MultiStateQuoteBuilder';
 import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
 import VolumeDiscountWidget from '../components/VolumeDiscountWidget';
+import {
+  MultiStateConsolidatedQuote,
+  multiStateQuoteService,
+} from '../services/MultiStateQuoteService';
+import { universalQuoteService } from '../services/universal-quote-service';
 
 // Quote interface
 interface Quote {
@@ -195,8 +201,15 @@ export default function FreightFlowQuotingEngine() {
 
   // Integrated Workflow State Management
   const [workflowStep, setWorkflowStep] = useState<
-    'customer' | 'analysis' | 'generation' | 'management'
+    'customer' | 'analysis' | 'generation' | 'management' | 'multi-state-quotes'
   >('customer');
+
+  // Multi-State Quote functionality
+  const [multiStateQuotes, setMultiStateQuotes] = useState<
+    MultiStateConsolidatedQuote[]
+  >([]);
+  const [selectedQuote, setSelectedQuote] =
+    useState<MultiStateConsolidatedQuote | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [workflowData, setWorkflowData] = useState({
     customer: {
@@ -1149,7 +1162,7 @@ export default function FreightFlowQuotingEngine() {
                         borderRadius: '50%',
                         boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         fontSize: '14px',
@@ -1310,6 +1323,11 @@ export default function FreightFlowQuotingEngine() {
                 { id: 'analysis', label: '🧠 AI Analysis', icon: '🧠' },
                 { id: 'generation', label: '💎 Quote Generation', icon: '💎' },
                 { id: 'management', label: '📋 Management', icon: '📋' },
+                {
+                  id: 'multi-state-quotes',
+                  label: '🌎 Multi-State Quotes',
+                  icon: '🌎',
+                },
               ].map((step) => (
                 <button
                   key={step.id}
@@ -1912,6 +1930,30 @@ export default function FreightFlowQuotingEngine() {
                     >
                       📊 View Analytics
                     </button>
+                    <Link
+                      href='/routes?tab=saved-quotes'
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        display: 'inline-block',
+                        transition: 'transform 0.2s ease',
+                      }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.transform = 'translateY(-1px)')
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.transform = 'translateY(0)')
+                      }
+                    >
+                      🗺️ Plan Route
+                    </Link>
                     <button
                       onClick={() => setWorkflowStep('customer')}
                       style={{
@@ -1937,6 +1979,7 @@ export default function FreightFlowQuotingEngine() {
                     borderRadius: '12px',
                     padding: '24px',
                     border: '1px solid rgba(255, 255, 255, 0.15)',
+                    overflow: 'hidden',
                   }}
                 >
                   <h4 style={{ color: 'white', marginBottom: '16px' }}>
@@ -1944,22 +1987,267 @@ export default function FreightFlowQuotingEngine() {
                   </h4>
                   <div
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr 1fr',
-                      gap: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '24px',
+                      width: '100%',
                     }}
                   >
-                    <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                      }}
+                    >
                       <EmergencyLoadPricingWidget />
                     </div>
-                    <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                      }}
+                    >
                       <SpotRateOptimizationWidget />
                     </div>
-                    <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                      }}
+                    >
                       <VolumeDiscountWidget />
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {workflowStep === 'multi-state-quotes' && (
+              <div>
+                {/* Multi-State Quotes Dashboard */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    marginBottom: '32px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    <div>
+                      <h2
+                        style={{
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          color: 'white',
+                          margin: '0 0 8px 0',
+                        }}
+                      >
+                        🌎 Multi-State Consolidated Quotes
+                      </h2>
+                      <p
+                        style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}
+                      >
+                        Multi-state logistics quote management
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        onClick={() => {
+                          const quotes = multiStateQuoteService.getAllQuotes();
+                          setMultiStateQuotes(quotes);
+                        }}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s ease',
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.background =
+                            'rgba(255, 255, 255, 0.3)')
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.background =
+                            'rgba(255, 255, 255, 0.2)')
+                        }
+                      >
+                        🔄 Refresh Quotes
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Existing Quotes Summary */}
+                  {multiStateQuotes.length > 0 && (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '20px',
+                        marginBottom: '32px',
+                      }}
+                    >
+                      {multiStateQuotes.slice(0, 4).map((quote) => (
+                        <div
+                          key={quote.id}
+                          style={{
+                            background: 'rgba(30, 58, 138, 0.2)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            border: '1px solid rgba(30, 58, 138, 0.3)',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onClick={() => setSelectedQuote(quote)}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(30, 58, 138, 0.3)';
+                            e.currentTarget.style.transform =
+                              'translateY(-2px)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(30, 58, 138, 0.2)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <h3
+                              style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                margin: 0,
+                              }}
+                            >
+                              {quote.quoteName}
+                            </h3>
+                            <span
+                              style={{
+                                background:
+                                  quote.status === 'approved'
+                                    ? '#10b981'
+                                    : quote.status === 'under_review'
+                                      ? '#3b82f6'
+                                      : quote.status === 'pending'
+                                        ? '#f59e0b'
+                                        : '#6b7280',
+                                color: 'white',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                fontSize: '10px',
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {quote.status.replace('_', ' ')}
+                            </span>
+                          </div>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            {quote.client.name}
+                          </p>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  color: '#1e3a8a',
+                                  fontSize: '18px',
+                                  fontWeight: '700',
+                                }}
+                              >
+                                $
+                                {(
+                                  quote.financialSummary.totalAnnualRevenue /
+                                  1000000
+                                ).toFixed(1)}
+                                M
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  fontSize: '12px',
+                                }}
+                              >
+                                Annual Value
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  color: 'white',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {quote.stateRoutes.length} States
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  fontSize: '12px',
+                                }}
+                              >
+                                {quote.financialSummary.totalAnnualVolume.toLocaleString()}{' '}
+                                loads
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Multi-State Quote Builder */}
+                <MultiStateQuoteBuilder
+                  onQuoteCreated={(quote) => {
+                    setMultiStateQuotes((prev) => [...prev, quote]);
+                    console.log('New multi-state quote created:', quote);
+                  }}
+                  onQuoteUpdated={(quote) => {
+                    setMultiStateQuotes((prev) =>
+                      prev.map((q) => (q.id === quote.id ? quote : q))
+                    );
+                    console.log('Multi-state quote updated:', quote);
+                  }}
+                />
               </div>
             )}
           </div>
@@ -3894,6 +4182,175 @@ export default function FreightFlowQuotingEngine() {
                         {quote.details.destination && (
                           <div>Destination: {quote.details.destination}</div>
                         )}
+                      </div>
+
+                      {/* Quote Actions */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '8px',
+                          marginTop: '16px',
+                          paddingTop: '16px',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                      >
+                        <Link
+                          href={`/routes?tab=saved-quotes&quote=${quote.id}`}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                            color: 'white',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            textDecoration: 'none',
+                            display: 'inline-block',
+                            transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-1px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 4px 12px rgba(139, 92, 246, 0.3)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          🗺️ Plan Route
+                        </Link>
+                        <button
+                          onClick={() => {
+                            // Convert current quote to Universal Quote format and save
+                            const universalQuote = {
+                              quoteNumber: quote.quoteNumber,
+                              type: quote.type,
+                              status: 'approved' as const,
+                              customer: {
+                                id:
+                                  'CUST-' +
+                                  Math.random()
+                                    .toString(36)
+                                    .substr(2, 6)
+                                    .toUpperCase(),
+                                name:
+                                  'Customer from Quote ' + quote.quoteNumber,
+                                email: 'customer@example.com',
+                                phone: '+1-555-0123',
+                              },
+                              origin: {
+                                address: '123 Origin St',
+                                city:
+                                  quote.details.origin?.split(',')[0] ||
+                                  'Unknown City',
+                                state:
+                                  quote.details.origin?.split(',')[1]?.trim() ||
+                                  'Unknown State',
+                                zipCode: '12345',
+                              },
+                              destination: {
+                                address: '456 Destination Ave',
+                                city:
+                                  quote.details.destination?.split(',')[0] ||
+                                  'Unknown City',
+                                state:
+                                  quote.details.destination
+                                    ?.split(',')[1]
+                                    ?.trim() || 'Unknown State',
+                                zipCode: '54321',
+                              },
+                              cargo: {
+                                weight: quote.details.weight || 10000,
+                                pieces: quote.details.pallets || 1,
+                                description: `${quote.type} shipment`,
+                                hazmat: false,
+                              },
+                              pricing: {
+                                baseRate: quote.baseRate,
+                                fuelSurcharge: quote.fuelSurcharge,
+                                accessorials: 0,
+                                taxes: 0,
+                                total: quote.total,
+                                currency: 'USD',
+                              },
+                              timeline: {
+                                pickupDate: new Date(
+                                  Date.now() + 24 * 60 * 60 * 1000
+                                ).toISOString(),
+                                deliveryDate: new Date(
+                                  Date.now() + 3 * 24 * 60 * 60 * 1000
+                                ).toISOString(),
+                                transitTime: 48,
+                                urgency: 'standard' as const,
+                              },
+                              equipment: {
+                                type: quote.details.equipmentType || quote.type,
+                              },
+                              routeData: {
+                                distance: quote.details.miles || 500,
+                                estimatedDuration:
+                                  (quote.details.miles || 500) / 55,
+                                routePlanningStatus: 'not_planned' as const,
+                              },
+                              createdBy: 'quoting-system@fleetflow.com',
+                              notes: `Converted from ${quote.type} quote ${quote.quoteNumber}`,
+                            };
+
+                            universalQuoteService.createQuote(universalQuote);
+                            alert(
+                              `Quote ${quote.quoteNumber} saved for route planning!`
+                            );
+                          }}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            color: 'white',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-1px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 4px 12px rgba(16, 185, 129, 0.3)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          💾 Save for Routes
+                        </button>
+                        <button
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(255, 255, 255, 0.3)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(255, 255, 255, 0.2)';
+                          }}
+                        >
+                          ✏️ Edit
+                        </button>
                       </div>
                     </div>
                   ))}

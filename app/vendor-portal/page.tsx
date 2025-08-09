@@ -2303,6 +2303,542 @@ export default function VendorPortalPage() {
           </div>
         )}
 
+        {activeTab === 'operations' && (
+          <div>
+            {/* Enhanced Header with Detailed Box */}
+            <div
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(217, 119, 6, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '24px',
+                border: '1px solid rgba(249, 115, 22, 0.3)',
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  right: '0',
+                  height: '3px',
+                  background:
+                    'linear-gradient(90deg, #f97316, #ea580c, #f97316)',
+                  borderRadius: '16px 16px 0 0',
+                }}
+              />
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '1.8rem',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                ⚡ Go With the Flow Operations
+              </h2>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '1rem',
+                  marginBottom: '24px',
+                }}
+              >
+                Professional load requests with intelligent matching and
+                market-based pricing
+              </p>
+            </div>
+
+            {/* Request a Truck Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                marginBottom: '24px',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '1.4rem',
+                  fontWeight: '600',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                🚛 Request a Truck
+              </h3>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '24px',
+                }}
+              >
+                {/* Request Form */}
+                <div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Pickup Location
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='Enter pickup address'
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Delivery Location
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='Enter delivery address'
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          display: 'block',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Weight (lbs)
+                      </label>
+                      <input
+                        type='number'
+                        placeholder='25000'
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          fontSize: '0.9rem',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          display: 'block',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Equipment Type
+                      </label>
+                      <select
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        <option value='dry-van'>Dry Van</option>
+                        <option value='reefer'>Reefer</option>
+                        <option value='flatbed'>Flatbed</option>
+                        <option value='step-deck'>Step Deck</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Pickup Date & Time
+                    </label>
+                    <input
+                      type='datetime-local'
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                      color: 'white',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(249, 115, 22, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(
+                          '/api/go-with-the-flow/shipper',
+                          {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              action: 'request-truck',
+                              shipperId: session?.shipperId,
+                              // Add form data here
+                            }),
+                          }
+                        );
+                        const result = await response.json();
+                        if (result.success) {
+                          alert(
+                            'Truck request submitted! Estimated arrival: ' +
+                              result.data.estimatedArrival
+                          );
+                        }
+                      } catch (error) {
+                        console.error('Error requesting truck:', error);
+                      }
+                    }}
+                  >
+                    📋 Submit Load Request
+                  </button>
+                </div>
+
+                {/* Real-Time Pricing & Availability */}
+                <div>
+                  <h4
+                    style={{
+                      color: 'white',
+                      marginBottom: '16px',
+                      fontSize: '1.1rem',
+                    }}
+                  >
+                    💰 Market Pricing
+                  </h4>
+
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                        Estimated Rate:
+                      </span>
+                      <span
+                        style={{
+                          color: '#34d399',
+                          fontSize: '1.2rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        $2,450
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '8px',
+                      }}
+                    >
+                      <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                        Distance:
+                      </span>
+                      <span style={{ color: 'white' }}>847 miles</span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '8px',
+                      }}
+                    >
+                      <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                        Estimated Transit:
+                      </span>
+                      <span style={{ color: 'white' }}>2-3 days</span>
+                    </div>
+                  </div>
+
+                  <h4
+                    style={{
+                      color: 'white',
+                      marginBottom: '16px',
+                      fontSize: '1.1rem',
+                    }}
+                  >
+                    🚛 Available Drivers Nearby
+                  </h4>
+
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    {[
+                      {
+                        name: 'Mike Rodriguez',
+                        distance: '12 miles',
+                        rating: 4.9,
+                        eta: '15 min',
+                      },
+                      {
+                        name: 'Sarah Johnson',
+                        distance: '18 miles',
+                        rating: 4.8,
+                        eta: '22 min',
+                      },
+                      {
+                        name: 'David Chen',
+                        distance: '25 miles',
+                        rating: 4.7,
+                        eta: '28 min',
+                      },
+                    ].map((driver, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '10px',
+                          padding: '12px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div style={{ color: 'white', fontWeight: '500' }}>
+                            {driver.name}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '0.8rem',
+                            }}
+                          >
+                            {driver.distance} • ⭐ {driver.rating}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            color: '#34d399',
+                            fontSize: '0.9rem',
+                            fontWeight: '500',
+                          }}
+                        >
+                          Available: {driver.eta}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Requests */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '1.4rem',
+                  fontWeight: '600',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                📋 Active Load Requests
+              </h3>
+
+              <div style={{ display: 'grid', gap: '16px' }}>
+                {[
+                  {
+                    id: 'REQ-001',
+                    pickup: 'Atlanta, GA',
+                    delivery: 'Miami, FL',
+                    status: 'Driver Assigned',
+                    driver: 'Mike Rodriguez',
+                    eta: '15 minutes',
+                    rate: '$2,450',
+                  },
+                  {
+                    id: 'REQ-002',
+                    pickup: 'Houston, TX',
+                    delivery: 'Dallas, TX',
+                    status: 'Searching...',
+                    driver: null,
+                    eta: 'Finding driver',
+                    rate: '$850',
+                  },
+                ].map((request, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          {request.id}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          📍 {request.pickup} → {request.delivery}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          {request.driver
+                            ? `Driver: ${request.driver}`
+                            : 'No driver assigned'}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div
+                          style={{
+                            color:
+                              request.status === 'Driver Assigned'
+                                ? '#34d399'
+                                : '#fbbf24',
+                            fontWeight: '500',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          {request.status}
+                        </div>
+                        <div style={{ color: 'white', fontWeight: '600' }}>
+                          {request.rate}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          Status: {request.eta}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'financials' && (
           <div>
             {/* Enhanced Header with Detailed Box */}

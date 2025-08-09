@@ -2276,6 +2276,249 @@ const BillingInvoicesPage = () => {
         </div>
       </div>
 
+      {/* Process New Payroll Section */}
+      <div
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05))',
+          border: '1px solid rgba(34, 197, 94, 0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px',
+        }}
+      >
+        <h3
+          style={{
+            color: '#22c55e',
+            margin: '0 0 16px 0',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+          }}
+        >
+          🎯 Process New Payroll
+        </h3>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <div>
+            <label
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.9rem',
+                marginBottom: '8px',
+                display: 'block',
+              }}
+            >
+              Pay Period Start
+            </label>
+            <input
+              type='date'
+              id='payPeriodStart'
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '0.9rem',
+              }}
+              defaultValue={
+                new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split('T')[0]
+              }
+            />
+          </div>
+          <div>
+            <label
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.9rem',
+                marginBottom: '8px',
+                display: 'block',
+              }}
+            >
+              Pay Period End
+            </label>
+            <input
+              type='date'
+              id='payPeriodEnd'
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '0.9rem',
+              }}
+              defaultValue={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+          <div>
+            <label
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.9rem',
+                marginBottom: '8px',
+                display: 'block',
+              }}
+            >
+              Pay Date
+            </label>
+            <input
+              type='date'
+              id='payDate'
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '0.9rem',
+              }}
+              defaultValue={
+                new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split('T')[0]
+              }
+            />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button
+            style={{
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onClick={async () => {
+              try {
+                const payPeriodStart = (
+                  document.getElementById('payPeriodStart') as HTMLInputElement
+                ).value;
+                const payPeriodEnd = (
+                  document.getElementById('payPeriodEnd') as HTMLInputElement
+                ).value;
+                const payDate = (
+                  document.getElementById('payDate') as HTMLInputElement
+                ).value;
+
+                const response = await fetch('/api/payroll/wave', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    action: 'process-payroll',
+                    payrollData: {
+                      payPeriodStart,
+                      payPeriodEnd,
+                      payDate,
+                      employees: [
+                        { employeeId: 'emp_001', hoursWorked: 80 },
+                        { employeeId: 'emp_002', hoursWorked: 80 },
+                        { employeeId: 'emp_003', hoursWorked: 80 },
+                      ],
+                    },
+                  }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                  alert(
+                    `✅ Payroll processed successfully!\\n\\nTotal Gross Pay: $${result.payrollRun.totalGrossPay.toFixed(2)}\\nTotal Taxes: $${result.payrollRun.totalTaxes.toFixed(2)}\\nTotal Net Pay: $${result.payrollRun.totalNetPay.toFixed(2)}\\n\\nEmployees: ${result.payrollRun.employees.length}`
+                  );
+                } else {
+                  alert(`❌ Error: ${result.error}`);
+                }
+              } catch (error) {
+                alert('❌ Failed to process payroll');
+                console.error('Payroll processing error:', error);
+              }
+            }}
+          >
+            ⚡ Process Payroll
+          </button>
+          <button
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onClick={async () => {
+              try {
+                const response = await fetch(
+                  '/api/payroll/wave?action=employees'
+                );
+                const result = await response.json();
+                if (result.success) {
+                  alert(
+                    `👥 Current Employees (${result.employees.length}):\\n\\n${result.employees.map((e) => `• ${e.firstName} ${e.lastName}\\n  Job: ${e.jobTitle}\\n  Pay: $${e.payRate}/${e.payType}\\n  Status: ${e.isActive ? 'Active' : 'Inactive'}`).join('\\n\\n')}`
+                  );
+                }
+              } catch (error) {
+                alert('❌ Failed to fetch employees');
+              }
+            }}
+          >
+            👥 View Employees
+          </button>
+          <button
+            style={{
+              background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onClick={async () => {
+              try {
+                const response = await fetch(
+                  '/api/payroll/wave?action=history&limit=5'
+                );
+                const result = await response.json();
+                if (result.success) {
+                  alert(
+                    `📊 Recent Payroll Runs (${result.history.length}):\\n\\n${result.history.map((h) => `• Period: ${h.payPeriodStart} to ${h.payPeriodEnd}\\n  Pay Date: ${h.payDate}\\n  Total Net: $${h.totalNetPay.toFixed(2)}\\n  Status: ${h.status.toUpperCase()}`).join('\\n\\n')}`
+                  );
+                }
+              } catch (error) {
+                alert('❌ Failed to fetch payroll history');
+              }
+            }}
+          >
+            📊 Payroll History
+          </button>
+        </div>
+      </div>
+
       <div
         style={{
           background: 'rgba(15, 23, 42, 0.8)',

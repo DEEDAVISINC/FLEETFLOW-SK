@@ -792,7 +792,7 @@ export default function AIFlowPlatform() {
                     background: '#ffffff',
                     animation: 'pulse 2s infinite',
                   }}
-                 />
+                />
               </div>
               <div
                 style={{
@@ -1163,67 +1163,32 @@ export default function AIFlowPlatform() {
               borderColor: 'rgba(245, 158, 11, 0.3)',
             },
             {
-              id: 'operations',
-              label: 'AI Operations',
-              icon: '🤖',
-              color: '#d946ef',
-              borderColor: 'rgba(217, 70, 239, 0.3)',
-            },
-            {
-              id: 'dispatch',
-              label: 'Dispatch',
-              icon: '🗂️',
-              color: '#3b82f6',
-              borderColor: 'rgba(59, 130, 246, 0.3)',
-            },
-            {
-              id: 'recruiting',
-              label: 'Recruiting',
-              icon: '👥',
-              color: '#ef4444',
-              borderColor: 'rgba(239, 68, 68, 0.3)',
-            },
-            {
               id: 'lead-generation',
-              label: 'Lead Generation',
+              label: 'Lead Generation Hub',
               icon: '🎯',
               color: '#f97316',
               borderColor: 'rgba(249, 115, 22, 0.3)',
             },
             {
-              id: 'customer-success',
-              label: 'Customer Success',
-              icon: '❤️',
-              color: '#ec4899',
-              borderColor: 'rgba(236, 72, 153, 0.3)',
+              id: 'operations',
+              label: 'Operations Center',
+              icon: '🤖',
+              color: '#d946ef',
+              borderColor: 'rgba(217, 70, 239, 0.3)',
             },
             {
-              id: 'scheduler',
-              label: 'Scheduler',
-              icon: '📅',
-              color: '#06b6d4',
-              borderColor: 'rgba(6, 182, 212, 0.3)',
+              id: 'customer-recruiting',
+              label: 'Customer & Recruiting',
+              icon: '👥',
+              color: '#ef4444',
+              borderColor: 'rgba(239, 68, 68, 0.3)',
             },
             {
               id: 'analytics',
-              label: 'Analytics',
+              label: 'Analytics & Sales',
               icon: '📈',
               color: '#8b5cf6',
               borderColor: 'rgba(139, 92, 246, 0.3)',
-            },
-            {
-              id: 'sales-division',
-              label: 'Sales Division',
-              icon: '🎯',
-              color: '#22c55e',
-              borderColor: 'rgba(34, 197, 94, 0.3)',
-            },
-            {
-              id: 'sales-analytics',
-              label: 'Sales Analytics',
-              icon: '📊',
-              color: '#16a34a',
-              borderColor: 'rgba(22, 163, 74, 0.3)',
             },
           ].map((tab) => {
             const getGradient = (color: string) => {
@@ -1585,7 +1550,7 @@ export default function AIFlowPlatform() {
                         marginTop: '4px',
                         boxShadow: `0 0 8px ${insight.priority === 'high' ? '#ef4444' : insight.priority === 'medium' ? '#f59e0b' : '#10b981'}40`,
                       }}
-                     />
+                    />
                     <div style={{ flex: 1 }}>
                       <div
                         style={{
@@ -1704,6 +1669,554 @@ export default function AIFlowPlatform() {
           </div>
         )}
 
+        {activeView === 'lead-generation' && (
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '20px',
+              }}
+            >
+              <h2
+                style={{
+                  color: '#f97316',
+                  margin: 0,
+                  fontSize: '20px',
+                  fontWeight: '600',
+                }}
+              >
+                🎯 Lead Generation Hub
+              </h2>
+              <div
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  background: '#f97316',
+                  color: 'white',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                ALL VERTICALS
+              </div>
+            </div>
+
+            {/* Strategic Acquisition Pipeline */}
+            <div
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(234, 88, 12, 0.05))',
+                borderRadius: '12px',
+                padding: '24px',
+                marginBottom: '24px',
+                border: '2px solid rgba(249, 115, 22, 0.3)',
+                boxShadow: '0 8px 32px rgba(249, 115, 22, 0.2)',
+              }}
+            >
+              <h3
+                style={{
+                  color: '#f97316',
+                  marginBottom: '20px',
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  textAlign: 'center',
+                }}
+              >
+                🏆 Strategic Acquisition Pipeline
+              </h3>
+
+              {/* High-Value Verticals */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '24px',
+                }}
+              >
+                {/* Pharmaceutical Vertical */}
+                <div
+                  style={{
+                    background: 'rgba(220, 38, 38, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '2px solid rgba(220, 38, 38, 0.3)',
+                    boxShadow: '0 6px 20px rgba(220, 38, 38, 0.2)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#dc2626',
+                      marginBottom: '12px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    💊 Pharmaceutical Logistics
+                  </h4>
+                  <div
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '12px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <strong>COLD CHAIN SPECIALISTS</strong>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      1,426 Total Leads
+                    </div>
+                    <div
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      $7.4M Pipeline Value
+                    </div>
+                  </div>
+
+                  {/* Pharmaceutical Categories */}
+                  <div
+                    style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)' }}
+                  >
+                    <div style={{ marginBottom: '4px' }}>
+                      🏭 Manufacturers: 847 leads ($2.4M)
+                    </div>
+                    <div style={{ marginBottom: '4px' }}>
+                      📦 Distributors: 423 leads ($1.8M)
+                    </div>
+                    <div>🧪 Biotech/Clinical: 156 leads ($3.2M)</div>
+                  </div>
+                </div>
+
+                {/* Medical Courier Vertical */}
+                <div
+                  style={{
+                    background: 'rgba(5, 150, 105, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '2px solid rgba(5, 150, 105, 0.3)',
+                    boxShadow: '0 6px 20px rgba(5, 150, 105, 0.2)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#059669',
+                      marginBottom: '12px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    🏥 Medical Courier Services
+                  </h4>
+                  <div
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '12px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <strong>STAT DELIVERY SPECIALISTS</strong>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      1,190 Total Leads
+                    </div>
+                    <div
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      $5.3M Pipeline Value
+                    </div>
+                  </div>
+
+                  {/* Medical Categories */}
+                  <div
+                    style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)' }}
+                  >
+                    <div style={{ marginBottom: '4px' }}>
+                      🏥 Hospitals: 234 leads ($1.8M)
+                    </div>
+                    <div style={{ marginBottom: '4px' }}>
+                      🔬 Laboratories: 567 leads ($2.1M)
+                    </div>
+                    <div>🩺 Specialty Clinics: 389 leads ($1.4M)</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategic Acquisition Metrics */}
+              <div
+                style={{
+                  background: 'rgba(249, 115, 22, 0.15)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#f97316',
+                    marginBottom: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  📊 Strategic Acquisition Value Drivers
+                </h4>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      $12.7M
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      Total Pipeline
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        color: '#60a5fa',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      2,616
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      Active Leads
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      94%
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      AI Accuracy
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        color: '#ef4444',
+                        fontSize: '16px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      $7-11B
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      Acquisition Value
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Target Categories */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '24px',
+                }}
+              >
+                {[
+                  {
+                    title: '🏭 Pharmaceutical Manufacturers',
+                    description:
+                      'Small to mid-size manufacturers needing FDA-compliant transport',
+                    leads: '847 Active Leads',
+                    value: '$2.4M Pipeline',
+                    color: '#dc2626',
+                  },
+                  {
+                    title: '📦 Wholesalers & Distributors',
+                    description:
+                      'Regional distributors requiring temperature-controlled logistics',
+                    leads: '423 Active Leads',
+                    value: '$1.8M Pipeline',
+                    color: '#ea580c',
+                  },
+                  {
+                    title: '🧪 Specialty Pharmaceuticals',
+                    description:
+                      'Biotech companies with clinical trial logistics needs',
+                    leads: '156 Active Leads',
+                    value: '$3.2M Pipeline',
+                    color: '#dc2626',
+                  },
+                ].map((category, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: `2px solid ${category.color}40`,
+                      boxShadow: `0 4px 12px ${category.color}20`,
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: category.color,
+                        marginBottom: '8px',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {category.title}
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '12px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      {category.description}
+                    </p>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: '#10b981',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {category.leads}
+                      </span>
+                      <span
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {category.value}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* AI Lead Scoring */}
+              <div
+                style={{
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '16px',
+                }}
+              >
+                <h4 style={{ color: '#dc2626', marginBottom: '12px' }}>
+                  🤖 AI Lead Scoring Algorithm
+                </h4>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {[
+                    { factor: 'Company Size', weight: '25%', score: '85/100' },
+                    {
+                      factor: 'Cold Chain Needs',
+                      weight: '30%',
+                      score: '92/100',
+                    },
+                    {
+                      factor: 'Geographic Fit',
+                      weight: '20%',
+                      score: '78/100',
+                    },
+                    {
+                      factor: 'Compliance Requirements',
+                      weight: '25%',
+                      score: '96/100',
+                    },
+                  ].map((factor, index) => (
+                    <div key={index} style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {factor.factor}
+                      </div>
+                      <div
+                        style={{
+                          color: '#dc2626',
+                          fontSize: '14px',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {factor.score}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '10px',
+                        }}
+                      >
+                        Weight: {factor.weight}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Pharmaceutical Leads */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                }}
+              >
+                <h4 style={{ color: '#dc2626', marginBottom: '12px' }}>
+                  🔥 Hot Pharmaceutical Leads
+                </h4>
+                {[
+                  {
+                    company: 'BioTech Solutions Inc.',
+                    type: 'Manufacturer',
+                    score: 94,
+                    value: '$250K',
+                    status: 'Contact Made',
+                  },
+                  {
+                    company: 'Regional Pharma Dist.',
+                    type: 'Distributor',
+                    score: 89,
+                    value: '$180K',
+                    status: 'Proposal Sent',
+                  },
+                  {
+                    company: 'Clinical Trials Co.',
+                    type: 'Biotech',
+                    score: 91,
+                    value: '$320K',
+                    status: 'Meeting Scheduled',
+                  },
+                ].map((lead, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 0',
+                      borderBottom:
+                        index < 2 ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {lead.company}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        {lead.type}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ color: '#10b981', fontSize: '12px' }}>
+                        Score: {lead.score}/100
+                      </div>
+                      <div style={{ color: '#f59e0b', fontSize: '12px' }}>
+                        {lead.value}
+                      </div>
+                      <div style={{ color: '#60a5fa', fontSize: '10px' }}>
+                        {lead.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeView === 'operations' && (
           <div>
             <div
@@ -1722,7 +2235,7 @@ export default function AIFlowPlatform() {
                   fontWeight: '600',
                 }}
               >
-                🤖 AI Operations Center
+                🤖 Operations Center
               </h2>
               <div
                 style={{
@@ -1742,7 +2255,7 @@ export default function AIFlowPlatform() {
           </div>
         )}
 
-        {activeView === 'customer-success' && (
+        {activeView === 'customer-recruiting' && (
           <div>
             <h2
               style={{
@@ -1756,7 +2269,7 @@ export default function AIFlowPlatform() {
                 gap: '12px',
               }}
             >
-              ❤️ AI Customer Success Platform & CRM
+              👥 Customer & Recruiting Hub
               <div
                 style={{
                   padding: '4px 8px',

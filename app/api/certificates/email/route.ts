@@ -1,23 +1,23 @@
-import nodemailer from 'nodemailer'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 interface EmailCertificateRequest {
-  recipientEmail: string
-  recipientName: string
-  moduleTitle: string
-  certificateId: string
-  score: number
-  dateEarned: string
-  pdfBuffer: Buffer
+  recipientEmail: string;
+  recipientName: string;
+  moduleTitle: string;
+  certificateId: string;
+  score: number;
+  dateEarned: string;
+  pdfBuffer: Buffer;
 }
 
 // Create reusable transporter object using SMTP transport
 const createTransporter = () => {
   // For development, you can use services like Gmail, Outlook, or testing services like Ethereal
   // For production, use services like SendGrid, AWS SES, or Mailgun
-  
+
   if (process.env.EMAIL_SERVICE === 'gmail') {
     return nodemailer.createTransporter({
       service: 'gmail',
@@ -25,10 +25,10 @@ const createTransporter = () => {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD, // Use App Password, not regular password
       },
-    })
+    });
   }
-  
-  if (process.env.EMAIL_SERVICE === 'sendgrid') {
+
+  if (process.env.SENDGRID_API_KEY) {
     return nodemailer.createTransporter({
       host: 'smtp.sendgrid.net',
       port: 587,
@@ -37,7 +37,7 @@ const createTransporter = () => {
         user: 'apikey',
         pass: process.env.SENDGRID_API_KEY,
       },
-    })
+    });
   }
 
   // Default to Ethereal Email for testing (creates a test account)
@@ -49,87 +49,94 @@ const createTransporter = () => {
       user: process.env.ETHEREAL_USER || 'ethereal.user@ethereal.email',
       pass: process.env.ETHEREAL_PASS || 'ethereal.pass',
     },
-  })
-}
+  });
+};
 
 export async function POST(request: NextRequest) {
   try {
-    const body: EmailCertificateRequest = await request.json()
-    
-    const { 
-      recipientEmail, 
-      recipientName, 
-      moduleTitle, 
-      certificateId, 
-      score, 
+    const body: EmailCertificateRequest = await request.json();
+
+    const {
+      recipientEmail,
+      recipientName,
+      moduleTitle,
+      certificateId,
+      score,
       dateEarned,
-      pdfBuffer 
-    } = body
+      pdfBuffer,
+    } = body;
 
     // Validate required fields
     if (!recipientEmail || !recipientName || !moduleTitle || !pdfBuffer) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
-      )
+      );
     }
 
     // Create transporter
-    const transporter = createTransporter()
+    const transporter = createTransporter();
 
     // Email content
     const mailOptions = {
       from: {
         name: 'FleetFlow University',
-        address: process.env.FROM_EMAIL || 'university@fleetflow.com'
+        address:
+          process.env.SENDGRID_FROM_EMAIL || 'university@fleetflowapp.com',
       },
       to: recipientEmail,
       subject: `🎓 Certificate of Completion - ${moduleTitle}`,
-      html: generateEmailHTML(recipientName, moduleTitle, score, dateEarned, certificateId),
+      html: generateEmailHTML(
+        recipientName,
+        moduleTitle,
+        score,
+        dateEarned,
+        certificateId
+      ),
       attachments: [
         {
           filename: `FleetFlow_Certificate_${certificateId}.pdf`,
           content: Buffer.from(pdfBuffer),
-          contentType: 'application/pdf'
-        }
-      ]
-    }
+          contentType: 'application/pdf',
+        },
+      ],
+    };
 
     // Send email
-    const info = await transporter.sendMail(mailOptions)
+    const info = await transporter.sendMail(mailOptions);
 
-    console.log('Certificate email sent:', info.messageId)
+    console.log('Certificate email sent:', info.messageId);
 
     // For Ethereal Email, provide preview URL
     if (process.env.NODE_ENV === 'development') {
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
+      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     }
 
     return NextResponse.json({
       success: true,
       messageId: info.messageId,
-      previewUrl: process.env.NODE_ENV === 'development' 
-        ? nodemailer.getTestMessageUrl(info) 
-        : null
-    })
-
+      previewUrl:
+        process.env.NODE_ENV === 'development'
+          ? nodemailer.getTestMessageUrl(info)
+          : null,
+    });
   } catch (error) {
-    console.error('Email sending failed:', error)
+    console.error('Email sending failed:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to send certificate email',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    )
+    );
   }
 }
 
 function generateEmailHTML(
-  recipientName: string, 
-  moduleTitle: string, 
-  score: number, 
-  dateEarned: string, 
+  recipientName: string,
+  moduleTitle: string,
+  score: number,
+  dateEarned: string,
   certificateId: string
 ): string {
   return `
@@ -212,7 +219,7 @@ function generateEmailHTML(
               margin-bottom: 15px;
               text-align: center;
             ">${moduleTitle}</h2>
-            
+
             <div style="
               display: grid;
               grid-template-columns: 1fr 1fr;
@@ -352,5 +359,5 @@ function generateEmailHTML(
       </div>
     </body>
     </html>
-  `
+  `;
 }

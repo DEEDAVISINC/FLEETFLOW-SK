@@ -2177,7 +2177,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                         background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                         animation: 'loading 2s infinite',
                       }}
-                     />
+                    />
                   </div>
                 </div>
               )}
@@ -2389,46 +2389,22 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               color: 'linear-gradient(135deg, #10b981, #059669)',
             },
             {
-              id: 'priority-queue',
-              label: 'Priority Queue',
-              icon: '🎯',
-              color: 'linear-gradient(135deg, #f59e0b, #d97706)',
-            },
-            {
-              id: 'government',
-              label: 'Government Ops',
-              icon: '🏛️',
+              id: 'discovery-hub',
+              label: 'Discovery Hub',
+              icon: '🔍',
               color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
             },
             {
-              id: 'enterprise',
-              label: 'Enterprise RFPs',
-              icon: '🏢',
-              color: 'linear-gradient(135deg, #f59e0b, #d97706)',
-            },
-            {
-              id: 'automotive',
-              label: 'Auto/Construction',
-              icon: '🚛',
+              id: 'industry-sectors',
+              label: 'Industry Sectors',
+              icon: '🏭',
               color: 'linear-gradient(135deg, #ef4444, #dc2626)',
             },
             {
-              id: 'instant_markets',
-              label: 'InstantMarkets',
+              id: 'network-partners',
+              label: 'Network & Priority',
               icon: '🌐',
-              color: 'linear-gradient(135deg, #dc2626, #991b1b)',
-            },
-            {
-              id: 'warehousing',
-              label: 'Warehousing & 3PL',
-              icon: '🏭',
-              color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-            },
-            {
-              id: 'trucking_planet',
-              label: 'TruckingPlanet Network',
-              icon: '🌐',
-              color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+              color: 'linear-gradient(135deg, #f59e0b, #d97706)',
             },
             {
               id: 'closed',
@@ -2739,8 +2715,8 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           </div>
         )}
 
-        {/* Priority Queue Content */}
-        {activeTab === 'priority-queue' && (
+        {/* OLD SECTIONS - NOW CONSOLIDATED */}
+        {false && activeTab === 'priority-queue' && (
           <div
             style={{
               display: 'grid',
@@ -2921,8 +2897,932 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           </div>
         )}
 
-        {/* Government Opportunities Content */}
-        {activeTab === 'government' && (
+        {/* Discovery Hub - Consolidated Government + Enterprise + InstantMarkets */}
+        {activeTab === 'discovery-hub' && (
+          <div>
+            {/* Discovery Hub Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                <span style={{ fontSize: '24px' }}>🔍</span>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  RFx Discovery Hub
+                </h3>
+              </div>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                  fontSize: '14px',
+                }}
+              >
+                Comprehensive RFx discovery across government, enterprise, and
+                market platforms
+              </p>
+
+              {/* Sub-tabs for Discovery Hub */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginTop: '16px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {[
+                  { id: 'government', label: 'Government', icon: '🏛️' },
+                  { id: 'enterprise', label: 'Enterprise', icon: '🏢' },
+                  {
+                    id: 'instant_markets',
+                    label: 'InstantMarkets',
+                    icon: '🌐',
+                  },
+                ].map((subTab) => (
+                  <button
+                    key={subTab.id}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span>{subTab.icon}</span>
+                    {subTab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Government Opportunities Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🏛️ Government Opportunities
+              </h4>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '13px',
+                  marginBottom: '12px',
+                }}
+              >
+                SAM.gov and federal contracting opportunities
+              </p>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#8b5cf6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Dept of Defense
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Military Logistics - $5.2M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#8b5cf6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    GSA Services
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Federal Transport - $3.8M
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Enterprise Opportunities Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🏢 Enterprise Opportunities
+              </h4>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '13px',
+                  marginBottom: '12px',
+                }}
+              >
+                Fortune 500 and major enterprise RFP opportunities
+              </p>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Microsoft
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Global Logistics RFP - $2.4M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Amazon
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Last-Mile Delivery - $1.8M
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* InstantMarkets Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🌐 InstantMarkets Opportunities
+              </h4>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '13px',
+                  marginBottom: '12px',
+                }}
+              >
+                205,587+ opportunities from 17,208 organizations
+              </p>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(220, 38, 38, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#dc2626',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Manufacturing Corp
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Supply Chain RFQ - $950K
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(220, 38, 38, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#dc2626',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Tech Solutions Inc
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Distribution RFP - $1.2M
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Industry Sectors - Consolidated Auto/Construction + Pharmaceutical + Warehousing */}
+        {activeTab === 'industry-sectors' && (
+          <div>
+            {/* Industry Sectors Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                <span style={{ fontSize: '24px' }}>🏭</span>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Industry Sectors
+                </h3>
+              </div>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                  fontSize: '14px',
+                }}
+              >
+                Specialized RFx opportunities across key industry verticals
+              </p>
+
+              {/* Sub-tabs for Industry Sectors */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginTop: '16px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {[
+                  { id: 'automotive', label: 'Auto/Construction', icon: '🚛' },
+                  { id: 'pharmaceutical', label: 'Pharmaceutical', icon: '💊' },
+                  {
+                    id: 'medical-courier',
+                    label: 'Medical Courier',
+                    icon: '🏥',
+                  },
+                  { id: 'warehousing', label: 'Warehousing & 3PL', icon: '🏭' },
+                ].map((subTab) => (
+                  <button
+                    key={subTab.id}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span>{subTab.icon}</span>
+                    {subTab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Automotive/Construction Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🚛 Automotive & Construction Opportunities
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#ef4444',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Ford Motor Company
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Parts Distribution - $3.2M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#ef4444',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Caterpillar Inc
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Heavy Equipment - $2.1M
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pharmaceutical Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                💊 Pharmaceutical Opportunities
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(6, 182, 212, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#06b6d4',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Pfizer Global
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Cold Chain Distribution - $2.4M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(6, 182, 212, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#06b6d4',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Johnson & Johnson
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Clinical Trials - $1.8M
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Warehousing & 3PL Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🏭 Warehousing & 3PL Opportunities
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#8b5cf6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Amazon Fulfillment
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    E-commerce Warehousing - $25M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#8b5cf6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Walmart Distribution
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Retail Distribution - $30M
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Network & Priority - Consolidated TruckingPlanet + Priority Queue */}
+        {activeTab === 'network-partners' && (
+          <div>
+            {/* Network Partners Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                <span style={{ fontSize: '24px' }}>🌐</span>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Network & Priority
+                </h3>
+              </div>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                  fontSize: '14px',
+                }}
+              >
+                Priority queue management and network partner opportunities
+              </p>
+            </div>
+
+            {/* Priority Queue Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🎯 Priority Queue
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '2px solid #f59e0b',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🚨 URGENT
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: '13px',
+                    }}
+                  >
+                    Global Tech Corp
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Emergency Server Transport - $850K
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '11px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    Deadline: 2 hours
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #f59e0b',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    ⚡ HIGH
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: '13px',
+                    }}
+                  >
+                    Manufacturing Plus
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Production Equipment - $1.2M
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '11px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    Deadline: Tomorrow
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TruckingPlanet Network Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '12px',
+                }}
+              >
+                🌐 TruckingPlanet Network
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(20, 184, 166, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#14b8a6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Premium Shipper
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    High-Volume Routes - $2.8M
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(20, 184, 166, 0.2)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#14b8a6',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Network Partner
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Dedicated Lanes - $1.9M
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Continue with existing government section structure... */}
+        {false && (
           <div>
             {/* SAM.gov Search Interface */}
             <div
@@ -3318,7 +4218,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
         )}
 
         {/* Enterprise Opportunities Content */}
-        {activeTab === 'enterprise' && (
+        {false && activeTab === 'enterprise' && (
           <div>
             {/* Enterprise RFP Search Interface */}
             <div
@@ -3569,7 +4469,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
         )}
 
         {/* Automotive Opportunities Content */}
-        {activeTab === 'automotive' && (
+        {false && activeTab === 'automotive' && (
           <div>
             {/* Automotive RFP Search Interface */}
             <div
@@ -3821,7 +4721,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
         )}
 
         {/* InstantMarkets Opportunities Content */}
-        {activeTab === 'instant_markets' && (
+        {false && activeTab === 'instant_markets' && (
           <div>
             {/* InstantMarkets Search Interface */}
             <div
@@ -4079,7 +4979,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
         )}
 
         {/* Warehousing Opportunities Content */}
-        {activeTab === 'warehousing' && (
+        {false && activeTab === 'warehousing' && (
           <div>
             {/* Warehousing & 3PL Search Interface */}
             <div
@@ -4334,7 +5234,7 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
 
         {/* Closed RFx Content */}
         {/* TruckingPlanet Network Content */}
-        {activeTab === 'trucking_planet' && (
+        {false && activeTab === 'trucking_planet' && (
           <div>
             {/* TruckingPlanet Search Interface */}
             <div
@@ -4650,6 +5550,328 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           </div>
         )}
 
+        {/* Pharmaceutical Opportunities Content */}
+        {false && activeTab === 'pharmaceutical' && (
+          <div>
+            {/* Pharmaceutical RFx Search Interface */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                <span style={{ fontSize: '24px' }}>💊</span>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Pharmaceutical Logistics RFx Discovery
+                </h3>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto',
+                  gap: '12px',
+                  alignItems: 'end',
+                }}
+              >
+                <div>
+                  <label
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      display: 'block',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    Search Keywords
+                  </label>
+                  <input
+                    type='text'
+                    value='pharmaceutical cold chain temperature controlled FDA GMP compliance'
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                    placeholder='Enter pharmaceutical logistics keywords...'
+                  />
+                </div>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  🔍 Search Pharmaceutical RFx
+                </button>
+              </div>
+
+              <div
+                style={{
+                  marginTop: '16px',
+                  padding: '12px',
+                  background: 'rgba(6, 182, 212, 0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>💊</span>
+                  <span
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Specialized Pharmaceutical Services
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '8px',
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                  }}
+                >
+                  <div>❄️ Cold Chain Management</div>
+                  <div>🌡️ Temperature Controlled Transport</div>
+                  <div>🏥 Hospital & Pharmacy Delivery</div>
+                  <div>🧪 Clinical Trial Logistics</div>
+                  <div>📋 FDA/GMP Compliance</div>
+                  <div>🔒 Secure Chain of Custody</div>
+                  <div>⚡ Emergency Pharmaceutical Delivery</div>
+                  <div>📦 Specialty Packaging Requirements</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pharmaceutical RFx Results */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Active Pharmaceutical RFx Opportunities
+                </h4>
+                <span
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Found 12 opportunities
+                </span>
+              </div>
+
+              {/* Header */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '80px 1fr 1fr 120px 100px 120px 80px',
+                  gap: '8px',
+                  padding: '10px 12px',
+                  background: 'rgba(6, 182, 212, 0.2)',
+                  borderRadius: '8px',
+                  marginBottom: '10px',
+                  fontWeight: '700',
+                  fontSize: '10px',
+                  textTransform: 'uppercase',
+                  color: 'white',
+                }}
+              >
+                <div>RFx ID</div>
+                <div>Pharmaceutical Company</div>
+                <div>Service Requirements</div>
+                <div>Temperature</div>
+                <div>Compliance</div>
+                <div>Deadline</div>
+                <div>Action</div>
+              </div>
+
+              {/* Sample Pharmaceutical RFx Opportunities */}
+              {[
+                {
+                  id: 'PHRFX-001',
+                  company: 'Pfizer Pharmaceuticals',
+                  service: 'Cold Chain Distribution Network',
+                  temperature: '2-8°C',
+                  compliance: 'FDA, GMP',
+                  deadline: '2024-02-15',
+                  urgency: 'high',
+                },
+                {
+                  id: 'PHRFX-002',
+                  company: 'Johnson & Johnson',
+                  service: 'Clinical Trial Sample Transport',
+                  temperature: '-20°C',
+                  compliance: 'FDA, GCP',
+                  deadline: '2024-02-20',
+                  urgency: 'medium',
+                },
+                {
+                  id: 'PHRFX-003',
+                  company: 'Moderna Therapeutics',
+                  service: 'Vaccine Distribution Services',
+                  temperature: '-70°C',
+                  compliance: 'FDA, CDC',
+                  deadline: '2024-02-12',
+                  urgency: 'critical',
+                },
+                {
+                  id: 'PHRFX-004',
+                  company: 'Merck & Co',
+                  service: 'Hospital Direct Delivery',
+                  temperature: '15-25°C',
+                  compliance: 'FDA, USP',
+                  deadline: '2024-02-25',
+                  urgency: 'medium',
+                },
+                {
+                  id: 'PHRFX-005',
+                  company: 'AbbVie Inc',
+                  service: 'Specialty Drug Logistics',
+                  temperature: '2-8°C',
+                  compliance: 'FDA, REMS',
+                  deadline: '2024-02-18',
+                  urgency: 'high',
+                },
+              ].map((opportunity, index) => (
+                <div
+                  key={opportunity.id}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1fr 1fr 120px 100px 120px 80px',
+                    gap: '8px',
+                    padding: '12px',
+                    background:
+                      index % 2 === 0
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: '8px',
+                    marginBottom: '6px',
+                    alignItems: 'center',
+                    fontSize: '13px',
+                    color: 'white',
+                  }}
+                >
+                  <div style={{ fontWeight: 'bold', color: '#06b6d4' }}>
+                    {opportunity.id}
+                  </div>
+                  <div>{opportunity.company}</div>
+                  <div>{opportunity.service}</div>
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {opportunity.temperature}
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {opportunity.compliance}
+                  </div>
+                  <div>{opportunity.deadline}</div>
+                  <button
+                    style={{
+                      background:
+                        opportunity.urgency === 'critical'
+                          ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                          : opportunity.urgency === 'high'
+                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                            : 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opportunity.urgency === 'critical'
+                      ? '🚨 URGENT'
+                      : opportunity.urgency === 'high'
+                        ? '⚡ HIGH'
+                        : '📋 BID'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'closed' && (
           <div>
             <div
@@ -4729,6 +5951,348 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                   </div>
                 </div>
               ))}
+          </div>
+        )}
+
+        {/* Medical Courier RFx Content */}
+        {activeTab === 'industry-sectors' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '20px',
+              marginBottom: '20px',
+            }}
+          >
+            <h4
+              style={{
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                marginBottom: '12px',
+              }}
+            >
+              🏥 Medical Courier & Expediting Opportunities
+            </h4>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '12px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  border: '1px solid rgba(220, 38, 38, 0.2)',
+                }}
+              >
+                <h5
+                  style={{
+                    color: '#fca5a5',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🚨 STAT Delivery Services
+                </h5>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '12px',
+                    margin: 0,
+                  }}
+                >
+                  Emergency medical deliveries with guaranteed response times.
+                  Hospital networks, emergency rooms, urgent care facilities.
+                </p>
+                <div
+                  style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    color: '#fca5a5',
+                  }}
+                >
+                  Active RFPs: 23 | Avg Value: $1.2M
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                }}
+              >
+                <h5
+                  style={{
+                    color: '#93c5fd',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🏥 Medical Equipment Transport
+                </h5>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '12px',
+                    margin: 0,
+                  }}
+                >
+                  Specialized transport for sensitive medical equipment.
+                  Temperature-controlled vehicles, specialized handling
+                  protocols.
+                </p>
+                <div
+                  style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    color: '#93c5fd',
+                  }}
+                >
+                  Active RFPs: 18 | Avg Value: $850K
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(124, 58, 237, 0.1)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  border: '1px solid rgba(124, 58, 237, 0.2)',
+                }}
+              >
+                <h5
+                  style={{
+                    color: '#c4b5fd',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🧪 Clinical Trial Logistics
+                </h5>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '12px',
+                    margin: 0,
+                  }}
+                >
+                  Secure transport for clinical trial materials and samples.
+                  Chain of custody protocols, FDA compliance requirements.
+                </p>
+                <div
+                  style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    color: '#c4b5fd',
+                  }}
+                >
+                  Active RFPs: 14 | Avg Value: $2.1M
+                </div>
+              </div>
+            </div>
+
+            {/* Medical Courier RFx Table */}
+            <div
+              style={{
+                marginTop: '20px',
+                background: 'rgba(220, 38, 38, 0.05)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: '1px solid rgba(220, 38, 38, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '12px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Active Medical Courier RFx Opportunities
+                </h4>
+                <span
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Found 16 opportunities
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '80px 1.2fr 1fr 100px 90px 90px 100px',
+                  gap: '8px',
+                  padding: '8px 12px',
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  borderRadius: '8px',
+                  marginBottom: '8px',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                }}
+              >
+                <div>RFx ID</div>
+                <div>Route</div>
+                <div>Medical Service</div>
+                <div>Urgency</div>
+                <div>Compliance</div>
+                <div>Value</div>
+                <div>Status</div>
+              </div>
+
+              {/* Sample Medical Courier RFx Opportunities */}
+              {[
+                {
+                  id: 'MCRFX-001',
+                  origin: 'Mayo Clinic',
+                  destination: 'Emergency Room Network',
+                  service: 'STAT Lab Results',
+                  urgency: 'Critical',
+                  compliance: 'HIPAA',
+                  value: '$850K',
+                  status: 'Open',
+                  urgencyLevel: 'critical',
+                },
+                {
+                  id: 'MCRFX-002',
+                  origin: 'Johns Hopkins',
+                  destination: 'Specialty Clinics',
+                  service: 'Medical Equipment',
+                  urgency: 'High',
+                  compliance: 'DOT, OSHA',
+                  value: '$640K',
+                  status: 'Bidding',
+                  urgencyLevel: 'high',
+                },
+                {
+                  id: 'MCRFX-003',
+                  origin: 'Research Lab',
+                  destination: 'Hospital Network',
+                  service: 'Clinical Trial Samples',
+                  urgency: 'Medium',
+                  compliance: 'FDA, GCP',
+                  value: '$1.2M',
+                  status: 'Review',
+                  urgencyLevel: 'medium',
+                },
+                {
+                  id: 'MCRFX-004',
+                  origin: 'Organ Bank',
+                  destination: 'Transplant Centers',
+                  service: 'Organ Transport',
+                  urgency: 'Critical',
+                  compliance: 'UNOS',
+                  value: '$2.1M',
+                  status: 'Emergency',
+                  urgencyLevel: 'critical',
+                },
+              ].map((rfx, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1.2fr 1fr 100px 90px 90px 100px',
+                    gap: '8px',
+                    padding: '10px 12px',
+                    background:
+                      index % 2 === 0
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    fontSize: '11px',
+                  }}
+                >
+                  <div style={{ fontWeight: '700', color: '#fca5a5' }}>
+                    {rfx.id}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: '600' }}>{rfx.origin}</div>
+                    <div style={{ fontSize: '10px', opacity: 0.7 }}>
+                      → {rfx.destination}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '11px' }}>{rfx.service}</div>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      color:
+                        rfx.urgencyLevel === 'critical'
+                          ? '#fca5a5'
+                          : rfx.urgencyLevel === 'high'
+                            ? '#fbbf24'
+                            : '#a3e635',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {rfx.urgency}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#93c5fd' }}>
+                    {rfx.compliance}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      color: '#22c55e',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {rfx.value}
+                  </div>
+                  <div>
+                    <span
+                      style={{
+                        background:
+                          rfx.status === 'Emergency'
+                            ? 'rgba(220, 38, 38, 0.2)'
+                            : rfx.status === 'Open'
+                              ? 'rgba(34, 197, 94, 0.2)'
+                              : rfx.status === 'Bidding'
+                                ? 'rgba(59, 130, 246, 0.2)'
+                                : 'rgba(245, 158, 11, 0.2)',
+                        color:
+                          rfx.status === 'Emergency'
+                            ? '#fca5a5'
+                            : rfx.status === 'Open'
+                              ? '#86efac'
+                              : rfx.status === 'Bidding'
+                                ? '#93c5fd'
+                                : '#fbbf24',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {rfx.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

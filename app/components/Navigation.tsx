@@ -463,20 +463,6 @@ export default function ProfessionalNavigation() {
                 >
                   🗺️ Live Load Tracking
                 </Link>
-                <Link
-                  href='/insurance-partnerships'
-                  onClick={handleDropdownClose}
-                  style={{
-                    display: 'block',
-                    padding: '10px 20px',
-                    color: '#14b8a6',
-                    textDecoration: 'none',
-                    fontSize: '0.85rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  🛡️ Insurance Partnerships
-                </Link>
               </div>
             )}
           </div>

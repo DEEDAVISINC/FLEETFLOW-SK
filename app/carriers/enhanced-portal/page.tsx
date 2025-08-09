@@ -70,8 +70,8 @@ const AccessRestricted = () => (
   </div>
 );
 
-// Enterprise 6-Step Onboarding Process Configuration
-const ENTERPRISE_ONBOARDING_STEPS = [
+// 6-Step Onboarding Process Configuration
+const ONBOARDING_STEPS = [
   {
     id: 'fmcsa_verification',
     title: 'FMCSA Verification',
@@ -167,7 +167,7 @@ const ENTERPRISE_ONBOARDING_STEPS = [
     title: 'Portal Activation',
     subtitle: 'Driver Access & Training',
     description:
-      'Complete portal setup with driver account creation, permissions, and comprehensive system training',
+      'Complete portal setup with driver account creation, permissions, and system training',
     icon: '🚀',
     color: '#06b6d4',
     bgGradient: 'linear-gradient(135deg, #06b6d4, #0891b2)',
@@ -182,8 +182,8 @@ const ENTERPRISE_ONBOARDING_STEPS = [
   },
 ];
 
-// Enterprise status configuration
-const ENTERPRISE_STATUS_CONFIG = {
+// Status configuration
+const STATUS_CONFIG = {
   active: {
     color: '#10b981',
     label: 'ACTIVE',
@@ -481,7 +481,7 @@ export default function EnhancedCarrierPortal() {
     return <AccessRestricted />;
   }
 
-  // Enhanced state management for enterprise functionality
+  // Enhanced state management for portal functionality
   const [activeView, setActiveView] = useState<
     'executive' | 'workflow' | 'analytics' | 'compliance'
   >('executive');
@@ -703,7 +703,7 @@ export default function EnhancedCarrierPortal() {
         fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
       }}
     >
-      {/* Enterprise Header */}
+      {/* Portal Header */}
       <div
         style={{
           background: 'rgba(0, 0, 0, 0.4)',
@@ -772,7 +772,7 @@ export default function EnhancedCarrierPortal() {
                   textShadow: '0 4px 12px rgba(0,0,0,0.5)',
                 }}
               >
-                🏢 Enterprise Carrier Management
+                🏢 Carrier Management Portal
               </h1>
               <p
                 style={{
@@ -934,7 +934,7 @@ export default function EnhancedCarrierPortal() {
                         borderRadius: '50%',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         fontSize: '14px',
@@ -984,7 +984,7 @@ export default function EnhancedCarrierPortal() {
           </div>
         </div>
 
-        {/* Enterprise Navigation */}
+        {/* Portal Navigation */}
         <div
           style={{
             background: 'rgba(255, 255, 255, 0.05)',
@@ -2953,7 +2953,7 @@ export default function EnhancedCarrierPortal() {
                 textShadow: '0 4px 8px rgba(0,0,0,0.3)',
               }}
             >
-              📈 Enterprise Performance Analytics
+              📈 Performance Analytics
             </h2>
 
             <div
@@ -3069,7 +3069,7 @@ export default function EnhancedCarrierPortal() {
                 textShadow: '0 4px 8px rgba(0,0,0,0.3)',
               }}
             >
-              🛡️ Enterprise Compliance Center
+              🛡️ Compliance Center
             </h2>
 
             <div
@@ -3997,7 +3997,7 @@ export default function EnhancedCarrierPortal() {
         </div>
       )}
 
-      {/* Enterprise CSS Animations */}
+      {/* Portal CSS Animations */}
       <style jsx>{`
         @keyframes pulse {
           0%,

@@ -22,7 +22,12 @@ interface IntraofficeNotification {
     | 'dispatch'
     | 'compliance'
     | 'system'
-    | 'lead_conversion';
+    | 'lead_conversion'
+    | 'onboarding_active'
+    | 'onboarding_pending'
+    | 'onboarding_completed'
+    | 'onboarding_stuck'
+    | 'onboarding_upcoming';
   priority: 'low' | 'normal' | 'high' | 'urgent' | 'critical';
   title: string;
   message: string;
@@ -42,6 +47,14 @@ interface IntraofficeNotification {
     potentialValue?: number;
     source?: string;
     conversionType?: string;
+    onboardingId?: string;
+    onboardingType?: 'carrier' | 'driver';
+    currentStep?: string;
+    completionPercentage?: number;
+    daysStuck?: number;
+    scheduledDate?: string;
+    carrierName?: string;
+    driverName?: string;
   };
 }
 
@@ -66,8 +79,165 @@ export default function GlobalNotificationBell({
   const bellRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Mock notifications with intraoffice messaging
+  // Generate onboarding progress notifications based on role
+  const generateOnboardingNotifications = (): IntraofficeNotification[] => {
+    const onboardingNotifications: IntraofficeNotification[] = [];
+
+    // Role-based onboarding notifications
+    if (department === 'admin') {
+      // Admins see all onboarding progress across the platform
+      onboardingNotifications.push(
+        {
+          id: 'ONB-001',
+          type: 'onboarding_stuck',
+          priority: 'high',
+          title: '⚠️ Onboarding Stuck: ABC Trucking',
+          message:
+            'Carrier onboarding stuck at Document Upload step for 5 days - requires attention',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: 'admin',
+          fromUser: 'FleetFlow System',
+          toUser: 'Admin',
+          requiresResponse: true,
+          metadata: {
+            onboardingId: 'ONB-ABC-001',
+            onboardingType: 'carrier',
+            currentStep: 'Document Upload',
+            completionPercentage: 50,
+            daysStuck: 5,
+            carrierName: 'ABC Trucking',
+          },
+        },
+        {
+          id: 'ONB-002',
+          type: 'onboarding_pending',
+          priority: 'normal',
+          title: '⏳ Pending Approval: XYZ Logistics',
+          message:
+            'Factoring setup completed - waiting for final agreement approval',
+          timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: 'admin',
+          fromUser: 'FleetFlow System',
+          toUser: 'Admin',
+          requiresResponse: true,
+          metadata: {
+            onboardingId: 'ONB-XYZ-001',
+            onboardingType: 'carrier',
+            currentStep: 'Agreement Signing',
+            completionPercentage: 83,
+            carrierName: 'XYZ Logistics',
+          },
+        }
+      );
+    }
+
+    if (department === 'dispatcher' || department === 'broker') {
+      // Managers see their team's onboarding status
+      onboardingNotifications.push(
+        {
+          id: 'ONB-003',
+          type: 'onboarding_completed',
+          priority: 'low',
+          title: '✅ Driver Onboarded: John Smith',
+          message:
+            'Driver onboarding completed successfully - portal access activated',
+          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: department,
+          fromUser: 'FleetFlow System',
+          toUser: 'Manager',
+          requiresResponse: false,
+          metadata: {
+            onboardingId: 'ONB-JS-001',
+            onboardingType: 'driver',
+            currentStep: 'Portal Access',
+            completionPercentage: 100,
+            driverName: 'John Smith',
+          },
+        },
+        {
+          id: 'ONB-004',
+          type: 'onboarding_upcoming',
+          priority: 'normal',
+          title: '📅 Scheduled Onboarding: Maria Garcia',
+          message: 'Driver onboarding scheduled for tomorrow at 9:00 AM',
+          timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: department,
+          fromUser: 'FleetFlow System',
+          toUser: 'Manager',
+          requiresResponse: false,
+          metadata: {
+            onboardingId: 'ONB-MG-001',
+            onboardingType: 'driver',
+            scheduledDate: 'Tomorrow 9:00 AM',
+            driverName: 'Maria Garcia',
+          },
+        }
+      );
+    }
+
+    if (department === 'carrier') {
+      // Carriers see their own onboarding progress
+      onboardingNotifications.push({
+        id: 'ONB-005',
+        type: 'onboarding_active',
+        priority: 'normal',
+        title: '🔄 Next Step: Upload Insurance Certificate',
+        message:
+          'Your onboarding is 66% complete - please upload your insurance certificate',
+        timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+        read: false,
+        fromDepartment: 'system',
+        toDepartment: 'carrier',
+        fromUser: 'FleetFlow System',
+        toUser: 'Carrier',
+        requiresResponse: true,
+        metadata: {
+          onboardingId: 'ONB-SELF-001',
+          onboardingType: 'carrier',
+          currentStep: 'Document Upload',
+          completionPercentage: 66,
+        },
+      });
+    }
+
+    if (department === 'driver') {
+      // Drivers see their individual onboarding steps
+      onboardingNotifications.push({
+        id: 'ONB-006',
+        type: 'onboarding_active',
+        priority: 'normal',
+        title: '🔄 Complete Your Profile Setup',
+        message: 'Please complete your driver profile - 2 steps remaining',
+        timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+        read: false,
+        fromDepartment: 'system',
+        toDepartment: 'driver',
+        fromUser: 'FleetFlow System',
+        toUser: 'Driver',
+        requiresResponse: true,
+        metadata: {
+          onboardingId: 'ONB-DRIVER-001',
+          onboardingType: 'driver',
+          currentStep: 'Profile Setup',
+          completionPercentage: 75,
+        },
+      });
+    }
+
+    return onboardingNotifications;
+  };
+
+  // Mock notifications with intraoffice messaging and onboarding progress
   const mockNotifications: IntraofficeNotification[] = [
+    ...generateOnboardingNotifications(),
     {
       id: 'INTRA-001',
       type: 'intraoffice',

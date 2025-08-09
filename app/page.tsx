@@ -1,17 +1,43 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Load, getMainDashboardLoads } from './services/loadService';
+import UserDataService from './services/user-data-service';
 
 export default function HomePage() {
+  const router = useRouter();
   const [selectedLoad, setSelectedLoad] = useState<string>('');
   const [showLoadDetails, setShowLoadDetails] = useState(false);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [loads, setLoads] = useState<Load[]>([]);
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
 
-  // Initialize time and load data
+  // Check for first-time login and redirect to settings
   useEffect(() => {
+    const userDataService = UserDataService.getInstance();
+    const currentUser = userDataService.getCurrentUser();
+
+    // If no user is logged in, simulate first login
+    if (!currentUser) {
+      // For demo purposes, check if this is a first visit
+      const hasVisitedBefore = localStorage.getItem('fleetflow_visited');
+
+      if (!hasVisitedBefore) {
+        // Mark as visited and redirect to settings (user's first login experience)
+        localStorage.setItem('fleetflow_visited', 'true');
+        setIsFirstLogin(true);
+
+        // Redirect to settings page after a brief delay
+        setTimeout(() => {
+          router.push('/settings');
+        }, 2000);
+        return;
+      }
+    }
+
+    // Normal dashboard initialization
     setCurrentTime(new Date());
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -22,7 +48,101 @@ export default function HomePage() {
     setLoads(dashboardLoads);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [router]);
+
+  // Show first login welcome screen
+  if (isFirstLogin) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '48px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            textAlign: 'center',
+            maxWidth: '500px',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '64px',
+              marginBottom: '24px',
+            }}
+          >
+            🎉
+          </div>
+          <h1
+            style={{
+              color: 'white',
+              fontSize: '32px',
+              fontWeight: '700',
+              margin: '0 0 16px 0',
+              background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Welcome to FleetFlow™!
+          </h1>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '18px',
+              margin: '0 0 24px 0',
+              lineHeight: '1.6',
+            }}
+          >
+            Your account has been created successfully. You're being redirected
+            to your personal profile to complete your setup.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              color: '#10b981',
+              fontSize: '16px',
+              fontWeight: '600',
+            }}
+          >
+            <div
+              style={{
+                width: '20px',
+                height: '20px',
+                border: '2px solid #10b981',
+                borderTop: '2px solid transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            Redirecting to your profile...
+          </div>
+        </div>
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   // Real-time alerts state management
   const alerts = [
@@ -56,6 +176,13 @@ export default function HomePage() {
   ];
 
   const quickLinks = [
+    {
+      href: '/go-with-the-flow',
+      bg: 'linear-gradient(135deg, #f97316, #ea580c)',
+      emoji: '⚡',
+      title: 'Go With the Flow',
+      color: 'white',
+    },
     {
       href: '/dispatch',
       bg: 'linear-gradient(135deg, #3b82f6, #2563eb)',

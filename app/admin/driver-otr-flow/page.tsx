@@ -56,7 +56,7 @@ interface WorkflowTask {
   status: string;
 }
 
-// Enhanced User Interface for comprehensive header
+// Enhanced User Interface for complete header
 interface EnhancedDriverUser {
   id: string;
   name: string;
@@ -260,7 +260,14 @@ const workflowManager = {
 
 export default function AdminDriverOTRFlow() {
   // All React hooks declared at the top
-  const [selectedTab, setSelectedTab] = useState('dashboard');
+  const [selectedTab, setSelectedTab] = useState<
+    | 'dashboard'
+    | 'tasks-loads'
+    | 'business-metrics'
+    | 'notifications'
+    | 'profile'
+    | 'go-with-the-flow'
+  >('dashboard');
   const [currentDriverId, setCurrentDriverId] = useState<string | null>(null);
   const [selectedDriverIndex, setSelectedDriverIndex] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -279,6 +286,10 @@ export default function AdminDriverOTRFlow() {
     averageResponseTime: 0,
   });
   const [alertSoundsEnabled, setAlertSoundsEnabled] = useState(true);
+  const [instantLoads, setInstantLoads] = useState<any[]>([]);
+  const [driverStatus, setDriverStatus] = useState<
+    'online' | 'offline' | 'on-load'
+  >('online');
   const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
 
   // 🏛️ TAXBANDITS FORM 2290 STATE MANAGEMENT
@@ -454,7 +465,7 @@ export default function AdminDriverOTRFlow() {
         },
       };
 
-  // Enhanced user data for comprehensive header
+  // Enhanced user data for complete header
   const currentUser: EnhancedDriverUser = {
     id: 'JR-OO-2025002',
     name: demoDriver.personalInfo?.name || 'John Rodriguez',
@@ -1255,6 +1266,40 @@ export default function AdminDriverOTRFlow() {
     return () => clearInterval(fuelTimer);
   }, []);
 
+  // ⚡ GO WITH THE FLOW - Real-time load updates via API
+  useEffect(() => {
+    const currentDriverId = 'driver-1'; // For demo, use driver-1 as the current driver
+
+    const loadInstantLoads = async () => {
+      try {
+        const response = await fetch(
+          `/api/go-with-the-flow?action=instant-loads&driverId=${currentDriverId}`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          setInstantLoads(data.loads);
+        } else {
+          console.error('Failed to load instant loads:', data.error);
+          setInstantLoads([]);
+        }
+      } catch (error) {
+        console.error('Error loading instant loads:', error);
+        setInstantLoads([]);
+      }
+    };
+
+    // Load initial data
+    loadInstantLoads();
+
+    // Update every 5 seconds for real-time feel
+    const loadTimer = setInterval(loadInstantLoads, 5000);
+
+    return () => {
+      clearInterval(loadTimer);
+    };
+  }, []);
+
   // 🏛️ TAXBANDITS FORM 2290 FILING FUNCTIONS
   const testTaxBanditsConnection = async () => {
     try {
@@ -1758,7 +1803,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                           animation: 'pulse 2s infinite',
                         }}
-                       />
+                      />
                       <span
                         style={{
                           color: 'rgba(255, 255, 255, 0.9)',
@@ -2210,12 +2255,27 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                   label: '📈 Business Metrics',
                   icon: '📈',
                 },
+                {
+                  key: 'go-with-the-flow',
+                  label: '⚡ Go With the Flow',
+                  icon: '⚡',
+                },
                 { key: 'notifications', label: '🔔 Messages', icon: '🔔' },
                 { key: 'profile', label: '👤 Profile', icon: '👤' },
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => setSelectedTab(tab.key)}
+                  onClick={() =>
+                    setSelectedTab(
+                      tab.key as
+                        | 'dashboard'
+                        | 'tasks-loads'
+                        | 'business-metrics'
+                        | 'notifications'
+                        | 'profile'
+                        | 'go-with-the-flow'
+                    )
+                  }
                   style={{
                     flex: 1,
                     background:
@@ -7011,6 +7071,865 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                {/* Driver Preferences Section */}
+                <div style={{ marginTop: '30px' }}>
+                  <h4
+                    style={{
+                      margin: '0 0 20px 0',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    ⚙️ Driver Preferences
+                  </h4>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Maximum Distance Range
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='range'
+                            min='50'
+                            max='500'
+                            defaultValue='250'
+                            style={{
+                              width: '70%',
+                              accentColor: '#f59e0b',
+                            }}
+                          />
+                          <span
+                            style={{
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            250 miles
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Minimum Rate per Mile
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='number'
+                            min='1.50'
+                            max='5.00'
+                            step='0.10'
+                            defaultValue='2.25'
+                            style={{
+                              width: '100px',
+                              padding: '6px 10px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          />
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            per mile
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Auto-Accept Settings
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: 'white',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <input
+                              type='checkbox'
+                              defaultChecked={true}
+                              style={{
+                                accentColor: '#f59e0b',
+                                transform: 'scale(1.2)',
+                              }}
+                            />
+                            <span style={{ fontSize: '14px' }}>
+                              Auto-accept preferred loads
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Go With the Flow Tab */}
+            {selectedTab === 'go-with-the-flow' && (
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: '20px',
+                  }}
+                >
+                  ⚡ Go With the Flow - Admin Real-Time Matching
+                </h3>
+
+                {/* Driver Status Panel */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                      margin: 0,
+                    }}
+                  >
+                    🚛 Driver Status Panel
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Current Location
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Dallas, TX
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Hours Remaining
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        8.5 hrs
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Truck Status
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Available
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Equipment Type
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Dry Van
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real-Time Matching Dashboard */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  {/* Live Matching Queue */}
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '2px solid rgba(59, 130, 246, 0.5)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: '#ffffff',
+                        margin: '0 0 16px 0',
+                        fontSize: '1.2rem',
+                        fontWeight: '700',
+                        textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
+                      }}
+                    >
+                      ⚡ Instant Loads Available
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {instantLoads.length > 0 ? (
+                        instantLoads.map((load, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.2)',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: '#ffffff',
+                                  fontWeight: '600',
+                                  fontSize: '14px',
+                                }}
+                              >
+                                {load.id}
+                              </div>
+                              <div
+                                style={{
+                                  background: '#22c55e',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {load.rate}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                color: '#e5e7eb',
+                                fontSize: '13px',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {load.origin.address} → {load.destination.address}
+                            </div>
+                            <div
+                              style={{
+                                color: '#e5e7eb',
+                                fontSize: '12px',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              Rate: ${load.rate} • Equipment:{' '}
+                              {load.equipmentType} • Expires:{' '}
+                              {Math.max(
+                                0,
+                                Math.floor(
+                                  (new Date(load.offerExpiresAt).getTime() -
+                                    Date.now()) /
+                                    1000
+                                )
+                              )}
+                              s
+                            </div>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <button
+                                style={{
+                                  background: '#22c55e',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      '/api/go-with-the-flow',
+                                      {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          action: 'accept-load',
+                                          driverId: 'driver-1',
+                                          loadId: load.id,
+                                        }),
+                                      }
+                                    );
+
+                                    const data = await response.json();
+
+                                    if (data.success) {
+                                      alert(`✅ ${data.message}`);
+                                    } else {
+                                      alert(`❌ ${data.message}`);
+                                    }
+                                  } catch (error) {
+                                    alert(`❌ Error accepting load: ${error}`);
+                                  }
+                                }}
+                              >
+                                ⚡ Accept Load
+                              </button>
+                              <button
+                                style={{
+                                  background: 'rgba(255, 255, 255, 0.2)',
+                                  color: 'white',
+                                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                                  padding: '6px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  marginLeft: '8px',
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      '/api/go-with-the-flow',
+                                      {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          action: 'decline-load',
+                                          driverId: 'driver-1',
+                                          loadId: load.id,
+                                        }),
+                                      }
+                                    );
+
+                                    const data = await response.json();
+
+                                    if (data.success) {
+                                      alert(`❌ ${data.message}`);
+                                    } else {
+                                      alert(`⚠️ ${data.message}`);
+                                    }
+                                  } catch (error) {
+                                    alert(`⚠️ Error declining load: ${error}`);
+                                  }
+                                }}
+                              >
+                                ❌ Decline
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                          }}
+                        >
+                          <div
+                            style={{ fontSize: '24px', marginBottom: '8px' }}
+                          >
+                            🔍
+                          </div>
+                          <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                            No instant loads available right now
+                          </div>
+                          <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                            We're actively matching loads to your preferences...
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Real-Time Matching Engine */}
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.2)',
+                      border: '2px solid rgba(139, 92, 246, 0.5)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: '#ffffff',
+                        margin: '0 0 16px 0',
+                        fontSize: '1.2rem',
+                        fontWeight: '700',
+                        textShadow: '0 2px 4px rgba(139, 92, 246, 0.8)',
+                      }}
+                    >
+                      🤖 Real-Time Matching Engine
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          AI Matching Algorithms
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='range'
+                            min='50'
+                            max='500'
+                            defaultValue='250'
+                            style={{
+                              width: '60%',
+                              accentColor: '#8b5cf6',
+                            }}
+                          />
+                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
+                            95.2% confidence
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Response Time Metrics
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='number'
+                            min='1.50'
+                            max='5.00'
+                            step='0.10'
+                            defaultValue='2.25'
+                            style={{
+                              width: '80px',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          />
+                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
+                            avg response
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Success Rate Analytics
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input
+                              type='checkbox'
+                              defaultChecked={true}
+                              style={{
+                                accentColor: '#8b5cf6',
+                                transform: 'scale(1.2)',
+                              }}
+                            />
+                            <span
+                              style={{ color: '#e5e7eb', fontSize: '14px' }}
+                            >
+                              Real-time matching enabled
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    border: '2px solid rgba(245, 158, 11, 0.5)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#ffffff',
+                      margin: '0 0 16px 0',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 4px rgba(245, 158, 11, 0.8)',
+                    }}
+                  >
+                    📈 Recent Activity
+                  </h4>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {[
+                      {
+                        time: '2 min ago',
+                        action: 'Accepted load FL-LOAD-001',
+                        result: 'Dallas → Houston ($850)',
+                        status: 'success',
+                      },
+                      {
+                        time: '15 min ago',
+                        action: 'Declined load FL-LOAD-004',
+                        result: 'Rate too low ($1.80/mi)',
+                        status: 'declined',
+                      },
+                      {
+                        time: '32 min ago',
+                        action: 'Auto-accepted load FL-LOAD-002',
+                        result: 'Austin → San Antonio ($450)',
+                        status: 'auto',
+                      },
+                      {
+                        time: '1 hr ago',
+                        action: 'Updated preferences',
+                        result: 'Min rate: $2.25/mi, Max distance: 250mi',
+                        status: 'settings',
+                      },
+                    ].map((activity, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              color: '#ffffff',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {activity.action}
+                          </div>
+                          <div
+                            style={{
+                              color: '#e5e7eb',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {activity.result}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            gap: '4px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              background:
+                                activity.status === 'success'
+                                  ? '#22c55e'
+                                  : activity.status === 'auto'
+                                    ? '#3b82f6'
+                                    : activity.status === 'declined'
+                                      ? '#ef4444'
+                                      : '#8b5cf6',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {activity.status.toUpperCase()}
+                          </div>
+                          <div
+                            style={{
+                              color: '#e5e7eb',
+                              fontSize: '11px',
+                            }}
+                          >
+                            {activity.time}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Admin Control Panel */}
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '2px solid rgba(34, 197, 94, 0.5)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.15)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#ffffff',
+                      margin: '0 0 16px 0',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 4px rgba(34, 197, 94, 0.8)',
+                    }}
+                  >
+                    🎛️ Admin Controls
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        alert(
+                          '🔄 Broadcasting urgent load to all available drivers...'
+                        );
+                      }}
+                    >
+                      📢 Broadcast Urgent Load
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        alert('⚙️ Opening AI matching configuration...');
+                      }}
+                    >
+                      ⚙️ Configure AI Rules
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        alert('📊 Generating performance analytics report...');
+                      }}
+                    >
+                      📊 Generate Report
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        alert(
+                          '🚨 Emergency override activated - manual dispatch mode enabled'
+                        );
+                      }}
+                    >
+                      🚨 Emergency Override
+                    </button>
                   </div>
                 </div>
               </div>

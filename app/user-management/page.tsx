@@ -3080,6 +3080,211 @@ export default function UserManagement() {
               </div>
             </div>
 
+            {/* Onboarding Progress */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  margin: '0 0 12px 0',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                }}
+              >
+                🚀 Onboarding Progress
+              </h4>
+
+              {/* Role-based onboarding status */}
+              {currentUser.departmentCode === 'MGR' ? (
+                // Admin/Manager view - shows team overview
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  <div style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ color: '#3b82f6', fontSize: '20px', fontWeight: 'bold' }}>7</div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>🔄 Active Workflows</div>
+                  </div>
+                  <div style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ color: '#f59e0b', fontSize: '20px', fontWeight: 'bold' }}>3</div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>⏳ Pending Approvals</div>
+                  </div>
+                  <div style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ color: '#10b981', fontSize: '20px', fontWeight: 'bold' }}>12</div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>✅ Completed</div>
+                  </div>
+                  <div style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ color: '#ef4444', fontSize: '20px', fontWeight: 'bold' }}>2</div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>⚠️ Stuck/Delayed</div>
+                  </div>
+                </div>
+              ) : currentUser.departmentCode === 'DM' ? (
+                // Driver view - shows individual progress
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                      DRIVER ONBOARDING
+                    </span>
+                    <span style={{ color: '#10b981', fontSize: '11px', fontWeight: 'bold' }}>
+                      100% COMPLETE
+                    </span>
+                  </div>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '6px',
+                    height: '8px',
+                    overflow: 'hidden',
+                    marginBottom: '8px'
+                  }}>
+                    <div style={{
+                      background: 'linear-gradient(90deg, #10b981, #059669)',
+                      height: '100%',
+                      width: '100%',
+                      borderRadius: '6px'
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
+                    <span style={{ color: '#10b981' }}>✅ Profile Setup</span>
+                    <span style={{ color: '#10b981' }}>✅ Document Upload</span>
+                    <span style={{ color: '#10b981' }}>✅ Equipment Assignment</span>
+                    <span style={{ color: '#10b981' }}>✅ Portal Access</span>
+                  </div>
+                </div>
+              ) : currentUser.departmentCode === 'BB' || currentUser.departmentCode === 'DC' || currentUser.departmentCode === 'MGR' || currentUser.departmentCode === 'CS' ? (
+                // Internal Staff view - shows ICA onboarding progress
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                      ICA ONBOARDING
+                    </span>
+                    <span style={{ color: '#10b981', fontSize: '11px', fontWeight: 'bold' }}>
+                      {currentUser.departmentCode === 'MGR' ? '100% COMPLETE' :
+                       currentUser.departmentCode === 'BB' ? '70% COMPLETE' :
+                       currentUser.departmentCode === 'DC' ? '40% COMPLETE' : '20% COMPLETE'}
+                    </span>
+                  </div>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '6px',
+                    height: '8px',
+                    overflow: 'hidden',
+                    marginBottom: '8px'
+                  }}>
+                    <div style={{
+                      background: currentUser.departmentCode === 'MGR' ? 'linear-gradient(90deg, #10b981, #059669)' :
+                                  currentUser.departmentCode === 'BB' ? 'linear-gradient(90deg, #3b82f6, #2563eb)' :
+                                  currentUser.departmentCode === 'DC' ? 'linear-gradient(90deg, #f59e0b, #d97706)' :
+                                  'linear-gradient(90deg, #ef4444, #dc2626)',
+                      height: '100%',
+                      width: currentUser.departmentCode === 'MGR' ? '100%' :
+                             currentUser.departmentCode === 'BB' ? '70%' :
+                             currentUser.departmentCode === 'DC' ? '40%' : '20%',
+                      borderRadius: '6px'
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px', fontSize: '9px', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#10b981' }}>✅ Personal Info</span>
+                    <span style={{ color: '#10b981' }}>✅ Experience</span>
+                    <span style={{ color: currentUser.departmentCode === 'CS' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
+                      {currentUser.departmentCode === 'CS' ? '⏳' : '✅'} Background
+                    </span>
+                    <span style={{ color: currentUser.departmentCode === 'CS' || currentUser.departmentCode === 'DC' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
+                      {currentUser.departmentCode === 'CS' || currentUser.departmentCode === 'DC' ? '⏳' : '✅'} Documents
+                    </span>
+                    <span style={{ color: currentUser.departmentCode !== 'MGR' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
+                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'} ICA Signed
+                    </span>
+                    <span style={{ color: currentUser.departmentCode !== 'MGR' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
+                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'} Training
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                // Carrier view - shows own progress
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                      CARRIER ONBOARDING
+                    </span>
+                    <span style={{ color: '#f59e0b', fontSize: '11px', fontWeight: 'bold' }}>
+                      66% COMPLETE
+                    </span>
+                  </div>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '6px',
+                    height: '8px',
+                    overflow: 'hidden',
+                    marginBottom: '8px'
+                  }}>
+                    <div style={{
+                      background: 'linear-gradient(90deg, #f59e0b, #d97706)',
+                      height: '100%',
+                      width: '66%',
+                      borderRadius: '6px'
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
+                    <span style={{ color: '#10b981' }}>✅ FMCSA Verification</span>
+                    <span style={{ color: '#10b981' }}>✅ Travel Limits</span>
+                    <span style={{ color: '#10b981' }}>✅ Documents</span>
+                    <span style={{ color: '#f59e0b' }}>🔄 Factoring</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>⏳ Agreements</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>⏳ Portal</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Recent onboarding activity */}
+              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '10px', fontWeight: '600', marginBottom: '6px' }}>
+                  RECENT ACTIVITY
+                </div>
+                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  {currentUser.departmentCode === 'DM'
+                    ? '✅ Driver portal access activated (2 hours ago)'
+                    : currentUser.departmentCode === 'MGR'
+                      ? '✅ ICA onboarding completed successfully (1 hour ago)'
+                      : currentUser.departmentCode === 'BB'
+                        ? '📝 Independent Contractor Agreement signed (3 hours ago)'
+                        : currentUser.departmentCode === 'DC'
+                          ? '🔍 Background check completed (1 day ago)'
+                          : currentUser.departmentCode === 'CS'
+                            ? '📄 Personal information submitted for review (2 days ago)'
+                            : '📄 Insurance certificate uploaded for review (4 hours ago)'
+                  }
+                </div>
+              </div>
+            </div>
+
             {/* Emergency Contact */}
             <div
               style={{

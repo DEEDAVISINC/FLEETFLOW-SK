@@ -684,6 +684,7 @@ export default function DispatchCentral() {
         >
           {[
             { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+            { id: 'go-with-flow', label: '⚡ Go With the Flow', icon: '⚡' },
             { id: 'task-priority', label: '🎯 Task Priority', icon: '🎯' },
             { id: 'loads', label: '📋 Load Management', icon: '📋' },
             { id: 'tracking', label: '🗺️ Live Tracking', icon: '🗺️' },
@@ -1162,6 +1163,785 @@ export default function DispatchCentral() {
             ))}
           </div>
         </div>
+
+        {selectedTab === 'go-with-flow' && (
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px',
+              }}
+            >
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '22px',
+                  fontWeight: '600',
+                  margin: 0,
+                }}
+              >
+                ⚡ Go With the Flow - Real-Time Load Matching
+              </h2>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                  onClick={() => {
+                    alert(
+                      'Auto-matching enabled! 🚛 FleetFlow will now automatically match urgent loads with nearby drivers.'
+                    );
+                  }}
+                >
+                  🚛 Enable Auto-Matching
+                </button>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                  onClick={() => {
+                    alert(
+                      '📡 Refreshing online drivers... Found 24 drivers available within 50 miles.'
+                    );
+                  }}
+                >
+                  📡 Refresh Drivers
+                </button>
+              </div>
+            </div>
+
+            {/* Real-Time Matching Dashboard */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '20px',
+                marginBottom: '30px',
+              }}
+            >
+              {/* Online Drivers Panel */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  border: '2px solid rgba(16, 185, 129, 0.5)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: '#ffffff',
+                    margin: '0 0 16px 0',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    textShadow: '0 2px 4px rgba(16, 185, 129, 0.8)',
+                  }}
+                >
+                  🟢 Online Drivers (24)
+                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                  }}
+                >
+                  {[
+                    {
+                      name: 'John Rodriguez',
+                      location: 'Dallas, TX',
+                      distance: '12 mi',
+                      status: 'Available',
+                      equipment: 'Dry Van',
+                    },
+                    {
+                      name: 'Maria Santos',
+                      location: 'Houston, TX',
+                      distance: '45 mi',
+                      status: 'Available',
+                      equipment: 'Refrigerated',
+                    },
+                    {
+                      name: 'David Thompson',
+                      location: 'Austin, TX',
+                      distance: '78 mi',
+                      status: 'Available',
+                      equipment: 'Flatbed',
+                    },
+                    {
+                      name: 'Lisa Chen',
+                      location: 'San Antonio, TX',
+                      distance: '95 mi',
+                      status: 'Available',
+                      equipment: 'Dry Van',
+                    },
+                  ].map((driver, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: '#ffffff',
+                            fontWeight: '700',
+                            fontSize: '15px',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+                          }}
+                        >
+                          {driver.name}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                          }}
+                        >
+                          {driver.location} • {driver.distance} •{' '}
+                          {driver.equipment}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: '#10b981',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {driver.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Urgent Loads Panel */}
+              <div
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '2px solid rgba(239, 68, 68, 0.6)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: '#ffffff',
+                    margin: '0 0 16px 0',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    textShadow: '0 2px 4px rgba(239, 68, 68, 0.8)',
+                  }}
+                >
+                  🚨 Urgent Loads (8)
+                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                  }}
+                >
+                  {[
+                    {
+                      id: 'FL-2401',
+                      route: 'Dallas → Phoenix',
+                      rate: '$2,800',
+                      pickup: '2 hrs',
+                      priority: 'CRITICAL',
+                    },
+                    {
+                      id: 'FL-2402',
+                      route: 'Houston → Denver',
+                      rate: '$3,200',
+                      pickup: '4 hrs',
+                      priority: 'HIGH',
+                    },
+                    {
+                      id: 'FL-2403',
+                      route: 'Austin → Seattle',
+                      rate: '$4,500',
+                      pickup: '6 hrs',
+                      priority: 'HIGH',
+                    },
+                  ].map((load, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border:
+                          load.priority === 'CRITICAL'
+                            ? '2px solid #ef4444'
+                            : '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {load.id}
+                        </div>
+                        <div
+                          style={{
+                            background:
+                              load.priority === 'CRITICAL'
+                                ? '#ef4444'
+                                : '#f59e0b',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.priority}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '12px',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {load.route}
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: '#10b981',
+                            fontWeight: '600',
+                            fontSize: '13px',
+                          }}
+                        >
+                          {load.rate}
+                        </span>
+                        <span
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '11px',
+                          }}
+                        >
+                          Pickup in {load.pickup}
+                        </span>
+                      </div>
+                      <button
+                        style={{
+                          width: '100%',
+                          marginTop: '8px',
+                          background:
+                            'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          alert(
+                            `⚡ Broadcasting ${load.id} to 24 nearby drivers... Expected response in 2-5 minutes.`
+                          );
+                        }}
+                      >
+                        ⚡ Instant Match
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Offers Panel */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  border: '2px solid rgba(59, 130, 246, 0.5)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: '#ffffff',
+                    margin: '0 0 16px 0',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
+                  }}
+                >
+                  📡 Active Offers (12)
+                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                  }}
+                >
+                  {[
+                    {
+                      load: 'FL-2401',
+                      driver: 'John Rodriguez',
+                      expires: '4:32',
+                      status: 'Pending',
+                    },
+                    {
+                      load: 'FL-2402',
+                      driver: 'Maria Santos',
+                      expires: '2:15',
+                      status: 'Viewed',
+                    },
+                    {
+                      load: 'FL-2403',
+                      driver: 'David Thompson',
+                      expires: '6:45',
+                      status: 'Pending',
+                    },
+                  ].map((offer, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {offer.load} → {offer.driver}
+                        </div>
+                        <div
+                          style={{
+                            background:
+                              offer.status === 'Viewed' ? '#f59e0b' : '#6b7280',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {offer.status}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          Expires in {offer.expires}
+                        </span>
+                        <button
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #ef4444, #dc2626)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            alert(`Cancelling offer for ${offer.load}...`);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Instant Load Broadcaster */}
+            <div
+              style={{
+                background: 'rgba(139, 92, 246, 0.2)',
+                border: '2px solid rgba(139, 92, 246, 0.5)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px',
+                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
+              }}
+            >
+              <h3
+                style={{
+                  color: '#ffffff',
+                  margin: '0 0 16px 0',
+                  fontSize: '1.2rem',
+                  fontWeight: '700',
+                  textShadow: '0 2px 4px rgba(139, 92, 246, 0.8)',
+                }}
+              >
+                📢 Instant Load Broadcaster
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                <div>
+                  <label
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Load ID
+                  </label>
+                  <input
+                    type='text'
+                    placeholder='FL-2404'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.4)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Route
+                  </label>
+                  <input
+                    type='text'
+                    placeholder='Dallas, TX → Phoenix, AZ'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.4)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Rate
+                  </label>
+                  <input
+                    type='text'
+                    placeholder='$2,800'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.4)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Equipment
+                  </label>
+                  <select
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.4)',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <option value='dry-van'>Dry Van</option>
+                    <option value='refrigerated'>Refrigerated</option>
+                    <option value='flatbed'>Flatbed</option>
+                    <option value='step-deck'>Step Deck</option>
+                  </select>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'center',
+                }}
+              >
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                  onClick={() => {
+                    alert(
+                      '⚡ Broadcasting load to 24 online drivers within 50 miles... Drivers will receive instant notifications on their mobile apps.'
+                    );
+                  }}
+                >
+                  ⚡ Broadcast Now
+                </button>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                  onClick={() => {
+                    alert(
+                      '🤖 AI is analyzing driver performance, location, equipment, and preferences to find the best matches...'
+                    );
+                  }}
+                >
+                  🤖 AI Match
+                </button>
+              </div>
+            </div>
+
+            {/* Real-Time Activity Feed */}
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.2)',
+                border: '2px solid rgba(34, 197, 94, 0.5)',
+                borderRadius: '12px',
+                padding: '20px',
+                boxShadow: '0 4px 12px rgba(34, 197, 94, 0.15)',
+              }}
+            >
+              <h3
+                style={{
+                  color: '#ffffff',
+                  margin: '0 0 16px 0',
+                  fontSize: '1.2rem',
+                  fontWeight: '700',
+                  textShadow: '0 2px 4px rgba(34, 197, 94, 0.8)',
+                }}
+              >
+                📈 Real-Time Activity Feed
+              </h3>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {[
+                  {
+                    time: '2:34 PM',
+                    action: '✅ John Rodriguez accepted FL-2401 ($2,800)',
+                    type: 'success',
+                  },
+                  {
+                    time: '2:32 PM',
+                    action: '📡 FL-2401 broadcasted to 12 nearby drivers',
+                    type: 'info',
+                  },
+                  {
+                    time: '2:31 PM',
+                    action: '⚡ Auto-match triggered for urgent load FL-2401',
+                    type: 'warning',
+                  },
+                  {
+                    time: '2:29 PM',
+                    action: '🚛 Maria Santos came online in Houston area',
+                    type: 'info',
+                  },
+                  {
+                    time: '2:27 PM',
+                    action: '❌ David Thompson declined FL-2399',
+                    type: 'error',
+                  },
+                  {
+                    time: '2:25 PM',
+                    action: '✅ Lisa Chen accepted FL-2398 ($3,400)',
+                    type: 'success',
+                  },
+                  {
+                    time: '2:23 PM',
+                    action: '📡 FL-2398 broadcasted to 8 nearby drivers',
+                    type: 'info',
+                  },
+                  {
+                    time: '2:21 PM',
+                    action: '🤖 AI recommended premium rate for FL-2398',
+                    type: 'warning',
+                  },
+                ].map((activity, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '10px 0',
+                      borderBottom:
+                        index < 7
+                          ? '1px solid rgba(255, 255, 255, 0.1)'
+                          : 'none',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background:
+                          activity.type === 'success'
+                            ? '#22c55e'
+                            : activity.type === 'error'
+                              ? '#ef4444'
+                              : activity.type === 'warning'
+                                ? '#f59e0b'
+                                : '#3b82f6',
+                        marginRight: '12px',
+                      }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        {activity.time}
+                      </div>
+                      <div style={{ color: 'white', fontSize: '14px' }}>
+                        {activity.action}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {selectedTab === 'task-priority' && (
           <div>

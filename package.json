@@ -80,7 +80,7 @@
     "esl": "^11.2.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
-    "jspdf-html2canvas": "^1.5.2",
+    "jspdf-html2canvas": "^1.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.263.1",
     "next": "^15.3.3",

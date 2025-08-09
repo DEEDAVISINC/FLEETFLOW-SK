@@ -1,23 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdvancedWeatherIntegration from '../components/AdvancedWeatherIntegration';
 import HazmatRouteComplianceWidget from '../components/HazmatRouteComplianceWidget';
 import PermitRoutePlanningWidget from '../components/PermitRoutePlanningWidget';
+import PortAuthorityAccessWidget from '../components/PortAuthorityAccessWidget';
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard';
 import RouteSharing from '../components/RouteSharing';
 import SeasonalLoadPlanningWidget from '../components/SeasonalLoadPlanningWidget';
-import PortAuthorityAccessWidget from '../components/PortAuthorityAccessWidget';
-import SpotRateOptimizationWidget from '../components/SpotRateOptimizationWidget';
 import { OptimizedRoute } from '../services/route-optimization';
+import {
+  UniversalQuote,
+  universalQuoteService,
+} from '../services/universal-quote-service';
 
 export default function RoutesPage() {
   const [activeView, setActiveView] = useState<
-    'dashboard' | 'optimizer' | 'analytics' | 'specialized'
+    'dashboard' | 'optimizer' | 'analytics' | 'specialized' | 'saved-quotes'
   >('dashboard');
   const [specializedSubTab, setSpecializedSubTab] = useState<
-    'permits' | 'hazmat' | 'seasonal' | 'weather' | 'ports'
+    | 'permits'
+    | 'hazmat'
+    | 'seasonal'
+    | 'weather'
+    | 'ports'
+    | 'pharmaceutical'
+    | 'medical-courier'
   >('permits');
   const [routeStats, setRouteStats] = useState({
     activeRoutes: 12,
@@ -51,6 +60,14 @@ export default function RoutesPage() {
   const [showRouteSharing, setShowRouteSharing] = useState(false);
   const [selectedRouteForSharing, setSelectedRouteForSharing] =
     useState<OptimizedRoute | null>(null);
+
+  // Quote integration state
+  const [savedQuotes, setSavedQuotes] = useState<UniversalQuote[]>([]);
+  const [selectedQuoteForRouting, setSelectedQuoteForRouting] =
+    useState<UniversalQuote | null>(null);
+  const [routePlanningInProgress, setRoutePlanningInProgress] = useState<
+    string[]
+  >([]);
 
   // Sample route data for sharing functionality
   const sampleRoutes: OptimizedRoute[] = [
@@ -135,6 +152,81 @@ export default function RoutesPage() {
   const handleShareCancel = () => {
     setShowRouteSharing(false);
     setSelectedRouteForSharing(null);
+  };
+
+  // Load saved quotes on component mount
+  useEffect(() => {
+    const loadSavedQuotes = () => {
+      const quotes = universalQuoteService.getRoutePlanningCandidates();
+      setSavedQuotes(quotes);
+    };
+    loadSavedQuotes();
+  }, []);
+
+  // Quote route planning functions
+  const handleStartRoutePlanning = async (quote: UniversalQuote) => {
+    setRoutePlanningInProgress((prev) => [...prev, quote.id]);
+    setSelectedQuoteForRouting(quote);
+
+    // Request route optimization
+    const routeRequest = universalQuoteService.requestRouteOptimization(
+      quote.id,
+      {
+        priority:
+          quote.timeline.urgency === 'emergency'
+            ? 'urgent'
+            : quote.timeline.urgency === 'expedited'
+              ? 'high'
+              : 'medium',
+        optimizationGoals: ['time', 'cost', 'fuel'],
+        constraints: {
+          avoidTolls: false,
+          avoidHighways: false,
+          maxDrivingHours: 11,
+        },
+        requestedBy: 'route-planner@fleetflow.com',
+        requestedAt: new Date().toISOString(),
+      }
+    );
+
+    // Simulate route optimization process
+    setTimeout(() => {
+      const optimizedDistance =
+        quote.routeData?.distance || Math.floor(Math.random() * 1000) + 200;
+      const optimizedDuration = optimizedDistance / 55; // Assume 55 mph average
+
+      universalQuoteService.updateRouteOptimization(quote.id, {
+        distance: optimizedDistance,
+        estimatedDuration: optimizedDuration,
+        routePlanningStatus: 'optimized',
+        optimizedRoute: {
+          waypoints: [quote.origin, quote.destination],
+          totalDistance: optimizedDistance,
+          totalDuration: optimizedDuration,
+          fuelEfficiency: 6.8,
+          estimatedFuelCost: (optimizedDistance / 6.8) * 3.45,
+        },
+      });
+
+      setRoutePlanningInProgress((prev) =>
+        prev.filter((id) => id !== quote.id)
+      );
+
+      // Refresh quotes list
+      const updatedQuotes = universalQuoteService.getRoutePlanningCandidates();
+      setSavedQuotes(updatedQuotes);
+    }, 3000);
+  };
+
+  const handleViewOptimizedRoute = (quote: UniversalQuote) => {
+    setSelectedQuoteForRouting(quote);
+    // Could open a detailed route view modal here
+    console.log('Viewing optimized route for:', quote.quoteNumber);
+  };
+
+  const refreshSavedQuotes = () => {
+    const quotes = universalQuoteService.getRoutePlanningCandidates();
+    setSavedQuotes(quotes);
   };
 
   return (
@@ -263,7 +355,7 @@ export default function RoutesPage() {
                         borderRadius: '50%',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         fontSize: '14px',
@@ -336,6 +428,7 @@ export default function RoutesPage() {
               { id: 'optimizer', label: 'AI Optimizer', icon: '⚡' },
               { id: 'analytics', label: 'Analytics', icon: '📈' },
               { id: 'specialized', label: 'Specialized Routing', icon: '🛣️' },
+              { id: 'saved-quotes', label: 'Saved Quotes', icon: '💾' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1488,7 +1581,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                     />
+                    />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>High Performance:</strong> Route efficiency has
                       improved by 12.5% this month due to AI optimization.
@@ -1510,7 +1603,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                     />
+                    />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Opportunity:</strong> Consider optimizing morning
                       departure times to avoid peak traffic.
@@ -1532,7 +1625,7 @@ export default function RoutesPage() {
                         marginTop: '8px',
                         flexShrink: 0,
                       }}
-                     />
+                    />
                     <p style={{ color: 'white', margin: 0, lineHeight: '1.5' }}>
                       <strong>Trend:</strong> Fuel costs decreased by 8% through
                       better route planning and traffic avoidance.
@@ -1567,6 +1660,16 @@ export default function RoutesPage() {
                   { id: 'seasonal', label: 'Seasonal Planning', icon: '🌦️' },
                   { id: 'weather', label: 'Weather Integration', icon: '🌤️' },
                   { id: 'ports', label: 'Port Authority Access', icon: '🏗️' },
+                  {
+                    id: 'pharmaceutical',
+                    label: 'Pharmaceutical Routes',
+                    icon: '💊',
+                  },
+                  {
+                    id: 'medical-courier',
+                    label: 'Medical Courier Services',
+                    icon: '🏥',
+                  },
                 ].map((subTab) => (
                   <button
                     key={subTab.id}
@@ -1609,6 +1712,1365 @@ export default function RoutesPage() {
             {specializedSubTab === 'seasonal' && <SeasonalLoadPlanningWidget />}
             {specializedSubTab === 'weather' && <AdvancedWeatherIntegration />}
             {specializedSubTab === 'ports' && <PortAuthorityAccessWidget />}
+            {specializedSubTab === 'pharmaceutical' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginTop: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <span style={{ fontSize: '32px' }}>💊</span>
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: '#1f2937',
+                        margin: 0,
+                      }}
+                    >
+                      Pharmaceutical Route Planning
+                    </h3>
+                    <p
+                      style={{
+                        color: '#6b7280',
+                        margin: 0,
+                        fontSize: '14px',
+                      }}
+                    >
+                      Cold chain & temperature-controlled delivery optimization
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pharmaceutical Route Features */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  {/* Temperature Control Planning */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>🌡️</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        Temperature Control Planning
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Optimize routes for cold chain requirements: 2-8°C, -20°C,
+                      -70°C
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ Real-time temperature monitoring</div>
+                      <div>✓ Backup refrigeration planning</div>
+                      <div>✓ Temperature excursion alerts</div>
+                    </div>
+                  </div>
+
+                  {/* FDA Compliance Routing */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>📋</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        FDA Compliance Routing
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Ensure all routes meet FDA, GMP, and pharmaceutical
+                      regulations
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ Chain of custody documentation</div>
+                      <div>✓ Audit trail maintenance</div>
+                      <div>✓ Regulatory checkpoint validation</div>
+                    </div>
+                  </div>
+
+                  {/* Emergency Pharmaceutical Delivery */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>⚡</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        Emergency Delivery Routes
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Expedited routing for critical pharmaceutical deliveries
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ Priority lane optimization</div>
+                      <div>✓ Hospital direct access routes</div>
+                      <div>✓ 24/7 emergency dispatch</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Active Pharmaceutical Routes */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(59, 130, 246, 0.1)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#1f2937',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🚛 Active Pharmaceutical Routes
+                  </h4>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        '120px 1fr 1fr 100px 120px 100px 80px',
+                      gap: '12px',
+                      padding: '12px',
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      marginBottom: '12px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: '#374151',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <div>Route ID</div>
+                    <div>Origin → Destination</div>
+                    <div>Pharmaceutical Product</div>
+                    <div>Temperature</div>
+                    <div>Compliance</div>
+                    <div>ETA</div>
+                    <div>Status</div>
+                  </div>
+
+                  {[
+                    {
+                      id: 'PH-R001',
+                      route: 'Pfizer NJ → Mount Sinai Hospital NYC',
+                      product: 'COVID-19 Vaccines',
+                      temperature: '-70°C',
+                      compliance: 'FDA, CDC',
+                      eta: '2:45 PM',
+                      status: 'In Transit',
+                      urgency: 'critical',
+                    },
+                    {
+                      id: 'PH-R002',
+                      route: 'J&J Facility → Boston Medical Center',
+                      product: 'Clinical Trial Samples',
+                      temperature: '-20°C',
+                      compliance: 'FDA, GCP',
+                      eta: '4:15 PM',
+                      status: 'Loading',
+                      urgency: 'high',
+                    },
+                    {
+                      id: 'PH-R003',
+                      route: 'Merck PA → CVS Distribution Center',
+                      product: 'Prescription Medications',
+                      temperature: '2-8°C',
+                      compliance: 'FDA, USP',
+                      eta: '11:30 AM',
+                      status: 'Delivered',
+                      urgency: 'medium',
+                    },
+                    {
+                      id: 'PH-R004',
+                      route: 'AbbVie IL → Mayo Clinic MN',
+                      product: 'Specialty Biologics',
+                      temperature: '2-8°C',
+                      compliance: 'FDA, GMP',
+                      eta: '6:20 PM',
+                      status: 'Optimizing',
+                      urgency: 'medium',
+                    },
+                  ].map((route, index) => (
+                    <div
+                      key={route.id}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          '120px 1fr 1fr 100px 120px 100px 80px',
+                        gap: '12px',
+                        padding: '12px',
+                        background:
+                          index % 2 === 0
+                            ? 'rgba(255, 255, 255, 0.5)'
+                            : 'transparent',
+                        borderRadius: '6px',
+                        alignItems: 'center',
+                        fontSize: '13px',
+                        color: '#374151',
+                      }}
+                    >
+                      <div style={{ fontWeight: 'bold', color: '#3b82f6' }}>
+                        {route.id}
+                      </div>
+                      <div>{route.route}</div>
+                      <div>{route.product}</div>
+                      <div
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          color: '#1d4ed8',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.temperature}
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.1)',
+                          color: '#059669',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.compliance}
+                      </div>
+                      <div>{route.eta}</div>
+                      <div
+                        style={{
+                          background:
+                            route.status === 'Delivered'
+                              ? 'rgba(16, 185, 129, 0.1)'
+                              : route.status === 'In Transit'
+                                ? 'rgba(59, 130, 246, 0.1)'
+                                : route.status === 'Loading'
+                                  ? 'rgba(245, 158, 11, 0.1)'
+                                  : 'rgba(107, 114, 128, 0.1)',
+                          color:
+                            route.status === 'Delivered'
+                              ? '#059669'
+                              : route.status === 'In Transit'
+                                ? '#1d4ed8'
+                                : route.status === 'Loading'
+                                  ? '#d97706'
+                                  : '#374151',
+                          padding: '4px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pharmaceutical Route Actions */}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    marginTop: '20px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    ➕ Plan New Pharmaceutical Route
+                  </button>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🌡️ Temperature Monitoring Dashboard
+                  </button>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    📋 Compliance Report
+                  </button>
+                </div>
+              </div>
+            )}
+            {specializedSubTab === 'medical-courier' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginTop: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <span style={{ fontSize: '32px' }}>🏥</span>
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: '#1f2937',
+                        margin: 0,
+                      }}
+                    >
+                      Medical Courier & Expediting Services
+                    </h3>
+                    <p
+                      style={{
+                        color: '#6b7280',
+                        margin: 0,
+                        fontSize: '14px',
+                      }}
+                    >
+                      STAT deliveries, medical equipment transport, and
+                      emergency medical logistics
+                    </p>
+                  </div>
+                </div>
+
+                {/* Medical Courier Service Features */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  {/* STAT Delivery Services */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #dc2626, #991b1b)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>🚨</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        STAT Delivery Services
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Emergency medical deliveries with guaranteed response
+                      times
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ 30-minute emergency response</div>
+                      <div>✓ 24/7 availability</div>
+                      <div>✓ Real-time tracking</div>
+                    </div>
+                  </div>
+
+                  {/* Medical Equipment Transport */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>🏥</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        Medical Equipment Transport
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Specialized transport for sensitive medical equipment
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ Temperature-controlled vehicles</div>
+                      <div>✓ Specialized handling protocols</div>
+                      <div>✓ Insurance coverage</div>
+                    </div>
+                  </div>
+
+                  {/* Clinical Trial Logistics */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '20px' }}>🧪</span>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>
+                        Clinical Trial Logistics
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
+                      Secure transport for clinical trial materials and samples
+                    </p>
+                    <div style={{ marginTop: '12px', fontSize: '12px' }}>
+                      <div>✓ Chain of custody protocols</div>
+                      <div>✓ FDA compliance</div>
+                      <div>✓ Sample integrity monitoring</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Active Medical Courier Routes */}
+                <div
+                  style={{
+                    background: 'rgba(220, 38, 38, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(220, 38, 38, 0.1)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#1f2937',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🚑 Active Medical Courier Routes
+                  </h4>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        '120px 1fr 1fr 100px 120px 100px 80px',
+                      gap: '12px',
+                      padding: '12px',
+                      background: 'rgba(220, 38, 38, 0.1)',
+                      borderRadius: '8px',
+                      marginBottom: '12px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: '#374151',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <div>Route ID</div>
+                    <div>Origin → Destination</div>
+                    <div>Medical Service</div>
+                    <div>Urgency</div>
+                    <div>Compliance</div>
+                    <div>ETA</div>
+                    <div>Status</div>
+                  </div>
+
+                  {[
+                    {
+                      id: 'MC-R001',
+                      route: 'Mayo Clinic → Emergency Room',
+                      service: 'STAT Lab Results',
+                      urgency: 'Critical',
+                      compliance: 'HIPAA',
+                      eta: '12 min',
+                      status: 'In Transit',
+                      urgencyLevel: 'critical',
+                    },
+                    {
+                      id: 'MC-R002',
+                      route: 'Medical Center → Specialty Clinic',
+                      service: 'Medical Equipment',
+                      urgency: 'High',
+                      compliance: 'DOT, OSHA',
+                      eta: '45 min',
+                      status: 'Loading',
+                      urgencyLevel: 'high',
+                    },
+                    {
+                      id: 'MC-R003',
+                      route: 'Research Lab → Hospital Network',
+                      service: 'Clinical Trial Samples',
+                      urgency: 'Medium',
+                      compliance: 'FDA, GCP',
+                      eta: '1:20 PM',
+                      status: 'Delivered',
+                      urgencyLevel: 'medium',
+                    },
+                    {
+                      id: 'MC-R004',
+                      route: 'Organ Bank → Transplant Center',
+                      service: 'Organ Transport',
+                      urgency: 'Critical',
+                      compliance: 'UNOS',
+                      eta: '18 min',
+                      status: 'Emergency',
+                      urgencyLevel: 'critical',
+                    },
+                  ].map((route, index) => (
+                    <div
+                      key={route.id}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          '120px 1fr 1fr 100px 120px 100px 80px',
+                        gap: '12px',
+                        padding: '12px',
+                        background:
+                          index % 2 === 0
+                            ? 'rgba(255, 255, 255, 0.5)'
+                            : 'transparent',
+                        borderRadius: '6px',
+                        alignItems: 'center',
+                        fontSize: '13px',
+                        color: '#374151',
+                      }}
+                    >
+                      <div style={{ fontWeight: 'bold', color: '#dc2626' }}>
+                        {route.id}
+                      </div>
+                      <div>{route.route}</div>
+                      <div>{route.service}</div>
+                      <div
+                        style={{
+                          background:
+                            route.urgencyLevel === 'critical'
+                              ? 'rgba(220, 38, 38, 0.1)'
+                              : route.urgencyLevel === 'high'
+                                ? 'rgba(245, 158, 11, 0.1)'
+                                : 'rgba(34, 197, 94, 0.1)',
+                          color:
+                            route.urgencyLevel === 'critical'
+                              ? '#dc2626'
+                              : route.urgencyLevel === 'high'
+                                ? '#f59e0b'
+                                : '#22c55e',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.urgency}
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          color: '#3b82f6',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.compliance}
+                      </div>
+                      <div>{route.eta}</div>
+                      <div
+                        style={{
+                          background:
+                            route.status === 'Emergency'
+                              ? 'rgba(220, 38, 38, 0.1)'
+                              : route.status === 'In Transit'
+                                ? 'rgba(59, 130, 246, 0.1)'
+                                : route.status === 'Loading'
+                                  ? 'rgba(245, 158, 11, 0.1)'
+                                  : 'rgba(34, 197, 94, 0.1)',
+                          color:
+                            route.status === 'Emergency'
+                              ? '#dc2626'
+                              : route.status === 'In Transit'
+                                ? '#3b82f6'
+                                : route.status === 'Loading'
+                                  ? '#f59e0b'
+                                  : '#22c55e',
+                          padding: '4px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {route.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Medical Courier Service Actions */}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    marginTop: '20px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #dc2626, #991b1b)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🚨 Request STAT Delivery
+                  </button>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🏥 Schedule Equipment Transport
+                  </button>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    📊 View Service Analytics
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Saved Quotes Tab */}
+        {activeView === 'saved-quotes' && (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '24px',
+                }}
+              >
+                <div>
+                  <h2
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                    }}
+                  >
+                    💾 Saved Quotes for Route Planning
+                  </h2>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>
+                    Convert approved quotes into optimized routes
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={refreshSavedQuotes}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.3s ease',
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.3)')
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.2)')
+                    }
+                  >
+                    🔄 Refresh
+                  </button>
+                  <Link
+                    href='/quoting'
+                    style={{
+                      background: 'linear-gradient(135deg, #14b8a6, #0f766e)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'transform 0.2s ease',
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(-1px)')
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(0)')
+                    }
+                  >
+                    💰 Create New Quote
+                  </Link>
+                </div>
+              </div>
+
+              {/* Quick Stats */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {savedQuotes.length}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Ready for Planning
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#22c55e',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    $
+                    {savedQuotes
+                      .reduce((sum, q) => sum + q.pricing.total, 0)
+                      .toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Total Quote Value
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {routePlanningInProgress.length}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Planning in Progress
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quotes List */}
+            {savedQuotes.length > 0 ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                {savedQuotes.map((quote) => (
+                  <div
+                    key={quote.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 40px rgba(0, 0, 0, 0.15)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 32px rgba(0, 0, 0, 0.1)';
+                    }}
+                  >
+                    {/* Quote Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div>
+                        <h3
+                          style={{
+                            color: 'white',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          {quote.quoteNumber}
+                        </h3>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              background:
+                                quote.type === 'FTL'
+                                  ? '#3b82f6'
+                                  : quote.type === 'LTL'
+                                    ? '#10b981'
+                                    : quote.type === 'Specialized'
+                                      ? '#dc2626'
+                                      : quote.type === 'Multi-State'
+                                        ? '#7c3aed'
+                                        : '#f59e0b',
+                              color: 'white',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {quote.type}
+                          </span>
+                          <span
+                            style={{
+                              background:
+                                quote.timeline.urgency === 'emergency'
+                                  ? '#dc2626'
+                                  : quote.timeline.urgency === 'expedited'
+                                    ? '#f59e0b'
+                                    : '#22c55e',
+                              color: 'white',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {quote.timeline.urgency}
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div
+                          style={{
+                            color: '#22c55e',
+                            fontSize: '20px',
+                            fontWeight: '700',
+                          }}
+                        >
+                          ${quote.pricing.total.toLocaleString()}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          Total Value
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer & Route Info */}
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        👤 {quote.customer.name}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '13px',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        📍 {quote.origin.city}, {quote.origin.state} →{' '}
+                        {quote.destination.city}, {quote.destination.state}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '13px',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        📦 {quote.cargo.weight.toLocaleString()} lbs •{' '}
+                        {quote.cargo.pieces} pieces
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '13px',
+                        }}
+                      >
+                        🚛 {quote.equipment.type}
+                      </div>
+                    </div>
+
+                    {/* Route Status */}
+                    {quote.routeData && (
+                      <div
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          marginBottom: '16px',
+                          border: '1px solid rgba(59, 130, 246, 0.2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Route Status
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              {quote.routeData.distance} miles •{' '}
+                              {quote.routeData.estimatedDuration.toFixed(1)}h
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              background:
+                                quote.routeData.routePlanningStatus ===
+                                'optimized'
+                                  ? '#22c55e'
+                                  : quote.routeData.routePlanningStatus ===
+                                      'planning'
+                                    ? '#f59e0b'
+                                    : '#6b7280',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '8px',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              textTransform: 'capitalize',
+                            }}
+                          >
+                            {quote.routeData.routePlanningStatus.replace(
+                              '_',
+                              ' '
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div
+                      style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+                    >
+                      {!quote.routeData ||
+                      quote.routeData.routePlanningStatus === 'not_planned' ? (
+                        <button
+                          onClick={() => handleStartRoutePlanning(quote)}
+                          disabled={routePlanningInProgress.includes(quote.id)}
+                          style={{
+                            background: routePlanningInProgress.includes(
+                              quote.id
+                            )
+                              ? '#6b7280'
+                              : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: routePlanningInProgress.includes(quote.id)
+                              ? 'not-allowed'
+                              : 'pointer',
+                            flex: 1,
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          {routePlanningInProgress.includes(quote.id)
+                            ? '⏳ Planning Route...'
+                            : '🗺️ Start Route Planning'}
+                        </button>
+                      ) : quote.routeData.routePlanningStatus ===
+                        'optimized' ? (
+                        <button
+                          onClick={() => handleViewOptimizedRoute(quote)}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #22c55e, #16a34a)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            flex: 1,
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          ✅ View Optimized Route
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          style={{
+                            background: '#f59e0b',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'not-allowed',
+                            flex: 1,
+                          }}
+                        >
+                          ⏳ Planning in Progress...
+                        </button>
+                      )}
+                      <Link
+                        href={`/quoting?quote=${quote.id}`}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          color: 'white',
+                          padding: '10px 16px',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          textDecoration: 'none',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.background =
+                            'rgba(255, 255, 255, 0.3)')
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.background =
+                            'rgba(255, 255, 255, 0.2)')
+                        }
+                      >
+                        📝 Edit Quote
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '48px',
+                  textAlign: 'center',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '48px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📭
+                </div>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  No Saved Quotes for Route Planning
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    marginBottom: '24px',
+                  }}
+                >
+                  Create and approve quotes in the Freight Quoting system to see
+                  them here for route optimization.
+                </p>
+                <Link
+                  href='/quoting'
+                  style={{
+                    background: 'linear-gradient(135deg, #14b8a6, #0f766e)',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    display: 'inline-block',
+                    transition: 'transform 0.2s ease',
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.transform = 'translateY(-2px)')
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.transform = 'translateY(0)')
+                  }
+                >
+                  💰 Create Your First Quote
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

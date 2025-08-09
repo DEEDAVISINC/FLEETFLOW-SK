@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "ES2020", "webworker"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2020",
+      "webworker"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -22,17 +27,38 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["app/components/*"],
-      "@/lib/*": ["lib/*"],
-      "@/types/*": ["lib/types/*"],
-      "@/utils/*": ["app/utils/*"],
-      "@/services/*": ["app/services/*"],
-      "@/hooks/*": ["app/hooks/*"],
-      "@/contexts/*": ["app/contexts/*"],
-      "@/config/*": ["app/config/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "app/components/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/types/*": [
+        "lib/types/*"
+      ],
+      "@/utils/*": [
+        "app/utils/*"
+      ],
+      "@/services/*": [
+        "app/services/*"
+      ],
+      "@/hooks/*": [
+        "app/hooks/*"
+      ],
+      "@/contexts/*": [
+        "app/contexts/*"
+      ],
+      "@/config/*": [
+        "app/config/*"
+      ]
     },
-    "typeRoots": ["./node_modules/@types", "./lib/types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./lib/types"
+    ]
   },
   "include": [
     "**/*.ts",
@@ -43,5 +69,14 @@
     "lib/types/**/*.ts",
     "supabase/**/*.ts"
   ],
-  "exclude": ["node_modules", "functions", "backups", ".next", "out", "dist", "build", ".vercel"]
+  "exclude": [
+    "node_modules",
+    "functions",
+    "backups",
+    ".next",
+    "out",
+    "dist",
+    "build",
+    ".vercel"
+  ]
 }

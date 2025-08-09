@@ -1,6 +1,150 @@
 'use client';
 
+import { useState } from 'react';
+
 export default function InsurancePartnershipsPage() {
+  const [formData, setFormData] = useState({
+    companyName: '',
+    mcNumber: '',
+    dotNumber: '',
+    yearsInBusiness: '',
+    vehicleCount: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    driverCount: '',
+    coverageTypes: [] as string[],
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    'idle' | 'success' | 'error'
+  >('idle');
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCoverageToggle = (coverageType: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      coverageTypes: prev.coverageTypes.includes(coverageType)
+        ? prev.coverageTypes.filter((type) => type !== coverageType)
+        : [...prev.coverageTypes, coverageType],
+    }));
+  };
+
+  const handleSubmitQuoteRequest = async () => {
+    if (isSubmitting) return;
+
+    // Basic validation
+    if (
+      !formData.companyName ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phone
+    ) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (formData.coverageTypes.length === 0) {
+      alert('Please select at least one coverage type');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const submissionId = `INS-${Date.now()}`;
+      const submissionData = {
+        submissionId,
+        companyName: formData.companyName,
+        customerName: `${formData.firstName} ${formData.lastName}`,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        mcNumber: formData.mcNumber,
+        dotNumber: formData.dotNumber,
+        vehicleCount: parseInt(formData.vehicleCount) || 0,
+        driverCount: parseInt(formData.driverCount) || 0,
+        yearsInBusiness: formData.yearsInBusiness,
+        coverageTypes: formData.coverageTypes,
+        partnersContacted: 3, // CoverDash, Tivly, Insurify
+        partnerNames: ['CoverDash', 'Tivly Affiliate', 'Insurify Partnership'],
+        estimatedResponse: '24-48 hours',
+        submittedAt: new Date().toISOString(),
+      };
+
+      // Send via universal email API
+      const response = await fetch('/api/email/universal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'insurance_confirmation',
+          recipient: {
+            email: formData.email,
+            name: `${formData.firstName} ${formData.lastName}`,
+          },
+          data: submissionData,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitStatus('success');
+        // Reset form
+        setFormData({
+          companyName: '',
+          mcNumber: '',
+          dotNumber: '',
+          yearsInBusiness: '',
+          vehicleCount: '',
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          driverCount: '',
+          coverageTypes: [],
+        });
+      } else {
+        throw new Error(result.error || 'Failed to submit quote request');
+      }
+    } catch (error) {
+      console.error('Quote submission error:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const coverageOptions = [
+    {
+      id: 'commercial_auto',
+      name: 'Commercial Auto',
+      description: 'Required for all commercial vehicles',
+    },
+    {
+      id: 'general_liability',
+      name: 'General Liability',
+      description: 'Protects against third-party claims',
+    },
+    {
+      id: 'workers_comp',
+      name: 'Workers Compensation',
+      description: 'Required for employees in most states',
+    },
+    {
+      id: 'cargo',
+      name: 'Cargo Insurance',
+      description: 'Protects freight being transported',
+    },
+  ];
+
   return (
     <div
       style={{
@@ -47,7 +191,7 @@ export default function InsurancePartnershipsPage() {
               marginBottom: '8px',
             }}
           >
-            Get Commercial Insurance Quotes
+            FleetFlow Insurance Referral Partners
           </h1>
           <p
             style={{
@@ -56,8 +200,32 @@ export default function InsurancePartnershipsPage() {
               fontSize: '18px',
             }}
           >
-            Compare quotes from multiple A-rated insurance carriers
+            We connect you with licensed insurance providers - FleetFlow earns
+            referral commissions
           </p>
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '8px',
+              padding: '12px',
+              marginTop: '16px',
+              textAlign: 'left',
+            }}
+          >
+            <p
+              style={{
+                color: '#10b981',
+                fontSize: '14px',
+                margin: 0,
+                fontWeight: '600',
+              }}
+            >
+              ⚠️ Important: FleetFlow operates as a referral partner only. We do
+              not sell insurance directly. All insurance policies are provided
+              by licensed insurance carriers through our partner network.
+            </p>
+          </div>
         </div>
 
         {/* Quote Request Form */}
@@ -96,6 +264,10 @@ export default function InsurancePartnershipsPage() {
                 <input
                   type='text'
                   placeholder='Company Name *'
+                  value={formData.companyName}
+                  onChange={(e) =>
+                    handleInputChange('companyName', e.target.value)
+                  }
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -199,6 +371,10 @@ export default function InsurancePartnershipsPage() {
                   <input
                     type='text'
                     placeholder='First Name *'
+                    value={formData.firstName}
+                    onChange={(e) =>
+                      handleInputChange('firstName', e.target.value)
+                    }
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -211,6 +387,10 @@ export default function InsurancePartnershipsPage() {
                   <input
                     type='text'
                     placeholder='Last Name *'
+                    value={formData.lastName}
+                    onChange={(e) =>
+                      handleInputChange('lastName', e.target.value)
+                    }
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -224,6 +404,8 @@ export default function InsurancePartnershipsPage() {
                 <input
                   type='email'
                   placeholder='Email Address *'
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -236,6 +418,8 @@ export default function InsurancePartnershipsPage() {
                 <input
                   type='tel'
                   placeholder='Phone Number *'
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -374,31 +558,85 @@ export default function InsurancePartnershipsPage() {
           {/* Submit Button */}
           <div style={{ textAlign: 'center' }}>
             <button
+              onClick={handleSubmitQuoteRequest}
+              disabled={isSubmitting}
               style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
+                background: isSubmitting
+                  ? 'linear-gradient(135deg, #6b7280, #4b5563)'
+                  : submitStatus === 'success'
+                    ? 'linear-gradient(135deg, #10b981, #059669)'
+                    : submitStatus === 'error'
+                      ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                      : 'linear-gradient(135deg, #10b981, #059669)',
                 color: 'white',
                 border: 'none',
                 padding: '20px 60px',
                 borderRadius: '12px',
                 fontSize: '20px',
                 fontWeight: '700',
-                cursor: 'pointer',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
                 transition: 'all 0.3s ease',
+                opacity: isSubmitting ? 0.7 : 1,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 12px 32px rgba(16, 185, 129, 0.5)';
+                if (!isSubmitting) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 12px 32px rgba(16, 185, 129, 0.5)';
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 8px 24px rgba(16, 185, 129, 0.4)';
+                if (!isSubmitting) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 24px rgba(16, 185, 129, 0.4)';
+                }
               }}
             >
-              🚀 Get My Insurance Quotes Now
+              {isSubmitting
+                ? '⏳ Submitting Request...'
+                : submitStatus === 'success'
+                  ? '✅ Request Submitted!'
+                  : submitStatus === 'error'
+                    ? '❌ Try Again'
+                    : '🚀 Get My Insurance Quotes Now'}
             </button>
+
+            {submitStatus === 'success' && (
+              <div
+                style={{
+                  marginTop: '20px',
+                  padding: '16px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  borderRadius: '8px',
+                  color: '#10b981',
+                  textAlign: 'center',
+                }}
+              >
+                ✅ <strong>Success!</strong> Your quote request has been
+                submitted. Check your email for confirmation and expect calls
+                from our insurance partners within 24-48 hours.
+              </div>
+            )}
+
+            {submitStatus === 'error' && (
+              <div
+                style={{
+                  marginTop: '20px',
+                  padding: '16px',
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                  borderRadius: '8px',
+                  color: '#dc2626',
+                  textAlign: 'center',
+                }}
+              >
+                ❌ <strong>Error:</strong> There was a problem submitting your
+                request. Please try again or call (833) 386-3509 for assistance.
+              </div>
+            )}
             <p
               style={{
                 color: 'rgba(255, 255, 255, 0.7)',
@@ -407,8 +645,133 @@ export default function InsurancePartnershipsPage() {
                 marginBottom: 0,
               }}
             >
-              Free quotes from multiple carriers • No obligation • 24-48 hour
-              response
+              Free referral to licensed insurance providers • No obligation •
+              FleetFlow earns commission on completed policies
+            </p>
+          </div>
+        </div>
+
+        {/* Partner Network Section */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            marginBottom: '24px',
+            textAlign: 'center',
+          }}
+        >
+          <h2
+            style={{
+              color: 'white',
+              margin: '0 0 24px 0',
+              fontSize: '24px',
+              fontWeight: '700',
+            }}
+          >
+            🤝 Our Insurance Partner Network
+          </h2>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px',
+              marginBottom: '24px',
+            }}
+          >
+            {[
+              {
+                name: 'CoverDash',
+                desc: 'Single-line NPM integration for embedded insurance quotes',
+                commission: 'Revenue share program',
+                icon: '💻',
+              },
+              {
+                name: 'Tivly Affiliate',
+                desc: '$300-$2,000+ commissions per policy without selling insurance',
+                commission: 'High commission rates',
+                icon: '💰',
+              },
+              {
+                name: 'Insurify Partnership',
+                desc: '120+ carriers with technology integration platform',
+                commission: 'Technology integration commissions',
+                icon: '🌐',
+              },
+            ].map((partner, index) => (
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div style={{ fontSize: '32px', marginBottom: '12px' }}>
+                  {partner.icon}
+                </div>
+                <h4
+                  style={{
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                  }}
+                >
+                  {partner.name}
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '14px',
+                    margin: '0 0 8px 0',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  {partner.desc}
+                </p>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '6px',
+                    padding: '6px 12px',
+                    fontSize: '12px',
+                    color: '#10b981',
+                    fontWeight: '600',
+                  }}
+                >
+                  {partner.commission}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              background: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '8px',
+              padding: '16px',
+              textAlign: 'left',
+            }}
+          >
+            <p
+              style={{
+                color: '#3b82f6',
+                fontSize: '14px',
+                margin: 0,
+                fontWeight: '600',
+              }}
+            >
+              💡 How It Works: FleetFlow connects you with our licensed
+              insurance partner network. When you complete a policy through our
+              referrals, we earn a commission while you get competitive rates
+              from A-rated carriers. This referral model allows us to offer this
+              service at no cost to you.
             </p>
           </div>
         </div>
@@ -430,7 +793,7 @@ export default function InsurancePartnershipsPage() {
             {
               icon: '⚡',
               title: 'Fast & Simple',
-              desc: 'Get competitive quotes in 24-48 hours with our streamlined process',
+              desc: 'Get competitive quotes in 24-48 hours with our simple process',
             },
             {
               icon: '🎯',
