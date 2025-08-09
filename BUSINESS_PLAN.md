@@ -61,8 +61,11 @@ experience with:
   integrated CRM, dialer platform, and performance analytics
 - **🔧 Advanced Tech System Administration**: Comprehensive communication automation with smart
   human escalation detection and system-level configuration management
-- **📞 Integrated Communication Hub**: Unified CRM with role-based phone dialer access, call log
-  integration, and transfer center capabilities
+- **📞 Integrated Communication Hub**: Unified CRM with **Smart Role-Based Phone Dialer Opt-In 
+  System** featuring automatic enrollment for management/sales/customer service/brokers/dispatchers, 
+  comprehensive user profile integration with opt-in status display, FreeSWITCH integration, call log
+  integration, and transfer center capabilities with department-specific messaging and extension
+  assignment
 - **🤖 AI-Enhanced Sales Analytics**: Real-time performance monitoring, conversion tracking, and
   predictive sales forecasting with human oversight
 - **💼 Comprehensive Broker Task Management**: AI-powered operational task prioritization for
@@ -132,7 +135,9 @@ strategic acquisition value through our comprehensive operational platform ecosy
   (RFB/RFQ/RFP/RFI)
 - **Broker Elite**: Starting at $149/month - Complete Freight Brokerage Platform
 - **🆕 AI Flow Professional**: Starting at $199/month - AI-Powered Call Center & Automation with
-  **AI Review System** for comprehensive process validation
+  **AI Review System** for comprehensive process validation, **Role-Based Lead Generation Opt-In
+  System** with automatic enrollment for management/sales/customer service, manual opt-in for
+  brokers/dispatchers, and comprehensive user profile integration
 - **🎯 Sales Division Professional**: Starting at $179/month - Human-powered sales operations with
   AI-enhanced intelligence, integrated CRM, and dialer platform
 - **🌐 TruckingPlanet Network Professional**: Starting at $249/month - Lifetime access to 70,000+
@@ -282,11 +287,21 @@ FleetFlow's "Go With the Flow" system is the **only enterprise-grade real-time f
   visual standards
 - **Role-Based Access Control**: Department-specific permissions with online status indicators
 
-#### **4. 📞 Professional Phone Dialer System**
+#### **4. 📞 Professional Phone Dialer System with Smart Opt-In Management**
 
 - **Browser-Based Softphone**: Complete Twilio-powered dialer integrated into FleetFlow platform
-- **Role-Based Access Control**: Mandatory for Customer Service and Sales, optional for Dispatchers
-  and Brokers, restricted for Drivers
+- **🔄 Smart Role-Based Opt-In System**: Revolutionary user profile management with automatic
+  enrollment for revenue-generation roles (Management, Sales, Customer Service, Brokers, Dispatchers)
+  and manual opt-in control where applicable
+- **📊 Comprehensive User Profile Integration**: Real-time opt-in status display, department-specific
+  messaging, extension assignment, and visual enrollment indicators
+- **🏢 Department-Specific Auto-Assignments**:
+  - **Management (MGR)**: Auto-enabled for platform oversight and strategic communications
+  - **Sales Team (SALES)**: Auto-enabled for revenue generation and customer outreach
+  - **Customer Service (CS)**: Auto-enabled for customer support and relationship management
+  - **Brokers (BB)**: Auto-enabled for freight coordination and carrier communications
+  - **Dispatchers (DC)**: Auto-enabled for operational coordination and driver management
+  - **Drivers (DM)**: Not applicable for operational focus
 - **Call Management**: Outbound calling, call logs, contact integration, and professional call
   handling
 - **CRM Integration**: Seamless integration with Central CRM for complete customer interaction
@@ -302,7 +317,35 @@ FleetFlow's "Go With the Flow" system is the **only enterprise-grade real-time f
 - **Workflow Integration**: Direct integration with load management, customer service, and dispatch
   operations
 
-#### **5. 📊 Financial Markets Intelligence**
+#### **5. 🎯 AI Flow Lead Generation Platform with Smart Opt-In Management**
+
+- **🤖 Automated Lead Discovery**: AI-powered market analysis and prospecting using machine learning
+  algorithms for intelligent lead generation and qualification
+- **🔄 Smart Role-Based Opt-In System**: Comprehensive user profile management with strategic
+  enrollment based on revenue generation potential and operational responsibilities
+- **📊 Advanced User Profile Integration**: Real-time enrollment status display with comprehensive
+  AI Platform Features section showing opt-in status, department privileges, and platform access
+- **🏢 Strategic Department-Based Assignments**:
+  - **Management (MGR)**: Auto-enabled with full platform privileges for strategic oversight
+  - **Sales Team (SALES)**: Auto-enabled for revenue generation and market expansion
+  - **Customer Service (CS)**: Auto-enabled for customer relationship enhancement and upselling
+  - **Brokers (BB)**: Opt-in available for enhanced lead generation and carrier prospecting
+  - **Dispatchers (DC)**: Opt-in available for operational efficiency and carrier discovery
+  - **Drivers (DM)**: Not applicable - focus remains on operational excellence
+- **📈 Market Intelligence Integration**: Real-time market analysis, competitive intelligence, and
+  opportunity identification using AI-powered algorithms
+- **🎨 Visual Status Indicators**: Department-specific color coding, enrollment badges, and
+  comprehensive status messaging for user clarity
+- **💼 Revenue Optimization**: Lead qualification, opportunity scoring, and automated follow-up
+  workflows for maximum conversion potential
+- **📱 Seamless Platform Integration**: Complete integration with CRM, phone dialer, and customer
+  management systems for unified lead-to-revenue workflows
+- **🔧 Admin Configuration Tools**: Management-level controls for department opt-ins, feature
+  enabling, and platform customization based on business requirements
+- **📊 Performance Analytics**: Lead generation metrics, conversion tracking, ROI analysis, and
+  department-specific performance monitoring
+
+#### **6. 📊 Financial Markets Intelligence**
 
 - **Real-Time Diesel Pricing**: Live fuel cost tracking and optimization
 - **Fuel Futures Integration**: AI-powered hedging recommendations
@@ -1267,7 +1310,9 @@ technology and enterprise software platforms.
 - **🔄 Central CRM Unified Communication Hub**: Industry-first unified communication system with
   seamless call transfers, multi-channel notifications, and complete interaction tracking -
   positions FleetFlow as the only transportation platform with enterprise-grade CRM capabilities
-- **📞 Professional Phone Dialer System**: Browser-based softphone with role-based access, CRM
+- **📞 Professional Phone Dialer System**: Browser-based softphone with **Smart Role-Based Opt-In
+  System** (auto-enabled for management/sales/customer service/brokers/dispatchers), comprehensive
+  user profile integration, FreeSWITCH integration, department-specific status indicators, CRM
   integration, and enterprise telephony capabilities
 - **Enhanced UX/UI**: Glassmorphism design with improved user experience across all platforms
 - **Smart Notification System**: Context-aware alerts with proper visual hierarchy

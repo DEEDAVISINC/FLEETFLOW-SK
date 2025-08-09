@@ -14,7 +14,15 @@ interface User {
   phone?: string;
   location?: string;
   department: 'DC' | 'BB' | 'DM' | 'MGR' | 'CS' | 'SALES';
-  role: 'Admin' | 'Manager' | 'Dispatcher' | 'Broker' | 'Driver' | 'Viewer' | 'Customer Service' | 'Sales';
+  role:
+    | 'Admin'
+    | 'Manager'
+    | 'Dispatcher'
+    | 'Broker'
+    | 'Driver'
+    | 'Viewer'
+    | 'Customer Service'
+    | 'Sales';
   status: 'Active' | 'Inactive';
   lastLogin: string;
   permissions: string[];
@@ -78,10 +86,11 @@ export default function SettingsPage() {
     // Auto opt-in for management, sales, and customer service
     const autoOptInDepartments = ['MGR', 'CS', 'SALES'];
     const isAutoOptIn = autoOptInDepartments.includes(department);
-    
+
     return {
       aiFlowOptIn: isAutoOptIn,
-      phoneDialerOptIn: isAutoOptIn || department === 'BB' || department === 'DC' // Include brokers and dispatchers for phone dialer
+      phoneDialerOptIn:
+        isAutoOptIn || department === 'BB' || department === 'DC', // Include brokers and dispatchers for phone dialer
     };
   };
 
@@ -1603,164 +1612,253 @@ export default function SettingsPage() {
                         )}
 
                         {/* AI Flow & Phone Dialer Opt-ins */}
-                        <div style={{
-                          background: 'white',
-                          borderRadius: '16px',
-                          padding: '24px',
-                          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-                          marginTop: '24px'
-                        }}>
-                          <h3 style={{ 
-                            fontSize: '24px', 
-                            fontWeight: '600', 
-                            color: '#1f2937', 
-                            margin: '0 0 16px 0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                          }}>
+                        <div
+                          style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '24px',
+                            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+                            marginTop: '24px',
+                          }}
+                        >
+                          <h3
+                            style={{
+                              fontSize: '24px',
+                              fontWeight: '600',
+                              color: '#1f2937',
+                              margin: '0 0 16px 0',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                            }}
+                          >
                             🤖 AI Platform Features
                           </h3>
-                          
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '20px',
+                            }}
+                          >
                             {/* AI Flow Lead Generation */}
-                            <div style={{
-                              background: '#f8fafc',
-                              borderRadius: '12px',
-                              padding: '20px',
-                              border: '2px solid #e2e8f0'
-                            }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <div
+                              style={{
+                                background: '#f8fafc',
+                                borderRadius: '12px',
+                                padding: '20px',
+                                border: '2px solid #e2e8f0',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '12px',
+                                  marginBottom: '16px',
+                                }}
+                              >
                                 <span style={{ fontSize: '24px' }}>🎯</span>
-                                <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                                <h4
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: '600',
+                                    color: '#1f2937',
+                                    margin: 0,
+                                  }}
+                                >
                                   AI Flow Lead Generation
                                 </h4>
                               </div>
-                              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '16px' }}>
-                                Automated lead discovery and prospecting using AI-powered market analysis
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  marginBottom: '16px',
+                                }}
+                              >
+                                Automated lead discovery and prospecting using
+                                AI-powered market analysis
                               </p>
-                              <div style={{
-                                background: currentUser.aiFlowOptIn 
-                                  ? '#dcfce7' 
-                                  : (currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES')
-                                    ? '#dbeafe' 
-                                    : '#fef3c7',
-                                color: currentUser.aiFlowOptIn 
-                                  ? '#166534' 
-                                  : (currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES')
-                                    ? '#1e40af'
-                                    : '#92400e',
-                                padding: '8px 12px',
-                                borderRadius: '8px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                marginBottom: '12px',
-                                textAlign: 'center'
-                              }}>
-                                {currentUser.aiFlowOptIn 
-                                  ? '✅ ENROLLED' 
-                                  : (currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES')
+                              <div
+                                style={{
+                                  background: currentUser.aiFlowOptIn
+                                    ? '#dcfce7'
+                                    : currentUser.department === 'MGR' ||
+                                        currentUser.department === 'CS' ||
+                                        currentUser.department === 'SALES'
+                                      ? '#dbeafe'
+                                      : '#fef3c7',
+                                  color: currentUser.aiFlowOptIn
+                                    ? '#166534'
+                                    : currentUser.department === 'MGR' ||
+                                        currentUser.department === 'CS' ||
+                                        currentUser.department === 'SALES'
+                                      ? '#1e40af'
+                                      : '#92400e',
+                                  padding: '8px 12px',
+                                  borderRadius: '8px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  marginBottom: '12px',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {currentUser.aiFlowOptIn
+                                  ? '✅ ENROLLED'
+                                  : currentUser.department === 'MGR' ||
+                                      currentUser.department === 'CS' ||
+                                      currentUser.department === 'SALES'
                                     ? '🔄 AUTO-ENABLED'
                                     : currentUser.department === 'DM'
                                       ? '❌ NOT APPLICABLE'
-                                      : '⏳ OPT-IN AVAILABLE'
-                                }
+                                      : '⏳ OPT-IN AVAILABLE'}
                               </div>
-                              {(currentUser.department === 'BB' || currentUser.department === 'DC') && !currentUser.aiFlowOptIn && (
-                                <button style={{
-                                  background: '#3b82f6',
-                                  color: 'white',
-                                  padding: '8px 16px',
-                                  borderRadius: '6px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  width: '100%'
-                                }}>
-                                  🚀 Enable AI Flow
-                                </button>
-                              )}
+                              {(currentUser.department === 'BB' ||
+                                currentUser.department === 'DC') &&
+                                !currentUser.aiFlowOptIn && (
+                                  <button
+                                    style={{
+                                      background: '#3b82f6',
+                                      color: 'white',
+                                      padding: '8px 16px',
+                                      borderRadius: '6px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      width: '100%',
+                                    }}
+                                  >
+                                    🚀 Enable AI Flow
+                                  </button>
+                                )}
                             </div>
 
                             {/* Phone Dialer System */}
-                            <div style={{
-                              background: '#f8fafc',
-                              borderRadius: '12px',
-                              padding: '20px',
-                              border: '2px solid #e2e8f0'
-                            }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                            <div
+                              style={{
+                                background: '#f8fafc',
+                                borderRadius: '12px',
+                                padding: '20px',
+                                border: '2px solid #e2e8f0',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '12px',
+                                  marginBottom: '16px',
+                                }}
+                              >
                                 <span style={{ fontSize: '24px' }}>📞</span>
-                                <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                                <h4
+                                  style={{
+                                    fontSize: '18px',
+                                    fontWeight: '600',
+                                    color: '#1f2937',
+                                    margin: 0,
+                                  }}
+                                >
                                   Phone Dialer System
                                 </h4>
                               </div>
-                              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '16px' }}>
-                                AI-powered calling system with FreeSWITCH integration for customer outreach
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  color: '#6b7280',
+                                  marginBottom: '16px',
+                                }}
+                              >
+                                AI-powered calling system with FreeSWITCH
+                                integration for customer outreach
                               </p>
-                              <div style={{
-                                background: currentUser.phoneDialerOptIn 
-                                  ? '#dcfce7' 
-                                  : currentUser.department === 'DM'
-                                    ? '#fee2e2'
-                                    : '#fef3c7',
-                                color: currentUser.phoneDialerOptIn 
-                                  ? '#166534' 
-                                  : currentUser.department === 'DM'
-                                    ? '#dc2626'
-                                    : '#92400e',
-                                padding: '8px 12px',
-                                borderRadius: '8px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                marginBottom: '12px',
-                                textAlign: 'center'
-                              }}>
-                                {currentUser.phoneDialerOptIn 
-                                  ? '✅ ENROLLED' 
+                              <div
+                                style={{
+                                  background: currentUser.phoneDialerOptIn
+                                    ? '#dcfce7'
+                                    : currentUser.department === 'DM'
+                                      ? '#fee2e2'
+                                      : '#fef3c7',
+                                  color: currentUser.phoneDialerOptIn
+                                    ? '#166534'
+                                    : currentUser.department === 'DM'
+                                      ? '#dc2626'
+                                      : '#92400e',
+                                  padding: '8px 12px',
+                                  borderRadius: '8px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  marginBottom: '12px',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {currentUser.phoneDialerOptIn
+                                  ? '✅ ENROLLED'
                                   : currentUser.department === 'DM'
                                     ? '❌ NOT APPLICABLE'
-                                    : '🔄 AUTO-ENABLED'
-                                }
+                                    : '🔄 AUTO-ENABLED'}
                               </div>
                               {currentUser.phoneDialerOptIn && (
-                                <div style={{ fontSize: '12px', color: '#6b7280', textAlign: 'center' }}>
-                                  Extension: {currentUser.phone ? `x${currentUser.phone.slice(-4)}` : 'TBD'}
+                                <div
+                                  style={{
+                                    fontSize: '12px',
+                                    color: '#6b7280',
+                                    textAlign: 'center',
+                                  }}
+                                >
+                                  Extension:{' '}
+                                  {currentUser.phone
+                                    ? `x${currentUser.phone.slice(-4)}`
+                                    : 'TBD'}
                                 </div>
                               )}
                             </div>
                           </div>
 
                           {/* Department-specific messaging */}
-                          <div style={{ 
-                            marginTop: '20px', 
-                            padding: '16px', 
-                            background: currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES'
-                              ? '#eff6ff' 
-                              : currentUser.department === 'DM'
-                                ? '#fef2f2'
-                                : '#fefce8',
-                            borderRadius: '8px',
-                            border: '1px solid ' + (
-                              currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES'
-                                ? '#bfdbfe' 
-                                : currentUser.department === 'DM'
-                                  ? '#fecaca'
-                                  : '#fde68a'
-                            )
-                          }}>
-                            <div style={{ 
-                              fontSize: '12px', 
-                              fontWeight: '600', 
-                              color: currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES'
-                                ? '#1e40af' 
-                                : currentUser.department === 'DM'
-                                  ? '#dc2626'
-                                  : '#92400e',
-                              marginBottom: '4px' 
-                            }}>
-                              {currentUser.department === 'MGR' 
+                          <div
+                            style={{
+                              marginTop: '20px',
+                              padding: '16px',
+                              background:
+                                currentUser.department === 'MGR' ||
+                                currentUser.department === 'CS' ||
+                                currentUser.department === 'SALES'
+                                  ? '#eff6ff'
+                                  : currentUser.department === 'DM'
+                                    ? '#fef2f2'
+                                    : '#fefce8',
+                              borderRadius: '8px',
+                              border:
+                                '1px solid ' +
+                                (currentUser.department === 'MGR' ||
+                                currentUser.department === 'CS' ||
+                                currentUser.department === 'SALES'
+                                  ? '#bfdbfe'
+                                  : currentUser.department === 'DM'
+                                    ? '#fecaca'
+                                    : '#fde68a'),
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color:
+                                  currentUser.department === 'MGR' ||
+                                  currentUser.department === 'CS' ||
+                                  currentUser.department === 'SALES'
+                                    ? '#1e40af'
+                                    : currentUser.department === 'DM'
+                                      ? '#dc2626'
+                                      : '#92400e',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {currentUser.department === 'MGR'
                                 ? '👑 MANAGEMENT PRIVILEGES'
                                 : currentUser.department === 'CS'
                                   ? '🎧 CUSTOMER SERVICE ACCESS'
@@ -1768,16 +1866,16 @@ export default function SettingsPage() {
                                     ? '💼 SALES TEAM ACCESS'
                                     : currentUser.department === 'DM'
                                       ? '🚛 DRIVER PROFILE'
-                                      : '⚙️ CONFIGURABLE ACCESS'
-                              }
+                                      : '⚙️ CONFIGURABLE ACCESS'}
                             </div>
                             <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                              {currentUser.department === 'MGR' || currentUser.department === 'CS' || currentUser.department === 'SALES'
+                              {currentUser.department === 'MGR' ||
+                              currentUser.department === 'CS' ||
+                              currentUser.department === 'SALES'
                                 ? 'AI Flow and Phone Dialer automatically enabled for revenue generation roles'
                                 : currentUser.department === 'DM'
                                   ? 'AI platforms not applicable for driver operations'
-                                  : 'Phone Dialer auto-enabled. AI Flow available as opt-in for enhanced lead generation'
-                              }
+                                  : 'Phone Dialer auto-enabled. AI Flow available as opt-in for enhanced lead generation'}
                             </div>
                           </div>
                         </div>
