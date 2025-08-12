@@ -1414,6 +1414,90 @@ const BillingInvoicesPage = () => {
     }
   };
 
+  const createSquareInvoice = async (invoiceData: any) => {
+    if (!integrations.square.connected) {
+      alert('Please connect Square first.');
+      return;
+    }
+
+    try {
+      // First create a customer if needed
+      let customerId = invoiceData.customerId;
+      if (!customerId) {
+        const customerResponse = await fetch('/api/payments/square', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'create-customer',
+            customer: {
+              givenName: invoiceData.customerName?.split(' ')[0] || 'Customer',
+              familyName:
+                invoiceData.customerName?.split(' ').slice(1).join(' ') || '',
+              companyName: invoiceData.companyName || 'Company',
+              emailAddress: invoiceData.email || 'customer@example.com',
+              phoneNumber: invoiceData.phone || '+15551234567',
+            },
+          }),
+        });
+
+        const customerData = await customerResponse.json();
+        if (!customerData.success) {
+          throw new Error('Failed to create customer');
+        }
+        customerId = customerData.customerId;
+      }
+
+      // Create the Square invoice
+      const invoiceResponse = await fetch('/api/payments/square', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create-fleetflow-invoice',
+          customerId,
+          invoiceTitle: invoiceData.title || 'FleetFlow Services Invoice',
+          description:
+            invoiceData.description || 'Transportation and logistics services',
+          lineItems: invoiceData.lineItems || [
+            {
+              name: 'FleetFlow Services',
+              quantity: 1,
+              rate: invoiceData.amount || 1000,
+              amount: invoiceData.amount || 1000,
+            },
+          ],
+          dueDate: invoiceData.dueDate,
+          customFields: [
+            { label: 'Invoice Type', value: 'FleetFlow Billing' },
+            {
+              label: 'Department',
+              value: invoiceData.department || 'Operations',
+            },
+            {
+              label: 'Reference',
+              value: invoiceData.reference || `INV-${Date.now()}`,
+            },
+          ],
+        }),
+      });
+
+      const result = await invoiceResponse.json();
+      if (result.success) {
+        alert(
+          `✅ Square invoice created successfully!\n📄 Invoice ID: ${result.invoiceId}\n💰 Amount: $${invoiceData.amount?.toLocaleString() || '1,000'}\n📧 Sent to: ${invoiceData.email || 'customer@example.com'}\n🔗 Payment URL: ${result.publicUrl || 'Available after sending'}`
+        );
+        return result;
+      } else {
+        throw new Error(result.error || 'Failed to create invoice');
+      }
+    } catch (error) {
+      console.error('Square invoice creation error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      alert(`❌ Square invoice creation failed: ${errorMessage}`);
+      return { success: false, error: errorMessage };
+    }
+  };
+
   // Export functionality
   const exportToCSV = (data, filename) => {
     if (!data || data.length === 0) return;
@@ -4994,6 +5078,34 @@ const BillingInvoicesPage = () => {
                       </button>
                       <button
                         onClick={() =>
+                          createSquareInvoice({
+                            title: 'FleetFlow Transportation Services',
+                            description: 'Load delivery and logistics services',
+                            amount: 1250,
+                            customerName: 'Demo Customer',
+                            companyName: 'ABC Logistics',
+                            email: 'customer@abclogistics.com',
+                            department: 'Operations',
+                            reference: `INV-DEMO-${Date.now()}`,
+                          })
+                        }
+                        style={{
+                          flex: 1,
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          background:
+                            'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          color: 'white',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        🧾 Create Invoice
+                      </button>
+                      <button
+                        onClick={() =>
                           setIntegrations((prev) => ({
                             ...prev,
                             square: {
@@ -5361,6 +5473,41 @@ const BillingInvoicesPage = () => {
             }}
           >
             🤖 AI New Invoice
+          </button>
+          <button
+            onClick={() => {
+              if (!integrations.square.connected) {
+                alert(
+                  'Please connect Square first in the integrations section below.'
+                );
+                return;
+              }
+              createSquareInvoice({
+                title: 'FleetFlow Professional Services',
+                description:
+                  'Transportation, logistics, and fleet management services',
+                amount: 2500,
+                customerName: 'Professional Client',
+                companyName: 'Enterprise Logistics Inc',
+                email: 'billing@enterprise-logistics.com',
+                department: 'Billing Department',
+                reference: `PROF-${Date.now()}`,
+              });
+            }}
+            style={{
+              padding: '14px 28px',
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            🧾 Square Invoice
           </button>
           <button
             onClick={() => {

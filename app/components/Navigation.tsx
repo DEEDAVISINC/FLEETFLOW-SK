@@ -467,8 +467,8 @@ export default function ProfessionalNavigation() {
             )}
           </div>
 
-          {/* ANALYTICS - Single Button */}
-          <Link href='/analytics' style={{ textDecoration: 'none' }}>
+          {/* GO WITH THE FLOW - Single Button */}
+          <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
             <button
               style={{
                 background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -484,7 +484,7 @@ export default function ProfessionalNavigation() {
                 gap: '4px',
               }}
             >
-              📊 ANALYTICS
+              🌊 GO WITH THE FLOW
             </button>
           </Link>
 
@@ -700,6 +700,20 @@ export default function ProfessionalNavigation() {
                   👥 User Management
                 </Link>
                 <Link
+                  href='/ai-company-dashboard'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🤖 AI Company Dashboard
+                </Link>
+                <Link
                   href='/settings'
                   onClick={handleDropdownClose}
                   style={{
@@ -728,6 +742,20 @@ export default function ProfessionalNavigation() {
                   }}
                 >
                   📞 Phone Dialer
+                </Link>
+                <Link
+                  href='/analytics'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📊 Analytics Dashboard
                 </Link>
 
                 {/* MANAGER-ONLY ITEMS */}

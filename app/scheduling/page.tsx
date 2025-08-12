@@ -528,7 +528,16 @@ export default function SchedulingDashboard() {
                 Real-time scheduling with Hours of Service compliance
               </p>
             </div>
+          </div>
 
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '30px',
+            }}
+          >
             <div
               style={{
                 display: 'flex',
@@ -2338,7 +2347,7 @@ export default function SchedulingDashboard() {
                           background: '#10b981',
                           borderRadius: '50%',
                         }}
-                       />
+                      />
                       <strong style={{ fontSize: '14px', color: '#111827' }}>
                         Origin:
                       </strong>
@@ -2378,7 +2387,7 @@ export default function SchedulingDashboard() {
                           background: '#ef4444',
                           borderRadius: '50%',
                         }}
-                       />
+                      />
                       <strong style={{ fontSize: '14px', color: '#111827' }}>
                         Destination:
                       </strong>

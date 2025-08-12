@@ -30,6 +30,25 @@ export async function POST(request: NextRequest) {
       case 'get-config':
         return await handleGetConfig();
 
+      // Invoice actions
+      case 'create-invoice':
+        return await handleCreateInvoice(body);
+
+      case 'publish-invoice':
+        return await handlePublishInvoice(body);
+
+      case 'get-invoice':
+        return await handleGetInvoice(body);
+
+      case 'cancel-invoice':
+        return await handleCancelInvoice(body);
+
+      case 'list-invoices':
+        return await handleListInvoices(body);
+
+      case 'create-fleetflow-invoice':
+        return await handleCreateFleetFlowInvoice(body);
+
       default:
         return NextResponse.json(
           {
@@ -169,6 +188,116 @@ async function handleGetConfig() {
     success: true,
     config,
   });
+}
+
+// ========================================
+// INVOICE HANDLER FUNCTIONS
+// ========================================
+
+async function handleCreateInvoice(body: any) {
+  const { invoiceData } = body;
+
+  if (!invoiceData) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Invoice data is required',
+      },
+      { status: 400 }
+    );
+  }
+
+  const result = await squareService.createInvoice(invoiceData);
+  return NextResponse.json(result);
+}
+
+async function handlePublishInvoice(body: any) {
+  const { invoiceId, version } = body;
+
+  if (!invoiceId || !version) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Invoice ID and version are required',
+      },
+      { status: 400 }
+    );
+  }
+
+  const result = await squareService.publishInvoice(invoiceId, version);
+  return NextResponse.json(result);
+}
+
+async function handleGetInvoice(body: any) {
+  const { invoiceId } = body;
+
+  if (!invoiceId) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Invoice ID is required',
+      },
+      { status: 400 }
+    );
+  }
+
+  const result = await squareService.getInvoice(invoiceId);
+  return NextResponse.json(result);
+}
+
+async function handleCancelInvoice(body: any) {
+  const { invoiceId, version } = body;
+
+  if (!invoiceId || !version) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Invoice ID and version are required',
+      },
+      { status: 400 }
+    );
+  }
+
+  const result = await squareService.cancelInvoice(invoiceId, version);
+  return NextResponse.json(result);
+}
+
+async function handleListInvoices(body: any) {
+  const { filters } = body;
+  const result = await squareService.listInvoices(filters);
+  return NextResponse.json(result);
+}
+
+async function handleCreateFleetFlowInvoice(body: any) {
+  const {
+    customerId,
+    invoiceTitle,
+    description,
+    lineItems,
+    dueDate,
+    customFields,
+  } = body;
+
+  if (!customerId || !invoiceTitle || !lineItems) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Customer ID, invoice title, and line items are required',
+      },
+      { status: 400 }
+    );
+  }
+
+  const result = await squareService.createFleetFlowInvoice({
+    customerId,
+    invoiceTitle,
+    description: description || `${invoiceTitle} - FleetFlow Services`,
+    lineItems,
+    dueDate,
+    customFields,
+  });
+
+  return NextResponse.json(result);
 }
 
 export async function GET(request: NextRequest) {

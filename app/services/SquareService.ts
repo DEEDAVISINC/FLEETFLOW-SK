@@ -68,6 +68,65 @@ export interface SquareOrder {
   }>;
 }
 
+export interface SquareInvoice {
+  id?: string;
+  version?: number;
+  locationId?: string;
+  invoiceNumber?: string;
+  title?: string;
+  description?: string;
+  primaryRecipient: {
+    customerId: string;
+  };
+  invoiceRequestMethod: 'EMAIL' | 'SMS' | 'SQUARE_POS' | 'CHECKOUT_LINK';
+  deliveryMethod: 'EMAIL' | 'SMS' | 'SQUARE_POS' | 'CHECKOUT_LINK';
+  paymentRequests: Array<{
+    requestMethod: 'EMAIL' | 'SMS' | 'SQUARE_POS' | 'CHECKOUT_LINK';
+    requestType: 'BALANCE' | 'DEPOSIT';
+    dueDate?: string;
+    tippingEnabled?: boolean;
+    automaticPaymentSource?: 'NONE' | 'CARD_ON_FILE' | 'BANK_ON_FILE';
+  }>;
+  orderRequest: {
+    order: SquareOrder;
+  };
+  acceptedPaymentMethods?: {
+    card?: boolean;
+    squareGiftCard?: boolean;
+    bankAccount?: boolean;
+    buyNowPayLater?: boolean;
+    cashAppPay?: boolean;
+  };
+  customFields?: Array<{
+    label: string;
+    value?: string;
+  }>;
+  subscriptionId?: string;
+  saleOrServiceDate?: string;
+  storePaymentMethodEnabled?: boolean;
+}
+
+export interface SquareInvoiceResponse {
+  success: boolean;
+  invoice?: SquareInvoice;
+  invoiceId?: string;
+  invoiceNumber?: string;
+  publicUrl?: string;
+  status?:
+    | 'DRAFT'
+    | 'UNPAID'
+    | 'SCHEDULED'
+    | 'PARTIALLY_PAID'
+    | 'PAID'
+    | 'PARTIALLY_REFUNDED'
+    | 'REFUNDED'
+    | 'CANCELED'
+    | 'FAILED'
+    | 'PAYMENT_PENDING';
+  error?: string;
+  errorCode?: string;
+}
+
 export class SquareService {
   private applicationId: string;
   private accessToken: string;
@@ -405,6 +464,328 @@ export class SquareService {
     const expectedSignature = hmac.digest('base64');
 
     return signature === expectedSignature;
+  }
+
+  // ========================================
+  // SQUARE INVOICING FUNCTIONALITY
+  // ========================================
+
+  /**
+   * Create a Square invoice
+   */
+  async createInvoice(
+    invoiceData: SquareInvoice
+  ): Promise<SquareInvoiceResponse> {
+    try {
+      const result = await this.makeRequest('/v2/invoices', 'POST', {
+        invoice_request: invoiceData,
+      });
+
+      if (result.invoice) {
+        return {
+          success: true,
+          invoice: result.invoice,
+          invoiceId: result.invoice.id,
+          invoiceNumber: result.invoice.invoice_number,
+          status: result.invoice.status,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'Failed to create invoice',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Send (publish) a Square invoice
+   */
+  async publishInvoice(
+    invoiceId: string,
+    version: number
+  ): Promise<SquareInvoiceResponse> {
+    try {
+      const result = await this.makeRequest(
+        `/v2/invoices/${invoiceId}/publish`,
+        'POST',
+        {
+          request_method: 'EMAIL',
+          invoice_version: version,
+        }
+      );
+
+      if (result.invoice) {
+        return {
+          success: true,
+          invoice: result.invoice,
+          invoiceId: result.invoice.id,
+          status: result.invoice.status,
+          publicUrl: result.invoice.public_url,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'Failed to publish invoice',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Get invoice details
+   */
+  async getInvoice(invoiceId: string): Promise<SquareInvoiceResponse> {
+    try {
+      const result = await this.makeRequest(`/v2/invoices/${invoiceId}`, 'GET');
+
+      if (result.invoice) {
+        return {
+          success: true,
+          invoice: result.invoice,
+          invoiceId: result.invoice.id,
+          invoiceNumber: result.invoice.invoice_number,
+          status: result.invoice.status,
+          publicUrl: result.invoice.public_url,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'Invoice not found',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Cancel a Square invoice
+   */
+  async cancelInvoice(
+    invoiceId: string,
+    version: number
+  ): Promise<SquareInvoiceResponse> {
+    try {
+      const result = await this.makeRequest(
+        `/v2/invoices/${invoiceId}/cancel`,
+        'POST',
+        {
+          invoice_version: version,
+        }
+      );
+
+      if (result.invoice) {
+        return {
+          success: true,
+          invoice: result.invoice,
+          invoiceId: result.invoice.id,
+          status: result.invoice.status,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'Failed to cancel invoice',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Update a Square invoice
+   */
+  async updateInvoice(
+    invoiceId: string,
+    invoiceData: Partial<SquareInvoice>,
+    version: number
+  ): Promise<SquareInvoiceResponse> {
+    try {
+      const result = await this.makeRequest(
+        `/v2/invoices/${invoiceId}`,
+        'PUT',
+        {
+          invoice_request: {
+            ...invoiceData,
+            version: version,
+          },
+        }
+      );
+
+      if (result.invoice) {
+        return {
+          success: true,
+          invoice: result.invoice,
+          invoiceId: result.invoice.id,
+          status: result.invoice.status,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'Failed to update invoice',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * List invoices with optional filters
+   */
+  async listInvoices(filters?: {
+    locationId?: string;
+    status?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<{
+    success: boolean;
+    invoices?: SquareInvoice[];
+    cursor?: string;
+    error?: string;
+  }> {
+    try {
+      const query = new URLSearchParams();
+      if (filters?.locationId) query.append('location_id', filters.locationId);
+      if (filters?.status) query.append('status', filters.status);
+      if (filters?.limit) query.append('limit', filters.limit.toString());
+      if (filters?.cursor) query.append('cursor', filters.cursor);
+
+      const result = await this.makeRequest(
+        `/v2/invoices/search?${query.toString()}`,
+        'GET'
+      );
+
+      if (result.invoices) {
+        return {
+          success: true,
+          invoices: result.invoices,
+          cursor: result.cursor,
+        };
+      } else {
+        return {
+          success: true,
+          invoices: [],
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Create FleetFlow-specific invoice (helper method)
+   */
+  async createFleetFlowInvoice(params: {
+    customerId: string;
+    invoiceTitle: string;
+    description: string;
+    lineItems: Array<{
+      name: string;
+      quantity: number;
+      rate: number;
+      amount: number;
+    }>;
+    dueDate?: string;
+    customFields?: Array<{
+      label: string;
+      value: string;
+    }>;
+  }): Promise<SquareInvoiceResponse> {
+    try {
+      // Get the first available location
+      const locationsResult = await this.getLocations();
+      if (!locationsResult.success || !locationsResult.locations?.length) {
+        return {
+          success: false,
+          error: 'No Square locations available',
+        };
+      }
+
+      const locationId = locationsResult.locations[0].id;
+
+      const invoice: SquareInvoice = {
+        locationId,
+        title: params.invoiceTitle,
+        description: params.description,
+        primaryRecipient: {
+          customerId: params.customerId,
+        },
+        invoiceRequestMethod: 'EMAIL',
+        deliveryMethod: 'EMAIL',
+        paymentRequests: [
+          {
+            requestMethod: 'EMAIL',
+            requestType: 'BALANCE',
+            dueDate:
+              params.dueDate ||
+              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split('T')[0], // 30 days from now
+            automaticPaymentSource: 'NONE',
+          },
+        ],
+        orderRequest: {
+          order: {
+            locationId,
+            lineItems: params.lineItems.map((item) => ({
+              name: item.name,
+              quantity: item.quantity.toString(),
+              basePriceMoney: {
+                amount: Math.round(item.rate * 100), // Convert to cents
+                currency: 'USD',
+              },
+            })),
+          },
+        },
+        acceptedPaymentMethods: {
+          card: true,
+          squareGiftCard: false,
+          bankAccount: true,
+          buyNowPayLater: false,
+          cashAppPay: true,
+        },
+        customFields: params.customFields,
+        storePaymentMethodEnabled: true,
+      };
+
+      return await this.createInvoice(invoice);
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
   }
 }
 

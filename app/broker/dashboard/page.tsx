@@ -13,6 +13,21 @@ import WarehouseShipmentFlow from '../../components/WarehouseShipmentFlow';
 // import { getAvailableDispatchers } from '../../config/access';
 import { businessWorkflowManager } from '../../services/businessWorkflowManager';
 // import { useShipper } from '../../contexts/ShipperContext';
+import {
+  BrokerMarginTracking,
+  BrokerPerformanceMetrics,
+  LoadBidding,
+  brokerAnalyticsService,
+} from '../../services/BrokerAnalyticsService';
+import {
+  ShipperProfile,
+  UpsellOpportunity,
+  brokerCRMService,
+} from '../../services/BrokerCRMService';
+import {
+  BrokerContract,
+  brokerContractService,
+} from '../../services/BrokerContractService';
 import { Load } from '../../services/loadService';
 
 interface BrokerSession {
@@ -26,7 +41,7 @@ interface BrokerSession {
 }
 
 export default function BrokerDashboard() {
-  const [selectedTab, setSelectedTab] = useState('shippers');
+  const [selectedTab, setSelectedTab] = useState('quotes-workflow');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showAddShipper, setShowAddShipper] = useState(false);
   const [brokerSession, setBrokerSession] = useState<BrokerSession | null>(
@@ -38,6 +53,45 @@ export default function BrokerDashboard() {
   // Temporary shipper state until context is fixed
   const [shippers] = useState([]);
   const setShippers = () => {};
+
+  // Load enhanced broker data
+  useEffect(() => {
+    const loadBrokerData = async () => {
+      try {
+        // Load performance metrics
+        const metrics = brokerAnalyticsService.getBrokerPerformanceMetrics();
+        setPerformanceMetrics(metrics);
+
+        // Load margin tracking
+        const margins = brokerAnalyticsService.getMarginTracking();
+        setMarginTracking(margins);
+
+        // Load bidding history
+        const bidding = brokerAnalyticsService.getBiddingHistory();
+        setBiddingHistory(bidding);
+
+        // Load contracts
+        const contracts = brokerContractService.getBrokerContracts();
+        setBrokerContracts(contracts);
+
+        // Load shipper profiles
+        const profiles = brokerCRMService.getShipperProfiles();
+        setShipperProfiles(profiles);
+
+        // Load upsell opportunities
+        const opportunities = brokerCRMService.getUpsellOpportunities();
+        setUpsellOpportunities(opportunities);
+      } catch (error) {
+        console.error('Error loading broker data:', error);
+      }
+    };
+
+    loadBrokerData();
+
+    // Refresh data every 30 seconds
+    const interval = setInterval(loadBrokerData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Freight Quotes state variables
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -115,6 +169,30 @@ export default function BrokerDashboard() {
   >('idle');
   const [quoteAcceptanceWorkflow, setQuoteAcceptanceWorkflow] =
     useState<any>(null);
+
+  // Enhanced Broker Features State
+  const [performanceMetrics, setPerformanceMetrics] =
+    useState<BrokerPerformanceMetrics | null>(null);
+  const [marginTracking, setMarginTracking] = useState<BrokerMarginTracking[]>(
+    []
+  );
+  const [biddingHistory, setBiddingHistory] = useState<LoadBidding[]>([]);
+  const [brokerContracts, setBrokerContracts] = useState<BrokerContract[]>([]);
+  const [shipperProfiles, setShipperProfiles] = useState<ShipperProfile[]>([]);
+  const [upsellOpportunities, setUpsellOpportunities] = useState<
+    UpsellOpportunity[]
+  >([]);
+  const [selectedShipper, setSelectedShipper] = useState<ShipperProfile | null>(
+    null
+  );
+  const [showShipperDetails, setShowShipperDetails] = useState(false);
+  const [showContractWorkflow, setShowContractWorkflow] = useState(false);
+  const [selectedContract, setSelectedContract] =
+    useState<BrokerContract | null>(null);
+  const [showBiddingModal, setShowBiddingModal] = useState(false);
+  const [selectedLoadForBid, setSelectedLoadForBid] = useState<any>(null);
+  const [bidAmount, setBidAmount] = useState('');
+  const [bidNotes, setBidNotes] = useState('');
 
   // Shipper Creation Workflow state variables
   const [showShipperCreation, setShowShipperCreation] = useState(false);
@@ -462,36 +540,19 @@ export default function BrokerDashboard() {
   };
 
   useEffect(() => {
-    // Check if broker is logged in
-    const session = localStorage.getItem('brokerSession');
-    if (!session) {
-      // Get current user from access system
-      const { user } = require('../../config/access').getCurrentUser();
-      if (user.role === 'broker') {
-        const demoSession = {
-          id: user.id,
-          brokerCode: user.brokerId || 'BR001',
-          brokerName: user.name,
-          email: user.email,
-          role: 'broker',
-          loginTime: new Date().toISOString(),
-        };
-        localStorage.setItem('brokerSession', JSON.stringify(demoSession));
-        setBrokerSession(demoSession);
-      } else {
-        router.push('/broker');
-      }
-      return;
-    }
+    // Auto-create demo broker session (no login required)
+    const demoSession = {
+      id: 'broker-demo-001',
+      brokerCode: 'DEMO001',
+      brokerName: 'Demo Broker',
+      email: 'demo@fleetflow.com',
+      role: 'broker',
+      loginTime: new Date().toISOString(),
+    };
 
-    try {
-      const parsedSession = JSON.parse(session);
-      setBrokerSession(parsedSession);
-    } catch (error) {
-      console.error('Invalid session data');
-      router.push('/broker');
-    }
-  }, [router]);
+    localStorage.setItem('brokerSession', JSON.stringify(demoSession));
+    setBrokerSession(demoSession);
+  }, []);
 
   // 🔗 LOAD UNIFIED QUOTES: Load quotes generated from the unified quoting system
   useEffect(() => {
@@ -544,7 +605,7 @@ export default function BrokerDashboard() {
     return (
       <div
         style={{
-          background: `
+          backgroundImage: `
           linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
           radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
           radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
@@ -562,7 +623,7 @@ export default function BrokerDashboard() {
       >
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '32px',
@@ -641,7 +702,7 @@ export default function BrokerDashboard() {
     <div
       style={{
         minHeight: '100vh',
-        background: `
+        backgroundImage: `
         linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
         radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
@@ -764,7 +825,7 @@ export default function BrokerDashboard() {
                         boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.9)',
@@ -892,7 +953,7 @@ export default function BrokerDashboard() {
                     fontWeight: 'bold',
                   }}
                 >
-                  {myShippers.length}
+                  {performanceMetrics?.customerCount || 0}
                 </div>
               </div>
             </div>
@@ -934,7 +995,7 @@ export default function BrokerDashboard() {
                     fontWeight: 'bold',
                   }}
                 >
-                  0
+                  {performanceMetrics?.activeLoads || 0}
                 </div>
               </div>
             </div>
@@ -976,7 +1037,7 @@ export default function BrokerDashboard() {
                     fontWeight: 'bold',
                   }}
                 >
-                  $0
+                  ${performanceMetrics?.totalRevenue?.toLocaleString() || '0'}
                 </div>
               </div>
             </div>
@@ -1018,7 +1079,7 @@ export default function BrokerDashboard() {
                     fontWeight: 'bold',
                   }}
                 >
-                  0%
+                  {performanceMetrics?.winRate || 0}%
                 </div>
               </div>
             </div>
@@ -1029,57 +1090,27 @@ export default function BrokerDashboard() {
         <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
           {[
             {
-              id: 'shippers',
-              label: 'My Shippers',
-              icon: '🏢',
+              id: 'quotes-workflow',
+              label: 'Quotes & Workflow',
+              icon: '💼',
               color: 'linear-gradient(135deg, #3b82f6, #2563eb)',
             }, // OPERATIONS - Blue
             {
-              id: 'loads',
-              label: 'My Loads',
+              id: 'loads-bids',
+              label: 'Loads & Bidding',
               icon: '📦',
-              color: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-            }, // OPERATIONS - Blue
-            {
-              id: 'quotes',
-              label: 'Freight Quotes',
-              icon: '💰',
-              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-            }, // ANALYTICS - Purple
-            {
-              id: 'warehouse-flow',
-              label: 'Warehouse Flow',
-              icon: '🏭',
               color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
             }, // FLEETFLOW - Teal
             {
-              id: 'bol-review',
-              label: 'BOL Review',
-              icon: '📋',
-              color: 'linear-gradient(135deg, #f97316, #ea580c)',
-            }, // RESOURCES - Orange
-            {
-              id: 'bids',
-              label: 'Active Bids',
-              icon: '💰',
-              color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-            }, // FLEETFLOW - Teal
-            {
-              id: 'contracts',
-              label: 'Contracts',
+              id: 'contracts-bol',
+              label: 'Contracts & BOL',
               icon: '📋',
               color: 'linear-gradient(135deg, #f97316, #ea580c)',
             }, // RESOURCES - Orange
             {
               id: 'analytics',
-              label: 'Analytics',
+              label: 'Performance Analytics',
               icon: '📊',
-              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-            }, // ANALYTICS - Purple
-            {
-              id: 'task-priority',
-              label: 'Task Priority',
-              icon: '🎯',
               color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
             }, // ANALYTICS - Purple
           ].map((tab) => (
@@ -1112,16 +1143,18 @@ export default function BrokerDashboard() {
               }}
               onMouseOver={(e) => {
                 if (selectedTab !== tab.id) {
-                  e.currentTarget.style.background =
+                  (e.currentTarget as HTMLButtonElement).style.background =
                     'rgba(255, 255, 255, 0.25)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  (e.currentTarget as HTMLButtonElement).style.transform =
+                    'translateY(-1px)';
                 }
               }}
               onMouseOut={(e) => {
                 if (selectedTab !== tab.id) {
-                  e.currentTarget.style.background =
+                  (e.currentTarget as HTMLButtonElement).style.background =
                     'rgba(255, 255, 255, 0.15)';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  (e.currentTarget as HTMLButtonElement).style.transform =
+                    'translateY(0)';
                 }
               }}
             >
@@ -1143,7 +1176,7 @@ export default function BrokerDashboard() {
             minHeight: '400px',
           }}
         >
-          {selectedTab === 'shippers' && (
+          {selectedTab === 'quotes-workflow' && (
             <div>
               <div
                 style={{
@@ -1161,7 +1194,7 @@ export default function BrokerDashboard() {
                     margin: 0,
                   }}
                 >
-                  My Shippers
+                  💼 Freight Quotes & Workflow Management
                 </h2>
                 <button
                   onClick={() => setShowAddShipper(true)}
@@ -1324,7 +1357,7 @@ export default function BrokerDashboard() {
             </div>
           )}
 
-          {selectedTab === 'loads' && (
+          {selectedTab === 'loads-bids' && (
             <div>
               <div
                 style={{
@@ -1334,16 +1367,28 @@ export default function BrokerDashboard() {
                   marginBottom: '24px',
                 }}
               >
-                <h2
-                  style={{
-                    color: 'white',
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    margin: 0,
-                  }}
-                >
-                  📦 My Loads
-                </h2>
+                <div>
+                  <h2
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      margin: 0,
+                      marginBottom: '8px',
+                    }}
+                  >
+                    📦 My Loads & Active Bidding
+                  </h2>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                      margin: 0,
+                    }}
+                  >
+                    Intelligent bidding with margin tracking and market analysis
+                  </p>
+                </div>
                 <button
                   onClick={() => setShowCreateForm(true)}
                   style={{
@@ -1374,11 +1419,153 @@ export default function BrokerDashboard() {
                   + Create Load
                 </button>
               </div>
+
+              {/* Load Management Quick Stats */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                    🎯
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Active Bids
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      biddingHistory.filter((b) => b.bidStatus === 'pending')
+                        .length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                    🏆
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Won Bids
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {biddingHistory.filter((b) => b.bidStatus === 'won').length}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                    📈
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Avg Margin
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {performanceMetrics?.avgMargin || 0}%
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                    💰
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Win Rate
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {performanceMetrics?.winRate || 0}%
+                  </div>
+                </div>
+              </div>
+
               <EnhancedLoadBoard />
             </div>
           )}
 
-          {selectedTab === 'quotes' && (
+          {selectedTab === 'loads-old' && (
             <div>
               <h2
                 style={{
@@ -3005,8 +3192,344 @@ export default function BrokerDashboard() {
                   marginBottom: '24px',
                 }}
               >
-                💰 Active Bids
+                💰 Smart Bidding & Market Intelligence
               </h2>
+
+              {/* Bidding Performance Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ⏳
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Pending Bids
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      biddingHistory.filter((b) => b.bidStatus === 'pending')
+                        .length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    🏆
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Won
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {biddingHistory.filter((b) => b.bidStatus === 'won').length}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ❌
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Lost
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      biddingHistory.filter((b) => b.bidStatus === 'lost')
+                        .length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ⏰
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Expired
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      biddingHistory.filter((b) => b.bidStatus === 'expired')
+                        .length
+                    }
+                  </div>
+                </div>
+              </div>
+
+              {/* Bidding History Table */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Bidding History & Performance
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Load ID
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Bid Amount
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Margin
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Status
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Submitted
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Notes
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {biddingHistory.map((bid) => (
+                        <tr key={bid.loadId}>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {bid.loadId}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${bid.bidAmount.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {bid.margin}%
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  bid.bidStatus === 'won'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : bid.bidStatus === 'pending'
+                                      ? 'rgba(245, 158, 11, 0.2)'
+                                      : bid.bidStatus === 'lost'
+                                        ? 'rgba(239, 68, 68, 0.2)'
+                                        : 'rgba(156, 163, 175, 0.2)',
+                                color:
+                                  bid.bidStatus === 'won'
+                                    ? '#22c55e'
+                                    : bid.bidStatus === 'pending'
+                                      ? '#f59e0b'
+                                      : bid.bidStatus === 'lost'
+                                        ? '#ef4444'
+                                        : '#9ca3af',
+                              }}
+                            >
+                              {bid.bidStatus.toUpperCase()}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {new Date(bid.submittedAt).toLocaleDateString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              {bid.notes || 'No notes'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               <div
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
@@ -3055,42 +3578,454 @@ export default function BrokerDashboard() {
                   marginBottom: '24px',
                 }}
               >
-                📊 Broker Analytics
+                📊 Comprehensive Performance Analytics
               </h2>
+
+              {/* Performance Overview */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '64px 32px',
-                  textAlign: 'center',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
                 }}
               >
                 <div
                   style={{
-                    fontSize: '64px',
-                    marginBottom: '16px',
-                    opacity: 0.7,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  📈
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>💰</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Total Revenue
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        $
+                        {performanceMetrics?.totalRevenue?.toLocaleString() ||
+                          '0'}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Monthly Growth: +{performanceMetrics?.monthlyGrowth || 0}%
+                  </div>
                 </div>
-                <p
+
+                <div
                   style={{
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '18px',
-                    marginBottom: '8px',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  Analytics will populate as you create loads
-                </p>
-                <p
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>🎯</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Win Rate
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {performanceMetrics?.winRate || 0}%
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Industry Average: 65%
+                  </div>
+                </div>
+
+                <div
                   style={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: '14px',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  Track your performance, revenue, and shipper relationships
-                </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(168, 85, 247, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>📈</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Avg Margin
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {performanceMetrics?.avgMargin || 0}%
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Target: 22.5%
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Customers */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  marginBottom: '32px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Top Performing Customers
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  {performanceMetrics?.topCustomers?.map((customer, index) => (
+                    <div
+                      key={customer.name}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background:
+                              index === 0
+                                ? 'linear-gradient(135deg, #ffd700, #ffed4e)'
+                                : index === 1
+                                  ? 'linear-gradient(135deg, #c0c0c0, #e5e5e5)'
+                                  : index === 2
+                                    ? 'linear-gradient(135deg, #cd7f32, #daa520)'
+                                    : 'rgba(255, 255, 255, 0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: index < 3 ? 'black' : 'white',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          #{index + 1}
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {customer.name}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {customer.loadCount} loads
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '18px',
+                          }}
+                        >
+                          ${customer.revenue.toLocaleString()}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          Revenue
+                        </div>
+                      </div>
+                    </div>
+                  )) || []}
+                </div>
+              </div>
+
+              {/* Performance Trends */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Performance Trends & Insights
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '24px',
+                  }}
+                >
+                  <div>
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Load Performance
+                    </h4>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        padding: '16px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Total Loads:{' '}
+                        <strong>{performanceMetrics?.totalLoads || 0}</strong>
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Active Loads:{' '}
+                        <strong>{performanceMetrics?.activeLoads || 0}</strong>
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Completed Loads:{' '}
+                        <strong>
+                          {performanceMetrics?.completedLoads || 0}
+                        </strong>
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                        Avg Load Value:{' '}
+                        <strong>
+                          $
+                          {performanceMetrics?.avgLoadValue?.toLocaleString() ||
+                            '0'}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Customer Metrics
+                    </h4>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        padding: '16px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        Active Customers:{' '}
+                        <strong>
+                          {performanceMetrics?.customerCount || 0}
+                        </strong>
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        High-Risk Customers:{' '}
+                        <strong>
+                          {
+                            shipperProfiles.filter(
+                              (s) => s.riskLevel === 'high'
+                            ).length
+                          }
+                        </strong>
+                      </div>
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        A+ Credit Rating:{' '}
+                        <strong>
+                          {
+                            shipperProfiles.filter(
+                              (s) => s.creditRating === 'A+'
+                            ).length
+                          }
+                        </strong>
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                        Upsell Opportunities:{' '}
+                        <strong>{upsellOpportunities.length}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -3114,7 +4049,7 @@ export default function BrokerDashboard() {
             </div>
           )}
 
-          {selectedTab === 'contracts' && (
+          {selectedTab === 'margin-tracking' && (
             <div>
               <h2
                 style={{
@@ -3124,8 +4059,1707 @@ export default function BrokerDashboard() {
                   marginBottom: '24px',
                 }}
               >
-                📋 Contract Management
+                💹 Margin Tracking & Performance
               </h2>
+
+              {/* Margin Overview Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>📈</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Average Margin
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {performanceMetrics?.avgMargin || 0}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>💰</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Total Margin
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        $
+                        {Math.round(
+                          (performanceMetrics?.totalRevenue || 0) * 0.225
+                        ).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(168, 85, 247, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>📊</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Avg Load Value
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        $
+                        {performanceMetrics?.avgLoadValue?.toLocaleString() ||
+                          '0'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Margin Tracking Table */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Load Margin Analysis
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Load ID
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Customer Rate
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Carrier Rate
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Margin
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {marginTracking.map((margin) => (
+                        <tr key={margin.loadId}>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {margin.loadId}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${margin.customerRate.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${margin.carrierRate.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${margin.margin.toLocaleString()} (
+                            {margin.marginPercent}%)
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  margin.status === 'on_target'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : margin.status === 'above_target'
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : 'rgba(239, 68, 68, 0.2)',
+                                color:
+                                  margin.status === 'on_target'
+                                    ? '#22c55e'
+                                    : margin.status === 'above_target'
+                                      ? '#3b82f6'
+                                      : '#ef4444',
+                              }}
+                            >
+                              {margin.status === 'on_target'
+                                ? '✅ On Target'
+                                : margin.status === 'above_target'
+                                  ? '⬆️ Above Target'
+                                  : '⬇️ Below Target'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'contract-workflow' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '24px',
+                }}
+              >
+                📋 Contract Workflow & Approvals
+              </h2>
+
+              {/* Contract Status Overview */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ⏳
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Pending Approval
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      brokerContracts.filter(
+                        (c) => c.status === 'pending_approval'
+                      ).length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ✅
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Approved
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      brokerContracts.filter((c) => c.status === 'approved')
+                        .length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ✍️
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Signed
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      brokerContracts.filter((c) => c.status === 'signed')
+                        .length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    💳
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Invoiced
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      brokerContracts.filter(
+                        (c) =>
+                          c.paymentStatus === 'invoiced' ||
+                          c.paymentStatus === 'paid'
+                      ).length
+                    }
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Contracts Table */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Active Contracts
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Contract #
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Customer
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Value
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Margin
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Status
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Payment
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {brokerContracts.map((contract) => (
+                        <tr key={contract.id}>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {contract.contractNumber}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {contract.customerName}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${contract.totalValue.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${contract.margin.toLocaleString()} (
+                            {contract.marginPercent}%)
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  contract.status === 'completed'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : contract.status === 'signed' ||
+                                        contract.status === 'active'
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : contract.status === 'approved'
+                                        ? 'rgba(168, 85, 247, 0.2)'
+                                        : contract.status === 'pending_approval'
+                                          ? 'rgba(245, 158, 11, 0.2)'
+                                          : 'rgba(156, 163, 175, 0.2)',
+                                color:
+                                  contract.status === 'completed'
+                                    ? '#22c55e'
+                                    : contract.status === 'signed' ||
+                                        contract.status === 'active'
+                                      ? '#3b82f6'
+                                      : contract.status === 'approved'
+                                        ? '#a855f7'
+                                        : contract.status === 'pending_approval'
+                                          ? '#f59e0b'
+                                          : '#9ca3af',
+                              }}
+                            >
+                              {contract.status.replace('_', ' ').toUpperCase()}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  contract.paymentStatus === 'paid'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : contract.paymentStatus === 'invoiced'
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : contract.paymentStatus === 'overdue'
+                                        ? 'rgba(239, 68, 68, 0.2)'
+                                        : 'rgba(245, 158, 11, 0.2)',
+                                color:
+                                  contract.paymentStatus === 'paid'
+                                    ? '#22c55e'
+                                    : contract.paymentStatus === 'invoiced'
+                                      ? '#3b82f6'
+                                      : contract.paymentStatus === 'overdue'
+                                        ? '#ef4444'
+                                        : '#f59e0b',
+                              }}
+                            >
+                              {contract.paymentStatus.toUpperCase()}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setSelectedContract(contract);
+                                setShowContractWorkflow(true);
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                background: 'rgba(59, 130, 246, 0.2)',
+                                color: '#3b82f6',
+                                border: '1px solid rgba(59, 130, 246, 0.3)',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              View Workflow
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'crm' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '24px',
+                }}
+              >
+                🤝 Customer Relationship Management
+              </h2>
+
+              {/* CRM Overview Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(139, 92, 246, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>🏢</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Total Customers
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {shipperProfiles.length}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>⭐</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Avg Customer Score
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {Math.round(
+                          shipperProfiles.reduce(
+                            (sum, s) => sum + s.overallScore,
+                            0
+                          ) / shipperProfiles.length
+                        ) || 0}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(245, 158, 11, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>🎯</span>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Upsell Opportunities
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {upsellOpportunities.length}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customer Profiles Table */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  marginBottom: '32px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Customer Profiles & Scoring
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Customer
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Score
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Credit
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Volume
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Risk Level
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Last Activity
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {shipperProfiles.map((shipper) => (
+                        <tr key={shipper.id}>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: '600' }}>
+                                {shipper.name}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                }}
+                              >
+                                {shipper.industry}
+                              </div>
+                            </div>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: '40px',
+                                  height: '6px',
+                                  background: 'rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '3px',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: `${shipper.overallScore}%`,
+                                    height: '100%',
+                                    background:
+                                      shipper.overallScore >= 85
+                                        ? '#22c55e'
+                                        : shipper.overallScore >= 70
+                                          ? '#f59e0b'
+                                          : '#ef4444',
+                                    borderRadius: '3px',
+                                  }}
+                                ></div>
+                              </div>
+                              <span
+                                style={{ fontSize: '14px', fontWeight: '600' }}
+                              >
+                                {shipper.overallScore}
+                              </span>
+                            </div>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 8px',
+                                borderRadius: '12px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background: shipper.creditRating.startsWith('A')
+                                  ? 'rgba(34, 197, 94, 0.2)'
+                                  : shipper.creditRating.startsWith('B')
+                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    : 'rgba(239, 68, 68, 0.2)',
+                                color: shipper.creditRating.startsWith('A')
+                                  ? '#22c55e'
+                                  : shipper.creditRating.startsWith('B')
+                                    ? '#f59e0b'
+                                    : '#ef4444',
+                              }}
+                            >
+                              {shipper.creditRating}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${shipper.totalVolume.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  shipper.riskLevel === 'low'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : shipper.riskLevel === 'medium'
+                                      ? 'rgba(245, 158, 11, 0.2)'
+                                      : 'rgba(239, 68, 68, 0.2)',
+                                color:
+                                  shipper.riskLevel === 'low'
+                                    ? '#22c55e'
+                                    : shipper.riskLevel === 'medium'
+                                      ? '#f59e0b'
+                                      : '#ef4444',
+                              }}
+                            >
+                              {shipper.riskLevel.toUpperCase()}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {new Date(
+                              shipper.lastActivity
+                            ).toLocaleDateString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setSelectedShipper(shipper);
+                                setShowShipperDetails(true);
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                background: 'rgba(139, 92, 246, 0.2)',
+                                color: '#8b5cf6',
+                                border: '1px solid rgba(139, 92, 246, 0.3)',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                marginRight: '8px',
+                              }}
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Upsell Opportunities */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Upselling Opportunities
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  {upsellOpportunities.map((opportunity) => (
+                    <div
+                      key={opportunity.shipperId}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          marginBottom: '12px',
+                        }}
+                      >
+                        <div>
+                          <h4
+                            style={{
+                              color: 'white',
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {opportunity.shipperName}
+                          </h4>
+                          <span
+                            style={{
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              background:
+                                opportunity.priority === 'urgent'
+                                  ? 'rgba(239, 68, 68, 0.2)'
+                                  : opportunity.priority === 'high'
+                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    : opportunity.priority === 'medium'
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : 'rgba(156, 163, 175, 0.2)',
+                              color:
+                                opportunity.priority === 'urgent'
+                                  ? '#ef4444'
+                                  : opportunity.priority === 'high'
+                                    ? '#f59e0b'
+                                    : opportunity.priority === 'medium'
+                                      ? '#3b82f6'
+                                      : '#9ca3af',
+                            }}
+                          >
+                            {opportunity.priority.toUpperCase()} PRIORITY
+                          </span>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            ${opportunity.potentialValue.toLocaleString()}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {opportunity.probability}% probability
+                          </div>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '14px',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        {opportunity.description}
+                      </p>
+                      <div style={{ marginBottom: '16px' }}>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '12px',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Required Actions:
+                        </div>
+                        <ul
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '12px',
+                            marginLeft: '16px',
+                          }}
+                        >
+                          {opportunity.requiredActions.map((action, index) => (
+                            <li key={index} style={{ marginBottom: '4px' }}>
+                              {action}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <span
+                          style={{
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            background: 'rgba(59, 130, 246, 0.2)',
+                            color: '#3b82f6',
+                          }}
+                        >
+                          {opportunity.opportunityType
+                            .replace('_', ' ')
+                            .toUpperCase()}
+                        </span>
+                        <span
+                          style={{
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            background: 'rgba(168, 85, 247, 0.2)',
+                            color: '#a855f7',
+                          }}
+                        >
+                          {opportunity.timeframe
+                            .replace('_', ' ')
+                            .toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'contracts-bol' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '24px',
+                }}
+              >
+                📋 BOL Review, Contracts & Workflow
+              </h2>
+
+              {/* Contract Status Overview */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    ⏳
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Pending Approval
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      brokerContracts.filter(
+                        (c) => c.status === 'pending_approval'
+                      ).length
+                    }
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    📈
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Avg Margin
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {performanceMetrics?.avgMargin || 0}%
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    🎯
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Active Bids
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {
+                      biddingHistory.filter((b) => b.bidStatus === 'pending')
+                        .length
+                    }
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Contracts Table */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  marginBottom: '32px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Active Contracts & Workflow
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Contract #
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Customer
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Value
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Margin
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Status
+                        </th>
+                        <th
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            padding: '12px',
+                            textAlign: 'left',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {brokerContracts.map((contract) => (
+                        <tr key={contract.id}>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {contract.contractNumber}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            {contract.customerName}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${contract.totalValue.toLocaleString()}
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            ${contract.margin.toLocaleString()} (
+                            {contract.marginPercent}%)
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                background:
+                                  contract.status === 'completed'
+                                    ? 'rgba(34, 197, 94, 0.2)'
+                                    : contract.status === 'signed' ||
+                                        contract.status === 'active'
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : contract.status === 'approved'
+                                        ? 'rgba(168, 85, 247, 0.2)'
+                                        : contract.status === 'pending_approval'
+                                          ? 'rgba(245, 158, 11, 0.2)'
+                                          : 'rgba(156, 163, 175, 0.2)',
+                                color:
+                                  contract.status === 'completed'
+                                    ? '#22c55e'
+                                    : contract.status === 'signed' ||
+                                        contract.status === 'active'
+                                      ? '#3b82f6'
+                                      : contract.status === 'approved'
+                                        ? '#a855f7'
+                                        : contract.status === 'pending_approval'
+                                          ? '#f59e0b'
+                                          : '#9ca3af',
+                              }}
+                            >
+                              {contract.status.replace('_', ' ').toUpperCase()}
+                            </span>
+                          </td>
+                          <td
+                            style={{
+                              color: 'white',
+                              padding: '12px',
+                              borderBottom:
+                                '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setSelectedContract(contract);
+                                setShowContractWorkflow(true);
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                background: 'rgba(59, 130, 246, 0.2)',
+                                color: '#3b82f6',
+                                border: '1px solid rgba(59, 130, 246, 0.3)',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              View Workflow
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               <div
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
@@ -3817,6 +6451,638 @@ export default function BrokerDashboard() {
               isWorkflowMode={true}
               workflowData={selectedAcceptedQuote}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Contract Workflow Modal */}
+      {showContractWorkflow && selectedContract && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              maxWidth: '800px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px',
+              }}
+            >
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
+                Contract Workflow: {selectedContract.contractNumber}
+              </h2>
+              <button
+                onClick={() => setShowContractWorkflow(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {(() => {
+              const workflowStatus =
+                brokerContractService.getContractWorkflowStatus(
+                  selectedContract.id
+                );
+              if (!workflowStatus) return null;
+
+              return (
+                <div>
+                  <div style={{ marginBottom: '24px' }}>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Contract Details
+                    </h3>
+                    <div
+                      style={{
+                        background: '#f9fafb',
+                        padding: '16px',
+                        borderRadius: '8px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '16px',
+                        }}
+                      >
+                        <div>
+                          <strong>Customer:</strong>{' '}
+                          {selectedContract.customerName}
+                        </div>
+                        <div>
+                          <strong>Total Value:</strong> $
+                          {selectedContract.totalValue.toLocaleString()}
+                        </div>
+                        <div>
+                          <strong>Margin:</strong> $
+                          {selectedContract.margin.toLocaleString()} (
+                          {selectedContract.marginPercent}%)
+                        </div>
+                        <div>
+                          <strong>Status:</strong>{' '}
+                          {selectedContract.status
+                            .replace('_', ' ')
+                            .toUpperCase()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '24px' }}>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Workflow Progress ({Math.round(workflowStatus.progress)}%
+                      Complete)
+                    </h3>
+                    <div
+                      style={{
+                        background: '#f3f4f6',
+                        borderRadius: '8px',
+                        padding: '4px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          background: '#3b82f6',
+                          height: '8px',
+                          borderRadius: '4px',
+                          width: `${workflowStatus.progress}%`,
+                          transition: 'width 0.3s ease',
+                        }}
+                      ></div>
+                    </div>
+
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                      {workflowStatus.workflow.map((step, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            padding: '16px',
+                            background:
+                              step.status === 'completed'
+                                ? '#f0fdf4'
+                                : step.status === 'pending'
+                                  ? '#fffbeb'
+                                  : '#f9fafb',
+                            borderRadius: '8px',
+                            border: `1px solid ${step.status === 'completed' ? '#22c55e' : step.status === 'pending' ? '#f59e0b' : '#e5e7eb'}`,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              background:
+                                step.status === 'completed'
+                                  ? '#22c55e'
+                                  : step.status === 'pending'
+                                    ? '#f59e0b'
+                                    : '#e5e7eb',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {step.status === 'completed' ? '✓' : index + 1}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{ fontWeight: '600', marginBottom: '4px' }}
+                            >
+                              {step.step}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                              {step.description}
+                            </div>
+                            {step.completedAt && (
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: '#9ca3af',
+                                  marginTop: '4px',
+                                }}
+                              >
+                                Completed:{' '}
+                                {new Date(step.completedAt).toLocaleString()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {selectedContract.status === 'pending_approval' && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <button
+                        onClick={async () => {
+                          const result =
+                            await brokerContractService.requestContractApproval(
+                              selectedContract.id
+                            );
+                          alert(result.message);
+                        }}
+                        style={{
+                          padding: '12px 24px',
+                          background: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Request Approval
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedContract.status === 'approved' &&
+                    selectedContract.paymentStatus === 'pending' && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          justifyContent: 'flex-end',
+                        }}
+                      >
+                        <button
+                          onClick={async () => {
+                            const result =
+                              await brokerContractService.generateSquareInvoice(
+                                selectedContract.id
+                              );
+                            if (result.success && result.invoiceUrl) {
+                              window.open(result.invoiceUrl, '_blank');
+                            }
+                            alert(result.message);
+                          }}
+                          style={{
+                            padding: '12px 24px',
+                            background: '#10b981',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Generate Square Invoice
+                        </button>
+                      </div>
+                    )}
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Shipper Details Modal */}
+      {showShipperDetails && selectedShipper && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              maxWidth: '900px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px',
+              }}
+            >
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
+                {selectedShipper.name} - Customer Profile
+              </h2>
+              <button
+                onClick={() => setShowShipperDetails(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Customer Overview */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '24px',
+                marginBottom: '32px',
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Contact Information
+                </h3>
+                <div
+                  style={{
+                    background: '#f9fafb',
+                    padding: '16px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Email:</strong> {selectedShipper.email}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Phone:</strong> {selectedShipper.phone}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Address:</strong> {selectedShipper.address}
+                  </div>
+                  <div>
+                    <strong>Industry:</strong> {selectedShipper.industry}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Performance Metrics
+                </h3>
+                <div
+                  style={{
+                    background: '#f9fafb',
+                    padding: '16px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Overall Score:</strong>{' '}
+                    {selectedShipper.overallScore}/100
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Credit Rating:</strong>{' '}
+                    {selectedShipper.creditRating}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Risk Level:</strong>{' '}
+                    {selectedShipper.riskLevel.toUpperCase()}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Payment Terms:</strong>{' '}
+                    {selectedShipper.paymentTerms} days
+                  </div>
+                  <div>
+                    <strong>Avg Payment Time:</strong>{' '}
+                    {selectedShipper.avgPaymentTime} days
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Business Intelligence */}
+            <div style={{ marginBottom: '32px' }}>
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                }}
+              >
+                Business Intelligence
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: '#f0fdf4',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #22c55e',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#22c55e',
+                    }}
+                  >
+                    ${selectedShipper.totalVolume.toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                    Annual Volume
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: '#eff6ff',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #3b82f6',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    {selectedShipper.loadCount}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                    Total Loads
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: '#fefce8',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #f59e0b',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    {selectedShipper.reliability}%
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                    Reliability Score
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Interaction History */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                }}
+              >
+                Recent Interactions
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {brokerCRMService
+                  .getInteractionHistory(selectedShipper.id)
+                  .slice(0, 3)
+                  .map((interaction) => (
+                    <div
+                      key={interaction.id}
+                      style={{
+                        background: '#f9fafb',
+                        padding: '16px',
+                        borderRadius: '8px',
+                        border: '1px solid #e5e7eb',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        <div>
+                          <span
+                            style={{
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              background:
+                                interaction.type === 'call'
+                                  ? 'rgba(59, 130, 246, 0.1)'
+                                  : interaction.type === 'email'
+                                    ? 'rgba(16, 185, 129, 0.1)'
+                                    : interaction.type === 'contract'
+                                      ? 'rgba(245, 158, 11, 0.1)'
+                                      : 'rgba(156, 163, 175, 0.1)',
+                              color:
+                                interaction.type === 'call'
+                                  ? '#3b82f6'
+                                  : interaction.type === 'email'
+                                    ? '#10b981'
+                                    : interaction.type === 'contract'
+                                      ? '#f59e0b'
+                                      : '#6b7280',
+                            }}
+                          >
+                            {interaction.type.toUpperCase()}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                          {new Date(interaction.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div style={{ fontWeight: '600', marginBottom: '4px' }}>
+                        {interaction.subject}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: '#6b7280',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {interaction.description}
+                      </div>
+                      {interaction.followUpRequired && (
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: '#f59e0b',
+                            fontWeight: '600',
+                          }}
+                        >
+                          📅 Follow-up required:{' '}
+                          {interaction.followUpDate
+                            ? new Date(
+                                interaction.followUpDate
+                              ).toLocaleDateString()
+                            : 'TBD'}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button
+                onClick={() => setShowShipperDetails(false)}
+                style={{
+                  padding: '12px 24px',
+                  background: '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+              <button
+                style={{
+                  padding: '12px 24px',
+                  background: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                }}
+              >
+                Add Interaction
+              </button>
+            </div>
           </div>
         </div>
       )}

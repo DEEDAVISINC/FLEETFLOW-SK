@@ -1,4 +1,4 @@
-u client';
+'use client';
 
 // Insurance Partner API Integration Service
 // Handles lead submission to insurance partners for referral/affiliate program

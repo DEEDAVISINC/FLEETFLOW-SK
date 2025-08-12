@@ -12,7 +12,7 @@ export interface PageSectionPermissions {
     canViewRecentActivity: boolean;
     canExportData: boolean;
   };
-  
+
   // DISPATCH CENTRAL PAGE SECTIONS
   dispatchCentral: {
     canViewLoadBoard: boolean;
@@ -26,8 +26,8 @@ export interface PageSectionPermissions {
     canManageDispatchFees: boolean;
     canViewLoadHistory: boolean;
   };
-  
-  // BROKER BOX PAGE SECTIONS  
+
+  // BROKER BOX PAGE SECTIONS
   brokerBox: {
     canViewShipperManagement: boolean;
     canCreateQuotes: boolean;
@@ -40,7 +40,7 @@ export interface PageSectionPermissions {
     canViewCommissionTracking: boolean;
     canManageBrokerTools: boolean;
   };
-  
+
   // DRIVER MANAGEMENT PAGE SECTIONS
   driverManagement: {
     canViewDriverList: boolean;
@@ -54,7 +54,7 @@ export interface PageSectionPermissions {
     canViewDriverFinancials: boolean;
     canAccessDriverPortal: boolean;
   };
-  
+
   // FLEETFLOW (ROUTES/VEHICLES) PAGE SECTIONS
   fleetFlow: {
     canViewRouteOptimization: boolean;
@@ -68,7 +68,7 @@ export interface PageSectionPermissions {
     canViewFleetPerformance: boolean;
     canAccessFleetReporting: boolean;
   };
-  
+
   // ANALYTICS PAGE SECTIONS (RESTRICTED)
   analytics: {
     canViewRevenueAnalytics: boolean;
@@ -82,7 +82,7 @@ export interface PageSectionPermissions {
     canViewRealTimeMetrics: boolean;
     canAccessPredictiveAnalytics: boolean;
   };
-  
+
   // FINANCIALS PAGE SECTIONS (RESTRICTED)
   financials: {
     canViewInvoicing: boolean;
@@ -96,7 +96,7 @@ export interface PageSectionPermissions {
     canViewFinancialReports: boolean;
     canAccessAuditTrail: boolean;
   };
-  
+
   // SETTINGS PAGE SECTIONS (ADMIN)
   settings: {
     canViewUserManagement: boolean;
@@ -110,7 +110,7 @@ export interface PageSectionPermissions {
     canManageCompanySettings: boolean;
     canAccessDeveloperTools: boolean;
   };
-  
+
   // TRAINING PAGE SECTIONS
   training: {
     canViewTrainingModules: boolean;
@@ -124,7 +124,7 @@ export interface PageSectionPermissions {
     canGenerateCertificates: boolean;
     canAccessTrainingAnalytics: boolean;
   };
-  
+
   // COMPLIANCE PAGE SECTIONS
   compliance: {
     canViewDOTCompliance: boolean;
@@ -138,7 +138,7 @@ export interface PageSectionPermissions {
     canViewComplianceAnalytics: boolean;
     canManageComplianceAlerts: boolean;
   };
-  
+
   // ACCOUNTING PAGE SECTIONS (FINANCIAL)
   accounting: {
     canViewRevenueDashboard: boolean;
@@ -157,13 +157,13 @@ export interface PageSectionPermissions {
 export const USER_ROLES = {
   DRIVER: 'driver',
   DISPATCHER: 'dispatcher',
-  BROKER: 'broker', 
+  BROKER: 'broker',
   MANAGER: 'manager',
   ADMIN: 'admin',
-  INSTRUCTOR: 'instructor'
+  INSTRUCTOR: 'instructor',
 } as const;
 
-export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
 // Deep partial type for custom permissions
 type DeepPartial<T> = {
@@ -186,10 +186,10 @@ export interface User {
 // GRANULAR SECTION-LEVEL PERMISSIONS BY ROLE
 export const getSectionPermissions = (user: User): PageSectionPermissions => {
   const { role, customPermissions } = user;
-  
+
   // Default permissions by role
   let permissions: PageSectionPermissions;
-  
+
   switch (role) {
     case 'admin':
       // Admins get access to ALL sections
@@ -201,7 +201,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: true
+          canExportData: true,
         },
         dispatchCentral: {
           canViewLoadBoard: true,
@@ -213,7 +213,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: true,
           canViewRealTimeTracking: true,
           canManageDispatchFees: true,
-          canViewLoadHistory: true
+          canViewLoadHistory: true,
         },
         brokerBox: {
           canViewShipperManagement: true,
@@ -225,7 +225,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: true,
           canAccessLoadMatching: true,
           canViewCommissionTracking: true,
-          canManageBrokerTools: true
+          canManageBrokerTools: true,
         },
         driverManagement: {
           canViewDriverList: true,
@@ -237,7 +237,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: true,
           canManageDriverOnboarding: true,
           canViewDriverFinancials: true,
-          canAccessDriverPortal: true
+          canAccessDriverPortal: true,
         },
         fleetFlow: {
           canViewRouteOptimization: true,
@@ -249,7 +249,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: true,
           canManageVehicleDocuments: true,
           canViewFleetPerformance: true,
-          canAccessFleetReporting: true
+          canAccessFleetReporting: true,
         },
         analytics: {
           canViewRevenueAnalytics: true,
@@ -261,7 +261,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: true,
           canExportAnalyticsData: true,
           canViewRealTimeMetrics: true,
-          canAccessPredictiveAnalytics: true
+          canAccessPredictiveAnalytics: true,
         },
         financials: {
           canViewInvoicing: true,
@@ -273,7 +273,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: true,
           canProcessPayments: true,
           canViewFinancialReports: true,
-          canAccessAuditTrail: true
+          canAccessAuditTrail: true,
         },
         settings: {
           canViewUserManagement: true,
@@ -285,7 +285,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: true,
           canViewAuditLogs: true,
           canManageCompanySettings: true,
-          canAccessDeveloperTools: true
+          canAccessDeveloperTools: true,
         },
         training: {
           canViewTrainingModules: true,
@@ -297,7 +297,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: true,
           canAssignTraining: true,
           canGenerateCertificates: true,
-          canAccessTrainingAnalytics: true
+          canAccessTrainingAnalytics: true,
         },
         compliance: {
           canViewDOTCompliance: true,
@@ -309,7 +309,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: true,
           canAccessAuditPrep: true,
           canViewComplianceAnalytics: true,
-          canManageComplianceAlerts: true
+          canManageComplianceAlerts: true,
         },
         accounting: {
           canViewRevenueDashboard: true,
@@ -321,11 +321,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: true,
           canProcessPayments: true,
           canViewAccountingAudit: true,
-          canAccessFinancialSettings: true
-        }
+          canAccessFinancialSettings: true,
+        },
       };
       break;
-      
+
     case 'manager':
       permissions = {
         dashboard: {
@@ -335,7 +335,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: true
+          canExportData: true,
         },
         dispatchCentral: {
           canViewLoadBoard: true,
@@ -347,7 +347,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: true,
           canViewRealTimeTracking: true,
           canManageDispatchFees: true,
-          canViewLoadHistory: true
+          canViewLoadHistory: true,
         },
         brokerBox: {
           canViewShipperManagement: true,
@@ -359,7 +359,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: true,
           canAccessLoadMatching: true,
           canViewCommissionTracking: true,
-          canManageBrokerTools: true
+          canManageBrokerTools: true,
         },
         driverManagement: {
           canViewDriverList: true,
@@ -371,7 +371,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: true,
           canManageDriverOnboarding: true,
           canViewDriverFinancials: true,
-          canAccessDriverPortal: true
+          canAccessDriverPortal: true,
         },
         fleetFlow: {
           canViewRouteOptimization: true,
@@ -383,7 +383,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: true,
           canManageVehicleDocuments: true,
           canViewFleetPerformance: true,
-          canAccessFleetReporting: true
+          canAccessFleetReporting: true,
         },
         analytics: {
           canViewRevenueAnalytics: true,
@@ -395,7 +395,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: true,
           canExportAnalyticsData: true,
           canViewRealTimeMetrics: true,
-          canAccessPredictiveAnalytics: true
+          canAccessPredictiveAnalytics: true,
         },
         financials: {
           canViewInvoicing: true,
@@ -407,7 +407,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: true,
           canProcessPayments: false, // Restricted
           canViewFinancialReports: true,
-          canAccessAuditTrail: true
+          canAccessAuditTrail: true,
         },
         settings: {
           canViewUserManagement: true,
@@ -419,7 +419,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false, // Admin only
           canViewAuditLogs: true,
           canManageCompanySettings: true,
-          canAccessDeveloperTools: false // Admin only
+          canAccessDeveloperTools: false, // Admin only
         },
         training: {
           canViewTrainingModules: true,
@@ -431,7 +431,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: true,
           canAssignTraining: true,
           canGenerateCertificates: true,
-          canAccessTrainingAnalytics: true
+          canAccessTrainingAnalytics: true,
         },
         compliance: {
           canViewDOTCompliance: true,
@@ -443,7 +443,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: true,
           canAccessAuditPrep: true,
           canViewComplianceAnalytics: true,
-          canManageComplianceAlerts: true
+          canManageComplianceAlerts: true,
         },
         accounting: {
           canViewRevenueDashboard: true,
@@ -455,11 +455,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: true,
           canProcessPayments: false, // Admin only
           canViewAccountingAudit: true,
-          canAccessFinancialSettings: false // Admin only
-        }
+          canAccessFinancialSettings: false, // Admin only
+        },
       };
       break;
-      
+
     case 'dispatcher':
       permissions = {
         dashboard: {
@@ -469,7 +469,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: false // No export access
+          canExportData: false, // No export access
         },
         dispatchCentral: {
           canViewLoadBoard: true,
@@ -481,7 +481,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: true,
           canViewRealTimeTracking: true,
           canManageDispatchFees: true,
-          canViewLoadHistory: true
+          canViewLoadHistory: true,
         },
         brokerBox: {
           canViewShipperManagement: false, // No broker access
@@ -493,7 +493,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: false,
           canAccessLoadMatching: false,
           canViewCommissionTracking: false,
-          canManageBrokerTools: false
+          canManageBrokerTools: false,
         },
         driverManagement: {
           canViewDriverList: true,
@@ -505,7 +505,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: true,
           canManageDriverOnboarding: true,
           canViewDriverFinancials: false, // No financial access
-          canAccessDriverPortal: true
+          canAccessDriverPortal: true,
         },
         fleetFlow: {
           canViewRouteOptimization: true,
@@ -517,7 +517,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: false, // No analytics access
           canManageVehicleDocuments: true,
           canViewFleetPerformance: true,
-          canAccessFleetReporting: false // No reporting access
+          canAccessFleetReporting: false, // No reporting access
         },
         analytics: {
           // NO ACCESS TO ANALYTICS
@@ -530,7 +530,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: false,
           canExportAnalyticsData: false,
           canViewRealTimeMetrics: false,
-          canAccessPredictiveAnalytics: false
+          canAccessPredictiveAnalytics: false,
         },
         financials: {
           // NO ACCESS TO FINANCIALS
@@ -543,7 +543,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: false,
           canProcessPayments: false,
           canViewFinancialReports: false,
-          canAccessAuditTrail: false
+          canAccessAuditTrail: false,
         },
         settings: {
           // LIMITED SETTINGS ACCESS
@@ -556,7 +556,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false,
           canViewAuditLogs: false,
           canManageCompanySettings: false,
-          canAccessDeveloperTools: false
+          canAccessDeveloperTools: false,
         },
         training: {
           canViewTrainingModules: true,
@@ -568,7 +568,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: false,
           canAssignTraining: false,
           canGenerateCertificates: false,
-          canAccessTrainingAnalytics: false
+          canAccessTrainingAnalytics: false,
         },
         compliance: {
           canViewDOTCompliance: true,
@@ -580,7 +580,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: true,
           canAccessAuditPrep: false,
           canViewComplianceAnalytics: false,
-          canManageComplianceAlerts: true
+          canManageComplianceAlerts: true,
         },
         accounting: {
           // NO ACCESS TO ACCOUNTING
@@ -593,11 +593,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: false,
           canProcessPayments: false,
           canViewAccountingAudit: false,
-          canAccessFinancialSettings: false
-        }
+          canAccessFinancialSettings: false,
+        },
       };
       break;
-      
+
     case 'broker':
       permissions = {
         dashboard: {
@@ -607,7 +607,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: false
+          canExportData: false,
         },
         dispatchCentral: {
           canViewLoadBoard: false, // Brokers don't manage dispatch
@@ -619,7 +619,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: false,
           canViewRealTimeTracking: false,
           canManageDispatchFees: false,
-          canViewLoadHistory: false
+          canViewLoadHistory: false,
         },
         brokerBox: {
           canViewShipperManagement: true,
@@ -631,7 +631,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: true,
           canAccessLoadMatching: true,
           canViewCommissionTracking: true,
-          canManageBrokerTools: true
+          canManageBrokerTools: true,
         },
         driverManagement: {
           canViewDriverList: false, // No driver management
@@ -643,7 +643,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: false,
           canManageDriverOnboarding: false,
           canViewDriverFinancials: false,
-          canAccessDriverPortal: false
+          canAccessDriverPortal: false,
         },
         fleetFlow: {
           canViewRouteOptimization: false, // Limited fleet access
@@ -655,7 +655,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: false,
           canManageVehicleDocuments: false,
           canViewFleetPerformance: false,
-          canAccessFleetReporting: false
+          canAccessFleetReporting: false,
         },
         analytics: {
           // NO ACCESS TO ANALYTICS
@@ -668,7 +668,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: false,
           canExportAnalyticsData: false,
           canViewRealTimeMetrics: false,
-          canAccessPredictiveAnalytics: false
+          canAccessPredictiveAnalytics: false,
         },
         financials: {
           // NO ACCESS TO FINANCIALS
@@ -681,7 +681,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: false,
           canProcessPayments: false,
           canViewFinancialReports: false,
-          canAccessAuditTrail: false
+          canAccessAuditTrail: false,
         },
         settings: {
           // NO SETTINGS ACCESS
@@ -694,7 +694,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false,
           canViewAuditLogs: false,
           canManageCompanySettings: false,
-          canAccessDeveloperTools: false
+          canAccessDeveloperTools: false,
         },
         training: {
           canViewTrainingModules: true,
@@ -706,7 +706,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: false,
           canAssignTraining: false,
           canGenerateCertificates: false,
-          canAccessTrainingAnalytics: false
+          canAccessTrainingAnalytics: false,
         },
         compliance: {
           canViewDOTCompliance: true,
@@ -718,7 +718,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: false,
           canAccessAuditPrep: false,
           canViewComplianceAnalytics: false,
-          canManageComplianceAlerts: false
+          canManageComplianceAlerts: false,
         },
         accounting: {
           // NO ACCESS TO ACCOUNTING
@@ -731,11 +731,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: false,
           canProcessPayments: false,
           canViewAccountingAudit: false,
-          canAccessFinancialSettings: false
-        }
+          canAccessFinancialSettings: false,
+        },
       };
       break;
-      
+
     case 'driver':
       permissions = {
         dashboard: {
@@ -745,7 +745,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: false
+          canExportData: false,
         },
         dispatchCentral: {
           // NO DISPATCH ACCESS
@@ -758,7 +758,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: false,
           canViewRealTimeTracking: false,
           canManageDispatchFees: false,
-          canViewLoadHistory: false
+          canViewLoadHistory: false,
         },
         brokerBox: {
           // NO BROKER ACCESS
@@ -771,7 +771,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: false,
           canAccessLoadMatching: false,
           canViewCommissionTracking: false,
-          canManageBrokerTools: false
+          canManageBrokerTools: false,
         },
         driverManagement: {
           // NO MANAGEMENT ACCESS
@@ -784,7 +784,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: false,
           canManageDriverOnboarding: false,
           canViewDriverFinancials: false,
-          canAccessDriverPortal: true // Own portal only
+          canAccessDriverPortal: true, // Own portal only
         },
         fleetFlow: {
           // LIMITED FLEET ACCESS
@@ -797,7 +797,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: false,
           canManageVehicleDocuments: false,
           canViewFleetPerformance: false,
-          canAccessFleetReporting: false
+          canAccessFleetReporting: false,
         },
         analytics: {
           // NO ACCESS TO ANALYTICS
@@ -810,7 +810,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: false,
           canExportAnalyticsData: false,
           canViewRealTimeMetrics: false,
-          canAccessPredictiveAnalytics: false
+          canAccessPredictiveAnalytics: false,
         },
         financials: {
           // NO ACCESS TO FINANCIALS
@@ -823,7 +823,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: false,
           canProcessPayments: false,
           canViewFinancialReports: false,
-          canAccessAuditTrail: false
+          canAccessAuditTrail: false,
         },
         settings: {
           // NO SETTINGS ACCESS
@@ -836,7 +836,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false,
           canViewAuditLogs: false,
           canManageCompanySettings: false,
-          canAccessDeveloperTools: false
+          canAccessDeveloperTools: false,
         },
         training: {
           canViewTrainingModules: true,
@@ -848,7 +848,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: false,
           canAssignTraining: false,
           canGenerateCertificates: false,
-          canAccessTrainingAnalytics: false
+          canAccessTrainingAnalytics: false,
         },
         compliance: {
           canViewDOTCompliance: true, // Own compliance only
@@ -860,7 +860,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: false,
           canAccessAuditPrep: false,
           canViewComplianceAnalytics: false,
-          canManageComplianceAlerts: false
+          canManageComplianceAlerts: false,
         },
         accounting: {
           // NO ACCESS TO ACCOUNTING
@@ -873,11 +873,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: false,
           canProcessPayments: false,
           canViewAccountingAudit: false,
-          canAccessFinancialSettings: false
-        }
+          canAccessFinancialSettings: false,
+        },
       };
       break;
-      
+
     case 'instructor':
       permissions = {
         dashboard: {
@@ -887,7 +887,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: true,
           canViewAlerts: true,
           canViewRecentActivity: true,
-          canExportData: false
+          canExportData: false,
         },
         dispatchCentral: {
           canViewLoadBoard: false,
@@ -899,7 +899,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: false,
           canViewRealTimeTracking: false,
           canManageDispatchFees: false,
-          canViewLoadHistory: false
+          canViewLoadHistory: false,
         },
         brokerBox: {
           canViewShipperManagement: false,
@@ -911,7 +911,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: false,
           canAccessLoadMatching: false,
           canViewCommissionTracking: false,
-          canManageBrokerTools: false
+          canManageBrokerTools: false,
         },
         driverManagement: {
           canViewDriverList: false,
@@ -923,7 +923,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: false,
           canManageDriverOnboarding: false,
           canViewDriverFinancials: false,
-          canAccessDriverPortal: false
+          canAccessDriverPortal: false,
         },
         fleetFlow: {
           canViewRouteOptimization: false,
@@ -935,7 +935,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: false,
           canManageVehicleDocuments: false,
           canViewFleetPerformance: false,
-          canAccessFleetReporting: false
+          canAccessFleetReporting: false,
         },
         analytics: {
           canViewRevenueAnalytics: false,
@@ -947,7 +947,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: false,
           canExportAnalyticsData: false,
           canViewRealTimeMetrics: false,
-          canAccessPredictiveAnalytics: false
+          canAccessPredictiveAnalytics: false,
         },
         financials: {
           canViewInvoicing: false,
@@ -959,7 +959,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: false,
           canProcessPayments: false,
           canViewFinancialReports: false,
-          canAccessAuditTrail: false
+          canAccessAuditTrail: false,
         },
         settings: {
           canViewUserManagement: true, // Can manage students
@@ -971,7 +971,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false,
           canViewAuditLogs: false,
           canManageCompanySettings: false,
-          canAccessDeveloperTools: false
+          canAccessDeveloperTools: false,
         },
         training: {
           canViewTrainingModules: true,
@@ -983,7 +983,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: true,
           canAssignTraining: true,
           canGenerateCertificates: true,
-          canAccessTrainingAnalytics: true
+          canAccessTrainingAnalytics: true,
         },
         compliance: {
           canViewDOTCompliance: true,
@@ -995,7 +995,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: false,
           canAccessAuditPrep: false,
           canViewComplianceAnalytics: false,
-          canManageComplianceAlerts: false
+          canManageComplianceAlerts: false,
         },
         accounting: {
           canViewRevenueDashboard: false,
@@ -1007,11 +1007,11 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: false,
           canProcessPayments: false,
           canViewAccountingAudit: false,
-          canAccessFinancialSettings: false
-        }
+          canAccessFinancialSettings: false,
+        },
       };
       break;
-      
+
     default:
       // Default to no access
       permissions = {
@@ -1022,7 +1022,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewQuickActions: false,
           canViewAlerts: false,
           canViewRecentActivity: false,
-          canExportData: false
+          canExportData: false,
         },
         dispatchCentral: {
           canViewLoadBoard: false,
@@ -1034,7 +1034,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canGenerateDocuments: false,
           canViewRealTimeTracking: false,
           canManageDispatchFees: false,
-          canViewLoadHistory: false
+          canViewLoadHistory: false,
         },
         brokerBox: {
           canViewShipperManagement: false,
@@ -1046,7 +1046,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canManageCustomerRelations: false,
           canAccessLoadMatching: false,
           canViewCommissionTracking: false,
-          canManageBrokerTools: false
+          canManageBrokerTools: false,
         },
         driverManagement: {
           canViewDriverList: false,
@@ -1058,7 +1058,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewDriverDocuments: false,
           canManageDriverOnboarding: false,
           canViewDriverFinancials: false,
-          canAccessDriverPortal: false
+          canAccessDriverPortal: false,
         },
         fleetFlow: {
           canViewRouteOptimization: false,
@@ -1070,7 +1070,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewFleetAnalytics: false,
           canManageVehicleDocuments: false,
           canViewFleetPerformance: false,
-          canAccessFleetReporting: false
+          canAccessFleetReporting: false,
         },
         analytics: {
           canViewRevenueAnalytics: false,
@@ -1082,7 +1082,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canCreateCustomReports: false,
           canExportAnalyticsData: false,
           canViewRealTimeMetrics: false,
-          canAccessPredictiveAnalytics: false
+          canAccessPredictiveAnalytics: false,
         },
         financials: {
           canViewInvoicing: false,
@@ -1094,7 +1094,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewTaxDocuments: false,
           canProcessPayments: false,
           canViewFinancialReports: false,
-          canAccessAuditTrail: false
+          canAccessAuditTrail: false,
         },
         settings: {
           canViewUserManagement: false,
@@ -1106,7 +1106,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canAccessBackupSettings: false,
           canViewAuditLogs: false,
           canManageCompanySettings: false,
-          canAccessDeveloperTools: false
+          canAccessDeveloperTools: false,
         },
         training: {
           canViewTrainingModules: false,
@@ -1118,7 +1118,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewAllUserProgress: false,
           canAssignTraining: false,
           canGenerateCertificates: false,
-          canAccessTrainingAnalytics: false
+          canAccessTrainingAnalytics: false,
         },
         compliance: {
           canViewDOTCompliance: false,
@@ -1130,7 +1130,7 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCSAScores: false,
           canAccessAuditPrep: false,
           canViewComplianceAnalytics: false,
-          canManageComplianceAlerts: false
+          canManageComplianceAlerts: false,
         },
         accounting: {
           canViewRevenueDashboard: false,
@@ -1142,124 +1142,220 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
           canViewCashFlowAnalysis: false,
           canProcessPayments: false,
           canViewAccountingAudit: false,
-          canAccessFinancialSettings: false
-        }
+          canAccessFinancialSettings: false,
+        },
       };
   }
-  
+
   // Apply custom permission overrides if they exist
   if (customPermissions) {
-    Object.keys(customPermissions).forEach(pageKey => {
+    Object.keys(customPermissions).forEach((pageKey) => {
       const page = pageKey as keyof PageSectionPermissions;
       if (permissions[page] && customPermissions[page]) {
         Object.assign(permissions[page], customPermissions[page]);
       }
     });
   }
-  
+
   return permissions;
 };
 
 // Mock users with custom permission examples
 export const MOCK_USERS: User[] = [
-  { id: 'admin-001', name: 'System Admin', email: 'admin@fleetflow.com', role: 'admin', departmentCode: 'MGR' },
-  { id: 'mgr-001', name: 'Fleet Manager', email: 'manager@fleetflow.com', role: 'manager', departmentCode: 'MGR' },
-  
+  {
+    id: 'admin-001',
+    name: 'System Admin',
+    email: 'admin@fleetflow.com',
+    role: 'admin',
+    departmentCode: 'MGR',
+  },
+  {
+    id: 'mgr-001',
+    name: 'Fleet Manager',
+    email: 'manager@fleetflow.com',
+    role: 'manager',
+    departmentCode: 'MGR',
+  },
+
   // Dispatchers (DC Department)
-  { id: 'disp-001', name: 'Sarah Johnson', email: 'sarah@fleetflow.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-001', 'broker-002'] },
-  { id: 'disp-002', name: 'Mike Chen', email: 'mike@fleetflow.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-003'] },
-  
+  {
+    id: 'disp-001',
+    name: 'Sarah Johnson',
+    email: 'sarah@fleetflow.com',
+    role: 'dispatcher',
+    departmentCode: 'DC',
+    assignedBrokers: ['broker-001', 'broker-002'],
+  },
+  {
+    id: 'disp-002',
+    name: 'Mike Chen',
+    email: 'mike@fleetflow.com',
+    role: 'dispatcher',
+    departmentCode: 'DC',
+    assignedBrokers: ['broker-003'],
+  },
+
   // Brokers (BB Department)
-  { id: 'broker-001', name: 'John Smith', email: 'john.smith@globalfreight.com', role: 'broker', departmentCode: 'BB', brokerId: 'broker-001', dispatcherId: 'disp-001', companyName: 'Global Freight Solutions' },
-  { id: 'broker-002', name: 'Maria Garcia', email: 'maria.garcia@swift.com', role: 'broker', departmentCode: 'BB', brokerId: 'broker-002', dispatcherId: 'disp-001', companyName: 'Swift Freight' },
-  { id: 'broker-003', name: 'David Wilson', email: 'david.wilson@express.com', role: 'broker', departmentCode: 'BB', brokerId: 'broker-003', dispatcherId: 'disp-002', companyName: 'Express Cargo' },
-  
+  {
+    id: 'broker-001',
+    name: 'John Smith',
+    email: 'john.smith@globalfreight.com',
+    role: 'broker',
+    departmentCode: 'BB',
+    brokerId: 'broker-001',
+    dispatcherId: 'disp-001',
+    companyName: 'Global Freight Solutions',
+  },
+  {
+    id: 'broker-002',
+    name: 'Maria Garcia',
+    email: 'maria.garcia@swift.com',
+    role: 'broker',
+    departmentCode: 'BB',
+    brokerId: 'broker-002',
+    dispatcherId: 'disp-001',
+    companyName: 'Swift Freight',
+  },
+  {
+    id: 'broker-003',
+    name: 'David Wilson',
+    email: 'david.wilson@express.com',
+    role: 'broker',
+    departmentCode: 'BB',
+    brokerId: 'broker-003',
+    dispatcherId: 'disp-002',
+    companyName: 'Express Cargo',
+  },
+
   // Drivers (DM Department)
-  { id: 'driver-001', name: 'Robert Johnson', email: 'robert.j@fleetflow.com', role: 'driver', departmentCode: 'DM' },
-  { id: 'driver-002', name: 'Michelle Davis', email: 'michelle.d@fleetflow.com', role: 'driver', departmentCode: 'DM' },
-  
+  {
+    id: 'driver-001',
+    name: 'Robert Johnson',
+    email: 'robert.j@fleetflow.com',
+    role: 'driver',
+    departmentCode: 'DM',
+  },
+  {
+    id: 'driver-002',
+    name: 'Michelle Davis',
+    email: 'michelle.d@fleetflow.com',
+    role: 'driver',
+    departmentCode: 'DM',
+  },
+
   // Instructors
-  { id: 'instructor-001', name: 'Dr. Patricia Wilson', email: 'p.wilson@fleetflow.com', role: 'instructor', departmentCode: 'MGR' },
-  
+  {
+    id: 'instructor-001',
+    name: 'Dr. Patricia Wilson',
+    email: 'p.wilson@fleetflow.com',
+    role: 'instructor',
+    departmentCode: 'MGR',
+  },
+
   // Example: Custom permissions for a dispatcher with limited access
-  { 
-    id: 'disp-003', 
-    name: 'Limited Dispatcher', 
-    email: 'limited@fleetflow.com', 
-    role: 'dispatcher', 
+  {
+    id: 'disp-003',
+    name: 'Limited Dispatcher',
+    email: 'limited@fleetflow.com',
+    role: 'dispatcher',
     departmentCode: 'DC',
     customPermissions: {
       driverManagement: {
         canViewDriverFinancials: false, // Override: No financial access
-        canManageDriverOnboarding: false // Override: No onboarding access
-      }
-    }
-  }
+        canManageDriverOnboarding: false, // Override: No onboarding access
+      },
+    },
+  },
 ];
 
 // Main function to get current user with section permissions
-export const getCurrentUser = (): { user: User; permissions: PageSectionPermissions } => {
+export const getCurrentUser = (): {
+  user: User;
+  permissions: PageSectionPermissions;
+} => {
   // Change this ID to test different users and permission levels:
-  const currentUserId = 'admin-001'; // Try: 'broker-001', 'disp-001', 'driver-001', 'disp-003'
-  
-  const user = MOCK_USERS.find(u => u.id === currentUserId) || MOCK_USERS[0];
+  const currentUserId = 'broker-001'; // Try: 'admin-001', 'disp-001', 'driver-001', 'disp-003'
+
+  const user = MOCK_USERS.find((u) => u.id === currentUserId) || MOCK_USERS[0];
   const permissions = getSectionPermissions(user);
-  
+
   return { user, permissions };
 };
 
 // Helper functions for section-level access checking
-export const canAccessDashboardSection = (section: keyof PageSectionPermissions['dashboard']): boolean => {
+export const canAccessDashboardSection = (
+  section: keyof PageSectionPermissions['dashboard']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.dashboard[section];
 };
 
-export const canAccessDispatchSection = (section: keyof PageSectionPermissions['dispatchCentral']): boolean => {
+export const canAccessDispatchSection = (
+  section: keyof PageSectionPermissions['dispatchCentral']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.dispatchCentral[section];
 };
 
-export const canAccessBrokerSection = (section: keyof PageSectionPermissions['brokerBox']): boolean => {
+export const canAccessBrokerSection = (
+  section: keyof PageSectionPermissions['brokerBox']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.brokerBox[section];
 };
 
-export const canAccessDriverManagementSection = (section: keyof PageSectionPermissions['driverManagement']): boolean => {
+export const canAccessDriverManagementSection = (
+  section: keyof PageSectionPermissions['driverManagement']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.driverManagement[section];
 };
 
-export const canAccessFleetFlowSection = (section: keyof PageSectionPermissions['fleetFlow']): boolean => {
+export const canAccessFleetFlowSection = (
+  section: keyof PageSectionPermissions['fleetFlow']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.fleetFlow[section];
 };
 
-export const canAccessAnalyticsSection = (section: keyof PageSectionPermissions['analytics']): boolean => {
+export const canAccessAnalyticsSection = (
+  section: keyof PageSectionPermissions['analytics']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.analytics[section];
 };
 
-export const canAccessFinancialsSection = (section: keyof PageSectionPermissions['financials']): boolean => {
+export const canAccessFinancialsSection = (
+  section: keyof PageSectionPermissions['financials']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.financials[section];
 };
 
-export const canAccessSettingsSection = (section: keyof PageSectionPermissions['settings']): boolean => {
+export const canAccessSettingsSection = (
+  section: keyof PageSectionPermissions['settings']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.settings[section];
 };
 
-export const canAccessTrainingSection = (section: keyof PageSectionPermissions['training']): boolean => {
+export const canAccessTrainingSection = (
+  section: keyof PageSectionPermissions['training']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.training[section];
 };
 
-export const canAccessComplianceSection = (section: keyof PageSectionPermissions['compliance']): boolean => {
+export const canAccessComplianceSection = (
+  section: keyof PageSectionPermissions['compliance']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.compliance[section];
 };
 
-export const canAccessAccountingSection = (section: keyof PageSectionPermissions['accounting']): boolean => {
+export const canAccessAccountingSection = (
+  section: keyof PageSectionPermissions['accounting']
+): boolean => {
   const { permissions } = getCurrentUser();
   return permissions.accounting[section];
 };
@@ -1267,10 +1363,13 @@ export const canAccessAccountingSection = (section: keyof PageSectionPermissions
 // Backwards compatibility
 export const checkPermission = (permission: string): boolean => {
   const { permissions } = getCurrentUser();
-  
+
   switch (permission) {
     case 'hasManagementAccess':
-      return permissions.analytics.canViewRevenueAnalytics || permissions.financials.canViewInvoicing;
+      return (
+        permissions.analytics.canViewRevenueAnalytics ||
+        permissions.financials.canViewInvoicing
+      );
     case 'hasAnalyticsAccess':
       return permissions.analytics.canViewRevenueAnalytics;
     case 'hasFinancialsAccess':
@@ -1301,7 +1400,7 @@ export const TRAINING_MODULES = {
   TECHNOLOGY: 'technology',
   CUSTOMER: 'customer',
   WORKFLOW: 'workflow',
-  SMS: 'sms'
+  SMS: 'sms',
 } as const;
 
 export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
@@ -1312,7 +1411,7 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
         allowedModules: Object.values(TRAINING_MODULES),
         canViewCertificates: true,
         canManageTraining: true,
-        canViewAllProgress: true
+        canViewAllProgress: true,
       };
 
     case USER_ROLES.MANAGER:
@@ -1320,7 +1419,7 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
         canAccessTraining: true,
         allowedModules: Object.values(TRAINING_MODULES),
         canViewCertificates: true,
-        canViewAllProgress: true
+        canViewAllProgress: true,
       };
 
     case USER_ROLES.DISPATCHER:
@@ -1332,9 +1431,9 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
           TRAINING_MODULES.COMPLIANCE,
           TRAINING_MODULES.SAFETY,
           TRAINING_MODULES.TECHNOLOGY,
-          TRAINING_MODULES.CUSTOMER
+          TRAINING_MODULES.CUSTOMER,
         ],
-        canViewCertificates: true
+        canViewCertificates: true,
       };
 
     case USER_ROLES.BROKER:
@@ -1344,9 +1443,9 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
           TRAINING_MODULES.BROKER,
           TRAINING_MODULES.WORKFLOW,
           TRAINING_MODULES.COMPLIANCE,
-          TRAINING_MODULES.CUSTOMER
+          TRAINING_MODULES.CUSTOMER,
         ],
-        canViewCertificates: true
+        canViewCertificates: true,
       };
 
     case USER_ROLES.DRIVER:
@@ -1355,16 +1454,16 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
         allowedModules: [
           TRAINING_MODULES.SAFETY,
           TRAINING_MODULES.COMPLIANCE,
-          TRAINING_MODULES.TECHNOLOGY
+          TRAINING_MODULES.TECHNOLOGY,
         ],
-        canViewCertificates: true
+        canViewCertificates: true,
       };
 
     default:
       return {
         canAccessTraining: false,
         allowedModules: [],
-        canViewCertificates: false
+        canViewCertificates: false,
       };
   }
 };

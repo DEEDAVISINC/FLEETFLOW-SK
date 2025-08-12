@@ -35,6 +35,11 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
     { id: 'quoting', label: 'Freight Quoting', href: '/quoting' },
     { id: 'carriers', label: 'Carrier Portal', href: '/carriers' },
     {
+      id: 'go-with-the-flow',
+      label: '⚡ Go With the Flow',
+      href: '/go-with-the-flow',
+    },
+    {
       id: 'user-management',
       label: '👥 Digital Rolodex',
       href: '/user-management',

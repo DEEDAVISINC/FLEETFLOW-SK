@@ -29,10 +29,13 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import AISalesIntelligenceHub from '../components/AISalesIntelligenceHub';
 import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
-import CRMLeadManager from '../components/CRMLeadManager';
+import WorkingCRMDashboard from '../components/WorkingCRMDashboard';
+// Updated import: 2024-12-21 23:15:00
 import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
+import TruckingPlanetIntelligence from '../components/TruckingPlanetIntelligence';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -416,7 +419,7 @@ export default function AIFlowPage() {
 
         {/* Main Tabs */}
         <Tabs value='overview' onValueChange={() => {}} className='space-y-6'>
-          <TabsList className='grid w-full grid-cols-12 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+          <TabsList className='grid w-full grid-cols-14 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -494,6 +497,18 @@ export default function AIFlowPage() {
             >
               <Target className='h-4 w-4' />
               Acquisition Pipeline
+            </TabsTrigger>
+            <TabsTrigger
+              value='sales-intelligence'
+              className='flex items-center gap-2'
+            >
+              🎯 Sales Intelligence
+            </TabsTrigger>
+            <TabsTrigger
+              value='truckingplanet-intel'
+              className='flex items-center gap-2'
+            >
+              🌐 TruckingPlanet Intel
             </TabsTrigger>
           </TabsList>
 
@@ -1141,7 +1156,7 @@ export default function AIFlowPage() {
 
           {/* CRM Lead Manager Tab - INTERACTIVE CRM */}
           <TabsContent value='crm-manager' className='space-y-6'>
-            <CRMLeadManager />
+            <WorkingCRMDashboard />
           </TabsContent>
 
           {/* Pharmaceutical Leads Tab */}
@@ -2005,6 +2020,16 @@ export default function AIFlowPage() {
                 </Card>
               </>
             )}
+          </TabsContent>
+
+          {/* AI Sales Intelligence Hub Tab */}
+          <TabsContent value='sales-intelligence' className='space-y-6'>
+            <AISalesIntelligenceHub />
+          </TabsContent>
+
+          {/* TruckingPlanet Intelligence Tab */}
+          <TabsContent value='truckingplanet-intel' className='space-y-6'>
+            <TruckingPlanetIntelligence />
           </TabsContent>
         </Tabs>
       </div>

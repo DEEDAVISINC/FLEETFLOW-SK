@@ -4,6 +4,7 @@ import { DispatchCommunicationIntegration } from '../utils/DispatchCommunication
 import { logger } from '../utils/logger';
 import { EDIService } from './EDIService';
 import { LoadIdentificationService } from './LoadIdentificationService';
+import MultiTenantDataService from './MultiTenantDataService';
 
 // Mock dispatchers for development
 const mockDispatchers = [
@@ -751,6 +752,16 @@ export const getLoadsForUser = (): Load[] => {
   return LOADS_DB;
 };
 
+// Enhanced multi-tenant load filtering
+export const getLoadsForTenant = (): Load[] => {
+  return MultiTenantDataService.filterLoadsForTenant(LOADS_DB);
+};
+
+// Get tenant-specific statistics
+export const getTenantLoadStats = () => {
+  return MultiTenantDataService.getTenantStats(LOADS_DB);
+};
+
 // Get loads for carrier portal (shows available loads to carriers)
 export const getLoadsForCarrierPortal = (): Load[] => {
   // Always return demo loads for carrier portal
@@ -835,7 +846,7 @@ export const getBrokerLoads = (brokerId?: string): Load[] => {
   }));
 };
 
-// Get dispatcher loads (dispatch central)
+// Get dispatcher loads (dispatch central) - LEGACY METHOD
 export const getDispatcherLoads = (dispatcherId?: string): Load[] => {
   const { user } = getCurrentUser();
   const dispatcherIdToUse = dispatcherId || user.id;
@@ -850,12 +861,134 @@ export const getDispatcherLoads = (dispatcherId?: string): Load[] => {
   }));
 };
 
-// Get all loads for main dashboard
-export const getMainDashboardLoads = (): Load[] => {
-  return LOADS_DB.map((load) => ({
+// MULTI-TENANT METHODS - New architecture supporting flexible user types
+
+/**
+ * Get loads for current tenant (user-specific data isolation)
+ * Supports individual dispatchers and dispatch companies
+ */
+export const getTenantLoads = (): Load[] => {
+  return MultiTenantDataService.filterLoadsForTenant(LOADS_DB).map((load) => ({
     ...load,
     loadBoardNumber: load.loadBoardNumber || generateLoadBoardNumber(load),
   }));
+};
+
+/**
+ * Get global load board (shared marketplace - not filtered by tenant)
+ * All users see the same available loads
+ */
+export const getGlobalLoadBoard = (): Load[] => {
+  return MultiTenantDataService.getGlobalLoadBoard(LOADS_DB).map((load) => ({
+    ...load,
+    loadBoardNumber: load.loadBoardNumber || generateLoadBoardNumber(load),
+  }));
+};
+
+/**
+ * Get tenant-specific statistics
+ */
+export const getTenantStats = () => {
+  return MultiTenantDataService.getTenantStats(LOADS_DB);
+};
+
+/**
+ * Check if current user has access to a specific load
+ */
+export const hasLoadAccess = (load: Load): boolean => {
+  return MultiTenantDataService.hasAccessToLoad(load);
+};
+
+// Function to add AI-generated expedited loads to the system
+export const addAIExpeditedLoad = (loadData: {
+  origin: string;
+  destination: string;
+  rate: number;
+  weight: number;
+  equipment: string;
+  urgency?: 'low' | 'medium' | 'high';
+  pickupTime?: Date;
+  deliveryTime?: Date;
+}): Load => {
+  const newLoad: Load = {
+    id: `GWF-AI-${Date.now()}`,
+    brokerId: 'gwf-ai-system',
+    brokerName: 'Go With the Flow',
+    origin: loadData.origin,
+    destination: loadData.destination,
+    rate: loadData.rate,
+    distance: 'Calculating...',
+    weight: loadData.weight.toString(),
+    equipment: loadData.equipment,
+    status: 'Available',
+    pickupDate:
+      loadData.pickupTime?.toISOString().split('T')[0] ||
+      new Date().toISOString().split('T')[0],
+    deliveryDate:
+      loadData.deliveryTime?.toISOString().split('T')[0] ||
+      new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    loadBoardNumber: `GWF-AI-${Date.now().toString().slice(-4)}`,
+    loadType: 'Expedited',
+  };
+
+  // Add to the database
+  LOADS_DB.push(newLoad);
+
+  // Notify dispatch central
+  notifyDispatchCentral(newLoad, 'create');
+
+  console.log(`🚀 AI-generated expedited load added: ${newLoad.id}`);
+  return newLoad;
+};
+
+// Get all loads for main dashboard
+export const getMainDashboardLoads = (): Load[] => {
+  // Get regular loads
+  const regularLoads = LOADS_DB.map((load) => ({
+    ...load,
+    loadBoardNumber: load.loadBoardNumber || generateLoadBoardNumber(load),
+  }));
+
+  // Get expedited loads from Go With the Flow service
+  try {
+    const { GoWithTheFlowService } = require('./GoWithTheFlowService');
+    const gwfService = new GoWithTheFlowService();
+    const expeditedLoads = gwfService
+      .getLiveLoads()
+      .map((expeditedLoad: any) => ({
+        id: expeditedLoad.id,
+        brokerId: 'gwf-system',
+        brokerName: 'Go With the Flow',
+        origin: expeditedLoad.origin.address,
+        destination: expeditedLoad.destination.address,
+        rate: expeditedLoad.rate,
+        distance: `${Math.round(expeditedLoad.origin.lat)} mi`, // Simplified distance
+        weight: expeditedLoad.weight.toString(),
+        equipment: expeditedLoad.equipmentType,
+        status:
+          expeditedLoad.status === 'offered'
+            ? 'Available'
+            : expeditedLoad.status === 'accepted'
+              ? 'Assigned'
+              : 'Available',
+        pickupDate: expeditedLoad.pickupTime.toISOString().split('T')[0],
+        deliveryDate: expeditedLoad.deliveryTime.toISOString().split('T')[0],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        loadBoardNumber: `GWF-${expeditedLoad.id.split('-').pop()}`,
+        loadType: 'Expedited',
+        urgency: expeditedLoad.urgency || 'medium',
+      }));
+
+    return [...regularLoads, ...expeditedLoads];
+  } catch (error) {
+    console.warn(
+      'Go With the Flow service not available, using regular loads only'
+    );
+    return regularLoads;
+  }
 };
 
 // Notification system (in production, these would be real notifications/webhooks)

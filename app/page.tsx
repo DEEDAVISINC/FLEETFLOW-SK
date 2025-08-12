@@ -940,7 +940,24 @@ export default function HomePage() {
                 </span>
               </div>
               <div style={{ fontSize: '12px' }}>{load.distance}</div>
-              <div style={{ fontSize: '12px' }}>{load.equipment}</div>
+              <div style={{ fontSize: '12px' }}>
+                {load.brokerName === 'Go With the Flow' ? (
+                  <span
+                    style={{
+                      background: 'rgba(249, 115, 22, 0.2)',
+                      color: '#f97316',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    ⚡ Expedited
+                  </span>
+                ) : (
+                  load.equipment
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -962,8 +979,12 @@ export default function HomePage() {
               marginBottom: '10px',
             }}
           >
-            Showing {Math.min(8, loads.length)} of {loads.length} total loads
-            from all brokers
+            Showing {Math.min(8, loads.length)} of {loads.length} total loads (
+            {
+              loads.filter((load) => load.brokerName === 'Go With the Flow')
+                .length
+            }{' '}
+            expedited) from all brokers
           </p>
           <Link href='/dispatch' style={{ textDecoration: 'none' }}>
             <button
@@ -983,6 +1004,244 @@ export default function HomePage() {
             </button>
           </Link>
         </div>
+      </div>
+
+      {/* Go With the Flow - Expedited Loads Section */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '30px',
+          marginBottom: '30px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '25px',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#ffffff',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            ⚡ Go With the Flow - Expedited Loads
+          </h2>
+          <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
+              }}
+            >
+              View Full Expedited Portal →
+            </button>
+          </Link>
+        </div>
+
+        {/* Expedited Loads Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px',
+            marginBottom: '20px',
+          }}
+        >
+          {loads
+            .filter((load) => load.brokerName === 'Go With the Flow')
+            .slice(0, 6)
+            .map((expeditedLoad, index) => (
+              <div
+                key={expeditedLoad.id}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.12)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '15px',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: '#f97316',
+                        fontWeight: '700',
+                        marginBottom: '5px',
+                      }}
+                    >
+                      {expeditedLoad.loadBoardNumber}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Expedited Load
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      color: '#f59e0b',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Expedited Priority
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '15px' }}>
+                  <div
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: '#ffffff',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {expeditedLoad.origin} → {expeditedLoad.destination}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    {expeditedLoad.distance} • {expeditedLoad.equipment}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: '#22c55e',
+                    }}
+                  >
+                    ${expeditedLoad.rate?.toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      background: getStatusColor(expeditedLoad.status),
+                      color: 'white',
+                    }}
+                  >
+                    {expeditedLoad.status}
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        {/* No Expedited Loads Message */}
+        {loads.filter((load) => load.brokerName === 'Go With the Flow')
+          .length === 0 && (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '40px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
+            <div
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#ffffff',
+                marginBottom: '10px',
+              }}
+            >
+              No Expedited Loads Available
+            </div>
+            <div
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '20px',
+              }}
+            >
+              Expedited loads will appear here when they become available
+            </div>
+            <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+              >
+                Check Expedited Portal
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Real-Time Monitoring & Alerts */}

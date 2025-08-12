@@ -363,6 +363,27 @@ const DriverRow = React.memo(
                 📊
               </button>
             </Link>
+            <Link
+              href='/dispatch'
+              style={{ textDecoration: 'none' }}
+              title='View in Dispatch Central'
+            >
+              <button
+                style={{
+                  padding: '3px 6px',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '9px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                🚛
+              </button>
+            </Link>
           </div>
         </div>
 

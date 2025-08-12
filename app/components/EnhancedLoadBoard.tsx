@@ -3,13 +3,11 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import EDIService from '../services/EDIService';
-import LoadIdentificationService from '../services/LoadIdentificationService';
 import {
   Load,
-  getBrokerLoads,
-  getDispatcherLoads,
+  assignLoadToDispatcher,
+  getGlobalLoadBoard,
   getLoadStats,
-  getMainDashboardLoads,
 } from '../services/loadService';
 
 export default function EnhancedLoadBoard() {
@@ -26,6 +24,8 @@ export default function EnhancedLoadBoard() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedEquipment, setSelectedEquipment] = useState<string>('all');
   const [stats, setStats] = useState<any>({});
+  const [viewMode, setViewMode] = useState<'table' | 'tracking'>('tracking'); // Add tracking view mode
+  const [isLoading, setIsLoading] = useState(true);
 
   // Generate Load Board Numbers for loads that don't have them
   const generateLoadBoardNumber = (load: Load) => {
@@ -50,80 +50,43 @@ export default function EnhancedLoadBoard() {
     }
   };
 
-  // Generate proper Load Identifier ID for loads
-  const generateProperLoadId = (load: Load) => {
-    try {
-      const currentUser = getCurrentUser();
-      const brokerInitials =
-        currentUser.initials ||
-        currentUser.name
-          ?.split(' ')
-          .map((n) => n[0])
-          .join('') ||
-        'FL';
-
-      const identifiers = LoadIdentificationService.generateLoadIdentifiers({
-        origin: load.origin,
-        destination: load.destination,
-        pickupDate: load.pickupDate || new Date().toISOString(),
-        equipment: load.equipment,
-        loadType: load.loadType as
-          | 'FTL'
-          | 'LTL'
-          | 'Partial'
-          | 'Expedited'
-          | 'Hazmat',
-        brokerInitials: brokerInitials,
-        shipperName: load.shipperName,
-        weight: load.weight?.toString(),
-        rate: load.rate,
-      });
-
-      return identifiers.loadId;
-    } catch (error) {
-      console.error('Error generating load identifier:', error);
-      return load.id; // Fallback to original ID
-    }
-  };
-
   useEffect(() => {
     const loadData = async () => {
       try {
+        setIsLoading(true);
         const currentUser = getCurrentUser();
 
         // Get loads based on user role and flow stage
         let userLoads: Load[] = [];
 
-        if (currentUser.role === 'broker') {
-          // Brokers see their own loads in broker board
-          userLoads = getBrokerLoads(currentUser.id);
-        } else if (currentUser.role === 'dispatcher') {
-          // Dispatchers see loads assigned to them
-          userLoads = getDispatcherLoads(currentUser.id);
-        } else {
-          // Other users see all loads
-          userLoads = getMainDashboardLoads();
-        }
+        // Load board is global marketplace - all users see all available loads
+        userLoads = getGlobalLoadBoard();
 
         // Add Load Board Numbers to loads that don't have them
-        const loadsWithProperIds = userLoads.map((load) => ({
+        const loadsWithBoardNumbers = userLoads.map((load) => ({
           ...load,
-          properLoadId: generateProperLoadId(load),
           loadBoardNumber:
             load.loadBoardNumber || generateLoadBoardNumber(load),
         }));
 
-        setLoads(loadsWithProperIds);
-        setFilteredLoads(loadsWithProperIds);
+        setLoads(loadsWithBoardNumbers);
+        setFilteredLoads(loadsWithBoardNumbers);
 
         const loadStats = getLoadStats();
         setStats(loadStats);
       } catch (error) {
         console.error('Error loading loads:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadData();
+
+    // Set up real-time refresh every 30 seconds
+    const interval = setInterval(loadData, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -152,7 +115,7 @@ export default function EnhancedLoadBoard() {
     if (searchTerm) {
       filtered = filtered.filter(
         (load) =>
-          load.properLoadId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          load.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           load.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           load.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
           load.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -210,6 +173,27 @@ export default function EnhancedLoadBoard() {
     selectedStatus,
     selectedEquipment,
   ]);
+
+  const getAvailableDispatchers = () => [
+    { id: 'disp-001', name: 'Sarah Johnson' },
+    { id: 'disp-002', name: 'Mike Chen' },
+    { id: 'disp-003', name: 'Lisa Rodriguez' },
+  ];
+
+  const handleDispatcherAssignment = (loadId: string, dispatcherId: string) => {
+    if (!dispatcherId) return;
+
+    const updatedLoad = assignLoadToDispatcher(loadId, dispatcherId);
+    if (updatedLoad) {
+      // Update the local state to reflect the change
+      setLoads((prevLoads) =>
+        prevLoads.map((load) => (load.id === loadId ? updatedLoad : load))
+      );
+      setFilteredLoads((prevFiltered) =>
+        prevFiltered.map((load) => (load.id === loadId ? updatedLoad : load))
+      );
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -336,35 +320,53 @@ export default function EnhancedLoadBoard() {
           backdropFilter: 'blur(20px)',
           borderRadius: '16px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: '20px',
-          marginBottom: '30px',
+          padding: '16px',
+          marginBottom: '20px',
         }}
       >
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
             gap: '16px',
             marginBottom: '20px',
+            alignItems: 'end',
           }}
         >
           {/* Search */}
           <div>
-            <input
-              type='text'
-              placeholder='Search by Load Identifier, ID, route, broker, equipment, dispatcher, or Load Board Number...'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                borderRadius: '8px',
-                border: '2px solid rgba(255, 255, 255, 0.3)',
-                background: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '12px',
-                width: '300px',
-                backdropFilter: 'blur(10px)',
-              }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type='text'
+                placeholder='🔍 Search loads...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  padding: '8px 12px 8px 32px',
+                  borderRadius: '8px',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '12px',
+                  width: '100%',
+                  backdropFilter: 'blur(10px)',
+                  color: '#1f2937',
+                  transition: 'all 0.2s ease',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: '14px',
+                  opacity: 0.6,
+                  pointerEvents: 'none',
+                }}
+              >
+                🔍
+              </div>
+            </div>
           </div>
 
           {/* Status Filter */}
@@ -453,6 +455,54 @@ export default function EnhancedLoadBoard() {
           </div>
         </div>
 
+        {/* View Mode Toggle */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <button
+            onClick={() => setViewMode('tracking')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              background:
+                viewMode === 'tracking'
+                  ? 'rgba(16, 185, 129, 0.2)'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color: viewMode === 'tracking' ? '#10b981' : 'white',
+              border:
+                viewMode === 'tracking'
+                  ? '1px solid rgba(16, 185, 129, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            📍 Live Tracking View
+          </button>
+          <button
+            onClick={() => setViewMode('table')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              background:
+                viewMode === 'table'
+                  ? 'rgba(59, 130, 246, 0.2)'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color: viewMode === 'table' ? '#3b82f6' : 'white',
+              border:
+                viewMode === 'table'
+                  ? '1px solid rgba(59, 130, 246, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            📊 Table View
+          </button>
+        </div>
+
         {/* Tab Navigation */}
         <div style={{ display: 'flex', gap: '10px' }}>
           {[
@@ -512,6 +562,23 @@ export default function EnhancedLoadBoard() {
           padding: '20px',
         }}
       >
+        {/* Dispatcher Assignment Info */}
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '20px',
+            fontSize: '12px',
+            color: '#60a5fa',
+          }}
+        >
+          💡 <strong>Dispatcher Assignment:</strong> Use the dropdown in the
+          Actions column to assign dispatchers to available loads. Once
+          assigned, loads move to "Assigned" status and are sent to Dispatch
+          Central.
+        </div>
         {filteredLoads.length === 0 ? (
           <div
             style={{
@@ -523,6 +590,316 @@ export default function EnhancedLoadBoard() {
           >
             🚛 No loads found matching your criteria
           </div>
+        ) : viewMode === 'tracking' ? (
+          // Live Tracking View - Similar to Vendor Portal
+          isLoading ? (
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '16px',
+                padding: '40px',
+                textAlign: 'center',
+                color: 'rgba(255, 255, 255, 0.8)',
+              }}
+            >
+              🔄 Loading real-time load data...
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {filteredLoads.map((load, index) => (
+                <div
+                  key={load.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '20px',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.05)';
+                  }}
+                >
+                  {/* Load Header */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '700',
+                          color: '#10b981',
+                        }}
+                      >
+                        📞 {load.loadBoardNumber || '000000'}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        {load.id}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#22c55e',
+                        }}
+                      >
+                        ${load.rate?.toLocaleString()}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        {load.equipment}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Route Information */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        📍 Origin
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600' }}>
+                        {load.origin}
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        🎯 Destination
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600' }}>
+                        {load.destination}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Real-Time Tracking */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr',
+                      gap: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        📍 Current Location
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600' }}>
+                        {load.currentLocation?.lat
+                          ? 'GPS Active'
+                          : 'Location Pending'}
+                        , {load.origin.split(',')[1]?.trim() || 'Route Active'}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        {load.currentLocation?.lat
+                          ? `${load.currentLocation.lat.toFixed(4)}° N, ${load.currentLocation.lng.toFixed(4)}° W`
+                          : 'GPS coordinates pending'}
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        ⏰ ETA
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600' }}>
+                        {new Date(
+                          load.realTimeETA || load.deliveryDate
+                        ).toLocaleString()}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        {load.estimatedProgress || 0}% complete
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        🚛 Status
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600' }}>
+                        <span
+                          style={{
+                            background: getStatusColor(load.status),
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.status}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        {load.distance}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Route Progress
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          color: '#10b981',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {load.estimatedProgress || 0}%
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '8px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${load.estimatedProgress || 0}%`,
+                          height: '100%',
+                          background:
+                            'linear-gradient(90deg, #10b981, #22c55e)',
+                          borderRadius: '4px',
+                          transition: 'width 0.3s ease',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      style={{
+                        padding: '8px 16px',
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      View Details
+                    </button>
+                    {load.status === 'Available' && (
+                      <select
+                        style={{
+                          padding: '8px 12px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                        }}
+                        onChange={(e) =>
+                          handleDispatcherAssignment(load.id, e.target.value)
+                        }
+                      >
+                        <option value=''>Assign Dispatcher</option>
+                        {getAvailableDispatchers().map((dispatcher) => (
+                          <option key={dispatcher.id} value={dispatcher.id}>
+                            {dispatcher.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
         ) : (
           <>
             {/* Load Board Header */}
@@ -549,7 +926,7 @@ export default function EnhancedLoadBoard() {
               <div>Status</div>
               <div>Equipment</div>
               <div>Distance</div>
-              <div>Actions</div>
+              <div>Actions & Assignment</div>
             </div>
 
             {/* Load Board Rows */}
@@ -597,7 +974,7 @@ export default function EnhancedLoadBoard() {
                   {load.loadBoardNumber || '000000'}
                 </div>
                 <div style={{ fontWeight: '600', color: '#60a5fa' }}>
-                  {load.properLoadId || load.id}
+                  {load.id}
                 </div>
                 <div>
                   <div style={{ fontWeight: '600' }}>{load.origin}</div>
@@ -627,7 +1004,13 @@ export default function EnhancedLoadBoard() {
                   {load.equipment || 'N/A'}
                 </div>
                 <div style={{ fontSize: '10px' }}>{load.distance}</div>
-                <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '4px',
+                    flexDirection: 'column',
+                  }}
+                >
                   <button
                     style={{
                       padding: '4px 8px',
@@ -642,6 +1025,41 @@ export default function EnhancedLoadBoard() {
                   >
                     View
                   </button>
+                  {load.status === 'Available' && (
+                    <select
+                      value={load.dispatcherId || ''}
+                      onChange={(e) =>
+                        handleDispatcherAssignment(load.id, e.target.value)
+                      }
+                      style={{
+                        padding: '2px 4px',
+                        fontSize: '8px',
+                        borderRadius: '3px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <option value=''>Assign Dispatcher</option>
+                      {getAvailableDispatchers().map((dispatcher) => (
+                        <option key={dispatcher.id} value={dispatcher.id}>
+                          {dispatcher.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {load.dispatcherName && (
+                    <div
+                      style={{
+                        fontSize: '8px',
+                        opacity: 0.8,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {load.dispatcherName}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

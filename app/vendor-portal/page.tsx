@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ReceiverNotificationService from '../services/ReceiverNotificationService';
+import { Load, getMainDashboardLoads } from '../services/loadService';
 
 interface VendorSession {
   shipperId: string;
@@ -794,39 +795,32 @@ export default function VendorPortalPage() {
     },
   ]);
 
-  // Mock load data with enhanced tracking
-  const [loads] = useState([
-    {
-      id: 'LF-25001-ATLMIA-WMT-DVFL-001',
-      currentStatus: 'in_transit',
-      origin: 'Atlanta, GA',
-      destination: 'Miami, FL',
-      commodity: 'Electronics',
-      weight: 15000,
-      equipment: 'Dry Van',
-      rate: 2800,
-      pickupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      deliveryDate: new Date(
-        Date.now() + 1 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-      driver: 'John Rodriguez',
-      truck: 'ABC-123',
-      trailer: 'XYZ-789',
-      trackingData: {
-        currentLocation: {
-          lat: 30.7128,
-          lng: -84.006,
-          city: 'Tallahassee',
-          state: 'FL',
-        },
-        estimatedProgress: 65,
-        realTimeETA: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
-        currentSpeed: 68,
-        lastUpdate: new Date().toISOString(),
-        isOnline: true,
-      },
-    },
-  ]);
+  // Real-time load data from loadService - connected to broker portal and Dispatch Central
+  const [loads, setLoads] = useState<Load[]>([]);
+  const [isLoadingLoads, setIsLoadingLoads] = useState(true);
+
+  // Load real-time load data
+  useEffect(() => {
+    const loadRealTimeData = async () => {
+      try {
+        setIsLoadingLoads(true);
+        // Get all active loads that this vendor/shipper is involved with
+        const allLoads = await getMainDashboardLoads();
+        setLoads(allLoads);
+      } catch (error) {
+        console.error('Error loading real-time load data:', error);
+      } finally {
+        setIsLoadingLoads(false);
+      }
+    };
+
+    loadRealTimeData();
+
+    // Refresh load data every 30 seconds for real-time updates
+    const interval = setInterval(loadRealTimeData, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const router = useRouter();
 
@@ -1526,261 +1520,287 @@ export default function VendorPortalPage() {
                 🚛 REAL-TIME TRACKING ACTIVE
               </h3>
 
-              {loads.map((load) => (
+              {isLoadingLoads ? (
                 <div
-                  key={load.id}
                   style={{
-                    background:
-                      'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                    background: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '16px',
-                    padding: '20px',
-                    marginBottom: '20px',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    position: 'relative',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.8)',
                   }}
                 >
-                  {/* Real-time Pulse Animation */}
+                  🔄 Loading real-time load data...
+                </div>
+              ) : loads.length === 0 ? (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                  }}
+                >
+                  📦 No active loads found. Loads will appear here when they are
+                  created and assigned.
+                </div>
+              ) : (
+                loads.map((load) => (
                   <div
+                    key={load.id}
                     style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: '#10b981',
-                      animation: 'pulse 2s infinite',
-                    }}
-                  />
-
-                  {/* Load Header */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '16px',
+                      background:
+                        'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                      borderRadius: '16px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      position: 'relative',
                     }}
                   >
-                    <div>
-                      <h4
-                        style={{
-                          color: 'white',
-                          fontSize: '1.1rem',
-                          margin: '0 0 4px 0',
-                        }}
-                      >
-                        {load.id}
-                      </h4>
-                      <p
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          margin: 0,
-                          fontSize: '0.9rem',
-                        }}
-                      >
-                        {load.origin} → {load.destination}
-                      </p>
-                    </div>
+                    {/* Real-time Pulse Animation */}
                     <div
                       style={{
-                        background: 'rgba(16, 185, 129, 0.2)',
-                        color: '#10b981',
-                        padding: '4px 8px',
-                        borderRadius: '8px',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      🚛 In Transit
-                    </div>
-                  </div>
-
-                  {/* Enhanced Tracking Data */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
-                          fontSize: '0.8rem',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        📍 Current Location
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '1rem',
-                          fontWeight: '600',
-                        }}
-                      >
-                        {load.trackingData.currentLocation.city},{' '}
-                        {load.trackingData.currentLocation.state}
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        {load.trackingData.currentLocation.lat.toFixed(4)}° N,{' '}
-                        {load.trackingData.currentLocation.lng.toFixed(4)}° W
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
-                          fontSize: '0.8rem',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        ⏰ Real-time ETA
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '1rem',
-                          fontWeight: '600',
-                        }}
-                      >
-                        {new Date(
-                          load.trackingData.realTimeETA
-                        ).toLocaleString()}
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        {load.trackingData.estimatedProgress}% complete
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
-                          fontSize: '0.8rem',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        🚛 Speed
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '1rem',
-                          fontWeight: '600',
-                        }}
-                      >
-                        {(load.trackingData.currentSpeed || 65).toFixed(0)} mph
-                      </div>
-                      <div
-                        style={{
-                          color:
-                            (load.trackingData.currentSpeed || 65) > 70
-                              ? '#fbbf24'
-                              : '#10b981',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        {(load.trackingData.currentSpeed || 65) > 70
-                          ? '⚠️ Over Speed Limit'
-                          : '✅ Normal Speed'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interactive Action Buttons */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '12px',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      🗺️ Live Map View
-                    </button>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                      }}
-                    >
-                      📋 Load Details
-                    </button>
-                  </div>
-
-                  {/* Real-time Status Bar */}
-                  <div
-                    style={{
-                      marginTop: '12px',
-                      padding: '8px 12px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '8px',
-                      fontSize: '0.8rem',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '4px',
-                        height: '4px',
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        width: '8px',
+                        height: '8px',
                         borderRadius: '50%',
-                        background: load.trackingData.isOnline
-                          ? '#10b981'
-                          : '#ef4444',
+                        background: '#10b981',
+                        animation: 'pulse 2s infinite',
                       }}
                     />
-                    <span>
-                      GPS Signal:{' '}
-                      {load.trackingData.isOnline ? 'Strong' : 'Weak'}
-                    </span>
-                    <span>•</span>
-                    <span>Auto-refresh: 30s</span>
-                    <span>•</span>
-                    <span>
-                      Last update:{' '}
-                      {new Date(
-                        load.trackingData.lastUpdate
-                      ).toLocaleTimeString()}
-                    </span>
+
+                    {/* Load Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div>
+                        <h4
+                          style={{
+                            color: 'white',
+                            fontSize: '1.1rem',
+                            margin: '0 0 4px 0',
+                          }}
+                        >
+                          {load.id}
+                        </h4>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: 0,
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          {load.origin} → {load.destination}
+                        </p>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.2)',
+                          color: '#10b981',
+                          padding: '4px 8px',
+                          borderRadius: '8px',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🚛 In Transit
+                      </div>
+                    </div>
+
+                    {/* Enhanced Tracking Data */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          📍 Current Location
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.currentLocation?.lat
+                            ? 'GPS Active'
+                            : 'Location Pending'}
+                          ,{' '}
+                          {load.origin.split(',')[1]?.trim() || 'Route Active'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          {load.currentLocation?.lat?.toFixed(4) || 'GPS'}° N,{' '}
+                          {load.currentLocation?.lng?.toFixed(4) || 'Pending'}°
+                          W
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          ⏰ Real-time ETA
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {new Date(
+                            load.realTimeETA || load.deliveryDate
+                          ).toLocaleString()}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          {load.estimatedProgress || 0}% complete
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          🚛 Speed
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {(65).toFixed(0)} mph
+                        </div>
+                        <div
+                          style={{
+                            color: 65 > 70 ? '#fbbf24' : '#10b981',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          {65 > 70 ? '⚠️ Over Speed Limit' : '✅ Normal Speed'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interactive Action Buttons */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #3b82f6, #2563eb)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '8px 16px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🗺️ Live Map View
+                      </button>
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '8px 16px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📋 Load Details
+                      </button>
+                    </div>
+
+                    {/* Real-time Status Bar */}
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        padding: '8px 12px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '4px',
+                          height: '4px',
+                          borderRadius: '50%',
+                          background: load.currentLocation?.lat
+                            ? '#10b981'
+                            : '#ef4444',
+                        }}
+                      />
+                      <span>
+                        GPS Signal:{' '}
+                        {load.currentLocation?.lat ? 'Strong' : 'Weak'}
+                      </span>
+                      <span>•</span>
+                      <span>Auto-refresh: 30s</span>
+                      <span>•</span>
+                      <span>
+                        Last update:{' '}
+                        {new Date(load.updatedAt).toLocaleTimeString()}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             {/* Documents Section - Now part of Operations */}

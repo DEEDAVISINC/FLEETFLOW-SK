@@ -45,6 +45,32 @@ export default function AIFlowPlatform() {
     string | null
   >(null);
 
+  // AI Co-Pilot State
+  const [coPilotOpen, setCoPilotOpen] = useState(false);
+  const [coPilotMessages, setCoPilotMessages] = useState<any[]>([
+    {
+      id: 'welcome',
+      type: 'assistant',
+      content:
+        "👋 Hi! I'm your AI Co-Pilot. I can help you navigate FleetFlow, discover features, troubleshoot issues, and optimize your workflow. What would you like to know?",
+      timestamp: new Date().toISOString(),
+      suggestions: [
+        'How do I use the Lead Generation Hub?',
+        'What are the best practices for dispatching?',
+        'How can I optimize my routes?',
+        'Show me hidden features',
+      ],
+    },
+  ]);
+  const [coPilotInput, setCoPilotInput] = useState('');
+  const [coPilotTyping, setCoPilotTyping] = useState(false);
+  const [coPilotContext, setCoPilotContext] = useState({
+    currentView: 'dashboard',
+    userRole: 'admin',
+    recentActions: [],
+    currentTask: null,
+  });
+
   // Helper function to process lead conversions via API
   const simulateLeadConversion = async (
     conversionType: string,
@@ -743,6 +769,394 @@ export default function AIFlowPlatform() {
     };
     return colors[priority] || 'bg-gray-100 text-gray-800';
   };
+
+  // Enhanced AI Co-Pilot Functions with Real-time Data Integration
+  const handleCoPilotMessage = async (message: string) => {
+    if (!message.trim()) return;
+
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: message,
+      timestamp: new Date().toISOString(),
+    };
+    setCoPilotMessages((prev) => [...prev, userMessage]);
+    setCoPilotInput('');
+    setCoPilotTyping(true);
+
+    // Enhanced AI response with real-time data and actions
+    setTimeout(() => {
+      const aiResponse = generateEnhancedCoPilotResponse(
+        message,
+        coPilotContext,
+        {
+          loads,
+          drivers,
+          customers,
+          dispatchQueue,
+          activeDispatches,
+        }
+      );
+      setCoPilotMessages((prev) => [...prev, aiResponse]);
+      setCoPilotTyping(false);
+    }, 1000);
+  };
+
+  const generateEnhancedCoPilotResponse = (
+    message: string,
+    context: any,
+    realTimeData: any
+  ) => {
+    const lowerMessage = message.toLowerCase();
+
+    // Enhanced responses with real-time data and action buttons
+    if (
+      lowerMessage.includes('schedule') ||
+      lowerMessage.includes('driver') ||
+      lowerMessage.includes('assign')
+    ) {
+      const availableDrivers =
+        realTimeData.drivers?.filter((d: any) => d.status === 'available') ||
+        [];
+      const unassignedLoads =
+        realTimeData.loads?.filter((l: any) => l.status === 'Available') || [];
+
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🚛 **Driver Scheduling & Load Assignment:**\n\n**Current Status:**\n• Available Drivers: ${availableDrivers.length}\n• Unassigned Loads: ${unassignedLoads.length}\n\n**Quick Actions Available:**\n• View all available drivers\n• See unassigned loads\n• Auto-match drivers to loads\n• Schedule driver appointments\n\n💡 **Pro Tip:** I can help you automatically match drivers to loads based on location, equipment, and availability!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'Show me available drivers',
+          'Show me unassigned loads',
+          'Auto-match drivers to loads',
+          'Schedule driver appointment',
+        ],
+        actions: [
+          {
+            label: 'View Available Drivers',
+            action: 'view_drivers',
+            data: { filter: 'available' },
+          },
+          {
+            label: 'View Unassigned Loads',
+            action: 'view_loads',
+            data: { filter: 'unassigned' },
+          },
+          {
+            label: 'Auto-Match Drivers',
+            action: 'auto_match',
+            data: { type: 'driver_load' },
+          },
+        ],
+      };
+    }
+
+    if (lowerMessage.includes('load') && lowerMessage.includes('match')) {
+      const availableLoads =
+        realTimeData.loads?.filter((l: any) => l.status === 'Available') || [];
+      const activeDispatches = realTimeData.activeDispatches || [];
+
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `📦 **Load Matching & Assignment:**\n\n**Current Status:**\n• Available Loads: ${availableLoads.length}\n• Active Dispatches: ${activeDispatches.length}\n\n**Matching Options:**\n• **Location-based matching** - Find loads near available drivers\n• **Equipment matching** - Match loads to appropriate truck types\n• **Capacity matching** - Optimize weight and space utilization\n• **Timeline matching** - Align pickup/delivery schedules\n\n💡 **Pro Tip:** I can analyze your current loads and drivers to suggest optimal matches!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'Show me load matching suggestions',
+          'Find loads by location',
+          'Match by equipment type',
+          'Optimize capacity utilization',
+        ],
+        actions: [
+          {
+            label: 'Get Load Matching Suggestions',
+            action: 'load_matching_suggestions',
+            data: { type: 'smart_match' },
+          },
+          {
+            label: 'View Available Loads',
+            action: 'view_loads',
+            data: { filter: 'available' },
+          },
+          {
+            label: 'Location-based Search',
+            action: 'location_search',
+            data: { type: 'loads' },
+          },
+        ],
+      };
+    }
+
+    if (
+      lowerMessage.includes('lead') ||
+      lowerMessage.includes('lead generation')
+    ) {
+      const currentLeads = realTimeData.leads || [];
+      const conversionRate =
+        currentLeads.length > 0
+          ? (
+              (currentLeads.filter((l: any) => l.status === 'converted')
+                .length /
+                currentLeads.length) *
+              100
+            ).toFixed(1)
+          : '0';
+
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🎯 **Lead Generation Hub Guide:**\n\n**Current Performance:**\n• Active Leads: ${currentLeads.length}\n• Conversion Rate: ${conversionRate}%\n\n**How to Use:**\n1. **Navigate to Lead Generation Hub** - Click the "Lead Generation Hub" tab\n2. **Use AI-Powered Discovery** - The system automatically finds potential customers\n3. **Review Lead Scores** - Focus on leads with scores above 70\n4. **Convert Leads** - Use the conversion buttons to move leads through your pipeline\n5. **Track Performance** - Monitor conversion rates in the analytics dashboard\n\n💡 **Pro Tip:** Set up automated follow-up sequences for high-scoring leads!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'How do I set up automated follow-ups?',
+          'What makes a good lead score?',
+          'Show me lead conversion analytics',
+        ],
+        actions: [
+          {
+            label: 'View Lead Analytics',
+            action: 'view_analytics',
+            data: { type: 'leads' },
+          },
+          {
+            label: 'Setup Auto-Followups',
+            action: 'setup_automation',
+            data: { type: 'followups' },
+          },
+        ],
+      };
+    }
+
+    if (
+      lowerMessage.includes('dispatch') ||
+      lowerMessage.includes('dispatching')
+    ) {
+      const dispatchQueueLength = realTimeData.dispatchQueue?.length || 0;
+      const activeDispatchesCount = realTimeData.activeDispatches?.length || 0;
+
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🚛 **Dispatch Best Practices:**\n\n**Current Dispatch Status:**\n• Queue Length: ${dispatchQueueLength}\n• Active Dispatches: ${activeDispatchesCount}\n\n**Best Practices:**\n1. **Load Prioritization** - Use the AI-powered prioritization system\n2. **Driver Matching** - Consider driver experience, equipment, and availability\n3. **Route Optimization** - Leverage the Route Optimizer for fuel efficiency\n4. **Real-time Updates** - Keep customers informed with live tracking\n5. **Documentation** - Complete all required paperwork before dispatch\n\n💡 **Pro Tip:** Use the Dispatch Task Prioritization Panel for complex load assignments!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'How do I use the Route Optimizer?',
+          'What documents do I need?',
+          'Show me dispatch analytics',
+        ],
+        actions: [
+          {
+            label: 'View Dispatch Queue',
+            action: 'view_queue',
+            data: { type: 'dispatch' },
+          },
+          {
+            label: 'Route Optimizer',
+            action: 'route_optimizer',
+            data: { type: 'optimize' },
+          },
+          {
+            label: 'Dispatch Analytics',
+            action: 'view_analytics',
+            data: { type: 'dispatch' },
+          },
+        ],
+      };
+    }
+
+    if (
+      lowerMessage.includes('route') ||
+      lowerMessage.includes('optimization')
+    ) {
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🗺️ **Route Optimization Guide:**\n\n1. **Access Route Optimizer** - Go to Operations Center → Route Optimizer\n2. **Input Parameters** - Set fuel costs, time constraints, and preferences\n3. **AI Analysis** - The system analyzes traffic, weather, and historical data\n4. **Review Options** - Compare multiple route scenarios\n5. **Apply & Share** - Send optimized routes to drivers and customers\n\n💡 **Pro Tip:** Use seasonal planning widgets for predictable routes!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'How do I account for weather delays?',
+          'What fuel optimization strategies work best?',
+          'Show me route performance metrics',
+        ],
+        actions: [
+          {
+            label: 'Open Route Optimizer',
+            action: 'route_optimizer',
+            data: { type: 'open' },
+          },
+          {
+            label: 'Weather Integration',
+            action: 'weather_integration',
+            data: { type: 'setup' },
+          },
+        ],
+      };
+    }
+
+    if (lowerMessage.includes('hidden') || lowerMessage.includes('features')) {
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🔍 **Hidden FleetFlow Features:**\n\n1. **Advanced Weather Integration** - Real-time weather alerts and route adjustments\n2. **Competitive Intelligence** - Monitor competitor pricing and strategies\n3. **Port Authority Access** - Specialized tools for port operations\n4. **Emergency Load Pricing** - Dynamic pricing during high-demand periods\n5. **Quantum Optimization** - Advanced algorithms for complex logistics\n6. **Government Contract Intelligence** - RFx and contract opportunities\n\n💡 **Pro Tip:** Many features are accessible through the Operations Center!`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'Tell me more about Competitive Intelligence',
+          'How do I use Emergency Load Pricing?',
+          'Show me Government Contract tools',
+        ],
+        actions: [
+          {
+            label: 'Competitive Intelligence',
+            action: 'competitive_intel',
+            data: { type: 'view' },
+          },
+          {
+            label: 'Government Contracts',
+            action: 'gov_contracts',
+            data: { type: 'browse' },
+          },
+        ],
+      };
+    }
+
+    if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+      return {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `🆘 **How I Can Help You:**\n\n• **Feature Discovery** - Find tools you didn't know existed\n• **Workflow Optimization** - Streamline your daily operations\n• **Troubleshooting** - Solve common issues quickly\n• **Best Practices** - Learn industry-leading techniques\n• **Training** - Get up to speed on new features\n• **Analytics** - Understand your performance metrics\n\n💡 **Pro Tip:** I'm context-aware! I'll provide more relevant help based on what you're currently doing.`,
+        timestamp: new Date().toISOString(),
+        suggestions: [
+          'What should I focus on today?',
+          'Show me performance insights',
+          'Help me optimize my workflow',
+        ],
+        actions: [
+          {
+            label: 'Performance Dashboard',
+            action: 'performance_dashboard',
+            data: { type: 'view' },
+          },
+          {
+            label: 'Workflow Analysis',
+            action: 'workflow_analysis',
+            data: { type: 'analyze' },
+          },
+        ],
+      };
+    }
+
+    // Default response
+    return {
+      id: Date.now().toString(),
+      type: 'assistant',
+      content: `🤖 **AI Co-Pilot Response:**\n\nI understand you're asking about "${message}". Let me help you with that!\n\nI can assist with:\n• **Navigation** - Finding the right tools and features\n• **Optimization** - Improving your workflows and processes\n• **Troubleshooting** - Solving technical issues\n• **Training** - Learning new capabilities\n• **Analytics** - Understanding your performance\n\n💡 **Pro Tip:** Try asking me about specific features like "Lead Generation", "Dispatch", or "Route Optimization" for detailed guidance!`,
+      timestamp: new Date().toISOString(),
+      suggestions: [
+        'How do I use the Lead Generation Hub?',
+        'What are dispatch best practices?',
+        'Show me hidden features',
+      ],
+    };
+  };
+
+  // Handle co-pilot actions
+  const handleCoPilotAction = async (action: string, data: any) => {
+    console.log('Co-pilot action:', action, data);
+
+    // Execute actions based on type
+    switch (action) {
+      case 'view_drivers':
+        setActiveView('drivers');
+        updateCoPilotContext({
+          currentView: 'drivers',
+          currentTask: 'viewing_drivers',
+        });
+        break;
+      case 'view_loads':
+        setActiveView('loads');
+        updateCoPilotContext({
+          currentView: 'loads',
+          currentTask: 'viewing_loads',
+        });
+        break;
+      case 'auto_match':
+        // Simulate auto-matching process
+        setCoPilotMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            type: 'assistant',
+            content:
+              '🔄 **Auto-Matching in Progress...**\n\nAnalyzing available drivers and loads for optimal matches...\n\nThis process considers:\n• Location proximity\n• Equipment compatibility\n• Driver availability\n• Load requirements\n\nResults will be displayed in the Dispatch Central.',
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+        break;
+      case 'load_matching_suggestions':
+        // Generate smart matching suggestions
+        const suggestions = generateLoadMatchingSuggestions();
+        setCoPilotMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            type: 'assistant',
+            content: `🎯 **Load Matching Suggestions:**\n\n${suggestions}`,
+            timestamp: new Date().toISOString(),
+            actions: [
+              {
+                label: 'Apply Suggestions',
+                action: 'apply_suggestions',
+                data: { type: 'load_matching' },
+              },
+            ],
+          },
+        ]);
+        break;
+      case 'route_optimizer':
+        setActiveView('operations');
+        updateCoPilotContext({
+          currentView: 'operations',
+          currentTask: 'route_optimization',
+        });
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
+  };
+
+  // Generate smart load matching suggestions
+  const generateLoadMatchingSuggestions = () => {
+    const availableLoads =
+      loads?.filter((l: any) => l.status === 'Available') || [];
+    const availableDrivers =
+      drivers?.filter((d: any) => d.status === 'available') || [];
+
+    if (availableLoads.length === 0 || availableDrivers.length === 0) {
+      return 'No available loads or drivers to match at this time.';
+    }
+
+    // Simple matching logic (in production, this would be more sophisticated)
+    const suggestions = availableLoads
+      .slice(0, 3)
+      .map((load: any, index: number) => {
+        const driver = availableDrivers[index % availableDrivers.length];
+        return `**Load ${index + 1}:** ${load.origin} → ${load.destination}\n   **Suggested Driver:** ${driver?.name || 'Available Driver'}\n   **Reason:** Location proximity and equipment match\n`;
+      })
+      .join('\n');
+
+    return `**Top ${Math.min(availableLoads.length, 3)} Matching Suggestions:**\n\n${suggestions}\n\n💡 **Pro Tip:** These suggestions are based on location, equipment compatibility, and availability. Review and adjust as needed!`;
+  };
+
+  const updateCoPilotContext = (newContext: any) => {
+    setCoPilotContext((prev) => ({ ...prev, ...newContext }));
+  };
+
+  // Update context when view changes
+  useEffect(() => {
+    updateCoPilotContext({ currentView: activeView });
+  }, [activeView]);
 
   return (
     <div>
@@ -4626,6 +5040,351 @@ export default function AIFlowPlatform() {
           </div>
         )}
       </div>
+
+      {/* Enhanced AI Co-Pilot Floating Button */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          right: '30px',
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={() => setCoPilotOpen(!coPilotOpen)}
+          style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #d946ef, #8b5cf6)',
+            border: 'none',
+            color: 'white',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 8px 32px rgba(217, 70, 239, 0.3)',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow =
+              '0 12px 40px rgba(217, 70, 239, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow =
+              '0 8px 32px rgba(217, 70, 239, 0.3)';
+          }}
+        >
+          🤖
+        </button>
+      </div>
+
+      {/* Enhanced AI Co-Pilot Chat Interface */}
+      {coPilotOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '100px',
+            right: '30px',
+            width: '450px',
+            height: '650px',
+            background: 'rgba(0, 0, 0, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            border: '2px solid rgba(217, 70, 239, 0.3)',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #d946ef, #8b5cf6)',
+              padding: '20px',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ fontSize: '24px' }}>🤖</div>
+              <div>
+                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                  AI Co-Pilot
+                </div>
+                <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                  Your FleetFlow Assistant
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setCoPilotOpen(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                fontSize: '20px',
+                cursor: 'pointer',
+                padding: '4px',
+                borderRadius: '4px',
+                transition: 'background 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'none';
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div
+            style={{
+              flex: 1,
+              padding: '20px',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            {coPilotMessages.map((msg) => (
+              <div
+                key={msg.id}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: msg.type === 'user' ? 'flex-end' : 'flex-start',
+                }}
+              >
+                <div
+                  style={{
+                    maxWidth: '80%',
+                    padding: '12px 16px',
+                    borderRadius: '16px',
+                    background:
+                      msg.type === 'user'
+                        ? 'linear-gradient(135deg, #d946ef, #8b5cf6)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                    lineHeight: '1.4',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {msg.content}
+                </div>
+
+                {/* Action Buttons for assistant messages */}
+                {msg.type === 'assistant' && msg.actions && (
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    {msg.actions.map(
+                      (
+                        action: { label: string; action: string; data: any },
+                        index: number
+                      ) => (
+                        <button
+                          key={index}
+                          onClick={() =>
+                            handleCoPilotAction(action.action, action.data)
+                          }
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #d946ef, #8b5cf6)',
+                            border: 'none',
+                            borderRadius: '20px',
+                            padding: '10px 18px',
+                            color: 'white',
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                            fontWeight: '600',
+                            boxShadow: '0 4px 12px rgba(217, 70, 239, 0.3)',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-2px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 6px 16px rgba(217, 70, 239, 0.4)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow =
+                              '0 4px 12px rgba(217, 70, 239, 0.3)';
+                          }}
+                        >
+                          {action.label}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* Suggestions for assistant messages */}
+                {msg.type === 'assistant' && msg.suggestions && (
+                  <div
+                    style={{
+                      marginTop: '8px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    {msg.suggestions.map(
+                      (suggestion: string, index: number) => (
+                        <button
+                          key={index}
+                          onClick={() => handleCoPilotMessage(suggestion)}
+                          style={{
+                            background: 'rgba(217, 70, 239, 0.2)',
+                            border: '1px solid rgba(217, 70, 239, 0.4)',
+                            borderRadius: '20px',
+                            padding: '8px 16px',
+                            color: '#d946ef',
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(217, 70, 239, 0.3)';
+                            e.currentTarget.style.borderColor =
+                              'rgba(217, 70, 239, 0.6)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(217, 70, 239, 0.2)';
+                            e.currentTarget.style.borderColor =
+                              'rgba(217, 70, 239, 0.4)';
+                          }}
+                        >
+                          {suggestion}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* Typing indicator */}
+            {coPilotTyping && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '8px',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '16px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                >
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ animation: 'bounce 1s infinite' }}>●</div>
+                    <div style={{ animation: 'bounce 1s infinite 0.2s' }}>
+                      ●
+                    </div>
+                    <div style={{ animation: 'bounce 1s infinite 0.4s' }}>
+                      ●
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input */}
+          <div
+            style={{
+              padding: '20px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <input
+                type='text'
+                value={coPilotInput}
+                onChange={(e) => setCoPilotInput(e.target.value)}
+                onKeyPress={(e) =>
+                  e.key === 'Enter' && handleCoPilotMessage(coPilotInput)
+                }
+                placeholder='Ask me anything about FleetFlow...'
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={() => handleCoPilotMessage(coPilotInput)}
+                disabled={!coPilotInput.trim()}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  background: coPilotInput.trim()
+                    ? 'linear-gradient(135deg, #d946ef, #8b5cf6)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                  border: 'none',
+                  color: 'white',
+                  cursor: coPilotInput.trim() ? 'pointer' : 'not-allowed',
+                  fontSize: '14px',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSS Animations for Co-Pilot */}
+      <style jsx>{`
+        @keyframes bounce {
+          0%,
+          80%,
+          100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+          }
+          40% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

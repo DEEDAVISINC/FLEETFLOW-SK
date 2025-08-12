@@ -1,1219 +1,2295 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-interface DriverLocation {
-  driverId: string;
-  name: string;
-  lat: number;
-  lng: number;
-  isOnline: boolean;
-  equipmentType: string;
-  rating: number;
-  eta: string;
-  distance: string;
-}
+export default function GoWithTheFlow() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isLoading, setIsLoading] = useState(false);
+  const [shipperRequests, setShipperRequests] = useState([]);
+  const [systemMetrics, setSystemMetrics] = useState(null);
+  const [availableDrivers, setAvailableDrivers] = useState([]);
+  const [liveLoads, setLiveLoads] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [quoteStatus, setQuoteStatus] = useState<
+    'idle' | 'generating' | 'completed' | 'error'
+  >('idle');
+  const [generatedQuotes, setGeneratedQuotes] = useState<any[]>([]);
+  const [quoteProgress, setQuoteProgress] = useState(0);
 
-interface AvailableLoad {
-  id: string;
-  pickup: string;
-  delivery: string;
-  rate: string;
-  distance: string;
-  urgency: 'low' | 'medium' | 'high';
-  equipmentType: string;
-  weight: number;
-  estimatedTime: string;
-}
-
-interface LoadOffer {
-  id: string;
-  loadId: string;
-  driverId: string;
-  rate: number;
-  expiresAt: string;
-  status: 'pending' | 'accepted' | 'declined' | 'expired';
-}
-
-export default function GoWithTheFlowPage() {
-  const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'dispatch' | 'drivers' | 'shippers' | 'analytics'
-  >('dashboard');
-  const [onlineDrivers, setOnlineDrivers] = useState<DriverLocation[]>([]);
-  const [availableLoads, setAvailableLoads] = useState<AvailableLoad[]>([]);
-  const [activeOffers, setActiveOffers] = useState<LoadOffer[]>([]);
-  const [systemMetrics, setSystemMetrics] = useState({
-    totalDriversOnline: 0,
-    activeLoads: 0,
-    successRate: 0,
-    avgResponseTime: 0,
-    totalRevenue: 0,
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const [realTimeActivity, setRealTimeActivity] = useState([
-    {
-      id: 1,
-      message: 'Driver Mike Rodriguez accepted load ATL→MIA',
-      time: '2 min ago',
-      type: 'success',
-    },
-    {
-      id: 2,
-      message: 'New load posted: HOU→DAL ($850)',
-      time: '3 min ago',
-      type: 'info',
-    },
-    {
-      id: 3,
-      message: 'Sarah Johnson went online in Dallas area',
-      time: '5 min ago',
-      type: 'driver',
-    },
-    {
-      id: 4,
-      message: 'Load CHI→DET delivered successfully',
-      time: '8 min ago',
-      type: 'success',
-    },
-    {
-      id: 5,
-      message: 'Emergency load: PHX→LAX (URGENT)',
-      time: '10 min ago',
-      type: 'urgent',
-    },
-  ]);
-  const [pulseAnimation, setPulseAnimation] = useState(true);
-
+  // Fetch system data on component mount
   useEffect(() => {
-    // Fetch initial data
     fetchSystemData();
-
-    // Set up real-time updates
-    const interval = setInterval(fetchSystemData, 5000);
-
-    // Simulate real-time activity updates
-    const activityInterval = setInterval(() => {
-      const activities = [
-        'Driver John Smith accepted load NYC→BOS',
-        'New urgent load posted: MIA→ATL ($1,200)',
-        'Driver Lisa Chen completed delivery in Chicago',
-        'Load LAX→PHX now in transit',
-        'Emergency pickup requested in Houston',
-        'Driver Mark Wilson went online in Denver',
-        'Load DFW→AUS delivered on time',
-        'New shipper registered: ABC Logistics',
-      ];
-
-      const newActivity = {
-        id: Date.now(),
-        message: activities[Math.floor(Math.random() * activities.length)],
-        time: 'Just now',
-        type: ['success', 'info', 'driver', 'urgent'][
-          Math.floor(Math.random() * 4)
-        ],
-      };
-
-      setRealTimeActivity((prev) => [newActivity, ...prev.slice(0, 9)]);
-    }, 8000);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(activityInterval);
-    };
   }, []);
 
   const fetchSystemData = async () => {
     try {
-      const [driversRes, loadsRes, metricsRes] = await Promise.all([
-        fetch('/api/go-with-the-flow?action=available-drivers'),
-        fetch('/api/go-with-the-flow?action=available-loads'),
-        fetch('/api/go-with-the-flow?action=system-metrics'),
-      ]);
+      // Fetch system metrics
+      const metricsResponse = await fetch(
+        '/api/go-with-the-flow?action=system-metrics'
+      );
+      const metricsData = await metricsResponse.json();
+      if (metricsData.success) {
+        setSystemMetrics(metricsData.metrics);
+      }
 
-      const drivers = await driversRes.json();
-      const loads = await loadsRes.json();
-      const metrics = await metricsRes.json();
+      // Fetch available drivers
+      const driversResponse = await fetch(
+        '/api/go-with-the-flow?action=available-drivers'
+      );
+      const driversData = await driversResponse.json();
+      if (driversData.success) {
+        setAvailableDrivers(driversData.drivers);
+      }
 
-      if (drivers.success) setOnlineDrivers(drivers.data || []);
-      if (loads.success) setAvailableLoads(loads.data || []);
-      if (metrics.success)
-        setSystemMetrics(
-          metrics.data || {
-            totalDriversOnline: 0,
-            activeLoads: 0,
-            successRate: 0,
-            avgResponseTime: 0,
-            totalRevenue: 0,
-          }
-        );
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching system data:', error);
-      setIsLoading(false);
-    }
-  };
-
-  const handleRequestTruck = async (requestData: any) => {
-    try {
-      const response = await fetch('/api/go-with-the-flow/shipper', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'request-truck',
-          ...requestData,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        alert(
-          `Load request submitted! Expected pickup: ${result.data.estimatedArrival}`
-        );
-        fetchSystemData(); // Refresh data
+      // Fetch live loads
+      const loadsResponse = await fetch(
+        '/api/go-with-the-flow?action=live-loads'
+      );
+      const loadsData = await loadsResponse.json();
+      if (loadsData.success) {
+        setLiveLoads(loadsData.loads);
       }
     } catch (error) {
-      console.error('Error requesting truck:', error);
+      console.error('Error fetching system data:', error);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background:
-            'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%)',
-          color: 'white',
-          fontSize: '1.2rem',
-        }}
-      >
-        ⚡ Loading Go With the Flow...
-      </div>
+  // AI Flow Quote Generation System
+  const generateAIQuotes = async (loadRequest: any) => {
+    try {
+      // Simulate AI analysis and quote generation
+      const aiAnalysis = await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve({
+            marketConditions: 'Strong demand, limited capacity',
+            fuelCosts: '$3.85/gallon average',
+            trafficPatterns: 'Moderate congestion expected',
+            seasonalFactors: 'Peak season pricing active',
+            competitorAnalysis: 'Market rates 15-20% above average',
+          });
+        }, 2000)
+      );
+
+      // Generate intelligent quotes based on AI analysis
+      const quotes = [
+        {
+          id: `quote-${Date.now()}-1`,
+          carrier: 'Premium Express Logistics',
+          rate: calculateIntelligentRate(loadRequest, 'premium', aiAnalysis),
+          eta: calculateETA(loadRequest, 'premium'),
+          confidence: 95,
+          features: [
+            'Real-time tracking',
+            'Insurance included',
+            '24/7 support',
+          ],
+          reasoning:
+            'Premium carrier with excellent safety record and on-time performance',
+        },
+        {
+          id: `quote-${Date.now()}-2`,
+          carrier: 'Reliable Transport Solutions',
+          rate: calculateIntelligentRate(loadRequest, 'standard', aiAnalysis),
+          eta: calculateETA(loadRequest, 'standard'),
+          confidence: 88,
+          features: [
+            'Standard tracking',
+            'Basic insurance',
+            'Business hours support',
+          ],
+          reasoning:
+            'Cost-effective option with good reliability and competitive pricing',
+        },
+        {
+          id: `quote-${Date.now()}-3`,
+          carrier: 'Economy Freight Services',
+          rate: calculateIntelligentRate(loadRequest, 'economy', aiAnalysis),
+          eta: calculateETA(loadRequest, 'economy'),
+          confidence: 75,
+          features: ['Basic tracking', 'Standard insurance', 'Email support'],
+          reasoning: 'Budget-friendly option for non-urgent shipments',
+        },
+      ];
+
+      return quotes;
+    } catch (error) {
+      console.error('Error generating AI quotes:', error);
+      return [];
+    }
+  };
+
+  // Intelligent rate calculation based on AI analysis
+  const calculateIntelligentRate = (
+    loadRequest: any,
+    serviceLevel: string,
+    aiAnalysis: any
+  ) => {
+    const baseRate = loadRequest.weight * 0.15; // Base rate per pound
+    const distance = calculateDistance(
+      loadRequest.origin,
+      loadRequest.destination
     );
-  }
+    const distanceMultiplier = distance * 0.85; // Rate per mile
+
+    let serviceMultiplier = 1.0;
+    switch (serviceLevel) {
+      case 'premium':
+        serviceMultiplier = 1.4;
+        break;
+      case 'standard':
+        serviceMultiplier = 1.0;
+        break;
+      case 'economy':
+        serviceMultiplier = 0.8;
+        break;
+    }
+
+    const urgencyMultiplier =
+      loadRequest.urgency === 'high'
+        ? 1.3
+        : loadRequest.urgency === 'medium'
+          ? 1.1
+          : 1.0;
+    const marketMultiplier = 1.15; // Based on AI analysis of strong demand
+
+    return Math.round(
+      (baseRate + distanceMultiplier) *
+        serviceMultiplier *
+        urgencyMultiplier *
+        marketMultiplier
+    );
+  };
+
+  // Calculate ETA based on service level and route
+  const calculateETA = (loadRequest: any, serviceLevel: string) => {
+    const baseDays = 3; // Base transit time
+    let serviceDays = baseDays;
+
+    switch (serviceLevel) {
+      case 'premium':
+        serviceDays = baseDays - 1;
+        break;
+      case 'standard':
+        serviceDays = baseDays;
+        break;
+      case 'economy':
+        serviceDays = baseDays + 1;
+        break;
+    }
+
+    const pickupDate = new Date(loadRequest.pickupDate);
+    const deliveryDate = new Date(pickupDate);
+    deliveryDate.setDate(deliveryDate.getDate() + serviceDays);
+
+    return deliveryDate.toLocaleDateString();
+  };
+
+  // Calculate distance between two locations (simplified)
+  const calculateDistance = (origin: string, destination: string) => {
+    // Simplified distance calculation - in production, use real geocoding
+    const distances: { [key: string]: number } = {
+      'New York': 0,
+      'Los Angeles': 2800,
+      Chicago: 800,
+      Houston: 1400,
+      Phoenix: 2400,
+      Philadelphia: 100,
+      'San Antonio': 1800,
+      'San Diego': 2800,
+      Dallas: 1400,
+      'San Jose': 2900,
+    };
+
+    const originDistance = distances[origin] || 500;
+    const destDistance = distances[destination] || 500;
+    return Math.abs(originDistance - destDistance);
+  };
+
+  const handleRequestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setQuoteStatus('generating');
+    setQuoteProgress(0);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const loadRequest = {
+        action: 'request-truck',
+        loadRequest: {
+          origin: formData.get('origin') as string,
+          destination: formData.get('destination') as string,
+          equipmentType: formData.get('equipmentType') as string,
+          weight: parseInt(formData.get('weight') as string),
+          urgency: formData.get('urgency') as 'low' | 'medium' | 'high',
+          pickupDate: formData.get('pickupDate') as string,
+          deliveryDate: formData.get('deliveryDate') as string,
+          shipperId: `shipper-${Date.now()}`,
+        },
+      };
+
+      // Step 1: Submit request to backend
+      const response = await fetch('/api/go-with-the-flow/shipper', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loadRequest),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setQuoteProgress(25);
+
+        // Step 2: AI Flow generates intelligent quotes
+        const aiQuotes = await generateAIQuotes(loadRequest.loadRequest);
+        setQuoteProgress(75);
+
+        // Step 3: Send notification to notification hub
+        await sendNotificationToHub({
+          type: 'shipper_request',
+          title: 'New Shipper Request',
+          message: `New freight request from ${loadRequest.loadRequest.origin} to ${loadRequest.loadRequest.destination}`,
+          priority: 'high',
+          metadata: {
+            loadId: result.load.id,
+            origin: loadRequest.loadRequest.origin,
+            destination: loadRequest.loadRequest.destination,
+            equipmentType: loadRequest.loadRequest.equipmentType,
+            weight: loadRequest.loadRequest.weight,
+            urgency: loadRequest.loadRequest.urgency,
+          },
+        });
+
+        setQuoteProgress(100);
+        setQuoteStatus('completed');
+        setGeneratedQuotes(aiQuotes);
+        setNotificationMessage(
+          `Request submitted successfully! Load ID: ${result.load.id}. Our team will contact you within 2 hours.`
+        );
+
+        // Refresh system data
+        fetchSystemData();
+      } else {
+        setNotificationMessage('Error submitting request. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      setNotificationMessage('Error submitting request. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendNotificationToHub = async (notificationData: any) => {
+    try {
+      await fetch('/api/notifications/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loadData: {
+            id: notificationData.metadata?.loadId || 'new-request',
+            origin: notificationData.metadata?.origin || 'Unknown',
+            destination: notificationData.metadata?.destination || 'Unknown',
+            rate: 'TBD',
+            pickupDate: new Date().toISOString(),
+            equipment: notificationData.metadata?.equipmentType || 'Unknown',
+            weight: notificationData.metadata?.weight?.toString() || 'Unknown',
+          },
+          recipients: [
+            {
+              id: 'admin-1',
+              name: 'Admin Team',
+              phone: '+1234567890',
+              type: 'admin' as const,
+            },
+          ],
+          notificationType: 'both',
+          messageTemplate: 'new-load',
+          urgency: notificationData.priority === 'high' ? 'high' : 'normal',
+        }),
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
+
+  const handleTrackingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const trackingNumber = formData.get('trackingNumber') as string;
+
+      const response = await fetch(
+        '/api/go-with-the-flow?action=track-load&trackingNumber=' +
+          trackingNumber
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        setNotificationMessage(
+          `Load found! Status: ${result.load.status}. ETA: ${result.load.eta}`
+        );
+
+        // Send tracking notification
+        await sendNotificationToHub({
+          type: 'tracking_request',
+          title: 'Load Tracking Request',
+          message: `Tracking request for load: ${trackingNumber}`,
+          priority: 'medium',
+          metadata: {
+            loadId: result.load.id,
+            trackingNumber: trackingNumber,
+          },
+        });
+      } else {
+        setNotificationMessage(
+          'Load not found. Please check your tracking number.'
+        );
+      }
+    } catch (error) {
+      console.error('Error tracking load:', error);
+      setNotificationMessage('Error tracking load. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const contactData = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        company: formData.get('company') as string,
+        message: formData.get('message') as string,
+        phone: formData.get('phone') as string,
+      };
+
+      const response = await fetch('/api/go-with-the-flow/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setNotificationMessage(
+          "Message sent successfully! We'll respond within 24 hours."
+        );
+
+        // Send contact notification
+        await sendNotificationToHub({
+          type: 'contact_request',
+          title: 'New Contact Request',
+          message: `Contact request from ${contactData.name} at ${contactData.company}`,
+          priority: 'medium',
+          metadata: {
+            contactName: contactData.name,
+            contactCompany: contactData.company,
+            contactEmail: contactData.email,
+          },
+        });
+      } else {
+        setNotificationMessage('Error sending message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending contact message:', error);
+      setNotificationMessage('Error sending message. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const testimonials = [
+    {
+      id: 1,
+      name: 'Sarah Johnson',
+      company: 'Global Logistics Corp',
+      role: 'Operations Director',
+      content:
+        'FleetFlow transformed our freight operations. The real-time tracking and AI-powered optimization saved us 30% on costs.',
+      rating: 5,
+      avatar: '👩‍💼',
+    },
+    {
+      id: 2,
+      name: 'Mike Rodriguez',
+      company: 'Express Shipping Solutions',
+      role: 'Fleet Manager',
+      content:
+        'Outstanding service and technology. Our drivers love the mobile app and our customers appreciate the transparency.',
+      rating: 5,
+      avatar: '👨‍💼',
+    },
+    {
+      id: 3,
+      name: 'Lisa Chen',
+      company: 'Premium Cargo Services',
+      role: 'CEO',
+      content:
+        "The best freight platform we've used. Professional, reliable, and the customer support is exceptional.",
+      rating: 5,
+      avatar: '👩‍💻',
+    },
+  ];
 
   return (
     <div
       style={{
-        padding: '40px',
-        paddingTop: '100px',
-        background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
-        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
-        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         minHeight: '100vh',
-        color: '#ffffff',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        padding: '60px 16px 16px 16px',
         position: 'relative',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        overflow: 'hidden',
       }}
     >
-      {/* Header */}
+      {/* Animated Background Elements */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: '24px',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          padding: '30px',
-          marginBottom: '30px',
-          boxShadow:
-            '0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+          radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)
+        `,
+          animation: 'pulse 4s ease-in-out infinite alternate',
+        }}
+      />
+
+      <div
+        style={{
+          maxWidth: '1600px',
+          margin: '0 auto',
           position: 'relative',
+          zIndex: 10,
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            right: '0',
-            height: '3px',
-            background: 'linear-gradient(90deg, #f97316, #ea580c, #f97316)',
-            borderRadius: '20px 20px 0 0',
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            <h1
+        {/* Notification Display */}
+        {notificationMessage && (
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '24px',
+              color: '#10b981',
+              fontSize: '14px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            <span>✅</span>
+            {notificationMessage}
+            <button
+              onClick={() => setNotificationMessage('')}
               style={{
-                color: 'white',
-                fontSize: '2.5rem',
-                fontWeight: '700',
-                margin: '0 0 8px 0',
+                marginLeft: 'auto',
+                background: 'none',
+                border: 'none',
+                color: '#10b981',
+                cursor: 'pointer',
+                fontSize: '18px',
+                padding: '0',
+                width: '24px',
+                height: '24px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '16px',
+                justifyContent: 'center',
               }}
             >
-              ⚡ Go With the Flow
-            </h1>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontSize: '1.1rem',
-                margin: '0',
-              }}
-            >
-              Real-time freight matching • Advanced logistics platform
-            </p>
+              ×
+            </button>
           </div>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                border: '1px solid rgba(16, 185, 129, 0.4)',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden',
-                boxShadow:
-                  '0 8px 25px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transform: 'translateZ(0)',
-              }}
-            >
+        )}
+
+        {/* Enterprise Command Header */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background:
+                'linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6, #ef4444, #f59e0b)',
+            }}
+          />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               <div
                 style={{
-                  position: 'absolute',
-                  top: '0',
-                  left: '0',
-                  right: '0',
-                  height: '2px',
-                  background:
-                    'linear-gradient(90deg, transparent, #34d399, transparent)',
-                  animation: 'shimmer 2s ease-in-out infinite',
-                }}
-              />
-              <div
-                style={{
-                  color: '#34d399',
-                  fontSize: '1.5rem',
-                  fontWeight: '700',
-                  animation: 'countUp 0.5s ease-out',
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
                 }}
               >
-                {systemMetrics?.totalDriversOnline || 0}
+                <span style={{ fontSize: '32px' }}>🚛</span>
               </div>
-              <div
-                style={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '0.8rem',
-                }}
-              >
-                Drivers Online
-              </div>
-            </div>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                border: '1px solid rgba(59, 130, 246, 0.4)',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                textAlign: 'center',
-                boxShadow:
-                  '0 8px 25px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transform: 'translateZ(0)',
-              }}
-            >
-              <div
-                style={{
-                  color: '#60a5fa',
-                  fontSize: '1.5rem',
-                  fontWeight: '700',
-                }}
-              >
-                {systemMetrics?.activeLoads || 0}
-              </div>
-              <div
-                style={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '0.8rem',
-                }}
-              >
-                Active Loads
-              </div>
-            </div>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                border: '1px solid rgba(249, 115, 22, 0.4)',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                textAlign: 'center',
-                boxShadow:
-                  '0 8px 25px rgba(249, 115, 22, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transform: 'translateZ(0)',
-              }}
-            >
-              <div
-                style={{
-                  color: '#fb923c',
-                  fontSize: '1.5rem',
-                  fontWeight: '700',
-                }}
-              >
-                {systemMetrics?.successRate || 0}%
-              </div>
-              <div
-                style={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '0.8rem',
-                }}
-              >
-                Success Rate
+              <div>
+                <h1
+                  style={{
+                    fontSize: '32px',
+                    fontWeight: '800',
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                    background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  🚛 FLEETFLOW™ FREIGHT SOLUTIONS PORTAL
+                </h1>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '16px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: '0 0 12px 0',
+                      fontWeight: '500',
+                    }}
+                  >
+                    Professional Freight Services & Logistics Intelligence
+                    Platform
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#10b981',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        border: '1px solid #10b981',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      🟢 SERVICES ACTIVE
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Platform Status: OPERATIONAL • 24/7 Support Available
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          marginBottom: '24px',
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: '16px',
-          padding: '8px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow:
-            '0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-          position: 'relative',
-        }}
-      >
-        {[
-          {
-            key: 'dashboard',
-            label: '📊 Flow Board',
-            color: '#3b82f6',
-            badge: realTimeActivity.filter((a) => a.type === 'urgent').length,
-          },
-          {
-            key: 'dispatch',
-            label: '🚛 Dispatch Central Flow',
-            color: '#f97316',
-          },
-          {
-            key: 'drivers',
-            label: '👨‍💼 Driver Flow',
-            color: '#10b981',
-            badge: onlineDrivers?.length > 0 ? onlineDrivers.length : undefined,
-          },
-          { key: 'shippers', label: '📦 Shippers', color: '#8b5cf6' },
-          { key: 'analytics', label: '📈 Analytics', color: '#8b5cf6' },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key as any)}
-            style={{
-              background:
-                activeTab === tab.key
-                  ? `linear-gradient(135deg, ${tab.color}, ${tab.color}dd)`
-                  : `linear-gradient(135deg, ${tab.color}60, ${tab.color}40)`,
-              color: 'white',
-              border:
-                activeTab === tab.key
-                  ? `1px solid ${tab.color}`
-                  : `1px solid ${tab.color}80`,
-              padding: '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              flex: 1,
-              textAlign: 'center',
-              position: 'relative',
-              boxShadow:
-                activeTab === tab.key
-                  ? `0 8px 25px ${tab.color}40, 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`
-                  : `0 4px 12px ${tab.color}20, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
-              transform: 'translateZ(0)',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== tab.key) {
-                e.currentTarget.style.background = `linear-gradient(135deg, ${tab.color}80, ${tab.color}60)`;
-                e.currentTarget.style.transform =
-                  'translateY(-2px) scale(1.02)';
-                e.currentTarget.style.boxShadow = `0 8px 25px ${tab.color}30, 0 4px 12px rgba(0, 0, 0, 0.15)`;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== tab.key) {
-                e.currentTarget.style.background = `linear-gradient(135deg, ${tab.color}60, ${tab.color}40)`;
-                e.currentTarget.style.transform = 'translateZ(0)';
-                e.currentTarget.style.boxShadow = `0 4px 12px ${tab.color}20, inset 0 1px 0 rgba(255, 255, 255, 0.1)`;
-              }
-            }}
-          >
-            {tab.label}
-            {tab.badge && tab.badge > 0 && (
-              <span
+        {/* Navigation Tabs */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '16px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {[
+              { key: 'overview', label: '📊 Overview', icon: '📊' },
+              { key: 'request', label: '🚀 Request Service', icon: '🚀' },
+              { key: 'tracking', label: '📍 Track Shipment', icon: '📍' },
+              { key: 'services', label: '🛠️ Our Services', icon: '🛠️' },
+              { key: 'contact', label: '📞 Contact Us', icon: '📞' },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
                 style={{
-                  position: 'absolute',
-                  top: '-8px',
-                  right: '-8px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  background:
+                    activeTab === tab.key
+                      ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
                   color: 'white',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  fontSize: '0.7rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   fontWeight: '600',
-                  animation: 'pulse 2s infinite',
-                  boxShadow:
-                    '0 4px 12px rgba(239, 68, 68, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                }}
-              >
-                {tab.badge > 99 ? '99+' : tab.badge}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: '24px',
-          padding: '30px',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          boxShadow:
-            '0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-          minHeight: '600px',
-          position: 'relative',
-        }}
-      >
-        {activeTab === 'dashboard' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '1.8rem',
-                marginBottom: '24px',
-              }}
-            >
-              🎯 Live Operations Board
-            </h2>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '20px',
-              }}
-            >
-              {/* Live Driver Map */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '16px',
-                  padding: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3 style={{ color: 'white', marginBottom: '16px' }}>
-                  🗺️ Live Driver Locations
-                </h3>
-                <div
-                  style={{
-                    height: '200px',
-                    background: 'rgba(0,0,0,0.3)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      color: 'rgba(255,255,255,0.6)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
-                      🗺️
-                    </div>
-                    <div>Interactive Map Coming Soon</div>
-                    <div style={{ fontSize: '0.8rem', marginTop: '4px' }}>
-                      {onlineDrivers?.length || 0} drivers currently online
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Available Load Monitor */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  borderRadius: '20px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow:
-                    '0 12px 40px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  position: 'relative',
-                  transform: 'translateZ(0)',
-                }}
-              >
-                <h3 style={{ color: 'white', marginBottom: '16px' }}>
-                  📢 Available Load Monitor
-                </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {availableLoads?.slice(0, 3).map((load, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        background:
-                          'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(234, 88, 12, 0.1))',
-                        border: '1px solid rgba(249, 115, 22, 0.4)',
-                        borderRadius: '12px',
-                        padding: '16px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        position: 'relative',
-                        boxShadow:
-                          '0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                      }}
-                      onClick={() => {
-                        alert(
-                          `⚡ Broadcasting load to 24 nearby drivers... Expected response in 2-5 minutes.`
-                        );
-                        const newActivity = {
-                          id: Date.now(),
-                          message: `Load broadcast initiated: ${load.pickup} → ${load.delivery}`,
-                          time: 'Just now',
-                          type: 'info',
-                        };
-                        setRealTimeActivity((prev) => [
-                          newActivity,
-                          ...prev.slice(0, 9),
-                        ]);
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform =
-                          'translateY(-4px) scale(1.02)';
-                        e.currentTarget.style.boxShadow =
-                          '0 12px 40px rgba(249, 115, 22, 0.4), 0 6px 20px rgba(0, 0, 0, 0.2)';
-                        e.currentTarget.style.background =
-                          'linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(234, 88, 12, 0.2))';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform =
-                          'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow =
-                          '0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.background =
-                          'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(234, 88, 12, 0.1))';
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <div style={{ color: 'white', fontWeight: '500' }}>
-                            {load.pickup} → {load.delivery}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255,255,255,0.7)',
-                              fontSize: '0.8rem',
-                            }}
-                          >
-                            {load.equipmentType} •{' '}
-                            {load.weight.toLocaleString()} lbs
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ color: '#fb923c', fontWeight: '600' }}>
-                            {load.rate}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255,255,255,0.7)',
-                              fontSize: '0.8rem',
-                            }}
-                          >
-                            {load.distance}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Active Offers */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  borderRadius: '20px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow:
-                    '0 12px 40px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  position: 'relative',
-                  transform: 'translateZ(0)',
-                }}
-              >
-                <h3 style={{ color: 'white', marginBottom: '16px' }}>
-                  📋 Active Load Assignments
-                </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  {[
-                    {
-                      driver: 'Mike Rodriguez',
-                      load: 'ATL→MIA',
-                      rate: '$2,450',
-                      status: 'Confirmed',
-                    },
-                    {
-                      driver: 'Sarah Johnson',
-                      load: 'HOU→DAL',
-                      rate: '$850',
-                      status: 'Pending',
-                    },
-                    {
-                      driver: 'David Chen',
-                      load: 'CHI→DET',
-                      rate: '$1,200',
-                      status: 'In Progress',
-                    },
-                  ].map((offer, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        background:
-                          'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1))',
-                        border: '1px solid rgba(59, 130, 246, 0.4)',
-                        borderRadius: '12px',
-                        padding: '16px',
-                        boxShadow:
-                          '0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <div style={{ color: 'white', fontWeight: '500' }}>
-                            {offer.driver}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255,255,255,0.7)',
-                              fontSize: '0.8rem',
-                            }}
-                          >
-                            {offer.load}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ color: '#60a5fa', fontWeight: '600' }}>
-                            {offer.rate}
-                          </div>
-                          <div
-                            style={{
-                              color: '#fbbf24',
-                              fontSize: '0.8rem',
-                              fontWeight: '500',
-                            }}
-                          >
-                            {offer.status}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Real-Time Activity Feed */}
-            <div style={{ marginTop: '24px' }}>
-              <h3
-                style={{
-                  color: 'white',
-                  marginBottom: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
+                  fontSize: '14px',
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== tab.key) {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== tab.key) {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.1)';
+                  }
                 }}
               >
-                📈 Live Activity Feed
-                <div
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    animation: pulseAnimation ? 'pulse 2s infinite' : 'none',
-                    boxShadow:
-                      '0 2px 8px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3)',
-                  }}
-                />
-              </h3>
+                <span>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            minHeight: '600px',
+          }}
+        >
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div>
+              {/* Hero Section */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  padding: '40px',
+                  background: 'rgba(59, 130, 246, 0.1)',
                   borderRadius: '20px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow:
-                    '0 12px 40px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  maxHeight: '320px',
-                  overflowY: 'auto',
-                  marginBottom: '24px',
-                  position: 'relative',
-                  transform: 'translateZ(0)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
                 }}
               >
-                {realTimeActivity.map((activity, index) => (
-                  <div
-                    key={activity.id}
+                <h2
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: '800',
+                    color: 'white',
+                    marginBottom: '16px',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  🚀 Transform Your Freight Operations
+                </h2>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '32px',
+                    maxWidth: '800px',
+                    margin: '0 auto 32px auto',
+                    lineHeight: '1.6',
+                  }}
+                >
+                  Join thousands of companies using FleetFlow's AI-powered
+                  logistics platform to streamline operations, reduce costs, and
+                  deliver exceptional customer experiences.
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    onClick={() => setActiveTab('request')}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px 0',
-                      borderBottom:
-                        index < realTimeActivity.length - 1
-                          ? '1px solid rgba(255,255,255,0.1)'
-                          : 'none',
-                      animation:
-                        index === 0 ? 'slideInRight 0.5s ease-out' : 'none',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '16px 32px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 24px rgba(16, 185, 129, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow =
+                        '0 4px 16px rgba(16, 185, 129, 0.4)';
                     }}
                   >
-                    <div
+                    🚀 Get Started Today
+                  </button>
+                  <Link href='/go-with-the-flow/how-it-works'>
+                    <button
                       style={{
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        background:
-                          activity.type === 'success'
-                            ? 'linear-gradient(135deg, #22c55e, #16a34a)'
-                            : activity.type === 'urgent'
-                              ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-                              : activity.type === 'driver'
-                                ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        flexShrink: 0,
-                        boxShadow:
-                          activity.type === 'success'
-                            ? '0 2px 8px rgba(34, 197, 94, 0.4)'
-                            : activity.type === 'urgent'
-                              ? '0 2px 8px rgba(239, 68, 68, 0.4)'
-                              : activity.type === 'driver'
-                                ? '0 2px 8px rgba(245, 158, 11, 0.4)'
-                                : '0 2px 8px rgba(59, 130, 246, 0.4)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        color: 'white',
+                        padding: '16px 32px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
                       }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '0.9rem',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        {activity.message}
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        {activity.time}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.1)';
+                      }}
+                    >
+                      📚 How It Works
+                    </button>
+                  </Link>
+                </div>
               </div>
-            </div>
 
-            {/* Quick Actions */}
-            <div style={{ marginTop: '24px' }}>
-              <h3 style={{ color: 'white', marginBottom: '16px' }}>
-                🚀 Quick Actions
-              </h3>
+              {/* Stats Grid */}
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '48px',
                 }}
               >
                 {[
                   {
-                    label: '⚡ Auto-Match Loads',
-                    color: '#10b981',
-                    action: () => {
-                      alert(
-                        '🤖 AI Auto-Matching activated! System will automatically match urgent loads with nearby drivers.'
-                      );
-                      const newActivity = {
-                        id: Date.now(),
-                        message: 'Auto-matching system activated by dispatcher',
-                        time: 'Just now',
-                        type: 'success',
-                      };
-                      setRealTimeActivity((prev) => [
-                        newActivity,
-                        ...prev.slice(0, 9),
-                      ]);
-                    },
-                  },
-                  {
-                    label: '📡 Refresh Drivers',
+                    label: 'Active Users',
+                    value: '15,000+',
+                    icon: '👥',
                     color: '#3b82f6',
-                    action: () => {
-                      alert(
-                        '📡 Scanning for online drivers... Found 28 drivers available within 100 miles!'
-                      );
-                      fetchSystemData();
-                    },
                   },
                   {
-                    label: '🚨 Emergency Load',
-                    color: '#ef4444',
-                    action: () => {
-                      alert(
-                        '🚨 Emergency load broadcast initiated! Notifying all available drivers immediately.'
-                      );
-                      const newActivity = {
-                        id: Date.now(),
-                        message:
-                          'EMERGENCY: Urgent load broadcast to all drivers',
-                        time: 'Just now',
-                        type: 'urgent',
-                      };
-                      setRealTimeActivity((prev) => [
-                        newActivity,
-                        ...prev.slice(0, 9),
-                      ]);
-                    },
+                    label: 'States Served',
+                    value: '48',
+                    icon: '🗺️',
+                    color: '#10b981',
                   },
                   {
-                    label: '📊 Live Dashboard',
+                    label: 'Success Rate',
+                    value: '98.5%',
+                    icon: '📈',
+                    color: '#f59e0b',
+                  },
+                  {
+                    label: 'Support Response',
+                    value: '<2 hours',
+                    icon: '⏰',
                     color: '#8b5cf6',
-                    action: () => setActiveTab('analytics'),
                   },
-                ].map((action, index) => (
-                  <button
+                ].map((stat, index) => (
+                  <div
                     key={index}
-                    onClick={action.action}
                     style={{
-                      background: `linear-gradient(135deg, ${action.color}, ${action.color}dd)`,
-                      border: `1px solid ${action.color}`,
-                      borderRadius: '12px',
-                      padding: '16px',
-                      color: 'white',
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      cursor: 'pointer',
+                      background: `rgba(${
+                        stat.color === '#3b82f6'
+                          ? '59, 130, 246'
+                          : stat.color === '#10b981'
+                            ? '16, 185, 129'
+                            : stat.color === '#f59e0b'
+                              ? '245, 158, 11'
+                              : '139, 92, 246'
+                      }, 0.1)`,
+                      border: `1px solid rgba(${
+                        stat.color === '#3b82f6'
+                          ? '59, 130, 246'
+                          : stat.color === '#10b981'
+                            ? '16, 185, 129'
+                            : stat.color === '#f59e0b'
+                              ? '245, 158, 11'
+                              : '139, 92, 246'
+                      }, 0.3)`,
+                      borderRadius: '16px',
+                      padding: '24px',
+                      textAlign: 'center',
                       transition: 'all 0.3s ease',
-                      boxShadow: `0 6px 20px ${action.color}30, 0 3px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
-                      position: 'relative',
-                      transform: 'translateZ(0)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform =
-                        'translateY(-4px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = `0 12px 40px ${action.color}40, 0 6px 20px rgba(0, 0, 0, 0.2)`;
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 24px rgba(0, 0, 0, 0.3)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.transform =
-                        'translateY(0) scale(1)';
-                      e.currentTarget.style.boxShadow = `0 4px 12px ${action.color}20, inset 0 1px 0 rgba(255, 255, 255, 0.1)`;
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    {action.label}
-                  </button>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      {stat.icon}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: '800',
+                        color: stat.color,
+                        marginBottom: '8px',
+                      }}
+                    >
+                      {stat.value}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {stat.label}
+                    </div>
+                  </div>
                 ))}
               </div>
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'dispatch' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '1.8rem',
-                marginBottom: '24px',
-              }}
-            >
-              🚛 Dispatch Central Flow
-            </h2>
-            <div style={{ color: 'rgba(255,255,255,0.8)' }}>
-              Advanced dispatch operations with live load posting and driver
-              coordination.
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'drivers' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '1.8rem',
-                marginBottom: '24px',
-              }}
-            >
-              👨‍💼 Driver Flow
-            </h2>
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {onlineDrivers?.map((driver, index) => (
-                <div
-                  key={index}
+              {/* Testimonials */}
+              <div>
+                <h3
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '16px',
-                    padding: '20px',
-                    boxShadow:
-                      '0 8px 25px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
-                    position: 'relative',
-                    transform: 'translateZ(0)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: 'white',
+                    textAlign: 'center',
+                    marginBottom: '32px',
+                  }}
+                >
+                  💬 What Our Customers Say
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '24px',
+                  }}
+                >
+                  {testimonials.map((testimonial) => (
+                    <div
+                      key={testimonial.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <div style={{ fontSize: '32px', marginRight: '16px' }}>
+                          {testimonial.avatar}
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {testimonial.name}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {testimonial.company}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {testimonial.role}
+                          </div>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '16px',
+                          lineHeight: '1.5',
+                        }}
+                      >
+                        {testimonial.content}
+                      </p>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <span
+                            key={i}
+                            style={{ color: '#fbbf24', fontSize: '16px' }}
+                          >
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Request Service Tab */}
+          {activeTab === 'request' && (
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                🚀 Request Freight Service
+              </h2>
+              <form
+                onSubmit={handleRequestSubmit}
+                style={{ display: 'grid', gap: '24px' }}
+              >
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '24px',
                   }}
                 >
                   <div>
-                    <div
+                    <label
                       style={{
+                        display: 'block',
                         color: 'white',
+                        marginBottom: '8px',
                         fontWeight: '600',
-                        marginBottom: '4px',
                       }}
                     >
-                      {driver.name}
-                    </div>
-                    <div
+                      Pickup Location
+                    </label>
+                    <input
+                      type='text'
+                      name='origin'
+                      required
                       style={{
-                        color: 'rgba(255,255,255,0.7)',
-                        fontSize: '0.9rem',
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
                       }}
-                    >
-                      {driver.equipmentType} • ⭐ {driver.rating} •{' '}
-                      {driver.distance}
-                    </div>
+                      placeholder='City, State'
+                    />
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                    }}
-                  >
-                    <div
+                  <div>
+                    <label
                       style={{
-                        background: driver.isOnline
-                          ? 'rgba(16, 185, 129, 0.2)'
-                          : 'rgba(239, 68, 68, 0.2)',
-                        color: driver.isOnline ? '#34d399' : '#f87171',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        fontSize: '0.8rem',
-                        fontWeight: '500',
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
                       }}
                     >
-                      {driver.isOnline ? 'Online' : 'Offline'}
-                    </div>
-                    <div style={{ color: '#60a5fa', fontSize: '0.9rem' }}>
-                      Available: {driver.eta}
-                    </div>
+                      Delivery Location
+                    </label>
+                    <input
+                      type='text'
+                      name='destination'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                      placeholder='City, State'
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'shippers' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '1.8rem',
-                marginBottom: '24px',
-              }}
-            >
-              📦 Shipper Portal
-            </h2>
-            <div style={{ color: 'rgba(255,255,255,0.8)' }}>
-              Professional load requests with intelligent matching and
-              market-based pricing.
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'analytics' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '1.8rem',
-                marginBottom: '24px',
-              }}
-            >
-              📈 Analytics & Insights
-            </h2>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '20px',
-              }}
-            >
-              {[
-                {
-                  label: 'Average Response Time',
-                  value: `${systemMetrics?.avgResponseTime || 0}s`,
-                  color: '#f97316',
-                },
-                {
-                  label: 'Total Revenue Today',
-                  value: `$${(systemMetrics?.totalRevenue || 0).toLocaleString()}`,
-                  color: '#10b981',
-                },
-                {
-                  label: 'Match Success Rate',
-                  value: `${systemMetrics?.successRate || 0}%`,
-                  color: '#22c55e',
-                },
-                {
-                  label: 'Active Drivers',
-                  value: (systemMetrics?.totalDriversOnline || 0).toString(),
-                  color: '#8b5cf6',
-                },
-              ].map((metric, index) => (
                 <div
-                  key={index}
                   style={{
-                    background: `linear-gradient(135deg, ${metric.color}20, ${metric.color}10)`,
-                    border: `1px solid ${metric.color}40`,
-                    borderRadius: '16px',
-                    padding: '20px',
-                    textAlign: 'center',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '24px',
                   }}
                 >
-                  <div
-                    style={{
-                      color: metric.color,
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    {metric.value}
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Equipment Type
+                    </label>
+                    <select
+                      name='equipmentType'
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option value='Dry Van'>Dry Van</option>
+                      <option value='Reefer'>Reefer</option>
+                      <option value='Flatbed'>Flatbed</option>
+                      <option value='Power Only'>Power Only</option>
+                      <option value='Step Deck'>Step Deck</option>
+                    </select>
                   </div>
-                  <div
-                    style={{
-                      color: 'rgba(255,255,255,0.8)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    {metric.label}
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Weight (lbs)
+                    </label>
+                    <input
+                      type='number'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                      placeholder='0'
+                    />
                   </div>
                 </div>
-              ))}
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '24px',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Urgency Level
+                    </label>
+                    <select
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option value='low'>Low - Flexible timing</option>
+                      <option value='medium'>Medium - Standard delivery</option>
+                      <option value='high'>High - Urgent delivery</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Pickup Date
+                    </label>
+                    <input
+                      type='date'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: 'white',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Special Requirements
+                  </label>
+                  <textarea
+                    rows={3}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '14px',
+                      resize: 'vertical',
+                    }}
+                    placeholder='Any special handling, temperature requirements, or additional notes...'
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: 'white',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Contact Information
+                  </label>
+                  <input
+                    type='email'
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                    placeholder='your.email@company.com'
+                  />
+                </div>
+
+                <button
+                  type='submit'
+                  disabled={isLoading}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    opacity: isLoading ? 0.6 : 1,
+                  }}
+                >
+                  {isLoading
+                    ? 'Submitting...'
+                    : '🚀 Submit Request & Get Quotes'}
+                </button>
+              </form>
+
+              {/* AI Flow Quote Generation Progress */}
+              {quoteStatus === 'generating' && (
+                <div
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.8)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginTop: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      🤖
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '700',
+                        color: 'white',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      AI Flow Generating Quotes
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      Analyzing market conditions, fuel costs, and carrier
+                      availability...
+                    </p>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${quoteProgress}%`,
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #10b981, #059669)',
+                        borderRadius: '4px',
+                        transition: 'width 0.5s ease',
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {quoteProgress}% Complete
+                  </div>
+                </div>
+              )}
+
+              {/* Generated Quotes Display */}
+              {quoteStatus === 'completed' && generatedQuotes.length > 0 && (
+                <div
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.8)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginTop: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      ✨
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: 'white',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      AI-Generated Quotes Ready!
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Intelligent pricing based on market analysis and carrier
+                      optimization
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'grid', gap: '20px' }}>
+                    {generatedQuotes.map((quote, index) => (
+                      <div
+                        key={quote.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          padding: '20px',
+                          position: 'relative',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {/* Confidence Badge */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '16px',
+                            right: '16px',
+                            background: `rgba(${
+                              quote.confidence >= 90
+                                ? '16, 185, 129'
+                                : quote.confidence >= 80
+                                  ? '245, 158, 11'
+                                  : '239, 68, 68'
+                            }, 0.2)`,
+                            border: `1px solid rgba(${
+                              quote.confidence >= 90
+                                ? '16, 185, 129'
+                                : quote.confidence >= 80
+                                  ? '245, 158, 11'
+                                  : '239, 68, 68'
+                            }, 0.4)`,
+                            borderRadius: '20px',
+                            padding: '4px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: `${
+                              quote.confidence >= 90
+                                ? '#10b981'
+                                : quote.confidence >= 80
+                                  ? '#f59e0b'
+                                  : '#ef4444'
+                            }`,
+                          }}
+                        >
+                          {quote.confidence}% Confidence
+                        </div>
+
+                        <div style={{ marginBottom: '16px' }}>
+                          <h4
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '700',
+                              color: 'white',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            {quote.carrier}
+                          </h4>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '14px',
+                              lineHeight: '1.5',
+                            }}
+                          >
+                            {quote.reasoning}
+                          </p>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              'repeat(auto-fit, minmax(120px, 1fr))',
+                            gap: '16px',
+                            marginBottom: '16px',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Rate
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '24px',
+                                fontWeight: '800',
+                                color: '#10b981',
+                              }}
+                            >
+                              ${quote.rate.toLocaleString()}
+                            </div>
+                          </div>
+                          <div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              ETA
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                color: 'white',
+                              }}
+                            >
+                              {quote.eta}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            Features Included
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: '8px',
+                            }}
+                          >
+                            {quote.features.map(
+                              (feature: string, featureIndex: number) => (
+                                <span
+                                  key={featureIndex}
+                                  style={{
+                                    background: 'rgba(59, 130, 246, 0.2)',
+                                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                                    borderRadius: '16px',
+                                    padding: '4px 12px',
+                                    fontSize: '12px',
+                                    color: '#3b82f6',
+                                    fontWeight: '500',
+                                  }}
+                                >
+                                  {feature}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          style={{
+                            width: '100%',
+                            background:
+                              'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                            border: 'none',
+                            color: 'white',
+                            padding: '12px 24px',
+                            borderRadius: '8px',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            marginTop: '16px',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-2px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 4px 12px rgba(59, 130, 246, 0.3)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          🚀 Select This Quote
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      marginTop: '24px',
+                      padding: '20px',
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: '#10b981',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        margin: 0,
+                      }}
+                    >
+                      💡 AI Flow analyzed market conditions, fuel costs, traffic
+                      patterns, and carrier performance to generate these
+                      optimized quotes.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
+          )}
+
+          {/* Tracking Tab */}
+          {activeTab === 'tracking' && (
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                📍 Track Your Shipment
+              </h2>
+              <form
+                onSubmit={handleTrackingSubmit}
+                style={{ display: 'grid', gap: '24px' }}
+              >
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: 'white',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Tracking Number or Load ID
+                  </label>
+                  <input
+                    type='text'
+                    name='trackingNumber'
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                    placeholder='Enter your tracking number'
+                  />
+                </div>
+                <button
+                  type='submit'
+                  disabled={isLoading}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: isLoading ? 0.7 : 1,
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {isLoading ? '🔍 Tracking...' : '📍 Track Shipment'}
+                </button>
+
+                <div
+                  style={{
+                    marginTop: '32px',
+                    padding: '24px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Sample Tracking Results
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    {[
+                      {
+                        status: 'Load Delivered',
+                        location: 'Miami, FL',
+                        time: '2 hours ago',
+                        color: '#10b981',
+                      },
+                      {
+                        status: 'In Transit',
+                        location: 'Jacksonville, FL',
+                        time: '4 hours ago',
+                        color: '#3b82f6',
+                      },
+                      {
+                        status: 'Picked Up',
+                        location: 'Atlanta, GA',
+                        time: 'Yesterday',
+                        color: '#6b7280',
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                            background: item.color,
+                          }}
+                        />
+                        <div>
+                          <div style={{ color: 'white', fontWeight: '500' }}>
+                            {item.status}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {item.location} - {item.time}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Services Tab */}
+          {activeTab === 'services' && (
+            <div>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                🛠️ Comprehensive Freight Solutions
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  maxWidth: '800px',
+                  margin: '0 auto 48px auto',
+                  lineHeight: '1.6',
+                }}
+              >
+                From single shipments to complex logistics operations, we
+                provide end-to-end solutions that keep your business moving
+                forward.
+              </p>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                {[
+                  {
+                    icon: '🚛',
+                    title: 'Full Truckload (FTL)',
+                    description:
+                      'Dedicated trucks for your exclusive shipments with real-time tracking and guaranteed delivery times.',
+                    features: [
+                      'Dry van, reefer, flatbed, and specialized equipment',
+                      'Nationwide coverage with local expertise',
+                      'Competitive rates and flexible scheduling',
+                    ],
+                  },
+                  {
+                    icon: '📦',
+                    title: 'Less Than Truckload (LTL)',
+                    description:
+                      'Cost-effective solutions for smaller shipments with consolidated freight options.',
+                    features: [
+                      'Multiple pickup and delivery points',
+                      'Flexible weight and size requirements',
+                      'Expedited and standard service options',
+                    ],
+                  },
+                  {
+                    icon: '🌡️',
+                    title: 'Temperature Controlled',
+                    description:
+                      'Specialized reefer services for pharmaceuticals, food, and other temperature-sensitive cargo.',
+                    features: [
+                      'Real-time temperature monitoring',
+                      'FDA and pharmaceutical compliance',
+                      'Emergency backup systems',
+                    ],
+                  },
+                  {
+                    icon: '⚡',
+                    title: 'Expedited & Hot Shot',
+                    description:
+                      'Urgent delivery services for time-critical shipments with dedicated drivers and equipment.',
+                    features: [
+                      'Same-day and next-day delivery',
+                      'Dedicated drivers and equipment',
+                      'Priority handling and routing',
+                    ],
+                  },
+                ].map((service, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      {service.icon}
+                    </div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      {service.title}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '16px',
+                        lineHeight: '1.5',
+                      }}
+                    >
+                      {service.description}
+                    </p>
+                    <ul style={{ display: 'grid', gap: '8px' }}>
+                      {service.features.map((feature, featureIndex) => (
+                        <li
+                          key={featureIndex}
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '14px',
+                          }}
+                        >
+                          • {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Contact Tab */}
+          {activeTab === 'contact' && (
+            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                📞 Get in Touch
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  lineHeight: '1.6',
+                }}
+              >
+                Ready to revolutionize your freight operations? Our team is here
+                to help you get started with FleetFlow's powerful logistics
+                platform.
+              </p>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                  gap: '48px',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'grid', gap: '24px' }}>
+                    {[
+                      {
+                        icon: '📞',
+                        title: 'Phone Support',
+                        value: '1-800-FLEET-FLOW',
+                        subtitle: '24/7 Customer Service',
+                      },
+                      {
+                        icon: '📧',
+                        title: 'Email Support',
+                        value: 'support@fleetflow.com',
+                        subtitle: 'Response within 2 hours',
+                      },
+                      {
+                        icon: '💬',
+                        title: 'Live Chat',
+                        value: 'Available on our website',
+                        subtitle: 'Instant support during business hours',
+                      },
+                    ].map((contact, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
+                        <div style={{ fontSize: '24px' }}>{contact.icon}</div>
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {contact.title}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            {contact.value}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {contact.subtitle}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    Send us a Message
+                  </h3>
+                  <form
+                    onSubmit={handleContactSubmit}
+                    style={{ display: 'grid', gap: '16px' }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Name
+                      </label>
+                      <input
+                        type='text'
+                        name='name'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your full name'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Company
+                      </label>
+                      <input
+                        type='text'
+                        name='company'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your company name'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Email
+                      </label>
+                      <input
+                        type='email'
+                        name='email'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='your.email@company.com'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Phone
+                      </label>
+                      <input
+                        type='tel'
+                        name='phone'
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your phone number (optional)'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Message
+                      </label>
+                      <textarea
+                        name='message'
+                        required
+                        rows={4}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                          resize: 'vertical',
+                        }}
+                        placeholder='Tell us about your shipping needs...'
+                      />
+                    </div>
+                    <button
+                      type='submit'
+                      disabled={isLoading}
+                      style={{
+                        width: '100%',
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        border: 'none',
+                        color: 'white',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        cursor: isLoading ? 'not-allowed' : 'pointer',
+                        opacity: isLoading ? 0.7 : 1,
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {isLoading ? '📤 Sending...' : '📤 Send Message'}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer CTA */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+            marginTop: '32px',
+            borderRadius: '16px',
+            padding: '32px',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '28px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '16px',
+            }}
+          >
+            🚀 Ready to Transform Your Freight Operations?
+          </h2>
+          <p
+            style={{
+              fontSize: '18px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              marginBottom: '32px',
+              maxWidth: '600px',
+              margin: '0 auto 32px auto',
+              lineHeight: '1.6',
+            }}
+          >
+            Join thousands of companies already using FleetFlow to streamline
+            their logistics, reduce costs, and improve customer satisfaction.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <button
+              onClick={() => setActiveTab('request')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                color: 'white',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              🚀 Start Shipping Today
+            </button>
+            <Link href='/go-with-the-flow/how-it-works'>
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                📚 How It Works
+              </button>
+            </Link>
           </div>
-        )}
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.7;
-            transform: scale(1.1);
-          }
-        }
-
-        @keyframes slideInRight {
-          0% {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          100% {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes countUp {
-          0% {
-            transform: scale(0.8);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes glow {
-          0%,
-          100% {
-            box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-          }
-          50% {
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
-          }
-        }
-
-        @keyframes bounce {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-5px);
-          }
-        }
-      `}</style>
     </div>
   );
 }

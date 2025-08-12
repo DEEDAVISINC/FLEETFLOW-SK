@@ -4,7 +4,7 @@ import { Building2, Target, Truck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AIAutomationDashboard from '../components/AIAutomationDashboard';
 import AIFlowPlatform from '../components/AIFlowPlatform';
-import CRMLeadManager from '../components/CRMLeadManager';
+import AIHubCRMDashboard from '../components/AIHubCRMDashboard';
 import { Badge } from '../components/ui/badge';
 
 export default function AIHubPage() {
@@ -119,7 +119,7 @@ export default function AIHubPage() {
                         ? '#ffffff'
                         : 'rgba(255, 255, 255, 0.4)',
                   }}
-                 />
+                />
                 <span
                   style={{
                     fontSize: '14px',
@@ -163,7 +163,7 @@ export default function AIHubPage() {
                         ? '#ffffff'
                         : 'rgba(255, 255, 255, 0.4)',
                   }}
-                 />
+                />
                 <span
                   style={{
                     fontSize: '14px',
@@ -1663,15 +1663,7 @@ export default function AIHubPage() {
                   </h2>
 
                   {showCRM ? (
-                    <div
-                      style={{
-                        background: '#fff',
-                        borderRadius: '8px',
-                        padding: '20px',
-                      }}
-                    >
-                      <CRMLeadManager />
-                    </div>
+                    <AIHubCRMDashboard />
                   ) : (
                     <>
                       {/* KPI Dashboard */}
