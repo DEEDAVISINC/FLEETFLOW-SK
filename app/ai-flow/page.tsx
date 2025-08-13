@@ -515,195 +515,193 @@ export default function AIFlowPage() {
           {/* Overview Tab */}
           <TabsContent value='overview' className='space-y-6'>
             <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <Brain className='h-5 w-5 text-blue-600' />
+              <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+                <div className='mb-6 flex items-center gap-3'>
+                  <Brain className='h-6 w-6 text-blue-400' />
+                  <h3 className='text-lg font-semibold text-white'>
                     AI Platform Status
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
-                      <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
-                        <span className='font-medium'>
-                          All Systems Operational
-                        </span>
-                      </div>
-                      <Badge className='bg-green-100 text-green-800'>
-                        Live
-                      </Badge>
-                    </div>
+                  </h3>
+                </div>
 
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div className='rounded-lg bg-blue-50 p-3 text-center'>
-                        <div className='text-2xl font-bold text-blue-600'>
-                          {aiMetrics.callCenterStats.activeCalls}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Active Calls
-                        </div>
-                      </div>
-                      <div className='rounded-lg bg-purple-50 p-3 text-center'>
-                        <div className='text-2xl font-bold text-purple-600'>
-                          {aiMetrics.freightStats.activeLoads}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Active Loads
-                        </div>
-                      </div>
-                      <div className='rounded-lg bg-green-50 p-3 text-center'>
-                        <div className='text-2xl font-bold text-green-600'>
-                          {aiMetrics.dispatchStats.driversActive}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Drivers Online
-                        </div>
-                      </div>
-                      <div className='rounded-lg bg-orange-50 p-3 text-center'>
-                        <div className='text-2xl font-bold text-orange-600'>
-                          {aiMetrics.recruitingStats.leadsToday}
-                        </div>
-                        <div className='text-sm text-gray-600'>Leads Today</div>
-                      </div>
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between rounded-lg border border-green-500/20 bg-green-500/10 p-3 backdrop-blur-sm'>
+                    <div className='flex items-center gap-2'>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-400' />
+                      <span className='font-medium text-white'>
+                        All Systems Operational
+                      </span>
+                    </div>
+                    <div className='inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-300'>
+                      Live
                     </div>
                   </div>
-                </CardContent>
-              </Card>
 
-              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <TrendingUp className='h-5 w-5 text-green-600' />
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-center backdrop-blur-sm'>
+                      <div className='text-2xl font-bold text-blue-400'>
+                        {aiMetrics.callCenterStats.activeCalls}
+                      </div>
+                      <div className='text-sm text-white/70'>Active Calls</div>
+                    </div>
+                    <div className='rounded-lg border border-purple-500/20 bg-purple-500/10 p-3 text-center backdrop-blur-sm'>
+                      <div className='text-2xl font-bold text-purple-400'>
+                        {aiMetrics.freightStats.activeLoads}
+                      </div>
+                      <div className='text-sm text-white/70'>Active Loads</div>
+                    </div>
+                    <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-center backdrop-blur-sm'>
+                      <div className='text-2xl font-bold text-green-400'>
+                        {aiMetrics.dispatchStats.driversActive}
+                      </div>
+                      <div className='text-sm text-white/70'>
+                        Drivers Online
+                      </div>
+                    </div>
+                    <div className='rounded-lg border border-orange-500/20 bg-orange-500/10 p-3 text-center backdrop-blur-sm'>
+                      <div className='text-2xl font-bold text-orange-400'>
+                        {aiMetrics.recruitingStats.leadsToday}
+                      </div>
+                      <div className='text-sm text-white/70'>Leads Today</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+                <div className='mb-6 flex items-center gap-3'>
+                  <TrendingUp className='h-6 w-6 text-green-400' />
+                  <h3 className='text-lg font-semibold text-white'>
                     AI Performance Metrics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Load Matching Accuracy
-                      </span>
-                      <span className='text-sm font-bold text-green-600'>
-                        {aiMetrics.freightStats.loadMatch}%
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Route Optimization
-                      </span>
-                      <span className='text-sm font-bold text-blue-600'>
-                        {aiMetrics.dispatchStats.routeOptimization}%
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Lead Qualification Rate
-                      </span>
-                      <span className='text-sm font-bold text-purple-600'>
-                        {aiMetrics.recruitingStats.qualificationRate}%
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Customer Conversion
-                      </span>
-                      <span className='text-sm font-bold text-pink-600'>
-                        {aiMetrics.customerStats.conversionRate}%
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        On-Time Delivery
-                      </span>
-                      <span className='text-sm font-bold text-green-600'>
-                        {aiMetrics.dispatchStats.deliveryTime}%
-                      </span>
-                    </div>
+                  </h3>
+                </div>
+
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium text-white/80'>
+                      Load Matching Accuracy
+                    </span>
+                    <span className='text-sm font-bold text-green-400'>
+                      {aiMetrics.freightStats.loadMatch}%
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium text-white/80'>
+                      Route Optimization
+                    </span>
+                    <span className='text-sm font-bold text-blue-400'>
+                      {aiMetrics.dispatchStats.routeOptimization}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium text-white/80'>
+                      Lead Qualification Rate
+                    </span>
+                    <span className='text-sm font-bold text-purple-400'>
+                      {aiMetrics.recruitingStats.qualificationRate}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium text-white/80'>
+                      Customer Conversion
+                    </span>
+                    <span className='text-sm font-bold text-pink-400'>
+                      {aiMetrics.customerStats.conversionRate}%
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium text-white/80'>
+                      On-Time Delivery
+                    </span>
+                    <span className='text-sm font-bold text-green-400'>
+                      {aiMetrics.dispatchStats.deliveryTime}%
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </TabsContent>
 
           {/* Call Center Tab */}
           <TabsContent value='call-center' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Phone className='h-5 w-5' />
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+              <div className='mb-6 flex items-center gap-3'>
+                <Phone className='h-6 w-6 text-blue-400' />
+                <h3 className='text-lg font-semibold text-white'>
                   AI-Powered Call Center Platform
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-                  <div className='space-y-4'>
-                    <div className='flex items-center justify-between rounded-lg bg-green-50 p-3'>
-                      <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
-                        <span className='font-medium'>FreeSWITCH Active</span>
-                      </div>
-                      <Badge className='bg-green-100 text-green-800'>
-                        ESL Port 8021
-                      </Badge>
+                </h3>
+              </div>
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between rounded-lg border border-green-500/20 bg-green-500/10 p-3 backdrop-blur-sm'>
+                    <div className='flex items-center gap-2'>
+                      <div className='h-2 w-2 animate-pulse rounded-full bg-green-400' />
+                      <span className='font-medium text-white'>
+                        FreeSWITCH Active
+                      </span>
                     </div>
-
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div className='rounded-lg bg-blue-50 p-4 text-center'>
-                        <div className='text-3xl font-bold text-blue-600'>
-                          {aiMetrics.callCenterStats.activeCalls}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Active Calls
-                        </div>
-                      </div>
-                      <div className='rounded-lg bg-purple-50 p-4 text-center'>
-                        <div className='text-3xl font-bold text-purple-600'>
-                          {aiMetrics.callCenterStats.totalAgents}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Agents Online
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className='rounded-lg bg-yellow-50 p-4 text-center'>
-                      <div className='text-2xl font-bold text-yellow-600'>
-                        {aiMetrics.callCenterStats.avgWaitTime}s
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        Average Wait Time
-                      </div>
+                    <div className='inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-300'>
+                      ESL Port 8021
                     </div>
                   </div>
 
-                  <div className='space-y-4'>
-                    <h3 className='text-lg font-semibold'>AI Features</h3>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2 rounded bg-gray-50 p-2'>
-                        <Shield className='h-4 w-4 text-green-600' />
-                        <span className='text-sm'>Real-time Lead Scoring</span>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-center backdrop-blur-sm'>
+                      <div className='text-3xl font-bold text-blue-400'>
+                        {aiMetrics.callCenterStats.activeCalls}
                       </div>
-                      <div className='flex items-center gap-2 rounded bg-gray-50 p-2'>
-                        <Brain className='h-4 w-4 text-blue-600' />
-                        <span className='text-sm'>
-                          Conversation Intelligence
-                        </span>
+                      <div className='text-sm text-white/70'>Active Calls</div>
+                    </div>
+                    <div className='rounded-lg border border-purple-500/20 bg-purple-500/10 p-4 text-center backdrop-blur-sm'>
+                      <div className='text-3xl font-bold text-purple-400'>
+                        {aiMetrics.callCenterStats.totalAgents}
                       </div>
-                      <div className='flex items-center gap-2 rounded bg-gray-50 p-2'>
-                        <Target className='h-4 w-4 text-purple-600' />
-                        <span className='text-sm'>Automated Follow-up</span>
-                      </div>
-                      <div className='flex items-center gap-2 rounded bg-gray-50 p-2'>
-                        <TrendingUp className='h-4 w-4 text-orange-600' />
-                        <span className='text-sm'>Performance Analytics</span>
-                      </div>
+                      <div className='text-sm text-white/70'>Agents Online</div>
+                    </div>
+                  </div>
+
+                  <div className='rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4 text-center backdrop-blur-sm'>
+                    <div className='text-2xl font-bold text-yellow-400'>
+                      {aiMetrics.callCenterStats.avgWaitTime}s
+                    </div>
+                    <div className='text-sm text-white/70'>
+                      Average Wait Time
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className='space-y-4'>
+                  <h3 className='text-lg font-semibold text-white'>
+                    AI Features
+                  </h3>
+                  <div className='space-y-2'>
+                    <div className='flex items-center gap-2 rounded border border-green-500/20 bg-green-500/10 p-2 backdrop-blur-sm'>
+                      <Shield className='h-4 w-4 text-green-400' />
+                      <span className='text-sm text-white/80'>
+                        Real-time Lead Scoring
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2 rounded border border-blue-500/20 bg-blue-500/10 p-2 backdrop-blur-sm'>
+                      <Brain className='h-4 w-4 text-blue-400' />
+                      <span className='text-sm text-white/80'>
+                        Conversation Intelligence
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2 rounded border border-purple-500/20 bg-purple-500/10 p-2 backdrop-blur-sm'>
+                      <Target className='h-4 w-4 text-purple-400' />
+                      <span className='text-sm text-white/80'>
+                        Automated Follow-up
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2 rounded border border-orange-500/20 bg-orange-500/10 p-2 backdrop-blur-sm'>
+                      <TrendingUp className='h-4 w-4 text-orange-400' />
+                      <span className='text-sm text-white/80'>
+                        Performance Analytics
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Freight Broker AI Tab */}
@@ -792,262 +790,266 @@ export default function AIFlowPage() {
               <AITaskPrioritizationPanel mode='dispatch' />
 
               {/* Dispatch Metrics */}
-              <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <Navigation className='h-5 w-5' />
+              <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+                <div className='mb-6 flex items-center gap-3'>
+                  <Navigation className='h-6 w-6 text-blue-400' />
+                  <h3 className='text-lg font-semibold text-white'>
                     AI Dispatch Control
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='rounded-lg bg-blue-50 p-4 text-center'>
-                      <div className='text-2xl font-bold text-blue-600'>
-                        {aiMetrics.freightStats.activeLoads}
-                      </div>
-                      <div className='text-sm text-gray-600'>Active Loads</div>
-                    </div>
-                    <div className='rounded-lg bg-green-50 p-4 text-center'>
-                      <div className='text-2xl font-bold text-green-600'>
-                        {aiMetrics.freightStats.avgMargin}%
-                      </div>
-                      <div className='text-sm text-gray-600'>Avg Margin</div>
-                    </div>
-                    <div className='rounded-lg bg-purple-50 p-4 text-center'>
-                      <div className='text-2xl font-bold text-purple-600'>
-                        {aiMetrics.systemEfficiency}%
-                      </div>
-                      <div className='text-sm text-gray-600'>AI Efficiency</div>
-                    </div>
-                    <div className='rounded-lg bg-orange-50 p-4 text-center'>
-                      <div className='text-2xl font-bold text-orange-600'>
-                        {aiMetrics.totalDecisions}
-                      </div>
-                      <div className='text-sm text-gray-600'>AI Decisions</div>
-                    </div>
-                  </div>
+                  </h3>
+                </div>
 
-                  <div className='mt-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white'>
-                    <div className='mb-2 flex items-center gap-2'>
-                      <Zap className='h-4 w-4' />
-                      <span className='font-semibold'>AI Status</span>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-center backdrop-blur-sm'>
+                    <div className='text-2xl font-bold text-blue-400'>
+                      {aiMetrics.freightStats.activeLoads}
                     </div>
-                    <p className='text-sm opacity-90'>
-                      Smart task prioritization is analyzing{' '}
-                      {aiMetrics.activeOperations} operations and optimizing
-                      dispatch decisions in real-time.
-                    </p>
+                    <div className='text-sm text-white/70'>Active Loads</div>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center backdrop-blur-sm'>
+                    <div className='text-2xl font-bold text-green-400'>
+                      {aiMetrics.freightStats.avgMargin}%
+                    </div>
+                    <div className='text-sm text-white/70'>Avg Margin</div>
+                  </div>
+                  <div className='rounded-lg border border-purple-500/20 bg-purple-500/10 p-4 text-center backdrop-blur-sm'>
+                    <div className='text-2xl font-bold text-purple-400'>
+                      {aiMetrics.systemEfficiency}%
+                    </div>
+                    <div className='text-sm text-white/70'>AI Efficiency</div>
+                  </div>
+                  <div className='rounded-lg border border-orange-500/20 bg-orange-500/10 p-4 text-center backdrop-blur-sm'>
+                    <div className='text-2xl font-bold text-orange-400'>
+                      {aiMetrics.totalDecisions}
+                    </div>
+                    <div className='text-sm text-white/70'>AI Decisions</div>
+                  </div>
+                </div>
+
+                <div className='mt-6 rounded-lg border border-purple-500/30 bg-gradient-to-r from-blue-500/20 to-purple-600/20 p-4 backdrop-blur-sm'>
+                  <div className='mb-2 flex items-center gap-2'>
+                    <Zap className='h-4 w-4 text-purple-400' />
+                    <span className='font-semibold text-white'>AI Status</span>
+                  </div>
+                  <p className='text-sm text-white/80'>
+                    Smart task prioritization is analyzing{' '}
+                    {aiMetrics.activeOperations} operations and optimizing
+                    dispatch decisions in real-time.
+                  </p>
+                </div>
+              </div>
             </div>
           </TabsContent>
 
           {/* Recruiting AI Tab */}
           <TabsContent value='recruiting' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <UserPlus className='h-5 w-5' />
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+              <div className='mb-6 flex items-center gap-3'>
+                <UserPlus className='h-6 w-6 text-orange-400' />
+                <h3 className='text-lg font-semibold text-white'>
                   AI-Powered Recruiting Platform
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-                  <div className='rounded-lg bg-orange-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-orange-600'>
-                      {aiMetrics.recruitingStats.leadsToday}
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Leads Today
-                    </div>
-                    <Badge className='bg-orange-100 text-orange-800'>
-                      Generated
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-green-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-green-600'>
-                      {aiMetrics.recruitingStats.qualificationRate.toFixed(1)}%
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Qualification Rate
-                    </div>
-                    <Badge className='bg-green-100 text-green-800'>
-                      AI Qualified
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-blue-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-blue-600'>
-                      {aiMetrics.recruitingStats.hireRate.toFixed(1)}%
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Hire Success Rate
-                    </div>
-                    <Badge className='bg-blue-100 text-blue-800'>
-                      Optimized
-                    </Badge>
-                  </div>
-                </div>
+                </h3>
+              </div>
 
-                <div className='mt-6 rounded-lg bg-gradient-to-r from-orange-50 to-yellow-50 p-4'>
-                  <h3 className='mb-3 text-lg font-semibold'>
-                    AI Recruiting Intelligence
-                  </h3>
-                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Target className='h-4 w-4 text-orange-600' />
-                        <span className='text-sm'>
-                          Automated Lead Generation
-                        </span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Brain className='h-4 w-4 text-green-600' />
-                        <span className='text-sm'>Candidate Scoring</span>
-                      </div>
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+                <div className='rounded-lg border border-orange-500/20 bg-orange-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-orange-400'>
+                    {aiMetrics.recruitingStats.leadsToday}
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>Leads Today</div>
+                  <div className='inline-block rounded-full bg-orange-500/20 px-3 py-1 text-xs font-medium text-orange-300'>
+                    Generated
+                  </div>
+                </div>
+                <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-green-400'>
+                    {aiMetrics.recruitingStats.qualificationRate.toFixed(1)}%
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>
+                    Qualification Rate
+                  </div>
+                  <div className='inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-300'>
+                    AI Qualified
+                  </div>
+                </div>
+                <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-blue-400'>
+                    {aiMetrics.recruitingStats.hireRate.toFixed(1)}%
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>
+                    Hire Success Rate
+                  </div>
+                  <div className='inline-block rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300'>
+                    Optimized
+                  </div>
+                </div>
+              </div>
+
+              <div className='mt-6 rounded-lg border border-yellow-500/30 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 p-4 backdrop-blur-sm'>
+                <h3 className='mb-3 text-lg font-semibold text-white'>
+                  AI Recruiting Intelligence
+                </h3>
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                  <div className='space-y-2'>
+                    <div className='flex items-center gap-2'>
+                      <Target className='h-4 w-4 text-orange-400' />
+                      <span className='text-sm text-white/80'>
+                        Automated Lead Generation
+                      </span>
                     </div>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Users className='h-4 w-4 text-blue-600' />
-                        <span className='text-sm'>Multi-channel Outreach</span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <TrendingUp className='h-4 w-4 text-purple-600' />
-                        <span className='text-sm'>Performance Tracking</span>
-                      </div>
+                    <div className='flex items-center gap-2'>
+                      <Brain className='h-4 w-4 text-green-400' />
+                      <span className='text-sm text-white/80'>
+                        Candidate Scoring
+                      </span>
+                    </div>
+                  </div>
+                  <div className='space-y-2'>
+                    <div className='flex items-center gap-2'>
+                      <Users className='h-4 w-4 text-blue-400' />
+                      <span className='text-sm text-white/80'>
+                        Multi-channel Outreach
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <TrendingUp className='h-4 w-4 text-purple-400' />
+                      <span className='text-sm text-white/80'>
+                        Performance Tracking
+                      </span>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Customer Success Platform (CRM) Tab */}
           <TabsContent value='customer-success' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Heart className='h-5 w-5' />
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+              <div className='mb-6 flex items-center gap-3'>
+                <Heart className='h-6 w-6 text-pink-400' />
+                <h3 className='text-lg font-semibold text-white'>
                   AI Customer Success Platform
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3'>
-                  <div className='rounded-lg bg-pink-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-pink-600'>
-                      {aiMetrics.customerStats.totalContacts}
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Total Contacts
-                    </div>
-                    <Badge className='bg-pink-100 text-pink-800'>
-                      Active Pipeline
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-green-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-green-600'>
-                      {formatCurrency(aiMetrics.customerStats.pipelineValue)}
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Pipeline Value
-                    </div>
-                    <Badge className='bg-green-100 text-green-800'>
-                      Revenue
-                    </Badge>
-                  </div>
-                  <div className='rounded-lg bg-blue-50 p-6 text-center'>
-                    <div className='text-3xl font-bold text-blue-600'>
-                      {aiMetrics.customerStats.conversionRate.toFixed(1)}%
-                    </div>
-                    <div className='mb-2 text-sm text-gray-600'>
-                      Conversion Rate
-                    </div>
-                    <Badge className='bg-blue-100 text-blue-800'>
-                      AI Optimized
-                    </Badge>
-                  </div>
-                </div>
+                </h3>
+              </div>
 
-                <div className='mb-6 rounded-lg bg-gradient-to-r from-pink-50 to-purple-50 p-4'>
-                  <h3 className='mb-3 text-lg font-semibold'>
-                    AI Customer Intelligence
-                  </h3>
-                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Brain className='h-4 w-4 text-pink-600' />
-                        <span className='text-sm'>
-                          Relationship Intelligence
-                        </span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <TrendingUp className='h-4 w-4 text-green-600' />
-                        <span className='text-sm'>Upselling Opportunities</span>
-                      </div>
+              <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3'>
+                <div className='rounded-lg border border-pink-500/20 bg-pink-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-pink-400'>
+                    {aiMetrics.customerStats.totalContacts}
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>
+                    Total Contacts
+                  </div>
+                  <div className='inline-block rounded-full bg-pink-500/20 px-3 py-1 text-xs font-medium text-pink-300'>
+                    Active Pipeline
+                  </div>
+                </div>
+                <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-green-400'>
+                    {formatCurrency(aiMetrics.customerStats.pipelineValue)}
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>
+                    Pipeline Value
+                  </div>
+                  <div className='inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-300'>
+                    Revenue
+                  </div>
+                </div>
+                <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-6 text-center backdrop-blur-sm'>
+                  <div className='text-3xl font-bold text-blue-400'>
+                    {aiMetrics.customerStats.conversionRate.toFixed(1)}%
+                  </div>
+                  <div className='mb-2 text-sm text-white/70'>
+                    Conversion Rate
+                  </div>
+                  <div className='inline-block rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300'>
+                    AI Optimized
+                  </div>
+                </div>
+              </div>
+
+              <div className='mb-6 rounded-lg border border-purple-500/30 bg-gradient-to-r from-pink-500/10 to-purple-500/10 p-4 backdrop-blur-sm'>
+                <h3 className='mb-3 text-lg font-semibold text-white'>
+                  AI Customer Intelligence
+                </h3>
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                  <div className='space-y-2'>
+                    <div className='flex items-center gap-2'>
+                      <Brain className='h-4 w-4 text-pink-400' />
+                      <span className='text-sm text-white/80'>
+                        Relationship Intelligence
+                      </span>
                     </div>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2'>
-                        <Shield className='h-4 w-4 text-blue-600' />
-                        <span className='text-sm'>Churn Prevention</span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Target className='h-4 w-4 text-purple-600' />
-                        <span className='text-sm'>
-                          Customer Success Scoring
-                        </span>
-                      </div>
+                    <div className='flex items-center gap-2'>
+                      <TrendingUp className='h-4 w-4 text-green-400' />
+                      <span className='text-sm text-white/80'>
+                        Upselling Opportunities
+                      </span>
+                    </div>
+                  </div>
+                  <div className='space-y-2'>
+                    <div className='flex items-center gap-2'>
+                      <Shield className='h-4 w-4 text-blue-400' />
+                      <span className='text-sm text-white/80'>
+                        Churn Prevention
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Target className='h-4 w-4 text-purple-400' />
+                      <span className='text-sm text-white/80'>
+                        Customer Success Scoring
+                      </span>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Integrated CRM Dashboard */}
-            <div className='rounded-lg border border-gray-200 bg-white/80 backdrop-blur-sm'>
+            <div className='rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm'>
               <CRMDashboard />
             </div>
           </TabsContent>
 
           {/* Scheduler AI Tab */}
           <TabsContent value='scheduler' className='space-y-6'>
-            <Card className='border border-gray-200 bg-white/80 backdrop-blur-sm'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Calendar className='h-5 w-5' />
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
+              <div className='mb-6 flex items-center gap-3'>
+                <Calendar className='h-6 w-6 text-green-400' />
+                <h3 className='text-lg font-semibold text-white'>
                   AI Scheduler & Appointment Intelligence
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='py-12 text-center'>
-                  <Calendar className='mx-auto mb-4 h-16 w-16 text-green-600' />
-                  <h3 className='mb-2 text-2xl font-bold text-green-600'>
-                    Smart Scheduling Platform
-                  </h3>
-                  <p className='mb-4 text-gray-600'>
-                    AI-powered appointment setting and calendar optimization for
-                    freight operations
-                  </p>
-                  <div className='mx-auto grid max-w-md grid-cols-1 gap-4 md:grid-cols-2'>
-                    <div className='rounded-lg bg-green-50 p-3'>
-                      <div className='font-semibold text-green-600'>
-                        Automated Booking
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        AI schedules pickups & deliveries
-                      </div>
+                </h3>
+              </div>
+
+              <div className='py-12 text-center'>
+                <Calendar className='mx-auto mb-4 h-16 w-16 text-green-400' />
+                <h3 className='mb-2 text-2xl font-bold text-green-400'>
+                  Smart Scheduling Platform
+                </h3>
+                <p className='mb-4 text-white/70'>
+                  AI-powered appointment setting and calendar optimization for
+                  freight operations
+                </p>
+                <div className='mx-auto grid max-w-md grid-cols-1 gap-4 md:grid-cols-2'>
+                  <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-3 backdrop-blur-sm'>
+                    <div className='font-semibold text-green-400'>
+                      Automated Booking
                     </div>
-                    <div className='rounded-lg bg-blue-50 p-3'>
-                      <div className='font-semibold text-blue-600'>
-                        Route Integration
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        Syncs with dispatch operations
-                      </div>
+                    <div className='text-sm text-white/70'>
+                      AI schedules pickups & deliveries
+                    </div>
+                  </div>
+                  <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 backdrop-blur-sm'>
+                    <div className='font-semibold text-blue-400'>
+                      Route Integration
+                    </div>
+                    <div className='text-sm text-white/70'>
+                      Syncs with dispatch operations
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           {/* AI Analytics Tab */}

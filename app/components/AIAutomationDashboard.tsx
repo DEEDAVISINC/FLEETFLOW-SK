@@ -54,12 +54,21 @@ export default function AIAutomationDashboard() {
   const loadAutomationStatus = async () => {
     try {
       const response = await fetch('/api/ai/automation');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (data.success) {
         setAutomationStatus(data.status);
       }
     } catch (error) {
       console.error('Failed to load automation status:', error);
+      // Set default status on error to prevent crashes
+      setAutomationStatus({
+        isRunning: false,
+        lastUpdate: null,
+        tasksRunning: [],
+      });
     }
   };
 
@@ -485,7 +494,7 @@ export default function AIAutomationDashboard() {
                             ? '#10b981'
                             : '#6b7280',
                         }}
-                       />
+                      />
                       <span
                         style={{
                           fontWeight: '600',
@@ -561,7 +570,7 @@ export default function AIAutomationDashboard() {
                               borderRadius: '50%',
                               animation: 'pulse 2s infinite',
                             }}
-                           />
+                          />
                           <span>{task}</span>
                         </div>
                       ))}
@@ -894,26 +903,58 @@ export default function AIAutomationDashboard() {
           <div className='space-y-6'>
             {/* AI Dispatch Test Results */}
             {dispatchRecommendation && (
-              <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 shadow-lg backdrop-blur-sm'>
-                <h3 className='mb-4 flex items-center text-xl font-semibold text-gray-900'>
-                  <span className='mr-2'>🚛</span>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    marginBottom: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ marginRight: '8px' }}>🚛</span>
                   AI Dispatch Recommendation
                 </h3>
 
                 <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
                   <div className='space-y-4'>
-                    <div className='rounded-xl border border-green-200 bg-green-50 p-4'>
-                      <h4 className='mb-2 font-semibold text-green-900'>
+                    <div
+                      style={{
+                        padding: '20px',
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(34, 197, 94, 0.2)',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                          color: 'rgb(134, 239, 172)',
+                        }}
+                      >
                         Primary Recommendation
                       </h4>
-                      <p className='text-green-800'>
+                      <p style={{ color: 'rgb(74, 222, 128)' }}>
                         Carrier:{' '}
                         {
                           dispatchRecommendation.primaryRecommendation
                             ?.carrierId
                         }
                       </p>
-                      <p className='text-green-700'>
+                      <p style={{ color: 'rgb(74, 222, 128)' }}>
                         Match Score:{' '}
                         {
                           dispatchRecommendation.primaryRecommendation
@@ -921,7 +962,13 @@ export default function AIAutomationDashboard() {
                         }
                         %
                       </p>
-                      <p className='mt-2 text-sm text-green-600'>
+                      <p
+                        style={{
+                          marginTop: '8px',
+                          fontSize: '14px',
+                          color: 'rgb(134, 239, 172)',
+                        }}
+                      >
                         {
                           dispatchRecommendation.primaryRecommendation
                             ?.reasoning
@@ -930,15 +977,29 @@ export default function AIAutomationDashboard() {
                     </div>
 
                     {dispatchRecommendation.rateRecommendation && (
-                      <div className='rounded-xl border border-blue-200 bg-blue-50 p-4'>
-                        <h4 className='mb-2 font-semibold text-blue-900'>
+                      <div
+                        style={{
+                          padding: '20px',
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(59, 130, 246, 0.2)',
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        <h4
+                          style={{
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                            color: 'rgb(147, 197, 253)',
+                          }}
+                        >
                           Rate Recommendation
                         </h4>
-                        <p className='text-blue-800'>
+                        <p style={{ color: 'rgb(96, 165, 250)' }}>
                           Suggested Rate: $
                           {dispatchRecommendation.rateRecommendation.suggestedRate.toLocaleString()}
                         </p>
-                        <p className='text-blue-700'>
+                        <p style={{ color: 'rgb(96, 165, 250)' }}>
                           Competitiveness:{' '}
                           {
                             dispatchRecommendation.rateRecommendation
@@ -946,7 +1007,13 @@ export default function AIAutomationDashboard() {
                           }
                           %
                         </p>
-                        <p className='mt-2 text-sm text-blue-600'>
+                        <p
+                          style={{
+                            marginTop: '8px',
+                            fontSize: '14px',
+                            color: 'rgb(147, 197, 253)',
+                          }}
+                        >
                           {
                             dispatchRecommendation.rateRecommendation
                               .rateJustification
@@ -958,16 +1025,47 @@ export default function AIAutomationDashboard() {
 
                   <div className='space-y-4'>
                     {dispatchRecommendation.expectedOutcome && (
-                      <div className='rounded-xl border border-purple-200 bg-purple-50 p-4'>
-                        <h4 className='mb-2 font-semibold text-purple-900'>
+                      <div
+                        style={{
+                          padding: '20px',
+                          background: 'rgba(147, 51, 234, 0.1)',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(147, 51, 234, 0.2)',
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        <h4
+                          style={{
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                            color: 'rgb(196, 181, 253)',
+                          }}
+                        >
                           Expected Outcome
                         </h4>
-                        <div className='space-y-2 text-sm'>
-                          <div className='flex justify-between'>
-                            <span className='text-purple-700'>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            fontSize: '14px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <span style={{ color: 'rgb(196, 181, 253)' }}>
                               On-Time Delivery:
                             </span>
-                            <span className='font-medium text-purple-800'>
+                            <span
+                              style={{
+                                fontWeight: '500',
+                                color: 'rgb(168, 85, 247)',
+                              }}
+                            >
                               {
                                 dispatchRecommendation.expectedOutcome
                                   .onTimeDeliveryProbability
@@ -975,11 +1073,21 @@ export default function AIAutomationDashboard() {
                               %
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-purple-700'>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <span style={{ color: 'rgb(196, 181, 253)' }}>
                               Cost Efficiency:
                             </span>
-                            <span className='font-medium text-purple-800'>
+                            <span
+                              style={{
+                                fontWeight: '500',
+                                color: 'rgb(168, 85, 247)',
+                              }}
+                            >
                               {
                                 dispatchRecommendation.expectedOutcome
                                   .costEfficiency
@@ -987,11 +1095,21 @@ export default function AIAutomationDashboard() {
                               %
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-purple-700'>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <span style={{ color: 'rgb(196, 181, 253)' }}>
                               Customer Satisfaction:
                             </span>
-                            <span className='font-medium text-purple-800'>
+                            <span
+                              style={{
+                                fontWeight: '500',
+                                color: 'rgb(168, 85, 247)',
+                              }}
+                            >
                               {
                                 dispatchRecommendation.expectedOutcome
                                   .customerSatisfactionPrediction
@@ -1005,18 +1123,43 @@ export default function AIAutomationDashboard() {
 
                     {dispatchRecommendation.riskFactors &&
                       dispatchRecommendation.riskFactors.length > 0 && (
-                        <div className='rounded-xl border border-yellow-200 bg-yellow-50 p-4'>
-                          <h4 className='mb-2 font-semibold text-yellow-900'>
+                        <div
+                          style={{
+                            padding: '20px',
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              marginBottom: '8px',
+                              fontWeight: '600',
+                              color: 'rgb(253, 224, 71)',
+                            }}
+                          >
                             Risk Factors
                           </h4>
-                          <ul className='space-y-1'>
+                          <ul
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '4px',
+                            }}
+                          >
                             {dispatchRecommendation.riskFactors.map(
                               (risk: string, index: number) => (
                                 <li
                                   key={index}
-                                  className='flex items-start text-sm text-yellow-700'
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    fontSize: '14px',
+                                    color: 'rgb(251, 191, 36)',
+                                  }}
                                 >
-                                  <span className='mr-2'>⚠️</span>
+                                  <span style={{ marginRight: '8px' }}>⚠️</span>
                                   <span>{risk}</span>
                                 </li>
                               )
@@ -1027,12 +1170,30 @@ export default function AIAutomationDashboard() {
                   </div>
                 </div>
 
-                <div className='mt-6 border-t border-gray-200 pt-4'>
-                  <p className='text-sm text-gray-600'>
-                    <strong>Confidence Score:</strong>{' '}
+                <div
+                  style={{
+                    marginTop: '24px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                    paddingTop: '16px',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    <strong style={{ color: 'white' }}>
+                      Confidence Score:
+                    </strong>{' '}
                     {dispatchRecommendation.confidenceScore}%
                     {dispatchRecommendation.warning && (
-                      <span className='ml-4 text-orange-600'>
+                      <span
+                        style={{
+                          marginLeft: '16px',
+                          color: 'rgb(251, 146, 60)',
+                        }}
+                      >
                         ⚠️ {dispatchRecommendation.warning}
                       </span>
                     )}
@@ -1043,33 +1204,29 @@ export default function AIAutomationDashboard() {
 
             {/* Dispatch Analytics */}
             <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-              <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 text-center shadow-lg backdrop-blur-sm'>
+              <div className='rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-lg backdrop-blur-sm'>
                 <div className='mb-3 text-3xl'>🎯</div>
-                <h4 className='mb-2 font-semibold text-gray-900'>
+                <h4 className='mb-2 font-semibold text-white'>
                   Match Accuracy
                 </h4>
-                <p className='text-2xl font-bold text-blue-600'>94.2%</p>
-                <p className='text-sm text-gray-600'>
+                <p className='text-2xl font-bold text-blue-400'>94.2%</p>
+                <p className='text-sm text-white/70'>
                   AI recommendation accuracy
                 </p>
               </div>
 
-              <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 text-center shadow-lg backdrop-blur-sm'>
+              <div className='rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-lg backdrop-blur-sm'>
                 <div className='mb-3 text-3xl'>💰</div>
-                <h4 className='mb-2 font-semibold text-gray-900'>
-                  Cost Savings
-                </h4>
-                <p className='text-2xl font-bold text-green-600'>$18,420</p>
-                <p className='text-sm text-gray-600'>This month</p>
+                <h4 className='mb-2 font-semibold text-white'>Cost Savings</h4>
+                <p className='text-2xl font-bold text-green-400'>$18,420</p>
+                <p className='text-sm text-white/70'>This month</p>
               </div>
 
-              <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 text-center shadow-lg backdrop-blur-sm'>
+              <div className='rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-lg backdrop-blur-sm'>
                 <div className='mb-3 text-3xl'>⚡</div>
-                <h4 className='mb-2 font-semibold text-gray-900'>
-                  Response Time
-                </h4>
-                <p className='text-2xl font-bold text-purple-600'>1.2s</p>
-                <p className='text-sm text-gray-600'>
+                <h4 className='mb-2 font-semibold text-white'>Response Time</h4>
+                <p className='text-2xl font-bold text-purple-400'>1.2s</p>
+                <p className='text-sm text-white/70'>
                   Average AI decision time
                 </p>
               </div>
@@ -1077,7 +1234,7 @@ export default function AIAutomationDashboard() {
 
             {/* EDI Integration Status Monitor */}
             <div className='mt-8'>
-              <EDIStatusMonitor className='border-gray-200/50 bg-white/80 backdrop-blur-sm' />
+              <EDIStatusMonitor className='border-white/20 bg-white/10 backdrop-blur-sm' />
             </div>
           </div>
         )}

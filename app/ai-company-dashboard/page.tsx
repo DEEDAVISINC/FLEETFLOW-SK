@@ -95,9 +95,9 @@ export default function AICompanyDashboard() {
       name: 'Sales & Revenue',
       color: '#ec4899',
       icon: '💰',
-      totalStaff: 15,
-      activeStaff: 15,
-      dailyRevenue: 185000,
+      totalStaff: 16,
+      activeStaff: 16,
+      dailyRevenue: 213900,
       tasksCompleted: 687,
       efficiency: 97.8,
     },
@@ -406,6 +406,20 @@ export default function AICompanyDashboard() {
       efficiency: 96.1,
       lastActivity: '1 min ago',
       avatar: '🏭',
+    },
+    {
+      id: 'sales-010',
+      name: 'AI Email Response Specialist',
+      role: 'Automated Email Communications',
+      department: 'sales',
+      status: 'active',
+      currentTask:
+        'Processing 47 carrier emails - 94.2% response rate, 23 voice calls scheduled',
+      tasksCompleted: 1247,
+      revenue: 28900,
+      efficiency: 98.9,
+      lastActivity: '15 sec ago',
+      avatar: '📧',
     },
 
     // Logistics Operations Team

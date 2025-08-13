@@ -593,6 +593,59 @@ export class FleetFlowAI {
       strategicImplications: 'Positive outlook with recommended actions',
     };
   }
+
+  /**
+   * Generate AI response for freight conversations
+   * Used by FreightConversationAI for voice interactions
+   */
+  async generateResponse(prompt: string): Promise<string> {
+    if (!this.isEnabled) {
+      return this.mockConversationResponse(prompt);
+    }
+
+    try {
+      const response = await this.claude.generateResponse(prompt);
+      return response;
+    } catch (error) {
+      console.error('Claude AI response generation failed:', error);
+      return this.mockConversationResponse(prompt);
+    }
+  }
+
+  /**
+   * Mock conversation response for development/fallback
+   */
+  private mockConversationResponse(prompt: string): string {
+    // Analyze prompt to generate appropriate mock response
+    const promptLower = prompt.toLowerCase();
+
+    if (promptLower.includes('greeting')) {
+      return "Hello! This is FleetFlow's AI assistant. How can I help you with your freight needs today?";
+    }
+
+    if (
+      promptLower.includes('qualification') ||
+      promptLower.includes('mc number') ||
+      promptLower.includes('dot number')
+    ) {
+      return 'Great! Can you provide your MC or DOT number so I can verify your authority and help you with available loads?';
+    }
+
+    if (promptLower.includes('load') || promptLower.includes('freight')) {
+      return "Perfect! I have several loads that might be a good fit. What's your preferred pickup area and equipment type?";
+    }
+
+    if (promptLower.includes('rate') || promptLower.includes('price')) {
+      return 'Based on current market rates and this lane, I can offer $2,850 all-in. This is competitive for this route. How does that work for you?';
+    }
+
+    if (promptLower.includes('closing') || promptLower.includes('book')) {
+      return "Excellent! I'll get the load booked for you right away. You'll receive confirmation and pickup details within the next few minutes. Thank you for choosing FleetFlow!";
+    }
+
+    // Default professional response
+    return "I understand. Let me help you with that. Can you provide a bit more detail about what you're looking for?";
+  }
 }
 
 export const fleetAI = new FleetFlowAI();

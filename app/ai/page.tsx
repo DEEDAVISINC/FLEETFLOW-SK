@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import AIAutomationDashboard from '../components/AIAutomationDashboard';
 import AIFlowPlatform from '../components/AIFlowPlatform';
 import AIHubCRMDashboard from '../components/AIHubCRMDashboard';
+import DetailedProspectViewer from '../components/DetailedProspectViewer';
 import { Badge } from '../components/ui/badge';
 
 export default function AIHubPage() {
@@ -22,6 +23,11 @@ export default function AIHubPage() {
 
   // CRM Lead Manager state
   const [showCRM, setShowCRM] = useState(false);
+
+  // Detailed prospect views state
+  const [activeProspectView, setActiveProspectView] = useState<string | null>(
+    null
+  );
 
   // Toggle between Strategic Operations and AI Automation Dashboard
   const [activeView, setActiveView] = useState<'strategic' | 'automation'>(
@@ -1397,6 +1403,52 @@ export default function AIHubPage() {
                               'rgba(255, 255, 255, 0.1)';
                             e.target.style.boxShadow = `0 0 10px ${tab.color}20`;
                           }}
+                          onClick={() => {
+                            // Reset CRM view when switching to detailed views
+                            setShowCRM(false);
+
+                            switch (tab.label) {
+                              case 'Platinum Prospects':
+                                setActiveProspectView('platinum');
+                                console.log(
+                                  'Platinum Prospects clicked - showing detailed view'
+                                );
+                                break;
+                              case 'Gold Prospects':
+                                setActiveProspectView('gold');
+                                console.log(
+                                  'Gold Prospects clicked - showing detailed view'
+                                );
+                                break;
+                              case 'Discovery Engine':
+                                setActiveProspectView(null);
+                                setShowCRM(true);
+                                console.log(
+                                  'Discovery Engine activated - showing CRM Lead Manager'
+                                );
+                                break;
+                              case 'Contact Manager':
+                                setActiveProspectView('contacts');
+                                console.log(
+                                  'Contact Manager clicked - showing detailed view'
+                                );
+                                break;
+                              case 'Revenue Tracker':
+                                setActiveProspectView('revenue');
+                                console.log(
+                                  'Revenue Tracker clicked - showing detailed view'
+                                );
+                                break;
+                              case 'AI Insights':
+                                setActiveProspectView('ai-insights');
+                                console.log(
+                                  'AI Insights clicked - showing detailed view'
+                                );
+                                break;
+                              default:
+                                console.log(`${tab.label} clicked`);
+                            }
+                          }}
                         >
                           {tab.icon} {tab.label}
                         </button>
@@ -1664,6 +1716,11 @@ export default function AIHubPage() {
 
                   {showCRM ? (
                     <AIHubCRMDashboard />
+                  ) : activeProspectView ? (
+                    <DetailedProspectViewer
+                      viewType={activeProspectView}
+                      onClose={() => setActiveProspectView(null)}
+                    />
                   ) : (
                     <>
                       {/* KPI Dashboard */}

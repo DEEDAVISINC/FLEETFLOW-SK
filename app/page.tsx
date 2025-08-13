@@ -1,1971 +1,504 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Load, getMainDashboardLoads } from './services/loadService';
+import FleetFlowLandingPage from './components/FleetFlowLandingPage';
+import FleetMap from './components/FleetMap';
+import MetricsGrid from './components/MetricsGrid';
+import RecentActivity from './components/RecentActivity';
+import StickyNote from './components/StickyNote';
+import VehicleStatusChart from './components/VehicleStatusChart';
 import UserDataService from './services/user-data-service';
 
 export default function HomePage() {
   const router = useRouter();
-  const [selectedLoad, setSelectedLoad] = useState<string>('');
-  const [showLoadDetails, setShowLoadDetails] = useState(false);
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [loads, setLoads] = useState<Load[]>([]);
-  const [isFirstLogin, setIsFirstLogin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [animatedMetrics, setAnimatedMetrics] = useState({
+    revenue: 0,
+    loads: 0,
+    drivers: 0,
+    efficiency: 0,
+    utilization: 0,
+  });
 
-  // Check for first-time login and redirect to settings
-  useEffect(() => {
-    const userDataService = UserDataService.getInstance();
-    const currentUser = userDataService.getCurrentUser();
-
-    // If no user is logged in, simulate first login
-    if (!currentUser) {
-      // For demo purposes, check if this is a first visit
-      const hasVisitedBefore = localStorage.getItem('fleetflow_visited');
-
-      if (!hasVisitedBefore) {
-        // Mark as visited and redirect to settings (user's first login experience)
-        localStorage.setItem('fleetflow_visited', 'true');
-        setIsFirstLogin(true);
-
-        // Redirect to settings page after a brief delay
-        setTimeout(() => {
-          router.push('/settings');
-        }, 2000);
-        return;
-      }
-    }
-
-    // Normal dashboard initialization
-    setCurrentTime(new Date());
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    // Load data from shared service
-    const dashboardLoads = getMainDashboardLoads();
-    setLoads(dashboardLoads);
-
-    return () => clearInterval(timer);
-  }, [router]);
-
-  // Show first login welcome screen
-  if (isFirstLogin) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '16px',
-            padding: '48px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            textAlign: 'center',
-            maxWidth: '500px',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '64px',
-              marginBottom: '24px',
-            }}
-          >
-            🎉
-          </div>
-          <h1
-            style={{
-              color: 'white',
-              fontSize: '32px',
-              fontWeight: '700',
-              margin: '0 0 16px 0',
-              background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            Welcome to FleetFlow™!
-          </h1>
-          <p
-            style={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: '18px',
-              margin: '0 0 24px 0',
-              lineHeight: '1.6',
-            }}
-          >
-            Your account has been created successfully. You're being redirected
-            to your personal profile to complete your setup.
-          </p>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '12px',
-              color: '#10b981',
-              fontSize: '16px',
-              fontWeight: '600',
-            }}
-          >
-            <div
-              style={{
-                width: '20px',
-                height: '20px',
-                border: '2px solid #10b981',
-                borderTop: '2px solid transparent',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-              }}
-            />
-            Redirecting to your profile...
-          </div>
-        </div>
-        <style jsx>{`
-          @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
-  // Real-time alerts state management
-  const alerts = [
+  const [activeAlerts, setActiveAlerts] = useState([
     {
       id: 1,
-      type: 'critical',
-      title: 'Load SHP-003 Delayed',
-      message: 'Mechanical breakdown on I-95. ETA pushed by 4 hours',
-      timestamp: '3:45 PM',
-      actionRequired: true,
-      loadId: 'SHP-003',
+      type: 'urgent',
+      message: 'Critical: Vehicle TRK-045 engine temperature warning',
+      timestamp: new Date().toISOString(),
+      priority: 'high',
+      category: 'mechanical',
     },
     {
       id: 2,
       type: 'warning',
-      title: 'Driver Hours Alert',
-      message: 'Driver Mike Wilson approaching HOS limit in 2 hours',
-      timestamp: '3:40 PM',
-      actionRequired: true,
-      driverId: 'DRV-789',
+      message: 'Driver fatigue detected: John Smith approaching HOS limit',
+      timestamp: new Date().toISOString(),
+      priority: 'medium',
+      category: 'compliance',
     },
     {
       id: 3,
       type: 'info',
-      title: 'Load Delivered',
-      message: 'SHP-002 successfully delivered to Atlanta, GA',
-      timestamp: '3:35 PM',
-      actionRequired: false,
-      loadId: 'SHP-002',
+      message: 'Route optimization saved 15% fuel on I-95 corridor',
+      timestamp: new Date().toISOString(),
+      priority: 'low',
+      category: 'efficiency',
     },
-  ];
+    {
+      id: 4,
+      type: 'urgent',
+      message: 'Weather alert: Severe storm affecting Route 7',
+      timestamp: new Date().toISOString(),
+      priority: 'high',
+      category: 'weather',
+    },
+  ]);
 
-  const quickLinks = [
-    {
-      href: '/go-with-the-flow',
-      bg: 'linear-gradient(135deg, #f97316, #ea580c)',
-      emoji: '⚡',
-      title: 'Go With the Flow',
-      color: 'white',
-    },
-    {
-      href: '/dispatch',
-      bg: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-      emoji: '🚛',
-      title: 'Dispatch',
-      color: 'white',
-    },
-    {
-      href: '/drivers',
-      bg: 'linear-gradient(135deg, #f7c52d, #f4a832)',
-      emoji: '👨‍💼',
-      title: 'Drivers',
-      color: '#2d3748',
-    },
-    {
-      href: '/drivers/dashboard',
-      bg: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
-      emoji: '🚗',
-      title: 'Driver Management',
-      color: 'white',
-    },
-    {
-      href: '/vehicles',
-      bg: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-      emoji: '🚚',
-      title: 'Fleet',
-      color: 'white',
-    },
-    {
-      href: '/broker',
-      bg: 'linear-gradient(135deg, #f97316, #ea580c)',
-      emoji: '🏢',
-      title: 'Broker',
-      color: 'white',
-    },
-    {
-      href: '/routes',
-      bg: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-      emoji: '🗺️',
-      title: 'Routes',
-      color: 'white',
-    },
-    {
-      href: '/analytics',
-      bg: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-      emoji: '📊',
-      title: 'Analytics',
-      color: 'white',
-    },
-    {
-      href: '/admin/accounting',
-      bg: 'linear-gradient(135deg, #059669, #047857)',
-      emoji: '💰',
-      title: 'Finance',
-      color: 'white',
-    },
-    {
-      href: '/notes',
-      bg: 'linear-gradient(135deg, #fef3c7, #fbbf24)',
-      emoji: '🔔',
-      title: 'Alerts',
-      color: '#2d3748',
-    },
-    {
-      href: '/quoting',
-      bg: 'linear-gradient(135deg, #10b981, #059669)',
-      emoji: '📋',
-      title: 'Quotes',
-      color: 'white',
-    },
-    {
-      href: '/compliance',
-      bg: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-      emoji: '✅',
-      title: 'Safety',
-      color: 'white',
-    },
-    {
-      href: '/shipper-portal',
-      bg: 'linear-gradient(135deg, #667eea, #764ba2)',
-      emoji: '🏢',
-      title: 'Shipper',
-      color: 'white',
-    },
-    {
-      href: '/scheduling',
-      bg: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-      emoji: '📅',
-      title: 'Schedule',
-      color: 'white',
-    },
-    {
-      href: '/ai',
-      bg: 'linear-gradient(135deg, #ec4899, #db2777)',
-      emoji: '🤖',
-      title: 'AI Hub',
-      color: 'white',
-    },
-  ];
+  const [todaysMetrics] = useState({
+    totalRevenue: 487520,
+    activeLoads: 23,
+    availableDrivers: 8,
+    maintenanceAlerts: 3,
+    fuelEfficiency: 6.8,
+    onTimeDelivery: 94.2,
+    profitMargin: 23.8,
+    customerSatisfaction: 97.5,
+    fleetUtilization: 89,
+  });
 
-  const handleLoadClick = (loadId: string) => {
-    setSelectedLoad(loadId);
-    setShowLoadDetails(true);
+  const [fleetMetrics] = useState({
+    totalVehicles: 45,
+    activeVehicles: 38,
+    maintenanceVehicles: 7,
+    totalDrivers: 52,
+    activeRoutes: 23,
+    fuelEfficiency: 6.8,
+    monthlyMileage: 125480,
+    maintenanceCosts: 28750,
+  });
+
+  // Check authentication status and handle dashboard logic
+  useEffect(() => {
+    const userDataService = UserDataService.getInstance();
+    const currentUser = userDataService.getCurrentUser();
+
+    // TEMPORARY: Bypass authentication for development - show dashboard immediately
+    // TODO: Remove this bypass for production and restore proper authentication
+    setIsAuthenticated(true);
+
+    // Clock and animations for dashboard
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Animate metrics on load
+    const animateMetrics = () => {
+      const duration = 2500;
+      const steps = 60;
+      const stepDuration = duration / steps;
+
+      for (let i = 0; i <= steps; i++) {
+        setTimeout(() => {
+          const progress = i / steps;
+          const easeProgress = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+          setAnimatedMetrics({
+            revenue: Math.floor(todaysMetrics.totalRevenue * easeProgress),
+            loads: Math.floor(todaysMetrics.activeLoads * easeProgress),
+            drivers: Math.floor(todaysMetrics.availableDrivers * easeProgress),
+            efficiency:
+              Math.floor(todaysMetrics.fuelEfficiency * easeProgress * 10) / 10,
+            utilization: Math.floor(
+              todaysMetrics.fleetUtilization * easeProgress
+            ),
+          });
+        }, i * stepDuration);
+      }
+    };
+
+    animateMetrics();
+    return () => clearInterval(timer);
+
+    // ORIGINAL AUTHENTICATION CODE (commented out for development):
+    // if (currentUser) {
+    //   setIsAuthenticated(true);
+    //   // ... rest of dashboard logic
+    // } else {
+    //   setIsAuthenticated(false);
+    // }
+  }, [router, todaysMetrics]);
+
+  // Quick Action handlers
+  const handleDispatchNewLoad = () => {
+    router.push('/dispatch');
   };
 
-  const selectedLoadData = loads.find((load) => load.id === selectedLoad);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Available':
-        return '#3b82f6';
-      case 'Assigned':
-        return '#f59e0b';
-      case 'In Transit':
-        return '#10b981';
-      case 'Delivered':
-        return '#6366f1';
-      default:
-        return '#6b7280';
-    }
+  const handleAddDriver = () => {
+    router.push('/drivers');
   };
 
+  const handleScheduleMaintenance = () => {
+    router.push('/maintenance');
+  };
+
+  const handleGenerateReport = () => {
+    router.push('/reports');
+  };
+
+  // Alert dismissal handler
+  const dismissAlert = (alertId: number) => {
+    setActiveAlerts((alerts) => alerts.filter((a) => a.id !== alertId));
+  };
+
+  const getAlertIcon = (type: string, category: string) => {
+    if (category === 'mechanical') return '🔧';
+    if (category === 'compliance') return '⚖️';
+    if (category === 'weather') return '🌩️';
+    if (category === 'efficiency') return '⚡';
+    return type === 'urgent' ? '🚨' : type === 'warning' ? '⚠️' : 'ℹ️';
+  };
+
+  // Show loading while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <div
+        style={{
+          background:
+            'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🚛</div>
+          <h2>Loading FleetFlow...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // Show landing page for non-authenticated users
+  if (!isAuthenticated) {
+    return <FleetFlowLandingPage />;
+  }
+
+  // Show original dashboard for authenticated users
   return (
-    <div
-      style={{
-        padding: '40px',
-        paddingTop: '100px',
-        background: `
-        linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
-        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 40% 60%, rgba(168, 85, 247, 0.04) 0%, transparent 50%)
-      `,
-        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
-        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
-        minHeight: '100vh',
-        color: '#ffffff',
-        position: 'relative',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      }}
-    >
-      {/* Professional Header */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '30px',
-          marginBottom: '30px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                fontSize: '32px',
-                fontWeight: '700',
-                color: '#ffffff',
-                margin: '0 0 10px 0',
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              }}
-            >
-              FleetFlow Command Center℠
-            </h1>
-            <p
-              style={{
-                fontSize: '16px',
-                color: 'rgba(255, 255, 255, 0.8)',
-                margin: 0,
-              }}
-            >
-              Real-time Fleet Operations Dashboard •{' '}
-              {currentTime?.toLocaleString() || '--'}
-            </p>
+    <div className='container py-6'>
+      {/* Header */}
+      <div className='mb-6 flex items-center justify-between'>
+        <div>
+          <h1
+            className='mb-2 text-gray-900'
+            style={{ fontSize: '2rem', fontWeight: 'bold' }}
+          >
+            FleetFlow Command Center℠
+          </h1>
+          <p className='text-gray-600'>Real-time fleet operations dashboard</p>
+          <div className='mt-2 flex items-center space-x-4 text-sm text-gray-500'>
+            <span>🕒 {currentTime.toLocaleTimeString()}</span>
+            <span>📅 {currentTime.toLocaleDateString()}</span>
+            <span className='flex items-center space-x-1'>
+              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
+              <span>System Operational</span>
+            </span>
           </div>
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <Link href='/dispatch' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '12px 24px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                📞 Dispatch Central
-              </button>
-            </Link>
-            <Link href='/tracking' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '12px 24px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                📍 Live Tracking
-              </button>
-            </Link>
+        </div>
+        <div className='text-right'>
+          <div className='text-3xl font-bold text-green-600'>
+            ${animatedMetrics.revenue.toLocaleString()}
+          </div>
+          <div className='text-sm text-gray-600'>Today's Revenue</div>
+          <div className='mt-1 text-xs text-green-600'>
+            ↗ +12.5% from yesterday
           </div>
         </div>
       </div>
 
-      {/* Executive KPIs */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px',
-          marginBottom: '30px',
-        }}
-      >
-        {/* Active Loads */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>🚛</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#3b82f6',
-              marginBottom: '5px',
-            }}
-          >
-            {loads.filter((load) => load.status === 'In Transit').length}
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            Active Loads
-          </div>
-          <div
-            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
-          >
-            +12% from last week
-          </div>
-        </div>
-
-        {/* Fleet Utilization */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>📊</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#8b5cf6',
-              marginBottom: '5px',
-            }}
-          >
-            89%
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            Fleet Utilization
-          </div>
-          <div
-            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
-          >
-            +5% from last month
-          </div>
-        </div>
-
-        {/* Revenue */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>💰</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#10b981',
-              marginBottom: '5px',
-            }}
-          >
-            $2.4M
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            MTD Revenue
-          </div>
-          <div
-            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
-          >
-            +8% from last month
-          </div>
-        </div>
-
-        {/* On-Time Delivery */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>⏰</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#f59e0b',
-              marginBottom: '5px',
-            }}
-          >
-            96.2%
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            On-Time Performance
-          </div>
-          <div
-            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
-          >
-            +2.1% from last month
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Links */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '15px',
-          marginBottom: '30px',
-        }}
-      >
-        {quickLinks.map((link, index) => (
-          <Link key={index} href={link.href} style={{ textDecoration: 'none' }}>
-            <div
-              style={{
-                background: link.bg,
-                borderRadius: '12px',
-                padding: '20px',
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow =
-                  '0 8px 25px rgba(0, 0, 0, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 6px rgba(0, 0, 0, 0.1)';
-              }}
-            >
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
-                {link.emoji}
+      {/* Real-time Metrics */}
+      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-4'>
+        {[
+          {
+            title: 'Active Loads',
+            value: animatedMetrics.loads,
+            change: '+3',
+            icon: '🎯',
+            subtitle: 'loads in transit',
+          },
+          {
+            title: 'Available Drivers',
+            value: animatedMetrics.drivers,
+            change: '-2',
+            icon: '👥',
+            subtitle: 'ready for dispatch',
+          },
+          {
+            title: 'Fuel Efficiency',
+            value: animatedMetrics.efficiency,
+            change: '+0.3',
+            icon: '⛽',
+            subtitle: 'MPG average',
+          },
+          {
+            title: 'Fleet Utilization',
+            value: `${animatedMetrics.utilization}%`,
+            change: '+5%',
+            icon: '📊',
+            subtitle: 'capacity used',
+          },
+        ].map((metric, index) => (
+          <div key={index} className='metric-card'>
+            <div className='mb-2 flex items-start justify-between'>
+              <div className='flex items-center gap-2'>
+                <span style={{ fontSize: '1.5rem' }}>{metric.icon}</span>
+                <div className='metric-label'>{metric.title}</div>
               </div>
-              <div
-                style={{
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  color: link.color,
-                }}
-              >
-                {link.title}
-              </div>
+              <span className='metric-change metric-up'>{metric.change}</span>
             </div>
-          </Link>
+            <div className='metric-value'>{metric.value}</div>
+            <div className='text-gray-500' style={{ fontSize: '0.875rem' }}>
+              {metric.subtitle}
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Management Load Overview - Same data as Dispatch Central */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '30px',
-          marginBottom: '30px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '25px',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#ffffff',
-              margin: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-          >
-            🌐 Management Load Overview - All Brokers
-          </h2>
-          <Link
-            href='/dispatch#task-priority'
-            style={{ textDecoration: 'none' }}
-          >
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '10px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
-              }}
-            >
-              Task Priority
-            </button>
-          </Link>
-        </div>
-
-        {/* Load Status Distribution */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '15px',
-            marginBottom: '25px',
-          }}
-        >
-          {/* Available Loads */}
-          <div
-            style={{
-              background: 'rgba(59, 130, 246, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-            }}
-          >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📋</div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#3b82f6',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {loads.filter((load) => load.status === 'Available').length}
+      {/* Critical Alerts */}
+      {activeAlerts.length > 0 && (
+        <div className='card mb-6'>
+          <div className='mb-4 flex items-center justify-between'>
+            <div className='flex items-center gap-3'>
+              <span style={{ fontSize: '1.5rem' }}>🚨</span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+                Critical Alerts
+              </h3>
             </div>
-            <div
-              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Available
+            <div className='flex items-center space-x-2'>
+              <span className='rounded-full border border-red-200 bg-red-100 px-3 py-1 text-xs font-medium text-red-700'>
+                {activeAlerts.filter((a) => a.priority === 'high').length} High
+                Priority
+              </span>
+              <span className='rounded-full border border-yellow-200 bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700'>
+                {activeAlerts.filter((a) => a.priority === 'medium').length}{' '}
+                Medium
+              </span>
             </div>
           </div>
-
-          {/* Assigned */}
-          <div
-            style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-            }}
-          >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📝</div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#f59e0b',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {loads.filter((load) => load.status === 'Assigned').length}
-            </div>
-            <div
-              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Assigned
-            </div>
-          </div>
-
-          {/* In Transit */}
-          <div
-            style={{
-              background: 'rgba(16, 185, 129, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-            }}
-          >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🚛</div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#10b981',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {loads.filter((load) => load.status === 'In Transit').length}
-            </div>
-            <div
-              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              In Transit
-            </div>
-          </div>
-
-          {/* Delivered */}
-          <div
-            style={{
-              background: 'rgba(99, 102, 241, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
-              textAlign: 'center',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-            }}
-          >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>✅</div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#6366f1',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {loads.filter((load) => load.status === 'Delivered').length}
-            </div>
-            <div
-              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Delivered
-            </div>
-          </div>
-        </div>
-
-        {/* Professional Loadboard - Matching Dispatch Central Format - LIGHTENED */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Loadboard Header */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns:
-                '90px 80px 1.5fr 1fr 120px 100px 100px 100px',
-              gap: '10px',
-              padding: '12px 15px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              fontWeight: '700',
-              color: '#d1d5db',
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-            }}
-          >
-            <div>📞 Board #</div>
-            <div>Load ID</div>
-            <div>Route</div>
-            <div>Broker</div>
-            <div>Rate</div>
-            <div>Status</div>
-            <div>Distance</div>
-            <div>Type</div>
-          </div>
-
-          {/* Load Rows */}
-          {loads.slice(0, 8).map((load, index) => (
-            <div
-              key={load.id}
-              onClick={() => handleLoadClick(load.id)}
-              style={{
-                display: 'grid',
-                gridTemplateColumns:
-                  '90px 80px 1.5fr 1fr 120px 100px 100px 100px',
-                gap: '10px',
-                padding: '10px 15px',
-                background:
-                  index % 2 === 0
-                    ? 'rgba(255, 255, 255, 0.06)'
-                    : 'rgba(255, 255, 255, 0.03)',
-                color: '#f3f4f6',
-                fontSize: '12px',
-                transition: 'all 0.3s ease',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background =
-                  index % 2 === 0
-                    ? 'rgba(255, 255, 255, 0.06)'
-                    : 'rgba(255, 255, 255, 0.03)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
+          <div className='space-y-3'>
+            {activeAlerts.map((alert) => (
               <div
-                style={{
-                  fontWeight: '700',
-                  color: '#10b981',
-                  fontSize: '9px',
-                  fontFamily: 'monospace',
-                  textAlign: 'center',
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  borderRadius: '4px',
-                  padding: '2px 4px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
+                key={alert.id}
+                className='flex items-center justify-between rounded-lg bg-gray-50 p-3'
               >
-                {load.loadBoardNumber}
-              </div>
-              <div
-                style={{
-                  fontWeight: '700',
-                  color: '#60a5fa',
-                  fontSize: '9px',
-                  fontFamily: 'monospace',
-                  textAlign: 'center',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {load.id}
-              </div>
-              <div>
-                <div style={{ fontWeight: '600' }}>{load.origin}</div>
-                <div style={{ fontSize: '11px', opacity: 0.7 }}>
-                  → {load.destination}
-                </div>
-              </div>
-              <div style={{ fontSize: '12px', fontWeight: '500' }}>
-                {load.brokerName}
-              </div>
-              <div
-                style={{
-                  fontWeight: '700',
-                  color: '#22c55e',
-                  fontSize: '13px',
-                }}
-              >
-                ${load.rate?.toLocaleString()}
-              </div>
-              <div>
-                <span
-                  style={{
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '10px',
-                    fontWeight: '600',
-                    background: getStatusColor(load.status),
-                    color: 'white',
-                  }}
-                >
-                  {load.status}
-                </span>
-              </div>
-              <div style={{ fontSize: '12px' }}>{load.distance}</div>
-              <div style={{ fontSize: '12px' }}>
-                {load.brokerName === 'Go With the Flow' ? (
-                  <span
-                    style={{
-                      background: 'rgba(249, 115, 22, 0.2)',
-                      color: '#f97316',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    ⚡ Expedited
+                <div className='flex items-center space-x-3'>
+                  <span style={{ fontSize: '1.2rem' }}>
+                    {getAlertIcon(alert.type, alert.category)}
                   </span>
-                ) : (
-                  load.equipment
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '20px',
-            padding: '15px',
-            background: 'rgba(59, 130, 246, 0.1)',
-            borderRadius: '10px',
-            border: '1px solid rgba(59, 130, 246, 0.2)',
-          }}
-        >
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '10px',
-            }}
-          >
-            Showing {Math.min(8, loads.length)} of {loads.length} total loads (
-            {
-              loads.filter((load) => load.brokerName === 'Go With the Flow')
-                .length
-            }{' '}
-            expedited) from all brokers
-          </p>
-          <Link href='/dispatch' style={{ textDecoration: 'none' }}>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-              }}
-            >
-              View Full Loadboard in Dispatch Central →
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Go With the Flow - Expedited Loads Section */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '30px',
-          marginBottom: '30px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '25px',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#ffffff',
-              margin: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-          >
-            ⚡ Go With the Flow - Expedited Loads
-          </h2>
-          <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '10px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
-              }}
-            >
-              View Full Expedited Portal →
-            </button>
-          </Link>
-        </div>
-
-        {/* Expedited Loads Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '20px',
-            marginBottom: '20px',
-          }}
-        >
-          {loads
-            .filter((load) => load.brokerName === 'Go With the Flow')
-            .slice(0, 6)
-            .map((expeditedLoad, index) => (
-              <div
-                key={expeditedLoad.id}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: '15px',
-                  }}
-                >
                   <div>
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: '#f97316',
-                        fontWeight: '700',
-                        marginBottom: '5px',
-                      }}
-                    >
-                      {expeditedLoad.loadBoardNumber}
+                    <p className='font-medium text-gray-800'>{alert.message}</p>
+                    <div className='mt-1 flex items-center space-x-3 text-sm text-gray-600'>
+                      <span>
+                        🕒 {new Date(alert.timestamp).toLocaleTimeString()}
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs ${
+                          alert.priority === 'high'
+                            ? 'bg-red-100 text-red-700'
+                            : alert.priority === 'medium'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-blue-100 text-blue-700'
+                        }`}
+                      >
+                        {alert.priority} priority
+                      </span>
+                      <span className='text-gray-500'>• {alert.category}</span>
                     </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                      }}
-                    >
-                      Expedited Load
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.2)',
-                      color: '#f59e0b',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Expedited Priority
                   </div>
                 </div>
-
-                <div style={{ marginBottom: '15px' }}>
-                  <div
-                    style={{
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      color: '#ffffff',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    {expeditedLoad.origin} → {expeditedLoad.destination}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                    }}
-                  >
-                    {expeditedLoad.distance} • {expeditedLoad.equipment}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
+                <button
+                  onClick={() => dismissAlert(alert.id)}
+                  className='p-1 text-gray-400 hover:text-gray-600'
                 >
-                  <div
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: '700',
-                      color: '#22c55e',
-                    }}
-                  >
-                    ${expeditedLoad.rate?.toLocaleString()}
-                  </div>
-                  <div
-                    style={{
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                      background: getStatusColor(expeditedLoad.status),
-                      color: 'white',
-                    }}
-                  >
-                    {expeditedLoad.status}
-                  </div>
-                </div>
+                  ✕
+                </button>
               </div>
             ))}
-        </div>
-
-        {/* No Expedited Loads Message */}
-        {loads.filter((load) => load.brokerName === 'Go With the Flow')
-          .length === 0 && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '40px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#ffffff',
-                marginBottom: '10px',
-              }}
-            >
-              No Expedited Loads Available
-            </div>
-            <div
-              style={{
-                fontSize: '14px',
-                color: 'rgba(255, 255, 255, 0.7)',
-                marginBottom: '20px',
-              }}
-            >
-              Expedited loads will appear here when they become available
-            </div>
-            <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                }}
-              >
-                Check Expedited Portal
-              </button>
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* Real-Time Monitoring & Alerts */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '30px',
-          marginBottom: '30px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '25px',
-          }}
-        >
-          <h2
-            style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#ffffff',
-              margin: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-          >
-            🚨 Real-time Alerts & Monitoring
-          </h2>
-          <Link href='/notes' style={{ textDecoration: 'none' }}>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                color: '#2d3748',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '10px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)',
-              }}
-            >
-              View All Alerts
-            </button>
-          </Link>
-        </div>
-
-        {/* Alert Summary Counters */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-            gap: '15px',
-            marginBottom: '25px',
-          }}
-        >
-          {/* Critical Alerts */}
-          <div
-            style={{
-              background: 'rgba(239, 68, 68, 0.2)',
-              borderRadius: '12px',
-              padding: '15px',
-              textAlign: 'center',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#ef4444',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {alerts.filter((alert) => alert.type === 'critical').length}
-            </div>
-            <div
-              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Critical
-            </div>
-          </div>
-
-          {/* Warning Alerts */}
-          <div
-            style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              borderRadius: '12px',
-              padding: '15px',
-              textAlign: 'center',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#f59e0b',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {alerts.filter((alert) => alert.type === 'warning').length}
-            </div>
-            <div
-              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Warning
-            </div>
-          </div>
-
-          {/* Info Alerts */}
-          <div
-            style={{
-              background: 'rgba(59, 130, 246, 0.2)',
-              borderRadius: '12px',
-              padding: '15px',
-              textAlign: 'center',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#3b82f6',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {alerts.filter((alert) => alert.type === 'info').length}
-            </div>
-            <div
-              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Info
-            </div>
-          </div>
-
-          {/* Total Alerts */}
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '15px',
-              textAlign: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#ffffff',
-                fontWeight: '700',
-                marginBottom: '5px',
-              }}
-            >
-              {alerts.length}
-            </div>
-            <div
-              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              Total
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Alerts Preview */}
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {alerts.map((alert, index) => (
-            <div
-              key={index}
-              style={{
-                background:
-                  alert.type === 'critical'
-                    ? 'rgba(239, 68, 68, 0.2)'
-                    : alert.type === 'warning'
-                      ? 'rgba(245, 158, 11, 0.2)'
-                      : 'rgba(59, 130, 246, 0.2)',
-                borderRadius: '12px',
-                padding: '20px',
-                border: `1px solid ${
-                  alert.type === 'critical'
-                    ? '#ef4444'
-                    : alert.type === 'warning'
-                      ? '#f59e0b'
-                      : '#3b82f6'
-                }`,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '15px',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '24px',
-                }}
-              >
-                {alert.type === 'critical'
-                  ? '🚨'
-                  : alert.type === 'warning'
-                    ? '⚠️'
-                    : 'ℹ️'}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#ffffff',
-                    marginBottom: '5px',
-                  }}
-                >
-                  {alert.title}
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    marginBottom: '5px',
-                  }}
-                >
-                  {alert.message}
-                </div>
-                <div
-                  style={{
-                    fontSize: '12px',
-                    color: 'rgba(255, 255, 255, 0.6)',
-                  }}
-                >
-                  {alert.timestamp}
-                </div>
-              </div>
-              {alert.actionRequired && (
-                <button
-                  style={{
-                    background:
-                      alert.type === 'critical'
-                        ? '#ef4444'
-                        : alert.type === 'warning'
-                          ? '#f59e0b'
-                          : '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '8px 16px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Action Required
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Management Load Details Modal - Information Only */}
-      {showLoadDetails && selectedLoadData && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: 'linear-gradient(135deg, #1e293b, #334155)',
-              borderRadius: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              padding: '40px',
-              maxWidth: '700px',
-              width: '90%',
-              maxHeight: '80vh',
-              overflow: 'auto',
-              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '30px',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  color: '#ffffff',
-                  margin: 0,
-                }}
-              >
-                Management Load Overview: {selectedLoadData.id}
-              </h3>
-              <button
-                onClick={() => setShowLoadDetails(false)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  cursor: 'pointer',
-                  fontSize: '20px',
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            <div style={{ display: 'grid', gap: '25px' }}>
-              {/* Load Information */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '25px',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Load Board Number
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#10b981',
-                      fontWeight: '700',
-                      fontFamily: 'monospace',
-                    }}
-                  >
-                    #{selectedLoadData.loadBoardNumber}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Broker
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.brokerName}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '25px',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Origin
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.origin}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Destination
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.destination}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '25px',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Rate
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      color: '#10b981',
-                      fontWeight: '700',
-                    }}
-                  >
-                    ${selectedLoadData.rate?.toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Status
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '16px',
-                      color: 'white',
-                      fontWeight: '600',
-                      background: getStatusColor(selectedLoadData.status),
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      display: 'inline-block',
-                    }}
-                  >
-                    {selectedLoadData.status}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '25px',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Distance
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.distance}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Equipment
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.equipment}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '25px',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Weight
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {selectedLoadData.weight}
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Pickup Date
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      color: '#ffffff',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {new Date(selectedLoadData.pickupDate).toLocaleDateString()}
-                  </div>
-                </div>
-              </div>
-
-              {selectedLoadData.dispatcherName && (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '25px',
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        marginBottom: '8px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                      }}
-                    >
-                      Assigned Dispatcher
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '18px',
-                        color: '#ffffff',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {selectedLoadData.dispatcherName}
-                    </div>
-                  </div>
-                  <div>
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        marginBottom: '8px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                      }}
-                    >
-                      Delivery Date
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '18px',
-                        color: '#ffffff',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {new Date(
-                        selectedLoadData.deliveryDate
-                      ).toLocaleDateString()}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Management Actions */}
-              <div
-                style={{
-                  marginTop: '20px',
-                  padding: '20px',
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(59, 130, 246, 0.2)',
-                  textAlign: 'center',
-                }}
-              >
-                <h4
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#ffffff',
-                    marginBottom: '15px',
-                  }}
-                >
-                  Management Actions
-                </h4>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '15px',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Link href='/dispatch' style={{ textDecoration: 'none' }}>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '10px 20px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      View in Dispatch Central
-                    </button>
-                  </Link>
-                  <Link href='/tracking' style={{ textDecoration: 'none' }}>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '10px 20px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Track Load
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       )}
+
+      {/* Quick Actions */}
+      <div className='card mb-6'>
+        <div className='mb-4 flex items-center gap-3'>
+          <span style={{ fontSize: '1.5rem' }}>⚡</span>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+            Quick Actions
+          </h3>
+        </div>
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+          {[
+            {
+              title: 'Dispatch Load',
+              subtitle: 'Assign new delivery',
+              icon: '🎯',
+              action: handleDispatchNewLoad,
+            },
+            {
+              title: 'Add Driver',
+              subtitle: 'Register new driver',
+              icon: '👥',
+              action: handleAddDriver,
+            },
+            {
+              title: 'Schedule Service',
+              subtitle: 'Book maintenance',
+              icon: '🔧',
+              action: handleScheduleMaintenance,
+            },
+            {
+              title: 'Generate Report',
+              subtitle: 'Analytics dashboard',
+              icon: '📈',
+              action: handleGenerateReport,
+            },
+          ].map((action, index) => (
+            <button
+              key={index}
+              onClick={action.action}
+              className='rounded-lg border border-gray-200 p-4 text-left transition-all hover:border-blue-300 hover:bg-blue-50'
+            >
+              <div className='mb-2 flex items-center gap-3'>
+                <span style={{ fontSize: '1.5rem' }}>{action.icon}</span>
+                <div style={{ fontWeight: '600' }}>{action.title}</div>
+              </div>
+              <div className='text-sm text-gray-600'>{action.subtitle}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Fleet Overview Grid */}
+      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3'>
+        {/* Today's Performance */}
+        <div className='card'>
+          <div className='mb-4 flex items-center gap-3'>
+            <span style={{ fontSize: '1.2rem' }}>📊</span>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              Today's Performance
+            </h3>
+          </div>
+          <MetricsGrid metrics={fleetMetrics} />
+        </div>
+
+        {/* Fleet Status */}
+        <div className='card'>
+          <div className='mb-4 flex items-center gap-3'>
+            <span style={{ fontSize: '1.2rem' }}>🚛</span>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              Fleet Status
+            </h3>
+          </div>
+          <VehicleStatusChart />
+        </div>
+
+        {/* Recent Activity */}
+        <div className='card'>
+          <div className='mb-4 flex items-center gap-3'>
+            <span style={{ fontSize: '1.2rem' }}>🕐</span>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              Live Activity
+            </h3>
+          </div>
+          <RecentActivity />
+        </div>
+      </div>
+
+      {/* Fleet Map and Notes */}
+      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3'>
+        {/* Fleet Map */}
+        <div className='card lg:col-span-2'>
+          <div className='mb-4 flex items-center justify-between'>
+            <div className='flex items-center gap-3'>
+              <span style={{ fontSize: '1.2rem' }}>🗺️</span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+                Real-time Fleet Tracking
+              </h3>
+            </div>
+            <span className='rounded-full border border-green-200 bg-green-100 px-3 py-1 text-sm font-medium text-green-700'>
+              {fleetMetrics.activeVehicles} Active Vehicles
+            </span>
+          </div>
+          <FleetMap />
+        </div>
+
+        {/* Command Notes */}
+        <div className='card'>
+          <div className='mb-4 flex items-center gap-3'>
+            <span style={{ fontSize: '1.2rem' }}>📝</span>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              Command Notes
+            </h3>
+          </div>
+          <StickyNote
+            section='dashboard'
+            entityId='fleet-overview'
+            entityName='Fleet Dashboard'
+          />
+        </div>
+      </div>
+
+      {/* Performance Analytics */}
+      <div className='card'>
+        <div className='mb-6 flex items-center gap-3'>
+          <span style={{ fontSize: '1.5rem' }}>🏆</span>
+          <div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              Performance Analytics
+            </h3>
+            <p className='text-sm text-gray-600'>Key operational metrics</p>
+          </div>
+        </div>
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+          {[
+            {
+              title: 'On-Time Delivery',
+              value: `${todaysMetrics.onTimeDelivery}%`,
+              change: '+2.1%',
+              icon: '🎯',
+            },
+            {
+              title: 'Customer Satisfaction',
+              value: `${todaysMetrics.customerSatisfaction}%`,
+              change: '+1.2%',
+              icon: '😊',
+            },
+            {
+              title: 'Profit Margin',
+              value: `${todaysMetrics.profitMargin}%`,
+              change: '+3.4%',
+              icon: '💰',
+            },
+          ].map((metric, index) => (
+            <div key={index} className='rounded-lg bg-gray-50 p-4 text-center'>
+              <div className='mb-2 text-4xl'>{metric.icon}</div>
+              <div className='mb-1 text-2xl font-bold text-gray-800'>
+                {metric.value}
+              </div>
+              <div className='mb-2 font-semibold text-gray-700'>
+                {metric.title}
+              </div>
+              <div className='text-sm font-medium text-green-600'>
+                {metric.change} from last week
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
