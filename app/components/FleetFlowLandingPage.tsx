@@ -105,7 +105,7 @@ export default function FleetFlowLandingPage() {
           <Logo />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href='/'>
+          <Link href='/dashboard'>
             <button
               style={{
                 background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
