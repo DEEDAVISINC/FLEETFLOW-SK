@@ -471,10 +471,10 @@ export default function ProfessionalNavigation() {
           <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
             <button
               style={{
-                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
                 color: 'white',
                 padding: '8px 14px',
-                border: 'none',
+                border: '2px solid #f4a832',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
@@ -482,6 +482,7 @@ export default function ProfessionalNavigation() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
+                boxShadow: '0 0 8px rgba(244, 168, 50, 0.3)',
               }}
             >
               🌊 GO WITH THE FLOW
@@ -726,7 +727,7 @@ export default function ProfessionalNavigation() {
                     opacity: '0.8',
                   }}
                 >
-                  👤 User Profile
+                  👤 User Profile Template
                 </Link>
                 <Link
                   href='/dialer'
@@ -1088,19 +1089,18 @@ export default function ProfessionalNavigation() {
 
                 {/* Quick Access Items */}
                 <div style={{ padding: '8px 0' }}>
-                  <Link
-                    href='/user-management'
-                    onClick={handleDropdownClose}
+                  <div
+                    onClick={() => handleSubDropdownClick('userprofileview')}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
                       padding: '12px 20px',
                       color: '#374151',
-                      textDecoration: 'none',
                       fontSize: '14px',
                       fontWeight: '500',
                       transition: 'background-color 0.2s ease',
+                      cursor: 'pointer',
                     }}
                     onMouseEnter={(e) =>
                       (e.target.style.backgroundColor =
@@ -1111,8 +1111,8 @@ export default function ProfessionalNavigation() {
                     }
                   >
                     <span style={{ fontSize: '16px' }}>👤</span>
-                    My Profile & Access
-                  </Link>
+                    My Profile & Access {activeSubDropdown === 'userprofileview' ? '🔽' : '▼'}
+                  </div>
 
                   <Link
                     href='/settings'
