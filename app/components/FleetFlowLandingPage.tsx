@@ -105,7 +105,23 @@ export default function FleetFlowLandingPage() {
           <Logo />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href='/dashboard'>
+          <Link href='/go-with-the-flow'>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
+                color: 'white',
+                border: '2px solid #f4a832',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 8px rgba(244, 168, 50, 0.3)',
+              }}
+            >
+              🌊 GO WITH THE FLOW
+            </button>
+          </Link>          <Link href='/dashboard'>
             <button
               style={{
                 background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -229,152 +245,225 @@ export default function FleetFlowLandingPage() {
         {/* Autoplay App Screenshots Video */}
         <FleetFlowAppVideo />
 
-        {/* Feature Cards */}
-        <div style={{ marginTop: '60px', marginBottom: '60px' }}>
-          <h2
-            style={{
-              fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-              fontWeight: 'bold',
-              marginBottom: '40px',
-              color: 'white',
-            }}
-          >
-            Complete Transportation Ecosystem
-          </h2>
-
+        {/* Go With the Flow Section */}
+        <div style={{ marginTop: '50px', marginBottom: '50px' }}>
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '30px',
-              maxWidth: '1200px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              border: '2px solid #f4a832',
+              padding: '35px',
+              maxWidth: '1000px',
               margin: '0 auto',
+              boxShadow: '0 8px 25px rgba(244, 168, 50, 0.3)',
             }}
           >
-            {[
-              {
-                icon: '🏛️',
-                title: 'Government Contracts',
-                description:
-                  'Access millions in government contracts and enterprise partnerships worth $25-50M annually.',
-              },
-              {
-                icon: '📊',
-                title: 'Live Load Tracking',
-                description:
-                  'Provide customers with real-time visibility through our advanced GPS tracking and ETA predictions.',
-              },
-              {
-                icon: '🚛',
-                title: 'Driver Operations',
-                description:
-                  'Streamline driver operations with our comprehensive mobile app and workflow management.',
-              },
-              {
-                icon: '🤝',
-                title: 'Carrier Network',
-                description:
-                  'Build a reliable carrier network with real-time FMCSA verification and performance scoring.',
-              },
-              {
-                icon: '💰',
-                title: 'Financial Automation',
-                description:
-                  'Automate your entire financial workflow with integrated billing, invoicing, and settlements.',
-              },
-              {
-                icon: '🎓',
-                title: 'FleetFlow University℠',
-                description:
-                  'Develop your team with our comprehensive training platform and certification programs.',
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+              <h2
                 style={{
-                  background: 'rgba(0,0,0,0.3)',
-                  backdropFilter: 'blur(15px)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '20px',
-                  padding: '35px',
-                  textAlign: 'center',
-                  position: 'relative',
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-                  overflow: 'hidden',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform =
-                    'translateY(-4px) scale(1.01)';
-                  e.currentTarget.style.boxShadow =
-                    '0 12px 30px rgba(59,130,246,0.2), 0 0 20px rgba(59,130,246,0.1)';
-                  e.currentTarget.style.border =
-                    '1px solid rgba(59,130,246,0.3)';
-                  e.currentTarget.style.background = 'rgba(59,130,246,0.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(0,0,0,0.3)';
-                  e.currentTarget.style.border =
-                    '1px solid rgba(255,255,255,0.2)';
-                  e.currentTarget.style.background = 'rgba(0,0,0,0.3)';
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  color: '#f4a832',
+                  marginBottom: '15px',
+                  textShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
                 }}
               >
-                <div
+                🌊 Go With the Flow
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.3rem',
+                  color: 'white',
+                  lineHeight: '1.6',
+                  marginBottom: '25px',
+                  fontWeight: '500',
+                }}
+              >
+                An advanced <strong style={{ color: '#f4a832' }}>instant marketplace</strong> - connecting shippers and drivers in real-time with AI-powered matching and dynamic pricing.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '25px',
+                marginBottom: '30px',
+              }}
+            >
+              {/* For Shippers */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.15)',
+                  borderRadius: '12px',
+                  padding: '25px',
+                  border: '1px solid rgba(59, 130, 246, 0.4)',
+                }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>📦</div>
+                  <h3
+                    style={{
+                      fontSize: '1.4rem',
+                      color: '#3b82f6',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    For Shippers
+                  </h3>
+                </div>
+                <ul
                   style={{
-                    fontSize: '2rem',
-                    marginBottom: '12px',
-                    filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.25))',
-                    transition: 'all 0.3s ease',
+                    color: 'white',
+                    fontSize: '1rem',
+                    lineHeight: '1.5',
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: 0,
                   }}
                 >
-                  {feature.icon}
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Request trucks instantly - no waiting
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    AI-powered fair pricing
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Real-time driver matching
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Live GPS tracking & updates
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    No long-term contracts required
+                  </li>
+                </ul>
+              </div>
+
+              {/* For Drivers */}
+              <div
+                style={{
+                  background: 'rgba(244, 168, 50, 0.15)',
+                  borderRadius: '12px',
+                  padding: '25px',
+                  border: '1px solid rgba(244, 168, 50, 0.4)',
+                }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🚛</div>
+                  <h3
+                    style={{
+                      fontSize: '1.4rem',
+                      color: '#f4a832',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    For Drivers
+                  </h3>
                 </div>
+                <ul
+                  style={{
+                    color: 'white',
+                    fontSize: '1rem',
+                    lineHeight: '1.5',
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: 0,
+                  }}
+                >
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Go online/offline instantly
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Find high-paying loads nearby
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Competitive market rates
+                  </li>
+                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Fast payment processing
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    Build your reputation & earnings
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginBottom: '25px',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                }}
+              >
                 <h3
                   style={{
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
+                    fontSize: '1.3rem',
+                    color: '#10b981',
                     marginBottom: '10px',
-                    color: 'white',
-                    textShadow: '0 0 8px rgba(255,255,255,0.25)',
-                    letterSpacing: '0.2px',
+                    fontWeight: '700',
                   }}
                 >
-                  {feature.title}
+                  🤖 Powered by Advanced AI
                 </h3>
                 <p
                   style={{
-                    fontSize: '0.85rem',
-                    color: 'rgba(255,255,255,0.85)',
-                    lineHeight: '1.6',
-                    fontWeight: '400',
-                    textShadow: '0 1px 5px rgba(0,0,0,0.3)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    lineHeight: '1.5',
+                    margin: 0,
                   }}
                 >
-                  {feature.description}
+                  Our intelligent system analyzes market conditions, traffic patterns, fuel costs, and demand in real-time to provide optimal pricing and instant matching.
                 </p>
-
-                {/* Subtle shimmer effect for feature cards */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: '-100%',
-                    width: '100%',
-                    height: '100%',
-                    background:
-                      'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)',
-                    animation: 'shimmer 6s ease-in-out infinite',
-                    borderRadius: '20px',
-                  }}
-                />
               </div>
-            ))}
+
+              <Link href='/go-with-the-flow'>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
+                    color: 'white',
+                    border: '2px solid #f4a832',
+                    padding: '15px 30px',
+                    borderRadius: '10px',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)'
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(244, 168, 50, 0.6)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'
+                    e.currentTarget.style.boxShadow = '0 0 15px rgba(244, 168, 50, 0.4)'
+                  }}
+                >
+                  🚀 Start Using Go With the Flow
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-
         {/* Who It's For Section */}
         <div style={{ marginBottom: '60px', maxWidth: '800px' }}>
           <h2

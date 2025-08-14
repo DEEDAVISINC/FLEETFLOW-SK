@@ -6,6 +6,7 @@ import AIAutomationDashboard from '../components/AIAutomationDashboard';
 import AIFlowPlatform from '../components/AIFlowPlatform';
 import AIHubCRMDashboard from '../components/AIHubCRMDashboard';
 import DetailedProspectViewer from '../components/DetailedProspectViewer';
+import PilotCarNetworkAI from '../components/PilotCarNetworkAI';
 import { Badge } from '../components/ui/badge';
 
 export default function AIHubPage() {
@@ -2205,6 +2206,9 @@ export default function AIHubPage() {
                     </>
                   )}
                 </div>
+
+                {/* FleetFlow Pilot Car Network AI */}
+                <PilotCarNetworkAI />
               </div>
             )}
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { shipperAccountService } from '../services/shipper-account-service';
 
 export default function GoWithTheFlow() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -16,6 +17,8 @@ export default function GoWithTheFlow() {
   >('idle');
   const [generatedQuotes, setGeneratedQuotes] = useState<any[]>([]);
   const [quoteProgress, setQuoteProgress] = useState(0);
+  const [accountCreationResult, setAccountCreationResult] = useState<any>(null);
+  const [showAccountSuccess, setShowAccountSuccess] = useState(false);
 
   // Fetch system data on component mount
   useEffect(() => {
@@ -214,6 +217,15 @@ export default function GoWithTheFlow() {
 
     try {
       const formData = new FormData(e.target as HTMLFormElement);
+
+      // Extract contact information
+      const contactInfo = {
+        contactName: formData.get('contactName') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        companyName: formData.get('companyName') as string,
+      };
+
       const loadRequest = {
         action: 'request-truck',
         loadRequest: {
@@ -265,9 +277,48 @@ export default function GoWithTheFlow() {
         setQuoteProgress(100);
         setQuoteStatus('completed');
         setGeneratedQuotes(aiQuotes);
-        setNotificationMessage(
-          `Request submitted successfully! Load ID: ${result.load.id}. Our team will contact you within 2 hours.`
-        );
+
+        // Step 4: Create shipper account automatically
+        const accountResult =
+          await shipperAccountService.createAccountFromQuoteRequest(
+            loadRequest.loadRequest,
+            contactInfo
+          );
+
+        if (accountResult.success) {
+          setAccountCreationResult(accountResult);
+          setShowAccountSuccess(true);
+
+          // Update the account with generated quotes
+          const latestShipment =
+            accountResult.account!.shipmentHistory[
+              accountResult.account!.shipmentHistory.length - 1
+            ];
+          await shipperAccountService.updateAccountWithQuotes(
+            accountResult.account!.id,
+            latestShipment.id,
+            aiQuotes.map((quote) => ({
+              id: quote.id,
+              carrierId: quote.carrier.toLowerCase().replace(/\s+/g, '-'),
+              carrierName: quote.carrier,
+              rate: quote.rate,
+              eta: quote.eta,
+              confidence: quote.confidence,
+              features: quote.features,
+              validUntil: new Date(
+                Date.now() + 24 * 60 * 60 * 1000
+              ).toISOString(), // 24 hours
+            }))
+          );
+
+          setNotificationMessage(
+            `🎉 ${accountResult.message} Load ID: ${result.load.id}. Portal access sent to ${contactInfo.email}!`
+          );
+        } else {
+          setNotificationMessage(
+            `Request submitted successfully! Load ID: ${result.load.id}. Our team will contact you within 2 hours.`
+          );
+        }
 
         // Refresh system data
         fetchSystemData();
@@ -578,7 +629,7 @@ export default function GoWithTheFlow() {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  🚛 FLEETFLOW™ FREIGHT SOLUTIONS PORTAL
+                  🚛 FLEETFLOW™ "GO WITH THE FLOW"
                 </h1>
                 <div
                   style={{
@@ -1573,6 +1624,169 @@ export default function GoWithTheFlow() {
                           </div>
                         </div>
 
+                        {/* Contact Information Section */}
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                          }}
+                        >
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              marginBottom: '16px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            👤 Contact Information
+                          </h3>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(250px, 1fr))',
+                              gap: '16px',
+                            }}
+                          >
+                            <div>
+                              <label
+                                style={{
+                                  display: 'block',
+                                  color: 'white',
+                                  marginBottom: '8px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Contact Name *
+                              </label>
+                              <input
+                                type='text'
+                                name='contactName'
+                                required
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '8px',
+                                  color: 'white',
+                                  fontSize: '14px',
+                                }}
+                                placeholder='Your full name'
+                              />
+                            </div>
+                            <div>
+                              <label
+                                style={{
+                                  display: 'block',
+                                  color: 'white',
+                                  marginBottom: '8px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Email Address *
+                              </label>
+                              <input
+                                type='email'
+                                name='email'
+                                required
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '8px',
+                                  color: 'white',
+                                  fontSize: '14px',
+                                }}
+                                placeholder='your@email.com'
+                              />
+                            </div>
+                            <div>
+                              <label
+                                style={{
+                                  display: 'block',
+                                  color: 'white',
+                                  marginBottom: '8px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Phone Number
+                              </label>
+                              <input
+                                type='tel'
+                                name='phone'
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '8px',
+                                  color: 'white',
+                                  fontSize: '14px',
+                                }}
+                                placeholder='(555) 123-4567'
+                              />
+                            </div>
+                            <div>
+                              <label
+                                style={{
+                                  display: 'block',
+                                  color: 'white',
+                                  marginBottom: '8px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Company Name
+                              </label>
+                              <input
+                                type='text'
+                                name='companyName'
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '8px',
+                                  color: 'white',
+                                  fontSize: '14px',
+                                }}
+                                placeholder='Your company (optional)'
+                              />
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              marginTop: '16px',
+                              padding: '12px',
+                              background: 'rgba(59, 130, 246, 0.1)',
+                              borderRadius: '8px',
+                              border: '1px solid rgba(59, 130, 246, 0.2)',
+                            }}
+                          >
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '13px',
+                                margin: '0',
+                                lineHeight: '1.4',
+                              }}
+                            >
+                              💡 <strong>Account Creation:</strong> A FleetFlow
+                              shipper account will be automatically created for
+                              you, giving you access to track shipments, request
+                              future quotes, and manage your logistics needs
+                              anytime!
+                            </p>
+                          </div>
+                        </div>
+
                         <button
                           style={{
                             width: '100%',
@@ -2290,6 +2504,255 @@ export default function GoWithTheFlow() {
           </div>
         </div>
       </div>
+
+      {/* Account Creation Success Modal */}
+      {showAccountSuccess && accountCreationResult && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowAccountSuccess(false)}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #1e293b, #334155)',
+              borderRadius: '20px',
+              padding: '32px',
+              maxWidth: '600px',
+              width: '90%',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div
+                style={{
+                  fontSize: '48px',
+                  marginBottom: '16px',
+                }}
+              >
+                🎉
+              </div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                Welcome to FleetFlow!
+              </h2>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '16px',
+                  margin: '0',
+                }}
+              >
+                Your shipper account has been created successfully
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '24px',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                👤 Account Details
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Company:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.companyName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Contact:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.contactName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Email:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.email}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Account ID:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.id}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                🌐 Your FleetFlow Portal
+              </h4>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '14px',
+                  marginBottom: '16px',
+                  lineHeight: '1.5',
+                }}
+              >
+                Access your dedicated shipper portal to track shipments, request
+                quotes, and manage your logistics needs anytime!
+              </p>
+              <button
+                onClick={() =>
+                  window.open(accountCreationResult.portalUrl, '_blank')
+                }
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  width: '100%',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                🚀 Access Your Shipper Portal
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowAccountSuccess(false)}
+                style={{
+                  flex: 1,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                Continue Browsing
+              </button>
+              <button
+                onClick={() => {
+                  setShowAccountSuccess(false);
+                  setActiveTab('request');
+                  // Reset form
+                  setQuoteStatus('idle');
+                  setGeneratedQuotes([]);
+                  setQuoteProgress(0);
+                }}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 20px rgba(16, 185, 129, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                🚚 Request Another Quote
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

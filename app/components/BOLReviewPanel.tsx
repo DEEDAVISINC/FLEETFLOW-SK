@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface BOLSubmission {
   id: string;
@@ -88,9 +88,9 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
-        setSubmissions(result.submissions.filter((sub: BOLSubmission) => 
+        setSubmissions(result.submissions.filter((sub: BOLSubmission) =>
           sub.status === 'broker_review' || sub.status === 'submitted'
         ));
       }
@@ -181,10 +181,10 @@ Professional Freight & Logistics Solutions`,
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
-        alert(approved ? 
-          `✅ BOL approved! Invoice ${result.invoiceId} sent to vendor via customized email.` : 
+        alert(approved ?
+          `✅ BOL approved! Invoice ${result.invoiceId} sent to vendor via customized email.` :
           '❌ BOL rejected. Driver has been notified.');
         setSelectedSubmission(null);
         setReviewNotes('');
@@ -226,7 +226,7 @@ Professional Freight & Logistics Solutions`,
   const updateCharge = (type: 'additionalCharges' | 'deductions', index: number, field: 'description' | 'amount', value: string | number) => {
     setAdjustments(prev => ({
       ...prev,
-      [type]: prev[type].map((item, i) => 
+      [type]: prev[type].map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -432,8 +432,8 @@ For questions regarding this invoice, please contact our billing department.`;
             padding: '30px',
             maxWidth: showEmailEditor ? '1200px' : '800px',
             width: '100%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
+            maxHeight: '85vh',
+            overflowY: 'visible',
             position: 'relative'
           }}>
             {/* Close Button */}
@@ -463,9 +463,17 @@ For questions regarding this invoice, please contact our billing department.`;
               📋 BOL Review - {selectedSubmission.loadIdentifierId}
             </h2>
 
-            <div style={{ display: 'flex', gap: '30px' }}>
-              {/* Left Column - BOL Details */}
-              <div style={{ flex: showEmailEditor ? '1' : '2' }}>
+            {/* Scrollable Content Area */}
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              maxHeight: 'calc(85vh - 120px)',
+              paddingRight: '10px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', gap: '30px' }}>
+                {/* Left Column - BOL Details */}
+                <div style={{ flex: showEmailEditor ? '1' : '2' }}>
                 {/* BOL Details */}
                 <div style={{
                   background: '#f9fafb',
@@ -706,11 +714,13 @@ For questions regarding this invoice, please contact our billing department.`;
                   </div>
                 </div>
               )}
+              </div>
             </div>
 
-            {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
+            {/* Action Buttons - Fixed at bottom */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', marginTop: '20px', paddingBottom: '20px' }}>
               <button
+                type="button"
                 onClick={() => setShowEmailEditor(!showEmailEditor)}
                 style={{
                   background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -720,7 +730,18 @@ For questions regarding this invoice, please contact our billing department.`;
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(-1px)';
+                  target.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(0)';
+                  target.style.boxShadow = 'none';
                 }}
               >
                 {showEmailEditor ? '📋 Hide Email Editor' : '📧 Customize Email'}
@@ -728,6 +749,7 @@ For questions regarding this invoice, please contact our billing department.`;
 
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
+                  type="button"
                   onClick={() => handleApproval(false)}
                   disabled={loading}
                   style={{
@@ -739,12 +761,26 @@ For questions regarding this invoice, please contact our billing department.`;
                     fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    opacity: loading ? 0.6 : 1
+                    opacity: loading ? 0.6 : 1,
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loading) {
+                      const target = e.target as HTMLElement;
+                      target.style.transform = 'translateY(-1px)';
+                      target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(0)';
+                    target.style.boxShadow = 'none';
                   }}
                 >
                   ❌ Reject BOL
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleApproval(true)}
                   disabled={loading}
                   style={{
@@ -756,7 +792,20 @@ For questions regarding this invoice, please contact our billing department.`;
                     fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    opacity: loading ? 0.6 : 1
+                    opacity: loading ? 0.6 : 1,
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loading) {
+                      const target = e.target as HTMLElement;
+                      target.style.transform = 'translateY(-1px)';
+                      target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(0)';
+                    target.style.boxShadow = 'none';
                   }}
                 >
                   ✅ Approve & Send Custom Email

@@ -9,6 +9,7 @@ import PortAuthorityAccessWidget from '../components/PortAuthorityAccessWidget';
 import RouteOptimizerDashboard from '../components/RouteOptimizerDashboard';
 import RouteSharing from '../components/RouteSharing';
 import SeasonalLoadPlanningWidget from '../components/SeasonalLoadPlanningWidget';
+import { HeavyHaulPermitService } from '../services/heavy-haul-permit-service';
 import { OptimizedRoute } from '../services/route-optimization';
 import {
   UniversalQuote,
@@ -65,6 +66,7 @@ export default function RoutesPage() {
   const [savedQuotes, setSavedQuotes] = useState<UniversalQuote[]>([]);
   const [selectedQuoteForRouting, setSelectedQuoteForRouting] =
     useState<UniversalQuote | null>(null);
+  const [heavyHaulService] = useState(() => new HeavyHaulPermitService());
   const [routePlanningInProgress, setRoutePlanningInProgress] = useState<
     string[]
   >([]);
@@ -3071,6 +3073,411 @@ export default function RoutesPage() {
                 </Link>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Specialized Routing View */}
+        {activeView === 'specialized' && (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+          >
+            {/* Specialized Routing Header */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '32px',
+                }}
+              >
+                <div>
+                  <h2
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                    }}
+                  >
+                    🚛 Specialized Equipment Routing
+                  </h2>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>
+                    Heavy haul, oversized loads, and specialized equipment route
+                    planning
+                  </p>
+                </div>
+              </div>
+
+              {/* Specialized Sub-Tabs */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginBottom: '24px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {[
+                  { id: 'permits', label: 'Heavy Haul Permits', icon: '📋' },
+                  { id: 'hazmat', label: 'Hazmat Routing', icon: '☢️' },
+                  { id: 'seasonal', label: 'Seasonal Planning', icon: '🌤️' },
+                  { id: 'weather', label: 'Weather Integration', icon: '🌦️' },
+                  { id: 'ports', label: 'Port Authority', icon: '🚢' },
+                ].map((subTab) => (
+                  <button
+                    key={subTab.id}
+                    onClick={() => setSpecializedSubTab(subTab.id as any)}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      background:
+                        specializedSubTab === subTab.id
+                          ? 'rgba(255, 255, 255, 0.9)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                      color:
+                        specializedSubTab === subTab.id ? '#4c1d95' : 'white',
+                    }}
+                  >
+                    <span style={{ marginRight: '6px' }}>{subTab.icon}</span>
+                    {subTab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Specialized Content */}
+              {specializedSubTab === 'permits' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '48px',
+                        background: 'rgba(220, 38, 38, 0.2)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      🚛
+                    </div>
+                    <div>
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: '600',
+                          margin: '0 0 8px 0',
+                        }}
+                      >
+                        Heavy Haul & Oversized Load Routing
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          margin: 0,
+                          fontSize: '14px',
+                        }}
+                      >
+                        Specialized routing for loads requiring permits, escort
+                        vehicles, and custom route planning
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Heavy Haul Features */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(300px, 1fr))',
+                      gap: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    {[
+                      {
+                        title: 'Oversize Load Analysis',
+                        description:
+                          'Width > 8.5ft, Height > 13.5ft, Length > 75ft',
+                        icon: '📏',
+                        color: '#dc2626',
+                      },
+                      {
+                        title: 'Overweight Load Analysis',
+                        description: 'Weight > 80,000 lbs gross vehicle weight',
+                        icon: '⚖️',
+                        color: '#ea580c',
+                      },
+                      {
+                        title: 'Multi-State Permits',
+                        description:
+                          'Automated permit applications for all 50 states',
+                        icon: '🗺️',
+                        color: '#7c3aed',
+                      },
+                      {
+                        title: 'Route Restrictions',
+                        description:
+                          'Bridge clearances, weight limits, time restrictions',
+                        icon: '🚧',
+                        color: '#0891b2',
+                      },
+                    ].map((feature, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '8px',
+                          padding: '16px',
+                          border: `1px solid ${feature.color}40`,
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '20px',
+                              background: `${feature.color}20`,
+                              padding: '8px',
+                              borderRadius: '6px',
+                            }}
+                          >
+                            {feature.icon}
+                          </span>
+                          <h4
+                            style={{
+                              color: 'white',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              margin: 0,
+                            }}
+                          >
+                            {feature.title}
+                          </h4>
+                        </div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '13px',
+                            margin: 0,
+                          }}
+                        >
+                          {feature.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Heavy Haul Planning Tool */}
+                  <div
+                    style={{
+                      background: 'rgba(220, 38, 38, 0.1)',
+                      borderRadius: '12px',
+                      padding: '24px',
+                      border: '1px solid rgba(220, 38, 38, 0.3)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      🚚 Heavy Haul Route Planner
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Load Dimensions
+                        </label>
+                        <input
+                          type='text'
+                          placeholder='Length x Width x Height (ft)'
+                          style={{
+                            width: '100%',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'white',
+                            fontSize: '13px',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Total Weight (lbs)
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='80,000+'
+                          style={{
+                            width: '100%',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'white',
+                            fontSize: '13px',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Equipment Type
+                        </label>
+                        <select
+                          style={{
+                            width: '100%',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'white',
+                            fontSize: '13px',
+                          }}
+                        >
+                          <option value=''>Select Equipment</option>
+                          <option value='lowboy'>Lowboy Trailer</option>
+                          <option value='rgn'>RGN (Removable Gooseneck)</option>
+                          <option value='step-deck'>Step Deck</option>
+                          <option value='multi-axle'>Multi-Axle Trailer</option>
+                          <option value='modular'>Modular Trailer</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div
+                      style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}
+                    >
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #dc2626, #b91c1c)',
+                          color: 'white',
+                          padding: '12px 24px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.transform = 'translateY(-2px)')
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.transform = 'translateY(0)')
+                        }
+                      >
+                        🔍 Analyze Heavy Haul Requirements
+                      </button>
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #14b8a6, #0891b2)',
+                          color: 'white',
+                          padding: '12px 24px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.transform = 'translateY(-2px)')
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.transform = 'translateY(0)')
+                        }
+                        onClick={() => {
+                          // Redirect to AI Flow Pilot Car Network
+                          window.open('/ai#pilot-car-network', '_blank');
+                        }}
+                      >
+                        🚗 FleetFlow Pilot Car Network
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {specializedSubTab === 'hazmat' && (
+                <HazmatRouteComplianceWidget />
+              )}
+              {specializedSubTab === 'seasonal' && (
+                <SeasonalLoadPlanningWidget />
+              )}
+              {specializedSubTab === 'weather' && (
+                <AdvancedWeatherIntegration />
+              )}
+            </div>
           </div>
         )}
       </div>

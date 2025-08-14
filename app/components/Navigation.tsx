@@ -715,7 +715,7 @@ export default function ProfessionalNavigation() {
                   🤖 AI Company Dashboard
                 </Link>
                 <Link
-                  href='/settings'
+                  href='/user-profile'
                   onClick={handleDropdownClose}
                   style={{
                     display: 'block',
@@ -727,7 +727,7 @@ export default function ProfessionalNavigation() {
                     opacity: '0.8',
                   }}
                 >
-                  👤 User Profile Template
+                  👤 User Profile
                 </Link>
                 <Link
                   href='/dialer'
@@ -1111,7 +1111,8 @@ export default function ProfessionalNavigation() {
                     }
                   >
                     <span style={{ fontSize: '16px' }}>👤</span>
-                    My Profile & Access {activeSubDropdown === 'userprofileview' ? '🔽' : '▼'}
+                    My Profile & Access{' '}
+                    {activeSubDropdown === 'userprofileview' ? '🔽' : '▼'}
                   </div>
 
                   <Link

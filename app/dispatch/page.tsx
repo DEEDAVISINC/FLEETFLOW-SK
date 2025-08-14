@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
-import EnhancedLoadBoard from '../components/EnhancedLoadBoard';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
 import { getCurrentUser } from '../config/access';
 import { schedulingService } from '../scheduling/service';
+import GoWithFlowAutomationService from '../services/GoWithFlowAutomationService';
 import {
   ensureUniqueKey,
   getAllInvoices,
@@ -140,6 +140,20 @@ export default function DispatchCentral() {
   // Current driver being viewed in Workflow Center
   const [currentDriverIndex, setCurrentDriverIndex] = useState(0);
 
+  // Go with the Flow Automation Service
+  const [automationService] = useState(() =>
+    GoWithFlowAutomationService.getInstance()
+  );
+  const [automatedActivities, setAutomatedActivities] = useState([]);
+  const [systemStatus, setSystemStatus] = useState({
+    autoMatchSuccessRate: 94,
+    avgResponseTime: 2.3,
+    activeBOLWorkflows: 12,
+    systemUptime: 99.8,
+    totalAutomatedLoads: 847,
+    activeDrivers: 24,
+  });
+
   // Driver Schedule Modal
   const [showDriverScheduleModal, setShowDriverScheduleModal] = useState(false);
   const [modalDriverData, setModalDriverData] = useState<any>(null);
@@ -151,6 +165,20 @@ export default function DispatchCentral() {
   useEffect(() => {
     const currentUser = getCurrentUser();
     setUser(currentUser);
+
+    // Initialize Go with the Flow automation service
+    if (automationService) {
+      setAutomatedActivities(automationService.getActivities());
+      setSystemStatus(automationService.getSystemStatus());
+
+      // Set up real-time activity updates (in real app, this would be WebSocket)
+      const activityInterval = setInterval(() => {
+        setAutomatedActivities(automationService.getActivities());
+        setSystemStatus(automationService.getSystemStatus());
+      }, 2000);
+
+      return () => clearInterval(activityInterval);
+    }
 
     if (currentUser) {
       // Get loads for this tenant/dispatcher using multi-tenant filtering
@@ -1075,7 +1103,7 @@ export default function DispatchCentral() {
               >
                 <input
                   type='text'
-                  placeholder='Search all loads...'
+                  placeholder='Search dispatches...'
                   style={{
                     padding: '8px 12px',
                     borderRadius: '8px',
@@ -2538,86 +2566,6 @@ export default function DispatchCentral() {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* All Loads Section */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  padding: '20px',
-                  marginBottom: '15px',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '15px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      margin: 0,
-                    }}
-                  >
-                    📋 All Loads
-                  </h3>
-                  <div style={{ display: 'flex', gap: '15px' }}>
-                    <button
-                      style={{
-                        padding: '8px 16px',
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      + Add Load
-                    </button>
-                    <button
-                      style={{
-                        padding: '8px 16px',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        color: 'white',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      🤖 AI Match
-                    </button>
-                  </div>
-                </div>
-
-                {filteredLoads.length === 0 ? (
-                  <div
-                    style={{
-                      padding: '50px',
-                      textAlign: 'center',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '18px',
-                    }}
-                  >
-                    🚛 No loads available. Ready for new assignments!
-                  </div>
-                ) : (
-                  <div>
-                    {/* Replace hardcoded load board with EnhancedLoadBoard */}
-                    <EnhancedLoadBoard />
-                  </div>
-                )}
               </div>
             </div>
           )}

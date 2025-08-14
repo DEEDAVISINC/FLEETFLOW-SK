@@ -605,15 +605,15 @@ export default function EnhancedLoadBoard() {
               🔄 Loading real-time load data...
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '8px' }}>
               {filteredLoads.map((load, index) => (
                 <div
                   key={load.id}
                   style={{
                     background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '16px',
+                    borderRadius: '12px',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                    padding: '20px',
+                    padding: '12px',
                     transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => {
@@ -631,7 +631,7 @@ export default function EnhancedLoadBoard() {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      marginBottom: '16px',
+                      marginBottom: '8px',
                     }}
                   >
                     <div>
@@ -679,8 +679,8 @@ export default function EnhancedLoadBoard() {
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr',
-                      gap: '16px',
-                      marginBottom: '16px',
+                      gap: '8px',
+                      marginBottom: '8px',
                     }}
                   >
                     <div>
@@ -718,8 +718,8 @@ export default function EnhancedLoadBoard() {
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr 1fr',
-                      gap: '16px',
-                      marginBottom: '16px',
+                      gap: '8px',
+                      marginBottom: '8px',
                     }}
                   >
                     <div>

@@ -4,6 +4,22 @@ const nextConfig = {
 
   // Webpack config for development
   webpack: (config, { dev, isServer }) => {
+    // Exclude backup and broken files from webpack compilation
+    config.module.rules.push({
+      test: /\.(ts|tsx|js|jsx)$/,
+      exclude: [
+        /EMERGENCY_BACKUP_/,
+        /-backup\./,
+        /-broken\./,
+        /-old\./,
+        /_backup\./,
+        /_broken\./,
+        /_old\./,
+        /_corrupted\./,
+        /app-production/,
+      ],
+    });
+
     if (dev && !isServer) {
       // Inject error suppression at the very beginning of the client bundle
       const originalEntry = config.entry;

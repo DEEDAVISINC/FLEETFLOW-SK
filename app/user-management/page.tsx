@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import UserProfileWorkflowService, {
+  TrainingAssignment,
+  UserProfileWorkflowData,
+} from '../services/UserProfileWorkflowService';
 
 // Comprehensive mock users with ALL detailed information + drivers with carrier onboarding
 const mockUsers = [
@@ -2327,6 +2331,12 @@ export default function UserManagement() {
   const [userPermissions, setUserPermissions] = useState<{
     [key: string]: boolean;
   }>({});
+  const [userWorkflowData, setUserWorkflowData] = useState<{
+    [userId: string]: UserProfileWorkflowData;
+  }>({});
+  const [showTrainingAssignment, setShowTrainingAssignment] = useState(false);
+
+  const workflowService = UserProfileWorkflowService.getInstance();
 
   const filteredUsers = mockUsers.filter(
     (user) =>
@@ -2345,6 +2355,18 @@ export default function UserManagement() {
       );
     }
   }, [currentUser]);
+
+  // Load workflow data for all users
+  useEffect(() => {
+    const workflowData: { [userId: string]: UserProfileWorkflowData } = {};
+    mockUsers.forEach((user) => {
+      const userData = workflowService.getUserProfileWorkflow(user.id);
+      if (userData) {
+        workflowData[user.id] = userData;
+      }
+    });
+    setUserWorkflowData(workflowData);
+  }, [workflowService]);
 
   const isDriver = currentUser?.departmentCode === 'DM';
   const workflow = isDriver
@@ -2403,6 +2425,76 @@ export default function UserManagement() {
     return (
       JSON.stringify(originalPermissions) !== JSON.stringify(userPermissions)
     );
+  };
+
+  // Handle training assignment
+  const handleAssignTraining = (userId: string, moduleIds: string[]) => {
+    const availableModules = workflowService.getAvailableModules();
+    const assignments: TrainingAssignment[] = moduleIds
+      .map((moduleId, index) => {
+        const module = availableModules.find((m) => m.id === moduleId);
+        if (!module) return null;
+
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30 * (index + 1));
+
+        return {
+          moduleId: module.id,
+          moduleName: module.name,
+          assignedDate: new Date().toISOString().split('T')[0],
+          dueDate: dueDate.toISOString().split('T')[0],
+          priority: index === 0 ? 'Critical' : index === 1 ? 'High' : 'Medium',
+          assignedBy: 'ADMIN_MANUAL_ASSIGN',
+          instructor: module.instructor,
+          status: 'assigned',
+        } as TrainingAssignment;
+      })
+      .filter(Boolean) as TrainingAssignment[];
+
+    workflowService.assignTrainingToUser(userId, assignments);
+
+    // Refresh workflow data
+    const userData = workflowService.getUserProfileWorkflow(userId);
+    if (userData) {
+      setUserWorkflowData((prev) => ({
+        ...prev,
+        [userId]: userData,
+      }));
+    }
+  };
+
+  // Handle auto-assign role-based FleetFlow University training
+  const handleAutoAssignTraining = (userId: string, departmentCode: string) => {
+    const roleTrainingMap: Record<string, string[]> = {
+      DC: [
+        'fleetflow_technology_systems',
+        'fleetflow_dispatch_mastery',
+        'fleetflow_workflow_ecosystem',
+        'fleetflow_compliance_training',
+      ], // Dispatcher - FleetFlow system training
+      BB: [
+        'fleetflow_technology_systems',
+        'fleetflow_broker_mastery',
+        'fleetflow_customer_service',
+        'fleetflow_financial_management',
+      ], // Broker - FleetFlow system training
+      DM: [
+        'fleetflow_technology_systems',
+        'fleetflow_compliance_training',
+        'fleetflow_sms_notifications',
+      ], // Driver - FleetFlow system training
+      MGR: [
+        'fleetflow_admin_management',
+        'fleetflow_analytics_reporting',
+        'fleetflow_workflow_ecosystem',
+        'fleetflow_financial_management',
+      ], // Manager - FleetFlow system training
+    };
+
+    const moduleIds = roleTrainingMap[departmentCode] || [];
+    if (moduleIds.length > 0) {
+      handleAssignTraining(userId, moduleIds);
+    }
   };
 
   if (!currentUser) {
@@ -3104,171 +3196,403 @@ export default function UserManagement() {
               {/* Role-based onboarding status */}
               {currentUser.departmentCode === 'MGR' ? (
                 // Admin/Manager view - shows team overview
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                  <div style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#3b82f6', fontSize: '20px', fontWeight: 'bold' }}>7</div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>🔄 Active Workflows</div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#3b82f6',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      7
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      🔄 Active Workflows
+                    </div>
                   </div>
-                  <div style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#f59e0b', fontSize: '20px', fontWeight: 'bold' }}>3</div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>⏳ Pending Approvals</div>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      3
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      ⏳ Pending Approvals
+                    </div>
                   </div>
-                  <div style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#10b981', fontSize: '20px', fontWeight: 'bold' }}>12</div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>✅ Completed</div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      12
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      ✅ Completed
+                    </div>
                   </div>
-                  <div style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#ef4444', fontSize: '20px', fontWeight: 'bold' }}>2</div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}>⚠️ Stuck/Delayed</div>
+                  <div
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#ef4444',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      2
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '10px',
+                      }}
+                    >
+                      ⚠️ Stuck/Delayed
+                    </div>
                   </div>
                 </div>
               ) : currentUser.departmentCode === 'DM' ? (
                 // Driver view - shows individual progress
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
                       DRIVER ONBOARDING
                     </span>
-                    <span style={{ color: '#10b981', fontSize: '11px', fontWeight: 'bold' }}>
+                    <span
+                      style={{
+                        color: '#10b981',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       100% COMPLETE
                     </span>
                   </div>
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '6px',
-                    height: '8px',
-                    overflow: 'hidden',
-                    marginBottom: '8px'
-                  }}>
-                    <div style={{
-                      background: 'linear-gradient(90deg, #10b981, #059669)',
-                      height: '100%',
-                      width: '100%',
-                      borderRadius: '6px'
-                    }} />
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '6px',
+                      height: '8px',
+                      overflow: 'hidden',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'linear-gradient(90deg, #10b981, #059669)',
+                        height: '100%',
+                        width: '100%',
+                        borderRadius: '6px',
+                      }}
+                    />
                   </div>
-                  <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
+                  <div
+                    style={{ display: 'flex', gap: '8px', fontSize: '10px' }}
+                  >
                     <span style={{ color: '#10b981' }}>✅ Profile Setup</span>
                     <span style={{ color: '#10b981' }}>✅ Document Upload</span>
-                    <span style={{ color: '#10b981' }}>✅ Equipment Assignment</span>
+                    <span style={{ color: '#10b981' }}>
+                      ✅ Equipment Assignment
+                    </span>
                     <span style={{ color: '#10b981' }}>✅ Portal Access</span>
                   </div>
                 </div>
-              ) : currentUser.departmentCode === 'BB' || currentUser.departmentCode === 'DC' || currentUser.departmentCode === 'MGR' || currentUser.departmentCode === 'CS' ? (
+              ) : currentUser.departmentCode === 'BB' ||
+                currentUser.departmentCode === 'DC' ||
+                currentUser.departmentCode === 'MGR' ||
+                currentUser.departmentCode === 'CS' ? (
                 // Internal Staff view - shows ICA onboarding progress
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
                       ICA ONBOARDING
                     </span>
-                    <span style={{ color: '#10b981', fontSize: '11px', fontWeight: 'bold' }}>
-                      {currentUser.departmentCode === 'MGR' ? '100% COMPLETE' :
-                       currentUser.departmentCode === 'BB' ? '70% COMPLETE' :
-                       currentUser.departmentCode === 'DC' ? '40% COMPLETE' : '20% COMPLETE'}
+                    <span
+                      style={{
+                        color: '#10b981',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {currentUser.departmentCode === 'MGR'
+                        ? '100% COMPLETE'
+                        : currentUser.departmentCode === 'BB'
+                          ? '70% COMPLETE'
+                          : currentUser.departmentCode === 'DC'
+                            ? '40% COMPLETE'
+                            : '20% COMPLETE'}
                     </span>
                   </div>
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '6px',
-                    height: '8px',
-                    overflow: 'hidden',
-                    marginBottom: '8px'
-                  }}>
-                    <div style={{
-                      background: currentUser.departmentCode === 'MGR' ? 'linear-gradient(90deg, #10b981, #059669)' :
-                                  currentUser.departmentCode === 'BB' ? 'linear-gradient(90deg, #3b82f6, #2563eb)' :
-                                  currentUser.departmentCode === 'DC' ? 'linear-gradient(90deg, #f59e0b, #d97706)' :
-                                  'linear-gradient(90deg, #ef4444, #dc2626)',
-                      height: '100%',
-                      width: currentUser.departmentCode === 'MGR' ? '100%' :
-                             currentUser.departmentCode === 'BB' ? '70%' :
-                             currentUser.departmentCode === 'DC' ? '40%' : '20%',
-                      borderRadius: '6px'
-                    }} />
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '6px',
+                      height: '8px',
+                      overflow: 'hidden',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background:
+                          currentUser.departmentCode === 'MGR'
+                            ? 'linear-gradient(90deg, #10b981, #059669)'
+                            : currentUser.departmentCode === 'BB'
+                              ? 'linear-gradient(90deg, #3b82f6, #2563eb)'
+                              : currentUser.departmentCode === 'DC'
+                                ? 'linear-gradient(90deg, #f59e0b, #d97706)'
+                                : 'linear-gradient(90deg, #ef4444, #dc2626)',
+                        height: '100%',
+                        width:
+                          currentUser.departmentCode === 'MGR'
+                            ? '100%'
+                            : currentUser.departmentCode === 'BB'
+                              ? '70%'
+                              : currentUser.departmentCode === 'DC'
+                                ? '40%'
+                                : '20%',
+                        borderRadius: '6px',
+                      }}
+                    />
                   </div>
-                  <div style={{ display: 'flex', gap: '6px', fontSize: '9px', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '6px',
+                      fontSize: '9px',
+                      flexWrap: 'wrap',
+                    }}
+                  >
                     <span style={{ color: '#10b981' }}>✅ Personal Info</span>
                     <span style={{ color: '#10b981' }}>✅ Experience</span>
-                    <span style={{ color: currentUser.departmentCode === 'CS' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
-                      {currentUser.departmentCode === 'CS' ? '⏳' : '✅'} Background
+                    <span
+                      style={{
+                        color:
+                          currentUser.departmentCode === 'CS'
+                            ? 'rgba(255, 255, 255, 0.4)'
+                            : '#10b981',
+                      }}
+                    >
+                      {currentUser.departmentCode === 'CS' ? '⏳' : '✅'}{' '}
+                      Background
                     </span>
-                    <span style={{ color: currentUser.departmentCode === 'CS' || currentUser.departmentCode === 'DC' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
-                      {currentUser.departmentCode === 'CS' || currentUser.departmentCode === 'DC' ? '⏳' : '✅'} Documents
+                    <span
+                      style={{
+                        color:
+                          currentUser.departmentCode === 'CS' ||
+                          currentUser.departmentCode === 'DC'
+                            ? 'rgba(255, 255, 255, 0.4)'
+                            : '#10b981',
+                      }}
+                    >
+                      {currentUser.departmentCode === 'CS' ||
+                      currentUser.departmentCode === 'DC'
+                        ? '⏳'
+                        : '✅'}{' '}
+                      Documents
                     </span>
-                    <span style={{ color: currentUser.departmentCode !== 'MGR' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
-                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'} ICA Signed
+                    <span
+                      style={{
+                        color:
+                          currentUser.departmentCode !== 'MGR'
+                            ? 'rgba(255, 255, 255, 0.4)'
+                            : '#10b981',
+                      }}
+                    >
+                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'} ICA
+                      Signed
                     </span>
-                    <span style={{ color: currentUser.departmentCode !== 'MGR' ? 'rgba(255, 255, 255, 0.4)' : '#10b981' }}>
-                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'} Training
+                    <span
+                      style={{
+                        color:
+                          currentUser.departmentCode !== 'MGR'
+                            ? 'rgba(255, 255, 255, 0.4)'
+                            : '#10b981',
+                      }}
+                    >
+                      {currentUser.departmentCode !== 'MGR' ? '⏳' : '✅'}{' '}
+                      Training
                     </span>
                   </div>
                 </div>
               ) : (
                 // Carrier view - shows own progress
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontWeight: '600' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
                       CARRIER ONBOARDING
                     </span>
-                    <span style={{ color: '#f59e0b', fontSize: '11px', fontWeight: 'bold' }}>
+                    <span
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       66% COMPLETE
                     </span>
                   </div>
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '6px',
-                    height: '8px',
-                    overflow: 'hidden',
-                    marginBottom: '8px'
-                  }}>
-                    <div style={{
-                      background: 'linear-gradient(90deg, #f59e0b, #d97706)',
-                      height: '100%',
-                      width: '66%',
-                      borderRadius: '6px'
-                    }} />
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '6px',
+                      height: '8px',
+                      overflow: 'hidden',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'linear-gradient(90deg, #f59e0b, #d97706)',
+                        height: '100%',
+                        width: '66%',
+                        borderRadius: '6px',
+                      }}
+                    />
                   </div>
-                  <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
-                    <span style={{ color: '#10b981' }}>✅ FMCSA Verification</span>
+                  <div
+                    style={{ display: 'flex', gap: '8px', fontSize: '10px' }}
+                  >
+                    <span style={{ color: '#10b981' }}>
+                      ✅ FMCSA Verification
+                    </span>
                     <span style={{ color: '#10b981' }}>✅ Travel Limits</span>
                     <span style={{ color: '#10b981' }}>✅ Documents</span>
                     <span style={{ color: '#f59e0b' }}>🔄 Factoring</span>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>⏳ Agreements</span>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>⏳ Portal</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
+                      ⏳ Agreements
+                    </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
+                      ⏳ Portal
+                    </span>
                   </div>
                 </div>
               )}
 
               {/* Recent onboarding activity */}
-              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '10px', fontWeight: '600', marginBottom: '6px' }}>
+              <div
+                style={{
+                  marginTop: '12px',
+                  paddingTop: '12px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '10px',
+                    fontWeight: '600',
+                    marginBottom: '6px',
+                  }}
+                >
                   RECENT ACTIVITY
                 </div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                <div
+                  style={{
+                    fontSize: '10px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
                   {currentUser.departmentCode === 'DM'
                     ? '✅ Driver portal access activated (2 hours ago)'
                     : currentUser.departmentCode === 'MGR'
@@ -3279,8 +3603,7 @@ export default function UserManagement() {
                           ? '🔍 Background check completed (1 day ago)'
                           : currentUser.departmentCode === 'CS'
                             ? '📄 Personal information submitted for review (2 days ago)'
-                            : '📄 Insurance certificate uploaded for review (4 hours ago)'
-                  }
+                            : '📄 Insurance certificate uploaded for review (4 hours ago)'}
                 </div>
               </div>
             </div>
@@ -4813,6 +5136,397 @@ export default function UserManagement() {
                 </div>
               </div>
             )}
+
+            {/* Training Management & Workflow Status - Role-Based */}
+            <div
+              style={{
+                background:
+                  currentUser.departmentCode === 'DM'
+                    ? 'rgba(16, 185, 129, 0.1)'
+                    : 'rgba(245, 158, 11, 0.1)',
+                border:
+                  currentUser.departmentCode === 'DM'
+                    ? '1px solid rgba(16, 185, 129, 0.3)'
+                    : '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginTop: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color:
+                    currentUser.departmentCode === 'DM' ? '#10b981' : '#f59e0b',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  margin: '0 0 16px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                {currentUser.departmentCode === 'DM'
+                  ? '🚛 Driver Onboarding & OTR Access'
+                  : '🎓 FleetFlow University℠ Training Management'}
+              </h4>
+
+              {!userWorkflowData[currentUser.id] ? (
+                <div>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    {currentUser.departmentCode === 'DM'
+                      ? 'Initialize driver onboarding workflow to begin carrier onboarding process.'
+                      : 'Initialize training workflow to assign FleetFlow University℠ modules.'}
+                  </p>
+                  <button
+                    onClick={() =>
+                      handleAutoAssignTraining(
+                        currentUser.id,
+                        currentUser.departmentCode
+                      )
+                    }
+                    style={{
+                      background:
+                        currentUser.departmentCode === 'DM'
+                          ? 'linear-gradient(135deg, #10b981, #059669)'
+                          : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: 'white',
+                      padding: '10px 16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s ease',
+                    }}
+                  >
+                    {currentUser.departmentCode === 'DM'
+                      ? '🚛 Start Driver Onboarding'
+                      : '🎓 Grant University Access'}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Workflow Status:
+                      </span>
+                      <span
+                        style={{
+                          background:
+                            userWorkflowData[currentUser.id]?.workflowStatus ===
+                            'active'
+                              ? 'rgba(16, 185, 129, 0.2)'
+                              : 'rgba(245, 158, 11, 0.2)',
+                          color:
+                            userWorkflowData[currentUser.id]?.workflowStatus ===
+                            'active'
+                              ? '#10b981'
+                              : '#f59e0b',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {userWorkflowData[
+                          currentUser.id
+                        ]?.workflowStatus?.toUpperCase() || 'PENDING'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <h5
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      {currentUser.departmentCode === 'DM'
+                        ? '📊 Driver Onboarding Progress:'
+                        : '📊 Training Progress Overview:'}
+                    </h5>
+                    {currentUser.departmentCode === 'DM' ? (
+                      // Driver onboarding progress
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          fontSize: '12px',
+                        }}
+                      >
+                        <span style={{ color: '#10b981' }}>
+                          📋 Current Step:{' '}
+                          {userWorkflowData[currentUser.id]
+                            ?.carrierOnboardingStatus?.currentStep || 1}{' '}
+                          of 6
+                        </span>
+                        <span style={{ color: '#3b82f6' }}>
+                          ✅ Completed Steps:{' '}
+                          {userWorkflowData[currentUser.id]
+                            ?.carrierOnboardingStatus?.completedSteps?.length ||
+                            0}
+                        </span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                          📊 Overall:{' '}
+                          {userWorkflowData[currentUser.id]
+                            ?.carrierOnboardingStatus?.overallProgress || 0}
+                          %
+                        </span>
+                      </div>
+                    ) : (
+                      // FleetFlow University training progress
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          fontSize: '12px',
+                        }}
+                      >
+                        <span style={{ color: '#10b981' }}>
+                          ✅ Completed:{' '}
+                          {userWorkflowData[
+                            currentUser.id
+                          ]?.trainingProgress?.filter(
+                            (p) => p.status === 'completed'
+                          ).length || 0}
+                        </span>
+                        <span style={{ color: '#3b82f6' }}>
+                          📚 In Progress:{' '}
+                          {userWorkflowData[
+                            currentUser.id
+                          ]?.trainingProgress?.filter(
+                            (p) => p.status === 'in_progress'
+                          ).length || 0}
+                        </span>
+                        <span style={{ color: '#f59e0b' }}>
+                          ⏳ Pending:{' '}
+                          {userWorkflowData[
+                            currentUser.id
+                          ]?.trainingProgress?.filter(
+                            (p) => p.status === 'not_started'
+                          ).length || 0}
+                        </span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                          📋 Overall:{' '}
+                          {Math.round(
+                            ((userWorkflowData[
+                              currentUser.id
+                            ]?.trainingProgress?.filter(
+                              (p) => p.status === 'completed'
+                            ).length || 0) /
+                              (userWorkflowData[currentUser.id]
+                                ?.trainingProgress?.length || 1)) *
+                              100
+                          )}
+                          %
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <h5
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      {currentUser.departmentCode === 'DM'
+                        ? '📋 Onboarding Steps:'
+                        : '📚 Assigned Training Modules:'}
+                    </h5>
+                    <div
+                      style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}
+                    >
+                      {currentUser.departmentCode === 'DM'
+                        ? // Driver onboarding steps
+                          [
+                            'FMCSA Verification',
+                            'Travel Limits',
+                            'Documents',
+                            'Factoring',
+                            'Agreements',
+                            'Portal Setup',
+                          ].map((step, index) => {
+                            const isCompleted = (
+                              userWorkflowData[currentUser.id]
+                                ?.carrierOnboardingStatus?.completedSteps || []
+                            ).includes(step);
+                            const isCurrent =
+                              (userWorkflowData[currentUser.id]
+                                ?.carrierOnboardingStatus?.currentStep || 1) ===
+                              index + 1;
+                            return (
+                              <span
+                                key={index}
+                                style={{
+                                  background: isCompleted
+                                    ? 'rgba(16, 185, 129, 0.2)'
+                                    : isCurrent
+                                      ? 'rgba(59, 130, 246, 0.2)'
+                                      : 'rgba(107, 114, 128, 0.2)',
+                                  color: isCompleted
+                                    ? '#10b981'
+                                    : isCurrent
+                                      ? '#3b82f6'
+                                      : '#6b7280',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '11px',
+                                  fontWeight: '500',
+                                }}
+                              >
+                                {isCompleted ? '✅' : isCurrent ? '🔄' : '⏳'}{' '}
+                                {step}
+                              </span>
+                            );
+                          })
+                        : // FleetFlow University training modules
+                          userWorkflowData[
+                            currentUser.id
+                          ]?.trainingAssignments?.map((assignment, index) => (
+                            <span
+                              key={index}
+                              style={{
+                                background:
+                                  assignment.status === 'completed'
+                                    ? 'rgba(16, 185, 129, 0.2)'
+                                    : 'rgba(59, 130, 246, 0.2)',
+                                color:
+                                  assignment.status === 'completed'
+                                    ? '#10b981'
+                                    : '#3b82f6',
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: '500',
+                              }}
+                            >
+                              {assignment.moduleName}
+                            </span>
+                          )) || []}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+                  >
+                    {currentUser.departmentCode === 'DM' ? (
+                      // Driver/Carrier action buttons
+                      <>
+                        <button
+                          onClick={() =>
+                            handleAutoAssignTraining(
+                              currentUser.id,
+                              currentUser.departmentCode
+                            )
+                          }
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            padding: '8px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          🚛 Continue Driver Onboarding
+                        </button>
+                        <button
+                          onClick={() =>
+                            alert(
+                              'Driver OTR Flow access will be granted upon onboarding completion'
+                            )
+                          }
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            padding: '8px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📱 Driver OTR Flow Access
+                        </button>
+                      </>
+                    ) : (
+                      // Internal staff action buttons
+                      <>
+                        <button
+                          onClick={() =>
+                            handleAutoAssignTraining(
+                              currentUser.id,
+                              currentUser.departmentCode
+                            )
+                          }
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            padding: '8px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          🎓 Grant FleetFlow Training Access
+                        </button>
+                        <button
+                          onClick={() =>
+                            alert('Custom training selection coming soon!')
+                          }
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            padding: '8px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📝 Custom Training Access (Coming Soon)
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Action Buttons */}
             <div

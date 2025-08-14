@@ -275,11 +275,11 @@ export default function PortAuthorityAccessWidget() {
   return (
     <div
       style={{
-        background: 'rgba(255, 255, 255, 0.1)',
+        background: 'rgba(255, 255, 255, 0.2)',
         backdropFilter: 'blur(10px)',
         borderRadius: '16px',
         padding: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
       }}
     >
@@ -297,7 +297,14 @@ export default function PortAuthorityAccessWidget() {
         >
           🏗️ Port Authority Access & TWIC Escort
         </h2>
-        <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+        <p
+          style={{
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '600',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          }}
+        >
           Manage port appointments, TWIC escort services, and secure facility
           access
         </p>
@@ -373,7 +380,12 @@ export default function PortAuthorityAccessWidget() {
                 {stats.totalAppointments}
               </div>
               <div
-                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+                style={{
+                  fontSize: '12px',
+                  color: 'white',
+                  fontWeight: '700',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                }}
               >
                 Port Appointments
               </div>
@@ -396,7 +408,12 @@ export default function PortAuthorityAccessWidget() {
                 {stats.activeAppointments}
               </div>
               <div
-                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+                style={{
+                  fontSize: '12px',
+                  color: 'white',
+                  fontWeight: '700',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                }}
               >
                 Active
               </div>
@@ -419,7 +436,12 @@ export default function PortAuthorityAccessWidget() {
                 {stats.twicEscortRequests}
               </div>
               <div
-                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+                style={{
+                  fontSize: '12px',
+                  color: 'white',
+                  fontWeight: '700',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                }}
               >
                 TWIC Escorts
               </div>
@@ -442,7 +464,12 @@ export default function PortAuthorityAccessWidget() {
                 {stats.averageWaitTime}min
               </div>
               <div
-                style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
+                style={{
+                  fontSize: '12px',
+                  color: 'white',
+                  fontWeight: '700',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                }}
               >
                 Avg Wait Time
               </div>
@@ -492,7 +519,7 @@ export default function PortAuthorityAccessWidget() {
               </button>
               <button
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   color: 'white',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   padding: '8px 12px',
@@ -505,7 +532,7 @@ export default function PortAuthorityAccessWidget() {
               </button>
               <button
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   color: 'white',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   padding: '8px 12px',
@@ -546,7 +573,12 @@ export default function PortAuthorityAccessWidget() {
                   Appointment APT-001 completed at Port of Los Angeles
                 </span>
                 <span
-                  style={{ color: 'rgba(255, 255, 255, 0.6)', float: 'right' }}
+                  style={{
+                    color: 'white',
+                    fontWeight: '700',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    float: 'right',
+                  }}
                 >
                   2 hours ago
                 </span>
@@ -565,7 +597,12 @@ export default function PortAuthorityAccessWidget() {
                   TWIC escort assigned for Port of NY/NJ visit
                 </span>
                 <span
-                  style={{ color: 'rgba(255, 255, 255, 0.6)', float: 'right' }}
+                  style={{
+                    color: 'white',
+                    fontWeight: '700',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    float: 'right',
+                  }}
                 >
                   4 hours ago
                 </span>
@@ -584,7 +621,12 @@ export default function PortAuthorityAccessWidget() {
                   New appointment booked for Port of Long Beach
                 </span>
                 <span
-                  style={{ color: 'rgba(255, 255, 255, 0.6)', float: 'right' }}
+                  style={{
+                    color: 'white',
+                    fontWeight: '700',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    float: 'right',
+                  }}
                 >
                   6 hours ago
                 </span>
@@ -636,7 +678,7 @@ export default function PortAuthorityAccessWidget() {
               <div
                 key={appointment.id}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
+                  background: 'rgba(255, 255, 255, 0.2)',
                   padding: '16px',
                   borderRadius: '8px',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -713,7 +755,13 @@ export default function PortAuthorityAccessWidget() {
                   }}
                 >
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                      }}
+                    >
                       Time:{' '}
                     </span>
                     <span style={{ color: 'white' }}>
@@ -721,7 +769,13 @@ export default function PortAuthorityAccessWidget() {
                     </span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                      }}
+                    >
                       Terminal:{' '}
                     </span>
                     <span style={{ color: 'white' }}>
@@ -729,7 +783,13 @@ export default function PortAuthorityAccessWidget() {
                     </span>
                   </div>
                   <div>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                      }}
+                    >
                       Type:{' '}
                     </span>
                     <span
@@ -740,7 +800,13 @@ export default function PortAuthorityAccessWidget() {
                   </div>
                   {appointment.containerNumber && (
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
                         Container:{' '}
                       </span>
                       <span style={{ color: 'white' }}>
@@ -750,7 +816,13 @@ export default function PortAuthorityAccessWidget() {
                   )}
                   {appointment.gateNumber && (
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
                         Gate:{' '}
                       </span>
                       <span style={{ color: 'white' }}>
@@ -821,7 +893,9 @@ export default function PortAuthorityAccessWidget() {
                   style={{
                     display: 'block',
                     fontSize: '12px',
-                    color: 'rgba(255, 255, 255, 0.8)',
+                    color: 'white',
+                    fontWeight: '700',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                     marginBottom: '4px',
                   }}
                 >
@@ -835,7 +909,7 @@ export default function PortAuthorityAccessWidget() {
                     padding: '8px',
                     borderRadius: '6px',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'rgba(255, 255, 255, 0.25)',
                     color: 'white',
                     fontSize: '12px',
                   }}
@@ -864,7 +938,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -879,7 +955,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -890,7 +966,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -904,7 +982,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -922,7 +1000,9 @@ export default function PortAuthorityAccessWidget() {
                   style={{
                     display: 'block',
                     fontSize: '12px',
-                    color: 'rgba(255, 255, 255, 0.8)',
+                    color: 'white',
+                    fontWeight: '700',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                     marginBottom: '4px',
                   }}
                 >
@@ -937,7 +1017,7 @@ export default function PortAuthorityAccessWidget() {
                     padding: '8px',
                     borderRadius: '6px',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'rgba(255, 255, 255, 0.25)',
                     color: 'white',
                     fontSize: '12px',
                   }}
@@ -956,7 +1036,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -971,7 +1053,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -982,7 +1064,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -996,7 +1080,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -1016,7 +1100,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -1030,7 +1116,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -1041,7 +1127,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -1055,7 +1143,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -1134,7 +1222,9 @@ export default function PortAuthorityAccessWidget() {
             <p
               style={{
                 fontSize: '12px',
-                color: 'rgba(255, 255, 255, 0.8)',
+                color: 'white',
+                fontWeight: '700',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                 margin: 0,
                 lineHeight: '1.4',
               }}
@@ -1162,7 +1252,7 @@ export default function PortAuthorityAccessWidget() {
                 <div
                   key={request.id}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(255, 255, 255, 0.25)',
                     padding: '16px',
                     borderRadius: '8px',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1231,7 +1321,13 @@ export default function PortAuthorityAccessWidget() {
                     }}
                   >
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
                         Driver:{' '}
                       </span>
                       <span style={{ color: 'white' }}>
@@ -1239,7 +1335,13 @@ export default function PortAuthorityAccessWidget() {
                       </span>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
                         Time:{' '}
                       </span>
                       <span style={{ color: 'white' }}>
@@ -1247,7 +1349,13 @@ export default function PortAuthorityAccessWidget() {
                       </span>
                     </div>
                     <div>
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <span
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
                         Duration:{' '}
                       </span>
                       <span style={{ color: 'white' }}>
@@ -1256,7 +1364,13 @@ export default function PortAuthorityAccessWidget() {
                     </div>
                     {request.escortName && (
                       <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                        <span
+                          style={{
+                            color: 'white',
+                            fontWeight: '700',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                          }}
+                        >
                           Escort:{' '}
                         </span>
                         <span style={{ color: 'white' }}>
@@ -1310,7 +1424,9 @@ export default function PortAuthorityAccessWidget() {
                       style={{
                         display: 'block',
                         fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.8)',
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                         marginBottom: '4px',
                       }}
                     >
@@ -1324,7 +1440,7 @@ export default function PortAuthorityAccessWidget() {
                         padding: '8px',
                         borderRadius: '6px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.5)',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -1345,7 +1461,9 @@ export default function PortAuthorityAccessWidget() {
                       style={{
                         display: 'block',
                         fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.8)',
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                         marginBottom: '4px',
                       }}
                     >
@@ -1359,7 +1477,7 @@ export default function PortAuthorityAccessWidget() {
                         padding: '8px',
                         borderRadius: '6px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.5)',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -1385,7 +1503,9 @@ export default function PortAuthorityAccessWidget() {
                       style={{
                         display: 'block',
                         fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.8)',
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                         marginBottom: '4px',
                       }}
                     >
@@ -1400,7 +1520,7 @@ export default function PortAuthorityAccessWidget() {
                         padding: '8px',
                         borderRadius: '6px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.5)',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -1411,7 +1531,9 @@ export default function PortAuthorityAccessWidget() {
                       style={{
                         display: 'block',
                         fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.8)',
+                        color: 'white',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                         marginBottom: '4px',
                       }}
                     >
@@ -1426,7 +1548,7 @@ export default function PortAuthorityAccessWidget() {
                         padding: '8px',
                         borderRadius: '6px',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.5)',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -1439,7 +1561,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -1454,7 +1578,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                     }}
@@ -1466,7 +1590,9 @@ export default function PortAuthorityAccessWidget() {
                     style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
+                      color: 'white',
+                      fontWeight: '700',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       marginBottom: '4px',
                     }}
                   >
@@ -1480,7 +1606,7 @@ export default function PortAuthorityAccessWidget() {
                       padding: '8px',
                       borderRadius: '6px',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.2)',
                       color: 'white',
                       fontSize: '12px',
                       minHeight: '60px',

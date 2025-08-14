@@ -35,6 +35,19 @@ export function FleetFlowAppVideo() {
       duration: 6000, // 6 seconds
     },
     {
+      title: '🌊 Go With the Flow',
+      description: 'Instant freight marketplace connecting shippers and drivers',
+      route: '/go-with-the-flow',
+      features: [
+        'Instant Load Matching',
+        'AI-Powered Pricing',
+        'Real-Time Driver Tracking',
+        'Quick Payment Processing',
+      ],
+      narration:
+        'Go With the Flow is our instant freight marketplace. Shippers can request trucks immediately while drivers find high-paying loads nearby - all powered by AI matching and dynamic pricing.',
+      duration: 5500,    },
+    {
       title: 'AI Automation Hub',
       description: 'Claude AI-powered automation for freight operations',
       route: '/ai',

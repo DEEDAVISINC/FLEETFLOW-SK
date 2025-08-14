@@ -3147,13 +3147,15 @@ export default function BrokerDashboard() {
                     transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow =
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(-2px)';
+                    target.style.boxShadow =
                       '0 6px 20px rgba(99, 102, 241, 0.4)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0px)';
-                    e.target.style.boxShadow =
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(0px)';
+                    target.style.boxShadow =
                       '0 4px 16px rgba(99, 102, 241, 0.3)';
                   }}
                 >
@@ -4710,17 +4712,6 @@ export default function BrokerDashboard() {
                                 fontWeight: '600',
                                 background:
                                   contract.status === 'completed'
-                                    ? 'rgba(34, 197, 94, 0.2)'
-                                    : contract.status === 'signed' ||
-                                        contract.status === 'active'
-                                      ? 'rgba(59, 130, 246, 0.2)'
-                                      : contract.status === 'approved'
-                                        ? 'rgba(168, 85, 247, 0.2)'
-                                        : contract.status === 'pending_approval'
-                                          ? 'rgba(245, 158, 11, 0.2)'
-                                          : 'rgba(156, 163, 175, 0.2)',
-                                color:
-                                  contract.status === 'completed'
                                     ? '#22c55e'
                                     : contract.status === 'signed' ||
                                         contract.status === 'active'
@@ -4729,7 +4720,8 @@ export default function BrokerDashboard() {
                                         ? '#a855f7'
                                         : contract.status === 'pending_approval'
                                           ? '#f59e0b'
-                                          : '#9ca3af',
+                                          : '#6b7280',
+                                color: 'white',
                               }}
                             >
                               {contract.status.replace('_', ' ').toUpperCase()}
@@ -4785,9 +4777,9 @@ export default function BrokerDashboard() {
                               }}
                               style={{
                                 padding: '6px 12px',
-                                background: 'rgba(59, 130, 246, 0.2)',
-                                color: '#3b82f6',
-                                border: '1px solid rgba(59, 130, 246, 0.3)',
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: '1px solid #3b82f6',
                                 borderRadius: '8px',
                                 fontSize: '12px',
                                 cursor: 'pointer',
@@ -5703,17 +5695,6 @@ export default function BrokerDashboard() {
                                 fontWeight: '600',
                                 background:
                                   contract.status === 'completed'
-                                    ? 'rgba(34, 197, 94, 0.2)'
-                                    : contract.status === 'signed' ||
-                                        contract.status === 'active'
-                                      ? 'rgba(59, 130, 246, 0.2)'
-                                      : contract.status === 'approved'
-                                        ? 'rgba(168, 85, 247, 0.2)'
-                                        : contract.status === 'pending_approval'
-                                          ? 'rgba(245, 158, 11, 0.2)'
-                                          : 'rgba(156, 163, 175, 0.2)',
-                                color:
-                                  contract.status === 'completed'
                                     ? '#22c55e'
                                     : contract.status === 'signed' ||
                                         contract.status === 'active'
@@ -5722,7 +5703,8 @@ export default function BrokerDashboard() {
                                         ? '#a855f7'
                                         : contract.status === 'pending_approval'
                                           ? '#f59e0b'
-                                          : '#9ca3af',
+                                          : '#6b7280',
+                                color: 'white',
                               }}
                             >
                               {contract.status.replace('_', ' ').toUpperCase()}
@@ -5743,9 +5725,9 @@ export default function BrokerDashboard() {
                               }}
                               style={{
                                 padding: '6px 12px',
-                                background: 'rgba(59, 130, 246, 0.2)',
-                                color: '#3b82f6',
-                                border: '1px solid rgba(59, 130, 246, 0.3)',
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: '1px solid #3b82f6',
                                 borderRadius: '8px',
                                 fontSize: '12px',
                                 cursor: 'pointer',

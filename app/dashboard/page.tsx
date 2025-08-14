@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const [selectedLoad, setSelectedLoad] = useState<string>('');
+  const router = useRouter();
   const [showLoadDetails, setShowLoadDetails] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -68,7 +70,7 @@ export default function HomePage() {
       progress: 85,
       commodity: 'Food Products',
       weight: '28,500 lbs',
-      priority: 'low',
+      priority: 'high',
     },
   ];
 
@@ -204,49 +206,38 @@ export default function HomePage() {
     },
   ];
 
-  // Clock and animations
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  const getAlertIcon = (type: string) => {
-    switch (type) {
-      case 'critical':
-        return '🚨';
-      case 'warning':
-        return '⚠️';
-      case 'info':
-        return 'ℹ️';
-      default:
-        return '📢';
-    }
+  const handleLoadClick = (loadId: string) => {
+    setSelectedLoad(loadId);
+    setShowLoadDetails(true);
   };
 
-  const getAlertColor = (type: string) => {
-    switch (type) {
-      case 'critical':
-        return '#dc2626';
-      case 'warning':
-        return '#f59e0b';
-      case 'info':
-        return '#3b82f6';
-      default:
-        return '#6b7280';
-    }
+  const handleAcceptLoad = (loadId: string) => {
+    alert(`Load ${loadId} accepted! Assigning to next available driver.`);
+    setShowLoadDetails(false);
   };
 
-  const getLoadStatusColor = (status: string) => {
+  const handleBidLoad = (loadId: string) => {
+    alert(`Bid submitted for load ${loadId}! Waiting for broker response.`);
+    setShowLoadDetails(false);
+  };
+
+  const selectedLoadData = loads.find((load) => load.id === selectedLoad);
+
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
         return '#10b981';
       case 'pending':
         return '#f59e0b';
       case 'delivered':
-        return '#3b82f6';
+        return '#6366f1';
       default:
         return '#6b7280';
     }
@@ -255,7 +246,7 @@ export default function HomePage() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return '#dc2626';
+        return '#ef4444';
       case 'medium':
         return '#f59e0b';
       case 'low':
@@ -268,22 +259,31 @@ export default function HomePage() {
   return (
     <div
       style={{
+        padding: '40px',
+        paddingTop: '100px',
+        background: `
+        linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(168, 85, 247, 0.04) 0%, transparent 50%)
+      `,
+        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         minHeight: '100vh',
-        background:
-          'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)',
-        color: 'white',
-        padding: '20px',
-        fontFamily: 'Inter, system-ui, sans-serif',
+        color: '#ffffff',
+        position: 'relative',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Hero Header - Back to original glassmorphism style */}
+      {/* Professional Header */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '24px',
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '40px',
+          padding: '30px',
           marginBottom: '30px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         }}
@@ -293,14 +293,12 @@ export default function HomePage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '20px',
           }}
         >
           <div>
             <h1
               style={{
-                fontSize: '48px',
+                fontSize: '32px',
                 fontWeight: '700',
                 color: '#ffffff',
                 margin: '0 0 10px 0',
@@ -404,98 +402,9 @@ export default function HomePage() {
             Active Loads
           </div>
           <div
-            style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
-            }}
+            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
           >
-            +12 from yesterday
-          </div>
-        </div>
-
-        {/* Revenue */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>💰</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#10b981',
-              marginBottom: '5px',
-            }}
-          >
-            $487,520
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            Today's Revenue
-          </div>
-          <div
-            style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
-            }}
-          >
-            +15.3% from yesterday
-          </div>
-        </div>
-
-        {/* Available Drivers */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '25px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>👥</div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#f59e0b',
-              marginBottom: '5px',
-            }}
-          >
-            38
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '5px',
-            }}
-          >
-            Available Drivers
-          </div>
-          <div
-            style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
-            }}
-          >
-            -3 from yesterday
+            +12% from last week
           </div>
         </div>
 
@@ -533,17 +442,94 @@ export default function HomePage() {
             Fleet Utilization
           </div>
           <div
+            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
+          >
+            +5% from last month
+          </div>
+        </div>
+
+        {/* Revenue */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '25px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '10px' }}>💰</div>
+          <div
             style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '5px',
             }}
           >
-            +2.1% from yesterday
+            $2.4M
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '5px',
+            }}
+          >
+            MTD Revenue
+          </div>
+          <div
+            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
+          >
+            +8% from last month
+          </div>
+        </div>
+
+        {/* On-Time Delivery */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '25px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '10px' }}>⏰</div>
+          <div
+            style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#f59e0b',
+              marginBottom: '5px',
+            }}
+          >
+            96.2%
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '5px',
+            }}
+          >
+            On-Time Performance
+          </div>
+          <div
+            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
+          >
+            +2.1% from last month
           </div>
         </div>
       </div>
 
-      {/* Quick Links Grid */}
+      {/* Quick Links */}
       <div
         style={{
           display: 'grid',
@@ -880,29 +866,1104 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Navigation Back to Landing Page */}
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <Link href='/'>
-          <button
+        {/* Call to Action */}
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '25px',
+            padding: '20px',
+            background: 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '12px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+          }}
+        >
+          <h3
             style={{
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '12px 24px',
-              fontSize: '14px',
+              fontSize: '18px',
               fontWeight: '600',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-              transition: 'all 0.3s ease',
+              color: '#ffffff',
+              marginBottom: '10px',
             }}
           >
-            ← Back to Landing Page
-          </button>
-        </Link>
+            Stay Ahead of Issues
+          </h3>
+          <p
+            style={{
+              fontSize: '14px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '15px',
+            }}
+          >
+            Monitor your fleet in real-time and take proactive action on
+            critical alerts
+          </p>
+          <Link href='/notes' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              View Alert Center →
+            </button>
+          </Link>
+        </div>
       </div>
+
+
+      {/* Go With the Flow - Real-Time Matching System */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
+          border: '2px solid #f4a832',
+          padding: '30px',
+          marginBottom: '30px',
+          boxShadow: '0 8px 32px rgba(244, 168, 50, 0.3), 0 0 20px rgba(244, 168, 50, 0.2)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '25px',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#f4a832',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            🌊 Go With the Flow - Real-Time Matching
+          </h2>
+          <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
+                color: 'white',
+                border: '2px solid #f4a832',
+                borderRadius: '10px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 8px rgba(244, 168, 50, 0.3)',
+              }}
+            >
+              View Full Flow
+            </button>
+          </Link>
+        </div>
+
+        {/* Flow Metrics */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '15px',
+            marginBottom: '25px',
+          }}
+        >
+          {/* Online Drivers */}
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.2)',
+              borderRadius: '12px',
+              padding: '15px',
+              textAlign: 'center',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#10b981',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              8
+            </div>
+            <div
+              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Online Drivers
+            </div>
+          </div>
+
+          {/* Active Matches */}
+          <div
+            style={{
+              background: 'rgba(59, 130, 246, 0.2)',
+              borderRadius: '12px',
+              padding: '15px',
+              textAlign: 'center',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#3b82f6',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              3
+            </div>
+            <div
+              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Active Matches
+            </div>
+          </div>
+
+          {/* Success Rate */}
+          <div
+            style={{
+              background: 'rgba(168, 85, 247, 0.2)',
+              borderRadius: '12px',
+              padding: '15px',
+              textAlign: 'center',
+              border: '1px solid rgba(168, 85, 247, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#a855f7',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              92%
+            </div>
+            <div
+              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Match Rate
+            </div>
+          </div>
+
+          {/* Avg Response */}
+          <div
+            style={{
+              background: 'rgba(245, 158, 11, 0.2)',
+              borderRadius: '12px',
+              padding: '15px',
+              textAlign: 'center',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#f59e0b',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              45s
+            </div>
+            <div
+              style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Avg Response
+            </div>
+          </div>
+        </div>
+
+        {/* Live Flow Activity */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            padding: '20px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#ffffff',
+              marginBottom: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            ⚡ Live Flow Activity
+          </h3>
+          
+          <div style={{ display: 'grid', gap: '10px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+              }}
+            >
+              <div style={{ fontSize: '16px' }}>🚛</div>
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    fontWeight: '600',
+                  }}
+                >
+                  Load GWF-001 matched to Alice Smith
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Dallas, TX → Houston, TX • $850 • Just now
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px',
+                background: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+              }}
+            >
+              <div style={{ fontSize: '16px' }}>📍</div>
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    fontWeight: '600',
+                  }}
+                >
+                  Bob Johnson went online
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Houston, TX • Reefer • 2 minutes ago
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px',
+                background: 'rgba(168, 85, 247, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(168, 85, 247, 0.2)',
+              }}
+            >
+              <div style={{ fontSize: '16px' }}>⚡</div>
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    fontWeight: '600',
+                  }}
+                >
+                  New load request received
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Austin, TX → San Antonio, TX • High priority • 5 minutes ago
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      {/* Executive Load Management */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          padding: '30px',
+          marginBottom: '30px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '25px',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#ffffff',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            🚛 Executive Load Management
+          </h2>
+          <Link href='/tracking' style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+              }}
+            >
+              View Full Tracking
+            </button>
+          </Link>
+        </div>
+
+        {/* Executive Load Management KPIs - Exact match to tracking page status distribution */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '15px',
+            marginBottom: '25px',
+          }}
+        >
+          {/* Available Loads */}
+          <div
+            style={{
+              background: 'rgba(59, 130, 246, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📋</div>
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#3b82f6',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              {loads.filter((load) => load.status === 'pending').length}
+            </div>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Available
+            </div>
+          </div>
+
+          {/* In Transit */}
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🚛</div>
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#10b981',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              {loads.filter((load) => load.status === 'active').length}
+            </div>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              In Transit
+            </div>
+          </div>
+
+          {/* Loading */}
+          <div
+            style={{
+              background: 'rgba(245, 158, 11, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>⏳</div>
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#f59e0b',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              0
+            </div>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Loading
+            </div>
+          </div>
+
+          {/* Delivered */}
+          <div
+            style={{
+              background: 'rgba(99, 102, 241, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>✅</div>
+            <div
+              style={{
+                fontSize: '24px',
+                color: '#6366f1',
+                fontWeight: '700',
+                marginBottom: '5px',
+              }}
+            >
+              {loads.filter((load) => load.status === 'delivered').length}
+            </div>
+            <div
+              style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
+            >
+              Delivered
+            </div>
+          </div>
+        </div>
+
+        {/* Live Load Board - Enhanced with functionality */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            padding: '25px',
+            marginTop: '20px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            {/* Load Board Header */}
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                color: '#ffffff',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+            >
+              📊 Live Load Board
+            </h3>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                }}
+              >
+                Last updated: {currentTime.toLocaleTimeString()}
+              </span>
+              <div
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#10b981',
+                  animation: 'pulse 2s infinite',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Load Board Rows */}
+          <div style={{ display: 'grid', gap: '15px' }}>
+            {loads.map((load, index) => (
+              <div
+                key={index}
+                onClick={() => handleLoadClick(load.id)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                        }}
+                      >
+                        {load.id}
+                      </span>
+                      <span
+                        style={{
+                          background: getStatusColor(load.status),
+                          color: 'white',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {load.status}
+                      </span>
+                      <span
+                        style={{
+                          background: getPriorityColor(load.priority),
+                          color: 'white',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {load.priority}
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(150px, 1fr))',
+                        gap: '15px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Route
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: '#ffffff',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.origin} → {load.destination}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Driver
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: '#ffffff',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.driver}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Revenue
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: '#10b981',
+                            fontWeight: '700',
+                          }}
+                        >
+                          {load.revenue}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          ETA
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: '#ffffff',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.eta}
+                        </div>
+                      </div>
+                    </div>
+
+                    {load.status === 'active' && (
+                      <div style={{ marginTop: '15px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: '5px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            Progress
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: '#ffffff',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {load.progress}%
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '10px',
+                            height: '6px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div
+                            style={{
+                              background:
+                                'linear-gradient(90deg, #10b981, #059669)',
+                              height: '100%',
+                              width: `${load.progress}%`,
+                              borderRadius: '10px',
+                              transition: 'width 0.3s ease',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Load Details Modal */}
+      {showLoadDetails && selectedLoadData && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #1e293b, #334155)',
+              borderRadius: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '40px',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '30px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  margin: 0,
+                }}
+              >
+                Load Details: {selectedLoadData.id}
+              </h3>
+              <button
+                onClick={() => setShowLoadDetails(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  cursor: 'pointer',
+                  fontSize: '20px',
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gap: '20px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '20px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Origin
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.origin}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Destination
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.destination}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '20px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Driver
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.driver}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Truck
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.truck}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '20px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Revenue
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#10b981',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {selectedLoadData.revenue}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Distance
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.distance}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '20px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Commodity
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.commodity}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    Weight
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: '#ffffff',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {selectedLoadData.weight}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
+                <button
+                  onClick={() => router.push("/dispatch")}
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    flex: 1,
+                  }}
+                >
+                  📋 Assign to Dispatcher
+                </button>
+                <button
+                  onClick={() => router.push("/crm")}
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    flex: 1,
+                  }}
+                >
+                  📞 Contact Customer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
