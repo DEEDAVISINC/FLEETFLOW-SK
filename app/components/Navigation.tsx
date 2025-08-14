@@ -624,6 +624,20 @@ export default function ProfessionalNavigation() {
                   🎓 FleetFlow University℠
                 </Link>
                 <Link
+                  href='/video-demo'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🎥 Video Player Demo
+                </Link>
+                <Link
                   href='/resources'
                   onClick={handleDropdownClose}
                   style={{

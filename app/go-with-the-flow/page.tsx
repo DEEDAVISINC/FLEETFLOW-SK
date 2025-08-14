@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import WarehouseQuoteBuilder from '../components/WarehouseQuoteBuilder';
 import { shipperAccountService } from '../services/shipper-account-service';
 
 export default function GoWithTheFlow() {
@@ -19,6 +20,8 @@ export default function GoWithTheFlow() {
   const [quoteProgress, setQuoteProgress] = useState(0);
   const [accountCreationResult, setAccountCreationResult] = useState<any>(null);
   const [showAccountSuccess, setShowAccountSuccess] = useState(false);
+  const [showWarehouseBuilder, setShowWarehouseBuilder] = useState(false);
+  const [selectedServiceType, setSelectedServiceType] = useState('');
 
   // Fetch system data on component mount
   useEffect(() => {
@@ -75,45 +78,128 @@ export default function GoWithTheFlow() {
       );
 
       // Generate intelligent quotes based on AI analysis
-      const quotes = [
-        {
-          id: `quote-${Date.now()}-1`,
-          carrier: 'Premium Express Logistics',
-          rate: calculateIntelligentRate(loadRequest, 'premium', aiAnalysis),
-          eta: calculateETA(loadRequest, 'premium'),
-          confidence: 95,
-          features: [
-            'Real-time tracking',
-            'Insurance included',
-            '24/7 support',
-          ],
-          reasoning:
-            'Premium carrier with excellent safety record and on-time performance',
-        },
-        {
-          id: `quote-${Date.now()}-2`,
-          carrier: 'Reliable Transport Solutions',
-          rate: calculateIntelligentRate(loadRequest, 'standard', aiAnalysis),
-          eta: calculateETA(loadRequest, 'standard'),
-          confidence: 88,
-          features: [
-            'Standard tracking',
-            'Basic insurance',
-            'Business hours support',
-          ],
-          reasoning:
-            'Cost-effective option with good reliability and competitive pricing',
-        },
-        {
-          id: `quote-${Date.now()}-3`,
-          carrier: 'Economy Freight Services',
-          rate: calculateIntelligentRate(loadRequest, 'economy', aiAnalysis),
-          eta: calculateETA(loadRequest, 'economy'),
-          confidence: 75,
-          features: ['Basic tracking', 'Standard insurance', 'Email support'],
-          reasoning: 'Budget-friendly option for non-urgent shipments',
-        },
-      ];
+      const isWarehousingService = [
+        'Warehouse Storage',
+        'Cross Docking',
+        'Pick & Pack',
+        'Inventory Management',
+        'Distribution Center',
+        'Fulfillment Services',
+        '3PL Full Service',
+      ].includes(loadRequest.equipmentType);
+
+      const quotes = isWarehousingService
+        ? [
+            {
+              id: `quote-${Date.now()}-1`,
+              carrier: 'FleetFlow Warehousing Solutions',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'premium',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'premium'),
+              confidence: 96,
+              features: [
+                'Climate-controlled facilities',
+                'Real-time inventory tracking',
+                'Advanced WMS integration',
+                '99.8% accuracy guarantee',
+                '24/7 facility security',
+              ],
+              reasoning:
+                'Premium warehousing with advanced technology and proven reliability',
+            },
+            {
+              id: `quote-${Date.now()}-2`,
+              carrier: 'Regional 3PL Partners',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'standard',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'standard'),
+              confidence: 89,
+              features: [
+                'Standard warehouse facilities',
+                'Inventory management system',
+                'Pick & pack services',
+                'Business hours support',
+              ],
+              reasoning:
+                'Reliable 3PL services with competitive pricing and good performance',
+            },
+            {
+              id: `quote-${Date.now()}-3`,
+              carrier: 'Economy Warehouse Network',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'economy',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'economy'),
+              confidence: 78,
+              features: [
+                'Basic storage facilities',
+                'Manual inventory tracking',
+                'Standard handling procedures',
+                'Email support',
+              ],
+              reasoning:
+                'Cost-effective warehousing solution for budget-conscious operations',
+            },
+          ]
+        : [
+            {
+              id: `quote-${Date.now()}-1`,
+              carrier: 'Premium Express Logistics',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'premium',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'premium'),
+              confidence: 95,
+              features: [
+                'Real-time tracking',
+                'Insurance included',
+                '24/7 support',
+              ],
+              reasoning:
+                'Premium carrier with excellent safety record and on-time performance',
+            },
+            {
+              id: `quote-${Date.now()}-2`,
+              carrier: 'Reliable Transport Solutions',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'standard',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'standard'),
+              confidence: 88,
+              features: [
+                'Standard tracking',
+                'Basic insurance',
+                'Business hours support',
+              ],
+              reasoning:
+                'Cost-effective option with good reliability and competitive pricing',
+            },
+            {
+              id: `quote-${Date.now()}-3`,
+              carrier: 'Economy Freight Services',
+              rate: calculateIntelligentRate(loadRequest, 'budget', aiAnalysis),
+              eta: calculateETA(loadRequest, 'budget'),
+              confidence: 75,
+              features: [
+                'Basic tracking',
+                'Standard insurance',
+                'Email support',
+              ],
+              reasoning: 'Budget-friendly option for non-urgent shipments',
+            },
+          ];
 
       return quotes;
     } catch (error) {
@@ -226,12 +312,31 @@ export default function GoWithTheFlow() {
         companyName: formData.get('companyName') as string,
       };
 
+      const equipmentType = formData.get('equipmentType') as string;
+      const isWarehousingService = [
+        'Warehouse Storage',
+        'Cross Docking',
+        'Pick & Pack',
+        'Inventory Management',
+        'Distribution Center',
+        'Fulfillment Services',
+        '3PL Full Service',
+      ].includes(equipmentType);
+
+      // If warehousing service is selected, show the warehouse quote builder
+      if (isWarehousingService) {
+        setSelectedServiceType(equipmentType);
+        setShowWarehouseBuilder(true);
+        setIsLoading(false);
+        return;
+      }
+
       const loadRequest = {
         action: 'request-truck',
         loadRequest: {
           origin: formData.get('origin') as string,
           destination: formData.get('destination') as string,
-          equipmentType: formData.get('equipmentType') as string,
+          equipmentType: equipmentType,
           weight: parseInt(formData.get('weight') as string),
           urgency: formData.get('urgency') as 'low' | 'medium' | 'high',
           pickupDate: formData.get('pickupDate') as string,
@@ -1176,11 +1281,34 @@ export default function GoWithTheFlow() {
                         fontSize: '14px',
                       }}
                     >
-                      <option value='Dry Van'>Dry Van</option>
-                      <option value='Reefer'>Reefer</option>
-                      <option value='Flatbed'>Flatbed</option>
-                      <option value='Power Only'>Power Only</option>
-                      <option value='Step Deck'>Step Deck</option>
+                      <optgroup label='Transportation Services'>
+                        <option value='Dry Van'>Dry Van</option>
+                        <option value='Reefer'>Reefer</option>
+                        <option value='Flatbed'>Flatbed</option>
+                        <option value='Power Only'>Power Only</option>
+                        <option value='Step Deck'>Step Deck</option>
+                      </optgroup>
+                      <optgroup label='Warehousing & 3PL Services'>
+                        <option value='Warehouse Storage'>
+                          🏭 Warehouse Storage
+                        </option>
+                        <option value='Cross Docking'>📦 Cross Docking</option>
+                        <option value='Pick & Pack'>
+                          📋 Pick & Pack Services
+                        </option>
+                        <option value='Inventory Management'>
+                          📊 Inventory Management
+                        </option>
+                        <option value='Distribution Center'>
+                          🚚 Distribution Center
+                        </option>
+                        <option value='Fulfillment Services'>
+                          📮 Fulfillment Services
+                        </option>
+                        <option value='3PL Full Service'>
+                          🏢 3PL Full Service
+                        </option>
+                      </optgroup>
                     </select>
                   </div>
                   <div>
@@ -2072,6 +2200,30 @@ export default function GoWithTheFlow() {
                       'Priority handling and routing',
                     ],
                   },
+                  {
+                    icon: '🏭',
+                    title: 'Warehousing & Storage',
+                    description:
+                      'Complete warehouse solutions including storage, inventory management, and distribution services.',
+                    features: [
+                      'Climate-controlled warehouse facilities',
+                      'Real-time inventory tracking systems',
+                      'Pick, pack, and ship services',
+                      'Cross-docking and transload operations',
+                    ],
+                  },
+                  {
+                    icon: '🏢',
+                    title: '3PL Services',
+                    description:
+                      'Full-service third-party logistics including warehousing, transportation, and supply chain management.',
+                    features: [
+                      'End-to-end supply chain management',
+                      'Multi-channel fulfillment capabilities',
+                      'Advanced WMS and inventory optimization',
+                      'Scalable storage and distribution network',
+                    ],
+                  },
                 ].map((service, index) => (
                   <div
                     key={index}
@@ -2792,6 +2944,184 @@ export default function GoWithTheFlow() {
           </div>
         </div>
       )}
+
+      {/* Warehouse Quote Builder Modal */}
+      {showWarehouseBuilder && (
+        <WarehouseQuoteBuilder
+          onQuoteGenerated={(quotes) => {
+            setGeneratedQuotes(quotes);
+            setQuoteStatus('completed');
+            setShowWarehouseBuilder(false);
+          }}
+          onClose={() => setShowWarehouseBuilder(false)}
+          initialData={{
+            equipmentType: selectedServiceType,
+            companyName: '',
+            contactName: '',
+            email: '',
+            phone: '',
+          }}
+        />
+      )}
     </div>
   );
 }
+
+// Helper Functions for Quote Generation
+const calculateIntelligentRate = (
+  loadRequest: any,
+  tier: string,
+  aiAnalysis: any
+) => {
+  const baseRates: Record<string, Record<string, number>> = {
+    // Transportation Services
+    'Dry Van': { premium: 2.85, standard: 2.45, economy: 2.15 },
+    Reefer: { premium: 3.25, standard: 2.85, economy: 2.55 },
+    Flatbed: { premium: 3.15, standard: 2.75, economy: 2.45 },
+    'Power Only': { premium: 1.95, standard: 1.65, economy: 1.45 },
+    'Step Deck': { premium: 3.45, standard: 3.05, economy: 2.75 },
+
+    // Warehousing & 3PL Services (monthly rates per sq ft or per pallet)
+    'Warehouse Storage': { premium: 8.5, standard: 6.25, economy: 4.75 },
+    'Cross Docking': { premium: 45.0, standard: 35.0, economy: 25.0 },
+    'Pick & Pack': { premium: 3.25, standard: 2.75, economy: 2.25 },
+    'Inventory Management': { premium: 125.0, standard: 95.0, economy: 75.0 },
+    'Distribution Center': { premium: 15.5, standard: 12.25, economy: 9.75 },
+    'Fulfillment Services': { premium: 4.85, standard: 3.95, economy: 3.25 },
+    '3PL Full Service': { premium: 185.0, standard: 145.0, economy: 115.0 },
+  };
+
+  const equipmentType = loadRequest.equipmentType;
+  const weight = loadRequest.weight || 40000;
+  const distance = calculateDistance(
+    loadRequest.origin,
+    loadRequest.destination
+  );
+
+  // Check if this is a warehousing service
+  const isWarehousingService = [
+    'Warehouse Storage',
+    'Cross Docking',
+    'Pick & Pack',
+    'Inventory Management',
+    'Distribution Center',
+    'Fulfillment Services',
+    '3PL Full Service',
+  ].includes(equipmentType);
+
+  if (isWarehousingService) {
+    // Warehousing pricing logic
+    const baseRate = baseRates[equipmentType]?.[tier] || 100;
+    const volumeMultiplier = Math.max(1, weight / 10000); // Scale by volume
+    const serviceComplexity = getWarehousingComplexity(equipmentType);
+
+    return Math.round(baseRate * volumeMultiplier * serviceComplexity);
+  } else {
+    // Transportation pricing logic
+    const baseRate = baseRates[equipmentType]?.[tier] || 2.5;
+    const fuelSurcharge = 0.25;
+    const urgencyMultiplier =
+      loadRequest.urgency === 'high'
+        ? 1.3
+        : loadRequest.urgency === 'medium'
+          ? 1.1
+          : 1.0;
+
+    return Math.round(
+      (baseRate + fuelSurcharge) * distance * urgencyMultiplier
+    );
+  }
+};
+
+const getWarehousingComplexity = (serviceType: string): number => {
+  const complexityMap: Record<string, number> = {
+    'Warehouse Storage': 1.0,
+    'Cross Docking': 1.2,
+    'Pick & Pack': 1.5,
+    'Inventory Management': 2.0,
+    'Distribution Center': 1.8,
+    'Fulfillment Services': 2.2,
+    '3PL Full Service': 2.5,
+  };
+  return complexityMap[serviceType] || 1.0;
+};
+
+const calculateETA = (loadRequest: any, tier: string) => {
+  const equipmentType = loadRequest.equipmentType;
+
+  // Check if this is a warehousing service
+  const isWarehousingService = [
+    'Warehouse Storage',
+    'Cross Docking',
+    'Pick & Pack',
+    'Inventory Management',
+    'Distribution Center',
+    'Fulfillment Services',
+    '3PL Full Service',
+  ].includes(equipmentType);
+
+  if (isWarehousingService) {
+    // Warehousing setup times
+    const setupTimes: Record<string, { min: number; max: number }> = {
+      premium: { min: 1, max: 3 }, // 1-3 days
+      standard: { min: 3, max: 7 }, // 3-7 days
+      economy: { min: 7, max: 14 }, // 1-2 weeks
+    };
+
+    const timeRange = setupTimes[tier] || setupTimes.standard;
+    const days =
+      Math.floor(Math.random() * (timeRange.max - timeRange.min + 1)) +
+      timeRange.min;
+
+    return `${days} day${days !== 1 ? 's' : ''} setup time`;
+  } else {
+    // Transportation delivery times
+    const distance = calculateDistance(
+      loadRequest.origin,
+      loadRequest.destination
+    );
+    const baseHours =
+      distance / (tier === 'premium' ? 65 : tier === 'standard' ? 55 : 45);
+    const urgencyMultiplier =
+      loadRequest.urgency === 'high'
+        ? 0.8
+        : loadRequest.urgency === 'medium'
+          ? 1.0
+          : 1.2;
+
+    const totalHours = Math.round(baseHours * urgencyMultiplier);
+    const days = Math.ceil(totalHours / 24);
+
+    return `${days} day${days !== 1 ? 's' : ''}`;
+  }
+};
+
+const calculateDistance = (origin: string, destination: string): number => {
+  // Simplified distance calculation (in production, use Google Maps API)
+  const distances = {
+    short: 250,
+    medium: 650,
+    long: 1200,
+  };
+
+  // Simple heuristic based on common routes
+  const key =
+    Math.random() > 0.6 ? 'long' : Math.random() > 0.4 ? 'medium' : 'short';
+  return distances[key] + Math.floor(Math.random() * 200);
+};
+
+const sendNotificationToHub = async (notification: any) => {
+  try {
+    const response = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notification),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return { success: false };
+  }
+};
