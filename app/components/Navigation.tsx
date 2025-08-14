@@ -489,9 +489,10 @@ export default function ProfessionalNavigation() {
             </button>
           </Link>
 
-          {/* COMPLIANCE - Single Button */}
-          <Link href='/compliance' style={{ textDecoration: 'none' }}>
+          {/* COMPLIANCE Dropdown - Red */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button
+              onClick={() => handleDropdownClick('compliance')}
               style={{
                 background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
                 color: 'white',
@@ -506,9 +507,70 @@ export default function ProfessionalNavigation() {
                 gap: '4px',
               }}
             >
-              ✅ COMPLIANCE
+              ✅ COMPLIANCE ▼
             </button>
-          </Link>
+            {activeDropdown === 'compliance' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
+                style={{
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '220px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  left: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
+                }}
+              >
+                <Link
+                  href='/compliance'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📋 DOT Compliance Center
+                </Link>
+                <Link
+                  href='/openeld'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📱 OpenELD System
+                </Link>
+                <Link
+                  href='/safety'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ Safety & Training
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* RESOURCES Dropdown - Orange */}
           <div style={{ position: 'relative', display: 'inline-block' }}>

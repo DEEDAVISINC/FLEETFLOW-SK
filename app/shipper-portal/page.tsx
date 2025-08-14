@@ -15,6 +15,14 @@ export default function ShipperPortal() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!searchParams) {
+      setError(
+        'Unable to access page parameters. Please refresh and try again.'
+      );
+      setLoading(false);
+      return;
+    }
+
     const accountId = searchParams.get('account');
     const token = searchParams.get('token');
 
@@ -170,6 +178,35 @@ export default function ShipperPortal() {
             >
               Welcome back, {account.contactName} • {account.companyName}
             </p>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                marginTop: '12px',
+                display: 'inline-block',
+              }}
+            >
+              <span
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '12px',
+                  marginRight: '8px',
+                }}
+              >
+                Go with the Flow ID:
+              </span>
+              <span
+                style={{
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  fontFamily: 'monospace',
+                }}
+              >
+                {account.goWithFlowId}
+              </span>
+            </div>
           </div>
           <div
             style={{

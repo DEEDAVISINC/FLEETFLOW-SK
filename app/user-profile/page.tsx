@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import OpenELDOnboardingSetup from '../components/OpenELDOnboardingSetup';
 import {
   ICAOnboardingRecord,
   ICAOnboardingService,
@@ -291,6 +292,7 @@ export default function UserProfile() {
   );
   const [workflowData, setWorkflowData] =
     useState<UserProfileWorkflowData | null>(null);
+  const [showOpenELDSetup, setShowOpenELDSetup] = useState(false);
 
   const currentUser = demoUser;
   const workflowService = UserProfileWorkflowService.getInstance();
@@ -350,11 +352,21 @@ export default function UserProfile() {
           user: mockUserProfile,
           trainingAssignments: [],
           trainingProgress: [],
-          carrierOnboardingStatus: {
-            currentStep: 3,
-            overallProgress: 50,
-            completedSteps: ['FMCSA Verification', 'Travel Limits'],
+          icaOnboardingStatus: {
+            currentStep: 1,
+            completedSteps: [],
+            overallProgress: 0,
           },
+          carrierOnboardingStatus: {
+            currentStep: 4,
+            overallProgress: 57,
+            completedSteps: [
+              'FMCSA Verification',
+              'Travel Limits',
+              'Documents',
+            ],
+          },
+          workflowStatus: 'onboarding',
         };
         setWorkflowData(mockWorkflowData);
       }
@@ -1232,6 +1244,13 @@ export default function UserProfile() {
                           'Upload insurance, permits, and certifications',
                       },
                       {
+                        id: 'openeld',
+                        title: 'OpenELD Setup',
+                        icon: '📱',
+                        description:
+                          'Configure Electronic Logging Device for compliance',
+                      },
+                      {
                         id: 'factoring',
                         title: 'Factoring',
                         icon: '💰',
@@ -1262,6 +1281,11 @@ export default function UserProfile() {
                       return (
                         <div
                           key={step.id}
+                          onClick={() => {
+                            if (step.id === 'openeld' && !isCompleted) {
+                              setShowOpenELDSetup(true);
+                            }
+                          }}
                           style={{
                             background: isCompleted
                               ? 'rgba(16, 185, 129, 0.1)'
@@ -2390,6 +2414,63 @@ export default function UserProfile() {
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* OpenELD Setup Modal */}
+        {showOpenELDSetup && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+            }}
+            onClick={() => setShowOpenELDSetup(false)}
+          >
+            <div
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                maxWidth: '800px',
+                width: '90%',
+                maxHeight: '90vh',
+                overflow: 'auto',
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <OpenELDOnboardingSetup
+                onComplete={() => {
+                  setShowOpenELDSetup(false);
+                  // Update the workflow data to mark OpenELD as completed
+                  if (workflowData) {
+                    const updatedWorkflowData = {
+                      ...workflowData,
+                      carrierOnboardingStatus: {
+                        ...workflowData.carrierOnboardingStatus!,
+                        currentStep: 5, // Move to next step (Factoring)
+                        overallProgress: 71, // Update progress
+                        completedSteps: [
+                          ...(workflowData.carrierOnboardingStatus
+                            ?.completedSteps || []),
+                          'OpenELD Setup',
+                        ],
+                      },
+                    };
+                    setWorkflowData(updatedWorkflowData);
+                  }
+                }}
+                driverId={currentUser.id}
+              />
             </div>
           </div>
         )}

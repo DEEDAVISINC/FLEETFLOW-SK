@@ -2,6 +2,7 @@
 
 export interface ShipperAccount {
   id: string;
+  goWithFlowId: string; // Unique customer-facing identifier
   companyName: string;
   contactName: string;
   email: string;
@@ -77,6 +78,32 @@ export interface ShipperAccountCreationResult {
 
 class ShipperAccountService {
   private storageKey = 'fleetflow_shipper_accounts';
+  private lastGoWithFlowId = 0;
+
+  // Generate unique Go with the Flow identifier
+  private generateGoWithFlowId(): string {
+    this.lastGoWithFlowId += 1;
+    const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0');
+    return `GWF-${this.lastGoWithFlowId.toString().padStart(4, '0')}-${timestamp}-${random}`;
+  }
+
+  // Initialize last ID from existing accounts
+  private initializeLastId(): void {
+    const accounts = this.getAllAccounts();
+    if (accounts.length > 0) {
+      const ids = accounts
+        .map((acc) => acc.goWithFlowId)
+        .filter((id) => id && id.startsWith('GWF-'))
+        .map((id) => {
+          const match = id.match(/GWF-(\d+)-/);
+          return match ? parseInt(match[1]) : 0;
+        });
+      this.lastGoWithFlowId = Math.max(...ids, 0);
+    }
+  }
 
   // Create new shipper account from quote request
   async createAccountFromQuoteRequest(
@@ -113,8 +140,14 @@ class ShipperAccountService {
       // Create new account
       const accountId = `shipper-${Date.now()}`;
 
+      // Initialize last ID if needed
+      if (this.lastGoWithFlowId === 0) {
+        this.initializeLastId();
+      }
+
       const newAccount: ShipperAccount = {
         id: accountId,
+        goWithFlowId: this.generateGoWithFlowId(),
         companyName: contactInfo.companyName || 'Individual Shipper',
         contactName: contactInfo.contactName || 'Contact',
         email: contactInfo.email,
@@ -262,6 +295,14 @@ class ShipperAccountService {
     return accounts.find((account) => account.id === accountId) || null;
   }
 
+  // Find account by Go with the Flow ID
+  findAccountByGoWithFlowId(goWithFlowId: string): ShipperAccount | null {
+    const accounts = this.getAllAccounts();
+    return (
+      accounts.find((account) => account.goWithFlowId === goWithFlowId) || null
+    );
+  }
+
   // Update account with quotes
   async updateAccountWithQuotes(
     accountId: string,
@@ -316,7 +357,7 @@ class ShipperAccountService {
         </ul>
         <p><strong>Account Details:</strong></p>
         <ul>
-          <li>Account ID: ${account.id}</li>
+          <li><strong>Go with the Flow ID:</strong> ${account.goWithFlowId}</li>
           <li>Company: ${account.companyName}</li>
           <li>Email: ${account.email}</li>
         </ul>
@@ -341,6 +382,7 @@ class ShipperAccountService {
     totalAccounts: number;
     totalShipments: number;
     totalRevenue: number;
+    nextGoWithFlowId: string;
   } {
     const accounts = this.getAllAccounts();
     return {
@@ -350,6 +392,7 @@ class ShipperAccountService {
         0
       ),
       totalRevenue: accounts.reduce((sum, acc) => sum + acc.totalSpent, 0),
+      nextGoWithFlowId: this.generateGoWithFlowId(),
     };
   }
 
@@ -393,4 +436,3 @@ class ShipperAccountService {
 }
 
 export const shipperAccountService = new ShipperAccountService();
-

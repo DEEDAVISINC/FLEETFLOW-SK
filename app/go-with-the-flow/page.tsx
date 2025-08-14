@@ -312,7 +312,7 @@ export default function GoWithTheFlow() {
           );
 
           setNotificationMessage(
-            `🎉 ${accountResult.message} Load ID: ${result.load.id}. Portal access sent to ${contactInfo.email}!`
+            `🎉 ${accountResult.message} Load ID: ${result.load.id}. Your Go with the Flow ID: ${accountResult.account!.goWithFlowId}. Portal access sent to ${contactInfo.email}!`
           );
         } else {
           setNotificationMessage(
@@ -1782,7 +1782,9 @@ export default function GoWithTheFlow() {
                               shipper account will be automatically created for
                               you, giving you access to track shipments, request
                               future quotes, and manage your logistics needs
-                              anytime!
+                              anytime! You'll receive a unique{' '}
+                              <strong>Go with the Flow ID</strong> for easy
+                              reference.
                             </p>
                           </div>
                         </div>
@@ -2586,6 +2588,37 @@ export default function GoWithTheFlow() {
                 👤 Account Details
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
+                {/* Go with the Flow ID - Prominently Displayed */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '12px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Your Go with the Flow ID
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {accountCreationResult.account.goWithFlowId}
+                  </div>
+                </div>
+
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
@@ -2620,9 +2653,15 @@ export default function GoWithTheFlow() {
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Account ID:
+                    Internal ID:
                   </span>
-                  <span style={{ color: 'white', fontWeight: '500' }}>
+                  <span
+                    style={{
+                      color: 'white',
+                      fontWeight: '500',
+                      fontSize: '12px',
+                    }}
+                  >
                     {accountCreationResult.account.id}
                   </span>
                 </div>
