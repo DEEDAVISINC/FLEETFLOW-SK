@@ -1,21 +1,36 @@
 'use client';
 
 import React, { useState } from 'react';
-import { fmcsaService, FMCSACarrierData, FMCSASearchResult } from '../services/FMCSAService';
+import { FraudGuardService } from '../../../services/fraud-guard-service';
+import {
+  FMCSACarrierData,
+  FMCSASearchResult,
+  fmcsaService,
+} from '../services/FMCSAService';
 
 interface FMCSAVerificationProps {
   onDataVerified: (data: FMCSACarrierData) => void;
   onNext: () => void;
 }
 
-export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVerified, onNext }) => {
+export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({
+  onDataVerified,
+  onNext,
+}) => {
   const [searchInput, setSearchInput] = useState('');
   const [searchType, setSearchType] = useState<'DOT' | 'MC' | 'NAME'>('DOT');
   const [loading, setLoading] = useState(false);
-  const [verificationData, setVerificationData] = useState<FMCSACarrierData | null>(null);
-  const [searchResult, setSearchResult] = useState<FMCSASearchResult | null>(null);
+  const [verificationData, setVerificationData] =
+    useState<FMCSACarrierData | null>(null);
+  const [searchResult, setSearchResult] = useState<FMCSASearchResult | null>(
+    null
+  );
   const [error, setError] = useState('');
   const [validationResult, setValidationResult] = useState<any>(null);
+  const [fraudAnalysis, setFraudAnalysis] = useState<any>(null);
+  const [fraudLoading, setFraudLoading] = useState(false);
+
+  const fraudGuardService = new FraudGuardService();
 
   const handleSearch = async () => {
     if (!searchInput.trim()) {
@@ -30,7 +45,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
 
     try {
       let result: FMCSASearchResult;
-      
+
       switch (searchType) {
         case 'DOT':
           result = await fmcsaService.searchByDOT(searchInput);
@@ -40,12 +55,15 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
           break;
         case 'NAME':
           const nameResults = await fmcsaService.searchByName(searchInput);
-          result = nameResults.length > 0 ? nameResults[0] : { 
-            success: false, 
-            error: 'No carriers found with that name', 
-            searchTime: 0, 
-            dataSource: 'MOCK' 
-          };
+          result =
+            nameResults.length > 0
+              ? nameResults[0]
+              : {
+                  success: false,
+                  error: 'No carriers found with that name',
+                  searchTime: 0,
+                  dataSource: 'MOCK',
+                };
           break;
         default:
           throw new Error('Invalid search type');
@@ -58,8 +76,13 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
         onDataVerified(result.data);
 
         // Validate carrier for onboarding
-        const validation = fmcsaService.constructor.validateForOnboarding(result.data);
+        const validation = fmcsaService.constructor.validateForOnboarding(
+          result.data
+        );
         setValidationResult(validation);
+
+        // Run FleetGuard AI fraud analysis
+        await runFraudAnalysis(result.data);
       } else {
         setError(result.error || 'Carrier not found');
       }
@@ -71,32 +94,76 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
     }
   };
 
+  const runFraudAnalysis = async (carrierData: FMCSACarrierData) => {
+    setFraudLoading(true);
+    try {
+      // Run comprehensive fraud analysis
+      const analysis = await fraudGuardService.analyzeCarrier({
+        mcNumber: carrierData.mcNumber,
+        dotNumber: carrierData.dotNumber,
+        companyName: carrierData.legalName,
+        physicalAddress: carrierData.physicalAddress,
+        mailingAddress: carrierData.mailingAddress,
+        phone: carrierData.phone,
+        safetyRating: carrierData.safetyRating,
+        operatingStatus: carrierData.operatingStatus || 'ACTIVE',
+      });
+
+      setFraudAnalysis(analysis);
+      console.log('🛡️ FleetGuard AI Analysis Complete:', analysis);
+    } catch (error) {
+      console.error('FleetGuard AI analysis failed:', error);
+      setFraudAnalysis({
+        riskLevel: 'medium',
+        confidence: 0,
+        flags: ['Analysis temporarily unavailable'],
+        recommendations: ['Manual review recommended'],
+      });
+    } finally {
+      setFraudLoading(false);
+    }
+  };
+
   const getSafetyRatingIcon = (rating: string) => {
     switch (rating) {
-      case 'SATISFACTORY': return '✅';
-      case 'CONDITIONAL': return '⚠️';
-      case 'UNSATISFACTORY': return '❌';
-      case 'NOT_RATED': return '❓';
-      default: return '❓';
+      case 'SATISFACTORY':
+        return '✅';
+      case 'CONDITIONAL':
+        return '⚠️';
+      case 'UNSATISFACTORY':
+        return '❌';
+      case 'NOT_RATED':
+        return '❓';
+      default:
+        return '❓';
     }
   };
 
   const getSafetyRatingColor = (rating: string) => {
     switch (rating) {
-      case 'SATISFACTORY': return '#10b981';
-      case 'CONDITIONAL': return '#f59e0b';
-      case 'UNSATISFACTORY': return '#ef4444';
-      case 'NOT_RATED': return '#6b7280';
-      default: return '#6b7280';
+      case 'SATISFACTORY':
+        return '#10b981';
+      case 'CONDITIONAL':
+        return '#f59e0b';
+      case 'UNSATISFACTORY':
+        return '#ef4444';
+      case 'NOT_RATED':
+        return '#6b7280';
+      default:
+        return '#6b7280';
     }
   };
 
   const getOperatingStatusIcon = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return '✅';
-      case 'OUT_OF_SERVICE': return '🚫';
-      case 'NOT_AUTHORIZED': return '❌';
-      default: return '❓';
+      case 'ACTIVE':
+        return '✅';
+      case 'OUT_OF_SERVICE':
+        return '🚫';
+      case 'NOT_AUTHORIZED':
+        return '❌';
+      default:
+        return '❓';
     }
   };
 
@@ -104,21 +171,25 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
   const testDOTNumbers = fmcsaService.getTestDOTNumbers();
 
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.1)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '16px',
-      padding: '32px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-    }}>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        padding: '32px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h2 style={{ 
-          fontSize: '2rem', 
-          fontWeight: 'bold', 
-          color: 'white', 
-          marginBottom: '12px' 
-        }}>
+        <h2
+          style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: '12px',
+          }}
+        >
           📊 FMCSA Carrier Verification
         </h2>
         <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}>
@@ -130,12 +201,14 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           {/* Search Type Selection */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              color: 'white', 
-              fontWeight: 'bold', 
-              marginBottom: '12px' 
-            }}>
+            <label
+              style={{
+                display: 'block',
+                color: 'white',
+                fontWeight: 'bold',
+                marginBottom: '12px',
+              }}
+            >
               Search Method
             </label>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
@@ -144,19 +217,25 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                   key={type}
                   onClick={() => setSearchType(type)}
                   style={{
-                    background: searchType === type 
-                      ? 'linear-gradient(135deg, #3b82f6, #2563eb)' 
-                      : 'rgba(255, 255, 255, 0.1)',
+                    background:
+                      searchType === type
+                        ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                        : 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
                     padding: '8px 16px',
                     borderRadius: '8px',
                     border: `1px solid ${searchType === type ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)'}`,
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  {type} {type === 'DOT' ? 'Number' : type === 'MC' ? 'Number' : 'Search'}
+                  {type}{' '}
+                  {type === 'DOT'
+                    ? 'Number'
+                    : type === 'MC'
+                      ? 'Number'
+                      : 'Search'}
                 </button>
               ))}
             </div>
@@ -164,23 +243,28 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
 
           {/* Search Input */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              color: 'white', 
-              fontWeight: 'bold', 
-              marginBottom: '8px' 
-            }}>
-              Enter {searchType === 'NAME' ? 'Company Name' : `${searchType} Number`}
+            <label
+              style={{
+                display: 'block',
+                color: 'white',
+                fontWeight: 'bold',
+                marginBottom: '8px',
+              }}
+            >
+              Enter{' '}
+              {searchType === 'NAME' ? 'Company Name' : `${searchType} Number`}
             </label>
             <div style={{ display: 'flex', gap: '12px' }}>
               <input
-                type="text"
+                type='text'
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={
-                  searchType === 'DOT' ? 'Enter DOT number (e.g., 123456)' :
-                  searchType === 'MC' ? 'Enter MC number (e.g., MC-123456)' :
-                  'Enter company name'
+                  searchType === 'DOT'
+                    ? 'Enter DOT number (e.g., 123456)'
+                    : searchType === 'MC'
+                      ? 'Enter MC number (e.g., MC-123456)'
+                      : 'Enter company name'
                 }
                 style={{
                   flex: 1,
@@ -189,7 +273,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: 'white',
-                  fontSize: '1rem'
+                  fontSize: '1rem',
                 }}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
@@ -197,7 +281,9 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                 onClick={handleSearch}
                 disabled={loading}
                 style={{
-                  background: loading ? '#6b7280' : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  background: loading
+                    ? '#6b7280'
+                    : 'linear-gradient(135deg, #3b82f6, #2563eb)',
                   color: 'white',
                   padding: '12px 24px',
                   borderRadius: '8px',
@@ -205,7 +291,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                   fontWeight: 'bold',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease',
-                  minWidth: '120px'
+                  minWidth: '120px',
                 }}
               >
                 {loading ? '🔄 Searching...' : '🔍 Search'}
@@ -215,15 +301,24 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
 
           {/* Demo DOT Numbers */}
           {searchType === 'DOT' && (
-            <div style={{
-              background: 'rgba(59, 130, 246, 0.1)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '24px'
-            }}>
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', margin: '0 0 8px 0' }}>
-                💡 <strong>Demo DOT Numbers:</strong> Try these sample numbers to see carrier data
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '24px',
+              }}
+            >
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '0.9rem',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                💡 <strong>Demo DOT Numbers:</strong> Try these sample numbers
+                to see carrier data
               </p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {testDOTNumbers.map((dotNumber) => (
@@ -238,7 +333,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                       border: '1px solid rgba(59, 130, 246, 0.5)',
                       fontSize: '0.8rem',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     {dotNumber}
@@ -250,97 +345,163 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
 
           {/* Search Result Info */}
           {searchResult && (
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              padding: '12px',
-              marginBottom: '16px',
-              fontSize: '0.85rem',
-              color: 'rgba(255, 255, 255, 0.7)'
-            }}>
-              Search completed in {searchResult.searchTime}ms • Data source: {searchResult.dataSource}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '16px',
+                fontSize: '0.85rem',
+                color: 'rgba(255, 255, 255, 0.7)',
+              }}
+            >
+              Search completed in {searchResult.searchTime}ms • Data source:{' '}
+              {searchResult.dataSource}
             </div>
           )}
 
           {/* Error Display */}
           {error && (
-            <div style={{
-              background: 'rgba(239, 68, 68, 0.2)',
-              border: '1px solid rgba(239, 68, 68, 0.5)',
-              borderRadius: '8px',
-              padding: '12px',
-              color: '#fef2f2',
-              textAlign: 'center'
-            }}>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.2)',
+                border: '1px solid rgba(239, 68, 68, 0.5)',
+                borderRadius: '8px',
+                padding: '12px',
+                color: '#fef2f2',
+                textAlign: 'center',
+              }}
+            >
               ❌ {error}
             </div>
           )}
         </div>
       ) : (
         <div>
-          <div style={{
-            background: 'rgba(16, 185, 129, 0.2)',
-            border: '1px solid rgba(16, 185, 129, 0.5)',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '32px',
-            textAlign: 'center'
-          }}>
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.2)',
+              border: '1px solid rgba(16, 185, 129, 0.5)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '32px',
+              textAlign: 'center',
+            }}
+          >
             <div style={{ fontSize: '3rem', marginBottom: '12px' }}>✅</div>
-            <h3 style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
+            <h3
+              style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}
+            >
               Carrier Verified Successfully
             </h3>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '20px',
-            marginBottom: '32px'
-          }}>
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '20px'
-            }}>
-              <h4 style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+              marginBottom: '32px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                }}
+              >
                 📋 Company Information
               </h4>
-              <div style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}>
-                <div><strong>Legal Name:</strong> {verificationData.legalName}</div>
-                {verificationData.dbaName && <div><strong>DBA:</strong> {verificationData.dbaName}</div>}
-                <div><strong>DOT:</strong> {verificationData.dotNumber}</div>
-                <div><strong>MC:</strong> {verificationData.mcNumber}</div>
-                <div><strong>Phone:</strong> {verificationData.phone}</div>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}
+              >
+                <div>
+                  <strong>Legal Name:</strong> {verificationData.legalName}
+                </div>
+                {verificationData.dbaName && (
+                  <div>
+                    <strong>DBA:</strong> {verificationData.dbaName}
+                  </div>
+                )}
+                <div>
+                  <strong>DOT:</strong> {verificationData.dotNumber}
+                </div>
+                <div>
+                  <strong>MC:</strong> {verificationData.mcNumber}
+                </div>
+                <div>
+                  <strong>Phone:</strong> {verificationData.phone}
+                </div>
               </div>
             </div>
 
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '20px'
-            }}>
-              <h4 style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '16px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                }}
+              >
                 🛡️ Safety & Authority
               </h4>
-              <div style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <strong>Safety Rating:</strong> 
-                  {getStatusIcon(verificationData.safetyRating)} {verificationData.safetyRating}
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  <strong>Safety Rating:</strong>
+                  {getSafetyRatingIcon(verificationData.safetyRating)}{' '}
+                  {verificationData.safetyRating}
                 </div>
-                <div><strong>Authority:</strong> {verificationData.operatingAuthority}</div>
-                <div><strong>Power Units:</strong> {verificationData.powerUnits}</div>
-                <div><strong>Drivers:</strong> {verificationData.drivers}</div>
-                <div><strong>Last Update:</strong> {verificationData.lastUpdate}</div>
+                <div>
+                  <strong>Authority:</strong>{' '}
+                  {verificationData.operatingAuthority}
+                </div>
+                <div>
+                  <strong>Power Units:</strong> {verificationData.powerUnits}
+                </div>
+                <div>
+                  <strong>Drivers:</strong> {verificationData.drivers}
+                </div>
+                <div>
+                  <strong>Last Update:</strong> {verificationData.lastUpdate}
+                </div>
               </div>
             </div>
 
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '20px'
-            }}>
-              <h4 style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '16px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                }}
+              >
                 🚛 Equipment Types
               </h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -353,7 +514,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                       padding: '6px 12px',
                       borderRadius: '20px',
                       fontSize: '0.9rem',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                   >
                     {type}
@@ -362,22 +523,189 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
               </div>
             </div>
 
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '20px'
-            }}>
-              <h4 style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '16px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                }}
+              >
                 📍 Addresses
               </h4>
-              <div style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}>
-                <div><strong>Physical:</strong></div>
-                <div style={{ marginBottom: '12px', paddingLeft: '8px' }}>{verificationData.physicalAddress}</div>
-                <div><strong>Mailing:</strong></div>
-                <div style={{ paddingLeft: '8px' }}>{verificationData.mailingAddress}</div>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6' }}
+              >
+                <div>
+                  <strong>Physical:</strong>
+                </div>
+                <div style={{ marginBottom: '12px', paddingLeft: '8px' }}>
+                  {verificationData.physicalAddress}
+                </div>
+                <div>
+                  <strong>Mailing:</strong>
+                </div>
+                <div style={{ paddingLeft: '8px' }}>
+                  {verificationData.mailingAddress}
+                </div>
               </div>
             </div>
           </div>
+
+          {/* FleetGuard AI Fraud Analysis */}
+          {fraudLoading && (
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.5)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '32px',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🤖</div>
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  marginBottom: '8px',
+                }}
+              >
+                🛡️ FleetGuard AI Analysis in Progress...
+              </h4>
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                Running comprehensive fraud detection analysis
+              </p>
+            </div>
+          )}
+
+          {fraudAnalysis && (
+            <div
+              style={{
+                background:
+                  fraudAnalysis.riskLevel === 'low'
+                    ? 'rgba(16, 185, 129, 0.2)'
+                    : fraudAnalysis.riskLevel === 'medium'
+                      ? 'rgba(245, 158, 11, 0.2)'
+                      : 'rgba(239, 68, 68, 0.2)',
+                border: `1px solid ${
+                  fraudAnalysis.riskLevel === 'low'
+                    ? 'rgba(16, 185, 129, 0.5)'
+                    : fraudAnalysis.riskLevel === 'medium'
+                      ? 'rgba(245, 158, 11, 0.5)'
+                      : 'rgba(239, 68, 68, 0.5)'
+                }`,
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '32px',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                  {fraudAnalysis.riskLevel === 'low'
+                    ? '✅'
+                    : fraudAnalysis.riskLevel === 'medium'
+                      ? '⚠️'
+                      : '🚨'}
+                </div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  🛡️ FleetGuard AI Risk Assessment: {fraudAnalysis.riskLevel}{' '}
+                  Risk
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Confidence: {Math.round(fraudAnalysis.confidence * 100)}%
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                {fraudAnalysis.flags && fraudAnalysis.flags.length > 0 && (
+                  <div>
+                    <h5
+                      style={{
+                        color: 'white',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      🚩 Risk Indicators:
+                    </h5>
+                    <ul
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        margin: 0,
+                        paddingLeft: '16px',
+                      }}
+                    >
+                      {fraudAnalysis.flags.map(
+                        (flag: string, index: number) => (
+                          <li key={index} style={{ marginBottom: '4px' }}>
+                            {flag}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+                {fraudAnalysis.recommendations &&
+                  fraudAnalysis.recommendations.length > 0 && (
+                    <div>
+                      <h5
+                        style={{
+                          color: 'white',
+                          fontWeight: 'bold',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        💡 Recommendations:
+                      </h5>
+                      <ul
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          margin: 0,
+                          paddingLeft: '16px',
+                        }}
+                      >
+                        {fraudAnalysis.recommendations.map(
+                          (rec: string, index: number) => (
+                            <li key={index} style={{ marginBottom: '4px' }}>
+                              {rec}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+              </div>
+            </div>
+          )}
 
           <div style={{ textAlign: 'center' }}>
             <button
@@ -392,10 +720,14 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({ onDataVeri
                 fontWeight: 'bold',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)'
+                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
               }}
-              onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+              onMouseOver={(e) =>
+                ((e.target as HTMLElement).style.transform = 'translateY(-2px)')
+              }
+              onMouseOut={(e) =>
+                ((e.target as HTMLElement).style.transform = 'translateY(0)')
+              }
             >
               ✅ Continue to Document Upload
             </button>

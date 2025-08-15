@@ -1,7 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { EnhancedCarrierService, CarrierData } from '../services/enhanced-carrier-service';
+import { useState } from 'react';
+import {
+  CarrierData,
+  EnhancedCarrierService,
+} from '../services/enhanced-carrier-service';
+import { FraudGuardService } from '../services/fraud-guard-service';
 
 interface CarrierVerificationPanelProps {
   onCarrierVerified?: (carrier: CarrierData) => void;
@@ -9,19 +13,24 @@ interface CarrierVerificationPanelProps {
   initialMcNumber?: string;
 }
 
-export default function CarrierVerificationPanel({ 
-  onCarrierVerified, 
-  onClose, 
-  initialMcNumber 
+export default function CarrierVerificationPanel({
+  onCarrierVerified,
+  onClose,
+  initialMcNumber,
 }: CarrierVerificationPanelProps) {
   const [mcNumber, setMcNumber] = useState(initialMcNumber || '');
   const [carrier, setCarrier] = useState<CarrierData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [trackingEnabled, setTrackingEnabled] = useState(false);
-  const [verificationTab, setVerificationTab] = useState<'fmcsa' | 'brokersnapshot' | 'combined'>('combined');
+  const [verificationTab, setVerificationTab] = useState<
+    'fmcsa' | 'brokersnapshot' | 'combined' | 'fleetguard'
+  >('combined');
+  const [fraudAnalysis, setFraudAnalysis] = useState<any>(null);
+  const [fraudLoading, setFraudLoading] = useState(false);
 
   const carrierService = new EnhancedCarrierService();
+  const fraudGuardService = new FraudGuardService();
 
   const handleVerifyCarrier = async () => {
     if (!mcNumber.trim()) {
@@ -41,7 +50,8 @@ export default function CarrierVerificationPanel({
           carrierData = await carrierService.verifyCarrierFMCSA(mcNumber);
           break;
         case 'brokersnapshot':
-          const bsData = await carrierService.getCarrierBrokerSnapshot(mcNumber);
+          const bsData =
+            await carrierService.getCarrierBrokerSnapshot(mcNumber);
           if (bsData) {
             carrierData = {
               mcNumber,
@@ -57,13 +67,18 @@ export default function CarrierVerificationPanel({
               mileage: 0,
               lastUpdate: new Date().toISOString(),
               source: 'BROKERSNAPSHOT',
-              ...bsData
+              ...bsData,
             } as CarrierData;
           }
           break;
+        case 'fleetguard':
+          // Run FleetGuard AI fraud analysis
+          await runFleetGuardAnalysis(mcNumber);
+          return; // Don't proceed with standard verification
         case 'combined':
         default:
-          carrierData = await carrierService.verifyCarrierComprehensive(mcNumber);
+          carrierData =
+            await carrierService.verifyCarrierComprehensive(mcNumber);
           break;
       }
 
@@ -87,7 +102,9 @@ export default function CarrierVerificationPanel({
 
     setLoading(true);
     try {
-      const result = await carrierService.enableCarrierTracking(carrier.mcNumber);
+      const result = await carrierService.enableCarrierTracking(
+        carrier.mcNumber
+      );
       if (result.success) {
         setTrackingEnabled(true);
         setCarrier({ ...carrier, trackingEnabled: true });
@@ -100,6 +117,43 @@ export default function CarrierVerificationPanel({
       setError('Failed to enable tracking');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const runFleetGuardAnalysis = async (mcNum: string) => {
+    setFraudLoading(true);
+    setError('');
+    setFraudAnalysis(null);
+
+    try {
+      // First get basic carrier data for analysis
+      const carrierData = await carrierService.verifyCarrierFMCSA(mcNum);
+
+      if (carrierData) {
+        // Run comprehensive fraud analysis
+        const analysis = await fraudGuardService.analyzeCarrier({
+          mcNumber: carrierData.mcNumber,
+          dotNumber: carrierData.dotNumber,
+          companyName: carrierData.companyName,
+          physicalAddress: carrierData.physicalAddress,
+          mailingAddress:
+            carrierData.mailingAddress || carrierData.physicalAddress,
+          phone: carrierData.phone,
+          safetyRating: carrierData.safetyRating,
+          operatingStatus: carrierData.operatingStatus || 'ACTIVE',
+        });
+
+        setFraudAnalysis(analysis);
+        setCarrier(carrierData); // Set carrier data for display
+        console.log('🛡️ FleetGuard AI Analysis Complete:', analysis);
+      } else {
+        setError('Carrier not found - unable to run fraud analysis');
+      }
+    } catch (error) {
+      console.error('FleetGuard AI analysis failed:', error);
+      setError('FleetGuard AI analysis failed. Please try again.');
+    } finally {
+      setFraudLoading(false);
     }
   };
 
@@ -120,14 +174,16 @@ export default function CarrierVerificationPanel({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className='rounded-lg bg-white p-6 shadow-lg'>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">🛡️ Carrier Verification & Tracking</h2>
+      <div className='mb-6 flex items-center justify-between'>
+        <h2 className='text-xl font-bold text-gray-900'>
+          🛡️ Carrier Verification & Tracking
+        </h2>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className='text-2xl text-gray-400 hover:text-gray-600'
           >
             ×
           </button>
@@ -135,16 +191,17 @@ export default function CarrierVerificationPanel({
       </div>
 
       {/* Verification Tabs */}
-      <div className="flex space-x-2 mb-6">
+      <div className='mb-6 flex space-x-2'>
         {[
           { id: 'combined', label: 'Full Verification', icon: '🔍' },
           { id: 'fmcsa', label: 'FMCSA Only', icon: '🏛️' },
-          { id: 'brokersnapshot', label: 'BrokerSnapshot', icon: '📊' }
+          { id: 'brokersnapshot', label: 'BrokerSnapshot', icon: '📊' },
+          { id: 'fleetguard', label: 'FleetGuard AI', icon: '🛡️' },
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setVerificationTab(tab.id as any)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 ${
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors duration-200 ${
               verificationTab === tab.id
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -157,22 +214,22 @@ export default function CarrierVerificationPanel({
       </div>
 
       {/* MC Number Input */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className='mb-6'>
+        <label className='mb-2 block text-sm font-medium text-gray-700'>
           MC Number
         </label>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <input
-            type="text"
+            type='text'
             value={mcNumber}
             onChange={(e) => setMcNumber(e.target.value.toUpperCase())}
-            placeholder="MC123456"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder='MC123456'
+            className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500'
           />
           <button
             onClick={handleVerifyCarrier}
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className='rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
           >
             {loading ? '⏳ Verifying...' : 'Verify'}
           </button>
@@ -181,60 +238,94 @@ export default function CarrierVerificationPanel({
 
       {/* Error Display */}
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <div className="text-red-800 text-sm">{error}</div>
+        <div className='mb-6 rounded-lg border border-red-200 bg-red-50 p-4'>
+          <div className='text-sm text-red-800'>{error}</div>
         </div>
       )}
 
       {/* Carrier Information */}
       {carrier && (
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Basic Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 Carrier Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              📋 Carrier Information
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Company Name</label>
-                <div className="text-sm text-gray-900 font-medium">{carrier.companyName}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Company Name
+                </label>
+                <div className='text-sm font-medium text-gray-900'>
+                  {carrier.companyName}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">MC Number</label>
-                <div className="text-sm text-gray-900 font-mono">{carrier.mcNumber}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  MC Number
+                </label>
+                <div className='font-mono text-sm text-gray-900'>
+                  {carrier.mcNumber}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">DOT Number</label>
-                <div className="text-sm text-gray-900 font-mono">{carrier.dotNumber}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  DOT Number
+                </label>
+                <div className='font-mono text-sm text-gray-900'>
+                  {carrier.dotNumber}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Phone</label>
-                <div className="text-sm text-gray-900">{carrier.phone}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Phone
+                </label>
+                <div className='text-sm text-gray-900'>{carrier.phone}</div>
               </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-500">Address</label>
-                <div className="text-sm text-gray-900">{carrier.physicalAddress}</div>
+              <div className='md:col-span-2'>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Address
+                </label>
+                <div className='text-sm text-gray-900'>
+                  {carrier.physicalAddress}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Safety & Compliance */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🛡️ Safety & Compliance</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              🛡️ Safety & Compliance
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Safety Rating</label>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(carrier.safetyRating)}`}>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Safety Rating
+                </label>
+                <span
+                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(carrier.safetyRating)}`}
+                >
                   {carrier.safetyRating}
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Insurance Status</label>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(carrier.insuranceStatus)}`}>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Insurance Status
+                </label>
+                <span
+                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(carrier.insuranceStatus)}`}
+                >
                   {carrier.insuranceStatus}
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Operating Status</label>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(carrier.operatingStatus)}`}>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Operating Status
+                </label>
+                <span
+                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(carrier.operatingStatus)}`}
+                >
                   {carrier.operatingStatus}
                 </span>
               </div>
@@ -242,45 +333,202 @@ export default function CarrierVerificationPanel({
           </div>
 
           {/* Fleet Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🚛 Fleet Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              🚛 Fleet Information
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Power Units</label>
-                <div className="text-sm text-gray-900 font-medium">{carrier.powerUnits}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Power Units
+                </label>
+                <div className='text-sm font-medium text-gray-900'>
+                  {carrier.powerUnits}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Drivers</label>
-                <div className="text-sm text-gray-900 font-medium">{carrier.drivers}</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Drivers
+                </label>
+                <div className='text-sm font-medium text-gray-900'>
+                  {carrier.drivers}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Total Mileage</label>
-                <div className="text-sm text-gray-900 font-medium">{carrier.mileage.toLocaleString()} mi</div>
+                <label className='block text-sm font-medium text-gray-500'>
+                  Total Mileage
+                </label>
+                <div className='text-sm font-medium text-gray-900'>
+                  {carrier.mileage.toLocaleString()} mi
+                </div>
               </div>
             </div>
           </div>
 
+          {/* FleetGuard AI Analysis */}
+          {(fraudLoading || fraudAnalysis) && (
+            <div
+              className={`rounded-lg p-4 ${
+                fraudAnalysis?.riskLevel === 'low'
+                  ? 'border border-green-200 bg-green-50'
+                  : fraudAnalysis?.riskLevel === 'medium'
+                    ? 'border border-yellow-200 bg-yellow-50'
+                    : fraudAnalysis?.riskLevel === 'high' ||
+                        fraudAnalysis?.riskLevel === 'critical'
+                      ? 'border border-red-200 bg-red-50'
+                      : 'border border-blue-200 bg-blue-50'
+              }`}
+            >
+              <h3 className='mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900'>
+                🛡️ FleetGuard AI Fraud Analysis
+                {fraudLoading && (
+                  <span className='text-sm text-blue-600'>(Analyzing...)</span>
+                )}
+              </h3>
+
+              {fraudLoading && (
+                <div className='flex items-center justify-center py-8'>
+                  <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600'></div>
+                  <span className='ml-3 text-blue-600'>
+                    Running comprehensive fraud detection...
+                  </span>
+                </div>
+              )}
+
+              {fraudAnalysis && (
+                <div className='space-y-4'>
+                  {/* Risk Level */}
+                  <div className='flex items-center gap-3'>
+                    <span className='text-2xl'>
+                      {fraudAnalysis.riskLevel === 'low'
+                        ? '✅'
+                        : fraudAnalysis.riskLevel === 'medium'
+                          ? '⚠️'
+                          : fraudAnalysis.riskLevel === 'high'
+                            ? '🚨'
+                            : '🔴'}
+                    </span>
+                    <div>
+                      <div className='text-lg font-bold text-gray-900 uppercase'>
+                        {fraudAnalysis.riskLevel} Risk Level
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        Confidence: {Math.round(fraudAnalysis.confidence * 100)}
+                        %
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Risk Indicators */}
+                  {fraudAnalysis.flags && fraudAnalysis.flags.length > 0 && (
+                    <div>
+                      <h4 className='mb-2 font-medium text-gray-900'>
+                        🚩 Risk Indicators:
+                      </h4>
+                      <ul className='list-inside list-disc space-y-1 text-sm text-gray-700'>
+                        {fraudAnalysis.flags.map(
+                          (flag: string, index: number) => (
+                            <li key={index}>{flag}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Recommendations */}
+                  {fraudAnalysis.recommendations &&
+                    fraudAnalysis.recommendations.length > 0 && (
+                      <div>
+                        <h4 className='mb-2 font-medium text-gray-900'>
+                          💡 Recommendations:
+                        </h4>
+                        <ul className='list-inside list-disc space-y-1 text-sm text-gray-700'>
+                          {fraudAnalysis.recommendations.map(
+                            (rec: string, index: number) => (
+                              <li key={index}>{rec}</li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                  {/* Analysis Details */}
+                  {fraudAnalysis.details && (
+                    <div className='grid grid-cols-2 gap-4 border-t border-gray-200 pt-4 md:grid-cols-4'>
+                      <div className='text-center'>
+                        <div className='text-lg font-bold text-gray-900'>
+                          {fraudAnalysis.details.addressRisk || 'N/A'}
+                        </div>
+                        <div className='text-xs text-gray-600'>
+                          Address Risk
+                        </div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-lg font-bold text-gray-900'>
+                          {fraudAnalysis.details.documentRisk || 'N/A'}
+                        </div>
+                        <div className='text-xs text-gray-600'>
+                          Document Risk
+                        </div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-lg font-bold text-gray-900'>
+                          {fraudAnalysis.details.behaviorRisk || 'N/A'}
+                        </div>
+                        <div className='text-xs text-gray-600'>
+                          Behavior Risk
+                        </div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-lg font-bold text-gray-900'>
+                          {fraudAnalysis.details.complianceRisk || 'N/A'}
+                        </div>
+                        <div className='text-xs text-gray-600'>
+                          Compliance Risk
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* BrokerSnapshot Data */}
           {carrier.source === 'BROKERSNAPSHOT' && (
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 BrokerSnapshot Insights</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='rounded-lg bg-blue-50 p-4'>
+              <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+                📊 BrokerSnapshot Insights
+              </h3>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 {carrier.creditScore && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">Credit Score</label>
-                    <div className="text-sm text-gray-900 font-medium">{carrier.creditScore}</div>
+                    <label className='block text-sm font-medium text-gray-500'>
+                      Credit Score
+                    </label>
+                    <div className='text-sm font-medium text-gray-900'>
+                      {carrier.creditScore}
+                    </div>
                   </div>
                 )}
                 {carrier.averagePaymentDays && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">Avg Payment Days</label>
-                    <div className="text-sm text-gray-900 font-medium">{carrier.averagePaymentDays} days</div>
+                    <label className='block text-sm font-medium text-gray-500'>
+                      Avg Payment Days
+                    </label>
+                    <div className='text-sm font-medium text-gray-900'>
+                      {carrier.averagePaymentDays} days
+                    </div>
                   </div>
                 )}
                 {carrier.paymentHistory && (
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-500">Payment History</label>
-                    <div className="text-sm text-gray-900">{carrier.paymentHistory}</div>
+                  <div className='md:col-span-2'>
+                    <label className='block text-sm font-medium text-gray-500'>
+                      Payment History
+                    </label>
+                    <div className='text-sm text-gray-900'>
+                      {carrier.paymentHistory}
+                    </div>
                   </div>
                 )}
               </div>
@@ -288,21 +536,27 @@ export default function CarrierVerificationPanel({
           )}
 
           {/* Real-time Tracking */}
-          <div className="bg-green-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📍 Real-time Tracking</h3>
-            <div className="flex items-center justify-between">
+          <div className='rounded-lg bg-green-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              📍 Real-time Tracking
+            </h3>
+            <div className='flex items-center justify-between'>
               <div>
-                <div className="text-sm text-gray-700 mb-2">
-                  {trackingEnabled ? 
-                    '✅ Live tracking is enabled for this carrier' : 
-                    '⚠️ Live tracking is not enabled'
-                  }
+                <div className='mb-2 text-sm text-gray-700'>
+                  {trackingEnabled
+                    ? '✅ Live tracking is enabled for this carrier'
+                    : '⚠️ Live tracking is not enabled'}
                 </div>
                 {carrier.lastKnownLocation && (
-                  <div className="text-xs text-gray-500">
-                    Last known location: {carrier.lastKnownLocation.lat.toFixed(4)}, {carrier.lastKnownLocation.lng.toFixed(4)}
+                  <div className='text-xs text-gray-500'>
+                    Last known location:{' '}
+                    {carrier.lastKnownLocation.lat.toFixed(4)},{' '}
+                    {carrier.lastKnownLocation.lng.toFixed(4)}
                     <br />
-                    Updated: {new Date(carrier.lastKnownLocation.timestamp).toLocaleString()}
+                    Updated:{' '}
+                    {new Date(
+                      carrier.lastKnownLocation.timestamp
+                    ).toLocaleString()}
                   </div>
                 )}
               </div>
@@ -310,7 +564,7 @@ export default function CarrierVerificationPanel({
                 <button
                   onClick={handleEnableTracking}
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  className='rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:opacity-50'
                 >
                   {loading ? '⏳ Enabling...' : '🔄 Enable Tracking'}
                 </button>
@@ -319,8 +573,9 @@ export default function CarrierVerificationPanel({
           </div>
 
           {/* Last Updated */}
-          <div className="text-xs text-gray-500 text-center">
-            Data source: {carrier.source} | Last updated: {new Date(carrier.lastUpdate).toLocaleString()}
+          <div className='text-center text-xs text-gray-500'>
+            Data source: {carrier.source} | Last updated:{' '}
+            {new Date(carrier.lastUpdate).toLocaleString()}
           </div>
         </div>
       )}

@@ -222,7 +222,7 @@ export default function ProfessionalNavigation() {
                 gap: '4px',
               }}
             >
-              �� OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
+              🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
             </button>
             {activeDropdown === 'operations' && (
               <div
@@ -567,6 +567,20 @@ export default function ProfessionalNavigation() {
                   }}
                 >
                   🛡️ Safety & Training
+                </Link>
+                <Link
+                  href='/fleetguard-demo'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ FleetGuard AI - Fraud Detection
                 </Link>
               </div>
             )}

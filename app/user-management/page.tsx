@@ -3172,6 +3172,285 @@ export default function UserManagement() {
               </div>
             </div>
 
+            {/* FleetGuard AI Security Analysis */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  margin: '0 0 12px 0',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                }}
+              >
+                🛡️ FleetGuard AI Security Analysis
+              </h4>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                {/* Security Status */}
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#10b981',
+                      fontSize: '24px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    ✅
+                  </div>
+                  <div
+                    style={{
+                      color: '#10b981',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    SECURITY STATUS
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '11px',
+                    }}
+                  >
+                    Verified & Active
+                  </div>
+                </div>
+
+                {/* Fraud Detection */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontSize: '24px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🔍
+                  </div>
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    FRAUD DETECTION
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '11px',
+                    }}
+                  >
+                    Continuously Monitored
+                  </div>
+                </div>
+
+                {/* Risk Assessment */}
+                <div
+                  style={{
+                    background:
+                      currentUser?.departmentCode === 'DM'
+                        ? 'rgba(245, 158, 11, 0.1)'
+                        : 'rgba(16, 185, 129, 0.1)',
+                    border:
+                      currentUser?.departmentCode === 'DM'
+                        ? '1px solid rgba(245, 158, 11, 0.2)'
+                        : '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color:
+                        currentUser?.departmentCode === 'DM'
+                          ? '#f59e0b'
+                          : '#10b981',
+                      fontSize: '24px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {currentUser?.departmentCode === 'DM' ? '⚠️' : '🛡️'}
+                  </div>
+                  <div
+                    style={{
+                      color:
+                        currentUser?.departmentCode === 'DM'
+                          ? '#f59e0b'
+                          : '#10b981',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    RISK LEVEL
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '11px',
+                    }}
+                  >
+                    {currentUser?.departmentCode === 'DM'
+                      ? 'Medium (Driver)'
+                      : 'Low (Internal)'}
+                  </div>
+                </div>
+
+                {/* BrokerSnapshot Integration */}
+                <div
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.1)',
+                    border: '1px solid rgba(168, 85, 247, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#a855f7',
+                      fontSize: '24px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    📊
+                  </div>
+                  <div
+                    style={{
+                      color: '#a855f7',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    BROKERSNAPSHOT
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '11px',
+                    }}
+                  >
+                    {currentUser?.departmentCode === 'DM'
+                      ? 'Financial Check'
+                      : 'N/A (Internal)'}
+                  </div>
+                </div>
+              </div>
+
+              {/* FleetGuard AI Features */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🔐 Active Security Features:
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '6px',
+                  }}
+                >
+                  {[
+                    'Address Verification',
+                    'Document Authentication',
+                    'Behavioral Analysis',
+                    currentUser?.departmentCode === 'DM'
+                      ? 'Carrier Screening'
+                      : 'Internal Monitoring',
+                    currentUser?.departmentCode === 'DM'
+                      ? 'Financial Intelligence'
+                      : 'Access Control',
+                    'Real-time Alerts',
+                  ].map((feature, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        padding: '2px 8px',
+                        fontSize: '10px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Role-Specific Security Information */}
+              <div
+                style={{
+                  marginTop: '12px',
+                  padding: '8px 12px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  borderRadius: '6px',
+                  fontSize: '10px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  lineHeight: '1.4',
+                }}
+              >
+                {currentUser?.departmentCode === 'MGR' &&
+                  '🔑 Executive Level: Full access to all FleetGuard AI security reports and carrier risk assessments across the entire platform.'}
+                {currentUser?.departmentCode === 'DC' &&
+                  '📋 Dispatcher: Access to carrier fraud detection for load assignment decisions and real-time security alerts.'}
+                {currentUser?.departmentCode === 'BB' &&
+                  '💼 Broker: Comprehensive carrier vetting with FMCSA + BrokerSnapshot integration for informed partner selection.'}
+                {currentUser?.departmentCode === 'DM' &&
+                  '🚛 Driver/Carrier: Enhanced onboarding security with document verification, address validation, and financial screening.'}
+              </div>
+            </div>
+
             {/* Onboarding Progress */}
             <div
               style={{

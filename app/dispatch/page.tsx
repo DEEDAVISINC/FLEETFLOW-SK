@@ -19,6 +19,11 @@ import {
   getLoadsForTenant,
   getTenantLoadStats,
 } from '../services/loadService';
+import {
+  LoadBoardMetrics,
+  UnifiedLoad,
+  unifiedLoadBoardService,
+} from '../services/unified-loadboard-service';
 
 interface DispatcherProfile {
   id: string;
@@ -109,6 +114,566 @@ const driversOnTheRoad = [
     status: 'At Delivery',
   },
 ];
+
+// Unified Load Board Section Component
+const UnifiedLoadBoardSection = () => {
+  const [unifiedLoads, setUnifiedLoads] = useState<UnifiedLoad[]>([]);
+  const [loadBoardMetrics, setLoadBoardMetrics] =
+    useState<LoadBoardMetrics | null>(null);
+  const [loadingUnified, setLoadingUnified] = useState(false);
+  const [showAllLoads, setShowAllLoads] = useState(false);
+  const [filters, setFilters] = useState({
+    origin: '',
+    destination: '',
+    equipment: '',
+    source: 'all',
+  });
+
+  // Load unified load board data
+  useEffect(() => {
+    loadUnifiedData();
+  }, []);
+
+  const loadUnifiedData = async () => {
+    setLoadingUnified(true);
+    try {
+      // Get loads from all sources (Phase 1: Free APIs + Phase 3: Partnerships)
+      const loads = await unifiedLoadBoardService.getAllLoads(true);
+      setUnifiedLoads(loads.slice(0, 12)); // Show top 12 loads initially
+
+      // Get metrics for partnership negotiations
+      const metrics = await unifiedLoadBoardService.getLoadBoardMetrics();
+      setLoadBoardMetrics(metrics);
+    } catch (error) {
+      console.error('Failed to load unified load board data:', error);
+    } finally {
+      setLoadingUnified(false);
+    }
+  };
+
+  const handleSearchUnified = async () => {
+    setLoadingUnified(true);
+    try {
+      const filteredLoads = await unifiedLoadBoardService.searchLoads({
+        origin: filters.origin || undefined,
+        destination: filters.destination || undefined,
+        equipment: filters.equipment || undefined,
+      });
+      setUnifiedLoads(filteredLoads.slice(0, 12));
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setLoadingUnified(false);
+    }
+  };
+
+  const handleContactBroker = async (load: UnifiedLoad) => {
+    // Track usage for partnership negotiations (Phase 2)
+    await unifiedLoadBoardService.trackLoadBoardUsage({
+      loadViewed: load.id,
+      source: load.source,
+      action: 'contacted',
+      userId: getCurrentUser()?.user?.id || 'dispatcher',
+    });
+
+    // Contact options: phone first, then email
+    if (load.brokerInfo.phone) {
+      window.open(`tel:${load.brokerInfo.phone}`, '_blank');
+    } else if (load.brokerInfo.email) {
+      window.open(
+        `mailto:${load.brokerInfo.email}?subject=Load Inquiry - ${load.origin.city} to ${load.destination.city}&body=Hi, I'm interested in your load from ${load.origin.city}, ${load.origin.state} to ${load.destination.city}, ${load.destination.state} for $${load.rate.toLocaleString()}.`,
+        '_blank'
+      );
+    }
+  };
+
+  return (
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '15px',
+        border: '2px solid rgba(255, 255, 255, 0.2)',
+        padding: '20px',
+        marginTop: '25px',
+        marginBottom: '25px',
+      }}
+    >
+      {/* Compact Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '15px',
+        }}
+      >
+        <h2
+          style={{
+            color: 'white',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            margin: 0,
+          }}
+        >
+          🎯 Unified Load Board ({unifiedLoads.length} loads)
+        </h2>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <span
+            style={{
+              background: '#10b981',
+              color: 'white',
+              padding: '2px 6px',
+              borderRadius: '8px',
+              fontSize: '9px',
+            }}
+          >
+            FREE APIs
+          </span>
+          <span
+            style={{
+              background: '#f59e0b',
+              color: 'white',
+              padding: '2px 6px',
+              borderRadius: '8px',
+              fontSize: '9px',
+            }}
+          >
+            TRACKING
+          </span>
+          <span
+            style={{
+              background: '#6b7280',
+              color: 'white',
+              padding: '2px 6px',
+              borderRadius: '8px',
+              fontSize: '9px',
+            }}
+          >
+            PARTNERSHIPS
+          </span>
+        </div>
+      </div>
+
+      {/* Compact Search Filters */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '10px',
+          marginBottom: '15px',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}
+      >
+        <input
+          type='text'
+          placeholder='Origin'
+          value={filters.origin}
+          onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
+          style={{
+            padding: '6px 10px',
+            borderRadius: '4px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '12px',
+            width: '120px',
+          }}
+        />
+        <input
+          type='text'
+          placeholder='Destination'
+          value={filters.destination}
+          onChange={(e) =>
+            setFilters({ ...filters, destination: e.target.value })
+          }
+          style={{
+            padding: '6px 10px',
+            borderRadius: '4px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '12px',
+            width: '120px',
+          }}
+        />
+        <select
+          value={filters.equipment}
+          onChange={(e) =>
+            setFilters({ ...filters, equipment: e.target.value })
+          }
+          style={{
+            padding: '6px 10px',
+            borderRadius: '4px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '12px',
+            width: '100px',
+          }}
+        >
+          <option value=''>All Equip</option>
+          <option value='van'>Van</option>
+          <option value='reefer'>Reefer</option>
+          <option value='flatbed'>Flatbed</option>
+        </select>
+        <select
+          value={filters.source}
+          onChange={(e) => setFilters({ ...filters, source: e.target.value })}
+          style={{
+            padding: '6px 10px',
+            borderRadius: '4px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '12px',
+            width: '100px',
+          }}
+        >
+          <option value='all'>All Sources</option>
+          <option value='DAT_FREE'>DAT</option>
+          <option value='TQL_PARTNER'>TQL</option>
+          <option value='LANDSTAR_PARTNER'>Landstar</option>
+        </select>
+        <button
+          onClick={handleSearchUnified}
+          disabled={loadingUnified}
+          style={{
+            background: loadingUnified ? 'rgba(255, 255, 255, 0.3)' : '#3b82f6',
+            color: 'white',
+            border: 'none',
+            padding: '6px 12px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            cursor: loadingUnified ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {loadingUnified ? '🔄' : '🔍 Search'}
+        </button>
+        {loadBoardMetrics && (
+          <span
+            style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '11px',
+              marginLeft: '10px',
+            }}
+          >
+            {loadBoardMetrics.totalLoads.toLocaleString()} total • $
+            {(loadBoardMetrics.averageRate / 1000).toFixed(1)}K avg
+          </span>
+        )}
+      </div>
+
+      {/* Load Board Table - Matching General Loadboard Style */}
+      <div
+        style={{
+          background: 'rgba(0, 0, 0, 0.6)',
+          borderRadius: '10px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Table Header */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              '90px 80px 1.5fr 1fr 120px 100px 100px 100px 120px',
+            gap: '10px',
+            padding: '12px 15px',
+            background: 'rgba(0, 0, 0, 0.6)',
+            fontWeight: '700',
+            color: '#9ca3af',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div>🎯 Source</div>
+          <div>Load ID</div>
+          <div>Route</div>
+          <div>Broker</div>
+          <div>Rate</div>
+          <div>Equipment</div>
+          <div>Distance</div>
+          <div>Pickup</div>
+          <div>🛡️ Risk</div>
+        </div>
+
+        {/* Table Body */}
+        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          {unifiedLoads.map((load, index) => (
+            <div
+              key={load.id}
+              style={{
+                display: 'grid',
+                gridTemplateColumns:
+                  '90px 80px 1.5fr 1fr 120px 100px 100px 100px 120px',
+                gap: '10px',
+                padding: '10px 15px',
+                background:
+                  index % 2 === 0 ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                color: '#e5e7eb',
+                fontSize: '12px',
+                transition: 'all 0.3s ease',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background =
+                  index % 2 === 0 ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.4)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+              onClick={() => handleContactBroker(load)}
+            >
+              {/* Source Badge */}
+              <div
+                style={{
+                  fontWeight: '700',
+                  color:
+                    load.sourceStatus === 'partnership' ? '#10b981' : '#6b7280',
+                  fontSize: '9px',
+                  fontFamily: 'monospace',
+                  textAlign: 'center',
+                  background:
+                    load.sourceStatus === 'partnership'
+                      ? 'rgba(16, 185, 129, 0.1)'
+                      : 'rgba(107, 114, 128, 0.1)',
+                  borderRadius: '4px',
+                  padding: '2px 4px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {load.source === 'DAT_FREE'
+                  ? 'DAT'
+                  : load.source === 'TQL_PARTNER'
+                    ? 'TQL'
+                    : load.source === 'LANDSTAR_PARTNER'
+                      ? 'LDS'
+                      : load.source === 'TRUCKSTOP_PUBLIC'
+                        ? 'TS'
+                        : load.source === '123LOADBOARD'
+                          ? '123'
+                          : load.source.substring(0, 3)}
+              </div>
+
+              {/* Load ID */}
+              <div
+                style={{
+                  fontWeight: '600',
+                  color: '#3b82f6',
+                  fontSize: '10px',
+                  fontFamily: 'monospace',
+                }}
+              >
+                {load.id.substring(load.id.length - 6)}
+              </div>
+
+              {/* Route */}
+              <div style={{ fontWeight: '600' }}>
+                <div style={{ color: '#10b981', marginBottom: '2px' }}>
+                  {load.origin.city}, {load.origin.state} →{' '}
+                  {load.destination.city}, {load.destination.state}
+                </div>
+                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
+                  {load.commodity} • {load.weight.toLocaleString()} lbs
+                  {load.hazmat && (
+                    <span style={{ color: '#ef4444' }}> • HAZMAT</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Broker */}
+              <div>
+                <div style={{ fontWeight: '600', marginBottom: '2px' }}>
+                  {load.brokerInfo.name.length > 20
+                    ? load.brokerInfo.name.substring(0, 20) + '...'
+                    : load.brokerInfo.name}
+                </div>
+                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
+                  {load.brokerInfo.phone && (
+                    <div>📞 {load.brokerInfo.phone}</div>
+                  )}
+                  {load.brokerInfo.email && (
+                    <div>✉️ {load.brokerInfo.email}</div>
+                  )}
+                  {load.brokerInfo.rating && (
+                    <div>⭐ {load.brokerInfo.rating}/5</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Rate */}
+              <div>
+                <div
+                  style={{
+                    fontWeight: '700',
+                    color: '#10b981',
+                    fontSize: '14px',
+                  }}
+                >
+                  ${load.rate.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
+                  ${(load.rate / load.miles).toFixed(2)}/mile
+                </div>
+              </div>
+
+              {/* Equipment */}
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    color: '#3b82f6',
+                    padding: '4px 6px',
+                    borderRadius: '4px',
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {load.equipment === 'van'
+                    ? 'VAN'
+                    : load.equipment === 'reefer'
+                      ? 'REF'
+                      : load.equipment === 'flatbed'
+                        ? 'FLT'
+                        : load.equipment === 'stepdeck'
+                          ? 'SD'
+                          : load.equipment.toUpperCase()}
+                </div>
+              </div>
+
+              {/* Distance */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: '600' }}>{load.miles} mi</div>
+                {load.deadheadMiles && load.deadheadMiles > 0 && (
+                  <div style={{ fontSize: '10px', color: '#f59e0b' }}>
+                    +{load.deadheadMiles} DH
+                  </div>
+                )}
+              </div>
+
+              {/* Pickup Date */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: '600' }}>
+                  {new Date(load.pickupDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </div>
+                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
+                  {new Date(load.pickupDate).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                  })}
+                </div>
+              </div>
+
+              {/* Risk Level & Actions */}
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                {load.riskLevel && (
+                  <span
+                    style={{
+                      background:
+                        load.riskLevel === 'low'
+                          ? 'rgba(16, 185, 129, 0.2)'
+                          : load.riskLevel === 'medium'
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(239, 68, 68, 0.2)',
+                      color:
+                        load.riskLevel === 'low'
+                          ? '#10b981'
+                          : load.riskLevel === 'medium'
+                            ? '#f59e0b'
+                            : '#ef4444',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {load.riskLevel.toUpperCase()}
+                  </span>
+                )}
+                {load.recommendationScore && (
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      color: '#9ca3af',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {load.recommendationScore}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Loading State */}
+        {loadingUnified && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '20px',
+              color: '#6b7280',
+            }}
+          >
+            <div
+              style={{
+                width: '16px',
+                height: '16px',
+                border: '2px solid #e5e7eb',
+                borderTop: '2px solid #3b82f6',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            <span style={{ marginLeft: '8px', fontSize: '12px' }}>
+              Loading loads...
+            </span>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loadingUnified && unifiedLoads.length === 0 && (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '30px',
+              color: '#6b7280',
+              fontSize: '14px',
+            }}
+          >
+            No loads found. Try adjusting your search filters.
+          </div>
+        )}
+      </div>
+
+      {/* Compact Footer */}
+      <div
+        style={{
+          marginTop: '10px',
+          textAlign: 'center',
+          color: 'rgba(255, 255, 255, 0.6)',
+          fontSize: '10px',
+        }}
+      >
+        Multi-platform aggregation: TQL • Landstar • DAT • Truckstop •
+        123LoadBoard • FleetGuard AI Risk Analysis
+      </div>
+    </div>
+  );
+};
 
 export default function DispatchCentral() {
   const [loads, setLoads] = useState<Load[]>([]);
@@ -1341,6 +1906,9 @@ export default function DispatchCentral() {
               ))}
             </div>
           </div>
+
+          {/* Unified Load Board Aggregator */}
+          <UnifiedLoadBoardSection />
 
           {selectedTab === 'go-with-flow' && (
             <div>
