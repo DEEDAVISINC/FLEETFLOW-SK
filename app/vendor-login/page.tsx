@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { extendedShipperService } from '../services/shipperService';
@@ -797,6 +798,27 @@ export default function VendorLoginPage() {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: '32px' }}>
+          <Link
+            href='/dashboard'
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 16px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '8px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              textDecoration: 'none',
+              fontSize: '0.85rem',
+              fontWeight: '500',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              marginBottom: '16px',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            🏠 FleetFlow Dashboard
+          </Link>
           <div
             style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.8rem' }}
           >

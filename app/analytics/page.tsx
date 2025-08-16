@@ -24,6 +24,7 @@ import EPASustainabilityAnalytics from '../components/EPASustainabilityAnalytics
 import FinancialDashboard from '../components/FinancialDashboard';
 import GovernmentContractIntelligence from '../components/GovernmentContractIntelligence';
 
+import OpenELDAnalyticsWidget from '../components/OpenELDAnalyticsWidget';
 import PortAuthorityIntelligence from '../components/PortAuthorityIntelligence';
 import SmartTaskPrioritizationWidget from '../components/SmartTaskPrioritizationWidget';
 
@@ -1922,6 +1923,11 @@ export default function AnalyticsPage() {
                 ⚓ Port Authority
               </a>
             </div>
+          </div>
+
+          {/* OpenELD Analytics Widget */}
+          <div style={{ marginBottom: '32px' }}>
+            <OpenELDAnalyticsWidget />
           </div>
 
           {/* Financial Markets Components */}

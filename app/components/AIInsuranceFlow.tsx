@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
   InsuranceLeadProfile,
@@ -83,6 +84,29 @@ export default function AIInsuranceFlow() {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Dashboard Navigation */}
+        <div style={{ marginBottom: '20px' }}>
+          <Link
+            href='/dashboard'
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            🏠 Back to Dashboard
+          </Link>
+        </div>
         {/* Header */}
         <div
           style={{

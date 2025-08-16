@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import GoogleMaps from '../components/GoogleMaps';
 import StickyNote from '../components/StickyNote-Enhanced';
+import VehicleInspectionChecklist from '../components/VehicleInspectionChecklist';
 
 interface Vehicle {
   id: string;
@@ -16,6 +17,10 @@ interface Vehicle {
   mileage: number;
   lastMaintenance: string;
   nextMaintenance: string;
+  vin?: string;
+  lastInspection?: string;
+  inspectionStatus?: 'pass' | 'fail' | 'overdue' | 'pending';
+  safeToOperate?: boolean;
 }
 
 export default function VehiclesPage() {
@@ -31,6 +36,10 @@ export default function VehiclesPage() {
       mileage: 125000,
       lastMaintenance: '2024-05-15',
       nextMaintenance: '2024-08-15',
+      vin: '1HGCM82633A123456',
+      lastInspection: '2024-07-15',
+      inspectionStatus: 'pass',
+      safeToOperate: true,
     },
     {
       id: 'V002',
@@ -43,6 +52,10 @@ export default function VehiclesPage() {
       mileage: 89000,
       lastMaintenance: '2024-06-20',
       nextMaintenance: '2024-09-20',
+      vin: '1FTFW1ET5DFC12345',
+      lastInspection: '2024-07-10',
+      inspectionStatus: 'fail',
+      safeToOperate: false,
     },
     {
       id: 'V003',
@@ -55,6 +68,10 @@ export default function VehiclesPage() {
       mileage: 78000,
       lastMaintenance: '2024-04-20',
       nextMaintenance: '2024-07-20',
+      vin: '1GCEK19T83Z123456',
+      lastInspection: '2024-07-14',
+      inspectionStatus: 'pass',
+      safeToOperate: true,
     },
     {
       id: 'V004',
@@ -67,6 +84,10 @@ export default function VehiclesPage() {
       mileage: 156000,
       lastMaintenance: '2024-02-10',
       nextMaintenance: '2024-05-10', // Overdue maintenance
+      vin: '1FTPW14V08KC12345',
+      lastInspection: '2024-06-20',
+      inspectionStatus: 'overdue',
+      safeToOperate: false,
     },
     {
       id: 'V005',
@@ -79,6 +100,10 @@ export default function VehiclesPage() {
       mileage: 65000,
       lastMaintenance: '2024-06-01',
       nextMaintenance: '2024-07-15', // Approaching due date
+      vin: '1GKEK13T43J123456',
+      lastInspection: undefined,
+      inspectionStatus: 'pending',
+      safeToOperate: false,
     },
   ]);
 
@@ -95,10 +120,25 @@ export default function VehiclesPage() {
     new Set()
   );
   const [showBulkActions, setShowBulkActions] = useState(false);
-  const [activeTab, setActiveTab] = useState<'fleet' | 'maintenance'>('fleet');
+  const [activeTab, setActiveTab] = useState<
+    'fleet' | 'maintenance' | 'inspections'
+  >('fleet');
   const [maintenanceView, setMaintenanceView] = useState<
     'dashboard' | 'schedule' | 'history'
   >('dashboard');
+  const [inspectionView, setInspectionView] = useState<
+    'dashboard' | 'history' | 'create'
+  >('dashboard');
+  const [showInspectionModal, setShowInspectionModal] = useState(false);
+  const [selectedVehicleForInspection, setSelectedVehicleForInspection] =
+    useState<Vehicle | null>(null);
+  const [inspectionType, setInspectionType] = useState<
+    | 'pre_trip'
+    | 'post_trip'
+    | 'damage_assessment'
+    | 'maintenance'
+    | 'dot_inspection'
+  >('pre_trip');
 
   // Mock maintenance data for demonstration
   const maintenanceData = {
@@ -175,8 +215,15 @@ export default function VehiclesPage() {
     overdueItems: 1,
   };
 
-  // Auto-refresh functionality
+  // Initialize inspection demo data and auto-refresh functionality
   useEffect(() => {
+    // Initialize vehicle inspection demo data
+    import('../services/VehicleInspectionService').then(
+      ({ VehicleInspectionService }) => {
+        VehicleInspectionService.initializeDemoData();
+      }
+    );
+
     const interval = setInterval(() => {
       // Simulate real-time data updates
       setVehicles((prevVehicles) =>
@@ -822,6 +869,37 @@ export default function VehiclesPage() {
             >
               🔧 Maintenance Management
             </button>
+            <button
+              onClick={() => setActiveTab('inspections')}
+              style={{
+                background:
+                  activeTab === 'inspections'
+                    ? 'rgba(255, 255, 255, 0.15)'
+                    : 'transparent',
+                color: 'white',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                flex: 1,
+                textAlign: 'center',
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== 'inspections') {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== 'inspections') {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              🔍 Vehicle Inspections
+            </button>
           </div>
 
           {/* MAINTENANCE MANAGEMENT SECTION */}
@@ -1405,6 +1483,776 @@ export default function VehiclesPage() {
                       }}
                     >
                       📥 Export Data
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* VEHICLE INSPECTIONS SECTION */}
+          {activeTab === 'inspections' && (
+            <div>
+              {/* Inspections Sub-Navigation */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  marginBottom: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <button
+                    onClick={() => setInspectionView('dashboard')}
+                    style={{
+                      background:
+                        inspectionView === 'dashboard'
+                          ? 'rgba(255, 255, 255, 0.2)'
+                          : 'transparent',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📊 Dashboard
+                  </button>
+                  <button
+                    onClick={() => setInspectionView('history')}
+                    style={{
+                      background:
+                        inspectionView === 'history'
+                          ? 'rgba(255, 255, 255, 0.2)'
+                          : 'transparent',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📋 History
+                  </button>
+                  <button
+                    onClick={() => setInspectionView('create')}
+                    style={{
+                      background:
+                        inspectionView === 'create'
+                          ? 'rgba(255, 255, 255, 0.2)'
+                          : 'transparent',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ➕ New Inspection
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedVehicleForInspection(null);
+                      setInspectionType('pre_trip');
+                      setShowInspectionModal(true);
+                    }}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      marginLeft: 'auto',
+                    }}
+                  >
+                    🔍 Quick Inspection
+                  </button>
+                </div>
+              </div>
+
+              {/* Inspections Dashboard */}
+              {inspectionView === 'dashboard' && (
+                <div>
+                  {/* Inspection KPIs */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '20px',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    {/* Vehicles Needing Inspection */}
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                        ⚠️
+                      </div>
+                      <h3
+                        style={{
+                          color: '#ef4444',
+                          margin: '0 0 8px 0',
+                          fontSize: '28px',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {
+                          vehicles.filter(
+                            (v) =>
+                              v.inspectionStatus === 'pending' ||
+                              v.inspectionStatus === 'overdue'
+                          ).length
+                        }
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(239, 68, 68, 0.8)',
+                          margin: 0,
+                          fontSize: '14px',
+                        }}
+                      >
+                        Need Inspection
+                      </p>
+                    </div>
+
+                    {/* Failed Inspections */}
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                        ❌
+                      </div>
+                      <h3
+                        style={{
+                          color: '#ef4444',
+                          margin: '0 0 8px 0',
+                          fontSize: '28px',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {
+                          vehicles.filter((v) => v.inspectionStatus === 'fail')
+                            .length
+                        }
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(239, 68, 68, 0.8)',
+                          margin: 0,
+                          fontSize: '14px',
+                        }}
+                      >
+                        Failed Inspections
+                      </p>
+                    </div>
+
+                    {/* Passed Inspections */}
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                        ✅
+                      </div>
+                      <h3
+                        style={{
+                          color: '#10b981',
+                          margin: '0 0 8px 0',
+                          fontSize: '28px',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {
+                          vehicles.filter((v) => v.inspectionStatus === 'pass')
+                            .length
+                        }
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(16, 185, 129, 0.8)',
+                          margin: 0,
+                          fontSize: '14px',
+                        }}
+                      >
+                        Passed Inspections
+                      </p>
+                    </div>
+
+                    {/* Safe to Operate */}
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        border: '1px solid rgba(59, 130, 246, 0.3)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                        🚛
+                      </div>
+                      <h3
+                        style={{
+                          color: '#3b82f6',
+                          margin: '0 0 8px 0',
+                          fontSize: '28px',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {vehicles.filter((v) => v.safeToOperate).length}
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(59, 130, 246, 0.8)',
+                          margin: 0,
+                          fontSize: '14px',
+                        }}
+                      >
+                        Safe to Operate
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Vehicle Inspection Status Table */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      🔍 Vehicle Inspection Status
+                    </h3>
+
+                    <div style={{ overflowX: 'auto' }}>
+                      <table
+                        style={{ width: '100%', borderCollapse: 'collapse' }}
+                      >
+                        <thead>
+                          <tr
+                            style={{
+                              borderBottom:
+                                '2px solid rgba(255, 255, 255, 0.2)',
+                            }}
+                          >
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'left',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Vehicle
+                            </th>
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'left',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              VIN
+                            </th>
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'center',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Last Inspection
+                            </th>
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'center',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Status
+                            </th>
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'center',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Safe to Operate
+                            </th>
+                            <th
+                              style={{
+                                color: 'white',
+                                padding: '12px',
+                                textAlign: 'center',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {vehicles.map((vehicle) => (
+                            <tr
+                              key={vehicle.id}
+                              style={{
+                                borderBottom:
+                                  '1px solid rgba(255, 255, 255, 0.1)',
+                                transition: 'background-color 0.2s ease',
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  'transparent';
+                              }}
+                            >
+                              <td style={{ padding: '12px', color: 'white' }}>
+                                <div>
+                                  <div
+                                    style={{
+                                      fontWeight: '600',
+                                      fontSize: '14px',
+                                    }}
+                                  >
+                                    {vehicle.name}
+                                  </div>
+                                  <div
+                                    style={{ fontSize: '12px', opacity: 0.7 }}
+                                  >
+                                    {vehicle.type}
+                                  </div>
+                                </div>
+                              </td>
+                              <td
+                                style={{
+                                  padding: '12px',
+                                  color: 'rgba(255, 255, 255, 0.8)',
+                                  fontSize: '12px',
+                                  fontFamily: 'monospace',
+                                }}
+                              >
+                                {vehicle.vin || 'N/A'}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '12px',
+                                  textAlign: 'center',
+                                  color: 'rgba(255, 255, 255, 0.8)',
+                                  fontSize: '14px',
+                                }}
+                              >
+                                {vehicle.lastInspection || 'Never'}
+                              </td>
+                              <td
+                                style={{ padding: '12px', textAlign: 'center' }}
+                              >
+                                <span
+                                  style={{
+                                    background:
+                                      vehicle.inspectionStatus === 'pass'
+                                        ? 'rgba(16, 185, 129, 0.2)'
+                                        : vehicle.inspectionStatus === 'fail'
+                                          ? 'rgba(239, 68, 68, 0.2)'
+                                          : vehicle.inspectionStatus ===
+                                              'overdue'
+                                            ? 'rgba(245, 158, 11, 0.2)'
+                                            : 'rgba(107, 114, 128, 0.2)',
+                                    color:
+                                      vehicle.inspectionStatus === 'pass'
+                                        ? '#10b981'
+                                        : vehicle.inspectionStatus === 'fail'
+                                          ? '#ef4444'
+                                          : vehicle.inspectionStatus ===
+                                              'overdue'
+                                            ? '#f59e0b'
+                                            : '#6b7280',
+                                    padding: '4px 12px',
+                                    borderRadius: '20px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {vehicle.inspectionStatus || 'Unknown'}
+                                </span>
+                              </td>
+                              <td
+                                style={{ padding: '12px', textAlign: 'center' }}
+                              >
+                                <span style={{ fontSize: '20px' }}>
+                                  {vehicle.safeToOperate ? '✅' : '❌'}
+                                </span>
+                              </td>
+                              <td
+                                style={{ padding: '12px', textAlign: 'center' }}
+                              >
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    gap: '8px',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <button
+                                    onClick={() => {
+                                      setSelectedVehicleForInspection(vehicle);
+                                      setInspectionType('pre_trip');
+                                      setShowInspectionModal(true);
+                                    }}
+                                    style={{
+                                      background:
+                                        'linear-gradient(135deg, #10b981, #059669)',
+                                      color: 'white',
+                                      border: 'none',
+                                      padding: '6px 12px',
+                                      borderRadius: '8px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    🔍 Inspect
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      alert(
+                                        `📋 Inspection History for ${vehicle.name}\n\nThis would show:\n• Complete inspection history\n• Photos and documentation\n• Deficiency tracking\n• Compliance reports`
+                                      );
+                                    }}
+                                    style={{
+                                      background: 'rgba(59, 130, 246, 0.2)',
+                                      color: '#3b82f6',
+                                      border:
+                                        '1px solid rgba(59, 130, 246, 0.3)',
+                                      padding: '6px 12px',
+                                      borderRadius: '8px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    📋 History
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Inspections History View */}
+              {inspectionView === 'history' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                    📋
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Inspection History
+                  </h3>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    Complete inspection records, compliance reports, and audit
+                    trails for your entire fleet.
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <button
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📊 Generate Report
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📥 Export Data
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* New Inspection View */}
+              {inspectionView === 'create' && (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      marginBottom: '24px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    🔍 Create New Inspection
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    {/* Vehicle Selection */}
+                    <div>
+                      <label
+                        style={{
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                          display: 'block',
+                        }}
+                      >
+                        Select Vehicle:
+                      </label>
+                      <select
+                        value={selectedVehicleForInspection?.id || ''}
+                        onChange={(e) => {
+                          const vehicle = vehicles.find(
+                            (v) => v.id === e.target.value
+                          );
+                          setSelectedVehicleForInspection(vehicle || null);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <option
+                          value=''
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          Select a vehicle...
+                        </option>
+                        {vehicles.map((vehicle) => (
+                          <option
+                            key={vehicle.id}
+                            value={vehicle.id}
+                            style={{ background: '#1e3a8a', color: 'white' }}
+                          >
+                            {vehicle.name} - {vehicle.type} ({vehicle.vin})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Inspection Type */}
+                    <div>
+                      <label
+                        style={{
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                          display: 'block',
+                        }}
+                      >
+                        Inspection Type:
+                      </label>
+                      <select
+                        value={inspectionType}
+                        onChange={(e) =>
+                          setInspectionType(e.target.value as any)
+                        }
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <option
+                          value='pre_trip'
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          Pre-Trip Inspection
+                        </option>
+                        <option
+                          value='post_trip'
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          Post-Trip Inspection
+                        </option>
+                        <option
+                          value='damage_assessment'
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          Damage Assessment
+                        </option>
+                        <option
+                          value='maintenance'
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          Maintenance Inspection
+                        </option>
+                        <option
+                          value='dot_inspection'
+                          style={{ background: '#1e3a8a', color: 'white' }}
+                        >
+                          DOT Inspection
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => {
+                        if (selectedVehicleForInspection) {
+                          setShowInspectionModal(true);
+                        } else {
+                          alert('Please select a vehicle first');
+                        }
+                      }}
+                      disabled={!selectedVehicleForInspection}
+                      style={{
+                        background: selectedVehicleForInspection
+                          ? 'linear-gradient(135deg, #10b981, #059669)'
+                          : 'rgba(107, 114, 128, 0.5)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '16px 32px',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: selectedVehicleForInspection
+                          ? 'pointer'
+                          : 'not-allowed',
+                      }}
+                    >
+                      🚀 Start Inspection
                     </button>
                   </div>
                 </div>
@@ -2826,6 +3674,155 @@ export default function VehiclesPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Vehicle Inspection Modal */}
+        {showInspectionModal && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: '20px',
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowInspectionModal(false);
+              }
+            }}
+          >
+            <div
+              style={{
+                width: '90%',
+                maxWidth: '1200px',
+                maxHeight: '90vh',
+                overflow: 'auto',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {selectedVehicleForInspection ? (
+                <VehicleInspectionChecklist
+                  vehicleId={selectedVehicleForInspection.id}
+                  vehicleVin={selectedVehicleForInspection.vin || 'N/A'}
+                  driverId='FLEET-MANAGER' // This would come from user context
+                  inspectionType={inspectionType}
+                  location={{
+                    address: selectedVehicleForInspection.location,
+                  }}
+                  onComplete={(inspection) => {
+                    console.log('✅ Inspection completed:', inspection);
+
+                    // Update vehicle inspection status
+                    setVehicles((prev) =>
+                      prev.map((v) =>
+                        v.id === selectedVehicleForInspection.id
+                          ? {
+                              ...v,
+                              lastInspection: new Date()
+                                .toISOString()
+                                .split('T')[0],
+                              inspectionStatus: inspection.overallStatus as any,
+                              safeToOperate: inspection.safeToOperate,
+                            }
+                          : v
+                      )
+                    );
+
+                    setShowInspectionModal(false);
+                    setSelectedVehicleForInspection(null);
+
+                    // Show completion message
+                    alert(
+                      `🔍 Inspection Complete!\n\n` +
+                        `Vehicle: ${selectedVehicleForInspection.name}\n` +
+                        `Status: ${inspection.overallStatus.toUpperCase()}\n` +
+                        `Safe to Operate: ${inspection.safeToOperate ? 'YES' : 'NO'}\n\n` +
+                        `${inspection.overallStatus === 'fail' ? 'Vehicle requires maintenance before operation.' : 'Vehicle cleared for operation.'}`
+                    );
+                  }}
+                  onCancel={() => {
+                    setShowInspectionModal(false);
+                    setSelectedVehicleForInspection(null);
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                >
+                  <h3>Quick Inspection</h3>
+                  <p>
+                    Please select a vehicle from the fleet to begin inspection.
+                  </p>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginTop: '24px',
+                    }}
+                  >
+                    {vehicles.map((vehicle) => (
+                      <button
+                        key={vehicle.id}
+                        onClick={() => {
+                          setSelectedVehicleForInspection(vehicle);
+                        }}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          color: 'white',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <div style={{ fontWeight: '600', marginBottom: '4px' }}>
+                          {vehicle.name}
+                        </div>
+                        <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                          {vehicle.type}
+                        </div>
+                        <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                          Status: {vehicle.inspectionStatus || 'Unknown'}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowInspectionModal(false)}
+                    style={{
+                      background: 'rgba(107, 114, 128, 0.5)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      marginTop: '24px',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
@@ -137,7 +138,7 @@ const UnifiedLoadBoardSection = () => {
   const loadUnifiedData = async () => {
     setLoadingUnified(true);
     try {
-      // Get loads from all sources (Phase 1: Free APIs + Phase 3: Partnerships)
+      // Get loads from all sources (Phase 1: API Integrations + Phase 3: Partnerships)
       const loads = await unifiedLoadBoardService.getAllLoads(true);
       setUnifiedLoads(loads.slice(0, 12)); // Show top 12 loads initially
 
@@ -228,7 +229,7 @@ const UnifiedLoadBoardSection = () => {
               fontSize: '9px',
             }}
           >
-            FREE APIs
+            API INTEGRATIONS
           </span>
           <span
             style={{
@@ -709,7 +710,7 @@ export default function DispatchCentral() {
   const [automationService] = useState(() =>
     GoWithFlowAutomationService.getInstance()
   );
-  const [automatedActivities, setAutomatedActivities] = useState([]);
+  const [automatedActivities, setAutomatedActivities] = useState<any[]>([]);
   const [systemStatus, setSystemStatus] = useState({
     autoMatchSuccessRate: 94,
     avgResponseTime: 2.3,
@@ -1283,12 +1284,22 @@ export default function DispatchCentral() {
         <p
           style={{
             fontSize: '1.1rem',
-            marginBottom: '25px',
+            marginBottom: '15px',
             opacity: 0.9,
           }}
         >
           Professional Load Management & Real-time Dispatch Operations -{' '}
           {user?.name || 'System Admin'}
+        </p>
+        <p
+          style={{
+            fontSize: '0.9rem',
+            marginBottom: '25px',
+            color: 'rgba(139, 92, 246, 0.9)',
+            fontWeight: '600',
+          }}
+        >
+          🛡️ Integrated with FACIS™ Security Intelligence & Risk Assessment
         </p>
 
         {/* Quick Stats */}
@@ -1423,6 +1434,11 @@ export default function DispatchCentral() {
           >
             {[
               { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+              {
+                id: 'ai-optimization',
+                label: '🤖 AI Optimization',
+                icon: '🤖',
+              },
               { id: 'go-with-flow', label: '⚡ Go With the Flow', icon: '⚡' },
               { id: 'task-priority', label: '🎯 Task Priority', icon: '🎯' },
               { id: 'loads', label: '📋 Load Management', icon: '📋' },
@@ -1909,6 +1925,22 @@ export default function DispatchCentral() {
 
           {/* Unified Load Board Aggregator */}
           <UnifiedLoadBoardSection />
+
+          {/* AI Load Optimization Tab */}
+          {selectedTab === 'ai-optimization' && (
+            <div style={{ marginTop: '25px' }}>
+              <AILoadOptimizationPanel
+                onOptimizationComplete={(result) => {
+                  console.log('Optimization completed:', result);
+                  // Could integrate with other dispatch systems here
+                }}
+                onAssignmentSelected={(assignment) => {
+                  console.log('Assignment selected:', assignment);
+                  // Could auto-fill load assignment forms here
+                }}
+              />
+            </div>
+          )}
 
           {selectedTab === 'go-with-flow' && (
             <div>

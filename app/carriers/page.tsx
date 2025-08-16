@@ -178,10 +178,20 @@ export default function CarrierPortal() {
             style={{
               fontSize: '20px',
               color: 'rgba(255, 255, 255, 0.9)',
-              margin: 0,
+              margin: '0 0 8px 0',
             }}
           >
             Available Loads & Freight Opportunities - Book High-Paying Loads
+          </p>
+          <p
+            style={{
+              fontSize: '14px',
+              color: 'rgba(139, 92, 246, 0.9)',
+              margin: 0,
+              fontWeight: '600',
+            }}
+          >
+            🛡️ Enhanced with FACIS™ Carrier Intelligence & Verification
           </p>
         </div>
 

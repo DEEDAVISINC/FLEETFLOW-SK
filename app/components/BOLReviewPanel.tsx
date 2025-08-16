@@ -9,7 +9,13 @@ interface BOLSubmission {
   driverName: string;
   shipperName: string;
   shipperEmail: string;
-  status: 'submitted' | 'broker_review' | 'broker_approved' | 'invoice_generated' | 'invoice_sent' | 'completed';
+  status:
+    | 'submitted'
+    | 'broker_review'
+    | 'broker_approved'
+    | 'invoice_generated'
+    | 'invoice_sent'
+    | 'completed';
   submittedAt: string;
   bolData: {
     bolNumber: string;
@@ -40,15 +46,26 @@ interface EmailTemplate {
   contactInfo: string;
 }
 
-export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelProps) {
+export default function BOLReviewPanel({
+  brokerId,
+  brokerName,
+}: BOLReviewPanelProps) {
+  console.log(
+    '🏗️ BOLReviewPanel initialized with brokerId:',
+    brokerId,
+    'brokerName:',
+    brokerName
+  );
+
   const [submissions, setSubmissions] = useState<BOLSubmission[]>([]);
-  const [selectedSubmission, setSelectedSubmission] = useState<BOLSubmission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<BOLSubmission | null>(null);
   const [loading, setLoading] = useState(false);
   const [reviewNotes, setReviewNotes] = useState('');
   const [adjustments, setAdjustments] = useState({
     rate: '',
     additionalCharges: [] as Array<{ description: string; amount: number }>,
-    deductions: [] as Array<{ description: string; amount: number }>
+    deductions: [] as Array<{ description: string; amount: number }>,
   });
 
   // Email editing state
@@ -58,7 +75,7 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
     body: '',
     paymentTerms: 'Net 30 Days',
     specialInstructions: '',
-    contactInfo: 'billing@fleetflow.com'
+    contactInfo: 'billing@fleetflow.com',
   });
   const [previewMode, setPreviewMode] = useState(false);
 
@@ -76,6 +93,8 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
   const loadSubmissions = async () => {
     try {
       setLoading(true);
+      console.log('🔍 Loading BOL submissions for broker:', brokerId);
+
       const response = await fetch('/api/bol-workflow', {
         method: 'POST',
         headers: {
@@ -83,19 +102,49 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
         },
         body: JSON.stringify({
           action: 'get_submissions',
-          brokerId
+          brokerId,
         }),
       });
 
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers.get('content-type'));
+
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Expected JSON but got:', contentType);
+        console.error('❌ Response text:', text.substring(0, 500));
+        throw new Error(
+          `Server returned ${contentType || 'unknown content type'} instead of JSON. Response: ${text.substring(0, 200)}...`
+        );
+      }
+
       const result = await response.json();
+      console.log('📊 API result:', result);
 
       if (result.success) {
-        setSubmissions(result.submissions.filter((sub: BOLSubmission) =>
-          sub.status === 'broker_review' || sub.status === 'submitted'
-        ));
+        const filteredSubmissions = result.submissions.filter(
+          (sub: BOLSubmission) =>
+            sub.status === 'broker_review' || sub.status === 'submitted'
+        );
+        console.log(
+          '✅ Loaded',
+          filteredSubmissions.length,
+          'submissions for review'
+        );
+        setSubmissions(filteredSubmissions);
+      } else {
+        console.error('❌ API returned error:', result.error);
+        throw new Error(result.error || 'Unknown API error');
       }
     } catch (error) {
-      console.error('Failed to load BOL submissions:', error);
+      console.error('❌ Failed to load BOL submissions:', error);
+
+      // Show user-friendly error message
+      alert(
+        `Failed to load BOL submissions: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     } finally {
       setLoading(false);
     }
@@ -103,8 +152,14 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
 
   const generateDefaultEmailTemplate = (submission: BOLSubmission) => {
     const rate = parseFloat(adjustments.rate) || 2500;
-    const additionalCharges = adjustments.additionalCharges.reduce((sum, charge) => sum + charge.amount, 0);
-    const deductions = adjustments.deductions.reduce((sum, deduction) => sum + deduction.amount, 0);
+    const additionalCharges = adjustments.additionalCharges.reduce(
+      (sum, charge) => sum + charge.amount,
+      0
+    );
+    const deductions = adjustments.deductions.reduce(
+      (sum, deduction) => sum + deduction.amount,
+      0
+    );
     const totalAmount = rate + additionalCharges - deductions;
 
     const invoiceId = `INV-${submission.loadIdentifierId}-${Date.now().toString().slice(-6)}`;
@@ -135,14 +190,20 @@ BILLING INFORMATION:
 Amount Due: $${totalAmount.toLocaleString()}
 Due Date: ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
 
-${adjustments.rate || adjustments.additionalCharges.length > 0 || adjustments.deductions.length > 0 ? `
+${
+  adjustments.rate ||
+  adjustments.additionalCharges.length > 0 ||
+  adjustments.deductions.length > 0
+    ? `
 RATE BREAKDOWN:
 Base Rate: $${rate.toLocaleString()}
-${adjustments.additionalCharges.map(charge => `${charge.description}: +$${charge.amount.toLocaleString()}`).join('\n')}
-${adjustments.deductions.map(deduction => `${deduction.description}: -$${deduction.amount.toLocaleString()}`).join('\n')}
+${adjustments.additionalCharges.map((charge) => `${charge.description}: +$${charge.amount.toLocaleString()}`).join('\n')}
+${adjustments.deductions.map((deduction) => `${deduction.description}: -$${deduction.amount.toLocaleString()}`).join('\n')}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Total Amount: $${totalAmount.toLocaleString()}
-` : ''}
+`
+    : ''
+}
 
 Thank you for your business!
 
@@ -150,7 +211,7 @@ FleetFlow Transportation Services
 Professional Freight & Logistics Solutions`,
       paymentTerms: 'Net 30 Days',
       specialInstructions: '',
-      contactInfo: 'billing@fleetflow.com'
+      contactInfo: 'billing@fleetflow.com',
     });
   };
 
@@ -170,22 +231,26 @@ Professional Freight & Logistics Solutions`,
           brokerId,
           approved,
           reviewNotes,
-          adjustments: adjustments.rate ? {
-            rate: parseFloat(adjustments.rate) || undefined,
-            additionalCharges: adjustments.additionalCharges,
-            deductions: adjustments.deductions
-          } : undefined,
+          adjustments: adjustments.rate
+            ? {
+                rate: parseFloat(adjustments.rate) || undefined,
+                additionalCharges: adjustments.additionalCharges,
+                deductions: adjustments.deductions,
+              }
+            : undefined,
           // Include custom email template
-          emailTemplate: approved ? emailTemplate : undefined
+          emailTemplate: approved ? emailTemplate : undefined,
         }),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        alert(approved ?
-          `✅ BOL approved! Invoice ${result.invoiceId} sent to vendor via customized email.` :
-          '❌ BOL rejected. Driver has been notified.');
+        alert(
+          approved
+            ? `✅ BOL approved! Invoice ${result.invoiceId} sent to vendor via customized email.`
+            : '❌ BOL rejected. Driver has been notified.'
+        );
         setSelectedSubmission(null);
         setReviewNotes('');
         setAdjustments({ rate: '', additionalCharges: [], deductions: [] });
@@ -217,25 +282,33 @@ Professional Freight & Logistics Solutions`,
   };
 
   const addCharge = (type: 'additionalCharges' | 'deductions') => {
-    setAdjustments(prev => ({
+    setAdjustments((prev) => ({
       ...prev,
-      [type]: [...prev[type], { description: '', amount: 0 }]
+      [type]: [...prev[type], { description: '', amount: 0 }],
     }));
   };
 
-  const updateCharge = (type: 'additionalCharges' | 'deductions', index: number, field: 'description' | 'amount', value: string | number) => {
-    setAdjustments(prev => ({
+  const updateCharge = (
+    type: 'additionalCharges' | 'deductions',
+    index: number,
+    field: 'description' | 'amount',
+    value: string | number
+  ) => {
+    setAdjustments((prev) => ({
       ...prev,
       [type]: prev[type].map((item, i) =>
         i === index ? { ...item, [field]: value } : item
-      )
+      ),
     }));
   };
 
-  const removeCharge = (type: 'additionalCharges' | 'deductions', index: number) => {
-    setAdjustments(prev => ({
+  const removeCharge = (
+    type: 'additionalCharges' | 'deductions',
+    index: number
+  ) => {
+    setAdjustments((prev) => ({
       ...prev,
-      [type]: prev[type].filter((_, i) => i !== index)
+      [type]: prev[type].filter((_, i) => i !== index),
     }));
   };
 
@@ -243,16 +316,26 @@ Professional Freight & Logistics Solutions`,
     if (!selectedSubmission) return '';
 
     const rate = parseFloat(adjustments.rate) || 2500;
-    const additionalCharges = adjustments.additionalCharges.reduce((sum, charge) => sum + charge.amount, 0);
-    const deductions = adjustments.deductions.reduce((sum, deduction) => sum + deduction.amount, 0);
+    const additionalCharges = adjustments.additionalCharges.reduce(
+      (sum, charge) => sum + charge.amount,
+      0
+    );
+    const deductions = adjustments.deductions.reduce(
+      (sum, deduction) => sum + deduction.amount,
+      0
+    );
     const totalAmount = rate + additionalCharges - deductions;
 
     return `${emailTemplate.body}
 
-${emailTemplate.specialInstructions ? `
+${
+  emailTemplate.specialInstructions
+    ? `
 SPECIAL INSTRUCTIONS:
 ${emailTemplate.specialInstructions}
-` : ''}
+`
+    : ''
+}
 
 REMIT PAYMENT TO:
 FleetFlow Transportation Services
@@ -274,18 +357,22 @@ For questions regarding this invoice, please contact our billing department.`;
 
   return (
     <div style={{ padding: '24px' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '24px'
-      }}>
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: 'white',
-          margin: 0
-        }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px',
+        }}
+      >
+        <h2
+          style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: 'white',
+            margin: 0,
+          }}
+        >
           📋 BOL Review Queue
         </h2>
         <button
@@ -300,7 +387,7 @@ For questions regarding this invoice, please contact our billing department.`;
             fontSize: '14px',
             fontWeight: '600',
             cursor: 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           🔄 Refresh
@@ -308,18 +395,20 @@ For questions regarding this invoice, please contact our billing department.`;
       </div>
 
       {submissions.length === 0 ? (
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '12px',
-          padding: '40px',
-          textAlign: 'center',
-          color: 'rgba(255, 255, 255, 0.7)'
-        }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            padding: '40px',
+            textAlign: 'center',
+            color: 'rgba(255, 255, 255, 0.7)',
+          }}
+        >
           📋 No BOL submissions pending review
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '16px' }}>
-          {submissions.map(submission => (
+          {submissions.map((submission) => (
             <div
               key={submission.id}
               style={{
@@ -328,7 +417,7 @@ For questions regarding this invoice, please contact our billing department.`;
                 padding: '20px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
               }}
               onClick={() => setSelectedSubmission(submission)}
               onMouseOver={(e) => {
@@ -338,25 +427,31 @@ For questions regarding this invoice, please contact our billing department.`;
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             >
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr auto auto',
-                gap: '16px',
-                alignItems: 'center'
-              }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto auto',
+                  gap: '16px',
+                  alignItems: 'center',
+                }}
+              >
                 <div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '8px'
-                  }}>
-                    <h3 style={{
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                      color: 'white',
-                      margin: 0
-                    }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        margin: 0,
+                      }}
+                    >
                       Load {submission.loadIdentifierId}
                     </h3>
                     <div
@@ -366,25 +461,49 @@ For questions regarding this invoice, please contact our billing department.`;
                         padding: '4px 8px',
                         borderRadius: '4px',
                         fontSize: '12px',
-                        fontWeight: '600'
+                        fontWeight: '600',
                       }}
                     >
                       {submission.status.replace('_', ' ').toUpperCase()}
                     </div>
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    🚛 Driver: {submission.driverName} | 📦 Shipper: {submission.shipperName}
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    🚛 Driver: {submission.driverName} | 📦 Shipper:{' '}
+                    {submission.shipperName}
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
-                    📅 Delivered: {submission.bolData.deliveryDate} at {submission.bolData.deliveryTime}
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    📅 Delivered: {submission.bolData.deliveryDate} at{' '}
+                    {submission.bolData.deliveryTime}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
-                    📷 {submission.bolData.deliveryPhotos.length} delivery photos
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    📷 {submission.bolData.deliveryPhotos.length} delivery
+                    photos
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
-                    🔒 Seal: {submission.bolData.sealNumbers.join(', ') || 'N/A'}
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    🔒 Seal:{' '}
+                    {submission.bolData.sealNumbers.join(', ') || 'N/A'}
                   </div>
                 </div>
                 <button
@@ -400,7 +519,7 @@ For questions regarding this invoice, please contact our billing department.`;
                     borderRadius: '6px',
                     fontSize: '12px',
                     fontWeight: '600',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                 >
                   Review
@@ -413,29 +532,33 @@ For questions regarding this invoice, please contact our billing department.`;
 
       {/* BOL Review Modal with Email Editor */}
       {selectedSubmission && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '30px',
-            maxWidth: showEmailEditor ? '1200px' : '800px',
-            width: '100%',
-            maxHeight: '85vh',
-            overflowY: 'visible',
-            position: 'relative'
-          }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: '20px',
+              padding: '30px',
+              maxWidth: showEmailEditor ? '1200px' : '800px',
+              width: '100%',
+              maxHeight: '85vh',
+              overflowY: 'visible',
+              position: 'relative',
+            }}
+          >
             {/* Close Button */}
             <button
               onClick={() => {
@@ -453,274 +576,458 @@ For questions regarding this invoice, please contact our billing department.`;
                 height: '40px',
                 fontSize: '18px',
                 cursor: 'pointer',
-                color: '#dc2626'
+                color: '#dc2626',
               }}
             >
               ✕
             </button>
 
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '24px' }}>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#111827',
+                marginBottom: '24px',
+              }}
+            >
               📋 BOL Review - {selectedSubmission.loadIdentifierId}
             </h2>
 
             {/* Scrollable Content Area */}
-            <div style={{
-              flex: 1,
-              overflowY: 'auto',
-              maxHeight: 'calc(85vh - 120px)',
-              paddingRight: '10px',
-              marginBottom: '20px'
-            }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                maxHeight: 'calc(85vh - 120px)',
+                paddingRight: '10px',
+                marginBottom: '20px',
+              }}
+            >
               <div style={{ display: 'flex', gap: '30px' }}>
                 {/* Left Column - BOL Details */}
                 <div style={{ flex: showEmailEditor ? '1' : '2' }}>
-                {/* BOL Details */}
-                <div style={{
-                  background: '#f9fafb',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
-                    Delivery Details
-                  </h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px' }}>
-                    <div><strong>BOL #:</strong> {selectedSubmission.bolData.bolNumber}</div>
-                    <div><strong>PRO #:</strong> {selectedSubmission.bolData.proNumber}</div>
-                    <div><strong>Driver:</strong> {selectedSubmission.driverName}</div>
-                    <div><strong>Receiver:</strong> {selectedSubmission.bolData.receiverName}</div>
-                    <div><strong>Delivery Date:</strong> {selectedSubmission.bolData.deliveryDate}</div>
-                    <div><strong>Delivery Time:</strong> {selectedSubmission.bolData.deliveryTime}</div>
-                    <div><strong>Weight:</strong> {selectedSubmission.bolData.weight}</div>
-                    <div><strong>Pieces:</strong> {selectedSubmission.bolData.pieces}</div>
-                  </div>
-                  {selectedSubmission.bolData.notes && (
-                    <div style={{ marginTop: '12px' }}>
-                      <strong>Notes:</strong> {selectedSubmission.bolData.notes}
-                    </div>
-                  )}
-                </div>
-
-                {/* Rate Adjustments */}
-                <div style={{
-                  background: '#f0f9ff',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
-                    �� Rate Adjustments (Optional)
-                  </h3>
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                      Adjusted Rate
-                    </label>
-                    <input
-                      type="number"
-                      value={adjustments.rate}
-                      onChange={(e) => setAdjustments(prev => ({ ...prev, rate: e.target.value }))}
-                      placeholder="Leave blank to use original rate"
+                  {/* BOL Details */}
+                  <div
+                    style={{
+                      background: '#f9fafb',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <h3
                       style={{
-                        width: '200px',
-                        padding: '8px 12px',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        color: '#111827',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Delivery Details
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <div>
+                        <strong>BOL #:</strong>{' '}
+                        {selectedSubmission.bolData.bolNumber}
+                      </div>
+                      <div>
+                        <strong>PRO #:</strong>{' '}
+                        {selectedSubmission.bolData.proNumber}
+                      </div>
+                      <div>
+                        <strong>Driver:</strong> {selectedSubmission.driverName}
+                      </div>
+                      <div>
+                        <strong>Receiver:</strong>{' '}
+                        {selectedSubmission.bolData.receiverName}
+                      </div>
+                      <div>
+                        <strong>Delivery Date:</strong>{' '}
+                        {selectedSubmission.bolData.deliveryDate}
+                      </div>
+                      <div>
+                        <strong>Delivery Time:</strong>{' '}
+                        {selectedSubmission.bolData.deliveryTime}
+                      </div>
+                      <div>
+                        <strong>Weight:</strong>{' '}
+                        {selectedSubmission.bolData.weight}
+                      </div>
+                      <div>
+                        <strong>Pieces:</strong>{' '}
+                        {selectedSubmission.bolData.pieces}
+                      </div>
+                    </div>
+                    {selectedSubmission.bolData.notes && (
+                      <div style={{ marginTop: '12px' }}>
+                        <strong>Notes:</strong>{' '}
+                        {selectedSubmission.bolData.notes}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Rate Adjustments */}
+                  <div
+                    style={{
+                      background: '#f0f9ff',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        color: '#111827',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      �� Rate Adjustments (Optional)
+                    </h3>
+                    <div style={{ marginBottom: '16px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Adjusted Rate
+                      </label>
+                      <input
+                        type='number'
+                        value={adjustments.rate}
+                        onChange={(e) =>
+                          setAdjustments((prev) => ({
+                            ...prev,
+                            rate: e.target.value,
+                          }))
+                        }
+                        placeholder='Leave blank to use original rate'
+                        style={{
+                          width: '200px',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Review Notes */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      📝 Review Notes
+                    </label>
+                    <textarea
+                      value={reviewNotes}
+                      onChange={(e) => setReviewNotes(e.target.value)}
+                      placeholder='Add any notes about this BOL review...'
+                      rows={3}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
                         border: '1px solid #d1d5db',
                         borderRadius: '8px',
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        resize: 'vertical',
                       }}
                     />
                   </div>
                 </div>
 
-                {/* Review Notes */}
-                <div style={{ marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
-                    📝 Review Notes
-                  </label>
-                  <textarea
-                    value={reviewNotes}
-                    onChange={(e) => setReviewNotes(e.target.value)}
-                    placeholder="Add any notes about this BOL review..."
-                    rows={3}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      resize: 'vertical'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Right Column - Email Editor */}
-              {showEmailEditor && (
-                <div style={{ flex: '2' }}>
-                  <div style={{
-                    background: '#fef3c7',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-                        📧 Customize Invoice Email
-                      </h3>
-                      <button
-                        onClick={() => setPreviewMode(!previewMode)}
+                {/* Right Column - Email Editor */}
+                {showEmailEditor && (
+                  <div style={{ flex: '2' }}>
+                    <div
+                      style={{
+                        background: '#fef3c7',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <div
                         style={{
-                          background: previewMode ? '#ef4444' : '#10b981',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer'
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '16px',
                         }}
                       >
-                        {previewMode ? '✏️ Edit' : '👁️ Preview'}
-                      </button>
-                    </div>
+                        <h3
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#111827',
+                            margin: 0,
+                          }}
+                        >
+                          📧 Customize Invoice Email
+                        </h3>
+                        <button
+                          onClick={() => setPreviewMode(!previewMode)}
+                          style={{
+                            background: previewMode ? '#ef4444' : '#10b981',
+                            color: 'white',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {previewMode ? '✏️ Edit' : '👁️ Preview'}
+                        </button>
+                      </div>
 
-                    {!previewMode ? (
-                      <>
-                        {/* Email Subject */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                            Email Subject
-                          </label>
-                          <input
-                            type="text"
-                            value={emailTemplate.subject}
-                            onChange={(e) => setEmailTemplate(prev => ({ ...prev, subject: e.target.value }))}
-                            style={{
-                              width: '100%',
-                              padding: '8px 12px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '8px',
-                              fontSize: '14px'
-                            }}
-                          />
-                        </div>
+                      {!previewMode ? (
+                        <>
+                          {/* Email Subject */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Email Subject
+                            </label>
+                            <input
+                              type='text'
+                              value={emailTemplate.subject}
+                              onChange={(e) =>
+                                setEmailTemplate((prev) => ({
+                                  ...prev,
+                                  subject: e.target.value,
+                                }))
+                              }
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                              }}
+                            />
+                          </div>
 
-                        {/* Email Body */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                            Email Body
-                          </label>
-                          <textarea
-                            value={emailTemplate.body}
-                            onChange={(e) => setEmailTemplate(prev => ({ ...prev, body: e.target.value }))}
-                            rows={12}
-                            style={{
-                              width: '100%',
-                              padding: '12px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '8px',
-                              fontSize: '12px',
-                              fontFamily: 'monospace',
-                              resize: 'vertical'
-                            }}
-                          />
-                        </div>
+                          {/* Email Body */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Email Body
+                            </label>
+                            <textarea
+                              value={emailTemplate.body}
+                              onChange={(e) =>
+                                setEmailTemplate((prev) => ({
+                                  ...prev,
+                                  body: e.target.value,
+                                }))
+                              }
+                              rows={12}
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                fontFamily: 'monospace',
+                                resize: 'vertical',
+                              }}
+                            />
+                          </div>
 
-                        {/* Payment Terms */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                            Payment Terms
-                          </label>
-                          <select
-                            value={emailTemplate.paymentTerms}
-                            onChange={(e) => setEmailTemplate(prev => ({ ...prev, paymentTerms: e.target.value }))}
+                          {/* Payment Terms */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Payment Terms
+                            </label>
+                            <select
+                              value={emailTemplate.paymentTerms}
+                              onChange={(e) =>
+                                setEmailTemplate((prev) => ({
+                                  ...prev,
+                                  paymentTerms: e.target.value,
+                                }))
+                              }
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                              }}
+                            >
+                              <option value='Net 15 Days'>Net 15 Days</option>
+                              <option value='Net 30 Days'>Net 30 Days</option>
+                              <option value='Net 45 Days'>Net 45 Days</option>
+                              <option value='Net 60 Days'>Net 60 Days</option>
+                              <option value='Due on Receipt'>
+                                Due on Receipt
+                              </option>
+                              <option value='2/10 Net 30'>2/10 Net 30</option>
+                            </select>
+                          </div>
+
+                          {/* Special Instructions */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Special Instructions
+                            </label>
+                            <textarea
+                              value={emailTemplate.specialInstructions}
+                              onChange={(e) =>
+                                setEmailTemplate((prev) => ({
+                                  ...prev,
+                                  specialInstructions: e.target.value,
+                                }))
+                              }
+                              placeholder='Add any special billing instructions, PO numbers, or vendor-specific requirements...'
+                              rows={3}
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                resize: 'vertical',
+                              }}
+                            />
+                          </div>
+
+                          {/* Contact Info */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Billing Contact Email
+                            </label>
+                            <input
+                              type='email'
+                              value={emailTemplate.contactInfo}
+                              onChange={(e) =>
+                                setEmailTemplate((prev) => ({
+                                  ...prev,
+                                  contactInfo: e.target.value,
+                                }))
+                              }
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                              }}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        /* Email Preview */
+                        <div
+                          style={{
+                            background: 'white',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '8px',
+                            padding: '20px',
+                            maxHeight: '500px',
+                            overflowY: 'auto',
+                          }}
+                        >
+                          <div
                             style={{
-                              width: '100%',
-                              padding: '8px 12px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '8px',
-                              fontSize: '14px'
+                              marginBottom: '16px',
+                              paddingBottom: '16px',
+                              borderBottom: '1px solid #e5e7eb',
                             }}
                           >
-                            <option value="Net 15 Days">Net 15 Days</option>
-                            <option value="Net 30 Days">Net 30 Days</option>
-                            <option value="Net 45 Days">Net 45 Days</option>
-                            <option value="Net 60 Days">Net 60 Days</option>
-                            <option value="Due on Receipt">Due on Receipt</option>
-                            <option value="2/10 Net 30">2/10 Net 30</option>
-                          </select>
-                        </div>
-
-                        {/* Special Instructions */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                            Special Instructions
-                          </label>
-                          <textarea
-                            value={emailTemplate.specialInstructions}
-                            onChange={(e) => setEmailTemplate(prev => ({ ...prev, specialInstructions: e.target.value }))}
-                            placeholder="Add any special billing instructions, PO numbers, or vendor-specific requirements..."
-                            rows={3}
+                            <strong>Subject:</strong> {emailTemplate.subject}
+                          </div>
+                          <div
                             style={{
-                              width: '100%',
-                              padding: '8px 12px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '8px',
+                              marginBottom: '16px',
+                              paddingBottom: '16px',
+                              borderBottom: '1px solid #e5e7eb',
+                            }}
+                          >
+                            <strong>To:</strong>{' '}
+                            {selectedSubmission.shipperEmail}
+                          </div>
+                          <div
+                            style={{
+                              whiteSpace: 'pre-line',
                               fontSize: '14px',
-                              resize: 'vertical'
+                              fontFamily: 'monospace',
                             }}
-                          />
+                          >
+                            {generateEmailPreview()}
+                          </div>
                         </div>
-
-                        {/* Contact Info */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                            Billing Contact Email
-                          </label>
-                          <input
-                            type="email"
-                            value={emailTemplate.contactInfo}
-                            onChange={(e) => setEmailTemplate(prev => ({ ...prev, contactInfo: e.target.value }))}
-                            style={{
-                              width: '100%',
-                              padding: '8px 12px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '8px',
-                              fontSize: '14px'
-                            }}
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      /* Email Preview */
-                      <div style={{
-                        background: 'white',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '8px',
-                        padding: '20px',
-                        maxHeight: '500px',
-                        overflowY: 'auto'
-                      }}>
-                        <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
-                          <strong>Subject:</strong> {emailTemplate.subject}
-                        </div>
-                        <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
-                          <strong>To:</strong> {selectedSubmission.shipperEmail}
-                        </div>
-                        <div style={{ whiteSpace: 'pre-line', fontSize: '14px', fontFamily: 'monospace' }}>
-                          {generateEmailPreview()}
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               </div>
             </div>
 
             {/* Action Buttons - Fixed at bottom */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', marginTop: '20px', paddingBottom: '20px' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'space-between',
+                marginTop: '20px',
+                paddingBottom: '20px',
+              }}
+            >
               <button
-                type="button"
+                type='button'
                 onClick={() => setShowEmailEditor(!showEmailEditor)}
                 style={{
                   background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -731,7 +1038,7 @@ For questions regarding this invoice, please contact our billing department.`;
                   fontSize: '14px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
                   const target = e.target as HTMLElement;
@@ -744,12 +1051,14 @@ For questions regarding this invoice, please contact our billing department.`;
                   target.style.boxShadow = 'none';
                 }}
               >
-                {showEmailEditor ? '📋 Hide Email Editor' : '📧 Customize Email'}
+                {showEmailEditor
+                  ? '📋 Hide Email Editor'
+                  : '📧 Customize Email'}
               </button>
 
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => handleApproval(false)}
                   disabled={loading}
                   style={{
@@ -762,13 +1071,14 @@ For questions regarding this invoice, please contact our billing department.`;
                     fontWeight: '600',
                     cursor: 'pointer',
                     opacity: loading ? 0.6 : 1,
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
                     if (!loading) {
                       const target = e.target as HTMLElement;
                       target.style.transform = 'translateY(-1px)';
-                      target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                      target.style.boxShadow =
+                        '0 4px 12px rgba(239, 68, 68, 0.3)';
                     }
                   }}
                   onMouseLeave={(e) => {
@@ -780,7 +1090,7 @@ For questions regarding this invoice, please contact our billing department.`;
                   ❌ Reject BOL
                 </button>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => handleApproval(true)}
                   disabled={loading}
                   style={{
@@ -793,13 +1103,14 @@ For questions regarding this invoice, please contact our billing department.`;
                     fontWeight: '600',
                     cursor: 'pointer',
                     opacity: loading ? 0.6 : 1,
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
                     if (!loading) {
                       const target = e.target as HTMLElement;
                       target.style.transform = 'translateY(-1px)';
-                      target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                      target.style.boxShadow =
+                        '0 4px 12px rgba(16, 185, 129, 0.3)';
                     }
                   }}
                   onMouseLeave={(e) => {

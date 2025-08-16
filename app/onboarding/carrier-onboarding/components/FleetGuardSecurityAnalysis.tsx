@@ -227,7 +227,7 @@ export const FleetGuardSecurityAnalysis: React.FC<
             style={{
               fontSize: '1.1rem',
               color: 'rgba(255, 255, 255, 0.8)',
-              margin: 0,
+              margin: '0 0 8px 0',
               maxWidth: '600px',
               marginLeft: 'auto',
               marginRight: 'auto',
@@ -235,6 +235,19 @@ export const FleetGuardSecurityAnalysis: React.FC<
           >
             Comprehensive fraud detection and carrier risk assessment using
             FMCSA safety data and BrokerSnapshot financial intelligence
+          </p>
+          <p
+            style={{
+              fontSize: '0.9rem',
+              color: 'rgba(139, 92, 246, 0.9)',
+              margin: 0,
+              maxWidth: '600px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              fontWeight: '600',
+            }}
+          >
+            🛡️ Part of FACIS™ (FleetGuard Advanced Carrier Intelligence System)
           </p>
         </div>
 

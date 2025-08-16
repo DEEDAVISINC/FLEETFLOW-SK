@@ -121,30 +121,59 @@ async function handleBOLApproval(body: any) {
  * Get BOL submissions for broker review
  */
 async function handleGetSubmissions(body: any) {
-  const { brokerId } = body;
+  try {
+    console.log(
+      '🔍 handleGetSubmissions called with body:',
+      JSON.stringify(body, null, 2)
+    );
 
-  if (!brokerId) {
-    return NextResponse.json({ error: 'Broker ID required' }, { status: 400 });
-  }
+    const { brokerId } = body;
 
-  const submissions = BOLWorkflowService.getBrokerSubmissions(brokerId);
+    if (!brokerId) {
+      console.error('❌ Missing broker ID in request');
+      return NextResponse.json(
+        { error: 'Broker ID required' },
+        { status: 400 }
+      );
+    }
 
-  return NextResponse.json({
-    success: true,
-    submissions: submissions.map((sub) => ({
-      ...sub,
-      // Don't expose sensitive data
-      bolData: {
-        ...sub.bolData,
-        driverSignature: sub.bolData.driverSignature
-          ? '[SIGNATURE_PRESENT]'
-          : '',
-        receiverSignature: sub.bolData.receiverSignature
-          ? '[SIGNATURE_PRESENT]'
-          : '',
+    console.log('📋 Getting submissions for broker:', brokerId);
+    const submissions = BOLWorkflowService.getBrokerSubmissions(brokerId);
+    console.log('📊 Found submissions:', submissions.length);
+
+    const response = {
+      success: true,
+      submissions: submissions.map((sub) => ({
+        ...sub,
+        // Don't expose sensitive data
+        bolData: {
+          ...sub.bolData,
+          driverSignature: sub.bolData.driverSignature
+            ? '[SIGNATURE_PRESENT]'
+            : '',
+          receiverSignature: sub.bolData.receiverSignature
+            ? '[SIGNATURE_PRESENT]'
+            : '',
+        },
+      })),
+    };
+
+    console.log(
+      '✅ Returning response with',
+      response.submissions.length,
+      'submissions'
+    );
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error('❌ Error in handleGetSubmissions:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to get submissions',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-    })),
-  });
+      { status: 500 }
+    );
+  }
 }
 
 export async function GET(request: NextRequest) {

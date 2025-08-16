@@ -34,6 +34,7 @@ import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
 import WorkingCRMDashboard from '../components/WorkingCRMDashboard';
 // Updated import: 2024-12-21 23:15:00
+import AILoadBookingHub from '../components/AILoadBookingHub';
 import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
 import TruckingPlanetIntelligence from '../components/TruckingPlanetIntelligence';
 import { Badge } from '../components/ui/badge';
@@ -509,6 +510,12 @@ export default function AIFlowPage() {
               className='flex items-center gap-2'
             >
               🌐 TruckingPlanet Intel
+            </TabsTrigger>
+            <TabsTrigger
+              value='ai-load-booking'
+              className='flex items-center gap-2'
+            >
+              🚛 AI Load Booking
             </TabsTrigger>
           </TabsList>
 
@@ -2032,6 +2039,11 @@ export default function AIFlowPage() {
           {/* TruckingPlanet Intelligence Tab */}
           <TabsContent value='truckingplanet-intel' className='space-y-6'>
             <TruckingPlanetIntelligence />
+          </TabsContent>
+
+          {/* AI Load Booking Tab */}
+          <TabsContent value='ai-load-booking' className='space-y-6'>
+            <AILoadBookingHub />
           </TabsContent>
         </Tabs>
       </div>

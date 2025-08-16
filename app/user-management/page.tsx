@@ -997,6 +997,127 @@ const mockUsers = [
       },
     },
   },
+  // Sample Freight Brokerage Business (FBB) entity
+  {
+    id: 'DD-FBB-2024092', // User identifier (person)
+    name: 'Dee Davis',
+    email: 'operations@samplefreight.com',
+    phone: '(555) 901-2345',
+    department: 'Freight Brokerage',
+    departmentCode: 'FBB',
+    position: 'Owner/President',
+    hiredDate: '2024-04-01',
+    role: 'Freight Brokerage',
+    status: 'active',
+    lastActive: '2024-01-15T14:20:00Z',
+    userType: 'business_entity',
+
+    // Business entity information
+    businessInfo: {
+      companyId: 'FBB-987654', // Company identifier
+      companyName: 'Sample Freight Brokerage LLC',
+      businessAddress: '123 Business Park Dr, Atlanta, GA 30309',
+      mcNumber: 'MC-987654',
+      dotNumber: 'DOT-456789',
+      businessPhone: '(555) 123-4567',
+      businessEmail: 'operations@samplefreight.com',
+      ownerName: 'Dee Davis',
+      businessType: 'freight_brokerage',
+      incorporationDate: '2024-03-15',
+      taxId: 'EIN-12-3456789',
+      territories: ['Southeast', 'Midwest', 'Texas'],
+      specializations: ['Dry Van', 'Refrigerated', 'Flatbed'],
+    },
+
+    systemAccess: {
+      level: 'Freight Brokerage Operations',
+      accessCode: 'ACC-TS-FBB',
+      securityLevel: 'Level 4 - Brokerage Owner',
+      allowedSystems: [
+        'Brokerage Portal',
+        'Agent Management',
+        'Financial Dashboard',
+        'Load Management',
+        'Customer Portal',
+        'Compliance Center',
+      ],
+    },
+
+    personalInfo: {
+      emergencyContact: {
+        name: 'Sarah Smith',
+        relation: 'Spouse',
+        phone: '(555) 432-1098',
+        altPhone: '(555) 765-4321',
+      },
+    },
+
+    notes:
+      '• Freight Brokerage Business Owner\n• Sample Freight Brokerage LLC - MC-987654, DOT-456789\n• Manages broker agents\n• Specializes in Southeast corridor freight\n• Established March 2024',
+
+    permissions: {
+      'user-management': true,
+      'agent-management': true,
+      'financial-oversight': true,
+      'load-management': true,
+      'customer-management': true,
+      'compliance-monitoring': true,
+      'reporting-analytics': true,
+      'system-configuration': true,
+      'driver-direct-management': false,
+      'vehicle-maintenance': false,
+    },
+  },
+  // Sample Broker Agent (BB) linked to Sample Freight Brokerage (FBB)
+  {
+    id: 'JL-BB-2024125',
+    name: 'Jennifer Lopez',
+    email: 'jennifer.lopez@samplefreight.com',
+    phone: '(555) 234-5678',
+    department: 'Brokerage',
+    departmentCode: 'BB',
+    position: 'Senior Broker Agent',
+    hiredDate: '2024-05-01',
+    role: 'Broker Agent',
+    status: 'active',
+    lastActive: '2024-01-15T16:30:00Z',
+    userType: 'individual',
+    parentCompanyId: 'DD-FBB-2024092', // Linked to Sample Freight Brokerage
+
+    systemAccess: {
+      level: 'Broker Agent Operations',
+      accessCode: 'ACC-TS-BB',
+      securityLevel: 'Level 3 - Agent',
+      allowedSystems: [
+        'Load Management',
+        'Customer Communication',
+        'Performance Tracking',
+        'Basic Reporting',
+      ],
+    },
+
+    personalInfo: {
+      emergencyContact: {
+        name: 'Carlos Lopez',
+        relation: 'Husband',
+        phone: '(555) 876-5432',
+        altPhone: '(555) 321-9876',
+      },
+    },
+
+    notes:
+      '• Senior Broker Agent under Sample Freight Brokerage LLC\n• Specializes in refrigerated freight\n• Top performer - 95% customer satisfaction\n• Covers Southeast and Midwest territories',
+
+    permissions: {
+      'load-management': true,
+      'customer-communication': true,
+      'performance-tracking': true,
+      'basic-reporting': true,
+      'user-management': false,
+      'financial-oversight': false,
+      'system-configuration': false,
+    },
+  },
 ];
 
 // Permission categories with hierarchical sub-pages and granular section permissions
@@ -2923,7 +3044,9 @@ export default function UserManagement() {
                   fontWeight: '600',
                 }}
               >
-                👤 Account Details
+                {currentUser?.departmentCode === 'FBB'
+                  ? '🏢 Owner Details (BUSINESS ENTITY)'
+                  : '👤 Account Details'}
               </h4>
               <div
                 style={{
@@ -3450,6 +3573,391 @@ export default function UserManagement() {
                   '🚛 Driver/Carrier: Enhanced onboarding security with document verification, address validation, and financial screening.'}
               </div>
             </div>
+
+            {/* Business Entity Information - Only for FBB users - BEFORE ONBOARDING */}
+            {currentUser.departmentCode === 'FBB' &&
+              currentUser.businessInfo && (
+                <>
+                  {/* Company Information */}
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      marginBottom: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🏢 Company Information
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '16px',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '6px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          🏢 <strong>COMPANY NAME</strong>
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: '600',
+                            fontSize: '13px',
+                          }}
+                        >
+                          {currentUser.businessInfo.companyName}
+                        </div>
+
+                        <div style={{ marginTop: '8px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '6px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            🆔 <strong>COMPANY ID</strong>
+                          </div>
+                          <div
+                            style={{
+                              color: '#f59e0b',
+                              fontWeight: '600',
+                              fontSize: '13px',
+                              padding: '4px 8px',
+                              background: 'rgba(245, 158, 11, 0.1)',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(245, 158, 11, 0.3)',
+                            }}
+                          >
+                            {currentUser.businessInfo.companyId ||
+                              'Not assigned'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '6px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          🚛 <strong>MC NUMBER</strong>
+                        </div>
+                        <div
+                          style={{
+                            color: '#10b981',
+                            fontWeight: '600',
+                            fontSize: '13px',
+                            padding: '4px 8px',
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                          }}
+                        >
+                          {currentUser.businessInfo.mcNumber || 'Not provided'}
+                        </div>
+
+                        <div style={{ marginTop: '8px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '6px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            🔢 <strong>DOT NUMBER</strong>
+                          </div>
+                          <div
+                            style={{
+                              color: '#3b82f6',
+                              fontWeight: '600',
+                              fontSize: '13px',
+                              padding: '4px 8px',
+                              background: 'rgba(59, 130, 246, 0.1)',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(59, 130, 246, 0.3)',
+                            }}
+                          >
+                            {currentUser.businessInfo.dotNumber ||
+                              'Not provided'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: '12px' }}>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📍 <strong>BUSINESS ADDRESS</strong>
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontWeight: '600',
+                          fontSize: '13px',
+                        }}
+                      >
+                        {currentUser.businessInfo.businessAddress}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Business Operations */}
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      marginBottom: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🎯 Business Operations
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '8px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          🗺️ <strong>SERVICE TERRITORIES</strong>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '6px',
+                          }}
+                        >
+                          {currentUser.businessInfo.territories.map(
+                            (territory, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  background: 'rgba(59, 130, 246, 0.2)',
+                                  color: '#60a5fa',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '11px',
+                                  fontWeight: '600',
+                                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                                }}
+                              >
+                                {territory}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '8px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          🚚 <strong>SPECIALIZATIONS</strong>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '6px',
+                          }}
+                        >
+                          {currentUser.businessInfo.specializations.map(
+                            (spec, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  background: 'rgba(16, 185, 129, 0.2)',
+                                  color: '#34d399',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '11px',
+                                  fontWeight: '600',
+                                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                                }}
+                              >
+                                {spec}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Agent Management */}
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      marginBottom: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      👥 Agent Management
+                    </h4>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '8px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🎯 <strong>BROKER AGENTS UNDER THIS COMPANY</strong>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '8px',
+                        }}
+                      >
+                        {(() => {
+                          const childAgents = mockUsers.filter(
+                            (user) =>
+                              user.departmentCode === 'BB' &&
+                              user.parentCompanyId === currentUser.id
+                          );
+
+                          if (childAgents.length === 0) {
+                            return (
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '12px',
+                                  fontStyle: 'italic',
+                                  padding: '8px 12px',
+                                  background: 'rgba(255, 255, 255, 0.05)',
+                                  borderRadius: '6px',
+                                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                                }}
+                              >
+                                No broker agents assigned yet
+                              </div>
+                            );
+                          }
+
+                          return childAgents.map((agent, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                background: 'rgba(249, 115, 22, 0.2)',
+                                color: '#fb923c',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                border: '1px solid rgba(249, 115, 22, 0.3)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              <span>👤</span>
+                              <span>{agent.name}</span>
+                              <span
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '10px',
+                                }}
+                              >
+                                ({agent.id})
+                              </span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+
+                      <div
+                        style={{
+                          marginTop: '12px',
+                          padding: '8px 12px',
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          borderRadius: '6px',
+                          border: '1px solid rgba(59, 130, 246, 0.3)',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#60a5fa',
+                        }}
+                      >
+                        📊 Total Active Agents:{' '}
+                        {
+                          mockUsers.filter(
+                            (user) =>
+                              user.departmentCode === 'BB' &&
+                              user.parentCompanyId === currentUser.id
+                          ).length
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
             {/* Onboarding Progress */}
             <div

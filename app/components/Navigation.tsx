@@ -338,20 +338,7 @@ export default function ProfessionalNavigation() {
                 >
                   🚛 Driver Management
                 </Link>
-                <Link
-                  href='/onboarding/carrier-onboarding'
-                  onClick={handleDropdownClose}
-                  style={{
-                    display: 'block',
-                    padding: '10px 20px',
-                    color: '#f4a832',
-                    textDecoration: 'none',
-                    fontSize: '0.85rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  🚛 Carrier Onboarding
-                </Link>
+
                 <Link
                   href='/carriers/enhanced-portal'
                   onClick={handleDropdownClose}
@@ -637,20 +624,7 @@ export default function ProfessionalNavigation() {
                 >
                   🎓 FleetFlow University℠
                 </Link>
-                <Link
-                  href='/video-demo'
-                  onClick={handleDropdownClose}
-                  style={{
-                    display: 'block',
-                    padding: '10px 20px',
-                    color: '#f97316',
-                    textDecoration: 'none',
-                    fontSize: '0.9rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  🎥 Video Player Demo
-                </Link>
+
                 <Link
                   href='/resources'
                   onClick={handleDropdownClose}

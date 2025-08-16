@@ -16,7 +16,7 @@ interface Resource {
 
 export default function ResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<
-    'drivers' | 'dispatch' | 'broker' | 'heavyhaul' | 'factoring'
+    'drivers' | 'dispatch' | 'broker' | 'heavyhaul' | 'factoring' | 'facis'
   >('drivers');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -147,6 +147,32 @@ export default function ResourcesPage() {
         category: 'Parking & Navigation',
         type: 'Hardware',
         tags: ['gps', 'navigation', 'commercial', 'routing'],
+      },
+      {
+        name: 'Freight Ninja',
+        description:
+          'Secure truck and trailer parking solutions with 24/7 surveillance and strategic locations near major transportation hubs',
+        website: 'https://freightninja.com',
+        category: 'Parking & Navigation',
+        type: 'Parking Infrastructure',
+        features: [
+          '24/7 Surveillance',
+          'Perimeter Fencing',
+          'Security Gates',
+          'LED Lighting',
+          'Assigned Parking',
+          '250+ Acres Nationwide',
+          '7,500+ Parking Spaces',
+          'Mobile App Management',
+        ],
+        contact: '📞 844-303-1505 | 📧 info@freightninja.com',
+        tags: [
+          'parking',
+          'security',
+          'surveillance',
+          'infrastructure',
+          'mobile-app',
+        ],
       },
 
       // Training & Certification
@@ -1614,6 +1640,99 @@ export default function ResourcesPage() {
         ],
       },
     ],
+    facis: [
+      {
+        name: 'FACIS™ Overview',
+        description:
+          'FleetGuard Advanced Carrier Intelligence System - Enterprise-level carrier verification, fraud detection, and compliance monitoring integrated into FleetFlow workflows.',
+        website: '/compliance',
+        category: 'Platform Features',
+        features: [
+          'Real-time FMCSA SAFER integration',
+          'AI-powered fraud detection',
+          'Multi-factor security scoring',
+          'DOL/OSHA compliance monitoring',
+          'SEC EDGAR financial intelligence',
+          'USPTO business legitimacy verification',
+        ],
+        tags: ['intelligence', 'security', 'compliance', 'verification'],
+      },
+      {
+        name: 'Carrier Verification Hub',
+        description:
+          'Access FACIS™ carrier verification tools including enhanced carrier scoring, fraud prevention, and comprehensive background checks.',
+        website: '/carriers',
+        category: 'Verification Tools',
+        features: [
+          'Enhanced carrier verification panel',
+          'FleetGuard Security Analysis',
+          'BrokerSnapshot financial integration',
+          'Real-time safety ratings',
+          'Insurance status verification',
+        ],
+        tags: ['carriers', 'verification', 'safety', 'insurance'],
+      },
+      {
+        name: 'Compliance Intelligence Center',
+        description:
+          'Main FACIS™ compliance hub providing DOT monitoring, regulatory alerts, and comprehensive compliance tracking.',
+        website: '/compliance',
+        category: 'Compliance Monitoring',
+        features: [
+          'DOT compliance automation',
+          'Drug & Alcohol Clearinghouse',
+          'Regulatory violation tracking',
+          'Insurance policy monitoring',
+          'Automated compliance alerts',
+        ],
+        tags: ['compliance', 'dot', 'regulations', 'monitoring'],
+      },
+      {
+        name: 'Business Intelligence Dashboard',
+        description:
+          'Access FACIS™ business intelligence features including financial risk assessment, market analysis, and competitive intelligence.',
+        website: '/go-with-the-flow',
+        category: 'Business Intelligence',
+        features: [
+          'SEC EDGAR financial monitoring',
+          'DOL/OSHA violation tracking',
+          'USPTO patent verification',
+          'Market intelligence analysis',
+          'Competitive risk assessment',
+        ],
+        tags: ['intelligence', 'financial', 'market', 'analysis'],
+      },
+      {
+        name: 'Real-time Security Monitoring',
+        description:
+          'Live FACIS™ security monitoring integrated into dispatch operations with real-time fraud alerts and risk assessment.',
+        website: '/dispatch',
+        category: 'Security Operations',
+        features: [
+          'Real-time fraud alerts',
+          'Operational risk assessment',
+          'Load assignment security checks',
+          'Carrier risk validation',
+          'Automated threat detection',
+        ],
+        tags: ['security', 'monitoring', 'dispatch', 'operations'],
+      },
+      {
+        name: 'FACIS™ API Documentation',
+        description:
+          'Technical documentation for FACIS™ platform APIs including testing endpoints and integration guides.',
+        website: '/api/test-dol',
+        category: 'Developer Resources',
+        features: [
+          'DOL API testing endpoint',
+          'USPTO API integration',
+          'SEC EDGAR API access',
+          'FMCSA data integration',
+          'Real-time data validation',
+        ],
+        tags: ['api', 'development', 'integration', 'testing'],
+      },
+    ],
   };
 
   // Filter resources based on search and category
@@ -1808,6 +1927,7 @@ export default function ResourcesPage() {
                   'broker',
                   'heavyhaul',
                   'factoring',
+                  'facis',
                 ] as const
               ).map((category) => {
                 const getCategoryColor = (cat: string) => {
@@ -1822,6 +1942,8 @@ export default function ResourcesPage() {
                       return 'linear-gradient(135deg, #14b8a6, #0d9488)';
                     case 'factoring':
                       return 'linear-gradient(135deg, #10b981, #059669)';
+                    case 'facis':
+                      return 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
                     default:
                       return 'rgba(255, 255, 255, 0.08)';
                   }
@@ -1858,6 +1980,7 @@ export default function ResourcesPage() {
                     {category === 'broker' && '🏢 Brokers'}
                     {category === 'heavyhaul' && '🏗️ Heavy Haul'}
                     {category === 'factoring' && '💰 Factoring'}
+                    {category === 'facis' && '🛡️ FACIS™ Platform'}
                   </button>
                 );
               })}

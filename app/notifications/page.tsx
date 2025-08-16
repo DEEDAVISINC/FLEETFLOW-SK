@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import BrokerCommunicationHub from '../components/BrokerCommunicationHub';
+import SmartNotificationPanel from '../components/SmartNotificationPanel';
 
 // Types for comprehensive notification system
 interface FleetNotification {
@@ -77,9 +79,9 @@ export default function NotificationHub() {
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showComposeModal, setShowComposeModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'notifications' | 'live-alerts'>(
-    'notifications'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'notifications' | 'live-alerts' | 'broker-communication' | 'smart-system'
+  >('notifications');
 
   // Live alerts state (from main dashboard)
   const [liveAlerts, setLiveAlerts] = useState<LiveAlert[]>([
@@ -724,6 +726,50 @@ export default function NotificationHub() {
           >
             🚨 Live Alerts ({stats.liveAlerts.total})
           </button>
+
+          <button
+            onClick={() => setActiveTab('broker-communication')}
+            style={{
+              flex: 1,
+              background:
+                activeTab === 'broker-communication'
+                  ? 'rgba(45, 55, 72, 0.1)'
+                  : 'transparent',
+              color:
+                activeTab === 'broker-communication' ? '#1a202c' : '#2d3748',
+              border: 'none',
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            📱 Broker Communication
+          </button>
+
+          <button
+            onClick={() => setActiveTab('smart-system')}
+            style={{
+              flex: 1,
+              background:
+                activeTab === 'smart-system'
+                  ? 'rgba(45, 55, 72, 0.1)'
+                  : 'transparent',
+              color:
+                activeTab === 'smart-system' ? '#1a202c' : '#2d3748',
+              border: 'none',
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            🤖 Smart System
+          </button>
         </div>
 
         {/* Conditional Content Based on Active Tab */}
@@ -1078,7 +1124,7 @@ export default function NotificationHub() {
               </div>
             </div>
           </>
-        ) : (
+        ) : activeTab === 'live-alerts' ? (
           /* Live Alerts Tab */
           <div
             style={{
@@ -1432,6 +1478,43 @@ export default function NotificationHub() {
                 </Link>
               </div>
             </div>
+          </div>
+        ) : (
+          /* Broker Communication Tab */
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '20px',
+            }}
+          >
+            <BrokerCommunicationHub
+              brokerId='demo-broker'
+              onThreadUpdate={(threadId) => {
+                console.log('Thread updated:', threadId);
+                // Could trigger notification refresh here
+              }}
+            />
+          </div>
+        ) : activeTab === 'smart-system' ? (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '20px',
+            }}
+          >
+            <SmartNotificationPanel
+              userId='demo-user'
+              onNotificationAction={(action, data) => {
+                console.log('Notification action:', action, data);
+                // Handle smart notification actions
+              }}
+            />
           </div>
         )}
 

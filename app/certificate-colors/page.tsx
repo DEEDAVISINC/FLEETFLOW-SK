@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { getModuleColorScheme } from '../utils/moduleColors';
 
@@ -34,6 +35,30 @@ export default function CertificateColorsPage() {
           margin: '0 auto',
         }}
       >
+        {/* Dashboard Navigation */}
+        <div style={{ marginBottom: '20px' }}>
+          <Link
+            href='/dashboard'
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            🏠 Back to Dashboard
+          </Link>
+        </div>
+
         {/* Header */}
         <div
           style={{
@@ -175,7 +200,7 @@ export default function CertificateColorsPage() {
                       borderRadius: '8px',
                       flexShrink: 0,
                     }}
-                   />
+                  />
                   <div>
                     <div
                       style={{
@@ -255,7 +280,7 @@ export default function CertificateColorsPage() {
                 `,
                   backgroundSize: '20px 20px',
                 }}
-               />
+              />
 
               {/* Certificate Content */}
               <div
@@ -342,7 +367,7 @@ export default function CertificateColorsPage() {
                     background: colors.gradient,
                     marginBottom: '8px',
                   }}
-                 />
+                />
 
                 <div
                   style={{

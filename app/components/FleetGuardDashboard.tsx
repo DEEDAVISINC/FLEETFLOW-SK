@@ -190,6 +190,9 @@ export default function FleetGuardDashboard() {
         <p className='text-blue-100'>
           Advanced fraud detection and carrier risk assessment powered by AI
         </p>
+        <p className='mt-2 text-sm font-semibold text-purple-200'>
+          Part of FACIS™ (FleetGuard Advanced Carrier Intelligence System)
+        </p>
       </div>
 
       {/* Timeframe Selector */}
@@ -466,4 +469,3 @@ export default function FleetGuardDashboard() {
     </div>
   );
 }
-

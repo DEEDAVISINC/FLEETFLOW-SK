@@ -24,6 +24,30 @@ export default function FleetGuardDemoPage() {
           padding: '20px',
         }}
       >
+        {/* Dashboard Navigation */}
+        <div style={{ marginBottom: '20px' }}>
+          <Link
+            href='/dashboard'
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            🏠 Back to Dashboard
+          </Link>
+        </div>
+
         {/* Header */}
         <div
           style={{
@@ -46,10 +70,20 @@ export default function FleetGuardDemoPage() {
             style={{
               fontSize: '18px',
               color: 'rgba(255, 255, 255, 0.9)',
-              margin: '0',
+              margin: '0 0 8px 0',
             }}
           >
             Enterprise-grade fraud protection built into FleetFlow
+          </p>
+          <p
+            style={{
+              fontSize: '14px',
+              color: 'rgba(139, 92, 246, 0.9)',
+              margin: '0',
+              fontWeight: '600',
+            }}
+          >
+            🛡️ Part of FACIS™ (FleetGuard Advanced Carrier Intelligence System)
           </p>
 
           {/* Navigation Tabs */}
@@ -138,7 +172,10 @@ export default function FleetGuardDemoPage() {
               </p>
             </div>
             <div>
-              <Link href='/carriers' style={{ textDecoration: 'none' }}>
+              <Link
+                href='/carriers/enhanced-portal#document-compliance-dashboard'
+                style={{ textDecoration: 'none' }}
+              >
                 <button
                   style={{
                     background: 'white',

@@ -1567,6 +1567,7 @@ export default function EnhancedCarrierPortal() {
 
             {/* Document Compliance Dashboard */}
             <div
+              id='document-compliance-dashboard'
               style={{
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
@@ -2281,6 +2282,7 @@ export default function EnhancedCarrierPortal() {
 
             {/* Recent Carriers */}
             <div
+              id='recent-carrier-activity'
               style={{
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
