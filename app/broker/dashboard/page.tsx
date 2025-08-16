@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -7,6 +8,10 @@ import AddShipperForm from '../../components/AddShipperForm';
 import BOLReviewPanel from '../../components/BOLReviewPanel';
 import BrokerAIIntelligenceHub from '../../components/BrokerAIIntelligenceHub';
 import BrokerEnhancedCRM from '../../components/BrokerEnhancedCRM';
+import BrokerCarrierNetworkManager from '../../components/BrokerCarrierNetworkManager';
+import BrokerMarketIntelligence from '../../components/BrokerMarketIntelligence';
+import BrokerRegulatoryCompliance from '../../components/BrokerRegulatoryCompliance';
+import BrokerShipperAcquisition from '../../components/BrokerShipperAcquisition';
 import BrokerFinancialDashboard from '../../components/BrokerFinancialDashboard';
 import BrokerTaskPrioritizationPanel from '../../components/BrokerTaskPrioritizationPanel';
 import BrokerWorkflowAutomationEngine from '../../components/BrokerWorkflowAutomationEngine';
@@ -799,7 +804,7 @@ export default function BrokerDashboard() {
                       textShadow: '0 4px 8px rgba(0,0,0,0.3)',
                     }}
                   >
-                    Broker Agent Portal
+                    Brokerage Portal
                   </h1>
                   <p
                     style={{
@@ -1156,6 +1161,30 @@ export default function BrokerDashboard() {
                 icon: '🏢',
                 color: 'linear-gradient(135deg, #ef4444, #dc2626)',
               }, // ENHANCED CRM - Red
+              {
+                id: 'carrier-network',
+                label: 'Carrier Network',
+                icon: '🚛',
+                color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+              }, // CARRIER NETWORK - Teal
+              {
+                id: 'market-intelligence',
+                label: 'Market Intelligence',
+                icon: '📊',
+                color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+              }, // MARKET INTELLIGENCE - Purple
+              {
+                id: 'regulatory-compliance',
+                label: 'Regulatory Compliance',
+                icon: '⚖️',
+                color: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+              }, // REGULATORY COMPLIANCE - Red
+              {
+                id: 'shipper-acquisition',
+                label: 'Shipper Acquisition',
+                icon: '🏢',
+                color: 'linear-gradient(135deg, #f97316, #ea580c)',
+              }, // SHIPPER ACQUISITION - Orange
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -4141,6 +4170,38 @@ export default function BrokerDashboard() {
               </div>
             )}
 
+
+            {selectedTab === 'carrier-network' && (
+              <div>
+                <BrokerCarrierNetworkManager
+                  brokerId={brokerSession?.id || 'demo-broker'}
+                />
+              </div>
+            )}
+
+            {selectedTab === 'market-intelligence' && (
+              <div>
+                <BrokerMarketIntelligence
+                  brokerId={brokerSession?.id || 'demo-broker'}
+                />
+              </div>
+            )}
+
+            {selectedTab === 'regulatory-compliance' && (
+              <div>
+                <BrokerRegulatoryCompliance
+                  brokerId={brokerSession?.id || 'demo-broker'}
+                />
+              </div>
+            )}
+
+            {selectedTab === 'shipper-acquisition' && (
+              <div>
+                <BrokerShipperAcquisition
+                  brokerId={brokerSession?.id || 'demo-broker'}
+                />
+              </div>
+            )}
             {selectedTab === 'task-priority' && (
               <div>
                 <h2
