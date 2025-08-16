@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import InvitationQuickManager from '../components/InvitationQuickManager';
 
 export default function DashboardPage() {
   const quickLinks = [
@@ -188,6 +189,12 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
+
+        {/* Carrier Invitation Management */}
+        <InvitationQuickManager
+          compact={true}
+          style={{ marginBottom: '24px' }}
+        />
 
         {/* Quick Links */}
         <div

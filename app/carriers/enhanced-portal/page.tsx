@@ -1,7 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import CarrierInvitationManager from '../../components/CarrierInvitationManager';
+import EnhancedNewCarrierButton from '../../components/EnhancedNewCarrierButton';
+import CarrierInvitationService from '../../services/CarrierInvitationService';
 import { checkPermission } from '../config/access';
 import {
   CarrierPortalProfile,
@@ -69,6 +73,292 @@ const AccessRestricted = () => (
     </div>
   </div>
 );
+
+// Invitation Landing Page Component
+const InvitationLandingPage: React.FC<{
+  invitationData: {
+    ref?: string;
+    carrier?: string;
+    mc?: string;
+    dot?: string;
+    email?: string;
+    inviter?: string;
+  };
+  onProceedToOnboarding: () => void;
+  onReturnToPortal: () => void;
+}> = ({ invitationData, onProceedToOnboarding, onReturnToPortal }) => {
+  return (
+    <div
+      style={{
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}
+    >
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '24px',
+          padding: '60px 40px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 25px 80px rgba(0, 0, 0, 0.5)',
+          textAlign: 'center',
+          maxWidth: '600px',
+          width: '100%',
+        }}
+      >
+        {/* Welcome Header */}
+        <div style={{ marginBottom: '40px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚛</div>
+          <h1
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              color: 'white',
+              marginBottom: '16px',
+              textShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            Welcome to FleetFlow!
+          </h1>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '1.2rem',
+              lineHeight: '1.6',
+              marginBottom: '8px',
+            }}
+          >
+            You've been invited to join our carrier network
+          </p>
+          {invitationData.inviter && (
+            <p
+              style={{
+                color: '#14b8a6',
+                fontSize: '1rem',
+                fontWeight: '600',
+              }}
+            >
+              Invited by: {decodeURIComponent(invitationData.inviter)}
+            </p>
+          )}
+        </div>
+
+        {/* Carrier Information */}
+        {(invitationData.carrier ||
+          invitationData.mc ||
+          invitationData.dot) && (
+          <div
+            style={{
+              background: 'rgba(20, 184, 166, 0.1)',
+              border: '1px solid rgba(20, 184, 166, 0.3)',
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '32px',
+            }}
+          >
+            <h3
+              style={{
+                color: '#14b8a6',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                marginBottom: '16px',
+              }}
+            >
+              📋 Your Information
+            </h3>
+            <div style={{ display: 'grid', gap: '8px', textAlign: 'left' }}>
+              {invitationData.carrier && (
+                <div style={{ color: 'white', fontSize: '1rem' }}>
+                  <strong>Company:</strong>{' '}
+                  {decodeURIComponent(invitationData.carrier)}
+                </div>
+              )}
+              {invitationData.mc && (
+                <div style={{ color: 'white', fontSize: '1rem' }}>
+                  <strong>MC Number:</strong> {invitationData.mc}
+                </div>
+              )}
+              {invitationData.dot && (
+                <div style={{ color: 'white', fontSize: '1rem' }}>
+                  <strong>DOT Number:</strong> {invitationData.dot}
+                </div>
+              )}
+              {invitationData.email && (
+                <div style={{ color: 'white', fontSize: '1rem' }}>
+                  <strong>Email:</strong>{' '}
+                  {decodeURIComponent(invitationData.email)}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Driver OTR Flow Benefits */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '32px',
+            textAlign: 'left',
+          }}
+        >
+          <h3
+            style={{
+              color: 'white',
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
+              marginBottom: '16px',
+              textAlign: 'center',
+            }}
+          >
+            🚛 Access to Driver OTR Flow Portal
+          </h3>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>📱</span> Complete mobile driver workflow management
+            </div>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>📄</span> Digital document management and BOL processing
+            </div>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>🤝</span> Professional broker relationships and load
+              assignments
+            </div>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>💰</span> Competitive rates and automated settlement
+            </div>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>📊</span> Real-time performance tracking and analytics
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <button
+            onClick={onProceedToOnboarding}
+            style={{
+              background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+              color: 'white',
+              border: 'none',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              minWidth: '200px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 12px 30px rgba(20, 184, 166, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            🚀 Start Onboarding
+          </button>
+
+          <button
+            onClick={onReturnToPortal}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              minWidth: '200px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            📊 View Portal
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            marginTop: '40px',
+            paddingTop: '24px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+            Questions? Contact us at support@fleetflow.com
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // 6-Step Onboarding Process Configuration
 const ONBOARDING_STEPS = [
@@ -483,7 +773,7 @@ export default function EnhancedCarrierPortal() {
 
   // Enhanced state management for portal functionality
   const [activeView, setActiveView] = useState<
-    'executive' | 'workflow' | 'analytics' | 'compliance'
+    'executive' | 'workflow' | 'analytics' | 'compliance' | 'invitations'
   >('executive');
   const [carriers, setCarriers] = useState<CarrierPortalProfile[]>([]);
   const [selectedCarrier, setSelectedCarrier] =
@@ -497,6 +787,57 @@ export default function EnhancedCarrierPortal() {
   const [sortBy, setSortBy] = useState<'name' | 'status' | 'progress' | 'date'>(
     'status'
   );
+
+  // Invitation landing page state
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [showInvitationLanding, setShowInvitationLanding] = useState(false);
+  const [invitationData, setInvitationData] = useState({
+    ref: '',
+    carrier: '',
+    mc: '',
+    dot: '',
+    email: '',
+    inviter: '',
+  });
+
+  // Check for invitation parameters on component mount
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const ref = searchParams.get('ref');
+    const carrier = searchParams.get('carrier');
+    const mc = searchParams.get('mc');
+    const dot = searchParams.get('dot');
+    const email = searchParams.get('email');
+    const inviter = searchParams.get('inviter');
+    const showInvitations = searchParams.get('showInvitations');
+
+    // If we have invitation parameters, show the landing page
+    if (ref || carrier || mc || dot || inviter) {
+      setInvitationData({
+        ref: ref || '',
+        carrier: carrier || '',
+        mc: mc || '',
+        dot: dot || '',
+        email: email || '',
+        inviter: inviter || '',
+      });
+      setShowInvitationLanding(true);
+
+      // Track that the invitation was opened
+      if (ref) {
+        const invitationService = CarrierInvitationService.getInstance();
+        invitationService.updateInvitationStatus(ref, 'opened');
+        console.log(`Invitation ${ref} marked as opened`);
+      }
+    }
+
+    // If showInvitations parameter is present, go directly to invitations tab
+    if (showInvitations === 'true') {
+      setActiveView('invitations');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Load all carriers from the integration service
@@ -525,6 +866,37 @@ export default function EnhancedCarrierPortal() {
   const handleCloseDetails = () => {
     setSelectedCarrier(null);
     setShowDetailModal(false);
+  };
+
+  // Invitation landing page handlers
+  const handleProceedToOnboarding = () => {
+    // Track that the invitation process was started
+    if (invitationData.ref) {
+      const invitationService = CarrierInvitationService.getInstance();
+      invitationService.updateInvitationStatus(invitationData.ref, 'started');
+      console.log(`Invitation ${invitationData.ref} marked as started`);
+    }
+
+    // Build the onboarding URL with pre-filled data
+    const params = new URLSearchParams();
+    if (invitationData.carrier) params.set('company', invitationData.carrier);
+    if (invitationData.mc) params.set('mc', invitationData.mc);
+    if (invitationData.dot) params.set('dot', invitationData.dot);
+    if (invitationData.email) params.set('email', invitationData.email);
+    if (invitationData.ref) params.set('invitationRef', invitationData.ref);
+
+    const onboardingUrl = `/onboarding/carrier-onboarding/new?${params.toString()}`;
+
+    // Redirect to onboarding with pre-filled data
+    router.push(onboardingUrl);
+  };
+
+  const handleReturnToPortal = () => {
+    // Hide the landing page and show the normal portal
+    setShowInvitationLanding(false);
+
+    // Clear URL parameters for a clean portal experience
+    router.replace('/carriers/enhanced-portal');
   };
 
   const getStatusCounts = () => {
@@ -683,6 +1055,17 @@ export default function EnhancedCarrierPortal() {
     }, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Show invitation landing page if accessed via invitation link
+  if (showInvitationLanding) {
+    return (
+      <InvitationLandingPage
+        invitationData={invitationData}
+        onProceedToOnboarding={handleProceedToOnboarding}
+        onReturnToPortal={handleReturnToPortal}
+      />
+    );
+  }
 
   return (
     <div
@@ -955,32 +1338,19 @@ export default function EnhancedCarrierPortal() {
                 </div>
               </div>
             </div>
-            <Link href='/onboarding/carrier-onboarding/new'>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                + New Carrier
-              </button>
-            </Link>
+            <EnhancedNewCarrierButton
+              onDirectOnboarding={() => {
+                window.location.href = '/onboarding/carrier-onboarding/new';
+              }}
+              onShowInvitations={() => {
+                setActiveView('invitations');
+              }}
+              currentUser={{
+                name: 'Portal User',
+                role: 'Admin',
+                company: 'FleetFlow',
+              }}
+            />
           </div>
         </div>
 
@@ -1021,6 +1391,12 @@ export default function EnhancedCarrierPortal() {
                 label: 'Compliance Center',
                 icon: '🛡️',
                 color: '#ef4444',
+              },
+              {
+                id: 'invitations',
+                label: 'Carrier Invitations',
+                icon: '📧',
+                color: '#8b5cf6',
               },
             ].map((mode) => (
               <button
@@ -3106,6 +3482,28 @@ export default function EnhancedCarrierPortal() {
                 onboarded carriers.
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Carrier Invitations View */}
+        {activeView === 'invitations' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              padding: '40px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <CarrierInvitationManager
+              currentUser={{
+                name: 'Portal Admin',
+                role: 'Admin',
+                company: 'FleetFlow',
+              }}
+            />
           </div>
         )}
       </div>

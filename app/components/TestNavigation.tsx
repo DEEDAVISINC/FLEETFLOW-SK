@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 // Simplified Navigation Component for Testing
 export default function TestNavigation() {
+  const pathname = usePathname();
+  const isCarrierPlatform = pathname === '/carrier-landing';
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -190,6 +193,20 @@ export default function TestNavigation() {
                 zIndex: 1001,
               }}
             >
+              <Link
+                href='/carrier-landing'
+                onClick={handleDropdownClose}
+                style={{
+                  display: 'block',
+                  padding: '10px 20px',
+                  color: '#f4a832',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                }}
+              >
+                🌐 Carrier Network
+              </Link>
               <Link
                 href='/drivers'
                 onClick={handleDropdownClose}

@@ -1,21 +1,18 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AddShipperForm from '../../components/AddShipperForm';
 import BOLReviewPanel from '../../components/BOLReviewPanel';
 import BrokerAIIntelligenceHub from '../../components/BrokerAIIntelligenceHub';
-import BrokerEnhancedCRM from '../../components/BrokerEnhancedCRM';
 import BrokerCarrierNetworkManager from '../../components/BrokerCarrierNetworkManager';
-import BrokerMarketIntelligence from '../../components/BrokerMarketIntelligence';
-import BrokerRegulatoryCompliance from '../../components/BrokerRegulatoryCompliance';
-import BrokerShipperAcquisition from '../../components/BrokerShipperAcquisition';
 import BrokerFinancialDashboard from '../../components/BrokerFinancialDashboard';
+import BrokerMarketIntelligence from '../../components/BrokerMarketIntelligence';
+import BrokerShipperAcquisition from '../../components/BrokerShipperAcquisition';
 import BrokerTaskPrioritizationPanel from '../../components/BrokerTaskPrioritizationPanel';
-import BrokerWorkflowAutomationEngine from '../../components/BrokerWorkflowAutomationEngine';
 import CreateLoadForm from '../../components/CreateLoadForm';
+import InvitationQuickManager from '../../components/InvitationQuickManager';
 // import CustomizableDashboard from '../../components/CustomizableDashboard'; // Temporarily disabled due to Grid3x3 import issue
 import EnhancedLoadBoard from '../../components/EnhancedLoadBoard';
 
@@ -851,7 +848,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -1150,12 +1147,6 @@ export default function BrokerDashboard() {
                 color: 'linear-gradient(135deg, #10b981, #059669)',
               }, // FINANCIAL DASHBOARD - Green
               {
-                id: 'workflow-automation',
-                label: 'Workflow Automation',
-                icon: '🔄',
-                color: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              }, // WORKFLOW AUTOMATION - Amber
-              {
                 id: 'enhanced-crm',
                 label: 'Enhanced CRM',
                 icon: '🏢',
@@ -1165,26 +1156,21 @@ export default function BrokerDashboard() {
                 id: 'carrier-network',
                 label: 'Carrier Network',
                 icon: '🚛',
-                color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-              }, // CARRIER NETWORK - Teal
+                color: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+              }, // CARRIER NETWORK - Sky Blue
               {
                 id: 'market-intelligence',
                 label: 'Market Intelligence',
                 icon: '📊',
-                color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-              }, // MARKET INTELLIGENCE - Purple
-              {
-                id: 'regulatory-compliance',
-                label: 'Regulatory Compliance',
-                icon: '⚖️',
-                color: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-              }, // REGULATORY COMPLIANCE - Red
+                color: 'linear-gradient(135deg, #ec4899, #db2777)',
+              }, // MARKET INTELLIGENCE - Pink
+
               {
                 id: 'shipper-acquisition',
                 label: 'Shipper Acquisition',
                 icon: '🏢',
-                color: 'linear-gradient(135deg, #f97316, #ea580c)',
-              }, // SHIPPER ACQUISITION - Orange
+                color: 'linear-gradient(135deg, #a855f7, #9333ea)',
+              }, // SHIPPER ACQUISITION - Violet
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1251,400 +1237,15 @@ export default function BrokerDashboard() {
             }}
           >
             {selectedTab === 'quotes-workflow' && (
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '32px',
-                  }}
-                >
-                  <h2
-                    style={{
-                      color: 'white',
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      margin: 0,
-                    }}
-                  >
-                    💼 Freight Quotes & Workflow Management
-                  </h2>
-                  <button
-                    onClick={() => setShowAddShipper(true)}
-                    style={{
-                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)', // OPERATIONS - Blue
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 24px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 8px 25px rgba(0, 0, 0, 0.2)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    + Add Shipper
-                  </button>
-                </div>
-
-                {myShippers.length === 0 ? (
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      padding: '64px 32px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '64px',
-                        marginBottom: '16px',
-                        opacity: 0.7,
-                      }}
-                    >
-                      🏢
-                    </div>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '18px',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      No shippers assigned yet
-                    </p>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.5)',
-                        fontSize: '14px',
-                      }}
-                    >
-                      Start building your customer network by adding shippers
-                    </p>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
-                    {myShippers.slice(0, 5).map((shipper: any) => (
-                      <div
-                        key={shipper.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '20px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '12px',
-                          transition: 'all 0.3s ease',
-                          cursor: 'pointer',
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.background =
-                            'rgba(255, 255, 255, 0.15)';
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.background =
-                            'rgba(255, 255, 255, 0.1)';
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '20px',
-                            flex: 1,
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: '56px',
-                              height: '56px',
-                              background:
-                                'linear-gradient(135deg, #10b981, #059669)',
-                              borderRadius: '12px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: 'white',
-                              fontWeight: 'bold',
-                              fontSize: '20px',
-                              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-                            }}
-                          >
-                            {shipper.companyName.charAt(0)}
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '16px',
-                                marginBottom: '8px',
-                              }}
-                            >
-                              <h3
-                                style={{
-                                  fontWeight: '600',
-                                  color: 'white',
-                                  margin: 0,
-                                  fontSize: '18px',
-                                }}
-                              >
-                                {shipper.companyName}
-                              </h3>
-                              <div
-                                style={{
-                                  background: 'rgba(59, 130, 246, 0.2)',
-                                  color: '#60a5fa',
-                                  padding: '4px 10px',
-                                  borderRadius: '6px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                                }}
-                              >
-                                ID: {shipper.id.toUpperCase()}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {selectedTab === 'loads-bids' && (
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '24px',
-                  }}
-                >
-                  <div>
-                    <h2
-                      style={{
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                        margin: 0,
-                        marginBottom: '8px',
-                      }}
-                    >
-                      📦 My Loads & Active Bidding
-                    </h2>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                        margin: 0,
-                      }}
-                    >
-                      Intelligent bidding with margin tracking and market
-                      analysis
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowCreateForm(true)}
-                    style={{
-                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)', // OPERATIONS - Blue
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 24px',
-                      borderRadius: '12px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 8px 25px rgba(0, 0, 0, 0.2)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(135deg, #3b82f6, #2563eb)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    + Create Load
-                  </button>
-                </div>
-
-                {/* Load Management Quick Stats */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '16px',
-                    marginBottom: '32px',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
-                      🎯
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '12px',
-                      }}
-                    >
-                      Active Bids
-                    </div>
-                    <div
-                      style={{
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {
-                        biddingHistory.filter((b) => b.bidStatus === 'pending')
-                          .length
-                      }
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
-                      🏆
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '12px',
-                      }}
-                    >
-                      Won Bids
-                    </div>
-                    <div
-                      style={{
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {
-                        biddingHistory.filter((b) => b.bidStatus === 'won')
-                          .length
-                      }
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
-                      📈
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '12px',
-                      }}
-                    >
-                      Avg Margin
-                    </div>
-                    <div
-                      style={{
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {performanceMetrics?.avgMargin || 0}%
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
-                      💰
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '12px',
-                      }}
-                    >
-                      Win Rate
-                    </div>
-                    <div
-                      style={{
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {performanceMetrics?.winRate || 0}%
-                    </div>
-                  </div>
-                </div>
-
-                <EnhancedLoadBoard />
-              </div>
-            )}
-
-            {selectedTab === 'loads-old' && (
-              <div>
+              <div
+                style={{
+                  border: '2px solid #8b5cf6', // Purple outline around entire section
+                  borderRadius: '16px',
+                  padding: '24px',
+                  background: 'rgba(0, 0, 0, 0.4)', // Darker background for better contrast
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
                 <h2
                   style={{
                     color: 'white',
@@ -1661,13 +1262,38 @@ export default function BrokerDashboard() {
                   style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}
                 >
                   {[
-                    { id: 'LTL', label: 'LTL', icon: '📦' },
-                    { id: 'FTL', label: 'FTL', icon: '🚛' },
-                    { id: 'Specialized', label: 'Specialized', icon: '⭐' },
-                    { id: 'Warehousing', label: 'Warehousing', icon: '🏢' },
-                    { id: 'Multi-Service', label: 'Multi-Service', icon: '🔄' },
-                    { id: 'SpotRates', label: 'Spot Rates', icon: '📈' },
-                    { id: 'History', label: 'History', icon: '📋' },
+                    { id: 'LTL', label: 'LTL', icon: '📦', color: '#8b5cf6' },
+                    { id: 'FTL', label: 'FTL', icon: '🚛', color: '#6366f1' },
+                    {
+                      id: 'Specialized',
+                      label: 'Specialized',
+                      icon: '⭐',
+                      color: '#6366f1',
+                    },
+                    {
+                      id: 'Warehousing',
+                      label: 'Warehousing',
+                      icon: '🏢',
+                      color: '#14b8a6',
+                    },
+                    {
+                      id: 'Multi-Service',
+                      label: 'Multi-Service',
+                      icon: '🔄',
+                      color: '#f59e0b',
+                    },
+                    {
+                      id: 'SpotRates',
+                      label: 'Spot Rates',
+                      icon: '📈',
+                      color: '#10b981',
+                    },
+                    {
+                      id: 'History',
+                      label: 'History',
+                      icon: '📋',
+                      color: '#6b7280',
+                    },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -1681,16 +1307,16 @@ export default function BrokerDashboard() {
                         transition: 'all 0.3s ease',
                         backgroundColor:
                           activeQuoteTab === tab.id
-                            ? 'rgba(34, 197, 94, 0.2)'
-                            : 'rgba(255, 255, 255, 0.1)',
+                            ? `${tab.color}30` // Use tab's color with more opacity
+                            : 'rgba(255, 255, 255, 0.15)', // Slightly more visible inactive buttons
                         color:
                           activeQuoteTab === tab.id
-                            ? '#10b981'
+                            ? tab.color // Use tab's color
                             : 'rgba(255, 255, 255, 0.8)',
                         border:
                           activeQuoteTab === tab.id
-                            ? '1px solid rgba(34, 197, 94, 0.3)'
-                            : '1px solid rgba(255, 255, 255, 0.1)',
+                            ? `1px solid ${tab.color}60` // Stronger border for active tabs
+                            : '1px solid rgba(255, 255, 255, 0.2)', // More visible inactive borders
                         backdropFilter: 'blur(10px)',
                       }}
                     >
@@ -1704,13 +1330,14 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'LTL' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(139, 92, 246, 0.5)', // Stronger purple border
                     }}
                   >
-                    <h3 style={{ marginBottom: '24px', color: '#10b981' }}>
+                    <h3 style={{ marginBottom: '24px', color: '#8b5cf6' }}>
                       📦 LTL (Less Than Truckload) Quote Calculator
                     </h3>
                     <div
@@ -1726,6 +1353,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Weight (lbs) *
@@ -1743,8 +1371,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1757,6 +1385,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Pallet Count
@@ -1774,8 +1403,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1788,6 +1417,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Freight Class
@@ -1804,8 +1434,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1836,6 +1466,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Origin *
@@ -1853,8 +1484,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1867,6 +1498,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Destination *
@@ -1884,8 +1516,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1898,6 +1530,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Commodity
@@ -1915,8 +1548,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -1985,7 +1618,7 @@ export default function BrokerDashboard() {
                       }}
                       style={{
                         marginTop: '24px',
-                        background: 'linear-gradient(135deg, #6366f1, #4f46e5)', // ANALYTICS - Purple
+                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Purple gradient
                         color: 'white',
                         padding: '16px 32px',
                         borderRadius: '12px',
@@ -1994,6 +1627,7 @@ export default function BrokerDashboard() {
                         fontWeight: '600',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
                       }}
                     >
                       💰 Calculate LTL Quote
@@ -2005,10 +1639,11 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'FTL' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#3b82f6' }}>
@@ -2027,6 +1662,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Miles *
@@ -2044,8 +1680,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2058,6 +1694,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Equipment Type
@@ -2074,8 +1711,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2093,6 +1730,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Weight (lbs)
@@ -2110,8 +1748,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2124,6 +1762,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Origin *
@@ -2141,8 +1780,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2155,6 +1794,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Destination *
@@ -2172,8 +1812,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2186,6 +1826,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Commodity
@@ -2203,8 +1844,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2293,10 +1934,11 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'Specialized' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#f59e0b' }}>
@@ -2315,6 +1957,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Service Type
@@ -2331,8 +1974,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2358,6 +2001,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Weight (lbs)
@@ -2375,8 +2019,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2389,6 +2033,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Dimensions (L×W×H)
@@ -2406,8 +2051,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2420,6 +2065,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Declared Value ($)
@@ -2437,8 +2083,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2451,6 +2097,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Origin *
@@ -2468,8 +2115,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2482,6 +2129,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Destination *
@@ -2499,8 +2147,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2543,6 +2191,7 @@ export default function BrokerDashboard() {
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(139, 92, 246, 0.3)', // Purple border accent
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#8b5cf6' }}>
@@ -2561,6 +2210,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Service Type
@@ -2577,8 +2227,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2598,6 +2248,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Pallet Count *
@@ -2615,8 +2266,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2629,6 +2280,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Duration (months) *
@@ -2646,8 +2298,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2660,6 +2312,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Location *
@@ -2677,8 +2330,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2691,6 +2344,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Temperature Requirements
@@ -2707,8 +2361,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2755,10 +2409,11 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'Multi-Service' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#f59e0b' }}>
@@ -2777,6 +2432,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Selected Services
@@ -2887,6 +2543,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Common Origin
@@ -2904,8 +2561,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2918,6 +2575,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Common Destination
@@ -2935,8 +2593,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2949,6 +2607,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Total Weight (lbs)
@@ -2966,8 +2625,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -2980,6 +2639,7 @@ export default function BrokerDashboard() {
                             display: 'block',
                             marginBottom: '8px',
                             fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)', // Better label contrast
                           }}
                         >
                           Notes
@@ -2996,8 +2656,8 @@ export default function BrokerDashboard() {
                             width: '100%',
                             padding: '12px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
+                            background: 'rgba(0, 0, 0, 0.3)', // Darker input background
                             color: 'white',
                             fontSize: '14px',
                           }}
@@ -3038,10 +2698,11 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'History' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#6b7280' }}>
@@ -3088,7 +2749,7 @@ export default function BrokerDashboard() {
                                 <p
                                   style={{
                                     margin: '0 0 4px 0',
-                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    color: 'rgba(255, 255, 255, 0.9)',
                                     fontSize: '14px',
                                   }}
                                 >
@@ -3099,7 +2760,7 @@ export default function BrokerDashboard() {
                                   <p
                                     style={{
                                       margin: '0 0 4px 0',
-                                      color: 'rgba(255, 255, 255, 0.6)',
+                                      color: 'rgba(255, 255, 255, 0.8)',
                                       fontSize: '12px',
                                     }}
                                   >
@@ -3134,7 +2795,7 @@ export default function BrokerDashboard() {
                                 <div
                                   style={{
                                     fontSize: '12px',
-                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    color: 'rgba(255, 255, 255, 0.8)',
                                     marginBottom: '4px',
                                   }}
                                 >
@@ -3167,10 +2828,11 @@ export default function BrokerDashboard() {
                 {activeQuoteTab === 'SpotRates' && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.6)', // Darker background for better contrast
                       borderRadius: '16px',
                       padding: '32px',
                       color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     <h3 style={{ marginBottom: '24px', color: '#6366f1' }}>
@@ -3253,6 +2915,701 @@ export default function BrokerDashboard() {
                     🚀 Open Full Quoting System
                   </button>
                 </div>
+
+                {/* Workflow Automation Section - COMPLETE VERSION */}
+                <div style={{ marginTop: '48px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <div>
+                      <h2
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          margin: 0,
+                          marginBottom: '8px',
+                        }}
+                      >
+                        🔄 Workflow Automation Engine
+                      </h2>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '14px',
+                          margin: 0,
+                        }}
+                      >
+                        Automated workflows for quotes, contracts, and
+                        operations
+                      </p>
+                    </div>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)', // AMBER
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      + Create Rule
+                    </button>
+                  </div>
+
+                  {/* Automation Overview Cards - COMPLETE VERSION */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                        ⚡
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Active Rules
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        12
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                        🔄
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Tasks Automated
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        348
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                        💰
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Time Saved
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        24hrs
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                        📊
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Success Rate
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        94%
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Active Workflow Rules - COMPLETE VERSION */}
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      🔄 Active Automation Rules
+                    </h3>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      {[
+                        {
+                          name: 'Auto-Quote Generation',
+                          trigger: 'New RFQ Received',
+                          status: 'Active',
+                          lastRun: '2 min ago',
+                          success: '98%',
+                        },
+                        {
+                          name: 'Invoice Processing',
+                          trigger: 'Load Delivered',
+                          status: 'Active',
+                          lastRun: '15 min ago',
+                          success: '95%',
+                        },
+                        {
+                          name: 'Carrier Assignment',
+                          trigger: 'Quote Accepted',
+                          status: 'Active',
+                          lastRun: '1 hour ago',
+                          success: '92%',
+                        },
+                        {
+                          name: 'Document Generation',
+                          trigger: 'Contract Signed',
+                          status: 'Paused',
+                          lastRun: '3 hours ago',
+                          success: '88%',
+                        },
+                      ].map((rule, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '16px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '16px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: '12px',
+                                height: '12px',
+                                borderRadius: '50%',
+                                background:
+                                  rule.status === 'Active'
+                                    ? '#10b981'
+                                    : '#f59e0b',
+                              }}
+                            />
+                            <div>
+                              <div
+                                style={{
+                                  color: 'white',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                {rule.name}
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '14px',
+                                }}
+                              >
+                                Trigger: {rule.trigger}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '24px',
+                            }}
+                          >
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.9)',
+                                  fontSize: '12px',
+                                }}
+                              >
+                                Last Run
+                              </div>
+                              <div style={{ color: 'white', fontSize: '14px' }}>
+                                {rule.lastRun}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.9)',
+                                  fontSize: '12px',
+                                }}
+                              >
+                                Success Rate
+                              </div>
+                              <div
+                                style={{
+                                  color: '#10b981',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {rule.success}
+                              </div>
+                            </div>
+                            <button
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: 'white',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recent Automated Tasks - MISSING SECTION ADDED */}
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      📋 Recent Automated Tasks
+                    </h3>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {[
+                        {
+                          task: 'Generated quote for Atlanta → Miami shipment',
+                          rule: 'Auto-Quote Generation',
+                          status: 'Completed',
+                          time: '2 minutes ago',
+                        },
+                        {
+                          task: 'Processed invoice #INV-2024-0892',
+                          rule: 'Invoice Processing',
+                          status: 'Completed',
+                          time: '15 minutes ago',
+                        },
+                        {
+                          task: 'Assigned carrier for Load #L-24-5678',
+                          rule: 'Carrier Assignment',
+                          status: 'Completed',
+                          time: '1 hour ago',
+                        },
+                        {
+                          task: 'Generated BOL for shipment #SH-24-9876',
+                          rule: 'Document Generation',
+                          status: 'In Progress',
+                          time: '2 hours ago',
+                        },
+                        {
+                          task: 'Sent delivery confirmation to customer',
+                          rule: 'Customer Notifications',
+                          status: 'Completed',
+                          time: '3 hours ago',
+                        },
+                      ].map((task, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '12px 16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{ color: 'white', marginBottom: '4px' }}
+                            >
+                              {task.task}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              Rule: {task.rule}
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '16px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                background:
+                                  task.status === 'Completed'
+                                    ? 'rgba(16, 185, 129, 0.2)'
+                                    : 'rgba(245, 158, 11, 0.2)',
+                                color:
+                                  task.status === 'Completed'
+                                    ? '#10b981'
+                                    : '#f59e0b',
+                              }}
+                            >
+                              {task.status}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '12px',
+                                minWidth: '80px',
+                              }}
+                            >
+                              {task.time}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedTab === 'loads-bids' && (
+              <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <div>
+                    <h2
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: 0,
+                        marginBottom: '8px',
+                      }}
+                    >
+                      📦 My Loads & Active Bidding
+                    </h2>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Intelligent bidding with margin tracking and market
+                      analysis
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowCreateForm(true)}
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)', // OPERATIONS - Blue
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background =
+                        'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background =
+                        'linear-gradient(135deg, #3b82f6, #2563eb)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    + Create Load
+                  </button>
+                </div>
+
+                {/* Load Management Quick Stats */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      🎯
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Active Bids
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {
+                        biddingHistory.filter((b) => b.bidStatus === 'pending')
+                          .length
+                      }
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      🏆
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Won Bids
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {
+                        biddingHistory.filter((b) => b.bidStatus === 'won')
+                          .length
+                      }
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      📈
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Avg Margin
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {performanceMetrics?.avgMargin || 0}%
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      💰
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Win Rate
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {performanceMetrics?.winRate || 0}%
+                    </div>
+                  </div>
+                </div>
+
+                <EnhancedLoadBoard />
               </div>
             )}
 
@@ -3312,7 +3669,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -3347,7 +3704,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -3382,7 +3739,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -3417,7 +3774,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -3622,7 +3979,7 @@ export default function BrokerDashboard() {
                               <span
                                 style={{
                                   fontSize: '12px',
-                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  color: 'rgba(255, 255, 255, 0.9)',
                                 }}
                               >
                                 {bid.notes || 'No notes'}
@@ -3724,7 +4081,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -3783,7 +4140,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -3840,7 +4197,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -3947,7 +4304,7 @@ export default function BrokerDashboard() {
                               </div>
                               <div
                                 style={{
-                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  color: 'rgba(255, 255, 255, 0.8)',
                                   fontSize: '12px',
                                 }}
                               >
@@ -4151,25 +4508,369 @@ export default function BrokerDashboard() {
                 <BrokerFinancialDashboard
                   brokerId={brokerSession?.id || 'demo-broker'}
                 />
-              </div>
-            )}
 
-            {selectedTab === 'workflow-automation' && (
-              <div>
-                <BrokerWorkflowAutomationEngine
-                  brokerId={brokerSession?.id || 'demo-broker'}
-                />
+                {/* Carrier Invitation Management */}
+                <div style={{ marginTop: '25px' }}>
+                  <InvitationQuickManager compact={false} />
+                </div>
               </div>
             )}
 
             {selectedTab === 'enhanced-crm' && (
               <div>
-                <BrokerEnhancedCRM
-                  brokerId={brokerSession?.id || 'demo-broker'}
-                />
+                {/* Enhanced CRM with Glassmorphism Design */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <div>
+                    <h2
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: 0,
+                        marginBottom: '8px',
+                      }}
+                    >
+                      🏢 Enhanced CRM
+                    </h2>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Customer relationship management and business intelligence
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowAddShipper(true)}
+                    style={{
+                      background: 'linear-gradient(135deg, #ef4444, #dc2626)', // RED
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    + Add Shipper
+                  </button>
+                </div>
+
+                {/* CRM Overview Cards */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      👥
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Total Customers
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      147
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      💰
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Pipeline Value
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      $2.4M
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      📈
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Win Rate
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      78%
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '8px' }}>
+                      🎯
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Active Opportunities
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      34
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Customer Activity */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    📊 Recent Customer Activity
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '16px',
+                    }}
+                  >
+                    {[
+                      {
+                        customer: 'Walmart Distribution',
+                        activity:
+                          'Requested new quote for Atlanta → Miami route',
+                        value: '$4,200',
+                        status: 'Quote Sent',
+                        time: '2 hours ago',
+                        priority: 'High',
+                      },
+                      {
+                        customer: 'Home Depot Logistics',
+                        activity:
+                          'Approved contract for Q1 2024 freight services',
+                        value: '$85,000',
+                        status: 'Contract Signed',
+                        time: '4 hours ago',
+                        priority: 'High',
+                      },
+                      {
+                        customer: 'Target Supply Chain',
+                        activity:
+                          'Scheduled pickup for Chicago → Dallas shipment',
+                        value: '$3,800',
+                        status: 'Scheduled',
+                        time: '6 hours ago',
+                        priority: 'Medium',
+                      },
+                    ].map((activity, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.15)',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '12px',
+                              height: '12px',
+                              borderRadius: '50%',
+                              background:
+                                activity.priority === 'High'
+                                  ? '#ef4444'
+                                  : activity.priority === 'Medium'
+                                    ? '#f59e0b'
+                                    : '#10b981',
+                            }}
+                          />
+                          <div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontWeight: '600',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {activity.customer}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '14px',
+                              }}
+                            >
+                              {activity.activity}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '24px',
+                          }}
+                        >
+                          <div style={{ textAlign: 'right' }}>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              Value
+                            </div>
+                            <div
+                              style={{
+                                color: '#10b981',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              {activity.value}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              Status
+                            </div>
+                            <div style={{ color: 'white', fontSize: '14px' }}>
+                              {activity.status}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right', minWidth: '80px' }}>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              {activity.time}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
-
 
             {selectedTab === 'carrier-network' && (
               <div>
@@ -4187,14 +4888,6 @@ export default function BrokerDashboard() {
               </div>
             )}
 
-            {selectedTab === 'regulatory-compliance' && (
-              <div>
-                <BrokerRegulatoryCompliance
-                  brokerId={brokerSession?.id || 'demo-broker'}
-                />
-              </div>
-            )}
-
             {selectedTab === 'shipper-acquisition' && (
               <div>
                 <BrokerShipperAcquisition
@@ -4202,6 +4895,7 @@ export default function BrokerDashboard() {
                 />
               </div>
             )}
+
             {selectedTab === 'task-priority' && (
               <div>
                 <h2
@@ -4272,7 +4966,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -4320,7 +5014,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -4371,7 +5065,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -4602,7 +5296,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -4638,7 +5332,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -4673,7 +5367,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -4708,7 +5402,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -5037,7 +5731,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -5085,7 +5779,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -5138,7 +5832,7 @@ export default function BrokerDashboard() {
                       <div>
                         <div
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '14px',
                           }}
                         >
@@ -5283,7 +5977,7 @@ export default function BrokerDashboard() {
                                 <div
                                   style={{
                                     fontSize: '12px',
-                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    color: 'rgba(255, 255, 255, 0.8)',
                                   }}
                                 >
                                   {shipper.industry}
@@ -5566,7 +6260,7 @@ export default function BrokerDashboard() {
                         <div style={{ marginBottom: '16px' }}>
                           <div
                             style={{
-                              color: 'rgba(255, 255, 255, 0.7)',
+                              color: 'rgba(255, 255, 255, 0.9)',
                               fontSize: '12px',
                               marginBottom: '8px',
                             }}
@@ -5581,7 +6275,7 @@ export default function BrokerDashboard() {
                             }}
                           >
                             {opportunity.requiredActions.map(
-                              (action, index) => (
+                              (action: string, index: number) => (
                                 <li key={index} style={{ marginBottom: '4px' }}>
                                   {action}
                                 </li>
@@ -5663,7 +6357,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -5699,7 +6393,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -5731,7 +6425,7 @@ export default function BrokerDashboard() {
                     </div>
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         fontSize: '14px',
                       }}
                     >
@@ -5987,7 +6681,7 @@ export default function BrokerDashboard() {
                       </h3>
                       <p
                         style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          color: 'rgba(255, 255, 255, 0.9)',
                           fontSize: '14px',
                         }}
                       >
@@ -6055,7 +6749,7 @@ export default function BrokerDashboard() {
                       </h4>
                       <p
                         style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          color: 'rgba(255, 255, 255, 0.9)',
                           fontSize: '14px',
                           marginBottom: '12px',
                         }}
@@ -6098,7 +6792,7 @@ export default function BrokerDashboard() {
                       </h4>
                       <p
                         style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          color: 'rgba(255, 255, 255, 0.9)',
                           fontSize: '14px',
                           marginBottom: '12px',
                         }}
@@ -6141,7 +6835,7 @@ export default function BrokerDashboard() {
                       </h4>
                       <p
                         style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          color: 'rgba(255, 255, 255, 0.9)',
                           fontSize: '14px',
                           marginBottom: '12px',
                         }}

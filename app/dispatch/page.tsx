@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
+import InvitationQuickManager from '../components/InvitationQuickManager';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
@@ -1645,6 +1646,14 @@ export default function DispatchCentral() {
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Carrier Invitation Management */}
+          {selectedTab === 'dashboard' && (
+            <InvitationQuickManager
+              compact={true}
+              style={{ marginBottom: '25px' }}
+            />
           )}
 
           {/* General Loadboard - All Brokers */}
