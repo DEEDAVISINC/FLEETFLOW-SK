@@ -121,7 +121,8 @@ export default function FleetFlowLandingPage() {
             >
               🌊 GO WITH THE FLOW
             </button>
-          </Link>          <Link href='/dashboard'>
+          </Link>{' '}
+          <Link href='/fleetflowdash'>
             <button
               style={{
                 background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -134,7 +135,7 @@ export default function FleetFlowLandingPage() {
                 cursor: 'pointer',
               }}
             >
-              Dashboard
+              FLEETFLOWDASH
             </button>
           </Link>
           <Link href='/settings'>
@@ -280,7 +281,12 @@ export default function FleetFlowLandingPage() {
                   fontWeight: '500',
                 }}
               >
-                An advanced <strong style={{ color: '#f4a832' }}>instant marketplace</strong> - connecting shippers and drivers in real-time with AI-powered matching and dynamic pricing.
+                An advanced{' '}
+                <strong style={{ color: '#f4a832' }}>
+                  instant marketplace
+                </strong>{' '}
+                - connecting shippers and drivers in real-time with AI-powered
+                matching and dynamic pricing.
               </p>
             </div>
 
@@ -302,7 +308,9 @@ export default function FleetFlowLandingPage() {
                 }}
               >
                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>📦</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                    📦
+                  </div>
                   <h3
                     style={{
                       fontSize: '1.4rem',
@@ -324,24 +332,58 @@ export default function FleetFlowLandingPage() {
                     margin: 0,
                   }}
                 >
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Request trucks instantly - no waiting
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     AI-powered fair pricing
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Real-time driver matching
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Live GPS tracking & updates
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     No long-term contracts required
                   </li>
                 </ul>
@@ -357,7 +399,9 @@ export default function FleetFlowLandingPage() {
                 }}
               >
                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🚛</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                    🚛
+                  </div>
                   <h3
                     style={{
                       fontSize: '1.4rem',
@@ -379,24 +423,58 @@ export default function FleetFlowLandingPage() {
                     margin: 0,
                   }}
                 >
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Go online/offline instantly
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Find high-paying loads nearby
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Competitive market rates
                   </li>
-                  <li style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                  <li
+                    style={{
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Fast payment processing
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>✓</span>
+                    <span style={{ color: '#10b981', marginRight: '8px' }}>
+                      ✓
+                    </span>
                     Build your reputation & earnings
                   </li>
                 </ul>
@@ -431,7 +509,9 @@ export default function FleetFlowLandingPage() {
                     margin: 0,
                   }}
                 >
-                  Our intelligent system analyzes market conditions, traffic patterns, fuel costs, and demand in real-time to provide optimal pricing and instant matching.
+                  Our intelligent system analyzes market conditions, traffic
+                  patterns, fuel costs, and demand in real-time to provide
+                  optimal pricing and instant matching.
                 </p>
               </div>
 
@@ -450,12 +530,14 @@ export default function FleetFlowLandingPage() {
                     transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)'
-                    e.currentTarget.style.boxShadow = '0 0 20px rgba(244, 168, 50, 0.6)'
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 20px rgba(244, 168, 50, 0.6)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)'
-                    e.currentTarget.style.boxShadow = '0 0 15px rgba(244, 168, 50, 0.4)'
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 15px rgba(244, 168, 50, 0.4)';
                   }}
                 >
                   🚀 Start Using Go With the Flow

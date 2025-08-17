@@ -141,7 +141,7 @@ export default function TestNavigation() {
                 🚛 Dispatch Central
               </Link>
               <Link
-                href='/broker'
+                href='/broker/dashboard'
                 onClick={handleDropdownClose}
                 style={{
                   display: 'block',

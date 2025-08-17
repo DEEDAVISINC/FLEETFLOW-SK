@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import ExecutiveComplianceCenter from '../components/ExecutiveComplianceCenter';
 import OpenELDOnboardingSetup from '../components/OpenELDOnboardingSetup';
 import {
   ICAOnboardingRecord,
@@ -15,49 +16,57 @@ import { UserProfile } from '../services/user-data-service';
 
 // Single demo user - can be toggled between DC (Internal Staff) and DM (Driver/Carrier)
 const demoUser = {
-  id: 'JR-DM-20240114-1',
-  name: 'John Rodriguez',
-  email: 'john.rodriguez@carrierpartner.com',
-  phone: '(555) 123-4567',
-  department: 'Driver Operations',
-  departmentCode: 'DM',
-  position: 'Owner Operator',
-  hiredDate: '2024-01-14',
-  role: 'Driver',
+  id: 'DD-MGR-20240101-1',
+  name: 'David Davis',
+  email: 'ddavis@freight1stdirect.com',
+  phone: '(555) 987-6543',
+  department: 'Executive Management',
+  departmentCode: 'MGR',
+  position: 'President & Owner',
+  hiredDate: '2024-01-01',
+  role: 'Owner',
   status: 'active',
-  lastActive: '2024-12-19T14:30:00Z',
-  cdlNumber: 'CDL-123456789',
-  carrierMC: 'MC-987654',
-  usDot: 'DOT-3456789',
-  companyName: 'Rodriguez Transport LLC',
+  lastActive: '2024-12-19T16:45:00Z',
+  cdlNumber: null,
+  carrierMC: 'MC-123456',
+  usDot: 'DOT-7654321',
+  companyName: 'Freight 1st Direct Brokerage LLC',
   systemAccess: {
-    level: 'Driver Portal',
-    accessCode: 'ACC-JR-DM',
-    securityLevel: 'Level 2 - Driver',
+    level: 'Executive Portal',
+    accessCode: 'ACC-DD-MGR',
+    securityLevel: 'Level 5 - Executive',
     allowedSystems: [
-      'Driver OTR Flow',
-      'Load Management',
-      'ELD Integration',
-      'Document Upload',
+      'Executive Dashboard',
+      'Regulatory Compliance',
+      'Financial Management',
+      'Strategic Analytics',
+      'Brokerage Operations',
+      'Risk Management',
     ],
   },
   emergencyContact: {
-    name: 'Maria Rodriguez',
+    name: 'Sarah Davis',
     relation: 'Wife',
-    phone: '(555) 987-6543',
-    altPhone: '(555) 444-7777',
+    phone: '(555) 444-8888',
+    altPhone: '(555) 555-9999',
   },
   notes:
-    '• Owner operator with 5+ years OTR experience\n• Specialized in refrigerated freight\n• Clean driving record and DOT compliant\n• Emergency contact updated December 2024',
+    '• Company President & Owner since 2024\n• 15+ years freight brokerage experience\n• Licensed freight broker with MC authority\n• Responsible for regulatory compliance oversight\n• Emergency contact updated December 2024',
   permissions: {
-    'driver-otr-access': true,
-    'driver-load-accept': true,
-    'driver-load-status-update': true,
-    'driver-document-upload': true,
-    'driver-eld-integration': true,
-    'driver-communication-receive': true,
+    'executive-dashboard-access': true,
+    'regulatory-compliance-management': true,
+    'financial-oversight': true,
+    'strategic-analytics': true,
+    'brokerage-operations-oversight': true,
+    'risk-management': true,
+    'user-management': true,
+    'compliance-alerts': true,
+    'system-administration': true,
     'fleet-location-tracking': true,
-    'compliance-hours-management': true,
+    'ai-flow-platform': true,
+    'crm-customer-management': true,
+    'government-contracts-rfp': true,
+    'financial-services-integration': true,
     'system-notifications-receive': true,
     'system-profile-edit': true,
     'system-password-change': true,
@@ -65,40 +74,46 @@ const demoUser = {
   // Training progress data - connects to user-management and instructor portal
   trainingProgress: {
     required: [
-      'Dispatch Fundamentals',
-      'Load Management',
-      'Driver Communication',
-      'Safety Protocols',
-      'DOT Compliance',
+      'Executive Leadership',
+      'Regulatory Compliance',
+      'Risk Management',
+      'Financial Oversight',
+      'Strategic Planning',
     ],
     completed: [
       {
-        name: 'Dispatch Fundamentals',
+        name: 'Executive Leadership',
         completedDate: '2024-01-15',
-        score: 95,
-        instructor: 'Sarah Johnson',
+        score: 98,
+        instructor: 'John Maxwell',
       },
       {
-        name: 'Load Management',
-        completedDate: '2024-01-22',
-        score: 88,
-        instructor: 'Mike Chen',
+        name: 'Regulatory Compliance',
+        completedDate: '2024-02-01',
+        score: 96,
+        instructor: 'Lisa Rodriguez',
+      },
+      {
+        name: 'Risk Management',
+        completedDate: '2024-02-15',
+        score: 94,
+        instructor: 'Michael Chen',
       },
     ],
     inProgress: [
       {
-        name: 'Driver Communication',
-        startedDate: '2024-01-25',
-        progress: 65,
-        dueDate: '2024-02-10',
-        instructor: 'Lisa Rodriguez',
+        name: 'Strategic Planning',
+        startedDate: '2024-03-01',
+        progress: 75,
+        dueDate: '2024-03-30',
+        instructor: 'Sarah Johnson',
       },
     ],
-    overallProgress: 60,
+    overallProgress: 85,
     totalModules: 5,
-    completedModules: 2,
+    completedModules: 3,
     inProgressModules: 1,
-    pendingModules: 2,
+    pendingModules: 1,
   },
 };
 
@@ -817,6 +832,71 @@ export default function UserProfile() {
                     {formatDate(currentUser.hiredDate)}
                   </div>
                 </div>
+
+                {/* Executive/Brokerage specific fields */}
+                {currentUser.departmentCode === 'MGR' && (
+                  <>
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '8px',
+                          marginTop: '16px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}
+                      >
+                        🚛 <strong>BROKER MC</strong>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(245, 158, 11, 0.1)',
+                          color: '#fbbf24',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(245, 158, 11, 0.2)',
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        {currentUser.carrierMC || 'MC-123456'}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '8px',
+                          marginTop: '16px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}
+                      >
+                        🛡️ <strong>US DOT</strong>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(139, 92, 246, 0.1)',
+                          color: '#a78bfa',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(139, 92, 246, 0.2)',
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        {currentUser.usDot || 'DOT-7654321'}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Driver/Carrier specific fields */}
                 {currentUser.departmentCode === 'DM' && (
@@ -1616,7 +1696,8 @@ export default function UserProfile() {
                       marginBottom: '4px',
                     }}
                   >
-                    {workflowData?.trainingProgress.length > 0
+                    {workflowData?.trainingProgress &&
+                    workflowData.trainingProgress.length > 0
                       ? Math.round(
                           workflowData.trainingProgress.reduce(
                             (sum, p) => sum + p.progress,
@@ -1654,7 +1735,8 @@ export default function UserProfile() {
                     background: 'linear-gradient(90deg, #10b981, #059669)',
                     height: '100%',
                     width: `${
-                      workflowData?.trainingProgress.length > 0
+                      workflowData?.trainingProgress &&
+                      workflowData.trainingProgress.length > 0
                         ? Math.round(
                             workflowData.trainingProgress.reduce(
                               (sum, p) => sum + p.progress,
@@ -2206,6 +2288,36 @@ export default function UserProfile() {
             </div>
           )}
 
+          {/* Executive Compliance Center - Only for executive users */}
+          {['Admin', 'Manager', 'Owner', 'President'].includes(
+            currentUser.role
+          ) && (
+            <div
+              style={{
+                padding: '32px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  margin: '0 0 24px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                ⚖️ Executive Regulatory Compliance Center
+              </h4>
+              <ExecutiveComplianceCenter
+                userId={currentUser.id}
+                userRole={currentUser.role}
+              />
+            </div>
+          )}
+
           {/* Notes Section - exactly from user-management */}
           <div
             style={{
@@ -2237,12 +2349,13 @@ export default function UserProfile() {
             >
               <div
                 style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  color: 'rgba(255, 255, 255, 0.8)',
                   fontSize: '14px',
-                  fontStyle: 'italic',
+                  lineHeight: '1.6',
+                  whiteSpace: 'pre-line',
                 }}
               >
-                No additional notes on file.
+                {currentUser.notes || 'No additional notes on file.'}
               </div>
             </div>
           </div>

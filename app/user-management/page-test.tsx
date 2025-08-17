@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 export default function UserManagementTest() {
   return (
     <div style={{ padding: '20px', color: 'white', background: '#1a1a1a' }}>

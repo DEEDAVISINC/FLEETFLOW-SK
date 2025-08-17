@@ -460,4 +460,3 @@ class OpenELDAnalyticsService {
 }
 
 export const openELDAnalyticsService = new OpenELDAnalyticsService();
-

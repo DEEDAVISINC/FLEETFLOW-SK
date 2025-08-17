@@ -584,5 +584,3 @@ export class LinearProgrammingSolver {
 
 // Export default instance
 export const linearProgrammingSolver = new LinearProgrammingSolver();
-
-

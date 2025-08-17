@@ -137,6 +137,3 @@ integrated into your operational workflow at zero additional cost."**
 Management Platform** with built-in carrier security and fraud prevention.
 
 **Trademark Notice:** FACIS™ is a trademark of FleetFlow Technologies.
-
-
-

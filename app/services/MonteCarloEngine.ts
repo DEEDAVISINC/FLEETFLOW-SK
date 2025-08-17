@@ -445,5 +445,3 @@ export class MonteCarloEngine {
 
 // Export default instance
 export const monteCarloEngine = new MonteCarloEngine();
-
-

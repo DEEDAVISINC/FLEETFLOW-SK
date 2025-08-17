@@ -1153,5 +1153,3 @@ function generateMockData(): { loads: Load[]; drivers: Driver[] } {
 
   return { loads, drivers };
 }
-
-

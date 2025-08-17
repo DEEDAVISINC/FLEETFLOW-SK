@@ -1,6 +1,10 @@
 'use client';
 
 import { getCurrentUser } from '../config/access';
+import {
+  BrokerageConsolidatedMetrics,
+  brokerAgentIntegrationService,
+} from './BrokerAgentIntegrationService';
 import { getLoadsForTenant } from './loadService';
 
 export interface BrokerPerformanceMetrics {
@@ -232,9 +236,137 @@ class BrokerAnalyticsService {
       }, 1000);
     });
   }
+
+  // ===============================
+  // AGENT AGGREGATION METHODS
+  // ===============================
+
+  /**
+   * Get comprehensive brokerage metrics including all agent data
+   */
+  getBrokerageOverviewMetrics(): BrokerageConsolidatedMetrics & {
+    managementInsights: {
+      topPerformingAgent: string;
+      lowestPerformingAgent: string;
+      avgAgentRevenue: number;
+      agentRetentionRate: number;
+      loadDistributionEfficiency: number;
+    };
+  } {
+    const consolidatedMetrics =
+      brokerAgentIntegrationService.getBrokerageConsolidatedMetrics();
+    const agents = brokerAgentIntegrationService.getAllBrokerageAgents();
+
+    // Calculate management insights
+    const sortedByRevenue = agents.sort(
+      (a, b) => b.performance.monthlyRevenue - a.performance.monthlyRevenue
+    );
+    const topPerformingAgent = sortedByRevenue[0]?.name || 'N/A';
+    const lowestPerformingAgent =
+      sortedByRevenue[sortedByRevenue.length - 1]?.name || 'N/A';
+    const avgAgentRevenue =
+      agents.length > 0
+        ? agents.reduce(
+            (sum, agent) => sum + agent.performance.monthlyRevenue,
+            0
+          ) / agents.length
+        : 0;
+
+    // Mock retention and efficiency metrics
+    const agentRetentionRate = 94.5; // 94.5% retention rate
+    const loadDistributionEfficiency = 87.3; // 87.3% efficiency in load distribution
+
+    return {
+      ...consolidatedMetrics,
+      managementInsights: {
+        topPerformingAgent,
+        lowestPerformingAgent,
+        avgAgentRevenue: Math.round(avgAgentRevenue),
+        agentRetentionRate,
+        loadDistributionEfficiency,
+      },
+    };
+  }
+
+  /**
+   * Get all loads created by agents (for brokerage load board)
+   */
+  getAllAgentLoads() {
+    return brokerAgentIntegrationService.getAllAgentLoads();
+  }
+
+  /**
+   * Get loads ready for dispatch (flows to Dispatch Central)
+   */
+  getLoadsForDispatch() {
+    return brokerAgentIntegrationService.getLoadsForDispatch();
+  }
+
+  /**
+   * Get real-time agent performance comparison
+   */
+  getAgentPerformanceRanking() {
+    const agents = brokerAgentIntegrationService.getAllBrokerageAgents();
+
+    return agents
+      .map((agent) => ({
+        rank: 0, // Will be calculated
+        agentId: agent.id,
+        agentName: agent.name,
+        revenue: agent.performance.monthlyRevenue,
+        loads: agent.performance.totalLoads,
+        margin: agent.performance.avgMargin,
+        successRate: agent.performance.successRate,
+        efficiency:
+          (agent.performance.successRate * agent.performance.avgMargin) / 100,
+        customerCount: agent.performance.customerCount,
+        lastActive: agent.lastActive,
+      }))
+      .sort((a, b) => b.efficiency - a.efficiency)
+      .map((agent, index) => ({ ...agent, rank: index + 1 }));
+  }
+
+  /**
+   * Get combined broker + agent performance metrics
+   */
+  getCombinedPerformanceMetrics(): BrokerPerformanceMetrics & {
+    agentMetrics: BrokerageConsolidatedMetrics;
+    loadSourceBreakdown: {
+      brokerLoads: number;
+      agentLoads: number;
+      totalLoads: number;
+      agentContributionPercent: number;
+    };
+  } {
+    const standardMetrics = this.getBrokerPerformanceMetrics();
+    const agentMetrics =
+      brokerAgentIntegrationService.getBrokerageConsolidatedMetrics();
+    const agentLoads = brokerAgentIntegrationService.getAllAgentLoads();
+
+    // Calculate load source breakdown
+    const brokerLoads = standardMetrics.totalLoads;
+    const agentLoadCount = agentLoads.length;
+    const totalCombinedLoads = brokerLoads + agentLoadCount;
+    const agentContributionPercent =
+      totalCombinedLoads > 0 ? (agentLoadCount / totalCombinedLoads) * 100 : 0;
+
+    return {
+      ...standardMetrics,
+      // Update totals to include agent data
+      totalLoads: totalCombinedLoads,
+      totalRevenue: standardMetrics.totalRevenue + agentMetrics.totalRevenue,
+      customerCount:
+        standardMetrics.customerCount + agentMetrics.totalCustomers,
+      agentMetrics,
+      loadSourceBreakdown: {
+        brokerLoads,
+        agentLoads: agentLoadCount,
+        totalLoads: totalCombinedLoads,
+        agentContributionPercent:
+          Math.round(agentContributionPercent * 10) / 10,
+      },
+    };
+  }
 }
 
 export const brokerAnalyticsService = new BrokerAnalyticsService();
-
-
-

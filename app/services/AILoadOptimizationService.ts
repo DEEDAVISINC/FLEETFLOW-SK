@@ -647,5 +647,3 @@ export class AILoadOptimizationService {
 
 // Export singleton instance
 export const aiLoadOptimizationService = new AILoadOptimizationService();
-
-

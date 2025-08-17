@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
-import InvitationQuickManager from '../components/InvitationQuickManager';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
 import { getCurrentUser } from '../config/access';
 import { schedulingService } from '../scheduling/service';
+import { brokerAgentIntegrationService } from '../services/BrokerAgentIntegrationService';
 import GoWithFlowAutomationService from '../services/GoWithFlowAutomationService';
 import {
   ensureUniqueKey,
@@ -750,11 +750,62 @@ export default function DispatchCentral() {
     if (currentUser) {
       // Get loads for this tenant/dispatcher using multi-tenant filtering
       const tenantLoads = getLoadsForTenant();
-      setLoads(tenantLoads);
 
-      // Get tenant-specific load statistics
+      // Get agent loads from brokerage system (flows through hierarchy)
+      const agentLoads = brokerAgentIntegrationService.getLoadsForDispatch();
+
+      // Convert agent loads to standard Load format and combine
+      const convertedAgentLoads: Load[] = agentLoads.map((agentLoad) => ({
+        id: agentLoad.id,
+        brokerId: agentLoad.brokerageId,
+        brokerName: `${agentLoad.agentName} (Agent)`,
+        shipperName: agentLoad.shipperName,
+        origin: agentLoad.origin,
+        destination: agentLoad.destination,
+        rate: agentLoad.rate,
+        distance: '0 mi', // Will be calculated
+        weight: agentLoad.weight,
+        equipment: agentLoad.equipment,
+        status: agentLoad.status as any,
+        pickupDate: agentLoad.pickupDate,
+        deliveryDate: agentLoad.deliveryDate,
+        createdAt: agentLoad.createdAt,
+        updatedAt: agentLoad.createdAt, // Use createdAt as default updatedAt
+        loadBoardNumber: agentLoad.loadNumber,
+        // Additional fields for agent load tracking
+        agentId: agentLoad.agentId,
+        agentName: agentLoad.agentName,
+        marginPercent: agentLoad.marginPercent,
+      }));
+
+      // Combine tenant loads with agent loads
+      const allLoads = [...tenantLoads, ...convertedAgentLoads];
+      setLoads(allLoads);
+
+      // Get tenant-specific load statistics (now includes agent loads)
       const tenantStats = getTenantLoadStats();
-      setStats(tenantStats);
+      // Add agent load counts to stats
+      const agentLoadStats = {
+        total: tenantStats.total + agentLoads.length,
+        available:
+          tenantStats.available +
+          agentLoads.filter((l) => l.status === 'Available').length,
+        assigned:
+          tenantStats.assigned +
+          agentLoads.filter((l) => l.status === 'Assigned').length,
+        inTransit:
+          tenantStats.inTransit +
+          agentLoads.filter((l) => l.status === 'In Transit').length,
+        delivered:
+          tenantStats.delivered +
+          agentLoads.filter((l) => l.status === 'Delivered').length,
+        // Include all required stats properties
+        broadcasted: tenantStats.broadcasted || 0,
+        driverSelected: tenantStats.driverSelected || 0,
+        orderSent: tenantStats.orderSent || 0,
+        unassigned: tenantStats.unassigned || 0,
+      };
+      setStats(agentLoadStats);
 
       // Load invoices
       const allInvoices = getAllInvoices();
@@ -762,6 +813,10 @@ export default function DispatchCentral() {
 
       const stats = getInvoiceStats();
       setInvoiceStats(stats);
+
+      console.log(
+        `🔄 Dispatch Central: Loaded ${tenantLoads.length} tenant loads + ${agentLoads.length} agent loads = ${allLoads.length} total loads`
+      );
     }
   }, []);
 
@@ -1646,14 +1701,6 @@ export default function DispatchCentral() {
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Carrier Invitation Management */}
-          {selectedTab === 'dashboard' && (
-            <InvitationQuickManager
-              compact={true}
-              style={{ marginBottom: '25px' }}
-            />
           )}
 
           {/* General Loadboard - All Brokers */}
@@ -4748,6 +4795,117 @@ export default function DispatchCentral() {
             </div>
           )}
         </div>
+
+        {/* Carrier Invitation Management - Bottom Section */}
+        {selectedTab === 'dashboard' && (
+          <div
+            style={{
+              marginTop: '25px',
+              marginBottom: '25px',
+              background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+              border: '2px solid #0d9488',
+              borderRadius: '8px',
+              padding: '12px',
+              color: 'white',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '8px',
+              }}
+            >
+              <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>
+                📧 Carrier Invitations
+              </span>
+              <div style={{ display: 'flex', gap: '8px', fontSize: '0.7rem' }}>
+                <span
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  📧 8
+                </span>
+                <span
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  👁️ 5
+                </span>
+                <span
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  ✅ 3
+                </span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem' }}>
+              <input
+                placeholder='Company Name'
+                style={{
+                  flex: 1,
+                  padding: '6px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: 'rgba(255,255,255,0.9)',
+                  color: '#2d3748',
+                  fontSize: '0.8rem',
+                }}
+              />
+              <input
+                placeholder='Email'
+                style={{
+                  flex: 1,
+                  padding: '6px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: 'rgba(255,255,255,0.9)',
+                  color: '#2d3748',
+                  fontSize: '0.8rem',
+                }}
+              />
+              <button
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  borderRadius: '4px',
+                  color: 'white',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                }}
+              >
+                📧 Send
+              </button>
+              <button
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  borderRadius: '4px',
+                  color: 'white',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                }}
+              >
+                🔗 Link
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Back Button */}
         <div style={{ textAlign: 'center' }}>

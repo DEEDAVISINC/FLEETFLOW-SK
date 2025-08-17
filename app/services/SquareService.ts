@@ -458,12 +458,25 @@ export class SquareService {
     body: string,
     webhookSignatureKey: string
   ): boolean {
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha256', webhookSignatureKey);
-    hmac.update(body);
-    const expectedSignature = hmac.digest('base64');
+    // This method should only run on the server side
+    if (typeof window !== 'undefined') {
+      console.warn(
+        'Webhook signature validation should only run on server side'
+      );
+      return false;
+    }
 
-    return signature === expectedSignature;
+    try {
+      const crypto = require('crypto');
+      const hmac = crypto.createHmac('sha256', webhookSignatureKey);
+      hmac.update(body);
+      const expectedSignature = hmac.digest('base64');
+
+      return signature === expectedSignature;
+    } catch (error) {
+      console.error('Error validating webhook signature:', error);
+      return false;
+    }
   }
 
   // ========================================

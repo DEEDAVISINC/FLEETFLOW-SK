@@ -1566,5 +1566,3 @@ export default function BrokerAIIntelligenceHub({ brokerId }: Props) {
     </div>
   );
 }
-
-

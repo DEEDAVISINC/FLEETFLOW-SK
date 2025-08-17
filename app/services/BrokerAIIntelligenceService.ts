@@ -534,5 +534,3 @@ export class BrokerAIIntelligenceService {
 
 export const brokerAIIntelligenceService =
   BrokerAIIntelligenceService.getInstance();
-
-

@@ -693,5 +693,3 @@ export class SmartNotificationService {
 }
 
 export const smartNotificationService = SmartNotificationService.getInstance();
-
-

@@ -1171,6 +1171,12 @@ export default function BrokerDashboard() {
                 icon: '🏢',
                 color: 'linear-gradient(135deg, #a855f7, #9333ea)',
               }, // SHIPPER ACQUISITION - Violet
+              {
+                id: 'agent-management',
+                label: 'Agent Management',
+                icon: '👥',
+                color: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              }, // AGENT MANAGEMENT - Amber
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -4893,6 +4899,497 @@ export default function BrokerDashboard() {
                 <BrokerShipperAcquisition
                   brokerId={brokerSession?.id || 'demo-broker'}
                 />
+              </div>
+            )}
+
+            {selectedTab === 'agent-management' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '15px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '25px',
+                }}
+              >
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    marginBottom: '25px',
+                  }}
+                >
+                  👥 Agent Management Dashboard
+                </h2>
+
+                {/* Agent Performance Overview */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  {(() => {
+                    const agentMetrics =
+                      brokerAnalyticsService.getBrokerageOverviewMetrics();
+                    return [
+                      {
+                        title: 'Total Agents',
+                        value: agentMetrics.totalAgents,
+                        subtitle: `${agentMetrics.activeAgents} active today`,
+                        color: '#3b82f6',
+                        icon: '👥',
+                      },
+                      {
+                        title: 'Total Agent Revenue',
+                        value: `$${agentMetrics.totalRevenue.toLocaleString()}`,
+                        subtitle: `Avg: $${agentMetrics.managementInsights.avgAgentRevenue.toLocaleString()}/agent`,
+                        color: '#10b981',
+                        icon: '💰',
+                      },
+                      {
+                        title: 'Agent Loads',
+                        value: agentMetrics.totalLoads,
+                        subtitle: `${agentMetrics.activeLoads} active loads`,
+                        color: '#f59e0b',
+                        icon: '📦',
+                      },
+                      {
+                        title: 'Conversion Rate',
+                        value: `${agentMetrics.conversionRate}%`,
+                        subtitle: `${agentMetrics.quotesAccepted}/${agentMetrics.totalQuotes} quotes`,
+                        color: '#8b5cf6',
+                        icon: '📈',
+                      },
+                    ].map((metric, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(20px)',
+                          borderRadius: '15px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '20px',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '28px',
+                            marginBottom: '10px',
+                          }}
+                        >
+                          {metric.icon}
+                        </div>
+                        <div
+                          style={{
+                            color: metric.color,
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            marginBottom: '5px',
+                          }}
+                        >
+                          {metric.value}
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            marginBottom: '5px',
+                          }}
+                        >
+                          {metric.title}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {metric.subtitle}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+
+                {/* Agent Performance Ranking */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '30px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  {/* Top Performing Agents */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '15px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      padding: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      🏆 Top Performing Agents
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                      }}
+                    >
+                      {brokerAnalyticsService
+                        .getAgentPerformanceRanking()
+                        .slice(0, 5)
+                        .map((agent, index) => (
+                          <div
+                            key={agent.agentId}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '10px',
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '8px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  borderRadius: '50%',
+                                  background:
+                                    index === 0
+                                      ? '#ffd700'
+                                      : index === 1
+                                        ? '#c0c0c0'
+                                        : index === 2
+                                          ? '#cd7f32'
+                                          : '#6b7280',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: 'white',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {agent.rank}
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {agent.agentName}
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    fontSize: '12px',
+                                  }}
+                                >
+                                  {agent.loads} loads • {agent.successRate}%
+                                  success
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  color: '#10b981',
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                ${agent.revenue.toLocaleString()}
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  fontSize: '12px',
+                                }}
+                              >
+                                {agent.margin}% margin
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Agent Load Board Integration */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '15px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      padding: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      🚛 Agent Loads (Live Feed)
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                      }}
+                    >
+                      {brokerAnalyticsService
+                        .getAllAgentLoads()
+                        .slice(0, 4)
+                        .map((load, index) => (
+                          <div
+                            key={load.id}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '8px 12px',
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  color: 'white',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {load.loadNumber}
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  fontSize: '11px',
+                                }}
+                              >
+                                by {load.agentName}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.9)',
+                                  fontSize: '11px',
+                                }}
+                              >
+                                {load.origin} → {load.destination}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div
+                                style={{
+                                  color: '#10b981',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                ${load.rate.toLocaleString()}
+                              </div>
+                              <div
+                                style={{
+                                  color:
+                                    load.status === 'Available'
+                                      ? '#f59e0b'
+                                      : '#10b981',
+                                  fontSize: '10px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {load.status}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                    <div
+                      style={{
+                        marginTop: '15px',
+                        padding: '10px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(59, 130, 246, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: '#60a5fa',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          marginBottom: '5px',
+                        }}
+                      >
+                        💡 Integration Status
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '11px',
+                        }}
+                      >
+                        All agent loads automatically flow to Dispatch Central
+                        for assignment. Management maintains full visibility and
+                        control.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Management Insights */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '15px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    📊 Management Insights & Data Flow
+                  </h3>
+                  {(() => {
+                    const insights =
+                      brokerAnalyticsService.getBrokerageOverviewMetrics()
+                        .managementInsights;
+                    return (
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(200px, 1fr))',
+                          gap: '15px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: '15px',
+                            background: 'rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Top Performer
+                          </div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {insights.topPerformingAgent}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            padding: '15px',
+                            background: 'rgba(245, 158, 11, 0.2)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: '#f59e0b',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Retention Rate
+                          </div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {insights.agentRetentionRate}%
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            padding: '15px',
+                            background: 'rgba(59, 130, 246, 0.2)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Load Distribution
+                          </div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {insights.loadDistributionEfficiency}% efficient
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
             )}
 

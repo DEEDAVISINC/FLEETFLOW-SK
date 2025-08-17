@@ -904,5 +904,3 @@ Broker: Great, I'll follow up then. Thanks for your time!
 
 export const brokerCommunicationService =
   BrokerCommunicationService.getInstance();
-
-
