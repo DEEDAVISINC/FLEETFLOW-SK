@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
-import AICoPilotButton from './AICoPilotButton';
 import FleetFlowFooter from './FleetFlowFooter';
+import FlowterButton from './FlowterButton';
 import Navigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 
@@ -14,26 +14,26 @@ interface ClientLayoutProps {
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const [coPilotOpen, setCoPilotOpen] = useState(false);
+  const [flowterOpen, setFlowterOpen] = useState(false);
   const pathname = usePathname();
 
-  const handleCoPilotOpen = () => {
-    setCoPilotOpen(true);
+  const handleFlowterOpen = () => {
+    setFlowterOpen(true);
   };
 
-  const handleCoPilotClose = () => {
-    setCoPilotOpen(false);
+  const handleFlowterClose = () => {
+    setFlowterOpen(false);
   };
 
-  // Hide AI co-pilot button on main university pages (but allow on instructors page)
-  const shouldShowCoPilot =
+  // Hide Flowter button on main university pages (but allow on instructors page)
+  const shouldShowFlowter =
     !pathname?.includes('/university') ||
     pathname?.includes('/training/instructor');
 
   // Debug logging
   console.log('🔍 ClientLayout Debug:', {
     pathname,
-    shouldShowCoPilot,
+    shouldShowFlowter,
     isUniversity: pathname?.includes('/university'),
     isInstructor: pathname?.includes('/training/instructor'),
   });
@@ -56,16 +56,16 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
             <FleetFlowFooter variant='transparent' />
           </main>
 
-          {/* AI Co-Pilot Button - appears on all pages except university */}
-          {shouldShowCoPilot && (
+          {/* Flowter AI Button - appears on all pages except university */}
+          {shouldShowFlowter && (
             <>
-              {console.log('🎯 Rendering AI Co-Pilot Button')}
-              <AICoPilotButton onOpen={handleCoPilotOpen} />
+              {console.log('🎯 Rendering Flowter AI Button')}
+              <FlowterButton onOpen={handleFlowterOpen} />
             </>
           )}
 
-          {/* Simple Co-Pilot Modal */}
-          {coPilotOpen && (
+          {/* Simple Flowter Modal */}
+          {flowterOpen && (
             <div
               style={{
                 position: 'fixed',
@@ -79,7 +79,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onClick={handleCoPilotClose}
+              onClick={handleFlowterClose}
             >
               <div
                 style={{
@@ -102,11 +102,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                     marginBottom: '20px',
                   }}
                 >
-                  <h2 style={{ margin: 0, color: '#1f2937' }}>
-                    🤖 AI Co-Pilot
-                  </h2>
+                  <h2 style={{ margin: 0, color: '#1f2937' }}>🤖 Flowter AI</h2>
                   <button
-                    onClick={handleCoPilotClose}
+                    onClick={handleFlowterClose}
                     style={{
                       background: 'none',
                       border: 'none',
@@ -121,9 +119,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
                 <div style={{ marginBottom: '20px' }}>
                   <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
-                    Hi! I'm your AI Co-Pilot. I can help you navigate FleetFlow,
-                    discover features, troubleshoot issues, and optimize your
-                    workflow.
+                    Hi! I'm Flowter, your AI assistant. I can help you navigate
+                    FleetFlow, discover features, troubleshoot issues, and
+                    optimize your workflow.
                   </p>
                 </div>
 

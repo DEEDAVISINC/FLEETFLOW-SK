@@ -23,6 +23,204 @@ interface Vehicle {
   safeToOperate?: boolean;
 }
 
+interface DOTInspectionData {
+  vehicleId: string;
+  dotInspectionNumber: string;
+  inspectionDate: string;
+  nextInspectionDue: string;
+  inspectionType: 'annual' | 'random' | 'targeted' | 'accident';
+  inspectionResult: 'pass' | 'fail' | 'conditional' | 'out_of_service';
+  violations: DOTViolation[];
+  inspector: string;
+  location: string;
+  complianceScore: number;
+  correctedViolations: DOTViolation[];
+  outOfServiceStatus: boolean;
+  reinspectionRequired: boolean;
+}
+
+interface DOTViolation {
+  id: string;
+  violationCode: string;
+  description: string;
+  severity: 'minor' | 'major' | 'out_of_service';
+  category:
+    | 'brakes'
+    | 'tires'
+    | 'lighting'
+    | 'cargo_securement'
+    | 'driver'
+    | 'vehicle_maintenance';
+  corrected: boolean;
+  correctionDate?: string;
+  fineAmount?: number;
+}
+
+interface MaintenanceComplianceData {
+  vehicleId: string;
+  preventiveMaintenance: {
+    lastService: string;
+    nextServiceDue: string;
+    overdueDays: number;
+    serviceType: 'routine' | 'major' | 'inspection';
+    compliant: boolean;
+  };
+  safetyEquipment: {
+    brakeSystem: {
+      status: 'good' | 'warning' | 'critical';
+      lastChecked: string;
+    };
+    tires: { status: 'good' | 'warning' | 'critical'; lastChecked: string };
+    lights: { status: 'good' | 'warning' | 'critical'; lastChecked: string };
+    emergencyEquipment: {
+      status: 'good' | 'warning' | 'critical';
+      lastChecked: string;
+    };
+  };
+  emissionsCompliance: {
+    lastTest: string;
+    nextTestDue: string;
+    status: 'compliant' | 'non_compliant' | 'overdue';
+    certificate: string;
+  };
+}
+
+// Mock DOT inspection data
+const mockDOTInspections: DOTInspectionData[] = [
+  {
+    vehicleId: 'V001',
+    dotInspectionNumber: 'DOT-2024-001',
+    inspectionDate: '2024-07-15',
+    nextInspectionDue: '2025-07-15',
+    inspectionType: 'annual',
+    inspectionResult: 'pass',
+    violations: [],
+    inspector: 'Inspector Johnson',
+    location: 'Atlanta, GA',
+    complianceScore: 95,
+    correctedViolations: [],
+    outOfServiceStatus: false,
+    reinspectionRequired: false,
+  },
+  {
+    vehicleId: 'V002',
+    dotInspectionNumber: 'DOT-2024-002',
+    inspectionDate: '2024-07-10',
+    nextInspectionDue: '2025-07-10',
+    inspectionType: 'annual',
+    inspectionResult: 'fail',
+    violations: [
+      {
+        id: 'V001',
+        violationCode: '393.75',
+        description: 'Tire has tread depth less than 4/32 inch',
+        severity: 'major',
+        category: 'tires',
+        corrected: false,
+        fineAmount: 150,
+      },
+      {
+        id: 'V002',
+        violationCode: '393.45',
+        description: 'Brake adjustment limits exceeded',
+        severity: 'out_of_service',
+        category: 'brakes',
+        corrected: false,
+        fineAmount: 300,
+      },
+    ],
+    inspector: 'Inspector Smith',
+    location: 'Birmingham, AL',
+    complianceScore: 45,
+    correctedViolations: [],
+    outOfServiceStatus: true,
+    reinspectionRequired: true,
+  },
+  {
+    vehicleId: 'V004',
+    dotInspectionNumber: 'DOT-2024-004',
+    inspectionDate: '2024-06-20',
+    nextInspectionDue: '2024-12-20',
+    inspectionType: 'random',
+    inspectionResult: 'conditional',
+    violations: [
+      {
+        id: 'V003',
+        violationCode: '396.3',
+        description: 'Inspector access not provided',
+        severity: 'minor',
+        category: 'vehicle_maintenance',
+        corrected: true,
+        correctionDate: '2024-06-21',
+      },
+    ],
+    inspector: 'Inspector Davis',
+    location: 'Tampa, FL',
+    complianceScore: 78,
+    correctedViolations: [
+      {
+        id: 'V003',
+        violationCode: '396.3',
+        description: 'Inspector access not provided',
+        severity: 'minor',
+        category: 'vehicle_maintenance',
+        corrected: true,
+        correctionDate: '2024-06-21',
+      },
+    ],
+    outOfServiceStatus: false,
+    reinspectionRequired: false,
+  },
+];
+
+// Mock maintenance compliance data
+const mockMaintenanceCompliance: MaintenanceComplianceData[] = [
+  {
+    vehicleId: 'V001',
+    preventiveMaintenance: {
+      lastService: '2024-05-15',
+      nextServiceDue: '2024-08-15',
+      overdueDays: 0,
+      serviceType: 'routine',
+      compliant: true,
+    },
+    safetyEquipment: {
+      brakeSystem: { status: 'good', lastChecked: '2024-07-15' },
+      tires: { status: 'good', lastChecked: '2024-07-15' },
+      lights: { status: 'good', lastChecked: '2024-07-15' },
+      emergencyEquipment: { status: 'good', lastChecked: '2024-07-15' },
+    },
+    emissionsCompliance: {
+      lastTest: '2024-07-01',
+      nextTestDue: '2025-07-01',
+      status: 'compliant',
+      certificate: 'EMIT-2024-001',
+    },
+  },
+  {
+    vehicleId: 'V002',
+    preventiveMaintenance: {
+      lastService: '2024-06-20',
+      nextServiceDue: '2024-09-20',
+      overdueDays: 0,
+      serviceType: 'major',
+      compliant: false,
+    },
+    safetyEquipment: {
+      brakeSystem: { status: 'critical', lastChecked: '2024-07-10' },
+      tires: { status: 'critical', lastChecked: '2024-07-10' },
+      lights: { status: 'warning', lastChecked: '2024-07-10' },
+      emergencyEquipment: { status: 'good', lastChecked: '2024-07-10' },
+    },
+    emissionsCompliance: {
+      lastTest: '2024-06-15',
+      nextTestDue: '2025-06-15',
+      status: 'compliant',
+      certificate: 'EMIT-2024-002',
+    },
+  },
+];
+
 export default function VehiclesPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([
     {
@@ -107,6 +305,17 @@ export default function VehiclesPage() {
     },
   ]);
 
+  // Compliance state management
+  const [dotInspections, setDotInspections] =
+    useState<DOTInspectionData[]>(mockDOTInspections);
+  const [maintenanceCompliance, setMaintenanceCompliance] = useState<
+    MaintenanceComplianceData[]
+  >(mockMaintenanceCompliance);
+  const [selectedVehicleCompliance, setSelectedVehicleCompliance] = useState<
+    string | null
+  >(null);
+  const [showComplianceModal, setShowComplianceModal] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState<
@@ -121,7 +330,7 @@ export default function VehiclesPage() {
   );
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    'fleet' | 'maintenance' | 'inspections'
+    'fleet' | 'maintenance' | 'inspections' | 'compliance'
   >('fleet');
   const [maintenanceView, setMaintenanceView] = useState<
     'dashboard' | 'schedule' | 'history'
@@ -139,6 +348,66 @@ export default function VehiclesPage() {
     | 'maintenance'
     | 'dot_inspection'
   >('pre_trip');
+
+  // Compliance functions
+  const getDOTInspectionForVehicle = (
+    vehicleId: string
+  ): DOTInspectionData | null => {
+    return (
+      dotInspections.find((inspection) => inspection.vehicleId === vehicleId) ||
+      null
+    );
+  };
+
+  const getMaintenanceComplianceForVehicle = (
+    vehicleId: string
+  ): MaintenanceComplianceData | null => {
+    return (
+      maintenanceCompliance.find(
+        (compliance) => compliance.vehicleId === vehicleId
+      ) || null
+    );
+  };
+
+  const getComplianceStatusColor = (
+    result: DOTInspectionData['inspectionResult']
+  ) => {
+    switch (result) {
+      case 'pass':
+        return '#10b981'; // green
+      case 'conditional':
+        return '#f59e0b'; // amber
+      case 'fail':
+        return '#ef4444'; // red
+      case 'out_of_service':
+        return '#dc2626'; // dark red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
+  const getSafetyEquipmentColor = (status: 'good' | 'warning' | 'critical') => {
+    switch (status) {
+      case 'good':
+        return '#10b981'; // green
+      case 'warning':
+        return '#f59e0b'; // amber
+      case 'critical':
+        return '#ef4444'; // red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
+  const handleScheduleDOTInspection = (vehicleId: string) => {
+    console.log(`Scheduling DOT inspection for vehicle ${vehicleId}`);
+    // TODO: Integrate with DOT inspection scheduling API
+  };
+
+  const handleViewComplianceDetails = (vehicleId: string) => {
+    setSelectedVehicleCompliance(vehicleId);
+    setShowComplianceModal(true);
+  };
 
   // Mock maintenance data for demonstration
   const maintenanceData = {
@@ -899,6 +1168,37 @@ export default function VehiclesPage() {
               }}
             >
               🔍 Vehicle Inspections
+            </button>
+            <button
+              onClick={() => setActiveTab('compliance')}
+              style={{
+                background:
+                  activeTab === 'compliance'
+                    ? 'rgba(255, 255, 255, 0.15)'
+                    : 'transparent',
+                color: 'white',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                flex: 1,
+                textAlign: 'center',
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== 'compliance') {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== 'compliance') {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              🛡️ DOT Compliance
             </button>
           </div>
 
@@ -2257,6 +2557,716 @@ export default function VehiclesPage() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* DOT COMPLIANCE SECTION */}
+          {activeTab === 'compliance' && (
+            <div>
+              {/* Compliance Overview Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '30px',
+                }}
+              >
+                {/* Overall Compliance Score */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    📊 Fleet Compliance Score
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {Math.round(
+                      dotInspections.reduce(
+                        (acc, insp) => acc + insp.complianceScore,
+                        0
+                      ) / dotInspections.length
+                    )}
+                    %
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Average across all vehicles
+                  </div>
+                </div>
+
+                {/* DOT Inspections Status */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    🔍 DOT Inspections
+                  </h3>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#10b981',
+                        }}
+                      >
+                        {
+                          dotInspections.filter(
+                            (i) => i.inspectionResult === 'pass'
+                          ).length
+                        }
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Passed
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ef4444',
+                        }}
+                      >
+                        {
+                          dotInspections.filter(
+                            (i) => i.inspectionResult === 'fail'
+                          ).length
+                        }
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Failed
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Violations Summary */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    ⚠️ Active Violations
+                  </h3>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#f59e0b',
+                        }}
+                      >
+                        {dotInspections.reduce(
+                          (acc, insp) =>
+                            acc +
+                            insp.violations.filter((v) => !v.corrected).length,
+                          0
+                        )}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Open
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#10b981',
+                        }}
+                      >
+                        {dotInspections.reduce(
+                          (acc, insp) => acc + insp.correctedViolations.length,
+                          0
+                        )}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Corrected
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Out of Service Status */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    🚫 Out of Service
+                  </h3>
+                  <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color:
+                          dotInspections.filter((i) => i.outOfServiceStatus)
+                            .length > 0
+                            ? '#ef4444'
+                            : '#10b981',
+                      }}
+                    >
+                      {
+                        dotInspections.filter((i) => i.outOfServiceStatus)
+                          .length
+                      }
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Vehicles affected
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vehicle Compliance Details */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '20px',
+                  padding: '24px',
+                  marginBottom: '30px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h2
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      margin: 0,
+                    }}
+                  >
+                    🛡️ Vehicle Compliance Status
+                  </h2>
+                  <Link href='/compliance' style={{ textDecoration: 'none' }}>
+                    <button
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.8)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                      }}
+                    >
+                      📋 Full Compliance Dashboard
+                    </button>
+                  </Link>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns:
+                      'repeat(auto-fill, minmax(400px, 1fr))',
+                    gap: '20px',
+                  }}
+                >
+                  {vehicles.map((vehicle) => {
+                    const dotInspection = getDOTInspectionForVehicle(
+                      vehicle.id
+                    );
+                    const maintenanceComp = getMaintenanceComplianceForVehicle(
+                      vehicle.id
+                    );
+
+                    return (
+                      <div
+                        key={vehicle.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '16px',
+                          padding: '20px',
+                          border: dotInspection
+                            ? `2px solid ${getComplianceStatusColor(dotInspection.inspectionResult)}40`
+                            : '2px solid rgba(107, 114, 128, 0.4)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '16px',
+                          }}
+                        >
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              margin: 0,
+                            }}
+                          >
+                            {vehicle.name}
+                          </h3>
+                          {dotInspection && (
+                            <div
+                              style={{
+                                background: getComplianceStatusColor(
+                                  dotInspection.inspectionResult
+                                ),
+                                color: 'white',
+                                padding: '6px 12px',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {dotInspection.inspectionResult}
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{ marginBottom: '16px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            <strong>VIN:</strong>{' '}
+                            {vehicle.vin || 'Not available'}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            <strong>Type:</strong> {vehicle.type}
+                          </div>
+                          {dotInspection && (
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '14px',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              <strong>Last DOT Inspection:</strong>{' '}
+                              {new Date(
+                                dotInspection.inspectionDate
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* DOT Inspection Details */}
+                        {dotInspection ? (
+                          <div style={{ marginBottom: '16px' }}>
+                            <h4
+                              style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                margin: '0 0 8px 0',
+                              }}
+                            >
+                              DOT Inspection Details
+                            </h4>
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '8px',
+                                fontSize: '14px',
+                              }}
+                            >
+                              <div
+                                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                              >
+                                <strong>Score:</strong>{' '}
+                                {dotInspection.complianceScore}/100
+                              </div>
+                              <div
+                                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                              >
+                                <strong>Inspector:</strong>{' '}
+                                {dotInspection.inspector}
+                              </div>
+                              <div
+                                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                              >
+                                <strong>Violations:</strong>{' '}
+                                {dotInspection.violations.length}
+                              </div>
+                              <div
+                                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                              >
+                                <strong>Next Due:</strong>{' '}
+                                {new Date(
+                                  dotInspection.nextInspectionDue
+                                ).toLocaleDateString()}
+                              </div>
+                            </div>
+
+                            {dotInspection.violations.length > 0 && (
+                              <div style={{ marginTop: '12px' }}>
+                                <div
+                                  style={{
+                                    color: 'rgba(255, 255, 255, 0.9)',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    marginBottom: '8px',
+                                  }}
+                                >
+                                  Active Violations:
+                                </div>
+                                {dotInspection.violations
+                                  .filter((v) => !v.corrected)
+                                  .map((violation) => (
+                                    <div
+                                      key={violation.id}
+                                      style={{
+                                        background: 'rgba(239, 68, 68, 0.2)',
+                                        padding: '8px',
+                                        borderRadius: '6px',
+                                        marginBottom: '4px',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          color: 'white',
+                                          fontWeight: '600',
+                                        }}
+                                      >
+                                        {violation.violationCode}:{' '}
+                                        {violation.description}
+                                      </div>
+                                      <div
+                                        style={{
+                                          color: 'rgba(255, 255, 255, 0.8)',
+                                        }}
+                                      >
+                                        Severity: {violation.severity} | Fine: $
+                                        {violation.fineAmount || 'TBD'}
+                                      </div>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              background: 'rgba(245, 158, 11, 0.2)',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              marginBottom: '16px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: '#f59e0b',
+                                fontWeight: '600',
+                                fontSize: '14px',
+                              }}
+                            >
+                              ⚠️ No DOT Inspection Data Available
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '12px',
+                                marginTop: '4px',
+                              }}
+                            >
+                              Schedule DOT inspection for compliance
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Safety Equipment Status */}
+                        {maintenanceComp && (
+                          <div style={{ marginBottom: '16px' }}>
+                            <h4
+                              style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                margin: '0 0 8px 0',
+                              }}
+                            >
+                              Safety Equipment Status
+                            </h4>
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '6px',
+                                fontSize: '12px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                >
+                                  Brakes:
+                                </span>
+                                <span
+                                  style={{
+                                    color: getSafetyEquipmentColor(
+                                      maintenanceComp.safetyEquipment
+                                        .brakeSystem.status
+                                    ),
+                                  }}
+                                >
+                                  {
+                                    maintenanceComp.safetyEquipment.brakeSystem
+                                      .status
+                                  }
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                >
+                                  Tires:
+                                </span>
+                                <span
+                                  style={{
+                                    color: getSafetyEquipmentColor(
+                                      maintenanceComp.safetyEquipment.tires
+                                        .status
+                                    ),
+                                  }}
+                                >
+                                  {maintenanceComp.safetyEquipment.tires.status}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                >
+                                  Lights:
+                                </span>
+                                <span
+                                  style={{
+                                    color: getSafetyEquipmentColor(
+                                      maintenanceComp.safetyEquipment.lights
+                                        .status
+                                    ),
+                                  }}
+                                >
+                                  {
+                                    maintenanceComp.safetyEquipment.lights
+                                      .status
+                                  }
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                >
+                                  Emergency:
+                                </span>
+                                <span
+                                  style={{
+                                    color: getSafetyEquipmentColor(
+                                      maintenanceComp.safetyEquipment
+                                        .emergencyEquipment.status
+                                    ),
+                                  }}
+                                >
+                                  {
+                                    maintenanceComp.safetyEquipment
+                                      .emergencyEquipment.status
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '8px',
+                            marginTop: '16px',
+                          }}
+                        >
+                          <button
+                            onClick={() =>
+                              handleViewComplianceDetails(vehicle.id)
+                            }
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.8)',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              flex: 1,
+                            }}
+                          >
+                            📋 View Details
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleScheduleDOTInspection(vehicle.id)
+                            }
+                            style={{
+                              background: 'rgba(16, 185, 129, 0.8)',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              flex: 1,
+                            }}
+                          >
+                            📅 Schedule Inspection
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
 

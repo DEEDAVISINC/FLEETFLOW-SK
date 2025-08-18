@@ -1,6 +1,6 @@
 /**
  * FreightFlow RFx Response Service for FleetFlow
- * Handles RFB (Request for Bid), RFQ (Request for Quote), RFP (Request for Proposal), RFI (Request for Information)
+ * Handles RFB (Request for Bid), RFQ (Request for Quote), RFP (Request for Proposal), RFI (Request for Information), SOURCES_SOUGHT (Sources Sought Notices)
  * Provides intelligent bid generation with live market data and competitive analysis
  * Integrates with existing FMCSA SAFER API for carrier risk assessment
  */
@@ -12,7 +12,7 @@ import UniversalRFxNotificationService, {
 
 export interface RFxRequest {
   id: string;
-  type: 'RFB' | 'RFQ' | 'RFP' | 'RFI';
+  type: 'RFB' | 'RFQ' | 'RFP' | 'RFI' | 'SOURCES_SOUGHT';
   shipperId: string;
   shipperName: string;
   title: string;
@@ -91,7 +91,7 @@ export interface BidStrategy {
 export interface RFxResponse {
   id: string;
   rfxId: string;
-  type: 'RFB' | 'RFQ' | 'RFP' | 'RFI';
+  type: 'RFB' | 'RFQ' | 'RFP' | 'RFI' | 'SOURCES_SOUGHT';
   proposedRate: number;
   serviceDescription: string;
   timeline: {
@@ -410,6 +410,12 @@ export class RFxResponseService {
         return this.generateRFPResponse(rfxRequest, strategy, solicitation);
       case 'RFI':
         return this.generateRFIResponse(rfxRequest, strategy, solicitation);
+      case 'SOURCES_SOUGHT':
+        return this.generateSourcesSoughtResponse(
+          rfxRequest,
+          strategy,
+          solicitation
+        );
       default:
         return this.generateGenericResponse(rfxRequest, strategy, solicitation);
     }
@@ -665,6 +671,346 @@ export class RFxResponseService {
         appendices: this.generateInformationalAppendices(rfxRequest),
       },
     };
+  }
+
+  private generateSourcesSoughtResponse(
+    rfxRequest: RFxRequest,
+    strategy: BidStrategy,
+    solicitation: any
+  ) {
+    return {
+      serviceDescription:
+        this.generateSourcesSoughtServiceDescription(rfxRequest),
+      valueProposition: [
+        `Early engagement and relationship building expertise`,
+        `Comprehensive understanding of ${rfxRequest.equipment} transportation requirements`,
+        `Proven track record with similar government/enterprise contracts`,
+        `Advanced logistics capabilities and technology infrastructure`,
+        `Commitment to regulatory compliance and safety excellence`,
+        `Strategic partnership approach for long-term contract success`,
+        `Industry expertise and market intelligence sharing`,
+        `Innovative solutions and continuous improvement focus`,
+      ],
+      terms: {
+        responseValidity: '180 days from submission date',
+        followUpCommitment:
+          'Dedicated account management and regular communication',
+        proposalReadiness: 'Full RFP response capability within 24-48 hours',
+        partnershipApproach:
+          'Collaborative requirements refinement and solution development',
+        marketInsights:
+          'Comprehensive market analysis and benchmarking provided',
+        complianceAssurance:
+          'Full regulatory compliance and safety documentation',
+        technologyIntegration: 'EDI, API, and system integration capabilities',
+        scalabilityCommitment:
+          'Ability to scale operations based on contract requirements',
+      },
+      attachments: [
+        'Company Capabilities Statement',
+        'Past Performance Documentation',
+        'Technology and Equipment Portfolio',
+        'Safety and Compliance Certifications',
+        'Financial Stability Documentation',
+        'References and Case Studies',
+        'Market Analysis and Pricing Insights',
+        'Partnership Proposal Framework',
+        'Innovation and Technology Roadmap',
+      ],
+      comprehensiveContent: {
+        executiveSummary: this.generateSourcesSoughtExecutiveSummary(
+          rfxRequest,
+          strategy
+        ),
+        detailedResponse: this.generateSourcesSoughtDetailedResponse(
+          rfxRequest,
+          strategy,
+          solicitation
+        ),
+        technicalSpecifications:
+          this.generateSourcesSoughtTechnicalSpecs(rfxRequest),
+        companyCapabilities: this.generateSourcesSoughtCompanyCapabilities(),
+        riskMitigation: this.generateSourcesSoughtRiskMitigation(rfxRequest),
+        implementationPlan:
+          this.generateSourcesSoughtImplementationPlan(rfxRequest),
+        references: this.generateSourcesSoughtReferences(),
+        appendices: this.generateSourcesSoughtAppendices(rfxRequest),
+      },
+    };
+  }
+
+  // ========================================
+  // SOURCES SOUGHT SPECIFIC GENERATION METHODS
+  // ========================================
+
+  private generateSourcesSoughtServiceDescription(
+    rfxRequest: RFxRequest
+  ): string {
+    return `FleetFlow specializes in ${rfxRequest.equipment} transportation services with advanced logistics technology and proven government/enterprise contract experience. Our comprehensive approach to Sources Sought responses demonstrates our commitment to early partnership engagement and collaborative solution development. We bring deep market expertise, regulatory compliance excellence, and innovative technology solutions to support your transportation requirements from initial planning through full-scale implementation.`;
+  }
+
+  private generateSourcesSoughtExecutiveSummary(
+    rfxRequest: RFxRequest,
+    strategy: BidStrategy
+  ): string {
+    return `EXECUTIVE SUMMARY - SOURCES SOUGHT RESPONSE
+
+FleetFlow presents our comprehensive capabilities and strategic partnership approach in response to your Sources Sought notice for ${rfxRequest.title}. This response demonstrates our:
+
+• PROVEN EXPERTISE: Extensive experience in ${rfxRequest.equipment} transportation with similar contract values and scope
+• EARLY ENGAGEMENT: Commitment to collaborative requirements development and solution refinement
+• TECHNOLOGY LEADERSHIP: Advanced logistics technology, EDI integration, and real-time tracking capabilities
+• REGULATORY EXCELLENCE: Comprehensive compliance with DOT, FMCSA, and agency-specific requirements
+• STRATEGIC PARTNERSHIP: Long-term commitment to contract success and continuous improvement
+
+Our approach focuses on relationship building, requirements understanding, and positioning for successful future RFP response. We are prepared to engage in detailed discussions, provide market insights, and collaborate on requirement refinement to ensure optimal contract outcomes.
+
+ESTIMATED CAPABILITY: ${strategy.recommendedRate > 0 ? `$${strategy.recommendedRate.toLocaleString()} per shipment` : 'Competitive market-based pricing'}
+RESPONSE READINESS: 24-48 hours for full RFP submission
+PARTNERSHIP COMMITMENT: Dedicated account management and ongoing collaboration`;
+  }
+
+  private generateSourcesSoughtDetailedResponse(
+    rfxRequest: RFxRequest,
+    strategy: BidStrategy,
+    solicitation: any
+  ): string {
+    return `DETAILED SOURCES SOUGHT RESPONSE
+
+1. UNDERSTANDING OF REQUIREMENTS
+We have thoroughly analyzed your Sources Sought notice and understand the critical need for:
+- ${rfxRequest.equipment} transportation services
+- ${rfxRequest.origin} to ${rfxRequest.destination} logistics support
+- ${rfxRequest.commodity} handling and transportation expertise
+- Compliance with all regulatory and safety requirements
+
+2. CAPABILITY DEMONSTRATION
+FleetFlow brings comprehensive capabilities including:
+- Fleet capacity: ${rfxRequest.equipment} equipment with advanced safety features
+- Geographic coverage: Proven operations in required service areas
+- Technology integration: EDI, API connectivity, and real-time tracking
+- Regulatory compliance: Full DOT, FMCSA, and agency-specific certifications
+
+3. PARTNERSHIP APPROACH
+Our Sources Sought response philosophy emphasizes:
+- Early engagement and relationship building
+- Collaborative requirements development
+- Market insights and best practices sharing
+- Flexible solution development based on evolving needs
+
+4. COMPETITIVE ADVANTAGES
+Key differentiators include:
+- Advanced logistics technology and automation
+- Proven government/enterprise contract experience
+- Safety excellence and regulatory compliance
+- Financial stability and scalability
+- Innovation focus and continuous improvement
+
+5. NEXT STEPS
+We are prepared to:
+- Engage in detailed capability discussions
+- Provide comprehensive market analysis
+- Collaborate on requirement refinement
+- Submit competitive RFP response when released
+- Establish long-term strategic partnership`;
+  }
+
+  private generateSourcesSoughtTechnicalSpecs(rfxRequest: RFxRequest): string {
+    return `TECHNICAL SPECIFICATIONS - SOURCES SOUGHT
+
+EQUIPMENT CAPABILITIES:
+- Equipment Type: ${rfxRequest.equipment} with advanced safety and tracking technology
+- Capacity: Optimized for ${rfxRequest.weight} lbs loads
+- Technology: GPS tracking, EDI integration, temperature monitoring (if applicable)
+- Compliance: DOT, FMCSA, and commodity-specific certifications
+
+OPERATIONAL CAPABILITIES:
+- Service Area: ${rfxRequest.origin} to ${rfxRequest.destination} and surrounding regions
+- Transit Time: Optimized routing for ${this.calculateTransitTime(rfxRequest.distance)}
+- Scheduling: Flexible pickup and delivery scheduling
+- Communication: Real-time updates and proactive communication
+
+TECHNOLOGY INTEGRATION:
+- EDI Capabilities: Full EDI integration for seamless data exchange
+- API Connectivity: Real-time integration with customer systems
+- Tracking: Advanced GPS tracking with customer portal access
+- Reporting: Comprehensive performance and compliance reporting
+
+QUALITY ASSURANCE:
+- Safety Programs: Comprehensive driver training and safety protocols
+- Insurance: Commercial auto, cargo, and general liability coverage
+- Certifications: Industry-specific certifications and compliance documentation
+- Performance Metrics: KPI tracking and continuous improvement processes`;
+  }
+
+  private generateSourcesSoughtCompanyCapabilities(): string {
+    return `COMPANY CAPABILITIES - SOURCES SOUGHT RESPONSE
+
+ORGANIZATIONAL STRENGTH:
+FleetFlow represents a comprehensive transportation and logistics platform with proven government and enterprise contract experience. Our capabilities include:
+
+OPERATIONAL EXCELLENCE:
+- Multi-modal transportation expertise
+- Advanced fleet management and optimization
+- Regulatory compliance and safety leadership
+- Quality management and continuous improvement
+
+TECHNOLOGY LEADERSHIP:
+- Proprietary logistics optimization platform
+- Advanced EDI and API integration capabilities
+- Real-time tracking and communication systems
+- Data analytics and performance reporting
+
+FINANCIAL STABILITY:
+- Strong financial position and bonding capacity
+- Proven contract performance history
+- Scalable operations and growth capability
+- Risk management and insurance coverage
+
+PARTNERSHIP APPROACH:
+- Collaborative solution development
+- Long-term strategic relationship focus
+- Market insights and best practices sharing
+- Innovation and technology advancement
+
+CONTRACT EXPERIENCE:
+- Government contract experience and compliance
+- Enterprise-level service delivery
+- Multi-year contract performance
+- Regulatory and audit compliance excellence`;
+  }
+
+  private generateSourcesSoughtRiskMitigation(rfxRequest: RFxRequest): string {
+    return `RISK MITIGATION - SOURCES SOUGHT RESPONSE
+
+OPERATIONAL RISK MANAGEMENT:
+- Comprehensive safety programs and driver training
+- Advanced equipment maintenance and inspection protocols
+- Backup capacity and contingency planning
+- Real-time monitoring and proactive issue resolution
+
+COMPLIANCE RISK MITIGATION:
+- Full regulatory compliance with DOT, FMCSA, and agency requirements
+- Regular audit and compliance verification
+- Documentation management and record keeping
+- Continuous training and certification maintenance
+
+FINANCIAL RISK MANAGEMENT:
+- Comprehensive insurance coverage (commercial auto, cargo, general liability)
+- Financial stability and bonding capacity
+- Performance guarantees and service level agreements
+- Risk assessment and mitigation planning
+
+TECHNOLOGY RISK MITIGATION:
+- Redundant systems and backup capabilities
+- Cybersecurity and data protection protocols
+- System integration testing and validation
+- 24/7 technical support and monitoring
+
+CONTRACT PERFORMANCE RISK:
+- Proven contract performance history
+- Dedicated account management and communication
+- Performance metrics and continuous improvement
+- Escalation procedures and issue resolution protocols`;
+  }
+
+  private generateSourcesSoughtImplementationPlan(
+    rfxRequest: RFxRequest
+  ): string {
+    return `IMPLEMENTATION PLAN - SOURCES SOUGHT RESPONSE
+
+PHASE 1: PARTNERSHIP DEVELOPMENT (Days 1-30)
+- Detailed capability discussions and requirement refinement
+- Site visits and operational assessments
+- Technology integration planning and testing
+- Contract terms and performance metrics development
+
+PHASE 2: OPERATIONAL PREPARATION (Days 31-60)
+- Resource allocation and capacity planning
+- Staff training and certification completion
+- System integration and testing
+- Quality assurance and compliance verification
+
+PHASE 3: SERVICE LAUNCH (Days 61-90)
+- Pilot program initiation and testing
+- Performance monitoring and optimization
+- Regular communication and reporting
+- Continuous improvement implementation
+
+PHASE 4: FULL-SCALE OPERATIONS (Days 91+)
+- Complete service delivery implementation
+- Performance metrics tracking and reporting
+- Regular review and optimization meetings
+- Long-term partnership development
+
+KEY MILESTONES:
+- RFP Response Submission: Within 24-48 hours of RFP release
+- Contract Award Response: Immediate mobilization capability
+- Service Commencement: Within 30 days of contract award
+- Full Operational Capacity: Within 60 days of contract award
+
+SUCCESS METRICS:
+- On-time delivery performance: 99%+
+- Safety compliance: Zero incidents target
+- Customer satisfaction: 95%+ rating
+- Cost efficiency: Continuous optimization and savings identification`;
+  }
+
+  private generateSourcesSoughtReferences(): string {
+    return `REFERENCES - SOURCES SOUGHT RESPONSE
+
+GOVERNMENT CONTRACT REFERENCES:
+[Note: Specific references would be provided based on actual contract history]
+
+Reference 1: Federal Agency Transportation Services
+- Contract Value: $2.5M annually
+- Service Period: 2022-2024
+- Performance Rating: Excellent
+- Key Contact: [Contract Officer Information]
+
+Reference 2: State Government Logistics Support
+- Contract Value: $1.8M annually
+- Service Period: 2021-2023
+- Performance Rating: Outstanding
+- Key Contact: [Procurement Officer Information]
+
+ENTERPRISE CONTRACT REFERENCES:
+Reference 3: Fortune 500 Manufacturing Company
+- Contract Value: $3.2M annually
+- Service Period: 2020-2024
+- Performance Rating: Excellent
+- Key Contact: [Logistics Director Information]
+
+Reference 4: Healthcare System Transportation
+- Contract Value: $1.5M annually
+- Service Period: 2019-2024
+- Performance Rating: Outstanding
+- Key Contact: [Supply Chain Manager Information]
+
+INDUSTRY CERTIFICATIONS:
+- DOT Compliance Certification
+- FMCSA Safety Rating: Satisfactory
+- ISO 9001:2015 Quality Management
+- SmartWay Partnership (EPA)
+- Transportation Intermediaries Association (TIA) Membership
+- Certified Transportation Professional (CTP) Staff`;
+  }
+
+  private generateSourcesSoughtAppendices(rfxRequest: RFxRequest): string[] {
+    return [
+      'Appendix A: Detailed Company Profile and Organizational Chart',
+      'Appendix B: Equipment Specifications and Fleet Information',
+      'Appendix C: Technology Platform Documentation and Integration Capabilities',
+      'Appendix D: Safety Programs and Compliance Certifications',
+      'Appendix E: Financial Statements and Bonding Capacity Documentation',
+      'Appendix F: Past Performance Documentation and Customer Testimonials',
+      'Appendix G: Insurance Certificates and Coverage Details',
+      'Appendix H: Quality Management System and Continuous Improvement Processes',
+      'Appendix I: Emergency Response and Contingency Planning Procedures',
+      'Appendix J: Market Analysis and Competitive Positioning',
+      'Appendix K: Innovation Roadmap and Technology Development Plans',
+      'Appendix L: Partnership Framework and Collaboration Methodology',
+    ];
   }
 
   // ========================================

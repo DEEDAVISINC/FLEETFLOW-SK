@@ -1,6 +1,7 @@
 'use client';
 
-// OpenELD Integration Service - Open Source ELD Standard Implementation
+// FleetFlow OpenELD Integration Service - AI-Powered Open Source ELD
+// Enhanced with Flowter AI, Live Tracking, and FleetFlow Ecosystem Integration
 // Based on open source ELD protocols and FMCSA requirements
 
 export interface OpenELDDevice {
@@ -122,7 +123,33 @@ export interface OpenELDComplianceReport {
     compliant: boolean;
     issues: string[];
     recommendations: string[];
+    aiScore: number; // Flowter AI compliance score (0-100)
+    riskLevel: 'low' | 'medium' | 'high';
   };
+  flowterInsights?: {
+    predictedViolations: string[];
+    efficiencyScore: number;
+    maintenanceAlerts: string[];
+    routeOptimizationSuggestions: string[];
+  };
+}
+
+// Enhanced interfaces for FleetFlow integration
+export interface FleetFlowIntegration {
+  liveTrackingEnabled: boolean;
+  dispatchIntegration: boolean;
+  flowterAiEnabled: boolean;
+  dotComplianceSync: boolean;
+}
+
+export interface AIInsight {
+  id: string;
+  type: 'compliance' | 'efficiency' | 'maintenance' | 'safety';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  recommendation: string;
+  confidence: number; // 0-100
+  timestamp: string;
 }
 
 class OpenELDIntegrationService {
@@ -131,9 +158,17 @@ class OpenELDIntegrationService {
   private dutyLogs: Map<string, OpenELDDutyStatus[]> = new Map();
   private violations: Map<string, OpenELDViolation[]> = new Map();
   private logEntries: Map<string, OpenELDLogEntry[]> = new Map();
+  private aiInsights: Map<string, AIInsight[]> = new Map();
+  private fleetFlowIntegration: FleetFlowIntegration = {
+    liveTrackingEnabled: true,
+    dispatchIntegration: true,
+    flowterAiEnabled: true,
+    dotComplianceSync: true,
+  };
 
   constructor() {
     this.initializeMockData();
+    this.initializeAIInsights();
   }
 
   // Initialize with realistic OpenELD mock data
@@ -211,6 +246,87 @@ class OpenELDIntegrationService {
     ];
 
     mockDrivers.forEach((driver) => this.drivers.set(driver.driverId, driver));
+  }
+
+  // Initialize Flowter AI insights
+  private initializeAIInsights(): void {
+    const mockInsights: AIInsight[] = [
+      {
+        id: 'insight-001',
+        type: 'compliance',
+        priority: 'medium',
+        message: 'Driver DRV-001 approaching 11-hour limit in 2 hours',
+        recommendation: 'Suggest rest area stop or end-of-duty planning',
+        confidence: 92,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: 'insight-002',
+        type: 'efficiency',
+        priority: 'low',
+        message: 'Route optimization available - save 15 minutes on current trip',
+        recommendation: 'Enable AI route optimization in dispatch system',
+        confidence: 85,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: 'insight-003',
+        type: 'maintenance',
+        priority: 'high',
+        message: 'Device OPENELD-001 battery degradation detected',
+        recommendation: 'Schedule device maintenance within 7 days',
+        confidence: 78,
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    // Assign insights to drivers
+    this.drivers.forEach((driver) => {
+      this.aiInsights.set(driver.driverId, mockInsights);
+    });
+  }
+
+  // Enhanced FleetFlow Integration Methods
+  async getFlowterAIInsights(driverId: string): Promise<AIInsight[]> {
+    if (!this.fleetFlowIntegration.flowterAiEnabled) {
+      return [];
+    }
+    return this.aiInsights.get(driverId) || [];
+  }
+
+  async generateAIComplianceScore(driverId: string): Promise<number> {
+    const compliance = await this.checkCompliance(driverId);
+    const insights = await this.getFlowterAIInsights(driverId);
+
+    let baseScore = compliance.compliance.compliant ? 95 : 75;
+
+    // Adjust based on AI insights
+    const criticalInsights = insights.filter(i => i.priority === 'critical').length;
+    const highInsights = insights.filter(i => i.priority === 'high').length;
+
+    baseScore -= (criticalInsights * 10) + (highInsights * 5);
+
+    return Math.max(0, Math.min(100, baseScore));
+  }
+
+  async syncWithLiveTracking(deviceId: string): Promise<boolean> {
+    if (!this.fleetFlowIntegration.liveTrackingEnabled) {
+      return false;
+    }
+
+    // Simulate sync with FleetFlow's live tracking system
+    const device = this.devices.get(deviceId);
+    if (!device) return false;
+
+    // Update location with simulated GPS data
+    device.location = {
+      latitude: 32.7767 + (Math.random() - 0.5) * 0.01,
+      longitude: -96.797 + (Math.random() - 0.5) * 0.01,
+      accuracy: 3 + Math.random() * 2,
+      timestamp: new Date().toISOString(),
+    };
+
+    return true;
   }
 
   // Device Management
@@ -475,6 +591,13 @@ class OpenELDIntegrationService {
     }
 
     const compliant = issues.length === 0;
+    const aiScore = await this.generateAIComplianceScore(driverId);
+    const insights = await this.getFlowterAIInsights(driverId);
+
+    // Generate risk level based on AI analysis
+    const riskLevel: 'low' | 'medium' | 'high' =
+      aiScore >= 90 ? 'low' :
+      aiScore >= 75 ? 'medium' : 'high';
 
     return {
       driverId,
@@ -490,7 +613,23 @@ class OpenELDIntegrationService {
         compliant,
         issues,
         recommendations,
+        aiScore,
+        riskLevel,
       },
+      flowterInsights: this.fleetFlowIntegration.flowterAiEnabled ? {
+        predictedViolations: insights
+          .filter(i => i.type === 'compliance')
+          .map(i => i.message),
+        efficiencyScore: Math.round(85 + Math.random() * 15), // Simulated efficiency score
+        maintenanceAlerts: insights
+          .filter(i => i.type === 'maintenance')
+          .map(i => i.message),
+        routeOptimizationSuggestions: [
+          'Alternative route available saving 12 minutes',
+          'Fuel stop optimization can save $15 in current trip',
+          'Rest area scheduling optimized for HOS compliance'
+        ]
+      } : undefined,
     };
   }
 

@@ -170,87 +170,128 @@ export default function AddShipperForm({
     setCommodities(updated);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const assignedBroker = brokerAgents.find(
       (b) => b.id === formData.assignedBrokerId
     );
 
-    // Create shipper data object
-    const shipperData = {
+    // Create vendor profile data for vendor management portal
+    const vendorData = {
+      id: `vendor-${Date.now()}`,
+      name: formData.companyName,
+      category: 'Transportation/Logistics',
       companyName: formData.companyName,
-      contactName: contacts[0]?.name || '',
-      email: contacts[0]?.email || '',
-      phone: contacts[0]?.phone || '',
-      address: locations[0]?.address || '',
-      city: locations[0]?.city || '',
-      state: locations[0]?.state || '',
-      zipCode: locations[0]?.zip || '',
       taxId: formData.taxId,
-      creditTerms: formData.paymentTerms,
-      paymentMethod: 'Net 30',
-      preferredCarriers: [],
+      mcNumber: formData.mcNumber,
+      paymentTerms: formData.paymentTerms,
+      creditLimit: parseFloat(formData.creditLimit) || 50000,
+      creditRating: formData.creditRating,
+      contacts: contacts.map((contact, index) => ({
+        ...contact,
+        id: `contact-${index}`,
+      })),
+      locations: locations.map((location, index) => ({
+        ...location,
+        id: `location-${index}`,
+      })),
+      commodities: commodities,
       serviceTypes: commodities.map((c) => c.name).filter(Boolean),
       specialRequirements: formData.notes,
-      creditLimit: parseFloat(formData.creditLimit) || 50000,
-      creditApproved: false,
-      // Add workflow-specific data
-      workflowQuote: workflowData,
-      createdAt: new Date().toISOString(),
+      assignedBrokerId: formData.assignedBrokerId,
+      assignedBrokerName: assignedBroker?.name || 'Unknown',
       status: 'active',
+      joinDate: new Date().toISOString(),
+      lastActivity: new Date().toISOString(),
+      totalLoads: 0,
+      totalRevenue: 0,
+      averageRate: 0,
+      performance: 95.0, // Default performance rating
+      spend: 0, // Initial spend amount
+      contract_expires: new Date(
+        Date.now() + 365 * 24 * 60 * 60 * 1000
+      ).toISOString(), // 1 year from now
+      notes: formData.notes,
+      // Photo Requirements Policy (set by broker)
+      photoRequirements: {
+        pickupPhotosRequired: photoRequirements.pickupPhotosRequired,
+        deliveryPhotosRequired: photoRequirements.deliveryPhotosRequired,
+        minimumPhotos: photoRequirements.minimumPhotos,
+        canSkipPhotos: photoRequirements.canSkipPhotos,
+        photoTypes: photoRequirements.photoTypes,
+        specialPhotoInstructions:
+          photoRequirements.specialPhotoInstructions || undefined,
+        setByBrokerId: currentUser.user.id,
+        setAt: new Date().toISOString(),
+        reason: photoRequirements.reason || undefined,
+      },
     };
 
     if (isWorkflowMode && onSubmit) {
       // Call the workflow submit function
-      onSubmit(shipperData);
+      onSubmit(vendorData);
     } else {
-      // Original form submission logic
-      const newShipper: Shipper = {
-        id: `shipper-${Date.now()}`,
-        companyName: formData.companyName,
-        taxId: formData.taxId,
-        mcNumber: formData.mcNumber,
-        paymentTerms: formData.paymentTerms,
-        creditLimit: parseFloat(formData.creditLimit) || 0,
-        creditRating: formData.creditRating,
-        contacts: contacts.map((contact, index) => ({
-          ...contact,
-          id: `contact-${index}`,
-        })),
-        locations: locations.map((location, index) => ({
-          ...location,
-          id: `location-${index}`,
-        })),
-        commodities: commodities,
-        preferredLanes: [],
-        loadRequests: [],
-        assignedBrokerId: formData.assignedBrokerId,
-        assignedBrokerName: assignedBroker?.name || 'Unknown',
-        status: 'active',
-        joinDate: new Date().toISOString(),
-        lastActivity: new Date().toISOString(),
-        totalLoads: 0,
-        totalRevenue: 0,
-        averageRate: 0,
-        notes: formData.notes,
-        // Photo Requirements Policy (set by broker)
-        photoRequirements: {
-          pickupPhotosRequired: photoRequirements.pickupPhotosRequired,
-          deliveryPhotosRequired: photoRequirements.deliveryPhotosRequired,
-          minimumPhotos: photoRequirements.minimumPhotos,
-          canSkipPhotos: photoRequirements.canSkipPhotos,
-          photoTypes: photoRequirements.photoTypes,
-          specialPhotoInstructions:
-            photoRequirements.specialPhotoInstructions || undefined,
-          setByBrokerId: currentUser.user.id,
-          setAt: new Date().toISOString(),
-          reason: photoRequirements.reason || undefined,
-        },
-      };
+      try {
+        // Create vendor profile in vendor management system
+        const response = await fetch('/api/vendor-management/vendors', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(vendorData),
+        });
 
-      setShippers([...shippers, newShipper]);
-      onClose();
+        if (response.ok) {
+          // Also add to local shipper context for backward compatibility
+          const newShipper: Shipper = {
+            id: `shipper-${Date.now()}`,
+            companyName: formData.companyName,
+            taxId: formData.taxId,
+            mcNumber: formData.mcNumber,
+            paymentTerms: formData.paymentTerms,
+            creditLimit: parseFloat(formData.creditLimit) || 0,
+            creditRating: formData.creditRating,
+            contacts: contacts.map((contact, index) => ({
+              ...contact,
+              id: `contact-${index}`,
+            })),
+            locations: locations.map((location, index) => ({
+              ...location,
+              id: `location-${index}`,
+            })),
+            commodities: commodities,
+            preferredLanes: [],
+            loadRequests: [],
+            assignedBrokerId: formData.assignedBrokerId,
+            assignedBrokerName: assignedBroker?.name || 'Unknown',
+            status: 'active',
+            joinDate: new Date().toISOString(),
+            lastActivity: new Date().toISOString(),
+            totalLoads: 0,
+            totalRevenue: 0,
+            averageRate: 0,
+            notes: formData.notes,
+            photoRequirements: vendorData.photoRequirements,
+          };
+
+          setShippers([...shippers, newShipper]);
+
+          // Show success message
+          alert(
+            `✅ Vendor profile created successfully for ${formData.companyName}!\n\nVendor ID: ${vendorData.id}\n\nYou can now manage this vendor in the Vendor Management Portal.`
+          );
+
+          onClose();
+        } else {
+          throw new Error('Failed to create vendor profile');
+        }
+      } catch (error) {
+        console.error('Error creating vendor profile:', error);
+        alert(
+          `❌ Error creating vendor profile: ${error instanceof Error ? error.message : 'Unknown error'}\n\nPlease try again or contact support.`
+        );
+      }
     }
   };
 
@@ -347,7 +388,7 @@ export default function AddShipperForm({
                     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                 }}
               >
-                Add New Shipper
+                Create Vendor Profile
               </h2>
             </div>
             <p
@@ -359,7 +400,8 @@ export default function AddShipperForm({
                   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               }}
             >
-              Create a new shipper account with complete information
+              Create a new vendor profile that will be managed in the Vendor
+              Management Portal
             </p>
           </div>
 

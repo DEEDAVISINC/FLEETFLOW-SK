@@ -41,6 +41,21 @@ interface DispatcherProfile {
   avgResponseTime: string;
 }
 
+interface ComplianceStatus {
+  driverId: string;
+  driverName: string;
+  hosStatus: 'compliant' | 'warning' | 'violation' | 'unavailable';
+  drivingTimeRemaining: number; // hours
+  dutyTimeRemaining: number; // hours
+  nextRestRequired: string;
+  cdlStatus: 'valid' | 'expired' | 'suspended';
+  clearinghouseStatus: 'clear' | 'prohibited' | 'pending';
+  medicalCertStatus: 'current' | 'expired' | 'expiring_soon';
+  lastUpdated: string;
+  canReceiveAssignment: boolean;
+  complianceScore: number;
+}
+
 interface Notification {
   id: string;
   message: string;
@@ -86,6 +101,66 @@ const mockNotifications: Notification[] = [
     timestamp: '1 hour ago',
     type: 'system_alert',
     read: true,
+  },
+];
+
+// Mock compliance data for drivers
+const mockComplianceData: ComplianceStatus[] = [
+  {
+    driverId: 'driver-001',
+    driverName: 'John Rodriguez',
+    hosStatus: 'compliant',
+    drivingTimeRemaining: 8.5,
+    dutyTimeRemaining: 11.2,
+    nextRestRequired: '2024-01-15T22:00:00Z',
+    cdlStatus: 'valid',
+    clearinghouseStatus: 'clear',
+    medicalCertStatus: 'current',
+    lastUpdated: new Date().toISOString(),
+    canReceiveAssignment: true,
+    complianceScore: 95,
+  },
+  {
+    driverId: 'driver-002',
+    driverName: 'Maria Santos',
+    hosStatus: 'warning',
+    drivingTimeRemaining: 2.1,
+    dutyTimeRemaining: 3.5,
+    nextRestRequired: '2024-01-15T18:00:00Z',
+    cdlStatus: 'valid',
+    clearinghouseStatus: 'clear',
+    medicalCertStatus: 'current',
+    lastUpdated: new Date().toISOString(),
+    canReceiveAssignment: true,
+    complianceScore: 78,
+  },
+  {
+    driverId: 'driver-003',
+    driverName: 'David Thompson',
+    hosStatus: 'violation',
+    drivingTimeRemaining: 0,
+    dutyTimeRemaining: 0,
+    nextRestRequired: '2024-01-15T16:00:00Z',
+    cdlStatus: 'valid',
+    clearinghouseStatus: 'clear',
+    medicalCertStatus: 'expiring_soon',
+    lastUpdated: new Date().toISOString(),
+    canReceiveAssignment: false,
+    complianceScore: 45,
+  },
+  {
+    driverId: 'driver-004',
+    driverName: 'Lisa Chen',
+    hosStatus: 'unavailable',
+    drivingTimeRemaining: 0,
+    dutyTimeRemaining: 0,
+    nextRestRequired: '2024-01-16T06:00:00Z',
+    cdlStatus: 'valid',
+    clearinghouseStatus: 'clear',
+    medicalCertStatus: 'current',
+    lastUpdated: new Date().toISOString(),
+    canReceiveAssignment: false,
+    complianceScore: 88,
   },
 ];
 
@@ -697,6 +772,14 @@ export default function DispatchCentral() {
   const [selectedTab, setSelectedTab] = useState('dashboard');
   const [loadStatusFilter, setLoadStatusFilter] = useState('All');
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
+  // Compliance state management
+  const [complianceData, setComplianceData] =
+    useState<ComplianceStatus[]>(mockComplianceData);
+  const [selectedDriverForAssignment, setSelectedDriverForAssignment] =
+    useState<string | null>(null);
+  const [showComplianceAlert, setShowComplianceAlert] = useState(false);
+  const [complianceAlertMessage, setComplianceAlertMessage] = useState('');
   const [selectedLoadForInvoice, setSelectedLoadForInvoice] =
     useState<Load | null>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -728,6 +811,116 @@ export default function DispatchCentral() {
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
     null
   );
+
+  // Compliance validation functions
+  const validateDriverCompliance = (
+    driverId: string
+  ): { canAssign: boolean; warnings: string[]; errors: string[] } => {
+    const driver = complianceData.find((d) => d.driverId === driverId);
+    if (!driver) {
+      return {
+        canAssign: false,
+        warnings: [],
+        errors: ['Driver compliance data not found'],
+      };
+    }
+
+    const warnings: string[] = [];
+    const errors: string[] = [];
+
+    // Check HOS compliance
+    if (driver.hosStatus === 'violation') {
+      errors.push(
+        `Driver ${driver.driverName} has HOS violation - cannot receive assignment`
+      );
+    } else if (driver.hosStatus === 'warning') {
+      warnings.push(
+        `Driver ${driver.driverName} has limited driving time remaining: ${driver.drivingTimeRemaining}h`
+      );
+    } else if (driver.hosStatus === 'unavailable') {
+      errors.push(
+        `Driver ${driver.driverName} is in required rest period until ${new Date(driver.nextRestRequired).toLocaleString()}`
+      );
+    }
+
+    // Check CDL status
+    if (driver.cdlStatus === 'expired') {
+      errors.push(
+        `Driver ${driver.driverName} has expired CDL - cannot receive assignment`
+      );
+    } else if (driver.cdlStatus === 'suspended') {
+      errors.push(
+        `Driver ${driver.driverName} has suspended CDL - cannot receive assignment`
+      );
+    }
+
+    // Check clearinghouse status
+    if (driver.clearinghouseStatus === 'prohibited') {
+      errors.push(
+        `Driver ${driver.driverName} is prohibited in DOT clearinghouse - cannot receive assignment`
+      );
+    } else if (driver.clearinghouseStatus === 'pending') {
+      warnings.push(
+        `Driver ${driver.driverName} has pending clearinghouse status`
+      );
+    }
+
+    // Check medical certificate
+    if (driver.medicalCertStatus === 'expired') {
+      errors.push(
+        `Driver ${driver.driverName} has expired medical certificate - cannot receive assignment`
+      );
+    } else if (driver.medicalCertStatus === 'expiring_soon') {
+      warnings.push(
+        `Driver ${driver.driverName} medical certificate expires soon`
+      );
+    }
+
+    const canAssign = errors.length === 0 && driver.canReceiveAssignment;
+    return { canAssign, warnings, errors };
+  };
+
+  const handleDriverAssignment = (driverId: string, loadId: string) => {
+    const validation = validateDriverCompliance(driverId);
+
+    if (!validation.canAssign) {
+      setComplianceAlertMessage(
+        `❌ ASSIGNMENT BLOCKED\n\nCompliance violations prevent assignment:\n${validation.errors.join('\n')}`
+      );
+      setShowComplianceAlert(true);
+      return false;
+    }
+
+    if (validation.warnings.length > 0) {
+      setComplianceAlertMessage(
+        `⚠️ ASSIGNMENT WARNING\n\nProceed with caution:\n${validation.warnings.join('\n')}\n\nContinue with assignment?`
+      );
+      setShowComplianceAlert(true);
+      setSelectedDriverForAssignment(driverId);
+      return false; // Wait for user confirmation
+    }
+
+    // Assignment approved - proceed normally
+    console.log(
+      `✅ Assignment approved: Driver ${driverId} assigned to load ${loadId}`
+    );
+    return true;
+  };
+
+  const getComplianceStatusColor = (status: ComplianceStatus['hosStatus']) => {
+    switch (status) {
+      case 'compliant':
+        return '#10b981'; // green
+      case 'warning':
+        return '#f59e0b'; // amber
+      case 'violation':
+        return '#ef4444'; // red
+      case 'unavailable':
+        return '#6b7280'; // gray
+      default:
+        return '#6b7280';
+    }
+  };
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -4906,6 +5099,321 @@ export default function DispatchCentral() {
             </div>
           </div>
         )}
+
+        {/* Compliance Alert Modal */}
+        {showComplianceAlert && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '24px',
+                padding: '32px',
+                maxWidth: '600px',
+                width: '90%',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '24px',
+                }}
+              >
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    margin: 0,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  🛡️ Compliance Check
+                </h2>
+                <button
+                  onClick={() => setShowComplianceAlert(false)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: 'none',
+                    color: 'white',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  marginBottom: '24px',
+                  lineHeight: '1.6',
+                  whiteSpace: 'pre-line',
+                  fontFamily: 'monospace',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  padding: '16px',
+                  borderRadius: '8px',
+                }}
+              >
+                {complianceAlertMessage}
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <button
+                  onClick={() => setShowComplianceAlert(false)}
+                  style={{
+                    background: 'rgba(107, 114, 128, 0.8)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                  }}
+                >
+                  Cancel
+                </button>
+                {selectedDriverForAssignment && (
+                  <button
+                    onClick={() => {
+                      console.log(
+                        `✅ Assignment confirmed with warnings for driver ${selectedDriverForAssignment}`
+                      );
+                      setShowComplianceAlert(false);
+                      setSelectedDriverForAssignment(null);
+                    }}
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.8)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Proceed with Warning
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Compliance Dashboard Section */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            padding: '24px',
+            marginBottom: '30px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: '700',
+                margin: 0,
+              }}
+            >
+              🛡️ Driver Compliance Status
+            </h2>
+            <Link href='/compliance' style={{ textDecoration: 'none' }}>
+              <button
+                style={{
+                  background: 'rgba(16, 185, 129, 0.8)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                }}
+              >
+                📋 Full Compliance Dashboard
+              </button>
+            </Link>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {complianceData.map((driver) => (
+              <div
+                key={driver.driverId}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  border: `2px solid ${getComplianceStatusColor(driver.hosStatus)}40`,
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      margin: 0,
+                    }}
+                  >
+                    {driver.driverName}
+                  </h3>
+                  <div
+                    style={{
+                      background: getComplianceStatusColor(driver.hosStatus),
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {driver.hosStatus}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '8px',
+                    fontSize: '14px',
+                  }}
+                >
+                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                    <strong>Driving Time:</strong> {driver.drivingTimeRemaining}
+                    h
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                    <strong>Duty Time:</strong> {driver.dutyTimeRemaining}h
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                    <strong>CDL:</strong>{' '}
+                    <span
+                      style={{
+                        color:
+                          driver.cdlStatus === 'valid' ? '#10b981' : '#ef4444',
+                      }}
+                    >
+                      {driver.cdlStatus}
+                    </span>
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                    <strong>Clearinghouse:</strong>{' '}
+                    <span
+                      style={{
+                        color:
+                          driver.clearinghouseStatus === 'clear'
+                            ? '#10b981'
+                            : '#ef4444',
+                      }}
+                    >
+                      {driver.clearinghouseStatus}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    marginTop: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Score: {driver.complianceScore}/100
+                  </div>
+                  <button
+                    onClick={() =>
+                      handleDriverAssignment(driver.driverId, 'TEST-LOAD-001')
+                    }
+                    disabled={!driver.canReceiveAssignment}
+                    style={{
+                      background: driver.canReceiveAssignment
+                        ? 'rgba(16, 185, 129, 0.8)'
+                        : 'rgba(107, 114, 128, 0.5)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      cursor: driver.canReceiveAssignment
+                        ? 'pointer'
+                        : 'not-allowed',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {driver.canReceiveAssignment
+                      ? '✅ Assign Load'
+                      : '❌ Unavailable'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Back Button */}
         <div style={{ textAlign: 'center' }}>

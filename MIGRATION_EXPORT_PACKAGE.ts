@@ -244,7 +244,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
-import AICoPilotButton from './AICoPilotButton';
+import FlowterButton from './FlowterButton';
 import FleetFlowFooter from './FleetFlowFooter';
 import Navigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
@@ -287,9 +287,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
             <FleetFlowFooter variant='transparent' />
           </main>
 
-          {/* AI Co-Pilot Button */}
+          {/* Flowter AI Button */}
           {shouldShowCoPilot && (
-            <AICoPilotButton onOpen={handleCoPilotOpen} />
+            <FlowterButton onOpen={handleCoPilotOpen} />
           )}
 
           {/* Co-Pilot Modal */}
@@ -331,7 +331,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                   }}
                 >
                   <h2 style={{ margin: 0, color: '#1f2937' }}>
-                    🤖 AI Co-Pilot
+                    🤖 Flowter AI
                   </h2>
                   <button
                     onClick={handleCoPilotClose}
@@ -349,7 +349,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
                 <div style={{ marginBottom: '20px' }}>
                   <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
-                    Hi! I'm your AI Co-Pilot. I can help you navigate FleetFlow,
+                    Hi! I'm Flowter, your AI assistant. I can help you navigate FleetFlow,
                     discover features, troubleshoot issues, and optimize your
                     workflow.
                   </p>
@@ -533,4 +533,3 @@ console.log('📦 FleetFlow Migration Package Ready');
 console.log(
   '🚀 Use: import { FLEETFLOW_MIGRATION_PACKAGE } from "./MIGRATION_EXPORT_PACKAGE"'
 );
-

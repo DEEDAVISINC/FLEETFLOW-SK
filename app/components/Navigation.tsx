@@ -742,6 +742,29 @@ export default function ProfessionalNavigation() {
                   </Link>
 
                   <Link
+                    href='/about'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#f97316',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                    }}
+                    onMouseEnter={(e) =>
+                      ((e.target as HTMLElement).style.backgroundColor =
+                        'rgba(249, 115, 22, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      ((e.target as HTMLElement).style.backgroundColor =
+                        'transparent')
+                    }
+                  >
+                    🏢 About FleetFlow
+                  </Link>
+
+                  <Link
                     href='/resources'
                     onClick={handleDropdownClose}
                     style={{

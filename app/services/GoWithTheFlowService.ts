@@ -143,7 +143,7 @@ class GoWithTheFlowService extends EventEmitter {
         status: 'offered',
         urgency: 'medium',
         assignedDriverId: 'driver-1',
-        offerExpiresAt: new Date(Date.now() + 30 * 1000), // 30 seconds from now
+        offerExpiresAt: new Date(Date.now() + 60 * 1000), // 60 seconds from now
       },
       {
         id: 'GWF-LOAD-002',
@@ -162,7 +162,7 @@ class GoWithTheFlowService extends EventEmitter {
         status: 'offered',
         urgency: 'high',
         assignedDriverId: 'driver-1',
-        offerExpiresAt: new Date(Date.now() + 25 * 1000), // 25 seconds from now
+        offerExpiresAt: new Date(Date.now() + 60 * 1000), // 60 seconds from now
       },
       {
         id: 'GWF-LOAD-003',
@@ -177,7 +177,7 @@ class GoWithTheFlowService extends EventEmitter {
         status: 'offered',
         urgency: 'medium',
         assignedDriverId: 'driver-1',
-        offerExpiresAt: new Date(Date.now() + 20 * 1000), // 20 seconds from now
+        offerExpiresAt: new Date(Date.now() + 60 * 1000), // 60 seconds from now
       },
     ];
     this.activityFeed.push(

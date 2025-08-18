@@ -45,14 +45,14 @@ export default function AIFlowPlatform() {
     string | null
   >(null);
 
-  // AI Co-Pilot State
-  const [coPilotOpen, setCoPilotOpen] = useState(false);
-  const [coPilotMessages, setCoPilotMessages] = useState<any[]>([
+  // Flowter AI State
+  const [flowterOpen, setFlowterOpen] = useState(false);
+  const [flowterMessages, setFlowterMessages] = useState<any[]>([
     {
       id: 'welcome',
       type: 'assistant',
       content:
-        "👋 Hi! I'm your AI Co-Pilot. I can help you navigate FleetFlow, discover features, troubleshoot issues, and optimize your workflow. What would you like to know?",
+        "👋 Hi! I'm Flowter, your AI assistant. I can help you navigate FleetFlow, discover features, troubleshoot issues, and optimize your workflow. What would you like to know?",
       timestamp: new Date().toISOString(),
       suggestions: [
         'How do I use the Lead Generation Hub?',
@@ -62,9 +62,9 @@ export default function AIFlowPlatform() {
       ],
     },
   ]);
-  const [coPilotInput, setCoPilotInput] = useState('');
-  const [coPilotTyping, setCoPilotTyping] = useState(false);
-  const [coPilotContext, setCoPilotContext] = useState({
+  const [flowterInput, setFlowterInput] = useState('');
+  const [flowterTyping, setFlowterTyping] = useState(false);
+  const [flowterContext, setFlowterContext] = useState({
     currentView: 'dashboard',
     userRole: 'admin',
     recentActions: [],
@@ -770,8 +770,8 @@ export default function AIFlowPlatform() {
     return colors[priority] || 'bg-gray-100 text-gray-800';
   };
 
-  // Enhanced AI Co-Pilot Functions with Real-time Data Integration
-  const handleCoPilotMessage = async (message: string) => {
+  // Enhanced Flowter AI Functions with Real-time Data Integration
+  const handleFlowterMessage = async (message: string) => {
     if (!message.trim()) return;
 
     // Add user message
@@ -781,15 +781,15 @@ export default function AIFlowPlatform() {
       content: message,
       timestamp: new Date().toISOString(),
     };
-    setCoPilotMessages((prev) => [...prev, userMessage]);
-    setCoPilotInput('');
-    setCoPilotTyping(true);
+    setFlowterMessages((prev) => [...prev, userMessage]);
+    setFlowterInput('');
+    setFlowterTyping(true);
 
     // Enhanced AI response with real-time data and actions
     setTimeout(() => {
-      const aiResponse = generateEnhancedCoPilotResponse(
+      const aiResponse = generateEnhancedFlowterResponse(
         message,
-        coPilotContext,
+        flowterContext,
         {
           loads,
           drivers,
@@ -798,12 +798,12 @@ export default function AIFlowPlatform() {
           activeDispatches,
         }
       );
-      setCoPilotMessages((prev) => [...prev, aiResponse]);
-      setCoPilotTyping(false);
+      setFlowterMessages((prev) => [...prev, aiResponse]);
+      setFlowterTyping(false);
     }, 1000);
   };
 
-  const generateEnhancedCoPilotResponse = (
+  const generateEnhancedFlowterResponse = (
     message: string,
     context: any,
     realTimeData: any
@@ -1051,7 +1051,7 @@ export default function AIFlowPlatform() {
     return {
       id: Date.now().toString(),
       type: 'assistant',
-      content: `🤖 **AI Co-Pilot Response:**\n\nI understand you're asking about "${message}". Let me help you with that!\n\nI can assist with:\n• **Navigation** - Finding the right tools and features\n• **Optimization** - Improving your workflows and processes\n• **Troubleshooting** - Solving technical issues\n• **Training** - Learning new capabilities\n• **Analytics** - Understanding your performance\n\n💡 **Pro Tip:** Try asking me about specific features like "Lead Generation", "Dispatch", or "Route Optimization" for detailed guidance!`,
+      content: `🤖 **Flowter AI Response:**\n\nI understand you're asking about "${message}". Let me help you with that!\n\nI can assist with:\n• **Navigation** - Finding the right tools and features\n• **Optimization** - Improving your workflows and processes\n• **Troubleshooting** - Solving technical issues\n• **Training** - Learning new capabilities\n• **Analytics** - Understanding your performance\n\n💡 **Pro Tip:** Try asking me about specific features like "Lead Generation", "Dispatch", or "Route Optimization" for detailed guidance!`,
       timestamp: new Date().toISOString(),
       suggestions: [
         'How do I use the Lead Generation Hub?',
@@ -1061,29 +1061,29 @@ export default function AIFlowPlatform() {
     };
   };
 
-  // Handle co-pilot actions
-  const handleCoPilotAction = async (action: string, data: any) => {
-    console.log('Co-pilot action:', action, data);
+  // Handle Flowter actions
+  const handleFlowterAction = async (action: string, data: any) => {
+    console.log('Flowter action:', action, data);
 
     // Execute actions based on type
     switch (action) {
       case 'view_drivers':
         setActiveView('drivers');
-        updateCoPilotContext({
+        updateFlowterContext({
           currentView: 'drivers',
           currentTask: 'viewing_drivers',
         });
         break;
       case 'view_loads':
         setActiveView('loads');
-        updateCoPilotContext({
+        updateFlowterContext({
           currentView: 'loads',
           currentTask: 'viewing_loads',
         });
         break;
       case 'auto_match':
         // Simulate auto-matching process
-        setCoPilotMessages((prev) => [
+        setFlowterMessages((prev) => [
           ...prev,
           {
             id: Date.now().toString(),
@@ -1097,7 +1097,7 @@ export default function AIFlowPlatform() {
       case 'load_matching_suggestions':
         // Generate smart matching suggestions
         const suggestions = generateLoadMatchingSuggestions();
-        setCoPilotMessages((prev) => [
+        setFlowterMessages((prev) => [
           ...prev,
           {
             id: Date.now().toString(),
@@ -1116,7 +1116,7 @@ export default function AIFlowPlatform() {
         break;
       case 'route_optimizer':
         setActiveView('operations');
-        updateCoPilotContext({
+        updateFlowterContext({
           currentView: 'operations',
           currentTask: 'route_optimization',
         });
@@ -1149,13 +1149,13 @@ export default function AIFlowPlatform() {
     return `**Top ${Math.min(availableLoads.length, 3)} Matching Suggestions:**\n\n${suggestions}\n\n💡 **Pro Tip:** These suggestions are based on location, equipment compatibility, and availability. Review and adjust as needed!`;
   };
 
-  const updateCoPilotContext = (newContext: any) => {
-    setCoPilotContext((prev) => ({ ...prev, ...newContext }));
+  const updateFlowterContext = (newContext: any) => {
+    setFlowterContext((prev) => ({ ...prev, ...newContext }));
   };
 
   // Update context when view changes
   useEffect(() => {
-    updateCoPilotContext({ currentView: activeView });
+    updateFlowterContext({ currentView: activeView });
   }, [activeView]);
 
   return (
@@ -5041,7 +5041,7 @@ export default function AIFlowPlatform() {
         )}
       </div>
 
-      {/* Enhanced AI Co-Pilot Floating Button */}
+      {/* Enhanced Flowter AI Floating Button */}
       <div
         style={{
           position: 'fixed',
@@ -5051,7 +5051,7 @@ export default function AIFlowPlatform() {
         }}
       >
         <button
-          onClick={() => setCoPilotOpen(!coPilotOpen)}
+          onClick={() => setFlowterOpen(!flowterOpen)}
           style={{
             width: '60px',
             height: '60px',
@@ -5082,8 +5082,8 @@ export default function AIFlowPlatform() {
         </button>
       </div>
 
-      {/* Enhanced AI Co-Pilot Chat Interface */}
-      {coPilotOpen && (
+      {/* Enhanced Flowter AI Chat Interface */}
+      {flowterOpen && (
         <div
           style={{
             position: 'fixed',
@@ -5117,7 +5117,7 @@ export default function AIFlowPlatform() {
               <div style={{ fontSize: '24px' }}>🤖</div>
               <div>
                 <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                  AI Co-Pilot
+                  Flowter AI
                 </div>
                 <div style={{ fontSize: '12px', opacity: 0.8 }}>
                   Your FleetFlow Assistant
@@ -5125,7 +5125,7 @@ export default function AIFlowPlatform() {
               </div>
             </div>
             <button
-              onClick={() => setCoPilotOpen(false)}
+              onClick={() => setFlowterOpen(false)}
               style={{
                 background: 'none',
                 border: 'none',
@@ -5204,7 +5204,7 @@ export default function AIFlowPlatform() {
                         <button
                           key={index}
                           onClick={() =>
-                            handleCoPilotAction(action.action, action.data)
+                            handleFlowterAction(action.action, action.data)
                           }
                           style={{
                             background:
@@ -5254,7 +5254,7 @@ export default function AIFlowPlatform() {
                       (suggestion: string, index: number) => (
                         <button
                           key={index}
-                          onClick={() => handleCoPilotMessage(suggestion)}
+                          onClick={() => handleFlowterMessage(suggestion)}
                           style={{
                             background: 'rgba(217, 70, 239, 0.2)',
                             border: '1px solid rgba(217, 70, 239, 0.4)',
@@ -5330,10 +5330,10 @@ export default function AIFlowPlatform() {
             <div style={{ display: 'flex', gap: '12px' }}>
               <input
                 type='text'
-                value={coPilotInput}
-                onChange={(e) => setCoPilotInput(e.target.value)}
+                value={flowterInput}
+                onChange={(e) => setFlowterInput(e.target.value)}
                 onKeyPress={(e) =>
-                  e.key === 'Enter' && handleCoPilotMessage(coPilotInput)
+                  e.key === 'Enter' && handleFlowterMessage(flowterInput)
                 }
                 placeholder='Ask me anything about FleetFlow...'
                 style={{
@@ -5348,17 +5348,17 @@ export default function AIFlowPlatform() {
                 }}
               />
               <button
-                onClick={() => handleCoPilotMessage(coPilotInput)}
-                disabled={!coPilotInput.trim()}
+                onClick={() => handleFlowterMessage(flowterInput)}
+                disabled={!flowterInput.trim()}
                 style={{
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  background: coPilotInput.trim()
+                  background: flowterInput.trim()
                     ? 'linear-gradient(135deg, #d946ef, #8b5cf6)'
                     : 'rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   color: 'white',
-                  cursor: coPilotInput.trim() ? 'pointer' : 'not-allowed',
+                  cursor: flowterInput.trim() ? 'pointer' : 'not-allowed',
                   fontSize: '14px',
                   transition: 'all 0.2s ease',
                 }}

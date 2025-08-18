@@ -18,7 +18,7 @@ interface RFxRequest {
   estimatedRate: string;
   urgency: string;
   specialRequirements: string;
-  documentType?: 'RFP' | 'RFQ' | 'RFI' | 'RFB';
+  documentType?: 'RFP' | 'RFQ' | 'RFI' | 'RFB' | 'SOURCES_SOUGHT';
   uploadedDocument?: File;
   aiAnalysis?: {
     summary: string;
@@ -47,12 +47,45 @@ interface AIBidAnalysis {
   generatedResponse: string;
 }
 
+// Government Contract Compliance Requirements
+interface ComplianceRequirement {
+  id: string;
+  category:
+    | 'safety'
+    | 'insurance'
+    | 'certification'
+    | 'security'
+    | 'financial'
+    | 'regulatory';
+  requirement: string;
+  description: string;
+  mandatory: boolean;
+  verificationRequired: boolean;
+  documents: string[];
+}
+
+// Carrier Qualification Check
+interface CarrierQualificationResult {
+  carrierId: string;
+  companyName: string;
+  qualified: boolean;
+  complianceScore: number;
+  safetyRating: 'SATISFACTORY' | 'CONDITIONAL' | 'UNSATISFACTORY' | 'NOT_RATED';
+  insuranceStatus: 'ACTIVE' | 'INACTIVE' | 'EXPIRED';
+  requiredInsuranceAmount: number;
+  currentInsuranceAmount: number;
+  specialEndorsements: string[];
+  missingRequirements: string[];
+  warnings: string[];
+  lastValidated: string;
+}
+
 function FreightFlowRFxContent() {
   const [activeTab, setActiveTab] = useState('active');
   const [showAIBidAssistant, setShowAIBidAssistant] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState<
-    'RFP' | 'RFQ' | 'RFI' | 'RFB'
+    'RFP' | 'RFQ' | 'RFI' | 'RFB' | 'SOURCES_SOUGHT'
   >('RFQ');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<AIBidAnalysis | null>(null);
@@ -115,6 +148,144 @@ function FreightFlowRFxContent() {
   const [selectedTruckingPlanetShipper, setSelectedTruckingPlanetShipper] =
     useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Compliance validation state
+  const [complianceRequirements, setComplianceRequirements] = useState<
+    ComplianceRequirement[]
+  >([]);
+  const [carrierQualification, setCarrierQualification] =
+    useState<CarrierQualificationResult | null>(null);
+  const [showComplianceCheck, setShowComplianceCheck] = useState(false);
+  const [complianceValidating, setComplianceValidating] = useState(false);
+
+  // Mock compliance requirements for government contracts
+  const mockComplianceRequirements: ComplianceRequirement[] = [
+    {
+      id: 'SAFETY-001',
+      category: 'safety',
+      requirement: 'FMCSA Safety Rating',
+      description: 'Must maintain SATISFACTORY safety rating with FMCSA',
+      mandatory: true,
+      verificationRequired: true,
+      documents: ['FMCSA SAFER Report', 'Safety Management Certificate'],
+    },
+    {
+      id: 'INS-001',
+      category: 'insurance',
+      requirement: 'Commercial Auto Insurance',
+      description: 'Minimum $1,000,000 commercial auto liability coverage',
+      mandatory: true,
+      verificationRequired: true,
+      documents: ['Certificate of Insurance', 'Policy Declaration Page'],
+    },
+    {
+      id: 'INS-002',
+      category: 'insurance',
+      requirement: 'Cargo Insurance',
+      description: 'Minimum $100,000 cargo insurance coverage',
+      mandatory: true,
+      verificationRequired: true,
+      documents: ['Cargo Insurance Certificate'],
+    },
+    {
+      id: 'SEC-001',
+      category: 'security',
+      requirement: 'TSA Security Clearance',
+      description:
+        'Transportation Security Administration clearance for hazmat',
+      mandatory: false,
+      verificationRequired: true,
+      documents: ['TSA Clearance Certificate', 'Background Check Results'],
+    },
+    {
+      id: 'FIN-001',
+      category: 'financial',
+      requirement: 'Financial Responsibility',
+      description: 'Proof of financial stability and bonding capacity',
+      mandatory: true,
+      verificationRequired: true,
+      documents: ['Audited Financial Statements', 'Surety Bond Certificate'],
+    },
+  ];
+
+  // Mock carrier qualification result
+  const mockCarrierQualification: CarrierQualificationResult = {
+    carrierId: 'CARRIER-001',
+    companyName: 'FleetFlow Logistics LLC',
+    qualified: true,
+    complianceScore: 92,
+    safetyRating: 'SATISFACTORY',
+    insuranceStatus: 'ACTIVE',
+    requiredInsuranceAmount: 1000000,
+    currentInsuranceAmount: 2000000,
+    specialEndorsements: ['Hazmat', 'Oversized Load', 'Government Contracts'],
+    missingRequirements: [],
+    warnings: ['Insurance renewal due in 60 days'],
+    lastValidated: new Date().toISOString(),
+  };
+
+  // Compliance validation functions
+  const validateCarrierCompliance = async (
+    contractRequirements: ComplianceRequirement[]
+  ) => {
+    setComplianceValidating(true);
+    setComplianceRequirements(contractRequirements);
+
+    try {
+      // Simulate API call to validate carrier against requirements
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Mock validation logic
+      const result: CarrierQualificationResult = {
+        ...mockCarrierQualification,
+        qualified:
+          contractRequirements.filter((req) => req.mandatory).length <= 3, // Simplified logic
+        complianceScore: Math.min(95, 70 + contractRequirements.length * 5),
+      };
+
+      setCarrierQualification(result);
+      setShowComplianceCheck(true);
+    } catch (error) {
+      console.error('Compliance validation failed:', error);
+    } finally {
+      setComplianceValidating(false);
+    }
+  };
+
+  const getComplianceRequirementsForContract = (
+    documentType: string,
+    isGovernment: boolean
+  ): ComplianceRequirement[] => {
+    if (!isGovernment) {
+      return mockComplianceRequirements.filter(
+        (req) => req.category !== 'security'
+      );
+    }
+
+    // Government contracts require all compliance requirements
+    return mockComplianceRequirements;
+  };
+
+  const getComplianceCategoryColor = (
+    category: ComplianceRequirement['category']
+  ) => {
+    switch (category) {
+      case 'safety':
+        return '#ef4444'; // red
+      case 'insurance':
+        return '#3b82f6'; // blue
+      case 'certification':
+        return '#10b981'; // green
+      case 'security':
+        return '#8b5cf6'; // purple
+      case 'financial':
+        return '#f59e0b'; // amber
+      case 'regulatory':
+        return '#6b7280'; // gray
+      default:
+        return '#6b7280';
+    }
+  };
 
   const rfxRequests = [
     {
@@ -342,6 +513,28 @@ function FreightFlowRFxContent() {
         transportationBid:
           'Secure government logistics with cleared personnel, armored transport, and full compliance protocols',
       },
+      // Sources Sought - Pre-Solicitation Intelligence and Relationship Building
+      {
+        industry: 'Government/Enterprise (Pre-Solicitation)',
+        detectedLogistics: [
+          'Relationship building opportunity',
+          'Requirements intelligence gathering',
+          'Strategic positioning for future RFP',
+        ],
+        summary: `${documentType === 'SOURCES_SOUGHT' ? 'Sources Sought notice' : documentType} representing early engagement opportunity for upcoming transportation contract. AI identified this as pre-solicitation intelligence gathering phase with 30-90 day timeline before formal RFP release. Strategic focus on relationship building, requirement refinement, and competitive positioning rather than immediate bidding.`,
+        keyRequirements: [
+          'Early engagement and relationship development with procurement team',
+          'Comprehensive capability demonstration and market intelligence sharing',
+          'Collaborative requirement refinement and solution development input',
+          'Strategic positioning for competitive advantage in future RFP',
+          'Market analysis and best practices consultation',
+          'Long-term partnership approach with dedicated account management',
+        ],
+        recommendedBid:
+          'Relationship Building Focus - No Immediate Pricing Required',
+        transportationBid:
+          'Strategic partnership development with emphasis on early engagement, capability demonstration, and positioning for future contract award',
+      },
       // Energy/Oil & Gas RFx with specialized industrial transport
       {
         industry: 'Energy/Oil & Gas',
@@ -365,9 +558,16 @@ function FreightFlowRFxContent() {
       },
     ];
 
-    // Randomly select a scenario to simulate intelligent extraction from different industries
+    // Select scenario based on document type - Sources Sought gets specific treatment
     const selectedScenario =
-      industryScenarios[Math.floor(Math.random() * industryScenarios.length)];
+      documentType === 'SOURCES_SOUGHT'
+        ? industryScenarios.find(
+            (scenario) =>
+              scenario.industry === 'Government/Enterprise (Pre-Solicitation)'
+          ) || industryScenarios[0]
+        : industryScenarios[
+            Math.floor(Math.random() * industryScenarios.length)
+          ];
 
     const mockAnalysis: AIBidAnalysis = {
       documentType: `${documentType} (${selectedScenario.industry} Industry)`,
@@ -2041,7 +2241,12 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                   value={documentType}
                   onChange={(e) =>
                     setDocumentType(
-                      e.target.value as 'RFP' | 'RFQ' | 'RFI' | 'RFB'
+                      e.target.value as
+                        | 'RFP'
+                        | 'RFQ'
+                        | 'RFI'
+                        | 'RFB'
+                        | 'SOURCES_SOUGHT'
                     )
                   }
                   style={{
@@ -2058,6 +2263,9 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                   <option value='RFP'>RFP - Request for Proposal</option>
                   <option value='RFB'>RFB - Request for Bid</option>
                   <option value='RFI'>RFI - Request for Information</option>
+                  <option value='SOURCES_SOUGHT'>
+                    Sources Sought - Pre-Solicitation Notice
+                  </option>
                 </select>
               </div>
 
@@ -6368,6 +6576,481 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           </button>
         </div>
       </div>
+
+      {/* Compliance Check Modal */}
+      {showComplianceCheck && carrierQualification && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              padding: '32px',
+              maxWidth: '800px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px',
+              }}
+            >
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: 0,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                }}
+              >
+                🛡️ Compliance Validation Results
+              </h2>
+              <button
+                onClick={() => setShowComplianceCheck(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: 'none',
+                  color: 'white',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Qualification Summary */}
+            <div
+              style={{
+                background: carrierQualification.qualified
+                  ? 'rgba(16, 185, 129, 0.2)'
+                  : 'rgba(239, 68, 68, 0.2)',
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+                border: `2px solid ${carrierQualification.qualified ? '#10b981' : '#ef4444'}40`,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    margin: 0,
+                  }}
+                >
+                  {carrierQualification.companyName}
+                </h3>
+                <div
+                  style={{
+                    background: carrierQualification.qualified
+                      ? '#10b981'
+                      : '#ef4444',
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                  }}
+                >
+                  {carrierQualification.qualified
+                    ? '✅ QUALIFIED'
+                    : '❌ NOT QUALIFIED'}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gap: '16px',
+                  marginBottom: '16px',
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    {carrierQualification.complianceScore}%
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Compliance Score
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    {carrierQualification.safetyRating}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Safety Rating
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color:
+                        carrierQualification.insuranceStatus === 'ACTIVE'
+                          ? '#10b981'
+                          : '#ef4444',
+                    }}
+                  >
+                    {carrierQualification.insuranceStatus}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Insurance Status
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '14px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Required Insurance:</strong> $
+                    {carrierQualification.requiredInsuranceAmount.toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <strong>Current Coverage:</strong> $
+                    {carrierQualification.currentInsuranceAmount.toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '14px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <strong>Endorsements:</strong>{' '}
+                    {carrierQualification.specialEndorsements.join(', ')}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <strong>Last Validated:</strong>{' '}
+                    {new Date(
+                      carrierQualification.lastValidated
+                    ).toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Compliance Requirements */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '16px',
+                padding: '24px',
+                marginBottom: '24px',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  margin: '0 0 16px 0',
+                }}
+              >
+                📋 Contract Compliance Requirements
+              </h3>
+
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {complianceRequirements.map((req) => (
+                  <div
+                    key={req.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: `2px solid ${getComplianceCategoryColor(req.category)}40`,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: getComplianceCategoryColor(
+                              req.category
+                            ),
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {req.category}
+                        </div>
+                        <h4
+                          style={{
+                            color: 'white',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            margin: 0,
+                          }}
+                        >
+                          {req.requirement}
+                        </h4>
+                      </div>
+                      <div
+                        style={{
+                          background: req.mandatory ? '#ef4444' : '#f59e0b',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '10px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {req.mandatory ? 'MANDATORY' : 'OPTIONAL'}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      {req.description}
+                    </div>
+
+                    {req.documents.length > 0 && (
+                      <div style={{ marginTop: '8px' }}>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          <strong>Required Documents:</strong>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '4px',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          {req.documents.map((doc, index) => (
+                            <span
+                              key={index}
+                              style={{
+                                background: 'rgba(59, 130, 246, 0.3)',
+                                color: '#93c5fd',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                fontSize: '10px',
+                              }}
+                            >
+                              {doc}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Warnings */}
+            {carrierQualification.warnings.length > 0 && (
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.2)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginBottom: '24px',
+                  border: '2px solid rgba(245, 158, 11, 0.4)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#f59e0b',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  ⚠️ Warnings
+                </h4>
+                {carrierQualification.warnings.map((warning, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '14px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    • {warning}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button
+                onClick={() => setShowComplianceCheck(false)}
+                style={{
+                  background: 'rgba(107, 114, 128, 0.8)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                }}
+              >
+                Close
+              </button>
+              <Link href='/compliance' style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.8)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                  }}
+                >
+                  📋 Full Compliance Dashboard
+                </button>
+              </Link>
+              {carrierQualification.qualified && (
+                <button
+                  onClick={() => {
+                    console.log(
+                      'Proceeding with qualified carrier for contract bid'
+                    );
+                    setShowComplianceCheck(false);
+                  }}
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.8)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                  }}
+                >
+                  ✅ Proceed with Bid
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes loading {

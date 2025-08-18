@@ -223,7 +223,7 @@ export async function GET(request: NextRequest) {
       case 'analytics':
         const analyticsData = {
           totalRevenue: 485000,
-          platformFees: 19400, // 4% of total revenue
+          platformFees: 58200, // 12% of total revenue
           transactionCount: 1247,
           averageTransactionValue: 2850,
           revenueByDay: [
@@ -470,8 +470,8 @@ export async function PUT(request: NextRequest) {
             carrierId: bid.carrierId,
             originalRate: targetLoad.rate,
             finalRate: bid.bidAmount,
-            platformFee: Math.round(bid.bidAmount * 0.04), // 4% commission
-            platformFeePercentage: 4,
+            platformFee: Math.round(bid.bidAmount * 0.12), // 12% commission
+            platformFeePercentage: 12,
             paymentStatus: 'pending',
             createdAt: new Date().toISOString(),
           };

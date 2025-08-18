@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 
-interface AICoPilotButtonProps {
+interface FlowterButtonProps {
   onOpen: () => void;
 }
 
-const AICoPilotButton: React.FC<AICoPilotButtonProps> = ({ onOpen }) => {
+const FlowterButton: React.FC<FlowterButtonProps> = ({ onOpen }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -38,7 +38,7 @@ const AICoPilotButton: React.FC<AICoPilotButtonProps> = ({ onOpen }) => {
           transition: 'all 0.3s ease',
           transform: isHovered ? 'scale(1.1)' : 'scale(1)',
         }}
-        title='AI Co-Pilot - Get help and guidance'
+        title='Flowter - Your AI assistant for FleetFlow guidance'
       >
         🤖
       </button>
@@ -60,7 +60,7 @@ const AICoPilotButton: React.FC<AICoPilotButtonProps> = ({ onOpen }) => {
             zIndex: 1001,
           }}
         >
-          AI Co-Pilot
+          Flowter AI
           <div
             style={{
               position: 'absolute',
@@ -79,4 +79,13 @@ const AICoPilotButton: React.FC<AICoPilotButtonProps> = ({ onOpen }) => {
   );
 };
 
-export default AICoPilotButton;
+export default FlowterButton;
+
+
+
+
+
+
+
+
+

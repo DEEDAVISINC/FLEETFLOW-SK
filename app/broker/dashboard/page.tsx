@@ -42,6 +42,7 @@ interface BrokerSession {
   role: string;
   loginTime: string;
   isNewRegistration?: boolean;
+  mcNumber?: string;
 }
 
 export default function BrokerDashboard() {
@@ -198,6 +199,12 @@ export default function BrokerDashboard() {
   >('manual');
   const [workflowForShipperCreation, setWorkflowForShipperCreation] =
     useState<any>(null);
+
+  // Settings state variables
+  const [showSettings, setShowSettings] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<
+    'preferences' | 'integrations' | 'commissions' | 'templates'
+  >('preferences');
 
   // Calculation Functions
   const calculateLTL = () => {
@@ -763,13 +770,12 @@ export default function BrokerDashboard() {
           {/* Header */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
+              background: 'rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              padding: '32px',
-              marginBottom: '32px',
+              padding: '24px',
+              marginBottom: '24px',
               border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             }}
           >
             <div
@@ -779,98 +785,134 @@ export default function BrokerDashboard() {
                 justifyContent: 'space-between',
               }}
             >
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
-              >
-                <div
+              <div>
+                <h1
                   style={{
-                    padding: '16px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
+                    color: 'white',
+                    margin: 0,
+                    fontSize: '2rem',
+                    fontWeight: '700',
+                    background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    marginBottom: '8px',
                   }}
                 >
-                  <span style={{ fontSize: '32px' }}>👤</span>
-                </div>
-                <div>
-                  <h1
+                  🚛 Brokerage Portal & Freight Management
+                </h1>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: '4px 0 0 0',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  Professional Freight Brokerage • Customer Relationship
+                  Management • Load Optimization
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginTop: '8px',
+                  }}
+                >
+                  <span
                     style={{
-                      fontSize: '36px',
-                      fontWeight: 'bold',
-                      color: 'white',
-                      margin: '0 0 8px 0',
-                      textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      color: '#10b981',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
                     }}
                   >
-                    Brokerage Portal
-                  </h1>
-                  <p
+                    ✅ {brokerSession?.brokerName || 'Broker'} Active
+                  </span>
+                  <span
                     style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '18px',
-                      margin: '0 0 16px 0',
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      color: '#3b82f6',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
                     }}
                   >
-                    Professional freight brokerage & customer relationship
-                    management
-                  </p>
-                  <div
+                    🆔 {brokerSession?.brokerCode || 'N/A'}
+                  </span>
+                  <span
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '24px',
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      color: '#fbbf24',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          background: '#10b981',
-                          borderRadius: '50%',
-                          boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
-                          animation: 'pulse 2s infinite',
-                        }}
-                      />
-                      <span
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.9)',
-                          fontSize: '14px',
-                        }}
-                      >
-                        Agent Portal Active
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '14px',
-                      }}
-                    >
-                      Agent: {brokerSession.brokerName} | Code:{' '}
-                      {brokerSession.brokerCode}
-                    </div>
-                  </div>
+                    🚛 MC: {brokerSession?.mcNumber || 'N/A'}
+                  </span>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
+                  onClick={() => router.push('/notifications')}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(10px)',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #d97706, #f59e0b)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(245, 158, 11, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #f59e0b, #d97706)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 4px 15px rgba(245, 158, 11, 0.3)';
+                  }}
+                  title='Notifications'
+                >
+                  🔔
+                </button>
+                <button
+                  onClick={() => setShowSettings(true)}
                   style={{
                     background: 'rgba(255, 255, 255, 0.2)',
                     color: 'white',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
-                    padding: '12px 24px',
+                    padding: '12px',
                     borderRadius: '12px',
-                    fontSize: '14px',
-                    fontWeight: '600',
+                    fontSize: '20px',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
                     backdropFilter: 'blur(10px)',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.background =
@@ -885,8 +927,44 @@ export default function BrokerDashboard() {
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
+                  title='Settings'
                 >
-                  ⚙️ Settings
+                  ⚙️
+                </button>
+                <button
+                  onClick={() => setSelectedTab('agent-management')}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(10px)',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                  title='Agent Management'
+                >
+                  👥
                 </button>
                 <button
                   onClick={handleLogout}
@@ -1108,138 +1186,266 @@ export default function BrokerDashboard() {
           </div>
 
           {/* Navigation Tabs */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              marginBottom: '24px',
+              flexWrap: 'wrap',
+            }}
+          >
             {[
               {
                 id: 'quotes-workflow',
                 label: 'Quotes & Workflow',
                 icon: '💼',
-                color: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              }, // OPERATIONS - Blue
+                color: '#3b82f6',
+              },
               {
                 id: 'loads-bids',
                 label: 'Loads & Bidding',
                 icon: '📦',
-                color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-              }, // FLEETFLOW - Teal
+                color: '#14b8a6',
+              },
               {
                 id: 'contracts-bol',
                 label: 'Contracts & BOL',
                 icon: '📋',
-                color: 'linear-gradient(135deg, #f97316, #ea580c)',
-              }, // RESOURCES - Orange
+                color: '#f97316',
+              },
               {
                 id: 'analytics',
                 label: 'Performance Analytics',
                 icon: '📊',
-                color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-              }, // ANALYTICS - Purple
+                color: '#6366f1',
+              },
               {
                 id: 'ai-intelligence',
                 label: 'AI Intelligence',
                 icon: '🤖',
-                color: 'linear-gradient(135deg, #8b5cf6, #a855f7)',
-              }, // AI INTELLIGENCE - Purple/Violet
+                color: '#8b5cf6',
+              },
               {
                 id: 'financial-dashboard',
                 label: 'Financial Dashboard',
                 icon: '💹',
-                color: 'linear-gradient(135deg, #10b981, #059669)',
-              }, // FINANCIAL DASHBOARD - Green
+                color: '#10b981',
+              },
               {
                 id: 'enhanced-crm',
                 label: 'Enhanced CRM',
                 icon: '🏢',
-                color: 'linear-gradient(135deg, #ef4444, #dc2626)',
-              }, // ENHANCED CRM - Red
+                color: '#1e40af',
+              },
               {
                 id: 'carrier-network',
                 label: 'Carrier Network',
                 icon: '🚛',
-                color: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
-              }, // CARRIER NETWORK - Sky Blue
+                color: '#0ea5e9',
+              },
               {
                 id: 'market-intelligence',
                 label: 'Market Intelligence',
                 icon: '📊',
-                color: 'linear-gradient(135deg, #ec4899, #db2777)',
-              }, // MARKET INTELLIGENCE - Pink
-
+                color: '#ec4899',
+              },
               {
                 id: 'shipper-acquisition',
                 label: 'Shipper Acquisition',
                 icon: '🏢',
-                color: 'linear-gradient(135deg, #a855f7, #9333ea)',
-              }, // SHIPPER ACQUISITION - Violet
-              {
-                id: 'agent-management',
-                label: 'Agent Management',
-                icon: '👥',
-                color: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              }, // AGENT MANAGEMENT - Amber
+                color: '#059669',
+              },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id)}
                 style={{
-                  padding: '16px 24px',
-                  borderRadius: '12px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
                   background:
                     selectedTab === tab.id
-                      ? tab.color
-                      : 'rgba(255, 255, 255, 0.15)',
-                  color: 'white',
-                  backdropFilter: 'blur(10px)',
+                      ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  color:
+                    selectedTab === tab.id
+                      ? '#60a5fa'
+                      : 'rgba(255, 255, 255, 0.8)',
                   border:
                     selectedTab === tab.id
-                      ? 'none'
+                      ? '1px solid rgba(59, 130, 246, 0.3)'
                       : '1px solid rgba(255, 255, 255, 0.2)',
-                  transform:
-                    selectedTab === tab.id
-                      ? 'translateY(-2px)'
-                      : 'translateY(0)',
-                  boxShadow:
-                    selectedTab === tab.id
-                      ? '0 8px 25px rgba(0, 0, 0, 0.3)'
-                      : 'none',
-                }}
-                onMouseOver={(e) => {
-                  if (selectedTab !== tab.id) {
-                    (e.currentTarget as HTMLButtonElement).style.background =
-                      'rgba(255, 255, 255, 0.25)';
-                    (e.currentTarget as HTMLButtonElement).style.transform =
-                      'translateY(-1px)';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (selectedTab !== tab.id) {
-                    (e.currentTarget as HTMLButtonElement).style.background =
-                      'rgba(255, 255, 255, 0.15)';
-                    (e.currentTarget as HTMLButtonElement).style.transform =
-                      'translateY(0)';
-                  }
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
                 }}
               >
-                <span style={{ marginRight: '8px' }}>{tab.icon}</span>
-                {tab.label}
+                {tab.icon} {tab.label}
               </button>
             ))}
           </div>
 
-          {/* Content Area */}
+          {/* Quick Stats Grid */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            {[
+              {
+                title: 'Active Quotes',
+                value: quotes.length,
+                unit: '',
+                change: '+12',
+                trend: 'up',
+                description: 'Currently active freight quotes',
+                color: '#3b82f6',
+                background: 'rgba(59, 130, 246, 0.5)',
+                border: 'rgba(59, 130, 246, 0.3)',
+              },
+              {
+                title: 'Loads in Progress',
+                value: acceptedQuotes.length,
+                unit: '',
+                change: '+5',
+                trend: 'up',
+                description: 'Loads currently being transported',
+                color: '#10b981',
+                background: 'rgba(16, 185, 129, 0.5)',
+                border: 'rgba(16, 185, 129, 0.3)',
+              },
+              {
+                title: 'Total Revenue',
+                value: (
+                  brokerContracts.reduce(
+                    (sum, contract) => sum + (contract.totalValue || 0),
+                    0
+                  ) / 1000
+                ).toFixed(1),
+                unit: 'K',
+                change: '+18.5%',
+                trend: 'up',
+                description: 'Total revenue from active contracts',
+                color: '#8b5cf6',
+                background: 'rgba(139, 92, 246, 0.5)',
+                border: 'rgba(139, 92, 246, 0.3)',
+              },
+              {
+                title: 'Customer Satisfaction',
+                value: 94.2,
+                unit: '%',
+                change: '+2.1%',
+                trend: 'up',
+                description: 'Overall customer satisfaction score',
+                color: '#f59e0b',
+                background: 'rgba(245, 158, 11, 0.5)',
+                border: 'rgba(245, 158, 11, 0.3)',
+              },
+              {
+                title: 'On-Time Delivery',
+                value: 96.8,
+                unit: '%',
+                change: '+1.3%',
+                trend: 'up',
+                description: 'On-time delivery performance',
+                color: '#14b8a6',
+                background: 'rgba(20, 184, 166, 0.5)',
+                border: 'rgba(20, 184, 166, 0.3)',
+              },
+              {
+                title: 'Cost Savings',
+                value: 12.4,
+                unit: '%',
+                change: '+3.2%',
+                trend: 'up',
+                description: 'Cost optimization vs previous period',
+                color: '#ef4444',
+                background: 'rgba(239, 68, 68, 0.5)',
+                border: 'rgba(239, 68, 68, 0.3)',
+              },
+            ].map((kpi, index) => (
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
+                      color: 'white',
+                      margin: 0,
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    {kpi.title}
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: kpi.trend === 'up' ? '#10b981' : '#ef4444',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {kpi.change}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    color: kpi.color,
+                    marginBottom: '0.25rem',
+                  }}
+                >
+                  {typeof kpi.value === 'number' && kpi.value % 1 !== 0
+                    ? kpi.value.toFixed(1)
+                    : kpi.value}
+                  {kpi.unit}
+                </div>
+                <p
+                  style={{
+                    fontSize: '0.8rem',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  {kpi.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Main Content Area */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              padding: '32px',
+              padding: '24px',
               border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              minHeight: '400px',
             }}
           >
             {selectedTab === 'quotes-workflow' && (
@@ -4558,7 +4764,7 @@ export default function BrokerDashboard() {
                   <button
                     onClick={() => setShowAddShipper(true)}
                     style={{
-                      background: 'linear-gradient(135deg, #ef4444, #dc2626)', // RED
+                      background: 'linear-gradient(135deg, #1e40af, #1e3a8a)', // Dark Blue
                       color: 'white',
                       border: 'none',
                       padding: '12px 24px',
@@ -8486,6 +8692,605 @@ export default function BrokerDashboard() {
                   }}
                 >
                   Add Interaction
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '20px',
+                padding: '32px',
+                maxWidth: '800px',
+                width: '90%',
+                maxHeight: '80vh',
+                overflow: 'auto',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              {/* Settings Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '24px',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#1f2937',
+                    margin: 0,
+                  }}
+                >
+                  ⚙️ Brokerage Settings
+                </h2>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    color: '#6b7280',
+                    padding: '8px',
+                    borderRadius: '8px',
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.1)')
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.background = 'none')
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Settings Tabs */}
+              <div
+                style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}
+              >
+                {[
+                  { id: 'preferences', label: 'Preferences', icon: '⚙️' },
+                  { id: 'integrations', label: 'API Integrations', icon: '🔗' },
+                  {
+                    id: 'commissions',
+                    label: 'Commission Structure',
+                    icon: '💰',
+                  },
+                  { id: 'templates', label: 'Document Templates', icon: '📄' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSettingsTab(tab.id as any)}
+                    style={{
+                      padding: '12px 20px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      background:
+                        settingsTab === tab.id
+                          ? '#3b82f6'
+                          : 'rgba(59, 130, 246, 0.1)',
+                      color: settingsTab === tab.id ? 'white' : '#3b82f6',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Settings Content */}
+              <div style={{ minHeight: '400px' }}>
+                {settingsTab === 'preferences' && (
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#1f2937',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Default Preferences
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Default Equipment Type
+                        </label>
+                        <select
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        >
+                          <option>Van</option>
+                          <option>Flatbed</option>
+                          <option>Reefer</option>
+                          <option>Power Only</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Default Service Area (Miles)
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='500'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Default Rate Per Mile
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='2.50'
+                          step='0.01'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Fuel Surcharge %
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='15'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {settingsTab === 'integrations' && (
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#1f2937',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      API Integrations
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Load Board APIs
+                        </label>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' defaultChecked /> DAT
+                          </label>
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' defaultChecked />{' '}
+                            Truckstop.com
+                          </label>
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' /> 123LoadBoard
+                          </label>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Factoring Companies
+                        </label>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' /> TAFS
+                          </label>
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' /> RTS Financial
+                          </label>
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input type='checkbox' /> eCapital
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {settingsTab === 'commissions' && (
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#1f2937',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Commission Structure
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Agent Commission Rate (%)
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='15'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Payment Terms (Days)
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='30'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Minimum Commission Amount
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='50'
+                          step='0.01'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Performance Bonus Threshold
+                        </label>
+                        <input
+                          type='number'
+                          placeholder='10000'
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {settingsTab === 'templates' && (
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#1f2937',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Document Templates
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          BOL Template
+                        </label>
+                        <textarea
+                          placeholder='Enter your custom BOL template...'
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                            resize: 'vertical',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Contract Template
+                        </label>
+                        <textarea
+                          placeholder='Enter your custom contract template...'
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                            resize: 'vertical',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Invoice Template
+                        </label>
+                        <textarea
+                          placeholder='Enter your custom invoice template...'
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                            resize: 'vertical',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '500',
+                            color: '#374151',
+                          }}
+                        >
+                          Email Signature
+                        </label>
+                        <textarea
+                          placeholder='Enter your custom email signature...'
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #d1d5db',
+                            resize: 'vertical',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Save Button */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  marginTop: '24px',
+                }}
+              >
+                <button
+                  style={{
+                    padding: '12px 24px',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                  }}
+                >
+                  💾 Save Settings
                 </button>
               </div>
             </div>
