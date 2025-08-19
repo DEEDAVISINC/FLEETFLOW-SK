@@ -110,6 +110,17 @@ export class MultiTenantSquareService {
     // Mock tenant configurations - replace with actual database query
     return [
       {
+        tenantId: 'admin',
+        applicationId:
+          process.env.SQUARE_APPLICATION_ID_ADMIN || 'sandbox-sq0idb-admin',
+        accessToken:
+          process.env.SQUARE_ACCESS_TOKEN_ADMIN || 'sandbox-token-admin',
+        locationId: process.env.SQUARE_LOCATION_ID_ADMIN || 'location-admin',
+        environment: 'sandbox',
+        enabled: true,
+        connected: true,
+      },
+      {
         tenantId: 'tenant-1',
         applicationId:
           process.env.SQUARE_APPLICATION_ID_TENANT_1 ||
@@ -574,65 +585,3 @@ export class MultiTenantSquareService {
 }
 
 export default MultiTenantSquareService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

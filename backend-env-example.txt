@@ -100,6 +100,12 @@ BILLCOM_PASSWORD=your_billcom_password
 BILLCOM_ENVIRONMENT=sandbox
 BILLCOM_ORG_ID=your_org_id
 
+# Square Payment Configuration (AI Company Dashboard - Single User)
+SQUARE_APPLICATION_ID=your_square_application_id
+SQUARE_ACCESS_TOKEN=your_square_access_token
+SQUARE_LOCATION_ID=your_square_location_id
+SQUARE_ENVIRONMENT=sandbox
+
 # Backup Configuration
 BACKUP_SCHEDULE=0 2 * * *
 BACKUP_RETENTION_DAYS=30

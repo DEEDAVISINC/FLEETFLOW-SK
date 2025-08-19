@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
+import CompletedLoadsInvoiceTracker from '../components/CompletedLoadsInvoiceTracker';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
+import InvoiceLifecycleViewer from '../components/InvoiceLifecycleViewer';
 import StickyNote from '../components/StickyNote-Enhanced';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
 import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
@@ -12,11 +14,7 @@ import { getCurrentUser } from '../config/access';
 import { schedulingService } from '../scheduling/service';
 import { brokerAgentIntegrationService } from '../services/BrokerAgentIntegrationService';
 import GoWithFlowAutomationService from '../services/GoWithFlowAutomationService';
-import {
-  ensureUniqueKey,
-  getAllInvoices,
-  getInvoiceStats,
-} from '../services/invoiceService';
+import { getAllInvoices, getInvoiceStats } from '../services/invoiceService';
 import {
   Load,
   getLoadsForTenant,
@@ -788,6 +786,33 @@ export default function DispatchCentral() {
     counts: { total: 0, pending: 0, sent: 0, paid: 0, overdue: 0 },
     amounts: { total: 0, pending: 0, paid: 0 },
   });
+
+  // Enhanced Invoice Tracking State
+  const [completedLoads, setCompletedLoads] = useState<any[]>([]);
+  const [selectedInvoiceForViewing, setSelectedInvoiceForViewing] = useState<
+    string | null
+  >(null);
+  const [showInvoiceLifecycleViewer, setShowInvoiceLifecycleViewer] =
+    useState(false);
+
+  // Square Accessorial Fee Management State
+  const [selectedAccessorialLoad, setSelectedAccessorialLoad] =
+    useState<Load | null>(null);
+  const [showAccessorialModal, setShowAccessorialModal] = useState(false);
+  const [accessorialFees, setAccessorialFees] = useState({
+    detention: {
+      hours: 0,
+      rate: 50,
+      location: 'pickup' as 'pickup' | 'delivery',
+      total: 0,
+    },
+    lumper: {
+      amount: 0,
+      location: 'pickup' as 'pickup' | 'delivery',
+      receiptNumber: '',
+    },
+    other: [] as Array<{ type: string; description: string; amount: number }>,
+  });
   // Current driver being viewed in Workflow Center
   const [currentDriverIndex, setCurrentDriverIndex] = useState(0);
 
@@ -1011,6 +1036,43 @@ export default function DispatchCentral() {
       console.log(
         `🔄 Dispatch Central: Loaded ${tenantLoads.length} tenant loads + ${agentLoads.length} agent loads = ${allLoads.length} total loads`
       );
+
+      // Populate completed loads for invoice tracking
+      const completedLoadsData = allLoads
+        .filter((load) => load.status === 'Delivered')
+        .map((load) => ({
+          id: load.id,
+          loadBoardNumber: load.loadBoardNumber || '100000',
+          route: `${load.origin} → ${load.destination}`,
+          completedDate: new Date().toISOString(),
+          grossRevenue: load.rate || 0,
+          dispatcherFee: Math.round((load.rate || 0) * 0.1), // 10% fee
+          netCarrierPayment: Math.round((load.rate || 0) * 0.9),
+          carrierName: load.brokerName || 'Unknown Carrier',
+
+          // Invoice Information
+          invoiceNumber: `INV-${load.id}-${Date.now().toString().slice(-6)}`,
+          invoiceStatus: Math.random() > 0.5 ? 'sent' : 'auto_generated',
+          invoiceCreatedAt: new Date().toISOString(),
+          paymentDueDate: new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+
+          // Document References
+          rateConfirmationNumber: `RC-${load.id}-${Date.now().toString().slice(-6)}`,
+          bolNumber: `BOL-${load.id}-${Date.now().toString().slice(-6)}`,
+          documentsVerified: Math.random() > 0.3,
+
+          // Payment Tracking
+          paymentMethod: undefined,
+          paymentReference: undefined,
+          daysOverdue:
+            Math.random() > 0.8
+              ? Math.floor(Math.random() * 10) + 1
+              : undefined,
+        }));
+
+      setCompletedLoads(completedLoadsData);
     }
   }, []);
 
@@ -1128,6 +1190,178 @@ export default function DispatchCentral() {
 
     const stats = getInvoiceStats();
     setInvoiceStats(stats);
+  };
+
+  // Square Accessorial Fee Handler
+  const handleCreateAccessorialInvoice = async () => {
+    if (!selectedAccessorialLoad) return;
+
+    try {
+      // Import Square accessorial functions
+      const { createAccessorialInvoice } = await import(
+        '../services/settlementService'
+      );
+
+      // Calculate detention fee total
+      const detentionTotal =
+        Math.max(0, accessorialFees.detention.hours - 2) *
+        accessorialFees.detention.rate;
+
+      // Prepare accessorial data
+      const accessorialData = {
+        detention:
+          detentionTotal > 0
+            ? {
+                hours: accessorialFees.detention.hours,
+                rate: accessorialFees.detention.rate,
+                location: accessorialFees.detention.location,
+                total: detentionTotal,
+              }
+            : undefined,
+        lumper:
+          accessorialFees.lumper.amount > 0
+            ? {
+                amount: accessorialFees.lumper.amount,
+                location: accessorialFees.lumper.location,
+                receiptNumber: accessorialFees.lumper.receiptNumber,
+              }
+            : undefined,
+        other:
+          accessorialFees.other.length > 0 ? accessorialFees.other : undefined,
+      };
+
+      // Create Square invoice for accessorial fees
+      const result = await createAccessorialInvoice(
+        selectedAccessorialLoad.id,
+        (selectedAccessorialLoad as any).brokerId ||
+          (selectedAccessorialLoad as any).broker ||
+          'default-broker',
+        accessorialData
+      );
+
+      if (result.success) {
+        // Add success notification
+        setNotifications((prev) => [
+          {
+            id: Date.now().toString(),
+            message: `✅ Square accessorial invoice created for Load ${selectedAccessorialLoad.id}. Invoice ID: ${result.invoiceId}`,
+            timestamp: 'Just now',
+            type: 'system_alert',
+            read: false,
+          },
+          ...prev,
+        ]);
+
+        // Reset form and close modal
+        setAccessorialFees({
+          detention: { hours: 0, rate: 50, location: 'pickup', total: 0 },
+          lumper: { amount: 0, location: 'pickup', receiptNumber: '' },
+          other: [],
+        });
+        setShowAccessorialModal(false);
+        setSelectedAccessorialLoad(null);
+      } else {
+        // Add error notification
+        setNotifications((prev) => [
+          {
+            id: Date.now().toString(),
+            message: `❌ Failed to create accessorial invoice: ${result.error}`,
+            timestamp: 'Just now',
+            type: 'system_alert',
+            read: false,
+          },
+          ...prev,
+        ]);
+      }
+    } catch (error) {
+      console.error('Error creating accessorial invoice:', error);
+      setNotifications((prev) => [
+        {
+          id: Date.now().toString(),
+          message: `❌ Error creating accessorial invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: 'Just now',
+          type: 'system_alert',
+          read: false,
+        },
+        ...prev,
+      ]);
+    }
+  };
+
+  // Enhanced Invoice Tracking Handlers
+  const handleViewInvoice = (invoiceNumber: string) => {
+    setSelectedInvoiceForViewing(invoiceNumber);
+    setShowInvoiceLifecycleViewer(true);
+  };
+
+  const handleCreateInvoiceFromLoad = (loadId: string) => {
+    // Find the load and create invoice
+    const load = loads.find((l) => l.id === loadId);
+    if (load) {
+      handleCreateInvoice(load);
+    }
+  };
+
+  const handleResendInvoice = (invoiceNumber: string) => {
+    // Add notification for resending invoice
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `📧 Invoice ${invoiceNumber} resent to carrier`,
+        timestamp: 'Just now',
+        type: 'system_alert',
+        read: false,
+      },
+      ...prev,
+    ]);
+  };
+
+  const handleMarkPaid = (invoiceNumber: string, paymentInfo: any) => {
+    // Update invoice status and add notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `💰 Invoice ${invoiceNumber} marked as paid - ${paymentInfo.method.toUpperCase()} ${paymentInfo.reference}`,
+        timestamp: 'Just now',
+        type: 'system_alert',
+        read: false,
+      },
+      ...prev,
+    ]);
+
+    // Update completed loads status
+    setCompletedLoads((prev) =>
+      prev.map((load) =>
+        load.invoiceNumber === invoiceNumber
+          ? {
+              ...load,
+              invoiceStatus: 'paid',
+              paidAt: new Date().toISOString(),
+              paymentMethod: paymentInfo.method,
+              paymentReference: paymentInfo.reference,
+            }
+          : load
+      )
+    );
+  };
+
+  const handleViewDocuments = (loadId: string, documentType: string) => {
+    // Open documents page for the specific load
+    window.open(`/documents?loadId=${loadId}&tab=${documentType}`, '_blank');
+  };
+
+  const handleSendReminder = () => {
+    // Add notification for reminder sent
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `🔔 Payment reminder sent for invoice`,
+        timestamp: 'Just now',
+        type: 'system_alert',
+        read: false,
+      },
+      ...prev,
+    ]);
   };
 
   // Function to cycle to next driver on the road
@@ -3131,453 +3365,15 @@ export default function DispatchCentral() {
                 />
               </div>
 
-              {/* Completed Loads Section - Auto-displayed for invoicing */}
-              <div
-                style={{
-                  background:
-                    'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(22, 163, 74, 0.1))',
-                  borderRadius: '16px',
-                  border: '2px solid rgba(34, 197, 94, 0.4)',
-                  padding: '20px',
-                  marginBottom: '25px',
-                  boxShadow: '0 8px 32px rgba(34, 197, 94, 0.2)',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <div>
-                    <h3
-                      style={{
-                        color: '#ffffff',
-                        fontSize: '20px',
-                        fontWeight: '700',
-                        margin: '0 0 8px 0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                      }}
-                    >
-                      ✅ Completed Loads Ready for Invoicing
-                    </h3>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '14px',
-                        margin: 0,
-                      }}
-                    >
-                      {
-                        sampleLoads.filter(
-                          (load) => load.status === 'Delivered'
-                        ).length
-                      }{' '}
-                      loads completed and ready for invoice creation
-                    </p>
-                  </div>
-                  <button
-                    style={{
-                      padding: '12px 24px',
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 6px 20px rgba(34, 197, 94, 0.4)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 8px 25px rgba(34, 197, 94, 0.5)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow =
-                        '0 6px 20px rgba(34, 197, 94, 0.4)';
-                    }}
-                  >
-                    💰 Create All Invoices
-                  </button>
-                </div>
-
-                {/* Completed Loads Display */}
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                  }}
-                >
-                  {/* Header for completed loads */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        '100px 120px 1.5fr 1fr 120px 140px 120px',
-                      gap: '12px',
-                      padding: '16px 20px',
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                      color: 'white',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    <div>📞 Board #</div>
-                    <div>Load ID</div>
-                    <div>Route</div>
-                    <div>Broker</div>
-                    <div>Revenue</div>
-                    <div>Invoice Status</div>
-                    <div>Actions</div>
-                  </div>
-
-                  {/* Completed loads rows */}
-                  {sampleLoads
-                    .filter((load) => load.status === 'Delivered')
-                    .map((load, index) => (
-                      <div
-                        key={load.id}
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns:
-                            '100px 120px 1.5fr 1fr 120px 140px 120px',
-                          gap: '12px',
-                          padding: '16px 20px',
-                          background: index % 2 === 0 ? '#ffffff' : '#f8fafc',
-                          color: '#1e293b',
-                          fontSize: '13px',
-                          transition: 'all 0.3s ease',
-                          borderBottom: '1px solid #e2e8f0',
-                          cursor: 'pointer',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background =
-                            'rgba(34, 197, 94, 0.05)';
-                          e.currentTarget.style.transform = 'translateY(-1px)';
-                          e.currentTarget.style.boxShadow =
-                            '0 4px 12px rgba(0, 0, 0, 0.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background =
-                            index % 2 === 0 ? '#ffffff' : '#f8fafc';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontWeight: '700',
-                            color: '#10b981',
-                            fontSize: '11px',
-                            fontFamily: 'monospace',
-                            textAlign: 'center',
-                            background: 'rgba(16, 185, 129, 0.15)',
-                            borderRadius: '6px',
-                            padding: '4px 6px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {load.loadBoardNumber}
-                        </div>
-                        <div
-                          style={{
-                            fontWeight: '600',
-                            color: '#3b82f6',
-                            fontSize: '10px',
-                            fontFamily: 'monospace',
-                          }}
-                        >
-                          {load.loadIdentifier}
-                        </div>
-                        <div>
-                          <div
-                            style={{ fontWeight: '600', marginBottom: '4px' }}
-                          >
-                            {load.origin}
-                          </div>
-                          <div style={{ fontSize: '11px', color: '#64748b' }}>
-                            → {load.destination}
-                          </div>
-                        </div>
-                        <div style={{ fontWeight: '500' }}>{load.broker}</div>
-                        <div
-                          style={{
-                            fontWeight: '700',
-                            color: '#059669',
-                            fontSize: '15px',
-                          }}
-                        >
-                          ${load.rate?.toLocaleString()}
-                        </div>
-                        <div>
-                          <span
-                            style={{
-                              padding: '6px 12px',
-                              borderRadius: '20px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              background: 'rgba(245, 158, 11, 0.15)',
-                              color: '#d97706',
-                              border: '1px solid rgba(245, 158, 11, 0.3)',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                          >
-                            ⏳ Pending Invoice
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '6px',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <button
-                            onClick={() =>
-                              handleGenerateRateConfirmation(load as any)
-                            }
-                            style={{
-                              padding: '6px 12px',
-                              background:
-                                'linear-gradient(135deg, #10b981, #059669)',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              transition: 'all 0.3s ease',
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.transform =
-                                'translateY(-2px)';
-                              e.currentTarget.style.boxShadow =
-                                '0 4px 12px rgba(16, 185, 129, 0.4)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = 'none';
-                            }}
-                            title='Generate Rate Confirmation'
-                          >
-                            📄 Rate Conf
-                          </button>
-                          <button
-                            onClick={() => handleGenerateBOL(load as any)}
-                            style={{
-                              padding: '6px 12px',
-                              background:
-                                'linear-gradient(135deg, #3b82f6, #1e40af)',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              transition: 'all 0.3s ease',
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.transform =
-                                'translateY(-2px)';
-                              e.currentTarget.style.boxShadow =
-                                '0 4px 12px rgba(59, 130, 246, 0.4)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = 'none';
-                            }}
-                            title='Generate Bill of Lading'
-                          >
-                            📋 BOL
-                          </button>
-                          <button
-                            onClick={() => handleCreateInvoice(load as any)}
-                            style={{
-                              padding: '6px 12px',
-                              background:
-                                'linear-gradient(135deg, #22c55e, #16a34a)',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              transition: 'all 0.3s ease',
-                              boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform =
-                                'translateY(-1px)';
-                              e.currentTarget.style.boxShadow =
-                                '0 4px 12px rgba(34, 197, 94, 0.4)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow =
-                                '0 2px 8px rgba(34, 197, 94, 0.3)';
-                            }}
-                          >
-                            📋 Submit Fee to Management
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-
-                  {/* No completed loads message */}
-                  {sampleLoads.filter((load) => load.status === 'Delivered')
-                    .length === 0 && (
-                    <div
-                      style={{
-                        padding: '40px 20px',
-                        textAlign: 'center',
-                        color: '#64748b',
-                        background: '#ffffff',
-                      }}
-                    >
-                      <div style={{ fontSize: '48px', marginBottom: '12px' }}>
-                        ✅
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '600',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        No completed loads yet
-                      </div>
-                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
-                        Completed loads will automatically appear here for
-                        invoicing
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Summary stats for completed loads */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                    gap: '16px',
-                    marginTop: '20px',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      textAlign: 'center',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: '#ffffff',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      {
-                        sampleLoads.filter(
-                          (load) => load.status === 'Delivered'
-                        ).length
-                      }
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '13px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                      }}
-                    >
-                      Completed Loads
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      textAlign: 'center',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: '#ffffff',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      $
-                      {sampleLoads
-                        .filter((load) => load.status === 'Delivered')
-                        .reduce((sum, load) => sum + (load.rate || 0), 0)
-                        .toLocaleString()}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '13px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                      }}
-                    >
-                      Total Revenue
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      textAlign: 'center',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: '#ffffff',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      {
-                        sampleLoads.filter(
-                          (load) => load.status === 'Delivered'
-                        ).length
-                      }
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '13px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                      }}
-                    >
-                      Pending Invoices
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Enhanced Completed Loads & Invoice Tracking Section */}
+              <CompletedLoadsInvoiceTracker
+                loads={completedLoads}
+                onViewInvoice={handleViewInvoice}
+                onCreateInvoice={handleCreateInvoiceFromLoad}
+                onResendInvoice={handleResendInvoice}
+                onMarkPaid={handleMarkPaid}
+                onViewDocuments={handleViewDocuments}
+              />
             </div>
           )}
 
@@ -3641,43 +3437,28 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    📦
+                    {stats.total}
                   </div>
                   <div
                     style={{
-                      color: '#3b82f6',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    12
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Total Shipments
+                    Total Loads
                   </div>
                 </div>
 
@@ -3691,40 +3472,95 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    🚛
+                    {stats.available}
                   </div>
                   <div
                     style={{
-                      color: '#10b981',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    8
+                    Available
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {stats.assigned}
                   </div>
                   <div
                     style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Assigned
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {stats.inTransit}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
                     In Transit
@@ -3741,40 +3577,25 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    ✅
+                    {stats.delivered}
                   </div>
                   <div
                     style={{
-                      color: '#059669',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    3
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
                     Delivered
@@ -3791,43 +3612,28 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    ⚠️
+                    {stats.broadcasted}
                   </div>
                   <div
                     style={{
-                      color: '#ef4444',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    1
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Delayed
+                    Broadcasted
                   </div>
                 </div>
 
@@ -3841,43 +3647,28 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    💰
+                    {stats.driverSelected}
                   </div>
                   <div
                     style={{
-                      color: '#8b5cf6',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    $156K
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Total Value
+                    Driver Selected
                   </div>
                 </div>
 
@@ -3891,143 +3682,28 @@ export default function DispatchCentral() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    textAlign: 'center',
                   }}
                 >
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                      color: '#1e293b',
+                      marginBottom: '4px',
                     }}
                   >
-                    🚨
+                    {stats.orderSent}
                   </div>
                   <div
                     style={{
-                      color: '#f59e0b',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    5
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Alerts
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
-                    }}
-                  >
-                    ⚡
-                  </div>
-                  <div
-                    style={{
-                      color: '#06b6d4',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    65
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    Avg Speed
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '80px',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      fontSize: '1rem',
-                    }}
-                  >
-                    📊
-                  </div>
-                  <div
-                    style={{
-                      color: '#84cc16',
-                      fontWeight: 800,
-                      fontSize: '1.25rem',
-                      marginBottom: '3px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    94%
-                  </div>
-                  <div
-                    style={{
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    On-Time %
+                    Order Sent
                   </div>
                 </div>
               </div>
@@ -4041,962 +3717,9 @@ export default function DispatchCentral() {
                   boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                   overflow: 'hidden',
                   minHeight: '400px',
-                  display: 'flex',
-                  flexDirection: 'column',
                 }}
               >
-                <div
-                  style={{
-                    padding: '20px 24px',
-                    borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-                    fontWeight: 700,
-                    fontSize: '1.125rem',
-                    color: '#1e293b',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <span>📋 Recent Shipments (3)</span>
-                </div>
-
-                <div style={{ padding: '16px 24px', flex: 1 }}>
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      margin: '0 0 12px 0',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      position: 'relative',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontWeight: 700,
-                            fontSize: '0.875rem',
-                            color: '#1e293b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          SHP-001
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.75rem',
-                            color: '#64748b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Swift Transport
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '6px',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div
-                          style={{
-                            background: '#2563eb',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          IN TRANSIT
-                        </div>
-                        <div
-                          style={{
-                            background: '#ef4444',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          HIGH
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        From: Los Angeles, CA
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        To: Chicago, IL
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        ETA: 14 hours
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Driver: John Smith
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Vehicle: Freightliner Cascadia - #FL001
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        Speed: 67 mph
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.3)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      margin: '0 0 12px 0',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      position: 'relative',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontWeight: 700,
-                            fontSize: '0.875rem',
-                            color: '#1e293b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          SHP-002
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.75rem',
-                            color: '#64748b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Express Logistics
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '6px',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div
-                          style={{
-                            background: '#10b981',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          DELIVERED
-                        </div>
-                        <div
-                          style={{
-                            background: '#f59e0b',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          MEDIUM
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        From: New York, NY
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        To: Miami, FL
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        ETA: Delivered
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        <span
-                          style={{ fontSize: '0.625rem', color: '#64748b' }}
-                        >
-                          Progress
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.625rem',
-                            color: '#1e293b',
-                            fontWeight: 600,
-                          }}
-                        >
-                          100%
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          width: '100%',
-                          height: '4px',
-                          background: 'rgba(148, 163, 184, 0.3)',
-                          borderRadius: '2px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            background: '#10b981',
-                            borderRadius: '2px',
-                            transition: 'width 0.3s ease',
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Driver: Sarah Wilson
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Vehicle: Volvo VNL - #VL002
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        Speed: 0 mph
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      margin: '0 0 12px 0',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      position: 'relative',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontWeight: 700,
-                            fontSize: '0.875rem',
-                            color: '#1e293b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          SHP-004
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.75rem',
-                            color: '#64748b',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Southern Express
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '6px',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div
-                          style={{
-                            background: '#ef4444',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          DELAYED
-                        </div>
-                        <div
-                          style={{
-                            background: '#ef4444',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.625rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          HIGH
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        From: Houston, TX
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        To: Atlanta, GA
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        ETA: Delayed - Est. 2024-01-16
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        <span
-                          style={{ fontSize: '0.625rem', color: '#64748b' }}
-                        >
-                          Progress
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.625rem',
-                            color: '#1e293b',
-                            fontWeight: 600,
-                          }}
-                        >
-                          45%
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          width: '100%',
-                          height: '4px',
-                          background: 'rgba(148, 163, 184, 0.3)',
-                          borderRadius: '2px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '45%',
-                            height: '100%',
-                            background: '#ef4444',
-                            borderRadius: '2px',
-                            transition: 'width 0.3s ease',
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Driver: Emily Davis
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        Vehicle: Kenworth T680 - #KW004
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#64748b',
-                        }}
-                      >
-                        Speed: 0 mph
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  marginTop: '20px',
-                  padding: '16px',
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(59, 130, 246, 0.2)',
-                  textAlign: 'center',
-                }}
-              >
-                <p
-                  style={{
-                    color: '#1e40af',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    margin: '0 0 8px 0',
-                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  💡 Real-Time Tracking Available
-                </p>
-                <p
-                  style={{
-                    color: '#1e293b',
-                    fontSize: '14px',
-                    margin: 0,
-                    lineHeight: 1.4,
-                    fontWeight: '500',
-                  }}
-                >
-                  Click "Open Full Tracking Dashboard" to access the interactive
-                  map with live driver locations, detailed route information,
-                  and real-time shipment monitoring for all your loads.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 'workflow' && (
-            <div>
-              <h2
-                style={{
-                  color: 'white',
-                  fontSize: '22px',
-                  fontWeight: 'bold',
-                  marginBottom: '15px',
-                }}
-              >
-                🔄 Workflow Center
-              </h2>
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  borderRadius: '16px',
-                  padding: '20px',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                }}
-              >
-                {/* Driver Information & Next Button */}
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '20px',
-                    padding: '16px',
-                    background: 'rgba(55, 65, 81, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '12px',
-                    border: '2px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        marginBottom: '4px',
-                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-                      }}
-                    >
-                      🚛 {currentDriver.truckingCompany}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '16px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      👤 Driver:{' '}
-                      <button
-                        onClick={() => openDriverScheduleModal(currentDriver)}
-                        style={{
-                          background:
-                            'linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3))',
-                          border: '1px solid rgba(59, 130, 246, 0.5)',
-                          borderRadius: '6px',
-                          padding: '4px 8px',
-                          color: 'rgba(255, 255, 255, 0.95)',
-                          textDecoration: 'none',
-                          cursor: 'pointer',
-                          font: 'inherit',
-                          boxShadow:
-                            '0 0 10px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.2)',
-                          transition: 'all 0.3s ease',
-                          fontWeight: 'bold',
-                          animation: 'driverNamePulse 2s infinite ease-in-out',
-                        }}
-                        onMouseEnter={(e) => {
-                          const target = e.target as HTMLButtonElement;
-                          target.style.boxShadow =
-                            '0 0 15px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.4)';
-                          target.style.transform = 'scale(1.05)';
-                          target.style.background =
-                            'linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 197, 253, 0.5))';
-                        }}
-                        onMouseLeave={(e) => {
-                          const target = e.target as HTMLButtonElement;
-                          target.style.boxShadow =
-                            '0 0 10px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.2)';
-                          target.style.transform = 'scale(1)';
-                          target.style.background =
-                            'linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3))';
-                        }}
-                        title='Click to view driver schedule'
-                      >
-                        {currentDriver.driverName} ✨
-                      </button>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.8)',
-                      }}
-                    >
-                      📋 MC #: <strong>{currentDriver.mcNumber}</strong> • 📦{' '}
-                      {currentDriver.currentLoad} • 🚚 {currentDriver.status}
-                    </div>
-                  </div>
-                  <button
-                    onClick={goToNextDriver}
-                    style={{
-                      background: 'linear-gradient(135deg, #f4a832, #e2940d)',
-                      color: 'black',
-                      border: 'none',
-                      padding: '12px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      boxShadow: '0 4px 12px rgba(244, 168, 50, 0.3)',
-                    }}
-                  >
-                    🚛 Currently on the Road ({currentDriverIndex + 1}/
-                    {driversOnTheRoad.length})
-                  </button>
-                </div>
-
-                <UnifiedLiveTrackingWorkflow
-                  driverId={currentDriver.id}
-                  driverName={currentDriver.driverName}
-                />
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 'invoices' && (
-            <div>
-              <h2
-                style={{
-                  color: 'white',
-                  fontSize: '22px',
-                  fontWeight: 'bold',
-                  marginBottom: '15px',
-                }}
-              >
-                🧾 Dispatch Invoices
-              </h2>
-
-              {/* Invoice Statistics */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                  gap: '15px',
-                  marginBottom: '20px',
-                }}
-              >
-                {[
-                  {
-                    label: 'Total Invoices',
-                    value: invoiceStats.counts.total,
-                    color: '#3b82f6',
-                    icon: '📄',
-                  },
-                  {
-                    label: 'Pending',
-                    value: invoiceStats.counts.pending,
-                    color: '#f59e0b',
-                    icon: '⏳',
-                  },
-                  {
-                    label: 'Sent',
-                    value: invoiceStats.counts.sent,
-                    color: '#8b5cf6',
-                    icon: '📤',
-                  },
-                  {
-                    label: 'Paid',
-                    value: invoiceStats.counts.paid,
-                    color: '#10b981',
-                    icon: '✅',
-                  },
-                  {
-                    label: 'Overdue',
-                    value: invoiceStats.counts.overdue,
-                    color: '#ef4444',
-                    icon: '⚠️',
-                  },
-                ].map((stat, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      backdropFilter: 'blur(20px)',
-                      borderRadius: '12px',
-                      padding: '15px',
-                      textAlign: 'center',
-                      border: '2px solid rgba(255, 255, 255, 0.3)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: stat.color,
-                        color: 'white',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        borderRadius: '8px',
-                        padding: '8px',
-                        marginBottom: '8px',
-                        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          opacity: 0.9,
-                          marginBottom: '2px',
-                        }}
-                      >
-                        {stat.icon}
-                      </div>
-                      <div>{stat.value}</div>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: 'white',
-                      }}
-                    >
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Invoice List */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: '15px',
-                  padding: '20px',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                }}
-              >
-                <h3
-                  style={{
-                    color: 'white',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    marginBottom: '15px',
-                  }}
-                >
-                  Invoice Management
-                </h3>
-
-                {invoices.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: '40px 20px',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                    }}
-                  >
-                    <div style={{ fontSize: '48px', marginBottom: '15px' }}>
-                      🧾
-                    </div>
-                    <div style={{ fontSize: '16px', marginBottom: '10px' }}>
-                      No invoices created yet
-                    </div>
-                    <div style={{ fontSize: '14px', opacity: 0.7 }}>
-                      Create invoices for assigned loads to start tracking
-                      dispatch fees
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      maxHeight: '400px',
-                      overflowY: 'auto',
-                      borderRadius: '10px',
-                    }}
-                  >
-                    {invoices.map((invoice, index) => (
-                      <div
-                        key={ensureUniqueKey(invoice, index)}
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '10px',
-                          padding: '15px',
-                          marginBottom: '10px',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          transition: 'all 0.3s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background =
-                            'rgba(255, 255, 255, 0.15)';
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background =
-                            'rgba(255, 255, 255, 0.1)';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <div style={{ flex: 1 }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                                marginBottom: '8px',
-                              }}
-                            >
-                              <div
-                                style={{
-                                  fontSize: '16px',
-                                  fontWeight: 'bold',
-                                  color: 'white',
-                                }}
-                              >
-                                {invoice.id}
-                              </div>
-                              <div
-                                style={{
-                                  padding: '4px 8px',
-                                  borderRadius: '6px',
-                                  fontSize: '10px',
-                                  fontWeight: '600',
-                                  background:
-                                    invoice.status === 'Paid'
-                                      ? 'rgba(34, 197, 94, 0.2)'
-                                      : invoice.status === 'Pending'
-                                        ? 'rgba(245, 158, 11, 0.2)'
-                                        : invoice.status === 'Sent'
-                                          ? 'rgba(139, 92, 246, 0.2)'
-                                          : 'rgba(239, 68, 68, 0.2)',
-                                  color:
-                                    invoice.status === 'Paid'
-                                      ? '#22c55e'
-                                      : invoice.status === 'Pending'
-                                        ? '#f59e0b'
-                                        : invoice.status === 'Sent'
-                                          ? '#8b5cf6'
-                                          : '#ef4444',
-                                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                                }}
-                              >
-                                {invoice.status}
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                fontSize: '14px',
-                                color: 'rgba(255, 255, 255, 0.9)',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              {invoice.carrierName} • Load {invoice.loadId}
-                              {invoice.loadBoardNumber && (
-                                <span
-                                  style={{
-                                    color: '#10b981',
-                                    fontWeight: '600',
-                                    marginLeft: '8px',
-                                  }}
-                                >
-                                  📞 #{invoice.loadBoardNumber}
-                                </span>
-                              )}
-                            </div>
-                            <div
-                              style={{
-                                fontSize: '12px',
-                                color: 'rgba(255, 255, 255, 0.7)',
-                              }}
-                            >
-                              Due:{' '}
-                              {new Date(invoice.dueDate).toLocaleDateString()} •
-                              Fee: ${invoice.dispatchFee.toFixed(2)}
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '18px',
-                              fontWeight: 'bold',
-                              color: '#10b981',
-                            }}
-                          >
-                            ${invoice.dispatchFee.toFixed(2)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <UnifiedLiveTrackingWorkflow />
               </div>
             </div>
           )}
@@ -5017,18 +3740,19 @@ export default function DispatchCentral() {
                 style={{
                   background: 'rgba(0, 0, 0, 0.4)',
                   backdropFilter: 'blur(20px)',
-                  borderRadius: '15px',
-                  overflow: 'hidden',
-                  border: '3px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  padding: '20px',
+                  maxHeight: '600px',
+                  overflowY: 'auto',
                 }}
               >
                 {notifications.length === 0 ? (
                   <div
                     style={{
                       textAlign: 'center',
-                      padding: '40px 20px',
                       color: 'rgba(255, 255, 255, 0.8)',
+                      padding: '40px 20px',
                     }}
                   >
                     <div style={{ fontSize: '48px', marginBottom: '15px' }}>
@@ -5051,96 +3775,411 @@ export default function DispatchCentral() {
                         background: notification.read
                           ? 'rgba(255, 255, 255, 0.05)'
                           : 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        marginBottom: '12px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        position: 'relative',
                       }}
                       onClick={() => handleMarkAsRead(notification.id)}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background =
                           'rgba(255, 255, 255, 0.15)';
                         e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 8px 20px rgba(0, 0, 0, 0.3)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = notification.read
                           ? 'rgba(255, 255, 255, 0.05)'
                           : 'rgba(255, 255, 255, 0.1)';
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
                       }}
                     >
-                      {!notification.read && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: '18px',
-                            left: '8px',
-                            width: '12px',
-                            height: '12px',
-                            borderRadius: '50%',
-                            background: '#ef4444',
-                            boxShadow: '0 0 12px rgba(239, 68, 68, 0.8)',
-                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                          }}
-                        />
-                      )}
                       <div
                         style={{
                           display: 'flex',
                           justifyContent: 'space-between',
-                          alignItems: 'start',
-                          marginLeft: notification.read ? '0' : '16px',
+                          alignItems: 'flex-start',
+                          marginBottom: '8px',
                         }}
                       >
-                        <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            fontSize: '15px',
+                            fontWeight: notification.read ? '500' : '700',
+                            color: notification.read
+                              ? 'rgba(255, 255, 255, 0.7)'
+                              : '#ffffff',
+                            flex: 1,
+                            marginRight: '15px',
+                          }}
+                        >
+                          {notification.message}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {notification.timestamp}
+                        </div>
+                      </div>
+                      {!notification.read && (
+                        <div
+                          style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: '#3b82f6',
+                            position: 'absolute',
+                            right: '15px',
+                            top: '20px',
+                          }}
+                        />
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'workflow' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '22px',
+                  fontWeight: 'bold',
+                  marginBottom: '15px',
+                }}
+              >
+                🔄 Go With The Flow - Workflow Center
+              </h2>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '16px',
+                    margin: 0,
+                  }}
+                >
+                  Currently viewing:{' '}
+                  {currentDriver?.driverName || 'No driver selected'} (
+                  {currentDriverIndex + 1} of {driversOnTheRoad.length})
+                </p>
+                <button
+                  onClick={() => openDriverScheduleModal(currentDriver)}
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #1e40af)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                  }}
+                >
+                  📅 View Schedule
+                </button>
+              </div>
+
+              {/* Driver Workflow Card */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  padding: '20px',
+                  marginBottom: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '15px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#ffffff',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      margin: 0,
+                    }}
+                  >
+                    🚛 {currentDriver?.driverName} -{' '}
+                    {currentDriver?.truckingCompany}
+                  </h3>
+                  <button
+                    onClick={goToNextDriver}
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      color: '#3b82f6',
+                      border: '1px solid #3b82f6',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Next Driver ({currentDriverIndex + 1}/
+                    {driversOnTheRoad.length})
+                  </button>
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                    marginBottom: '10px',
+                  }}
+                >
+                  MC: {currentDriver?.mcNumber} | Status:{' '}
+                  {currentDriver?.status}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'invoices' && (
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '22px',
+                  fontWeight: 'bold',
+                  marginBottom: '15px',
+                }}
+              >
+                🧾 Invoice Management
+              </h2>
+
+              {/* Invoice Statistics */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '24px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {invoiceStats.counts.total}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    Total Invoices
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {invoiceStats.counts.pending}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    Pending
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {invoiceStats.counts.paid}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    Paid
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#ffffff',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {invoiceStats.counts.overdue}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    Overdue
+                  </div>
+                </div>
+              </div>
+
+              {/* Invoice List */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  padding: '20px',
+                  maxHeight: '500px',
+                  overflowY: 'auto',
+                }}
+              >
+                {invoices.length === 0 ? (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      padding: '40px 20px',
+                    }}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '15px' }}>
+                      🧾
+                    </div>
+                    <div style={{ fontSize: '16px', marginBottom: '10px' }}>
+                      No invoices yet
+                    </div>
+                    <div style={{ fontSize: '14px', opacity: 0.7 }}>
+                      Invoices will appear here when loads are completed
+                    </div>
+                  </div>
+                ) : (
+                  invoices.map((invoice, index) => (
+                    <div
+                      key={invoice.id}
+                      style={{
+                        padding: '18px 22px',
+                        borderBottom:
+                          index < invoices.length - 1
+                            ? '2px solid rgba(255, 255, 255, 0.15)'
+                            : 'none',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '12px',
+                        marginBottom: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
                           <div
                             style={{
-                              fontSize: '15px',
-                              fontWeight: notification.read ? '400' : '600',
-                              color: 'white',
-                              marginBottom: '6px',
-                              lineHeight: '1.4',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#ffffff',
+                              marginBottom: '4px',
                             }}
                           >
-                            {notification.message}
+                            Invoice #{invoice.invoiceNumber}
                           </div>
                           <div
                             style={{
-                              fontSize: '13px',
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              fontWeight: '500',
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.7)',
                             }}
                           >
-                            {notification.timestamp}
+                            Load: {invoice.loadId} | Amount: ${invoice.amount}
                           </div>
                         </div>
                         <div
                           style={{
-                            display: 'inline-block',
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            background:
-                              notification.type === 'load_assignment'
-                                ? 'rgba(59, 130, 246, 0.2)'
-                                : notification.type === 'dispatch_update'
-                                  ? 'rgba(34, 197, 94, 0.2)'
-                                  : 'rgba(245, 158, 11, 0.2)',
-                            color:
-                              notification.type === 'load_assignment'
-                                ? '#60a5fa'
-                                : notification.type === 'dispatch_update'
-                                  ? '#22c55e'
-                                  : '#f59e0b',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
                           }}
                         >
-                          {notification.type.replace('_', ' ')}
+                          {invoice.status}
                         </div>
                       </div>
                     </div>
@@ -5151,119 +4190,97 @@ export default function DispatchCentral() {
           )}
         </div>
 
-        {/* Carrier Invitation Management - Bottom Section */}
-        {selectedTab === 'dashboard' && (
-          <div
-            style={{
-              marginTop: '25px',
-              marginBottom: '25px',
-              background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-              border: '2px solid #0d9488',
-              borderRadius: '8px',
-              padding: '12px',
-              color: 'white',
+        {/* Invoice Creation Modal */}
+        {showInvoiceModal && selectedLoadForInvoice && (
+          <InvoiceCreationModal
+            load={selectedLoadForInvoice}
+            onClose={() => {
+              setShowInvoiceModal(false);
+              setSelectedLoadForInvoice(null);
             }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '8px',
-              }}
-            >
-              <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>
-                📧 Carrier Invitations
-              </span>
-              <div style={{ display: 'flex', gap: '8px', fontSize: '0.7rem' }}>
-                <span
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                  }}
-                >
-                  📧 8
-                </span>
-                <span
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                  }}
-                >
-                  👁️ 5
-                </span>
-                <span
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                  }}
-                >
-                  ✅ 3
-                </span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem' }}>
-              <input
-                placeholder='Company Name'
-                style={{
-                  flex: 1,
-                  padding: '6px 8px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  background: 'rgba(255,255,255,0.9)',
-                  color: '#2d3748',
-                  fontSize: '0.8rem',
-                }}
-              />
-              <input
-                placeholder='Email'
-                style={{
-                  flex: 1,
-                  padding: '6px 8px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  background: 'rgba(255,255,255,0.9)',
-                  color: '#2d3748',
-                  fontSize: '0.8rem',
-                }}
-              />
-              <button
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.4)',
-                  borderRadius: '4px',
-                  color: 'white',
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                }}
-              >
-                📧 Send
-              </button>
-              <button
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.4)',
-                  borderRadius: '4px',
-                  color: 'white',
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                }}
-              >
-                🔗 Link
-              </button>
-            </div>
-          </div>
+            onInvoiceCreated={handleInvoiceCreated}
+          />
         )}
 
-        {/* Compliance Alert Modal */}
-        {showComplianceAlert && (
+        {/* Invoice Lifecycle Viewer Modal */}
+        {showInvoiceLifecycleViewer && selectedInvoiceForViewing && (
+          <InvoiceLifecycleViewer
+            invoice={{
+              invoiceNumber: selectedInvoiceForViewing || '',
+              loadId: 'FL-001',
+              loadBoardNumber: '100234',
+              route: 'Atlanta, GA → Miami, FL',
+              completedDate: new Date().toISOString(),
+              carrierName: 'ABC Trucking',
+              carrierMC: 'MC-123456',
+              grossRevenue: 2500,
+              dispatcherFeePercentage: 10,
+              dispatcherFeeAmount: 250,
+              netCarrierPayment: 2250,
+              status: 'sent',
+              createdAt: new Date().toISOString(),
+              dueDate: new Date(
+                Date.now() + 7 * 24 * 60 * 60 * 1000
+              ).toISOString(),
+              rateConfirmationNumber: 'RC-FL-001-123456',
+              bolNumber: 'BOL-FL-001-789012',
+              timeline: [
+                {
+                  id: '1',
+                  type: 'created',
+                  title: 'Invoice Auto-Generated',
+                  description:
+                    'System automatically created invoice upon load completion',
+                  timestamp: new Date().toISOString(),
+                  userName: 'System',
+                },
+                {
+                  id: '2',
+                  type: 'verified',
+                  title: 'Documents Verified',
+                  description:
+                    'Rate confirmation and BOL verified successfully',
+                  timestamp: new Date().toISOString(),
+                  userName: 'Dispatcher',
+                },
+                {
+                  id: '3',
+                  type: 'sent',
+                  title: 'Invoice Sent',
+                  description: 'Invoice sent to carrier via email',
+                  timestamp: new Date().toISOString(),
+                  userName: 'System',
+                },
+              ],
+            }}
+            onClose={() => {
+              setShowInvoiceLifecycleViewer(false);
+              setSelectedInvoiceForViewing(null);
+            }}
+            onViewDocument={(documentType, documentNumber) => {
+              window.open(
+                `/documents?type=${documentType}&number=${documentNumber}`,
+                '_blank'
+              );
+            }}
+            onResendInvoice={() => {
+              if (selectedInvoiceForViewing) {
+                handleResendInvoice(selectedInvoiceForViewing);
+              }
+              setShowInvoiceLifecycleViewer(false);
+            }}
+            onMarkPaid={(paymentInfo) => {
+              if (selectedInvoiceForViewing) {
+                handleMarkPaid(selectedInvoiceForViewing, paymentInfo);
+              }
+              setShowInvoiceLifecycleViewer(false);
+            }}
+            onSendReminder={handleSendReminder}
+          />
+        )}
+
+        {/* Square Accessorial Fee Modal */}
+        {showAccessorialModal && selectedAccessorialLoad && (
           <div
             style={{
               position: 'fixed',
@@ -5273,76 +4290,291 @@ export default function DispatchCentral() {
               bottom: 0,
               background: 'rgba(0, 0, 0, 0.8)',
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'center',
+              alignItems: 'center',
               zIndex: 1000,
-              backdropFilter: 'blur(10px)',
             }}
           >
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(20px)',
-                borderRadius: '24px',
-                padding: '32px',
+                background: 'white',
+                borderRadius: '12px',
+                padding: '24px',
                 maxWidth: '600px',
                 width: '90%',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+                maxHeight: '80vh',
+                overflowY: 'auto',
               }}
             >
-              <div
+              <h3
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '24px',
+                  margin: '0 0 20px 0',
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#1f2937',
                 }}
               >
-                <h2
+                Square Accessorial Fees - Load {selectedAccessorialLoad.id}
+              </h3>
+
+              {/* Accessorial Fee Form Content */}
+              <div style={{ marginBottom: '20px' }}>
+                <p style={{ color: '#6b7280', marginBottom: '16px' }}>
+                  Configure accessorial fees for this load to generate Square
+                  invoice.
+                </p>
+
+                {/* Detention Fees */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                      color: '#374151',
+                    }}
+                  >
+                    Detention Fees
+                  </label>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <input
+                      type='number'
+                      placeholder='Hours'
+                      value={accessorialFees.detention.hours}
+                      onChange={(e) => {
+                        const hours = Number(e.target.value);
+                        setAccessorialFees((prev) => ({
+                          ...prev,
+                          detention: {
+                            ...prev.detention,
+                            hours,
+                            total: hours * prev.detention.rate,
+                          },
+                        }));
+                      }}
+                      style={{
+                        padding: '8px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        width: '80px',
+                      }}
+                    />
+                    <span style={{ color: '#6b7280' }}>×</span>
+                    <input
+                      type='number'
+                      placeholder='Rate per hour'
+                      value={accessorialFees.detention.rate}
+                      onChange={(e) => {
+                        const rate = Number(e.target.value);
+                        setAccessorialFees((prev) => ({
+                          ...prev,
+                          detention: {
+                            ...prev.detention,
+                            rate,
+                            total: prev.detention.hours * rate,
+                          },
+                        }));
+                      }}
+                      style={{
+                        padding: '8px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        width: '100px',
+                      }}
+                    />
+                    <span style={{ color: '#6b7280' }}>=</span>
+                    <span style={{ fontWeight: '600', color: '#059669' }}>
+                      ${accessorialFees.detention.total}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Lumper Fees */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                      color: '#374151',
+                    }}
+                  >
+                    Lumper Fees
+                  </label>
+                  <input
+                    type='number'
+                    placeholder='Amount'
+                    value={accessorialFees.lumper.amount}
+                    onChange={(e) => {
+                      const amount = Number(e.target.value);
+                      setAccessorialFees((prev) => ({
+                        ...prev,
+                        lumper: { ...prev.lumper, amount },
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      width: '120px',
+                    }}
+                  />
+                </div>
+
+                {/* Other Fees */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                      color: '#374151',
+                    }}
+                  >
+                    Other Fees
+                  </label>
+                  {accessorialFees.other.map((fee, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '8px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <input
+                        type='text'
+                        placeholder='Type'
+                        value={fee.type}
+                        onChange={(e) => {
+                          const newOther = [...accessorialFees.other];
+                          newOther[index].type = e.target.value;
+                          setAccessorialFees((prev) => ({
+                            ...prev,
+                            other: newOther,
+                          }));
+                        }}
+                        style={{
+                          padding: '6px 10px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          width: '100px',
+                        }}
+                      />
+                      <input
+                        type='text'
+                        placeholder='Description'
+                        value={fee.description}
+                        onChange={(e) => {
+                          const newOther = [...accessorialFees.other];
+                          newOther[index].description = e.target.value;
+                          setAccessorialFees((prev) => ({
+                            ...prev,
+                            other: newOther,
+                          }));
+                        }}
+                        style={{
+                          padding: '6px 10px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          flex: 1,
+                        }}
+                      />
+                      <input
+                        type='number'
+                        placeholder='Amount'
+                        value={fee.amount}
+                        onChange={(e) => {
+                          const newOther = [...accessorialFees.other];
+                          newOther[index].amount = Number(e.target.value);
+                          setAccessorialFees((prev) => ({
+                            ...prev,
+                            other: newOther,
+                          }));
+                        }}
+                        style={{
+                          padding: '6px 10px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          width: '80px',
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          const newOther = accessorialFees.other.filter(
+                            (_, i) => i !== index
+                          );
+                          setAccessorialFees((prev) => ({
+                            ...prev,
+                            other: newOther,
+                          }));
+                        }}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 8px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      setAccessorialFees((prev) => ({
+                        ...prev,
+                        other: [
+                          ...prev.other,
+                          { type: '', description: '', amount: 0 },
+                        ],
+                      }));
+                    }}
+                    style={{
+                      background: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                    }}
+                  >
+                    + Add Fee
+                  </button>
+                </div>
+
+                {/* Total */}
+                <div
                   style={{
-                    color: 'white',
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    margin: 0,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                    padding: '12px',
+                    background: '#f3f4f6',
+                    borderRadius: '6px',
+                    marginBottom: '20px',
                   }}
                 >
-                  🛡️ Compliance Check
-                </h2>
-                <button
-                  onClick={() => setShowComplianceAlert(false)}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    color: 'white',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  ×
-                </button>
+                  <div style={{ fontWeight: '600', color: '#374151' }}>
+                    Total Accessorial Fees: $
+                    {accessorialFees.detention.total +
+                      accessorialFees.lumper.amount +
+                      accessorialFees.other.reduce(
+                        (sum, fee) => sum + fee.amount,
+                        0
+                      )}
+                  </div>
+                </div>
               </div>
 
-              <div
-                style={{
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  marginBottom: '24px',
-                  lineHeight: '1.6',
-                  whiteSpace: 'pre-line',
-                  fontFamily: 'monospace',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  padding: '16px',
-                  borderRadius: '8px',
-                }}
-              >
-                {complianceAlertMessage}
-              </div>
-
+              {/* Modal Actions */}
               <div
                 style={{
                   display: 'flex',
@@ -5351,276 +4583,55 @@ export default function DispatchCentral() {
                 }}
               >
                 <button
-                  onClick={() => setShowComplianceAlert(false)}
+                  onClick={() => {
+                    setShowAccessorialModal(false);
+                    setSelectedAccessorialLoad(null);
+                    setAccessorialFees({
+                      detention: {
+                        hours: 0,
+                        rate: 50,
+                        location: 'pickup',
+                        total: 0,
+                      },
+                      lumper: {
+                        amount: 0,
+                        location: 'pickup',
+                        receiptNumber: '',
+                      },
+                      other: [],
+                    });
+                  }}
                   style={{
-                    background: 'rgba(107, 114, 128, 0.8)',
+                    background: '#6b7280',
                     color: 'white',
                     border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
                     cursor: 'pointer',
-                    fontWeight: '600',
                   }}
                 >
                   Cancel
                 </button>
-                {selectedDriverForAssignment && (
-                  <button
-                    onClick={() => {
-                      console.log(
-                        `✅ Assignment confirmed with warnings for driver ${selectedDriverForAssignment}`
-                      );
-                      setShowComplianceAlert(false);
-                      setSelectedDriverForAssignment(null);
-                    }}
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.8)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 24px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Proceed with Warning
-                  </button>
-                )}
+                <button
+                  onClick={handleCreateAccessorialInvoice}
+                  style={{
+                    background: '#059669',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                  }}
+                >
+                  Create Square Invoice
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Compliance Dashboard Section */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '20px',
-            padding: '24px',
-            marginBottom: '30px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-            }}
-          >
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '24px',
-                fontWeight: '700',
-                margin: 0,
-              }}
-            >
-              🛡️ Driver Compliance Status
-            </h2>
-            <Link href='/compliance' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'rgba(16, 185, 129, 0.8)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                }}
-              >
-                📋 Full Compliance Dashboard
-              </button>
-            </Link>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '16px',
-            }}
-          >
-            {complianceData.map((driver) => (
-              <div
-                key={driver.driverId}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  border: `2px solid ${getComplianceStatusColor(driver.hosStatus)}40`,
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '12px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      margin: 0,
-                    }}
-                  >
-                    {driver.driverName}
-                  </h3>
-                  <div
-                    style={{
-                      background: getComplianceStatusColor(driver.hosStatus),
-                      color: 'white',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {driver.hosStatus}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '8px',
-                    fontSize: '14px',
-                  }}
-                >
-                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    <strong>Driving Time:</strong> {driver.drivingTimeRemaining}
-                    h
-                  </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    <strong>Duty Time:</strong> {driver.dutyTimeRemaining}h
-                  </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    <strong>CDL:</strong>{' '}
-                    <span
-                      style={{
-                        color:
-                          driver.cdlStatus === 'valid' ? '#10b981' : '#ef4444',
-                      }}
-                    >
-                      {driver.cdlStatus}
-                    </span>
-                  </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    <strong>Clearinghouse:</strong>{' '}
-                    <span
-                      style={{
-                        color:
-                          driver.clearinghouseStatus === 'clear'
-                            ? '#10b981'
-                            : '#ef4444',
-                      }}
-                    >
-                      {driver.clearinghouseStatus}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '12px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Score: {driver.complianceScore}/100
-                  </div>
-                  <button
-                    onClick={() =>
-                      handleDriverAssignment(driver.driverId, 'TEST-LOAD-001')
-                    }
-                    disabled={!driver.canReceiveAssignment}
-                    style={{
-                      background: driver.canReceiveAssignment
-                        ? 'rgba(16, 185, 129, 0.8)'
-                        : 'rgba(107, 114, 128, 0.5)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '6px 12px',
-                      borderRadius: '6px',
-                      cursor: driver.canReceiveAssignment
-                        ? 'pointer'
-                        : 'not-allowed',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {driver.canReceiveAssignment
-                      ? '✅ Assign Load'
-                      : '❌ Unavailable'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Back Button */}
-        <div style={{ textAlign: 'center' }}>
-          <Link href='/' style={{ textDecoration: 'none' }}>
-            <button
-              style={{
-                background: 'rgba(255, 255, 255, 0.3)',
-                color: 'white',
-                border: '2px solid white',
-                padding: '15px 30px',
-                borderRadius: '15px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                backdropFilter: 'blur(10px)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 10px 25px rgba(0, 0, 0, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              ← Back to Dashboard
-            </button>
-          </Link>
-        </div>
-
-        {/* Invoice Creation Modal */}
-        {showInvoiceModal && selectedLoadForInvoice && (
-          <InvoiceCreationModal
-            load={selectedLoadForInvoice as Load}
-            onClose={() => {
-              setShowInvoiceModal(false);
-              setSelectedLoadForInvoice(null);
-            }}
-            onInvoiceCreated={handleInvoiceCreated}
-          />
-        )}
-
-        {/* Driver Schedule Modal - Excel-like Popup */}
+        {/* Driver Schedule Modal */}
         {showDriverScheduleModal && modalDriverData && (
           <div
             style={{
@@ -5631,338 +4642,178 @@ export default function DispatchCentral() {
               bottom: 0,
               background: 'rgba(0, 0, 0, 0.8)',
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'center',
+              alignItems: 'center',
               zIndex: 1000,
             }}
-            onClick={() => setShowDriverScheduleModal(false)}
           >
             <div
               style={{
                 background: 'white',
                 borderRadius: '12px',
-                padding: '0',
-                maxWidth: '90vw',
+                padding: '24px',
+                maxWidth: '800px',
+                width: '90%',
                 maxHeight: '80vh',
-                overflow: 'hidden',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                overflowY: 'auto',
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div
                 style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                  color: 'white',
-                  padding: '16px 24px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  marginBottom: '20px',
                 }}
               >
-                <div>
-                  <h3
-                    style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}
-                  >
-                    🚛 {modalDriverData.driverName} - Schedule
-                  </h3>
-                  <p
-                    style={{
-                      margin: '4px 0 0 0',
-                      fontSize: '14px',
-                      opacity: 0.9,
-                    }}
-                  >
-                    {modalDriverData.truckingCompany} • MC #
-                    {modalDriverData.mcNumber}
-                  </p>
-                </div>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: '#1f2937',
+                  }}
+                >
+                  📅 Driver Schedule - {modalDriverData?.driverName}
+                </h3>
                 <button
                   onClick={() => setShowDriverScheduleModal(false)}
                   style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: 'none',
+                    background: '#6b7280',
                     color: 'white',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
                     cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
                   }}
                 >
-                  ×
+                  Close
                 </button>
               </div>
 
-              {/* Excel-like Schedule Table */}
               <div
                 style={{
-                  padding: '0',
-                  overflow: 'auto',
-                  maxHeight: 'calc(80vh - 80px)',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  marginBottom: '20px',
                 }}
               >
-                <table
+                <div
                   style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: '13px',
+                    padding: '12px',
+                    background: '#f3f4f6',
+                    borderRadius: '8px',
                   }}
                 >
-                  <thead>
-                    <tr
+                  <div
+                    style={{
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Driver Info
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                    MC: {modalDriverData?.mcNumber}
+                    <br />
+                    Company: {modalDriverData?.truckingCompany}
+                  </div>
+                </div>
+              </div>
+
+              {/* Schedule List */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 12px 0', color: '#374151' }}>
+                  Weekly Schedule
+                </h4>
+                {driverScheduleData.length === 0 ? (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      padding: '40px',
+                      color: '#6b7280',
+                    }}
+                  >
+                    No schedule data available
+                  </div>
+                ) : (
+                  driverScheduleData.map((schedule, index) => (
+                    <div
+                      key={schedule.id}
                       style={{
-                        background: '#f8fafc',
-                        borderBottom: '2px solid #e2e8f0',
+                        ...getScheduleStatusStyle(schedule.status),
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        marginBottom: '8px',
+                        cursor: 'pointer',
                       }}
+                      onDoubleClick={() =>
+                        handleScheduleDoubleClick(schedule.id)
+                      }
                     >
-                      <th
+                      <div
                         style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
                         }}
                       >
-                        📅 Date
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        ⏰ Time
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        📦 Load ID
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        📍 Route
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        🚚 Status
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        ⏱️ Hours
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                          borderRight: '1px solid #e2e8f0',
-                        }}
-                      >
-                        💰 Rate
-                      </th>
-                      <th
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'left',
-                          fontWeight: '600',
-                          color: '#374151',
-                        }}
-                      >
-                        📋 Notes
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Real Schedule Data from Scheduling Service */}
-                    {driverScheduleData.length > 0 ? (
-                      driverScheduleData.map((schedule, index) => {
-                        const statusStyle = getScheduleStatusStyle(
-                          schedule.status
-                        );
-                        const isAlternate = index % 2 === 1;
-                        return (
-                          <tr
-                            key={schedule.id}
-                            style={{
-                              borderBottom: '1px solid #f1f5f9',
-                              background: isAlternate ? '#fafafa' : 'white',
-                              cursor: 'pointer',
-                            }}
-                            onDoubleClick={() =>
-                              handleScheduleDoubleClick(schedule.id)
-                            }
-                            title='Double-click to edit schedule'
+                        <div>
+                          <div
+                            style={{ fontWeight: '600', marginBottom: '4px' }}
                           >
-                            <td
+                            {formatDate(schedule.date)} - {schedule.loadType}
+                          </div>
+                          <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                            {schedule.route} | Est. Hours:{' '}
+                            {schedule.estimatedHours}
+                          </div>
+                        </div>
+                        <div>
+                          {editingScheduleId === schedule.id ? (
+                            <select
+                              value={schedule.status}
+                              onChange={(e) => {
+                                updateScheduleStatus(
+                                  schedule.id,
+                                  e.target.value
+                                );
+                                setEditingScheduleId(null);
+                              }}
+                              onBlur={() => setEditingScheduleId(null)}
                               style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                border: '1px solid #d1d5db',
+                                background: 'white',
+                                color: '#374151',
                               }}
                             >
-                              {formatDate(schedule.startDate)}
-                            </td>
-                            <td
+                              <option value='pending'>Pending</option>
+                              <option value='active'>Active</option>
+                              <option value='completed'>Completed</option>
+                            </select>
+                          ) : (
+                            <span
                               style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                fontSize: '12px',
+                                cursor: 'pointer',
                               }}
+                              onClick={() => setEditingScheduleId(schedule.id)}
                             >
-                              {schedule.startTime}
-                            </td>
-                            <td
-                              style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
-                                color: '#3b82f6',
-                                fontWeight: '600',
-                              }}
-                            >
-                              {schedule.id}
-                            </td>
-                            <td
-                              style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
-                              }}
-                            >
-                              {schedule.origin && schedule.destination
-                                ? `${schedule.origin} → ${schedule.destination}`
-                                : schedule.title}
-                            </td>
-                            <td
-                              style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
-                              }}
-                            >
-                              {editingScheduleId === schedule.id ? (
-                                <select
-                                  value={schedule.status}
-                                  onChange={(e) => {
-                                    updateScheduleStatus(
-                                      schedule.id,
-                                      e.target.value
-                                    );
-                                    setEditingScheduleId(null);
-                                  }}
-                                  onBlur={() => setEditingScheduleId(null)}
-                                  autoFocus
-                                  style={{
-                                    background: statusStyle.background,
-                                    color: statusStyle.color,
-                                    border: '1px solid #d1d5db',
-                                    borderRadius: '6px',
-                                    fontSize: '11px',
-                                    fontWeight: '600',
-                                    padding: '4px 8px',
-                                  }}
-                                >
-                                  <option value='Scheduled'>Scheduled</option>
-                                  <option value='In Progress'>
-                                    In Progress
-                                  </option>
-                                  <option value='Completed'>Completed</option>
-                                  <option value='Cancelled'>Cancelled</option>
-                                  <option value='Delayed'>Delayed</option>
-                                </select>
-                              ) : (
-                                <span
-                                  style={{
-                                    background: statusStyle.background,
-                                    color: statusStyle.color,
-                                    padding: '4px 8px',
-                                    borderRadius: '6px',
-                                    fontSize: '11px',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingScheduleId(schedule.id);
-                                  }}
-                                  title='Click to change status'
-                                >
-                                  {schedule.status}
-                                </span>
-                              )}
-                            </td>
-                            <td
-                              style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
-                              }}
-                            >
-                              {schedule.estimatedHours || 8} / 11
-                            </td>
-                            <td
-                              style={{
-                                padding: '12px 16px',
-                                borderRight: '1px solid #f1f5f9',
-                                color: '#059669',
-                                fontWeight: '600',
-                              }}
-                            >
-                              {schedule.estimatedRevenue
-                                ? `$${schedule.estimatedRevenue.toLocaleString()}`
-                                : '-'}
-                            </td>
-                            <td style={{ padding: '12px 16px' }}>
-                              {schedule.description || schedule.scheduleType}
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan={8}
-                          style={{
-                            padding: '40px 16px',
-                            textAlign: 'center',
-                            color: '#6b7280',
-                            fontStyle: 'italic',
-                          }}
-                        >
-                          No schedules found for this driver
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                              {schedule.status}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* Modal Footer */}

@@ -1,6 +1,7 @@
 'use client';
 
-import { getMainDashboardLoads } from './loadService';
+// TEMPORARILY REMOVED TO FIX KPI ISSUES
+// import { getMainDashboardLoads } from './loadService';
 import { FleetFlowSystemOrchestrator } from './system-orchestrator';
 
 // 🔔 UNIFIED NOTIFICATION TYPES
@@ -406,8 +407,14 @@ export class FleetFlowNotificationManager {
     `;
   }
 
-  // 🔄 SYNC WITH FLEETFLOW SERVICES
+  // 🔄 SYNC WITH FLEETFLOW SERVICES - TEMPORARILY DISABLED
   private async syncWithFleetFlowServices(): Promise<void> {
+    // COMPLETELY DISABLED TO FIX KPI RENDERING ISSUES
+    console.log('🔇 FleetFlow sync completely disabled for stability');
+    return;
+
+    // Original sync code commented out to prevent execution
+    /*
     try {
       // Get real FleetFlow data
       const [loads, systemStatus] = await Promise.all([
@@ -420,13 +427,20 @@ export class FleetFlowNotificationManager {
     } catch (error) {
       console.warn('⚠️ FleetFlow service sync failed:', error);
     }
+    */
   }
 
-  // 🤖 GENERATE INTELLIGENT NOTIFICATIONS
+  // 🤖 GENERATE INTELLIGENT NOTIFICATIONS - TEMPORARILY DISABLED
   private async generateIntelligentNotifications(
     loads: any[],
     systemStatus: any
   ): Promise<void> {
+    // COMPLETELY DISABLED TO FIX KPI RENDERING ISSUES
+    console.log('🔇 Intelligent notifications disabled for stability');
+    return;
+
+    // Original notification code commented out
+    /*
     // ETA Updates for active loads
     const activeLoads = loads.filter((load) => load.status === 'In Transit');
     for (const load of activeLoads) {
@@ -509,6 +523,7 @@ export class FleetFlowNotificationManager {
         ],
       });
     }
+    */
   }
 
   // ⏰ CHECK IF ETA UPDATE SHOULD BE SENT

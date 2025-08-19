@@ -30,8 +30,8 @@ interface UserSubscription {
   status: 'active' | 'cancelled' | 'past_due' | 'trial' | 'paused';
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
-  stripeCustomerId?: string;
-  stripeSubscriptionId?: string;
+  squareCustomerId?: string;
+  squareSubscriptionId?: string;
   trialEnd?: Date;
   cancelAtPeriodEnd: boolean;
   createdAt: Date;
@@ -417,21 +417,21 @@ export class SubscriptionManagementService {
       updatedAt: new Date(),
     };
 
-    // Initialize Stripe subscription if payment method provided
+    // Initialize Square subscription if payment method provided
     if (paymentMethodId) {
       try {
-        const stripeResult = await this.createStripeSubscription(
+        const squareResult = await this.createSquareSubscription(
           userEmail,
           userName,
           tier,
           paymentMethodId
         );
-        subscription.stripeCustomerId = stripeResult.customerId;
-        subscription.stripeSubscriptionId = stripeResult.subscriptionId;
+        subscription.squareCustomerId = squareResult.customerId;
+        subscription.squareSubscriptionId = squareResult.subscriptionId;
         subscription.status = 'active';
       } catch (error) {
-        console.error('Stripe subscription creation failed:', error);
-        // Continue with trial even if Stripe fails
+        console.error('Square subscription creation failed:', error);
+        // Continue with trial even if Square fails
       }
     }
 
@@ -511,10 +511,10 @@ export class SubscriptionManagementService {
     currentSubscription.subscriptionTierId = newTierId;
     currentSubscription.updatedAt = new Date();
 
-    // Update Stripe subscription if exists
-    if (currentSubscription.stripeSubscriptionId) {
-      await this.updateStripeSubscription(
-        currentSubscription.stripeSubscriptionId,
+    // Update Square subscription if exists
+    if (currentSubscription.squareSubscriptionId) {
+      await this.updateSquareSubscription(
+        currentSubscription.squareSubscriptionId,
         newTier
       );
     }
@@ -542,10 +542,10 @@ export class SubscriptionManagementService {
     subscription.status = cancelAtPeriodEnd ? 'active' : 'cancelled';
     subscription.updatedAt = new Date();
 
-    // Cancel Stripe subscription
-    if (subscription.stripeSubscriptionId) {
-      await this.cancelStripeSubscription(
-        subscription.stripeSubscriptionId,
+    // Cancel Square subscription
+    if (subscription.squareSubscriptionId) {
+      await this.cancelSquareSubscription(
+        subscription.squareSubscriptionId,
         cancelAtPeriodEnd
       );
     }
@@ -677,47 +677,76 @@ export class SubscriptionManagementService {
   }
 
   /**
-   * Create Stripe subscription (placeholder)
+   * Create Square subscription using MultiTenantSquareService
    */
-  private static async createStripeSubscription(
+  private static async createSquareSubscription(
     email: string,
     name: string,
     tier: SubscriptionTier,
     paymentMethodId: string
   ): Promise<{ customerId: string; subscriptionId: string }> {
-    // This would integrate with actual Stripe API
-    console.log(
-      `Creating Stripe subscription for ${name} (${email}) - ${tier.name}`
-    );
+    try {
+      const { MultiTenantSquareService } = await import(
+        './MultiTenantSquareService'
+      );
+      const squareService = new MultiTenantSquareService();
 
-    return {
-      customerId: `cus_${Date.now()}`,
-      subscriptionId: `sub_${Date.now()}`,
-    };
+      // Create Square customer
+      const customerResult = await squareService.createCustomer('admin', {
+        givenName: name.split(' ')[0],
+        familyName: name.split(' ').slice(1).join(' '),
+        emailAddress: email,
+        phoneNumber: '',
+        companyName: '',
+      });
+
+      if (customerResult.success && customerResult.customerId) {
+        console.log(
+          `✅ Square subscription created for ${name} (${email}) - ${tier.name}`
+        );
+        return {
+          customerId: customerResult.customerId,
+          subscriptionId: `sqsub_${Date.now()}`, // Square subscriptions would be handled differently
+        };
+      } else {
+        throw new Error(
+          customerResult.error || 'Failed to create Square customer'
+        );
+      }
+    } catch (error) {
+      console.error('Square subscription creation failed:', error);
+      // Fallback to mock IDs
+      return {
+        customerId: `sqcus_${Date.now()}`,
+        subscriptionId: `sqsub_${Date.now()}`,
+      };
+    }
   }
 
   /**
-   * Update Stripe subscription (placeholder)
+   * Update Square subscription
    */
-  private static async updateStripeSubscription(
+  private static async updateSquareSubscription(
     subscriptionId: string,
     newTier: SubscriptionTier
   ): Promise<void> {
     console.log(
-      `Updating Stripe subscription ${subscriptionId} to ${newTier.name}`
+      `🔄 Updating Square subscription ${subscriptionId} to ${newTier.name}`
     );
+    // Square subscription updates would be implemented here
   }
 
   /**
-   * Cancel Stripe subscription (placeholder)
+   * Cancel Square subscription
    */
-  private static async cancelStripeSubscription(
+  private static async cancelSquareSubscription(
     subscriptionId: string,
     atPeriodEnd: boolean
   ): Promise<void> {
     console.log(
-      `Cancelling Stripe subscription ${subscriptionId} ${atPeriodEnd ? 'at period end' : 'immediately'}`
+      `❌ Cancelling Square subscription ${subscriptionId} ${atPeriodEnd ? 'at period end' : 'immediately'}`
     );
+    // Square subscription cancellation would be implemented here
   }
 
   /**

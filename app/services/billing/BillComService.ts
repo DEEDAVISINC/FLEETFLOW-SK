@@ -23,7 +23,13 @@ export interface InvoiceLineItem {
   quantity: number;
   rate: number;
   amount: number;
-  category: 'TMS' | 'CONSORTIUM' | 'COMPLIANCE' | 'USAGE' | 'ADDON';
+  category:
+    | 'TMS'
+    | 'CONSORTIUM'
+    | 'COMPLIANCE'
+    | 'USAGE'
+    | 'ADDON'
+    | 'ACCESSORIAL';
   metadata?: Record<string, string>;
 }
 
@@ -63,14 +69,18 @@ export class BillComService {
   constructor() {
     // Only initialize if Bill.com is enabled
     if (!isBillcomEnabled()) {
-      console.warn('Bill.com is not configured. Invoice features will be disabled.');
+      console.warn(
+        'Bill.com is not configured. Invoice features will be disabled.'
+      );
     }
-    
+
     this.apiUrl = process.env.BILLCOM_API_URL || 'https://api.bill.com/api/v2';
     this.apiKey = process.env.BILLCOM_API_KEY || '';
-    
+
     if (isBillcomEnabled() && !this.apiKey) {
-      throw new Error('BILLCOM_API_KEY environment variable is required when Bill.com is enabled');
+      throw new Error(
+        'BILLCOM_API_KEY environment variable is required when Bill.com is enabled'
+      );
     }
   }
 
@@ -93,9 +103,11 @@ export class BillComService {
       });
 
       const data = await response.json();
-      
+
       if (data.response_status !== 0) {
-        throw new Error(`Bill.com authentication failed: ${data.response_message}`);
+        throw new Error(
+          `Bill.com authentication failed: ${data.response_message}`
+        );
       }
 
       this.sessionId = data.response_data.sessionId;
@@ -139,7 +151,9 @@ export class BillComService {
   // CUSTOMER MANAGEMENT
   // ========================================
 
-  async createCustomer(customerData: Omit<BillComCustomer, 'id'>): Promise<BillComCustomer> {
+  async createCustomer(
+    customerData: Omit<BillComCustomer, 'id'>
+  ): Promise<BillComCustomer> {
     try {
       const billComCustomer = {
         entity: 'Customer',
@@ -157,7 +171,10 @@ export class BillComService {
         isActive: '1',
       };
 
-      const response = await this.makeRequest('Crud/Create/Customer.json', billComCustomer);
+      const response = await this.makeRequest(
+        'Crud/Create/Customer.json',
+        billComCustomer
+      );
 
       return {
         id: response.id,
@@ -200,6 +217,102 @@ export class BillComService {
   // INVOICE CREATION & MANAGEMENT
   // ========================================
 
+  async createAccessorialInvoice(
+    customerId: string,
+    loadId: string,
+    accessorials: {
+      detention: Array<{
+        hours: number;
+        ratePerHour: number;
+        total: number;
+        location: string;
+        approved: boolean;
+      }>;
+      lumper: Array<{ amount: number; location: string; approved: boolean }>;
+      other: Array<{
+        type: string;
+        description: string;
+        amount: number;
+        approved: boolean;
+      }>;
+      totalAmount: number;
+    }
+  ): Promise<Invoice | null> {
+    try {
+      const lineItems: InvoiceLineItem[] = [];
+
+      // Add detention fees
+      accessorials.detention
+        .filter((d) => d.approved)
+        .forEach((detention) => {
+          lineItems.push({
+            description: `Detention - ${detention.location} (${detention.hours} hours @ $${detention.ratePerHour}/hr)`,
+            quantity: detention.hours,
+            rate: detention.ratePerHour,
+            amount: detention.total,
+            category: 'ACCESSORIAL',
+            metadata: {
+              loadId,
+              type: 'detention',
+              location: detention.location,
+            },
+          });
+        });
+
+      // Add lumper fees
+      accessorials.lumper
+        .filter((l) => l.approved)
+        .forEach((lumper) => {
+          lineItems.push({
+            description: `Lumper Fee - ${lumper.location}`,
+            quantity: 1,
+            rate: lumper.amount,
+            amount: lumper.amount,
+            category: 'ACCESSORIAL',
+            metadata: {
+              loadId,
+              type: 'lumper',
+              location: lumper.location,
+            },
+          });
+        });
+
+      // Add other accessorials
+      accessorials.other
+        .filter((o) => o.approved)
+        .forEach((other) => {
+          lineItems.push({
+            description: `${other.type} - ${other.description}`,
+            quantity: 1,
+            rate: other.amount,
+            amount: other.amount,
+            category: 'ACCESSORIAL',
+            metadata: {
+              loadId,
+              type: 'other',
+              accessorialType: other.type,
+            },
+          });
+        });
+
+      if (lineItems.length === 0) {
+        console.log('No approved accessorials to invoice');
+        return null;
+      }
+
+      const invoice = await this.createInvoice(customerId, lineItems, {
+        loadId,
+        invoiceType: 'accessorial',
+        totalAccessorials: accessorials.totalAmount.toString(),
+      });
+
+      return invoice;
+    } catch (error) {
+      console.error('Error creating accessorial invoice:', error);
+      return null;
+    }
+  }
+
   async createInvoice(
     customerId: string,
     lineItems: InvoiceLineItem[],
@@ -228,7 +341,10 @@ export class BillComService {
         isActive: '1',
       };
 
-      const response = await this.makeRequest('Crud/Create/Invoice.json', invoiceData);
+      const response = await this.makeRequest(
+        'Crud/Create/Invoice.json',
+        invoiceData
+      );
 
       return {
         id: response.id,
@@ -265,7 +381,10 @@ export class BillComService {
           rate: usage.apiCalls.rate,
           amount: usage.apiCalls.quantity * usage.apiCalls.rate,
           category: 'USAGE',
-          metadata: { type: 'api_calls', period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}` },
+          metadata: {
+            type: 'api_calls',
+            period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}`,
+          },
         });
       }
 
@@ -277,7 +396,10 @@ export class BillComService {
           rate: usage.dataExports.rate,
           amount: usage.dataExports.quantity * usage.dataExports.rate,
           category: 'USAGE',
-          metadata: { type: 'data_exports', period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}` },
+          metadata: {
+            type: 'data_exports',
+            period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}`,
+          },
         });
       }
 
@@ -289,7 +411,10 @@ export class BillComService {
           rate: usage.smsMessages.rate,
           amount: usage.smsMessages.quantity * usage.smsMessages.rate,
           category: 'USAGE',
-          metadata: { type: 'sms_messages', period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}` },
+          metadata: {
+            type: 'sms_messages',
+            period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}`,
+          },
         });
       }
 
@@ -301,7 +426,10 @@ export class BillComService {
           rate: usage.premiumFeatures.rate,
           amount: usage.premiumFeatures.quantity * usage.premiumFeatures.rate,
           category: 'USAGE',
-          metadata: { type: 'premium_features', period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}` },
+          metadata: {
+            type: 'premium_features',
+            period: `${period.startDate.toISOString()}_${period.endDate.toISOString()}`,
+          },
         });
       }
 
@@ -398,7 +526,7 @@ export class BillComService {
     try {
       // Bill.com doesn't have built-in recurring billing, so we'll implement this
       // as a scheduled job that creates invoices based on the interval
-      
+
       const recurringBilling = {
         customerId,
         items: subscriptionItems,
@@ -453,8 +581,11 @@ export class BillComService {
       for (const invoice of overdueInvoices) {
         try {
           // Attempt to charge saved payment method
-          const paymentResult = await this.chargeCustomer(invoice.customerId, invoice.total);
-          
+          const paymentResult = await this.chargeCustomer(
+            invoice.customerId,
+            invoice.total
+          );
+
           if (paymentResult.success) {
             await this.markInvoiceAsPaid(invoice.id, paymentResult.paymentId);
             processedCount++;
@@ -462,7 +593,10 @@ export class BillComService {
             await this.handleFailedPayment(invoice.id, paymentResult.error);
           }
         } catch (error) {
-          console.error(`Error processing payment for invoice ${invoice.id}:`, error);
+          console.error(
+            `Error processing payment for invoice ${invoice.id}:`,
+            error
+          );
         }
       }
 
@@ -479,7 +613,7 @@ export class BillComService {
 
   private calculateDueDate(invoiceDate: Date, paymentTerms: string): string {
     const dueDate = new Date(invoiceDate);
-    
+
     switch (paymentTerms) {
       case 'NET_15':
         dueDate.setDate(dueDate.getDate() + 15);
@@ -501,7 +635,7 @@ export class BillComService {
 
   private calculateNextBillingDate(currentDate: Date, interval: string): Date {
     const nextDate = new Date(currentDate);
-    
+
     switch (interval) {
       case 'MONTHLY':
         nextDate.setMonth(nextDate.getMonth() + 1);
@@ -543,7 +677,10 @@ export class BillComService {
     return [];
   }
 
-  private async updateNextBillingDate(billId: string, interval: string): Promise<void> {
+  private async updateNextBillingDate(
+    billId: string,
+    interval: string
+  ): Promise<void> {
     // TODO: Implement database update for next billing date
     console.log('Updating next billing date for:', billId);
   }
@@ -553,17 +690,26 @@ export class BillComService {
     return [];
   }
 
-  private async chargeCustomer(customerId: string, amount: number): Promise<{ success: boolean; paymentId?: string; error?: string }> {
+  private async chargeCustomer(
+    customerId: string,
+    amount: number
+  ): Promise<{ success: boolean; paymentId?: string; error?: string }> {
     // TODO: Integrate with payment processor (Stripe) to charge customer
     return { success: false, error: 'Payment processing not implemented' };
   }
 
-  private async markInvoiceAsPaid(invoiceId: string, paymentId: string): Promise<void> {
+  private async markInvoiceAsPaid(
+    invoiceId: string,
+    paymentId: string
+  ): Promise<void> {
     // TODO: Update invoice status in Bill.com and local database
     console.log('Marking invoice as paid:', invoiceId, paymentId);
   }
 
-  private async handleFailedPayment(invoiceId: string, error: string): Promise<void> {
+  private async handleFailedPayment(
+    invoiceId: string,
+    error: string
+  ): Promise<void> {
     // TODO: Implement failed payment handling (notifications, retries, etc.)
     console.log('Handling failed payment for invoice:', invoiceId, error);
   }

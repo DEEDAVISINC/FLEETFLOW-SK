@@ -197,7 +197,7 @@ export default function UnifiedNotificationBell({
     }
   };
 
-  // Get theme styles
+  // Get theme styles - Simple transparent background like original
   const getThemeStyles = () => {
     const isDark =
       theme === 'dark' ||
@@ -207,11 +207,9 @@ export default function UnifiedNotificationBell({
 
     return {
       bell: {
-        background: isDark
-          ? 'rgba(31, 41, 55, 0.8)'
-          : 'rgba(255, 255, 255, 0.9)',
-        color: isDark ? '#f3f4f6' : '#1f2937',
-        border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(209, 213, 219, 0.3)'}`,
+        background: 'transparent',
+        color: '#ffffff',
+        border: 'none',
       },
       dropdown: {
         background: isDark
@@ -252,42 +250,41 @@ export default function UnifiedNotificationBell({
         ref={bellRef}
         onClick={() => showDropdown && setIsOpen(!isOpen)}
         style={{
-          position: 'relative',
-          width: `${config.bell}px`,
-          height: `${config.bell}px`,
-          borderRadius: '50%',
-          ...themeStyles.bell,
-          backdropFilter: 'blur(10px)',
+          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+          color: 'white',
+          border: '1px solid rgba(245, 158, 11, 0.3)',
+          padding: '12px',
+          borderRadius: '12px',
+          fontSize: '20px',
           cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          backdropFilter: 'blur(10px)',
+          width: '48px',
+          height: '48px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'all 0.3s ease',
-          transform: 'scale(1)',
-          animation: hasUrgent ? 'pulse 2s infinite' : 'none',
+          boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)',
+          position: 'relative',
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.05)';
+        onMouseOver={(e) => {
           e.currentTarget.style.background =
-            theme === 'dark'
-              ? 'rgba(55, 65, 81, 0.9)'
-              : 'rgba(243, 244, 246, 0.95)';
+            'linear-gradient(135deg, #d97706, #f59e0b)';
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow =
+            '0 8px 25px rgba(245, 158, 11, 0.4)';
         }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.background = themeStyles.bell.background;
+        onMouseOut={(e) => {
+          e.currentTarget.style.background =
+            'linear-gradient(135deg, #f59e0b, #d97706)';
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow =
+            '0 4px 15px rgba(245, 158, 11, 0.3)';
         }}
         aria-label={`Notifications (${unreadCount} unread)`}
         title={`${unreadCount} unread notifications`}
       >
-        <Bell
-          size={config.icon}
-          style={{
-            color: hasUrgent ? '#ef4444' : 'currentColor',
-            animation: hasUrgent ? 'shake 0.5s ease-in-out infinite' : 'none',
-          }}
-        />
-
+        🔔
         {/* Badge */}
         {showBadge && unreadCount > 0 && (
           <div
@@ -315,7 +312,6 @@ export default function UnifiedNotificationBell({
             {unreadCount > 99 ? '99+' : unreadCount}
           </div>
         )}
-
         {/* Connection Status Indicator */}
         <div
           style={{

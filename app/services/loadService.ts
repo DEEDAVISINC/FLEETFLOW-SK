@@ -95,6 +95,36 @@ export interface Load {
     brokerOverride: boolean; // Broker can enable/disable photos
     specialPhotoInstructions?: string;
   };
+  // Accessorial Fees (detention, lumper, additional charges) - managed by dispatcher
+  accessorials?: {
+    detention: Array<{
+      hours: number;
+      ratePerHour: number;
+      freeTimeHours: number;
+      total: number;
+      location: 'pickup' | 'delivery';
+      approved: boolean;
+      addedBy: string; // dispatcher ID
+      timestamp: string;
+    }>;
+    lumper: Array<{
+      amount: number;
+      receiptNumber?: string;
+      location: 'pickup' | 'delivery';
+      approved: boolean;
+      addedBy: string; // dispatcher ID
+      timestamp: string;
+    }>;
+    other: Array<{
+      type: string;
+      description: string;
+      amount: number;
+      approved: boolean;
+      addedBy: string; // dispatcher ID
+      timestamp: string;
+    }>;
+    totalAmount: number;
+  };
 }
 
 // Mock database - in production this would be a real database
@@ -1503,6 +1533,162 @@ export const notifyShipperStatusUpdate = async (
 // ========================================
 // These functions can be called from the detailed workflow system
 // to trigger simplified shipper notifications
+
+// ========================================
+// ACCESSORIAL FEES MANAGEMENT (Dispatcher Functions)
+// ========================================
+
+export const addDetentionFee = (
+  loadId: string,
+  hours: number,
+  ratePerHour: number = 50,
+  location: 'pickup' | 'delivery',
+  dispatcherId: string
+): boolean => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+  if (!load) return false;
+
+  if (!load.accessorials) {
+    load.accessorials = {
+      detention: [],
+      lumper: [],
+      other: [],
+      totalAmount: 0,
+    };
+  }
+
+  const freeTimeHours = 2; // Standard 2 hours free time
+  const billableHours = Math.max(0, hours - freeTimeHours);
+  const total = billableHours * ratePerHour;
+
+  load.accessorials.detention.push({
+    hours: billableHours,
+    ratePerHour,
+    freeTimeHours,
+    total,
+    location,
+    approved: false, // Requires approval before billing
+    addedBy: dispatcherId,
+    timestamp: new Date().toISOString(),
+  });
+
+  recalculateAccessorialTotal(load);
+  return true;
+};
+
+export const addLumperFee = (
+  loadId: string,
+  amount: number,
+  location: 'pickup' | 'delivery',
+  receiptNumber: string,
+  dispatcherId: string
+): boolean => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+  if (!load) return false;
+
+  if (!load.accessorials) {
+    load.accessorials = {
+      detention: [],
+      lumper: [],
+      other: [],
+      totalAmount: 0,
+    };
+  }
+
+  load.accessorials.lumper.push({
+    amount,
+    receiptNumber,
+    location,
+    approved: false, // Requires approval before billing
+    addedBy: dispatcherId,
+    timestamp: new Date().toISOString(),
+  });
+
+  recalculateAccessorialTotal(load);
+  return true;
+};
+
+export const addOtherAccessorial = (
+  loadId: string,
+  type: string,
+  description: string,
+  amount: number,
+  dispatcherId: string
+): boolean => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+  if (!load) return false;
+
+  if (!load.accessorials) {
+    load.accessorials = {
+      detention: [],
+      lumper: [],
+      other: [],
+      totalAmount: 0,
+    };
+  }
+
+  load.accessorials.other.push({
+    type,
+    description,
+    amount,
+    approved: false, // Requires approval before billing
+    addedBy: dispatcherId,
+    timestamp: new Date().toISOString(),
+  });
+
+  recalculateAccessorialTotal(load);
+  return true;
+};
+
+export const approveAccessorialFee = (
+  loadId: string,
+  feeType: 'detention' | 'lumper' | 'other',
+  feeIndex: number
+): boolean => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+  if (!load?.accessorials) return false;
+
+  if (feeType === 'detention' && load.accessorials.detention[feeIndex]) {
+    load.accessorials.detention[feeIndex].approved = true;
+  } else if (feeType === 'lumper' && load.accessorials.lumper[feeIndex]) {
+    load.accessorials.lumper[feeIndex].approved = true;
+  } else if (feeType === 'other' && load.accessorials.other[feeIndex]) {
+    load.accessorials.other[feeIndex].approved = true;
+  }
+
+  recalculateAccessorialTotal(load);
+  return true;
+};
+
+const recalculateAccessorialTotal = (load: Load) => {
+  if (!load.accessorials) return;
+
+  const detentionTotal = load.accessorials.detention
+    .filter((d) => d.approved)
+    .reduce((sum, d) => sum + d.total, 0);
+
+  const lumperTotal = load.accessorials.lumper
+    .filter((l) => l.approved)
+    .reduce((sum, l) => sum + l.amount, 0);
+
+  const otherTotal = load.accessorials.other
+    .filter((o) => o.approved)
+    .reduce((sum, o) => sum + o.amount, 0);
+
+  load.accessorials.totalAmount = detentionTotal + lumperTotal + otherTotal;
+};
+
+export const getLoadAccessorials = (loadId: string) => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+  return (
+    load?.accessorials || {
+      detention: [],
+      lumper: [],
+      other: [],
+      totalAmount: 0,
+    }
+  );
+};
 
 export const onWorkflowStepCompleted = async (
   loadId: string,
