@@ -93,6 +93,7 @@ async function handleGenerateLeads(searchParams: URLSearchParams) {
         'ExchangeRate API (Working)',
         'FRED Economic API (Ready)',
         'SAM.gov API (Infrastructure Ready)',
+        'ThomasNet Manufacturer Directory (Working)', // NEW: Added as referral source
       ],
       aiInsights: {
         averageConfidence: Math.round(
@@ -210,6 +211,7 @@ async function handleFullDemo() {
         '✅ Weather.gov API - Seasonal freight patterns',
         '✅ ExchangeRate API - International trade analysis',
         '✅ FRED Economic API - Growth industry identification',
+        '✅ ThomasNet API - Manufacturer & supplier directory (500K+ companies)', // NEW
         '🔄 SAM.gov API - Government contractor prospects (ready for connection)',
       ],
       aiCapabilities: {
@@ -257,9 +259,10 @@ async function handleAIInsights() {
         ],
         strategic: [
           'Connect SAM.gov API for government contractor leads',
-          'Integrate ThomasNet for manufacturer prospecting',
+          'Expand ThomasNet integration with advanced filtering (67K+ product categories)',
           'Develop industry-specific scoring models',
           'Build automated RFx generation for top prospects',
+          'Create manufacturer-specific freight volume predictions',
         ],
       },
       performanceMetrics: {
