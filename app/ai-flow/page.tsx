@@ -211,7 +211,7 @@ export default function AIFlowPage() {
   const [acquisitionLoading, setAcquisitionLoading] = useState(true);
   const [servicesData, setServicesData] = useState<any>(null);
   const [servicesLoading, setServicesLoading] = useState(true);
-  
+
   // Subscription Management State
   const [subscriptionData, setSubscriptionData] = useState<any>(null);
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
@@ -286,16 +286,17 @@ export default function AIFlowPage() {
     const loadSubscriptionData = async () => {
       try {
         // Get subscription data using static methods
-        const analytics = SubscriptionManagementService.getSubscriptionAnalytics();
+        const analytics =
+          SubscriptionManagementService.getSubscriptionAnalytics();
         const tiers = SubscriptionManagementService.getSubscriptionTiers();
-        
+
         setSubscriptionData({
           tiers,
           analytics,
           totalRevenue: analytics.monthlyRecurringRevenue,
           activeUsers: analytics.activeSubscriptions,
           churnRate: 2.3, // Calculate from analytics in production
-          growthRate: 15.7 // Calculate from analytics in production
+          growthRate: 15.7, // Calculate from analytics in production
         });
       } catch (error) {
         console.error('Failed to load subscription data:', error);
@@ -305,7 +306,7 @@ export default function AIFlowPage() {
     };
 
     loadSubscriptionData();
-    
+
     // Refresh subscription data every 30 seconds
     const subscriptionInterval = setInterval(loadSubscriptionData, 30000);
     return () => clearInterval(subscriptionInterval);
@@ -316,20 +317,30 @@ export default function AIFlowPage() {
     const initializeNotifications = async () => {
       try {
         // Set up real-time notification updates
-        const unsubscribe = fleetFlowNotificationManager.subscribe('notification_added', (notification: any) => {
-          if (notification.type === 'system_alert' || notification.type === 'workflow_update') {
-            // Update AI Flow metrics based on notifications
-            console.log('🔔 AI Flow notification received:', notification.title);
+        const unsubscribe = fleetFlowNotificationManager.subscribe(
+          'notification_added',
+          (notification: any) => {
+            if (
+              notification.type === 'system_alert' ||
+              notification.type === 'workflow_update'
+            ) {
+              // Update AI Flow metrics based on notifications
+              console.log(
+                '🔔 AI Flow notification received:',
+                notification.title
+              );
+            }
           }
-        });
+        );
 
         // Monitor WebSocket connection status
         const statusInterval = setInterval(() => {
           const wsStatus = webSocketNotificationService.getConnectionStatus();
-          const notificationHealth = fleetFlowNotificationManager.getHealthStatus();
+          const notificationHealth =
+            fleetFlowNotificationManager.getHealthStatus();
           setConnectionStatus({
             websocket: wsStatus,
-            notifications: notificationHealth
+            notifications: notificationHealth,
           });
         }, 10000);
 
@@ -338,14 +349,15 @@ export default function AIFlowPage() {
           type: 'system_alert',
           priority: 'normal',
           title: '🤖 AI Flow Platform Online',
-          message: 'FleetFlow AI Hub has been activated with full operational intelligence capabilities',
+          message:
+            'FleetFlow AI Hub has been activated with full operational intelligence capabilities',
           channels: { inApp: true, sms: false, email: false, push: false },
           targetPortals: ['admin'],
           metadata: {
             source: 'ai_flow_platform',
             systemComponent: 'AI Hub',
-            status: 'online'
-          }
+            status: 'online',
+          },
         });
 
         return () => {
@@ -428,10 +440,10 @@ export default function AIFlowPage() {
             <div className='flex items-center gap-4'>
               {/* Connection Status Indicator */}
               <div className='flex items-center gap-2 rounded-lg bg-white/60 px-3 py-2 backdrop-blur-sm'>
-                <div 
+                <div
                   className={`h-2 w-2 rounded-full ${
-                    connectionStatus?.websocket?.connected 
-                      ? 'animate-pulse bg-green-400' 
+                    connectionStatus?.websocket?.connected
+                      ? 'animate-pulse bg-green-400'
                       : 'bg-red-400'
                   }`}
                 />
@@ -442,11 +454,11 @@ export default function AIFlowPage() {
 
               {/* Unified Notification Bell */}
               <UnifiedNotificationBell
-                userId="ai-flow-admin"
-                portal="admin"
-                position="inline"
-                size="lg"
-                theme="auto"
+                userId='ai-flow-admin'
+                portal='admin'
+                position='inline'
+                size='lg'
+                theme='auto'
                 showBadge={true}
                 showDropdown={true}
                 maxNotifications={25}
@@ -539,8 +551,12 @@ export default function AIFlowPage() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className='space-y-6'>
-          <TabsList className='grid w-full grid-cols-15 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className='space-y-6'
+        >
+          <TabsList className='grid w-full grid-cols-16 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -643,6 +659,13 @@ export default function AIFlowPage() {
             >
               <DollarSign className='h-4 w-4' />
               💳 Subscription Manager
+            </TabsTrigger>
+            <TabsTrigger
+              value='thomasnet-intelligence'
+              className='flex items-center gap-2'
+            >
+              <Building2 className='h-4 w-4' />
+              🏭 ThomasNet Intelligence
             </TabsTrigger>
           </TabsList>
 
@@ -2179,7 +2202,9 @@ export default function AIFlowPage() {
               <div className='flex items-center justify-center p-8'>
                 <div className='text-center'>
                   <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
-                  <p className='text-gray-600'>Loading Subscription Management...</p>
+                  <p className='text-gray-600'>
+                    Loading Subscription Management...
+                  </p>
                 </div>
               </div>
             ) : (
@@ -2194,7 +2219,9 @@ export default function AIFlowPage() {
                             Monthly Recurring Revenue
                           </p>
                           <p className='text-2xl font-bold'>
-                            {formatCurrency(subscriptionData?.totalRevenue || 0)}
+                            {formatCurrency(
+                              subscriptionData?.totalRevenue || 0
+                            )}
                           </p>
                         </div>
                         <DollarSign className='h-8 w-8 text-green-200' />
@@ -2263,31 +2290,44 @@ export default function AIFlowPage() {
                     </CardHeader>
                     <CardContent>
                       <div className='space-y-4'>
-                        {subscriptionData?.analytics?.tierDistribution?.map((tier: any, index: number) => (
-                          <div key={index} className='flex items-center justify-between rounded-lg border p-3'>
-                            <div className='flex items-center gap-3'>
-                              <div className={`h-3 w-3 rounded-full ${
-                                tier.name === 'Enterprise Professional' ? 'bg-purple-500' :
-                                tier.name === 'Professional Brokerage' ? 'bg-blue-500' :
-                                tier.name === 'Professional Dispatcher' ? 'bg-green-500' :
-                                'bg-gray-500'
-                              }`} />
-                              <div>
-                                <div className='font-medium'>{tier.name}</div>
+                        {subscriptionData?.analytics?.tierDistribution?.map(
+                          (tier: any, index: number) => (
+                            <div
+                              key={index}
+                              className='flex items-center justify-between rounded-lg border p-3'
+                            >
+                              <div className='flex items-center gap-3'>
+                                <div
+                                  className={`h-3 w-3 rounded-full ${
+                                    tier.name === 'Enterprise Professional'
+                                      ? 'bg-purple-500'
+                                      : tier.name === 'Professional Brokerage'
+                                        ? 'bg-blue-500'
+                                        : tier.name ===
+                                            'Professional Dispatcher'
+                                          ? 'bg-green-500'
+                                          : 'bg-gray-500'
+                                  }`}
+                                />
+                                <div>
+                                  <div className='font-medium'>{tier.name}</div>
+                                  <div className='text-sm text-gray-600'>
+                                    {formatCurrency(tier.monthlyValue)} per user
+                                  </div>
+                                </div>
+                              </div>
+                              <div className='text-right'>
+                                <div className='text-xl font-bold text-blue-600'>
+                                  {tier.subscribers}
+                                </div>
                                 <div className='text-sm text-gray-600'>
-                                  {formatCurrency(tier.monthlyValue)} per user
+                                  subscribers
                                 </div>
                               </div>
                             </div>
-                            <div className='text-right'>
-                              <div className='text-xl font-bold text-blue-600'>
-                                {tier.subscribers}
-                              </div>
-                              <div className='text-sm text-gray-600'>subscribers</div>
-                            </div>
-                          </div>
-                        )) || (
-                          <div className='text-center text-gray-500 py-8'>
+                          )
+                        ) || (
+                          <div className='py-8 text-center text-gray-500'>
                             Loading subscription data...
                           </div>
                         )}
@@ -2313,8 +2353,9 @@ export default function AIFlowPage() {
                             </span>
                           </div>
                           <p className='text-sm text-gray-600'>
-                            AI analysis shows 23% potential revenue increase through targeted upselling and 
-                            reduced churn prevention strategies.
+                            AI analysis shows 23% potential revenue increase
+                            through targeted upselling and reduced churn
+                            prevention strategies.
                           </p>
                         </div>
 
@@ -2326,8 +2367,9 @@ export default function AIFlowPage() {
                             </span>
                           </div>
                           <p className='text-sm text-gray-600'>
-                            Predictive models forecast 187% subscriber growth over next 12 months 
-                            based on current market trends and platform adoption.
+                            Predictive models forecast 187% subscriber growth
+                            over next 12 months based on current market trends
+                            and platform adoption.
                           </p>
                         </div>
 
@@ -2339,8 +2381,9 @@ export default function AIFlowPage() {
                             </span>
                           </div>
                           <p className='text-sm text-gray-600'>
-                            12 subscribers identified at high churn risk. Automated retention 
-                            campaigns scheduled with personalized offers.
+                            12 subscribers identified at high churn risk.
+                            Automated retention campaigns scheduled with
+                            personalized offers.
                           </p>
                         </div>
                       </div>
@@ -2358,72 +2401,114 @@ export default function AIFlowPage() {
                   </CardHeader>
                   <CardContent>
                     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                      <button 
+                      <button
                         className='rounded-lg border p-4 text-left transition-colors hover:bg-blue-50'
                         onClick={async () => {
-                          await fleetFlowNotificationManager.createNotification({
-                            type: 'workflow_update',
-                            priority: 'high',
-                            title: '💰 Automated Upsell Campaign Initiated',
-                            message: 'AI has identified 34 subscribers eligible for Enterprise upgrade based on usage patterns',
-                            channels: { inApp: true, email: true, sms: false, push: false },
-                            targetPortals: ['admin'],
-                            metadata: { source: 'subscription_ai', campaign: 'upsell_automation' }
-                          });
+                          await fleetFlowNotificationManager.createNotification(
+                            {
+                              type: 'workflow_update',
+                              priority: 'high',
+                              title: '💰 Automated Upsell Campaign Initiated',
+                              message:
+                                'AI has identified 34 subscribers eligible for Enterprise upgrade based on usage patterns',
+                              channels: {
+                                inApp: true,
+                                email: true,
+                                sms: false,
+                                push: false,
+                              },
+                              targetPortals: ['admin'],
+                              metadata: {
+                                source: 'subscription_ai',
+                                campaign: 'upsell_automation',
+                              },
+                            }
+                          );
                         }}
                       >
                         <div className='mb-2 flex items-center gap-3'>
                           <TrendingUp className='h-5 w-5 text-blue-600' />
-                          <span className='font-medium'>Launch Upsell Campaign</span>
+                          <span className='font-medium'>
+                            Launch Upsell Campaign
+                          </span>
                         </div>
                         <p className='text-sm text-gray-600'>
-                          AI-generated personalized upgrade offers for high-usage customers
+                          AI-generated personalized upgrade offers for
+                          high-usage customers
                         </p>
                       </button>
 
-                      <button 
+                      <button
                         className='rounded-lg border p-4 text-left transition-colors hover:bg-green-50'
                         onClick={async () => {
-                          await fleetFlowNotificationManager.createNotification({
-                            type: 'workflow_update',
-                            priority: 'high',
-                            title: '🛡️ Churn Prevention Activated',
-                            message: 'AI retention system engaged for 12 at-risk subscribers with personalized retention offers',
-                            channels: { inApp: true, email: true, sms: false, push: false },
-                            targetPortals: ['admin'],
-                            metadata: { source: 'subscription_ai', campaign: 'churn_prevention' }
-                          });
+                          await fleetFlowNotificationManager.createNotification(
+                            {
+                              type: 'workflow_update',
+                              priority: 'high',
+                              title: '🛡️ Churn Prevention Activated',
+                              message:
+                                'AI retention system engaged for 12 at-risk subscribers with personalized retention offers',
+                              channels: {
+                                inApp: true,
+                                email: true,
+                                sms: false,
+                                push: false,
+                              },
+                              targetPortals: ['admin'],
+                              metadata: {
+                                source: 'subscription_ai',
+                                campaign: 'churn_prevention',
+                              },
+                            }
+                          );
                         }}
                       >
                         <div className='mb-2 flex items-center gap-3'>
                           <Shield className='h-5 w-5 text-green-600' />
-                          <span className='font-medium'>Activate Retention AI</span>
+                          <span className='font-medium'>
+                            Activate Retention AI
+                          </span>
                         </div>
                         <p className='text-sm text-gray-600'>
-                          Automated churn prevention with intelligent intervention strategies
+                          Automated churn prevention with intelligent
+                          intervention strategies
                         </p>
                       </button>
 
-                      <button 
+                      <button
                         className='rounded-lg border p-4 text-left transition-colors hover:bg-purple-50'
                         onClick={async () => {
-                          await fleetFlowNotificationManager.createNotification({
-                            type: 'payment_alert',
-                            priority: 'normal',
-                            title: '📊 Subscription Analytics Updated',
-                            message: 'Monthly subscription performance report generated with AI insights and recommendations',
-                            channels: { inApp: true, email: true, sms: false, push: false },
-                            targetPortals: ['admin'],
-                            metadata: { source: 'subscription_ai', type: 'monthly_report' }
-                          });
+                          await fleetFlowNotificationManager.createNotification(
+                            {
+                              type: 'payment_alert',
+                              priority: 'normal',
+                              title: '📊 Subscription Analytics Updated',
+                              message:
+                                'Monthly subscription performance report generated with AI insights and recommendations',
+                              channels: {
+                                inApp: true,
+                                email: true,
+                                sms: false,
+                                push: false,
+                              },
+                              targetPortals: ['admin'],
+                              metadata: {
+                                source: 'subscription_ai',
+                                type: 'monthly_report',
+                              },
+                            }
+                          );
                         }}
                       >
                         <div className='mb-2 flex items-center gap-3'>
                           <BarChart3 className='h-5 w-5 text-purple-600' />
-                          <span className='font-medium'>Generate AI Report</span>
+                          <span className='font-medium'>
+                            Generate AI Report
+                          </span>
                         </div>
                         <p className='text-sm text-gray-600'>
-                          Comprehensive analytics with predictive insights and recommendations
+                          Comprehensive analytics with predictive insights and
+                          recommendations
                         </p>
                       </button>
                     </div>
@@ -2431,6 +2516,179 @@ export default function AIFlowPage() {
                 </Card>
               </>
             )}
+          </TabsContent>
+
+          {/* ThomasNet Manufacturer Intelligence Tab */}
+          <TabsContent value='thomasnet-intelligence' className='space-y-6'>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              
+              {/* ThomasNet Overview */}
+              <Card className='border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2 text-orange-800'>
+                    <Building2 className='h-5 w-5' />
+                    ThomasNet Manufacturer Intelligence
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='grid grid-cols-2 gap-4'>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-orange-600'>500K+</div>
+                        <div className='text-sm text-gray-600'>Manufacturers</div>
+                      </div>
+                      <div className='text-center'>
+                        <div className='text-2xl font-bold text-orange-600'>67K+</div>
+                        <div className='text-sm text-gray-600'>Product Categories</div>
+                      </div>
+                    </div>
+                    <div className='flex items-center justify-between rounded-lg bg-orange-100 p-3'>
+                      <span className='text-sm font-medium text-orange-800'>AI Freight Scoring</span>
+                      <Badge className='bg-green-100 text-green-800'>75+ Threshold</Badge>
+                    </div>
+                    <div className='space-y-2'>
+                      <div className='flex items-center gap-2'>
+                        <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                        <span className='text-sm'>AI-Powered Lead Analysis</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                        <span className='text-sm'>Revenue Estimation Engine</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <div className='h-2 w-2 rounded-full bg-purple-500'></div>
+                        <span className='text-sm'>Industry-specific Targeting</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Market Intelligence Dashboard */}
+              <Card className='border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2 text-blue-800'>
+                    <TrendingUp className='h-5 w-5' />
+                    Manufacturing Market Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='grid grid-cols-1 gap-3'>
+                      {[
+                        { industry: 'Automotive', score: 92, volume: '$2.3M', trend: '↗️' },
+                        { industry: 'Electronics', score: 88, volume: '$1.8M', trend: '↗️' },
+                        { industry: 'Machinery', score: 85, volume: '$1.5M', trend: '→' },
+                        { industry: 'Chemicals', score: 79, volume: '$1.2M', trend: '↘️' },
+                      ].map((item, index) => (
+                        <div key={index} className='flex items-center justify-between rounded-lg bg-blue-50 p-3'>
+                          <div className='flex items-center gap-3'>
+                            <span className='text-2xl'>{item.trend}</span>
+                            <div>
+                              <div className='font-medium text-blue-900'>{item.industry}</div>
+                              <div className='text-sm text-blue-600'>Score: {item.score}/100</div>
+                            </div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='font-bold text-blue-800'>{item.volume}</div>
+                            <div className='text-sm text-blue-600'>Est. Volume</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* AI Processing Pipeline */}
+              <Card className='lg:col-span-2'>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <Brain className='h-5 w-5 text-purple-600' />
+                    AI-Powered ThomasNet Processing Pipeline
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
+                    {[
+                      {
+                        step: '1',
+                        title: 'Data Ingestion',
+                        desc: 'CSV import & parsing',
+                        icon: '📄',
+                        status: 'active'
+                      },
+                      {
+                        step: '2',
+                        title: 'AI Analysis',
+                        desc: 'Freight scoring & revenue estimation',
+                        icon: '🤖',
+                        status: 'active'
+                      },
+                      {
+                        step: '3',
+                        title: 'Lead Qualification',
+                        desc: '75+ score threshold filtering',
+                        icon: '🎯',
+                        status: 'active'
+                      },
+                      {
+                        step: '4',
+                        title: 'Sales Integration',
+                        desc: 'CRM & outreach automation',
+                        icon: '📞',
+                        status: 'ready'
+                      }
+                    ].map((step, index) => (
+                      <div key={index} className='rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 p-4'>
+                        <div className='mb-3 flex items-center gap-2'>
+                          <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+                            step.status === 'active' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {step.step}
+                          </div>
+                          <span className='text-2xl'>{step.icon}</span>
+                        </div>
+                        <h4 className='mb-2 font-semibold text-gray-900'>{step.title}</h4>
+                        <p className='text-sm text-gray-600'>{step.desc}</p>
+                        <div className='mt-2'>
+                          <Badge className={
+                            step.status === 'active' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-blue-100 text-blue-800'
+                          }>
+                            {step.status === 'active' ? '✅ Active' : '⚡ Ready'}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className='mt-6 flex flex-wrap gap-3'>
+                    <button className='flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-white hover:bg-orange-700'>
+                      <Building2 className='h-4 w-4' />
+                      Process ThomasNet CSV
+                    </button>
+                    <button className='flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'>
+                      <TrendingUp className='h-4 w-4' />
+                      Run Market Analysis
+                    </button>
+                    <button className='flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700'>
+                      <Phone className='h-4 w-4' />
+                      Start Outreach Campaign
+                    </button>
+                    <button className='flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700'>
+                      <Eye className='h-4 w-4' />
+                      View Lead Generation
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+            </div>
           </TabsContent>
         </Tabs>
       </div>
