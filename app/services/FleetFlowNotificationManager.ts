@@ -171,12 +171,13 @@ export class FleetFlowNotificationManager {
         this.isConnected = false;
         console.log('🔌 WebSocket disconnected, attempting reconnection...');
 
-        // Auto-reconnect after 5 seconds
-        setTimeout(() => this.initializeWebSocket(), 5000);
+        // Auto-reconnect after 30 seconds (reduced frequency)
+        setTimeout(() => this.initializeWebSocket(), 30000);
       };
 
       this.websocket.onerror = (error) => {
-        console.error('❌ WebSocket error:', error);
+        // Silently handle WebSocket errors to prevent console spam
+        this.websocket = null;
       };
     } catch (error) {
       console.warn('⚠️ WebSocket not available, using polling fallback');
@@ -403,7 +404,7 @@ export class FleetFlowNotificationManager {
       // Get real FleetFlow data
       const [loads, systemStatus] = await Promise.all([
         getMainDashboardLoads(),
-        this.systemOrchestrator.getSystemStatus(),
+        this.systemOrchestrator.getSystemHealth(),
       ]);
 
       // Generate intelligent notifications based on real data

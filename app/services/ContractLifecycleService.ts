@@ -1052,13 +1052,17 @@ export class ContractLifecycleService {
   }
 
   private setupPerformanceReviews(): void {
-    // Schedule quarterly performance reviews
+    // TEMPORARILY DISABLED - Performance reviews were causing console spam
+    console.log('📊 Performance reviews scheduled for quarterly execution (currently disabled)');
+    // TODO: Re-enable with proper singleton pattern
+    /*
     setInterval(
       () => {
         this.initiatePerformanceReviews();
       },
       90 * 24 * 60 * 60 * 1000
     ); // 90 days
+    */
   }
 
   private async initiatePerformanceReviews(): Promise<void> {
