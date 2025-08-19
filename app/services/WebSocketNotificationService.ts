@@ -3,7 +3,14 @@
 import { FleetFlowNotification } from './FleetFlowNotificationManager';
 
 export interface WebSocketMessage {
-  type: 'notification' | 'broadcast_notification' | 'register' | 'unregister' | 'ping' | 'pong' | 'system_status';
+  type:
+    | 'notification'
+    | 'broadcast_notification'
+    | 'register'
+    | 'unregister'
+    | 'ping'
+    | 'pong'
+    | 'system_status';
   notification?: FleetFlowNotification;
   service?: string;
   userId?: string;
@@ -31,7 +38,7 @@ export class WebSocketNotificationService {
     lastPing: '',
     connectionAttempts: 0,
     maxReconnectAttempts: 10,
-    reconnectDelay: 5000
+    reconnectDelay: 5000,
   };
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private reconnectTimeout: NodeJS.Timeout | null = null;
@@ -44,7 +51,8 @@ export class WebSocketNotificationService {
 
   public static getInstance(): WebSocketNotificationService {
     if (!WebSocketNotificationService.instance) {
-      WebSocketNotificationService.instance = new WebSocketNotificationService();
+      WebSocketNotificationService.instance =
+        new WebSocketNotificationService();
     }
     return WebSocketNotificationService.instance;
   }
@@ -57,10 +65,9 @@ export class WebSocketNotificationService {
       this.connectionStatus.websocketUrl = wsUrl;
 
       console.log(`🔌 Attempting WebSocket connection to: ${wsUrl}`);
-      
+
       this.websocket = new WebSocket(wsUrl);
       this.setupEventListeners();
-      
     } catch (error) {
       console.warn('⚠️ WebSocket initialization failed:', error);
       this.scheduleReconnect();
@@ -75,16 +82,16 @@ export class WebSocketNotificationService {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.hostname;
       const port = process.env.NEXT_PUBLIC_WEBSOCKET_PORT || '3001';
-      
+
       // Try environment variable first
       if (process.env.NEXT_PUBLIC_WEBSOCKET_URL) {
         return process.env.NEXT_PUBLIC_WEBSOCKET_URL;
       }
-      
+
       // Construct WebSocket URL
       return `${protocol}//${host}:${port}/notifications`;
     }
-    
+
     // Server-side fallback
     return process.env.WEBSOCKET_URL || 'ws://localhost:3001/notifications';
   }
@@ -95,14 +102,14 @@ export class WebSocketNotificationService {
 
     this.websocket.onopen = (event) => {
       console.log('✅ WebSocket connected');
-      
+
       this.connectionStatus.connected = true;
       this.connectionStatus.connectionAttempts = 0;
       this.isReconnecting = false;
-      
+
       // Start heartbeat
       this.startHeartbeat();
-      
+
       // Send initial registration
       this.sendMessage({
         type: 'register',
@@ -111,8 +118,8 @@ export class WebSocketNotificationService {
         data: {
           userAgent: navigator?.userAgent || 'Unknown',
           url: window?.location?.href || 'Unknown',
-          capabilities: ['notifications', 'real-time-sync']
-        }
+          capabilities: ['notifications', 'real-time-sync'],
+        },
       });
 
       // Notify handlers
@@ -130,15 +137,15 @@ export class WebSocketNotificationService {
 
     this.websocket.onclose = (event) => {
       console.log('🔌 WebSocket disconnected:', event.code, event.reason);
-      
+
       this.connectionStatus.connected = false;
       this.stopHeartbeat();
-      
+
       // Notify handlers
-      this.notifyHandlers('disconnected', { 
-        code: event.code, 
+      this.notifyHandlers('disconnected', {
+        code: event.code,
         reason: event.reason,
-        status: this.connectionStatus
+        status: this.connectionStatus,
       });
 
       // Schedule reconnection if not a clean close
@@ -149,9 +156,9 @@ export class WebSocketNotificationService {
 
     this.websocket.onerror = (error) => {
       console.error('❌ WebSocket error:', error);
-      
+
       this.notifyHandlers('error', { error, status: this.connectionStatus });
-      
+
       // If we can't connect initially, try fallback
       if (!this.connectionStatus.connected) {
         this.scheduleReconnect();
@@ -169,30 +176,30 @@ export class WebSocketNotificationService {
           this.notifyHandlers('notification_received', message.notification);
         }
         break;
-        
+
       case 'broadcast_notification':
         if (message.notification) {
           this.notifyHandlers('notification_broadcast', message.notification);
         }
         break;
-        
+
       case 'ping':
         // Respond to ping with pong
         this.sendMessage({
           type: 'pong',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
-        
+
       case 'pong':
         // Update last ping time
         this.connectionStatus.lastPing = message.timestamp;
         break;
-        
+
       case 'system_status':
         this.notifyHandlers('system_status', message.data);
         break;
-        
+
       default:
         console.log('📋 Unknown message type:', message.type, message);
         this.notifyHandlers('unknown_message', message);
@@ -203,7 +210,7 @@ export class WebSocketNotificationService {
   public sendMessage(message: WebSocketMessage): boolean {
     if (!this.websocket || this.websocket.readyState !== WebSocket.OPEN) {
       console.warn('⚠️ WebSocket not ready, message queued:', message.type);
-      
+
       // TODO: Implement message queuing for offline support
       return false;
     }
@@ -223,7 +230,7 @@ export class WebSocketNotificationService {
     return this.sendMessage({
       type: 'broadcast_notification',
       notification,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -232,9 +239,9 @@ export class WebSocketNotificationService {
     if (!this.messageHandlers.has(eventType)) {
       this.messageHandlers.set(eventType, []);
     }
-    
+
     this.messageHandlers.get(eventType)!.push(handler);
-    
+
     // Return unsubscribe function
     return () => {
       const handlers = this.messageHandlers.get(eventType);
@@ -251,7 +258,7 @@ export class WebSocketNotificationService {
   private notifyHandlers(eventType: string, data: any): void {
     const handlers = this.messageHandlers.get(eventType);
     if (handlers) {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         try {
           handler(data);
         } catch (error) {
@@ -264,12 +271,12 @@ export class WebSocketNotificationService {
   // 💓 START HEARTBEAT
   private startHeartbeat(): void {
     this.stopHeartbeat(); // Clear any existing heartbeat
-    
+
     this.heartbeatInterval = setInterval(() => {
       if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
         this.sendMessage({
           type: 'ping',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       } else {
         this.stopHeartbeat();
@@ -287,30 +294,41 @@ export class WebSocketNotificationService {
 
   // 🔄 SCHEDULE RECONNECT
   private scheduleReconnect(): void {
-    if (this.isReconnecting || this.connectionStatus.connectionAttempts >= this.connectionStatus.maxReconnectAttempts) {
-      console.warn('⚠️ Max reconnection attempts reached or already reconnecting');
+    if (
+      this.isReconnecting ||
+      this.connectionStatus.connectionAttempts >=
+        this.connectionStatus.maxReconnectAttempts
+    ) {
+      console.warn(
+        '⚠️ Max reconnection attempts reached or already reconnecting'
+      );
       return;
     }
 
     this.isReconnecting = true;
     this.connectionStatus.connectionAttempts++;
-    
+
     const delay = Math.min(
-      this.connectionStatus.reconnectDelay * Math.pow(2, this.connectionStatus.connectionAttempts - 1),
+      this.connectionStatus.reconnectDelay *
+        Math.pow(2, this.connectionStatus.connectionAttempts - 1),
       30000 // Max 30 second delay
     );
 
-    console.log(`🔄 Scheduling reconnect attempt ${this.connectionStatus.connectionAttempts} in ${delay}ms`);
+    console.log(
+      `🔄 Scheduling reconnect attempt ${this.connectionStatus.connectionAttempts} in ${delay}ms`
+    );
 
     this.reconnectTimeout = setTimeout(() => {
-      console.log(`🔄 Reconnect attempt ${this.connectionStatus.connectionAttempts}`);
-      
+      console.log(
+        `🔄 Reconnect attempt ${this.connectionStatus.connectionAttempts}`
+      );
+
       // Close existing connection
       if (this.websocket) {
         this.websocket.close();
         this.websocket = null;
       }
-      
+
       // Try to reconnect
       this.initializeConnection();
     }, delay);
@@ -319,22 +337,22 @@ export class WebSocketNotificationService {
   // 🔗 MANUAL RECONNECT
   public reconnect(): void {
     console.log('🔄 Manual reconnect requested');
-    
+
     // Clear any pending reconnect
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
-    
+
     // Reset connection attempts
     this.connectionStatus.connectionAttempts = 0;
     this.isReconnecting = false;
-    
+
     // Close existing connection
     if (this.websocket) {
       this.websocket.close();
     }
-    
+
     // Reconnect immediately
     setTimeout(() => this.initializeConnection(), 1000);
   }
@@ -352,15 +370,18 @@ export class WebSocketNotificationService {
     connectionAttempts: number;
     uptime: number;
   } {
-    const websocketState = this.websocket 
+    const websocketState = this.websocket
       ? ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][this.websocket.readyState]
       : 'NOT_INITIALIZED';
-    
+
     let status: 'healthy' | 'degraded' | 'unhealthy';
-    
+
     if (this.connectionStatus.connected && websocketState === 'OPEN') {
       status = 'healthy';
-    } else if (this.connectionStatus.connectionAttempts > 0 && this.connectionStatus.connectionAttempts < 5) {
+    } else if (
+      this.connectionStatus.connectionAttempts > 0 &&
+      this.connectionStatus.connectionAttempts < 5
+    ) {
       status = 'degraded';
     } else {
       status = 'unhealthy';
@@ -371,7 +392,7 @@ export class WebSocketNotificationService {
       websocketState,
       lastPing: this.connectionStatus.lastPing || 'Never',
       connectionAttempts: this.connectionStatus.connectionAttempts,
-      uptime: this.connectionStatus.connected ? Date.now() : 0
+      uptime: this.connectionStatus.connected ? Date.now() : 0,
     };
   }
 
@@ -383,28 +404,28 @@ export class WebSocketNotificationService {
       data: {
         test: true,
         message: 'WebSocket test message from FleetFlow client',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
   }
 
   // 🔌 DISCONNECT
   public disconnect(): void {
     console.log('🔌 Disconnecting WebSocket');
-    
+
     // Clear timers
     this.stopHeartbeat();
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
-    
+
     // Close connection
     if (this.websocket) {
       this.websocket.close(1000, 'Client disconnect');
       this.websocket = null;
     }
-    
+
     // Update status
     this.connectionStatus.connected = false;
     this.isReconnecting = false;
@@ -413,10 +434,10 @@ export class WebSocketNotificationService {
   // 🗑️ CLEANUP
   public destroy(): void {
     console.log('🗑️ Destroying WebSocketNotificationService');
-    
+
     this.disconnect();
     this.messageHandlers.clear();
-    
+
     // Clear singleton instance
     if (WebSocketNotificationService.instance === this) {
       // @ts-ignore
@@ -426,5 +447,6 @@ export class WebSocketNotificationService {
 }
 
 // 🌟 EXPORT SINGLETON INSTANCE
-export const webSocketNotificationService = WebSocketNotificationService.getInstance();
+export const webSocketNotificationService =
+  WebSocketNotificationService.getInstance();
 export default webSocketNotificationService;

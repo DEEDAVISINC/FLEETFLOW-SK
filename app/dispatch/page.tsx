@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
-import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
+import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
 import { getCurrentUser } from '../config/access';
 import { schedulingService } from '../scheduling/service';
 import { brokerAgentIntegrationService } from '../services/BrokerAgentIntegrationService';
@@ -1600,7 +1600,15 @@ export default function DispatchCentral() {
           textAlign: 'center',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '15px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '20px',
+            marginBottom: '15px',
+          }}
+        >
           <h1
             style={{
               fontSize: '2.5rem',
@@ -1612,14 +1620,14 @@ export default function DispatchCentral() {
           >
             🚛 DISPATCH CENTRAL
           </h1>
-          
+
           {/* Unified Notification Bell */}
-          <UnifiedNotificationBell 
-            userId={user?.id || 'dispatch-user'} 
-            portal="dispatch" 
-            position="inline"
-            size="lg"
-            theme="dark"
+          <UnifiedNotificationBell
+            userId={user?.id || 'dispatch-user'}
+            portal='dispatch'
+            position='inline'
+            size='lg'
+            theme='dark'
             showBadge={true}
             showDropdown={true}
             maxNotifications={25}

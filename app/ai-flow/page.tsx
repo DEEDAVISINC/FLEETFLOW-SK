@@ -2521,7 +2521,6 @@ export default function AIFlowPage() {
           {/* ThomasNet Manufacturer Intelligence Tab */}
           <TabsContent value='thomasnet-intelligence' className='space-y-6'>
             <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-              
               {/* ThomasNet Overview */}
               <Card className='border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50'>
                 <CardHeader>
@@ -2534,30 +2533,48 @@ export default function AIFlowPage() {
                   <div className='space-y-4'>
                     <div className='grid grid-cols-2 gap-4'>
                       <div className='text-center'>
-                        <div className='text-2xl font-bold text-orange-600'>500K+</div>
-                        <div className='text-sm text-gray-600'>Manufacturers</div>
+                        <div className='text-2xl font-bold text-orange-600'>
+                          500K+
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Manufacturers
+                        </div>
                       </div>
                       <div className='text-center'>
-                        <div className='text-2xl font-bold text-orange-600'>67K+</div>
-                        <div className='text-sm text-gray-600'>Product Categories</div>
+                        <div className='text-2xl font-bold text-orange-600'>
+                          67K+
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Product Categories
+                        </div>
                       </div>
                     </div>
                     <div className='flex items-center justify-between rounded-lg bg-orange-100 p-3'>
-                      <span className='text-sm font-medium text-orange-800'>AI Freight Scoring</span>
-                      <Badge className='bg-green-100 text-green-800'>75+ Threshold</Badge>
+                      <span className='text-sm font-medium text-orange-800'>
+                        AI Freight Scoring
+                      </span>
+                      <Badge className='bg-green-100 text-green-800'>
+                        75+ Threshold
+                      </Badge>
                     </div>
                     <div className='space-y-2'>
                       <div className='flex items-center gap-2'>
                         <div className='h-2 w-2 rounded-full bg-green-500'></div>
-                        <span className='text-sm'>AI-Powered Lead Analysis</span>
+                        <span className='text-sm'>
+                          AI-Powered Lead Analysis
+                        </span>
                       </div>
                       <div className='flex items-center gap-2'>
                         <div className='h-2 w-2 rounded-full bg-blue-500'></div>
-                        <span className='text-sm'>Revenue Estimation Engine</span>
+                        <span className='text-sm'>
+                          Revenue Estimation Engine
+                        </span>
                       </div>
                       <div className='flex items-center gap-2'>
                         <div className='h-2 w-2 rounded-full bg-purple-500'></div>
-                        <span className='text-sm'>Industry-specific Targeting</span>
+                        <span className='text-sm'>
+                          Industry-specific Targeting
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -2576,22 +2593,53 @@ export default function AIFlowPage() {
                   <div className='space-y-4'>
                     <div className='grid grid-cols-1 gap-3'>
                       {[
-                        { industry: 'Automotive', score: 92, volume: '$2.3M', trend: '↗️' },
-                        { industry: 'Electronics', score: 88, volume: '$1.8M', trend: '↗️' },
-                        { industry: 'Machinery', score: 85, volume: '$1.5M', trend: '→' },
-                        { industry: 'Chemicals', score: 79, volume: '$1.2M', trend: '↘️' },
+                        {
+                          industry: 'Automotive',
+                          score: 92,
+                          volume: '$2.3M',
+                          trend: '↗️',
+                        },
+                        {
+                          industry: 'Electronics',
+                          score: 88,
+                          volume: '$1.8M',
+                          trend: '↗️',
+                        },
+                        {
+                          industry: 'Machinery',
+                          score: 85,
+                          volume: '$1.5M',
+                          trend: '→',
+                        },
+                        {
+                          industry: 'Chemicals',
+                          score: 79,
+                          volume: '$1.2M',
+                          trend: '↘️',
+                        },
                       ].map((item, index) => (
-                        <div key={index} className='flex items-center justify-between rounded-lg bg-blue-50 p-3'>
+                        <div
+                          key={index}
+                          className='flex items-center justify-between rounded-lg bg-blue-50 p-3'
+                        >
                           <div className='flex items-center gap-3'>
                             <span className='text-2xl'>{item.trend}</span>
                             <div>
-                              <div className='font-medium text-blue-900'>{item.industry}</div>
-                              <div className='text-sm text-blue-600'>Score: {item.score}/100</div>
+                              <div className='font-medium text-blue-900'>
+                                {item.industry}
+                              </div>
+                              <div className='text-sm text-blue-600'>
+                                Score: {item.score}/100
+                              </div>
                             </div>
                           </div>
                           <div className='text-right'>
-                            <div className='font-bold text-blue-800'>{item.volume}</div>
-                            <div className='text-sm text-blue-600'>Est. Volume</div>
+                            <div className='font-bold text-blue-800'>
+                              {item.volume}
+                            </div>
+                            <div className='text-sm text-blue-600'>
+                              Est. Volume
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -2616,56 +2664,67 @@ export default function AIFlowPage() {
                         title: 'Data Ingestion',
                         desc: 'CSV import & parsing',
                         icon: '📄',
-                        status: 'active'
+                        status: 'active',
                       },
                       {
                         step: '2',
                         title: 'AI Analysis',
                         desc: 'Freight scoring & revenue estimation',
                         icon: '🤖',
-                        status: 'active'
+                        status: 'active',
                       },
                       {
                         step: '3',
                         title: 'Lead Qualification',
                         desc: '75+ score threshold filtering',
                         icon: '🎯',
-                        status: 'active'
+                        status: 'active',
                       },
                       {
                         step: '4',
                         title: 'Sales Integration',
                         desc: 'CRM & outreach automation',
                         icon: '📞',
-                        status: 'ready'
-                      }
+                        status: 'ready',
+                      },
                     ].map((step, index) => (
-                      <div key={index} className='rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 p-4'>
+                      <div
+                        key={index}
+                        className='rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 p-4'
+                      >
                         <div className='mb-3 flex items-center gap-2'>
-                          <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-                            step.status === 'active' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
+                          <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+                              step.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }`}
+                          >
                             {step.step}
                           </div>
                           <span className='text-2xl'>{step.icon}</span>
                         </div>
-                        <h4 className='mb-2 font-semibold text-gray-900'>{step.title}</h4>
+                        <h4 className='mb-2 font-semibold text-gray-900'>
+                          {step.title}
+                        </h4>
                         <p className='text-sm text-gray-600'>{step.desc}</p>
                         <div className='mt-2'>
-                          <Badge className={
-                            step.status === 'active' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-blue-100 text-blue-800'
-                          }>
-                            {step.status === 'active' ? '✅ Active' : '⚡ Ready'}
+                          <Badge
+                            className={
+                              step.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }
+                          >
+                            {step.status === 'active'
+                              ? '✅ Active'
+                              : '⚡ Ready'}
                           </Badge>
                         </div>
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className='mt-6 flex flex-wrap gap-3'>
                     <button className='flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-white hover:bg-orange-700'>
@@ -2687,7 +2746,6 @@ export default function AIFlowPage() {
                   </div>
                 </CardContent>
               </Card>
-
             </div>
           </TabsContent>
         </Tabs>

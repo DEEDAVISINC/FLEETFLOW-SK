@@ -1,8 +1,10 @@
 'use client';
 
-import { FleetFlowSystemOrchestrator, IntegratedWorkflow } from './system-orchestrator';
-import fleetFlowNotificationManager, { FleetFlowNotification } from './FleetFlowNotificationManager';
+import fleetFlowNotificationManager, {
+  FleetFlowNotification,
+} from './FleetFlowNotificationManager';
 import webSocketNotificationService from './WebSocketNotificationService';
+import { FleetFlowSystemOrchestrator } from './system-orchestrator';
 
 // 🔄 WORKFLOW NOTIFICATION TYPES
 export interface WorkflowNotificationConfig {
@@ -39,13 +41,24 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: false, push: true },
     template: {
       title: '🚛 New Load Assignment',
-      message: 'Load {{loadId}} has been assigned to you. Route: {{origin}} → {{destination}}. Rate: {{rate}}',
+      message:
+        'Load {{loadId}} has been assigned to you. Route: {{origin}} → {{destination}}. Rate: {{rate}}',
       actions: [
-        { id: 'accept', label: 'Accept Load', action: 'accept_load', style: 'primary' },
-        { id: 'decline', label: 'Decline', action: 'decline_load', style: 'secondary' }
-      ]
+        {
+          id: 'accept',
+          label: 'Accept Load',
+          action: 'accept_load',
+          style: 'primary',
+        },
+        {
+          id: 'decline',
+          label: 'Decline',
+          action: 'decline_load',
+          style: 'secondary',
+        },
+      ],
     },
-    conditions: { onSuccess: true }
+    conditions: { onSuccess: true },
   },
   {
     workflowId: 'load_assignment',
@@ -56,12 +69,19 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: false, email: true, push: false },
     template: {
       title: '📍 Tracking Initiated',
-      message: 'Live GPS tracking started for Load {{loadId}}. ETA: {{estimatedDelivery}}',
+      message:
+        'Live GPS tracking started for Load {{loadId}}. ETA: {{estimatedDelivery}}',
       actions: [
-        { id: 'track', label: 'View Live Tracking', action: 'open_tracking', url: '/tracking?load={{loadId}}', style: 'primary' }
-      ]
+        {
+          id: 'track',
+          label: 'View Live Tracking',
+          action: 'open_tracking',
+          url: '/tracking?load={{loadId}}',
+          style: 'primary',
+        },
+      ],
     },
-    conditions: { onSuccess: true }
+    conditions: { onSuccess: true },
   },
   {
     workflowId: 'load_assignment',
@@ -72,12 +92,19 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: true, push: true },
     template: {
       title: '📄 Documents Required',
-      message: 'Load {{loadId}} requires document signatures: {{documentTypes}}. Please complete within 2 hours.',
+      message:
+        'Load {{loadId}} requires document signatures: {{documentTypes}}. Please complete within 2 hours.',
       actions: [
-        { id: 'sign', label: 'Sign Documents', action: 'open_documents', url: '/documents/{{loadId}}', style: 'primary' }
-      ]
+        {
+          id: 'sign',
+          label: 'Sign Documents',
+          action: 'open_documents',
+          url: '/documents/{{loadId}}',
+          style: 'primary',
+        },
+      ],
     },
-    conditions: { onStart: true }
+    conditions: { onStart: true },
   },
 
   // Compliance Monitoring
@@ -90,13 +117,24 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: true, push: true },
     template: {
       title: '🚨 Safety Violation Detected',
-      message: 'Critical safety violation: {{violationType}}. Driver: {{driverName}}. Immediate action required.',
+      message:
+        'Critical safety violation: {{violationType}}. Driver: {{driverName}}. Immediate action required.',
       actions: [
-        { id: 'investigate', label: 'Investigate', action: 'open_compliance', style: 'danger' },
-        { id: 'contact', label: 'Contact Driver', action: 'call_driver', style: 'primary' }
-      ]
+        {
+          id: 'investigate',
+          label: 'Investigate',
+          action: 'open_compliance',
+          style: 'danger',
+        },
+        {
+          id: 'contact',
+          label: 'Contact Driver',
+          action: 'call_driver',
+          style: 'primary',
+        },
+      ],
     },
-    conditions: { onError: true }
+    conditions: { onError: true },
   },
 
   // Financial Alerts
@@ -109,13 +147,24 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: false, email: true, push: false },
     template: {
       title: '💳 Payment Processing Failed',
-      message: 'Payment of {{amount}} for Load {{loadId}} failed. Reason: {{errorMessage}}',
+      message:
+        'Payment of {{amount}} for Load {{loadId}} failed. Reason: {{errorMessage}}',
       actions: [
-        { id: 'retry', label: 'Retry Payment', action: 'retry_payment', style: 'primary' },
-        { id: 'review', label: 'Review Details', action: 'open_billing', style: 'secondary' }
-      ]
+        {
+          id: 'retry',
+          label: 'Retry Payment',
+          action: 'retry_payment',
+          style: 'primary',
+        },
+        {
+          id: 'review',
+          label: 'Review Details',
+          action: 'open_billing',
+          style: 'secondary',
+        },
+      ],
     },
-    conditions: { onError: true }
+    conditions: { onError: true },
   },
 
   // Emergency Alerts
@@ -128,14 +177,30 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: true, push: true },
     template: {
       title: '🚨 EMERGENCY: Accident Detected',
-      message: 'Potential accident detected for Driver {{driverName}} on Load {{loadId}}. Location: {{location}}',
+      message:
+        'Potential accident detected for Driver {{driverName}} on Load {{loadId}}. Location: {{location}}',
       actions: [
-        { id: 'emergency', label: 'Call 911', action: 'call_emergency', style: 'danger' },
-        { id: 'contact', label: 'Contact Driver', action: 'call_driver', style: 'primary' },
-        { id: 'track', label: 'Track Location', action: 'open_tracking', style: 'secondary' }
-      ]
+        {
+          id: 'emergency',
+          label: 'Call 911',
+          action: 'call_emergency',
+          style: 'danger',
+        },
+        {
+          id: 'contact',
+          label: 'Contact Driver',
+          action: 'call_driver',
+          style: 'primary',
+        },
+        {
+          id: 'track',
+          label: 'Track Location',
+          action: 'open_tracking',
+          style: 'secondary',
+        },
+      ],
     },
-    conditions: { onError: true }
+    conditions: { onError: true },
   },
 
   // Load Opportunities
@@ -148,13 +213,24 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: false, push: true },
     template: {
       title: '💰 High-Value Load Opportunity',
-      message: 'Premium load available: {{rate}} for {{miles}} miles. {{origin}} → {{destination}}. Expires in {{timeRemaining}}',
+      message:
+        'Premium load available: {{rate}} for {{miles}} miles. {{origin}} → {{destination}}. Expires in {{timeRemaining}}',
       actions: [
-        { id: 'bid', label: 'Submit Bid', action: 'submit_bid', style: 'success' },
-        { id: 'details', label: 'View Details', action: 'open_load', style: 'primary' }
-      ]
+        {
+          id: 'bid',
+          label: 'Submit Bid',
+          action: 'submit_bid',
+          style: 'success',
+        },
+        {
+          id: 'details',
+          label: 'View Details',
+          action: 'open_load',
+          style: 'primary',
+        },
+      ],
     },
-    conditions: { onSuccess: true }
+    conditions: { onSuccess: true },
   },
 
   // Warehouse Operations
@@ -167,13 +243,24 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: false, email: true, push: false },
     template: {
       title: '🏭 Warehouse Capacity Warning',
-      message: 'Warehouse {{warehouseName}} at {{capacityPercent}}% capacity. Consider rerouting new shipments.',
+      message:
+        'Warehouse {{warehouseName}} at {{capacityPercent}}% capacity. Consider rerouting new shipments.',
       actions: [
-        { id: 'reroute', label: 'View Alternatives', action: 'open_routing', style: 'primary' },
-        { id: 'schedule', label: 'Schedule Pickup', action: 'schedule_pickup', style: 'secondary' }
-      ]
+        {
+          id: 'reroute',
+          label: 'View Alternatives',
+          action: 'open_routing',
+          style: 'primary',
+        },
+        {
+          id: 'schedule',
+          label: 'Schedule Pickup',
+          action: 'schedule_pickup',
+          style: 'secondary',
+        },
+      ],
     },
-    conditions: { onSuccess: true }
+    conditions: { onSuccess: true },
   },
 
   // System Health
@@ -186,14 +273,25 @@ const WORKFLOW_NOTIFICATIONS: WorkflowNotificationConfig[] = [
     channels: { inApp: true, sms: true, email: true, push: false },
     template: {
       title: '⚙️ System Performance Alert',
-      message: 'System performance degraded: {{metric}} at {{value}}. Component: {{component}}',
+      message:
+        'System performance degraded: {{metric}} at {{value}}. Component: {{component}}',
       actions: [
-        { id: 'investigate', label: 'Investigate', action: 'open_monitoring', style: 'primary' },
-        { id: 'restart', label: 'Restart Service', action: 'restart_service', style: 'danger' }
-      ]
+        {
+          id: 'investigate',
+          label: 'Investigate',
+          action: 'open_monitoring',
+          style: 'primary',
+        },
+        {
+          id: 'restart',
+          label: 'Restart Service',
+          action: 'restart_service',
+          style: 'danger',
+        },
+      ],
     },
-    conditions: { onError: true }
-  }
+    conditions: { onError: true },
+  },
 ];
 
 // 🔧 SYSTEM ORCHESTRATOR NOTIFICATION INTEGRATION
@@ -210,7 +308,8 @@ export class SystemOrchestratorNotificationIntegration {
 
   public static getInstance(): SystemOrchestratorNotificationIntegration {
     if (!SystemOrchestratorNotificationIntegration.instance) {
-      SystemOrchestratorNotificationIntegration.instance = new SystemOrchestratorNotificationIntegration();
+      SystemOrchestratorNotificationIntegration.instance =
+        new SystemOrchestratorNotificationIntegration();
     }
     return SystemOrchestratorNotificationIntegration.instance;
   }
@@ -218,11 +317,13 @@ export class SystemOrchestratorNotificationIntegration {
   // 🚀 INITIALIZE INTEGRATION
   private async initializeIntegration(): Promise<void> {
     try {
-      console.log('🔄 Initializing System Orchestrator Notification Integration...');
+      console.log(
+        '🔄 Initializing System Orchestrator Notification Integration...'
+      );
 
       // Subscribe to system orchestrator events
       await this.subscribeToWorkflowEvents();
-      
+
       // Connect to WebSocket for real-time updates
       this.setupWebSocketIntegration();
 
@@ -230,23 +331,25 @@ export class SystemOrchestratorNotificationIntegration {
       this.setupSystemHealthMonitoring();
 
       this.isInitialized = true;
-      console.log('✅ System Orchestrator Notification Integration initialized');
+      console.log(
+        '✅ System Orchestrator Notification Integration initialized'
+      );
 
       // Send initialization notification
       await fleetFlowNotificationManager.createNotification({
         type: 'system_alert',
         priority: 'normal',
         title: '🔗 Notification System Online',
-        message: 'FleetFlow unified notification system connected to workflow orchestration',
+        message:
+          'FleetFlow unified notification system connected to workflow orchestration',
         channels: { inApp: true, sms: false, email: false, push: false },
         targetPortals: ['admin'],
         metadata: {
           systemComponent: 'NotificationIntegration',
           status: 'initialized',
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
-
     } catch (error) {
       console.error('❌ Failed to initialize notification integration:', error);
     }
@@ -256,11 +359,11 @@ export class SystemOrchestratorNotificationIntegration {
   private async subscribeToWorkflowEvents(): Promise<void> {
     // Subscribe to workflow step completion events
     // Note: This would integrate with the actual system orchestrator event system
-    
+
     // Simulate workflow event subscriptions
     const workflowEvents = [
       'workflow_started',
-      'workflow_completed', 
+      'workflow_completed',
       'workflow_failed',
       'step_started',
       'step_completed',
@@ -271,29 +374,37 @@ export class SystemOrchestratorNotificationIntegration {
       'document_generated',
       'payment_processed',
       'compliance_checked',
-      'emergency_detected'
+      'emergency_detected',
     ];
 
-    workflowEvents.forEach(eventType => {
-      const unsubscribe = this.systemOrchestrator.subscribe?.(eventType, (data: any) => {
-        this.handleWorkflowEvent(eventType, data);
-      });
+    workflowEvents.forEach((eventType) => {
+      const unsubscribe = this.systemOrchestrator.subscribe?.(
+        eventType,
+        (data: any) => {
+          this.handleWorkflowEvent(eventType, data);
+        }
+      );
 
       if (unsubscribe) {
         this.workflowSubscriptions.set(eventType, unsubscribe);
       }
     });
 
-    console.log(`📡 Subscribed to ${workflowEvents.length} workflow event types`);
+    console.log(
+      `📡 Subscribed to ${workflowEvents.length} workflow event types`
+    );
   }
 
   // 🎯 HANDLE WORKFLOW EVENTS
-  private async handleWorkflowEvent(eventType: string, eventData: any): Promise<void> {
+  private async handleWorkflowEvent(
+    eventType: string,
+    eventData: any
+  ): Promise<void> {
     try {
       console.log(`🔔 Workflow event received: ${eventType}`, eventData);
 
       // Find matching notification configurations
-      const matchingConfigs = WORKFLOW_NOTIFICATIONS.filter(config => {
+      const matchingConfigs = WORKFLOW_NOTIFICATIONS.filter((config) => {
         // Match workflow and step
         if (config.workflowId !== eventData.workflowId) return false;
         if (config.stepId !== eventData.stepId) return false;
@@ -301,12 +412,14 @@ export class SystemOrchestratorNotificationIntegration {
         // Check conditions
         if (config.conditions) {
           const conditions = config.conditions;
-          
+
           switch (eventType) {
             case 'step_started':
               return conditions.onStart === true;
             case 'step_completed':
-              return conditions.onComplete === true || conditions.onSuccess === true;
+              return (
+                conditions.onComplete === true || conditions.onSuccess === true
+              );
             case 'step_failed':
               return conditions.onError === true;
             case 'step_timeout':
@@ -323,7 +436,6 @@ export class SystemOrchestratorNotificationIntegration {
       for (const config of matchingConfigs) {
         await this.createWorkflowNotification(config, eventData);
       }
-
     } catch (error) {
       console.error('❌ Error handling workflow event:', error);
     }
@@ -336,45 +448,57 @@ export class SystemOrchestratorNotificationIntegration {
   ): Promise<void> {
     try {
       // Template variable replacement
-      const title = this.replaceTemplateVariables(config.template.title, eventData);
-      const message = this.replaceTemplateVariables(config.template.message, eventData);
-      
+      const title = this.replaceTemplateVariables(
+        config.template.title,
+        eventData
+      );
+      const message = this.replaceTemplateVariables(
+        config.template.message,
+        eventData
+      );
+
       // Process actions with template replacement
-      const actions = config.template.actions?.map(action => ({
+      const actions = config.template.actions?.map((action) => ({
         ...action,
-        url: action.url ? this.replaceTemplateVariables(action.url, eventData) : action.url
+        url: action.url
+          ? this.replaceTemplateVariables(action.url, eventData)
+          : action.url,
       }));
 
       // Determine target users if not specified
       let targetUsers = config.targetUsers;
       if (!targetUsers && eventData.assignedUsers) {
-        targetUsers = Array.isArray(eventData.assignedUsers) ? eventData.assignedUsers : [eventData.assignedUsers];
+        targetUsers = Array.isArray(eventData.assignedUsers)
+          ? eventData.assignedUsers
+          : [eventData.assignedUsers];
       }
 
       // Create notification
-      const notificationId = await fleetFlowNotificationManager.createNotification({
-        type: config.notificationType,
-        priority: config.priority,
-        title,
-        message,
-        channels: config.channels,
-        targetPortals: config.targetPortals,
-        targetUsers,
-        metadata: {
-          workflowId: eventData.workflowId,
-          stepId: eventData.stepId,
-          loadId: eventData.loadId,
-          orderId: eventData.orderId,
-          eventType: config.stepId,
-          actionRequired: !!actions?.length,
-          source: 'system_orchestrator',
-          ...eventData
-        },
-        actions
-      });
+      const notificationId =
+        await fleetFlowNotificationManager.createNotification({
+          type: config.notificationType,
+          priority: config.priority,
+          title,
+          message,
+          channels: config.channels,
+          targetPortals: config.targetPortals,
+          targetUsers,
+          metadata: {
+            workflowId: eventData.workflowId,
+            stepId: eventData.stepId,
+            loadId: eventData.loadId,
+            orderId: eventData.orderId,
+            eventType: config.stepId,
+            actionRequired: !!actions?.length,
+            source: 'system_orchestrator',
+            ...eventData,
+          },
+          actions,
+        });
 
-      console.log(`✅ Workflow notification created: ${notificationId} for ${config.workflowId}:${config.stepId}`);
-
+      console.log(
+        `✅ Workflow notification created: ${notificationId} for ${config.workflowId}:${config.stepId}`
+      );
     } catch (error) {
       console.error('❌ Error creating workflow notification:', error);
     }
@@ -383,7 +507,7 @@ export class SystemOrchestratorNotificationIntegration {
   // 🔧 REPLACE TEMPLATE VARIABLES
   private replaceTemplateVariables(template: string, data: any): string {
     let result = template;
-    
+
     // Replace {{variable}} patterns
     const variablePattern = /\{\{(\w+)\}\}/g;
     result = result.replace(variablePattern, (match, variableName) => {
@@ -393,11 +517,17 @@ export class SystemOrchestratorNotificationIntegration {
 
     // Format common data types
     if (data.rate && typeof data.rate === 'number') {
-      result = result.replace(/\{\{rate\}\}/g, `$${data.rate.toLocaleString()}`);
+      result = result.replace(
+        /\{\{rate\}\}/g,
+        `$${data.rate.toLocaleString()}`
+      );
     }
-    
+
     if (data.amount && typeof data.amount === 'number') {
-      result = result.replace(/\{\{amount\}\}/g, `$${data.amount.toLocaleString()}`);
+      result = result.replace(
+        /\{\{amount\}\}/g,
+        `$${data.amount.toLocaleString()}`
+      );
     }
 
     if (data.estimatedDelivery) {
@@ -420,7 +550,9 @@ export class SystemOrchestratorNotificationIntegration {
     });
 
     webSocketNotificationService.onMessage('disconnected', () => {
-      console.log('🔌 WebSocket disconnected - falling back to local notifications');
+      console.log(
+        '🔌 WebSocket disconnected - falling back to local notifications'
+      );
     });
 
     console.log('🔗 WebSocket notification integration configured');
@@ -429,60 +561,77 @@ export class SystemOrchestratorNotificationIntegration {
   // 🏥 SETUP SYSTEM HEALTH MONITORING
   private setupSystemHealthMonitoring(): void {
     // Monitor system orchestrator health every 5 minutes
-    setInterval(async () => {
-      try {
-        const systemStatus = await this.systemOrchestrator.getSystemStatus?.();
-        
-        if (systemStatus?.criticalAlerts?.length > 0) {
-          // Create critical system alerts
-          for (const alert of systemStatus.criticalAlerts) {
+    setInterval(
+      async () => {
+        try {
+          const systemStatus =
+            await this.systemOrchestrator.getSystemStatus?.();
+
+          if (systemStatus?.criticalAlerts?.length > 0) {
+            // Create critical system alerts
+            for (const alert of systemStatus.criticalAlerts) {
+              await fleetFlowNotificationManager.createNotification({
+                type: 'system_alert',
+                priority: 'critical',
+                title: `🚨 System Critical Alert: ${alert.component}`,
+                message: `${alert.description}\nComponent: ${alert.component}\nSeverity: ${alert.severity}`,
+                channels: { inApp: true, sms: true, email: true, push: true },
+                targetPortals: ['admin', 'dispatch'],
+                metadata: {
+                  alertId: alert.id,
+                  component: alert.component,
+                  severity: alert.severity,
+                  actionRequired: true,
+                  source: 'system_health_monitor',
+                },
+                actions: [
+                  {
+                    id: 'acknowledge',
+                    label: 'Acknowledge',
+                    action: 'acknowledge_alert',
+                    style: 'primary',
+                  },
+                  {
+                    id: 'investigate',
+                    label: 'Investigate',
+                    action: 'open_system_monitor',
+                    style: 'secondary',
+                  },
+                ],
+              });
+            }
+          }
+
+          // Check notification system health
+          const notificationHealth =
+            fleetFlowNotificationManager.getHealthStatus();
+          const wsHealth = webSocketNotificationService.getHealthStatus();
+
+          if (
+            notificationHealth.status === 'unhealthy' ||
+            wsHealth.status === 'unhealthy'
+          ) {
             await fleetFlowNotificationManager.createNotification({
               type: 'system_alert',
-              priority: 'critical',
-              title: `🚨 System Critical Alert: ${alert.component}`,
-              message: `${alert.description}\nComponent: ${alert.component}\nSeverity: ${alert.severity}`,
-              channels: { inApp: true, sms: true, email: true, push: true },
-              targetPortals: ['admin', 'dispatch'],
+              priority: 'urgent',
+              title: '⚠️ Notification System Health Warning',
+              message: `Notification system degraded: Manager(${notificationHealth.status}) WebSocket(${wsHealth.status})`,
+              channels: { inApp: true, sms: false, email: true, push: false },
+              targetPortals: ['admin'],
               metadata: {
-                alertId: alert.id,
-                component: alert.component,
-                severity: alert.severity,
+                notificationSystemStatus: notificationHealth.status,
+                webSocketStatus: wsHealth.status,
                 actionRequired: true,
-                source: 'system_health_monitor'
+                source: 'notification_health_monitor',
               },
-              actions: [
-                { id: 'acknowledge', label: 'Acknowledge', action: 'acknowledge_alert', style: 'primary' },
-                { id: 'investigate', label: 'Investigate', action: 'open_system_monitor', style: 'secondary' }
-              ]
             });
           }
+        } catch (error) {
+          console.error('❌ System health monitoring error:', error);
         }
-
-        // Check notification system health
-        const notificationHealth = fleetFlowNotificationManager.getHealthStatus();
-        const wsHealth = webSocketNotificationService.getHealthStatus();
-
-        if (notificationHealth.status === 'unhealthy' || wsHealth.status === 'unhealthy') {
-          await fleetFlowNotificationManager.createNotification({
-            type: 'system_alert',
-            priority: 'urgent',
-            title: '⚠️ Notification System Health Warning',
-            message: `Notification system degraded: Manager(${notificationHealth.status}) WebSocket(${wsHealth.status})`,
-            channels: { inApp: true, sms: false, email: true, push: false },
-            targetPortals: ['admin'],
-            metadata: {
-              notificationSystemStatus: notificationHealth.status,
-              webSocketStatus: wsHealth.status,
-              actionRequired: true,
-              source: 'notification_health_monitor'
-            }
-          });
-        }
-
-      } catch (error) {
-        console.error('❌ System health monitoring error:', error);
-      }
-    }, 5 * 60 * 1000); // 5 minutes
+      },
+      5 * 60 * 1000
+    ); // 5 minutes
 
     console.log('🏥 System health monitoring active');
   }
@@ -496,15 +645,15 @@ export class SystemOrchestratorNotificationIntegration {
   ): Promise<void> {
     const mappedEventType = {
       start: 'step_started',
-      success: 'step_completed', 
+      success: 'step_completed',
       error: 'step_failed',
-      timeout: 'step_timeout'
+      timeout: 'step_timeout',
     }[eventType];
 
     await this.handleWorkflowEvent(mappedEventType, {
       workflowId,
       stepId,
-      ...eventData
+      ...eventData,
     });
   }
 
@@ -513,30 +662,45 @@ export class SystemOrchestratorNotificationIntegration {
     console.log('🧪 Sending test workflow notifications...');
 
     // Test load assignment
-    await this.triggerWorkflowNotification('load_assignment', 'ai_dispatch', 'success', {
-      loadId: 'TEST-001',
-      origin: 'Atlanta, GA',
-      destination: 'Miami, FL',
-      rate: 2500,
-      miles: 650,
-      assignedUsers: ['test-driver-001']
-    });
+    await this.triggerWorkflowNotification(
+      'load_assignment',
+      'ai_dispatch',
+      'success',
+      {
+        loadId: 'TEST-001',
+        origin: 'Atlanta, GA',
+        destination: 'Miami, FL',
+        rate: 2500,
+        miles: 650,
+        assignedUsers: ['test-driver-001'],
+      }
+    );
 
     // Test emergency alert
-    await this.triggerWorkflowNotification('emergency_response', 'accident_detected', 'error', {
-      driverName: 'John Doe',
-      loadId: 'TEST-002',
-      location: 'I-75 Mile Marker 125'
-    });
+    await this.triggerWorkflowNotification(
+      'emergency_response',
+      'accident_detected',
+      'error',
+      {
+        driverName: 'John Doe',
+        loadId: 'TEST-002',
+        location: 'I-75 Mile Marker 125',
+      }
+    );
 
     // Test high-value opportunity
-    await this.triggerWorkflowNotification('load_matching', 'high_value_opportunity', 'success', {
-      rate: 4200,
-      miles: 800,
-      origin: 'Los Angeles, CA',
-      destination: 'Phoenix, AZ',
-      timeRemaining: '45 minutes'
-    });
+    await this.triggerWorkflowNotification(
+      'load_matching',
+      'high_value_opportunity',
+      'success',
+      {
+        rate: 4200,
+        miles: 800,
+        origin: 'Los Angeles, CA',
+        destination: 'Phoenix, AZ',
+        timeRemaining: '45 minutes',
+      }
+    );
 
     console.log('✅ Test workflow notifications sent');
   }
@@ -556,17 +720,17 @@ export class SystemOrchestratorNotificationIntegration {
       lastHealthCheck: new Date().toISOString(),
       systemStatus: {
         orchestratorConnected: !!this.systemOrchestrator,
-        workflowConfigs: WORKFLOW_NOTIFICATIONS.length
+        workflowConfigs: WORKFLOW_NOTIFICATIONS.length,
       },
       notificationHealth: fleetFlowNotificationManager.getHealthStatus(),
-      webSocketHealth: webSocketNotificationService.getHealthStatus()
+      webSocketHealth: webSocketNotificationService.getHealthStatus(),
     };
   }
 
   // 🗑️ CLEANUP
   public destroy(): void {
     console.log('🗑️ Cleaning up System Orchestrator Notification Integration');
-    
+
     // Unsubscribe from workflow events
     this.workflowSubscriptions.forEach((unsubscribe, eventType) => {
       try {
@@ -582,5 +746,6 @@ export class SystemOrchestratorNotificationIntegration {
 }
 
 // 🌟 EXPORT SINGLETON INSTANCE
-export const systemOrchestratorNotificationIntegration = SystemOrchestratorNotificationIntegration.getInstance();
+export const systemOrchestratorNotificationIntegration =
+  SystemOrchestratorNotificationIntegration.getInstance();
 export default systemOrchestratorNotificationIntegration;

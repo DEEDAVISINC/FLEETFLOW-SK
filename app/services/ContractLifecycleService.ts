@@ -1139,3 +1139,4 @@ export class ContractLifecycleService {
 // Export singleton instance
 export const contractLifecycleService = ContractLifecycleService.getInstance();
 
+

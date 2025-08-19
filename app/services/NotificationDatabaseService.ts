@@ -1,9 +1,14 @@
 'use client';
 
-import { FleetFlowNotification, NotificationPreferences, NotificationStats } from './FleetFlowNotificationManager';
+import {
+  FleetFlowNotification,
+  NotificationPreferences,
+  NotificationStats,
+} from './FleetFlowNotificationManager';
 
 // 🗄️ DATABASE INTERFACES
-export interface DatabaseNotification extends Omit<FleetFlowNotification, 'channels'> {
+export interface DatabaseNotification
+  extends Omit<FleetFlowNotification, 'channels'> {
   channels: string; // JSON string in database
   target_portals: string; // Array as string in database
   target_users: string | null; // Array as string in database
@@ -25,8 +30,20 @@ export interface NotificationRecipient {
   portal: string;
   in_app_status: 'pending' | 'delivered' | 'read' | 'dismissed' | 'failed';
   sms_status: 'pending' | 'sent' | 'delivered' | 'failed' | 'skipped';
-  email_status: 'pending' | 'sent' | 'delivered' | 'opened' | 'failed' | 'skipped';
-  push_status: 'pending' | 'sent' | 'delivered' | 'opened' | 'failed' | 'skipped';
+  email_status:
+    | 'pending'
+    | 'sent'
+    | 'delivered'
+    | 'opened'
+    | 'failed'
+    | 'skipped';
+  push_status:
+    | 'pending'
+    | 'sent'
+    | 'delivered'
+    | 'opened'
+    | 'failed'
+    | 'skipped';
   delivered_at: string | null;
   read_at: string | null;
   dismissed_at: string | null;
@@ -94,7 +111,10 @@ export class NotificationDatabaseService {
 
   private constructor() {
     // Use environment variable or fallback for local development
-    this.connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || 'postgresql://localhost:5432/fleetflow';
+    this.connectionString =
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL ||
+      'postgresql://localhost:5432/fleetflow';
     this.initializeConnection();
   }
 
@@ -111,14 +131,16 @@ export class NotificationDatabaseService {
       // For client-side usage, we'll simulate database operations
       // In a real implementation, this would connect to PostgreSQL
       console.log('🔗 Notification Database Service initialized');
-      console.log('📍 Connection string:', this.connectionString.replace(/\/\/.*@/, '//<credentials>@'));
-      
+      console.log(
+        '📍 Connection string:',
+        this.connectionString.replace(/\/\/.*@/, '//<credentials>@')
+      );
+
       this.isConnected = true;
-      
+
       // In production, you would:
       // const client = new Pool({ connectionString: this.connectionString });
       // await client.connect();
-      
     } catch (error) {
       console.error('❌ Database connection failed:', error);
       this.isConnected = false;
@@ -126,7 +148,9 @@ export class NotificationDatabaseService {
   }
 
   // 📝 CREATE NOTIFICATION
-  public async createNotification(notification: FleetFlowNotification): Promise<string> {
+  public async createNotification(
+    notification: FleetFlowNotification
+  ): Promise<string> {
     if (!this.isConnected) {
       console.warn('⚠️ Database not connected, using in-memory fallback');
       return notification.id;
@@ -137,7 +161,7 @@ export class NotificationDatabaseService {
       /*
       const result = await this.query(`
         INSERT INTO fleetflow_notifications (
-          id, type, priority, title, message, channels, target_portals, 
+          id, type, priority, title, message, channels, target_portals,
           target_users, metadata, created_by, source, tenant_id
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING id
@@ -156,14 +180,17 @@ export class NotificationDatabaseService {
         'default'
       ]);
       */
-      
+
       console.log(`📝 Created notification in database: ${notification.id}`);
-      
+
       // Create actions if present
       if (notification.actions) {
-        await this.createNotificationActions(notification.id, notification.actions);
+        await this.createNotificationActions(
+          notification.id,
+          notification.actions
+        );
       }
-      
+
       // Create recipient records
       await this.createNotificationRecipients(notification);
 
@@ -176,7 +203,7 @@ export class NotificationDatabaseService {
 
   // 🎯 CREATE NOTIFICATION ACTIONS
   private async createNotificationActions(
-    notificationId: string, 
+    notificationId: string,
     actions: FleetFlowNotification['actions']
   ): Promise<void> {
     if (!actions || actions.length === 0) return;
@@ -202,14 +229,18 @@ export class NotificationDatabaseService {
       }
       */
 
-      console.log(`🎯 Created ${actions.length} actions for notification ${notificationId}`);
+      console.log(
+        `🎯 Created ${actions.length} actions for notification ${notificationId}`
+      );
     } catch (error) {
       console.error('❌ Failed to create notification actions:', error);
     }
   }
 
   // 👥 CREATE NOTIFICATION RECIPIENTS
-  private async createNotificationRecipients(notification: FleetFlowNotification): Promise<void> {
+  private async createNotificationRecipients(
+    notification: FleetFlowNotification
+  ): Promise<void> {
     try {
       const recipients: { userId: string; portal: string }[] = [];
 
@@ -224,7 +255,7 @@ export class NotificationDatabaseService {
         // Add all users from target portals
         for (const portal of notification.targetPortals) {
           const portalUsers = await this.getUsersInPortal(portal);
-          recipients.push(...portalUsers.map(userId => ({ userId, portal })));
+          recipients.push(...portalUsers.map((userId) => ({ userId, portal })));
         }
       }
 
@@ -245,7 +276,9 @@ export class NotificationDatabaseService {
       }
       */
 
-      console.log(`👥 Created ${recipients.length} recipients for notification ${notification.id}`);
+      console.log(
+        `👥 Created ${recipients.length} recipients for notification ${notification.id}`
+      );
     } catch (error) {
       console.error('❌ Failed to create notification recipients:', error);
     }
@@ -278,39 +311,39 @@ export class NotificationDatabaseService {
         WHERE r.user_id = $1 AND r.portal = $2
         AND (n.expires_at IS NULL OR n.expires_at > NOW())
       `;
-      
+
       const params = [userId, portal];
       let paramIndex = 3;
-      
+
       if (filters?.unreadOnly) {
         query += ` AND r.in_app_status IN ('pending', 'delivered')`;
       }
-      
+
       if (filters?.priority?.length) {
         query += ` AND n.priority = ANY($${paramIndex})`;
         params.push(filters.priority);
         paramIndex++;
       }
-      
+
       if (filters?.type?.length) {
         query += ` AND n.type = ANY($${paramIndex})`;
         params.push(filters.type);
         paramIndex++;
       }
-      
+
       query += ` ORDER BY n.created_at DESC`;
-      
+
       if (filters?.limit) {
         query += ` LIMIT $${paramIndex}`;
         params.push(filters.limit);
         paramIndex++;
       }
-      
+
       if (filters?.offset) {
         query += ` OFFSET $${paramIndex}`;
         params.push(filters.offset);
       }
-      
+
       const result = await this.query(query, params);
       return result.rows.map(this.mapDatabaseNotificationToFleetFlow);
       */
@@ -338,8 +371,8 @@ export class NotificationDatabaseService {
       // In production:
       /*
       await this.query(`
-        UPDATE notification_recipients 
-        SET 
+        UPDATE notification_recipients
+        SET
           in_app_status = 'read',
           read_at = NOW(),
           read_count = read_count + 1,
@@ -348,7 +381,9 @@ export class NotificationDatabaseService {
       `, [notificationId, userId, portal]);
       */
 
-      console.log(`✅ Marked notification ${notificationId} as read for ${userId}`);
+      console.log(
+        `✅ Marked notification ${notificationId} as read for ${userId}`
+      );
       return true;
     } catch (error) {
       console.error('❌ Failed to mark notification as read:', error);
@@ -397,7 +432,7 @@ export class NotificationDatabaseService {
         INSERT INTO user_notification_preferences (
           user_id, portal, channels, priorities, types, schedule, thresholds
         ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-        ON CONFLICT (user_id, portal) 
+        ON CONFLICT (user_id, portal)
         DO UPDATE SET
           channels = EXCLUDED.channels,
           priorities = EXCLUDED.priorities,
@@ -416,7 +451,9 @@ export class NotificationDatabaseService {
       ]);
       */
 
-      console.log(`⚙️ Saved preferences for user ${userId} in portal ${portal}`);
+      console.log(
+        `⚙️ Saved preferences for user ${userId} in portal ${portal}`
+      );
       return true;
     } catch (error) {
       console.error('❌ Failed to save user preferences:', error);
@@ -441,12 +478,12 @@ export class NotificationDatabaseService {
         SELECT * FROM user_notification_preferences
         WHERE user_id = $1 AND portal = $2
       `, [userId, portal]);
-      
+
       if (result.rows.length === 0) {
         // Return default preferences
         return this.getDefaultPreferences(userId, portal);
       }
-      
+
       const row = result.rows[0];
       return {
         userId: row.user_id,
@@ -481,7 +518,7 @@ export class NotificationDatabaseService {
         byPriority: {},
         byChannel: {},
         readRate: 0,
-        avgResponseTime: 0
+        avgResponseTime: 0,
       };
     }
 
@@ -489,7 +526,7 @@ export class NotificationDatabaseService {
       // In production, this would query notification_analytics and aggregate data
       /*
       const result = await this.query(`
-        SELECT 
+        SELECT
           COUNT(*) as total_sent,
           COUNT(*) FILTER (WHERE r.in_app_status = 'read') as total_read,
           COUNT(*) FILTER (WHERE r.in_app_status IN ('pending', 'delivered')) as total_unread
@@ -508,26 +545,26 @@ export class NotificationDatabaseService {
         totalRead: 18,
         totalUnread: 7,
         byType: {
-          'load_assignment': 5,
-          'delivery_update': 8,
-          'system_alert': 3,
-          'payment_alert': 9
+          load_assignment: 5,
+          delivery_update: 8,
+          system_alert: 3,
+          payment_alert: 9,
         },
         byPriority: {
-          'critical': 2,
-          'urgent': 5,
-          'high': 8,
-          'normal': 10,
-          'low': 0
+          critical: 2,
+          urgent: 5,
+          high: 8,
+          normal: 10,
+          low: 0,
         },
         byChannel: {
-          'inApp': 25,
-          'sms': 12,
-          'email': 18,
-          'push': 20
+          inApp: 25,
+          sms: 12,
+          email: 18,
+          push: 20,
         },
         readRate: 72.0,
-        avgResponseTime: 1847 // seconds
+        avgResponseTime: 1847, // seconds
       };
     } catch (error) {
       console.error('❌ Failed to get notification stats:', error);
@@ -539,13 +576,15 @@ export class NotificationDatabaseService {
         byPriority: {},
         byChannel: {},
         readRate: 0,
-        avgResponseTime: 0
+        avgResponseTime: 0,
       };
     }
   }
 
   // 🔗 WEBSOCKET CONNECTION MANAGEMENT
-  public async trackWebSocketConnection(connection: Partial<WebSocketConnection>): Promise<string> {
+  public async trackWebSocketConnection(
+    connection: Partial<WebSocketConnection>
+  ): Promise<string> {
     if (!this.isConnected) {
       console.warn('⚠️ Database not connected, skipping WebSocket tracking');
       return connection.client_id || 'mock-connection';
@@ -558,7 +597,7 @@ export class NotificationDatabaseService {
         INSERT INTO websocket_connections (
           client_id, user_id, portal, service, ip_address, user_agent
         ) VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (client_id) 
+        ON CONFLICT (client_id)
         DO UPDATE SET
           last_ping = NOW(),
           status = 'connected',
@@ -589,7 +628,7 @@ export class NotificationDatabaseService {
       // In production:
       /*
       await this.query(`
-        UPDATE websocket_connections 
+        UPDATE websocket_connections
         SET last_ping = NOW(), updated_at = NOW()
         WHERE client_id = $1
       `, [clientId]);
@@ -609,7 +648,7 @@ export class NotificationDatabaseService {
       // In production:
       /*
       await this.query(`
-        UPDATE websocket_connections 
+        UPDATE websocket_connections
         SET status = 'disconnected', updated_at = NOW()
         WHERE client_id = $1
       `, [clientId]);
@@ -630,26 +669,26 @@ export class NotificationDatabaseService {
       /*
       // Delete expired notifications
       await this.query(`
-        DELETE FROM fleetflow_notifications 
+        DELETE FROM fleetflow_notifications
         WHERE expires_at IS NOT NULL AND expires_at < NOW()
       `);
-      
+
       // Delete old delivery logs (keep 90 days)
       await this.query(`
-        DELETE FROM notification_delivery_log 
+        DELETE FROM notification_delivery_log
         WHERE attempted_at < NOW() - INTERVAL '90 days'
       `);
-      
+
       // Delete stale WebSocket connections (24 hours)
       await this.query(`
-        DELETE FROM websocket_connections 
+        DELETE FROM websocket_connections
         WHERE last_ping < NOW() - INTERVAL '24 hours'
       `);
-      
+
       // Delete processed queue items (7 days)
       await this.query(`
-        DELETE FROM notification_queue 
-        WHERE status IN ('delivered', 'failed', 'cancelled') 
+        DELETE FROM notification_queue
+        WHERE status IN ('delivered', 'failed', 'cancelled')
         AND updated_at < NOW() - INTERVAL '7 days'
       `);
       */
@@ -668,8 +707,11 @@ export class NotificationDatabaseService {
   } {
     return {
       connected: this.isConnected,
-      connectionString: this.connectionString.replace(/\/\/.*@/, '//<credentials>@'),
-      lastQuery: new Date().toISOString()
+      connectionString: this.connectionString.replace(
+        /\/\/.*@/,
+        '//<credentials>@'
+      ),
+      lastQuery: new Date().toISOString(),
     };
   }
 
@@ -692,14 +734,20 @@ export class NotificationDatabaseService {
       dispatch: ['dispatch-1', 'dispatch-2', 'dispatch-3'],
       driver: ['driver-1', 'driver-2', 'driver-3', 'driver-4'],
       vendor: ['vendor-1', 'vendor-2'],
-      carrier: ['carrier-1', 'carrier-2', 'carrier-3']
+      carrier: ['carrier-1', 'carrier-2', 'carrier-3'],
     };
-    
+
     return mockUsers[portal as keyof typeof mockUsers] || [];
   }
 
-  private getDefaultPreferences(userId: string, portal: string): NotificationPreferences {
-    const portalDefaults: Record<string, Partial<NotificationPreferences['types']>> = {
+  private getDefaultPreferences(
+    userId: string,
+    portal: string
+  ): NotificationPreferences {
+    const portalDefaults: Record<
+      string,
+      Partial<NotificationPreferences['types']>
+    > = {
       admin: {
         load_assignment: true,
         delivery_update: true,
@@ -718,7 +766,7 @@ export class NotificationDatabaseService {
         eta_update: true,
         document_required: true,
         approval_needed: true,
-        onboarding_update: true
+        onboarding_update: true,
       },
       dispatch: {
         load_assignment: true,
@@ -738,7 +786,7 @@ export class NotificationDatabaseService {
         eta_update: true,
         document_required: true,
         approval_needed: true,
-        onboarding_update: false
+        onboarding_update: false,
       },
       driver: {
         load_assignment: true,
@@ -758,7 +806,7 @@ export class NotificationDatabaseService {
         eta_update: true,
         document_required: true,
         approval_needed: false,
-        onboarding_update: false
+        onboarding_update: false,
       },
       vendor: {
         load_assignment: false,
@@ -778,7 +826,7 @@ export class NotificationDatabaseService {
         eta_update: true,
         document_required: false,
         approval_needed: false,
-        onboarding_update: false
+        onboarding_update: false,
       },
       carrier: {
         load_assignment: true,
@@ -798,8 +846,8 @@ export class NotificationDatabaseService {
         eta_update: true,
         document_required: true,
         approval_needed: true,
-        onboarding_update: true
-      }
+        onboarding_update: true,
+      },
     };
 
     return {
@@ -808,33 +856,35 @@ export class NotificationDatabaseService {
         inApp: true,
         sms: portal === 'driver' || portal === 'dispatch',
         email: true,
-        push: portal !== 'vendor'
+        push: portal !== 'vendor',
       },
       priorities: {
         low: false,
         normal: true,
         high: true,
         urgent: true,
-        critical: true
+        critical: true,
       },
-      types: portalDefaults[portal] as NotificationPreferences['types'] || {},
+      types: (portalDefaults[portal] as NotificationPreferences['types']) || {},
       schedule: {
         enabled: false,
         startTime: '08:00',
         endTime: '18:00',
         timezone: 'America/New_York',
         daysOfWeek: [1, 2, 3, 4, 5],
-        urgentOnly: true
+        urgentOnly: true,
       },
       thresholds: {
         loadValueMin: portal === 'driver' ? 1000 : 500,
         distanceMax: portal === 'driver' ? 500 : 1000,
-        rateMin: portal === 'driver' ? 2.0 : 1.5
-      }
+        rateMin: portal === 'driver' ? 2.0 : 1.5,
+      },
     };
   }
 
-  private mapDatabaseNotificationToFleetFlow(dbNotification: DatabaseNotification): FleetFlowNotification {
+  private mapDatabaseNotificationToFleetFlow(
+    dbNotification: DatabaseNotification
+  ): FleetFlowNotification {
     return {
       id: dbNotification.id,
       type: dbNotification.type,
@@ -843,23 +893,26 @@ export class NotificationDatabaseService {
       message: dbNotification.message,
       timestamp: dbNotification.created_at,
       read: false, // This would be determined by recipient status
-      channels: typeof dbNotification.channels === 'string' 
-        ? JSON.parse(dbNotification.channels) 
-        : dbNotification.channels,
-      targetPortals: typeof dbNotification.target_portals === 'string'
-        ? JSON.parse(dbNotification.target_portals)
-        : dbNotification.target_portals,
-      targetUsers: dbNotification.target_users 
-        ? (typeof dbNotification.target_users === 'string' 
-           ? JSON.parse(dbNotification.target_users)
-           : dbNotification.target_users)
+      channels:
+        typeof dbNotification.channels === 'string'
+          ? JSON.parse(dbNotification.channels)
+          : dbNotification.channels,
+      targetPortals:
+        typeof dbNotification.target_portals === 'string'
+          ? JSON.parse(dbNotification.target_portals)
+          : dbNotification.target_portals,
+      targetUsers: dbNotification.target_users
+        ? typeof dbNotification.target_users === 'string'
+          ? JSON.parse(dbNotification.target_users)
+          : dbNotification.target_users
         : undefined,
       metadata: dbNotification.metadata,
-      actions: [] // Would need to fetch from notification_actions table
+      actions: [], // Would need to fetch from notification_actions table
     };
   }
 }
 
 // 🌟 EXPORT SINGLETON INSTANCE
-export const notificationDatabaseService = NotificationDatabaseService.getInstance();
+export const notificationDatabaseService =
+  NotificationDatabaseService.getInstance();
 export default notificationDatabaseService;

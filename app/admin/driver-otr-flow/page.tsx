@@ -2026,12 +2026,12 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                   </select>
                 )}
 
-                <UnifiedNotificationBell 
-                  userId="current-driver-user" 
-                  portal="driver" 
-                  position="navigation"
-                  size="md"
-                  theme="auto"
+                <UnifiedNotificationBell
+                  userId='current-driver-user'
+                  portal='driver'
+                  position='navigation'
+                  size='md'
+                  theme='auto'
                   showBadge={true}
                   showDropdown={true}
                   maxNotifications={15}

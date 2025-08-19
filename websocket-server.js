@@ -2,10 +2,10 @@
 
 /**
  * 🔗 FleetFlow WebSocket Notification Server
- * 
+ *
  * Real-time notification synchronization across all FleetFlow portals
  * Supports WebSocket and Socket.IO protocols
- * 
+ *
  * Usage:
  *   node websocket-server.js [--port 3001] [--cors-origin http://localhost:3000]
  */
@@ -15,8 +15,14 @@ const http = require('http');
 const { v4: uuidv4 } = require('uuid');
 
 // Configuration from environment or command line
-const PORT = process.env.WEBSOCKET_PORT || process.argv.find(arg => arg.startsWith('--port'))?.split('=')[1] || 3001;
-const CORS_ORIGIN = process.env.SOCKET_IO_CORS_ORIGIN || process.argv.find(arg => arg.startsWith('--cors-origin'))?.split('=')[1] || 'http://localhost:3000';
+const PORT =
+  process.env.WEBSOCKET_PORT ||
+  process.argv.find((arg) => arg.startsWith('--port'))?.split('=')[1] ||
+  3001;
+const CORS_ORIGIN =
+  process.env.SOCKET_IO_CORS_ORIGIN ||
+  process.argv.find((arg) => arg.startsWith('--cors-origin'))?.split('=')[1] ||
+  'http://localhost:3000';
 
 // Server state
 const clients = new Map();
@@ -27,7 +33,7 @@ const stats = {
   activeConnections: 0,
   messagesSent: 0,
   messagesReceived: 0,
-  startTime: Date.now()
+  startTime: Date.now(),
 };
 
 console.log(`🚀 FleetFlow WebSocket Notification Server starting...`);
@@ -57,9 +63,12 @@ const server = http.createServer((req, res) => {
       messagesSent: stats.messagesSent,
       messagesReceived: stats.messagesReceived,
       channels: Object.fromEntries(
-        Array.from(channels.entries()).map(([channel, clientSet]) => [channel, clientSet.size])
+        Array.from(channels.entries()).map(([channel, clientSet]) => [
+          channel,
+          clientSet.size,
+        ])
       ),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -78,8 +87,8 @@ const server = http.createServer((req, res) => {
         connected: client.ws.readyState === WebSocket.OPEN,
         lastPing: client.lastPing,
         messagesReceived: client.messagesReceived || 0,
-        messagesSent: client.messagesSent || 0
-      }))
+        messagesSent: client.messagesSent || 0,
+      })),
     };
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -89,11 +98,13 @@ const server = http.createServer((req, res) => {
 
   // Default response
   res.writeHead(404, { 'Content-Type': 'text/plain' });
-  res.end('FleetFlow WebSocket Notification Server\n\nEndpoints:\n  /health - Health status\n  /stats - Detailed statistics');
+  res.end(
+    'FleetFlow WebSocket Notification Server\n\nEndpoints:\n  /health - Health status\n  /stats - Detailed statistics'
+  );
 });
 
 // Create WebSocket server
-const wss = new WebSocket.Server({ 
+const wss = new WebSocket.Server({
   server,
   path: '/notifications',
   perMessageDeflate: {
@@ -106,7 +117,7 @@ const wss = new WebSocket.Server({
     concurrencyLimit: 10,
     serverMaxWindowBits: 13,
     clientMaxWindowBits: 13,
-  }
+  },
 });
 
 console.log('🔗 WebSocket server initialized');
@@ -122,14 +133,16 @@ wss.on('connection', (ws, req) => {
     portal: null,
     userId: null,
     messagesReceived: 0,
-    messagesSent: 0
+    messagesSent: 0,
   };
 
   clients.set(clientId, clientInfo);
   stats.totalConnections++;
   stats.activeConnections++;
 
-  console.log(`✅ Client connected: ${clientId} (${stats.activeConnections} active)`);
+  console.log(
+    `✅ Client connected: ${clientId} (${stats.activeConnections} active)`
+  );
 
   // Send welcome message
   sendToClient(clientId, {
@@ -141,9 +154,9 @@ wss.on('connection', (ws, req) => {
       serverInfo: {
         version: '1.0.0',
         capabilities: ['notifications', 'real-time-sync', 'channel-routing'],
-        activeConnections: stats.activeConnections
-      }
-    }
+        activeConnections: stats.activeConnections,
+      },
+    },
   });
 
   // Message handler
@@ -156,7 +169,7 @@ wss.on('connection', (ws, req) => {
       sendToClient(clientId, {
         type: 'error',
         timestamp: new Date().toISOString(),
-        data: { error: 'Invalid message format' }
+        data: { error: 'Invalid message format' },
       });
     }
   });
@@ -171,7 +184,7 @@ wss.on('connection', (ws, req) => {
   // Connection close handler
   ws.on('close', (code, reason) => {
     console.log(`🔌 Client disconnected: ${clientId} (${code}: ${reason})`);
-    
+
     // Remove from channels
     for (const [channel, clientSet] of channels.entries()) {
       if (clientSet.has(clientId)) {
@@ -185,7 +198,7 @@ wss.on('connection', (ws, req) => {
     // Remove from clients
     clients.delete(clientId);
     stats.activeConnections--;
-    
+
     // Clean up message queue
     messageQueue.delete(clientId);
   });
@@ -218,7 +231,7 @@ function handleMessage(clientId, message) {
     case 'ping':
       sendToClient(clientId, {
         type: 'pong',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       break;
 
@@ -239,7 +252,7 @@ function handleMessage(clientId, message) {
       sendToClient(clientId, {
         type: 'error',
         timestamp: new Date().toISOString(),
-        data: { error: `Unknown message type: ${message.type}` }
+        data: { error: `Unknown message type: ${message.type}` },
       });
   }
 }
@@ -254,7 +267,9 @@ function handleClientRegistration(clientId, message) {
   client.userId = message.userId || null;
   client.service = message.service || 'unknown';
 
-  console.log(`📝 Client ${clientId} registered: ${client.service} (${client.portal} portal)`);
+  console.log(
+    `📝 Client ${clientId} registered: ${client.service} (${client.portal} portal)`
+  );
 
   // Add to portal channel
   const channelName = `portal:${client.portal}`;
@@ -271,8 +286,8 @@ function handleClientRegistration(clientId, message) {
       clientId,
       portal: client.portal,
       channel: channelName,
-      activeConnections: stats.activeConnections
-    }
+      activeConnections: stats.activeConnections,
+    },
   });
 }
 
@@ -284,18 +299,20 @@ function handleNotificationBroadcast(clientId, message) {
   }
 
   const notification = message.notification;
-  console.log(`📢 Broadcasting notification: ${notification.title} to ${notification.targetPortals?.join(', ') || 'all portals'}`);
+  console.log(
+    `📢 Broadcasting notification: ${notification.title} to ${notification.targetPortals?.join(', ') || 'all portals'}`
+  );
 
   // Determine target clients
   const targetClients = new Set();
 
   if (notification.targetPortals && notification.targetPortals.length > 0) {
     // Target specific portals
-    notification.targetPortals.forEach(portal => {
+    notification.targetPortals.forEach((portal) => {
       const channelName = `portal:${portal}`;
       const portalClients = channels.get(channelName);
       if (portalClients) {
-        portalClients.forEach(clientId => targetClients.add(clientId));
+        portalClients.forEach((clientId) => targetClients.add(clientId));
       }
     });
   } else {
@@ -311,17 +328,19 @@ function handleNotificationBroadcast(clientId, message) {
     type: 'notification',
     notification,
     timestamp: new Date().toISOString(),
-    from: clientId
+    from: clientId,
   };
 
   let sentCount = 0;
-  targetClients.forEach(targetClientId => {
+  targetClients.forEach((targetClientId) => {
     if (sendToClient(targetClientId, broadcastMessage)) {
       sentCount++;
     }
   });
 
-  console.log(`📤 Notification sent to ${sentCount}/${targetClients.size} clients`);
+  console.log(
+    `📤 Notification sent to ${sentCount}/${targetClients.size} clients`
+  );
 
   // Send broadcast confirmation to sender
   sendToClient(clientId, {
@@ -330,8 +349,8 @@ function handleNotificationBroadcast(clientId, message) {
     data: {
       notificationId: notification.id,
       recipientCount: sentCount,
-      targetPortals: notification.targetPortals || ['all']
-    }
+      targetPortals: notification.targetPortals || ['all'],
+    },
   });
 }
 
@@ -349,7 +368,7 @@ function handleChannelJoin(clientId, channelName) {
   sendToClient(clientId, {
     type: 'channel_joined',
     timestamp: new Date().toISOString(),
-    data: { channel: channelName }
+    data: { channel: channelName },
   });
 }
 
@@ -358,7 +377,7 @@ function handleChannelLeave(clientId, channelName) {
   if (!channelName || !channels.has(channelName)) return;
 
   channels.get(channelName).delete(clientId);
-  
+
   // Clean up empty channels
   if (channels.get(channelName).size === 0) {
     channels.delete(channelName);
@@ -369,19 +388,19 @@ function handleChannelLeave(clientId, channelName) {
   sendToClient(clientId, {
     type: 'channel_left',
     timestamp: new Date().toISOString(),
-    data: { channel: channelName }
+    data: { channel: channelName },
   });
 }
 
 // Handle direct messages between clients
 function handleDirectMessage(clientId, message) {
   const { targetClientId, data } = message;
-  
+
   if (!targetClientId || !clients.has(targetClientId)) {
     sendToClient(clientId, {
       type: 'error',
       timestamp: new Date().toISOString(),
-      data: { error: 'Target client not found or offline' }
+      data: { error: 'Target client not found or offline' },
     });
     return;
   }
@@ -390,14 +409,14 @@ function handleDirectMessage(clientId, message) {
     type: 'direct_message',
     from: clientId,
     timestamp: new Date().toISOString(),
-    data
+    data,
   };
 
   if (sendToClient(targetClientId, directMessage)) {
     sendToClient(clientId, {
       type: 'message_delivered',
       timestamp: new Date().toISOString(),
-      data: { targetClientId }
+      data: { targetClientId },
     });
   }
 }
@@ -431,7 +450,7 @@ function broadcastToChannel(channelName, message, excludeClientId = null) {
   if (!channelClients) return 0;
 
   let sentCount = 0;
-  channelClients.forEach(clientId => {
+  channelClients.forEach((clientId) => {
     if (clientId !== excludeClientId) {
       if (sendToClient(clientId, message)) {
         sentCount++;
@@ -469,7 +488,7 @@ function performHealthCheck() {
 // Cleanup and shutdown handler
 function gracefulShutdown() {
   console.log('🛑 Shutting down WebSocket server...');
-  
+
   // Close all client connections
   clients.forEach((client, clientId) => {
     client.ws.close(1001, 'Server shutdown');
@@ -491,7 +510,9 @@ process.on('SIGTERM', gracefulShutdown);
 
 // Start server
 server.listen(PORT, () => {
-  console.log(`🚀 FleetFlow WebSocket Notification Server running on port ${PORT}`);
+  console.log(
+    `🚀 FleetFlow WebSocket Notification Server running on port ${PORT}`
+  );
   console.log(`🏥 Health check: http://localhost:${PORT}/health`);
   console.log(`📊 Statistics: http://localhost:${PORT}/stats`);
   console.log(`🔗 WebSocket endpoint: ws://localhost:${PORT}/notifications`);
@@ -504,7 +525,9 @@ server.on('error', (error) => {
   console.error('❌ Server error:', error);
   if (error.code === 'EADDRINUSE') {
     console.error(`🚫 Port ${PORT} is already in use`);
-    console.error('💡 Try using a different port: node websocket-server.js --port=3002');
+    console.error(
+      '💡 Try using a different port: node websocket-server.js --port=3002'
+    );
   }
   process.exit(1);
 });

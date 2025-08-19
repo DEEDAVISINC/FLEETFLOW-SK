@@ -1,5 +1,5 @@
 -- 🔔 FleetFlow Unified Notification System Database Schema
--- 
+--
 -- This schema supports the complete unified notification system
 -- across all FleetFlow portals with real-time synchronization
 --
@@ -15,7 +15,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE fleetflow_notifications (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     type VARCHAR(50) NOT NULL CHECK (type IN (
-        'load_assignment', 'delivery_update', 'payment_alert', 
+        'load_assignment', 'delivery_update', 'payment_alert',
         'warehouse_alert', 'emergency_alert', 'load_opportunity',
         'system_alert', 'compliance_alert', 'dispatch_update',
         'carrier_update', 'driver_update', 'vendor_update',
@@ -28,27 +28,27 @@ CREATE TABLE fleetflow_notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NULL,
-    
+
     -- Channel configuration
     channels JSONB NOT NULL DEFAULT '{"inApp": true, "sms": false, "email": false, "push": false}',
-    
+
     -- Target configuration
     target_portals TEXT[] NOT NULL DEFAULT ARRAY['admin'],
     target_users TEXT[] DEFAULT NULL,
-    
+
     -- Metadata
     metadata JSONB DEFAULT '{}',
-    
+
     -- Status tracking
     total_recipients INTEGER DEFAULT 0,
     total_read INTEGER DEFAULT 0,
     total_delivered INTEGER DEFAULT 0,
-    
+
     -- System fields
     created_by VARCHAR(100) DEFAULT 'system',
     source VARCHAR(50) DEFAULT 'manual',
     tenant_id VARCHAR(100) DEFAULT 'default',
-    
+
     CONSTRAINT valid_channels CHECK (jsonb_typeof(channels) = 'object'),
     CONSTRAINT valid_metadata CHECK (jsonb_typeof(metadata) = 'object'),
     CONSTRAINT valid_recipients CHECK (total_recipients >= 0),
@@ -66,7 +66,7 @@ CREATE TABLE notification_actions (
     url VARCHAR(500) NULL,
     style VARCHAR(20) DEFAULT 'primary' CHECK (style IN ('primary', 'secondary', 'danger', 'success')),
     sort_order INTEGER DEFAULT 0,
-    
+
     UNIQUE(notification_id, action_id)
 );
 
@@ -80,25 +80,25 @@ CREATE TABLE notification_recipients (
     notification_id UUID NOT NULL REFERENCES fleetflow_notifications(id) ON DELETE CASCADE,
     user_id VARCHAR(100) NOT NULL,
     portal VARCHAR(20) NOT NULL CHECK (portal IN ('vendor', 'driver', 'dispatch', 'admin', 'carrier')),
-    
+
     -- Delivery status per channel
     in_app_status VARCHAR(20) DEFAULT 'pending' CHECK (in_app_status IN ('pending', 'delivered', 'read', 'dismissed', 'failed')),
     sms_status VARCHAR(20) DEFAULT 'pending' CHECK (sms_status IN ('pending', 'sent', 'delivered', 'failed', 'skipped')),
     email_status VARCHAR(20) DEFAULT 'pending' CHECK (email_status IN ('pending', 'sent', 'delivered', 'opened', 'failed', 'skipped')),
     push_status VARCHAR(20) DEFAULT 'pending' CHECK (push_status IN ('pending', 'sent', 'delivered', 'opened', 'failed', 'skipped')),
-    
+
     -- Timestamps
     delivered_at TIMESTAMP NULL,
     read_at TIMESTAMP NULL,
     dismissed_at TIMESTAMP NULL,
-    
+
     -- Tracking
     read_count INTEGER DEFAULT 0,
     click_count INTEGER DEFAULT 0,
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(notification_id, user_id, portal)
 );
 
@@ -110,20 +110,20 @@ CREATE TABLE notification_delivery_log (
     channel VARCHAR(20) NOT NULL CHECK (channel IN ('in_app', 'sms', 'email', 'push')),
     status VARCHAR(20) NOT NULL,
     attempt_number INTEGER NOT NULL DEFAULT 1,
-    
+
     -- Provider details
     provider VARCHAR(50) NULL, -- e.g., 'twilio', 'sendgrid', 'firebase'
     external_id VARCHAR(200) NULL, -- provider's message ID
-    
+
     -- Error tracking
     error_code VARCHAR(50) NULL,
     error_message TEXT NULL,
-    
+
     -- Performance tracking
     processing_time_ms INTEGER NULL,
-    
+
     attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT valid_attempt_number CHECK (attempt_number > 0)
 );
 
@@ -136,38 +136,38 @@ CREATE TABLE user_notification_preferences (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id VARCHAR(100) NOT NULL,
     portal VARCHAR(20) NOT NULL CHECK (portal IN ('vendor', 'driver', 'dispatch', 'admin', 'carrier')),
-    
+
     -- Channel preferences
     channels JSONB NOT NULL DEFAULT '{"inApp": true, "sms": false, "email": true, "push": true}',
-    
+
     -- Priority preferences
     priorities JSONB NOT NULL DEFAULT '{"low": false, "normal": true, "high": true, "urgent": true, "critical": true}',
-    
+
     -- Type preferences (all notification types)
     types JSONB NOT NULL DEFAULT '{}',
-    
+
     -- Schedule preferences
     schedule JSONB NOT NULL DEFAULT '{
         "enabled": false,
         "startTime": "08:00",
-        "endTime": "18:00", 
+        "endTime": "18:00",
         "timezone": "America/New_York",
         "daysOfWeek": [1,2,3,4,5],
         "urgentOnly": true
     }',
-    
+
     -- Threshold preferences
     thresholds JSONB NOT NULL DEFAULT '{
         "loadValueMin": 500,
         "distanceMax": 1000,
         "rateMin": 1.50
     }',
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(user_id, portal),
-    
+
     CONSTRAINT valid_channels CHECK (jsonb_typeof(channels) = 'object'),
     CONSTRAINT valid_priorities CHECK (jsonb_typeof(priorities) = 'object'),
     CONSTRAINT valid_types CHECK (jsonb_typeof(types) = 'object'),
@@ -185,41 +185,41 @@ CREATE TABLE notification_analytics (
     date DATE NOT NULL,
     portal VARCHAR(20) NOT NULL,
     tenant_id VARCHAR(100) NOT NULL DEFAULT 'default',
-    
+
     -- Volume metrics
     total_sent INTEGER NOT NULL DEFAULT 0,
     total_delivered INTEGER NOT NULL DEFAULT 0,
     total_read INTEGER NOT NULL DEFAULT 0,
     total_clicked INTEGER NOT NULL DEFAULT 0,
-    
+
     -- Performance metrics
     avg_delivery_time_seconds DECIMAL(10,2) NULL,
     avg_read_time_seconds DECIMAL(10,2) NULL,
-    
+
     -- Channel breakdown
     in_app_sent INTEGER DEFAULT 0,
     sms_sent INTEGER DEFAULT 0,
     email_sent INTEGER DEFAULT 0,
     push_sent INTEGER DEFAULT 0,
-    
+
     -- Priority breakdown
     critical_sent INTEGER DEFAULT 0,
     urgent_sent INTEGER DEFAULT 0,
     high_sent INTEGER DEFAULT 0,
     normal_sent INTEGER DEFAULT 0,
     low_sent INTEGER DEFAULT 0,
-    
+
     -- Type breakdown (JSONB for flexibility)
     type_breakdown JSONB DEFAULT '{}',
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(date, portal, tenant_id),
-    
+
     CONSTRAINT valid_type_breakdown CHECK (jsonb_typeof(type_breakdown) = 'object'),
     CONSTRAINT valid_metrics CHECK (
-        total_sent >= 0 AND 
-        total_delivered >= 0 AND 
+        total_sent >= 0 AND
+        total_delivered >= 0 AND
         total_read >= 0 AND
         total_clicked >= 0 AND
         total_delivered <= total_sent AND
@@ -238,20 +238,20 @@ CREATE TABLE websocket_connections (
     user_id VARCHAR(100) NULL,
     portal VARCHAR(20) NULL,
     service VARCHAR(100) NOT NULL,
-    
+
     -- Connection details
     connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_ping TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ip_address INET NULL,
     user_agent TEXT NULL,
-    
+
     -- Message tracking
     messages_sent INTEGER DEFAULT 0,
     messages_received INTEGER DEFAULT 0,
-    
+
     -- Status
     status VARCHAR(20) DEFAULT 'connected' CHECK (status IN ('connected', 'disconnected', 'timeout')),
-    
+
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -261,22 +261,22 @@ CREATE TABLE notification_queue (
     notification_id UUID NOT NULL REFERENCES fleetflow_notifications(id) ON DELETE CASCADE,
     user_id VARCHAR(100) NOT NULL,
     portal VARCHAR(20) NOT NULL,
-    
+
     -- Queue management
     priority INTEGER NOT NULL DEFAULT 5, -- 1=highest, 10=lowest
     attempts INTEGER DEFAULT 0,
     max_attempts INTEGER DEFAULT 3,
-    
+
     -- Scheduling
     scheduled_for TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_attempted TIMESTAMP NULL,
-    
+
     -- Status
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'delivered', 'failed', 'cancelled')),
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT valid_priority CHECK (priority BETWEEN 1 AND 10),
     CONSTRAINT valid_attempts CHECK (attempts >= 0 AND attempts <= max_attempts)
 );
@@ -304,7 +304,7 @@ CREATE INDEX idx_delivery_log_notification ON notification_delivery_log(notifica
 CREATE INDEX idx_delivery_log_channel_status ON notification_delivery_log(channel, status);
 CREATE INDEX idx_delivery_log_attempted_at ON notification_delivery_log(attempted_at DESC);
 
--- Preferences indexes  
+-- Preferences indexes
 CREATE INDEX idx_preferences_user_portal ON user_notification_preferences(user_id, portal);
 
 -- Analytics indexes
@@ -346,29 +346,29 @@ CREATE OR REPLACE FUNCTION update_notification_stats()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Update notification statistics
-    UPDATE fleetflow_notifications 
-    SET 
+    UPDATE fleetflow_notifications
+    SET
         total_read = (
-            SELECT COUNT(*) 
-            FROM notification_recipients 
+            SELECT COUNT(*)
+            FROM notification_recipients
             WHERE notification_id = COALESCE(NEW.notification_id, OLD.notification_id)
             AND in_app_status = 'read'
         ),
         total_delivered = (
-            SELECT COUNT(*) 
-            FROM notification_recipients 
+            SELECT COUNT(*)
+            FROM notification_recipients
             WHERE notification_id = COALESCE(NEW.notification_id, OLD.notification_id)
             AND in_app_status IN ('delivered', 'read', 'dismissed')
         ),
         updated_at = CURRENT_TIMESTAMP
     WHERE id = COALESCE(NEW.notification_id, OLD.notification_id);
-    
+
     RETURN COALESCE(NEW, OLD);
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_notification_stats_trigger 
-    AFTER INSERT OR UPDATE OR DELETE ON notification_recipients 
+CREATE TRIGGER update_notification_stats_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON notification_recipients
     FOR EACH ROW EXECUTE FUNCTION update_notification_stats();
 
 -- ================================
@@ -377,7 +377,7 @@ CREATE TRIGGER update_notification_stats_trigger
 
 -- Unread notifications per user
 CREATE VIEW user_unread_notifications AS
-SELECT 
+SELECT
     r.user_id,
     r.portal,
     COUNT(*) as unread_count,
@@ -391,7 +391,7 @@ GROUP BY r.user_id, r.portal;
 
 -- Notification delivery performance
 CREATE VIEW notification_performance AS
-SELECT 
+SELECT
     n.id,
     n.type,
     n.priority,
@@ -402,8 +402,8 @@ SELECT
     COUNT(r.id) FILTER (WHERE r.in_app_status IN ('delivered', 'read', 'dismissed')) as delivered_count,
     COUNT(r.id) FILTER (WHERE r.in_app_status = 'read') as read_count,
     ROUND(
-        100.0 * COUNT(r.id) FILTER (WHERE r.in_app_status = 'read') / 
-        NULLIF(COUNT(r.id) FILTER (WHERE r.in_app_status IN ('delivered', 'read', 'dismissed')), 0), 
+        100.0 * COUNT(r.id) FILTER (WHERE r.in_app_status = 'read') /
+        NULLIF(COUNT(r.id) FILTER (WHERE r.in_app_status IN ('delivered', 'read', 'dismissed')), 0),
         2
     ) as read_rate_percent
 FROM fleetflow_notifications n
@@ -441,3 +441,4 @@ COMMENT ON VIEW notification_performance IS 'Performance metrics for notificatio
 
 -- Success message
 SELECT 'FleetFlow Unified Notification System database schema created successfully! 🔔✅' as message;
+

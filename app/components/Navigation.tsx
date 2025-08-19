@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
-import UnifiedNotificationBell from './UnifiedNotificationBell';
 import Logo from './Logo';
+import UnifiedNotificationBell from './UnifiedNotificationBell';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
@@ -1154,12 +1154,12 @@ export default function ProfessionalNavigation() {
           )}
 
           {/* Unified Notification Bell */}
-          <UnifiedNotificationBell 
-            userId="current-user" 
-            portal="admin" 
-            position="navigation"
-            size="md"
-            theme="auto"
+          <UnifiedNotificationBell
+            userId='current-user'
+            portal='admin'
+            position='navigation'
+            size='md'
+            theme='auto'
             showBadge={true}
             showDropdown={true}
             maxNotifications={15}

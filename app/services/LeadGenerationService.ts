@@ -647,19 +647,23 @@ export class LeadGenerationService {
     try {
       // Generate AI-powered manufacturer CSV data (simulated)
       const mockCSVData = this.generateMockThomasNetCSV(filters);
-      
+
       // Process through ThomasNet automation service
-      const processedData = await thomasNetAutomation.processThomasNetCSV(mockCSVData);
-      
+      const processedData =
+        await thomasNetAutomation.processThomasNetCSV(mockCSVData);
+
       // Convert to FleetFlow lead format with AI enhancement
       for (const manufacturer of processedData.manufacturers) {
-        if (manufacturer.freightScore >= 70) { // Only high-potential manufacturers
+        if (manufacturer.freightScore >= 70) {
+          // Only high-potential manufacturers
           const lead = await this.convertThomasNetToLead(manufacturer);
           leads.push(lead);
         }
       }
 
-      console.log(`✅ AI generated ${leads.length} ThomasNet manufacturer leads`);
+      console.log(
+        `✅ AI generated ${leads.length} ThomasNet manufacturer leads`
+      );
       return leads;
     } catch (error) {
       console.error('AI ThomasNet analysis error:', error);
@@ -669,27 +673,42 @@ export class LeadGenerationService {
 
   private generateMockThomasNetCSV(filters: LeadGenerationFilters): string {
     // Generate realistic manufacturer CSV data based on filters
-    const industries = filters.industry || ['Automotive', 'Electronics', 'Machinery', 'Chemicals'];
-    const states = [filters.location?.state || 'GA', 'TX', 'CA', 'OH', 'MI', 'NC'];
-    
-    let csv = 'Company Name,Industry,Category,Products,Address,City,State,ZIP,Phone,Website,Employees,Year Est.,Description\n';
-    
+    const industries = filters.industry || [
+      'Automotive',
+      'Electronics',
+      'Machinery',
+      'Chemicals',
+    ];
+    const states = [
+      filters.location?.state || 'GA',
+      'TX',
+      'CA',
+      'OH',
+      'MI',
+      'NC',
+    ];
+
+    let csv =
+      'Company Name,Industry,Category,Products,Address,City,State,ZIP,Phone,Website,Employees,Year Est.,Description\n';
+
     // Generate sample manufacturer data
     const manufacturers = [
       'Advanced Manufacturing Solutions,Automotive,Auto Parts Manufacturing,Brake Systems;Engine Components,2847 Industrial Pkwy,Atlanta,GA,30309,(470) 555-0123,www.advancedmfgsolutions.com,250-500,1987,Leading automotive parts manufacturer serving OEMs nationwide',
       'Southeast Electronics Corp,Electronics,Electronic Components,Circuit Boards;Sensors;Controllers,1456 Tech Drive,Charlotte,NC,28201,(704) 555-0187,www.southeastelectronics.com,100-250,1992,Specialized electronics manufacturing for industrial applications',
       'Precision Machinery Inc,Machinery,Industrial Equipment,CNC Machines;Automation Equipment,9823 Manufacturing Blvd,Houston,TX,77001,(713) 555-0245,www.precisionmachinery.com,500-1000,1981,Custom machinery and automation solutions for manufacturers',
-      'Chemical Solutions LLC,Chemicals,Specialty Chemicals,Industrial Coatings;Adhesives,4512 Chemical Row,Detroit,MI,48201,(313) 555-0167,www.chemsolutions.com,50-100,1995,Specialty chemical manufacturing for automotive and aerospace industries'
+      'Chemical Solutions LLC,Chemicals,Specialty Chemicals,Industrial Coatings;Adhesives,4512 Chemical Row,Detroit,MI,48201,(313) 555-0167,www.chemsolutions.com,50-100,1995,Specialty chemical manufacturing for automotive and aerospace industries',
     ];
 
-    manufacturers.forEach(mfg => {
+    manufacturers.forEach((mfg) => {
       csv += mfg + '\n';
     });
 
     return csv;
   }
 
-  private async convertThomasNetToLead(manufacturer: any): Promise<LeadProspect> {
+  private async convertThomasNetToLead(
+    manufacturer: any
+  ): Promise<LeadProspect> {
     // Convert ThomasNet manufacturer data to FleetFlow lead format
     const lead: LeadProspect = {
       id: `thomasnet-${manufacturer.id}`,
@@ -702,7 +721,9 @@ export class LeadGenerationService {
       },
       businessIntel: {
         industryCode: this.getIndustryCode(manufacturer.industry),
-        estimatedRevenue: this.estimateRevenueFromEmployees(manufacturer.employeeCount),
+        estimatedRevenue: this.estimateRevenueFromEmployees(
+          manufacturer.employeeCount
+        ),
         employeeCount: manufacturer.employeeCount || '50-100',
         freightNeed: this.calculateFreightNeed(manufacturer.freightScore),
         seasonality: 'Year-round with Q4 peak',
@@ -715,21 +736,23 @@ export class LeadGenerationService {
         `Products: ${manufacturer.products?.join(', ') || 'Industrial products'}`,
         `AI Freight Score: ${manufacturer.freightScore}/100`,
         `Recommended Services: ${manufacturer.recommendedServices?.join(', ') || 'FTL Transportation, Warehousing'}`,
-        `Contact Strategy: ${manufacturer.contactStrategy || 'Manufacturing-focused approach'}`
+        `Contact Strategy: ${manufacturer.contactStrategy || 'Manufacturing-focused approach'}`,
       ],
       aiConfidence: manufacturer.freightScore || 80,
       aiRecommendations: [
         'ThomasNet-verified manufacturer with established shipping needs',
         'Focus on supply chain optimization and cost reduction',
         'Emphasize manufacturing industry expertise and reliability',
-        'Target procurement and logistics decision makers'
+        'Target procurement and logistics decision makers',
       ],
     };
 
     return lead;
   }
 
-  private calculateFreightNeed(freightScore: number): 'high' | 'medium' | 'low' {
+  private calculateFreightNeed(
+    freightScore: number
+  ): 'high' | 'medium' | 'low' {
     if (freightScore >= 85) return 'high';
     if (freightScore >= 70) return 'medium';
     return 'low';
@@ -749,20 +772,22 @@ export class LeadGenerationService {
   private getIndustryCode(industry: string): string {
     // Map ThomasNet industries to NAICS codes
     const industryCodes: Record<string, string> = {
-      'Automotive': '336',
-      'Electronics': '334',
-      'Machinery': '333',
-      'Chemicals': '325',
+      Automotive: '336',
+      Electronics: '334',
+      Machinery: '333',
+      Chemicals: '325',
       'Food Processing': '311',
-      'Textiles': '313',
-      'Pharmaceuticals': '325',
-      'Aerospace': '336',
-      'Medical Devices': '339'
+      Textiles: '313',
+      Pharmaceuticals: '325',
+      Aerospace: '336',
+      'Medical Devices': '339',
     };
     return industryCodes[industry] || '330';
   }
 
-  private getMockThomasNetLeads(filters: LeadGenerationFilters): LeadProspect[] {
+  private getMockThomasNetLeads(
+    filters: LeadGenerationFilters
+  ): LeadProspect[] {
     return [
       {
         id: 'thomasnet-demo-001',
@@ -788,16 +813,16 @@ export class LeadGenerationService {
           'Products: Brake Systems, Engine Components, Transmission Parts',
           'AI Freight Score: 87/100 (High shipping volume potential)',
           'Recommended Services: FTL Transportation, JIT Delivery, Warehousing',
-          'Contact Strategy: Focus on supply chain optimization and cost reduction'
+          'Contact Strategy: Focus on supply chain optimization and cost reduction',
         ],
         aiConfidence: 85,
         aiRecommendations: [
           'ThomasNet-verified manufacturer with 500K+ supplier network',
           'Automotive industry: High frequency, time-sensitive shipping',
           'Focus on procurement and logistics decision makers',
-          'Emphasize manufacturing expertise and supply chain reliability'
+          'Emphasize manufacturing expertise and supply chain reliability',
         ],
-      }
+      },
     ];
   }
 
