@@ -1308,77 +1308,229 @@ export default function AICompanyDashboard() {
               </div>
             </div>
 
+            {/* FLEETFLOW INTEGRATION COMMAND CENTER - REAL DATA */}
             <div
               style={{
-                background:
-                  'linear-gradient(135deg, rgba(220, 38, 38, 0.9) 0%, rgba(185, 28, 28, 0.9) 100%)',
-                borderRadius: '20px',
-                padding: '28px',
+                background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 20px 40px -10px rgba(220, 38, 38, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '32px',
+                marginBottom: '32px',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
               }}
             >
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '800',
+                  color: '#ffffff',
+                  marginBottom: '24px',
+                  textAlign: 'center',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                🔗 FleetFlow Integration Command Center
+              </h2>
+              
+              {/* KPI Grid */}
               <div
                 style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  right: '-50%',
-                  width: '200px',
-                  height: '200px',
-                  background:
-                    'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%)',
-                  borderRadius: '50%',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '24px',
                 }}
-              />
-              <div style={{ position: 'relative', zIndex: 1 }}>
+              >
+                {/* Load Board Connections */}
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '16px',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    backdropFilter: 'blur(15px)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    padding: '20px',
+                    textAlign: 'center',
                   }}
                 >
-                  <div>
-                    <p
-                      style={{
-                        fontSize: '16px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        margin: 0,
-                        fontWeight: '600',
-                      }}
-                    >
-                      API Calls
-                    </p>
-                    <p
-                      style={{
-                        fontSize: '36px',
-                        fontWeight: '900',
-                        margin: 0,
-                        color: '#ffffff',
-                        textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-                      }}
-                    >
-                      {fleetFlowIntegration.apiCalls.toLocaleString()}
-                    </p>
-                  </div>
-                  <span style={{ fontSize: '40px', opacity: 0.8 }}>🔗</span>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>📋</div>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      margin: 0,
+                      color: '#10b981',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {fleetFlowIntegration.loadBoardConnections.toLocaleString()}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: 0,
+                      fontWeight: '600',
+                    }}
+                  >
+                    Load Board Connections
+                  </p>
                 </div>
+
+                {/* Active Dispatches */}
                 <div
                   style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    fontWeight: '600',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    backdropFilter: 'blur(15px)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    padding: '20px',
+                    textAlign: 'center',
                   }}
                 >
-                  ⚡ High-speed processing
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🚛</div>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      margin: 0,
+                      color: '#f59e0b',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {fleetFlowIntegration.activeDispatches.toLocaleString()}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: 0,
+                      fontWeight: '600',
+                    }}
+                  >
+                    Active Dispatches
+                  </p>
                 </div>
+
+                {/* Revenue Generated */}
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    backdropFilter: 'blur(15px)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>💰</div>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      margin: 0,
+                      color: '#22c55e',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    ${(fleetFlowIntegration.revenueGenerated / 1000).toFixed(0)}K
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: 0,
+                      fontWeight: '600',
+                    }}
+                  >
+                    Revenue Generated
+                  </p>
+                </div>
+
+                {/* Customer Interactions */}
+                <div
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.1)',
+                    backdropFilter: 'blur(15px)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>👥</div>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      margin: 0,
+                      color: '#a855f7',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {fleetFlowIntegration.customerInteractions.toLocaleString()}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: 0,
+                      fontWeight: '600',
+                    }}
+                  >
+                    Customer Interactions
+                  </p>
+                </div>
+
+                {/* API Calls */}
+                <div
+                  style={{
+                    background: 'rgba(236, 72, 153, 0.1)',
+                    backdropFilter: 'blur(15px)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(236, 72, 153, 0.3)',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🔗</div>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      margin: 0,
+                      color: '#ec4899',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {fleetFlowIntegration.apiCalls.toLocaleString()}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: 0,
+                      fontWeight: '600',
+                    }}
+                  >
+                    API Calls
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Bar */}
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  textAlign: 'center',
+                }}
+              >
+                ⚡ Live FleetFlow Data Integration - Updates Every 30 Seconds
               </div>
             </div>
           </div>
