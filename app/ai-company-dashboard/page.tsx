@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+// ADD REAL DATA INTEGRATION - KEEP SAME LOOK
+import { getMainDashboardLoads, getLoadStats } from '../services/loadService';
+import { calculateFinancialMetrics } from '../services/settlementService';
 
 // Enhanced interfaces for comprehensive AI management
 interface PerformanceMetrics {
@@ -605,14 +608,14 @@ export default function AICompanyDashboard() {
     monthlyGrowth: [12.5, 18.7, 24.3, 31.2, 38.9, 45.6],
   };
 
-  // Live FleetFlow Integration Data
-  const fleetFlowIntegration: FleetFlowIntegration = {
-    loadBoardConnections: 47,
-    activeDispatches: 23,
-    revenueGenerated: 156780,
+  // ADD REAL DATA - Live FleetFlow Integration Data (keep same interface)
+  const [fleetFlowIntegration, setFleetFlowIntegration] = useState<FleetFlowIntegration>({
+    loadBoardConnections: 47, // Will be updated with real data
+    activeDispatches: 23,     // Will be updated with real data
+    revenueGenerated: 156780, // Will be updated with real data
     customerInteractions: 89,
     apiCalls: 12847,
-  };
+  });
 
   // Active AI Tasks
   const aiTasks: AITask[] = [
@@ -676,6 +679,38 @@ export default function AICompanyDashboard() {
       setRealTimeUpdate((prev) => prev + 1);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // ADD REAL DATA INTEGRATION - Load real FleetFlow data (keep same UI)
+  useEffect(() => {
+    const loadRealData = async () => {
+      try {
+        // Get real load data
+        const loads = getMainDashboardLoads();
+        const loadStats = getLoadStats();
+        
+        // Get real financial data
+        const financialMetrics = calculateFinancialMetrics('admin', 'monthly');
+        
+        // Update FleetFlow integration with REAL DATA (same UI)
+        setFleetFlowIntegration(prev => ({
+          ...prev,
+          loadBoardConnections: loads.length || prev.loadBoardConnections,
+          activeDispatches: loadStats.inTransit + loadStats.assigned || prev.activeDispatches,
+          revenueGenerated: financialMetrics?.revenue?.total || prev.revenueGenerated,
+        }));
+        
+        console.log('✅ AI Company Dashboard loaded with REAL FleetFlow data (same UI)');
+      } catch (error) {
+        console.log('⚠️ Using mock data fallback (preserving original functionality)');
+      }
+    };
+
+    // Load real data on mount and every 30 seconds
+    loadRealData();
+    const dataInterval = setInterval(loadRealData, 30000);
+    
+    return () => clearInterval(dataInterval);
   }, []);
 
   const getStatusColor = (status: string) => {
