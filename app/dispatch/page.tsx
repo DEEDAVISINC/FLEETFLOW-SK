@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
+import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import InvoiceCreationModal from '../components/InvoiceCreationModal';
 import StickyNote from '../components/StickyNote-Enhanced';
@@ -1599,17 +1600,31 @@ export default function DispatchCentral() {
           textAlign: 'center',
         }}
       >
-        <h1
-          style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            marginBottom: '15px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-            color: 'white',
-          }}
-        >
-          🚛 DISPATCH CENTRAL
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '15px' }}>
+          <h1
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              color: 'white',
+              margin: 0,
+            }}
+          >
+            🚛 DISPATCH CENTRAL
+          </h1>
+          
+          {/* Unified Notification Bell */}
+          <UnifiedNotificationBell 
+            userId={user?.id || 'dispatch-user'} 
+            portal="dispatch" 
+            position="inline"
+            size="lg"
+            theme="dark"
+            showBadge={true}
+            showDropdown={true}
+            maxNotifications={25}
+          />
+        </div>
 
         <p
           style={{

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import GlobalNotificationBell from '../../components/GlobalNotificationBell';
+import UnifiedNotificationBell from '../../components/UnifiedNotificationBell';
 import { driverPreferencesService } from '../../services/DriverPreferencesService';
 import {
   FinancialMarketsService,
@@ -2026,7 +2026,16 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                   </select>
                 )}
 
-                <GlobalNotificationBell department='driver' />
+                <UnifiedNotificationBell 
+                  userId="current-driver-user" 
+                  portal="driver" 
+                  position="navigation"
+                  size="md"
+                  theme="auto"
+                  showBadge={true}
+                  showDropdown={true}
+                  maxNotifications={15}
+                />
                 <button
                   style={{
                     background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
