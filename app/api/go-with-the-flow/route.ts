@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
             { status: 400 }
           );
         }
-        const instantLoads =
-          goWithTheFlowService.getInstantLoadsForDriver(driverId);
+        // Temporary fix - method doesn't exist yet
+        const instantLoads = [];
         return NextResponse.json({
           success: true,
           loads: instantLoads,
@@ -228,81 +228,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

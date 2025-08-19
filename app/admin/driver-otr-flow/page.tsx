@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GlobalNotificationBell from '../../components/GlobalNotificationBell';
+import { driverPreferencesService } from '../../services/DriverPreferencesService';
 import {
   FinancialMarketsService,
   FuelPriceData,
@@ -501,6 +502,85 @@ export default function AdminDriverOTRFlow() {
   };
 
   // Helper Functions
+  const handleGenerateRateConfirmation = (load: any) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `rate-confirmation-${load.id}-${Date.now()}`,
+      type: 'rate-confirmation',
+      loadId: load.id,
+      data: {
+        ...load,
+        carrierName: demoDriver?.driverName || 'TBD',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with rate confirmation tab
+    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
+
+    // Add notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `📄 Rate Confirmation generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        read: false,
+      },
+      ...prev.slice(0, 4), // Keep only 5 notifications
+    ]);
+  };
+
+  const handleGenerateBOL = (load: any) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `bill-of-lading-${load.id}-${Date.now()}`,
+      type: 'bill-of-lading',
+      loadId: load.id,
+      data: {
+        ...load,
+        weight: load.weight || '40,000 lbs',
+        equipment: load.equipment || 'Dry Van',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with bill of lading tab
+    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
+
+    // Add notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `📋 Bill of Lading generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        read: false,
+      },
+      ...prev.slice(0, 4), // Keep only 5 notifications
+    ]);
+  };
+
   const getDepartmentColor = (roleType: string): string => {
     switch (roleType) {
       case 'owner_operator':
@@ -2136,20 +2216,99 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                       ($2,100)
                     </p>
                   </div>
-                  <button
+                  <div
                     style={{
-                      background: 'white',
-                      color: '#dc2626',
-                      border: 'none',
-                      padding: '15px 30px',
-                      borderRadius: '12px',
-                      fontWeight: '700',
-                      fontSize: '16px',
-                      cursor: 'pointer',
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'center',
                     }}
                   >
-                    CONFIRM NOW
-                  </button>
+                    <button
+                      onClick={() =>
+                        handleGenerateRateConfirmation({
+                          id: 'L2025-002',
+                          origin: 'Fort Worth, TX',
+                          destination: 'San Antonio, TX',
+                          rate: '$2,100',
+                          commodity: 'General Freight',
+                          equipment: 'Dry Van',
+                        })
+                      }
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(16, 185, 129, 0.4)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Rate Confirmation'
+                    >
+                      📄 Rate Conf
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleGenerateBOL({
+                          id: 'L2025-002',
+                          origin: 'Fort Worth, TX',
+                          destination: 'San Antonio, TX',
+                          rate: '$2,100',
+                          commodity: 'General Freight',
+                          equipment: 'Dry Van',
+                          weight: '40,000 lbs',
+                        })
+                      }
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(245, 158, 11, 0.4)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Bill of Lading'
+                    >
+                      📋 BOL
+                    </button>
+                    <button
+                      style={{
+                        background: 'white',
+                        color: '#dc2626',
+                        border: 'none',
+                        padding: '15px 30px',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      CONFIRM NOW
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -7866,13 +8025,75 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
                       }}
-                      onClick={() => {
-                        alert(
-                          '🔄 Broadcasting urgent load to all available drivers...'
-                        );
+                      onClick={async () => {
+                        try {
+                          const driverId = demoDriver?.driverId || 'driver-001';
+                          const driverName =
+                            demoDriver?.driverName || 'Demo Driver';
+
+                          // Get driver preferences
+                          const preferences =
+                            driverPreferencesService.getDriverPreferences(
+                              driverId,
+                              driverName
+                            );
+
+                          // Create urgent load request
+                          const urgentRequest = {
+                            driverId,
+                            driverName,
+                            currentLocation: driverLocation || {
+                              city: 'Dallas',
+                              state: 'TX',
+                              lat: 32.7767,
+                              lng: -96.797,
+                            },
+                            requestType: 'urgent' as const,
+                            preferences,
+                          };
+
+                          const success =
+                            driverPreferencesService.requestUrgentLoad(
+                              urgentRequest
+                            );
+
+                          if (success) {
+                            // Add notification to driver portal
+                            setNotifications((prev) => [
+                              {
+                                id: Date.now().toString(),
+                                message: `🔍 Urgent load request submitted! Dispatch team has been notified and will respond within 15 minutes.`,
+                                timestamp: 'Just now',
+                                read: false,
+                              },
+                              ...prev.slice(0, 4),
+                            ]);
+
+                            alert(
+                              `🔍 URGENT LOAD REQUEST SUBMITTED\n\n` +
+                                `Driver: ${driverName}\n` +
+                                `Location: ${urgentRequest.currentLocation.city}, ${urgentRequest.currentLocation.state}\n` +
+                                `Equipment: ${preferences.equipmentTypes.join(', ')}\n` +
+                                `Max Distance: ${preferences.maxDistance} miles\n` +
+                                `Min Rate: $${preferences.minRate}/mile\n\n` +
+                                `✅ Dispatch team has been notified\n` +
+                                `⏱️ Expected response: 15 minutes\n` +
+                                `📱 You'll receive a notification when loads are available`
+                            );
+                          } else {
+                            alert(
+                              '❌ Failed to submit urgent load request. Please try again.'
+                            );
+                          }
+                        } catch (error) {
+                          console.error('Error requesting urgent load:', error);
+                          alert(
+                            '❌ Error submitting request. Please check your connection and try again.'
+                          );
+                        }
                       }}
                     >
-                      📢 Broadcast Urgent Load
+                      🔍 Request Urgent Load
                     </button>
                     <button
                       style={{
@@ -7887,10 +8108,80 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         transition: 'all 0.3s ease',
                       }}
                       onClick={() => {
-                        alert('⚙️ Opening AI matching configuration...');
+                        const driverId = demoDriver?.driverId || 'driver-001';
+                        const driverName =
+                          demoDriver?.driverName || 'Demo Driver';
+
+                        // Get current preferences
+                        const preferences =
+                          driverPreferencesService.getDriverPreferences(
+                            driverId,
+                            driverName
+                          );
+
+                        // Show preferences configuration dialog
+                        const newPreferences = prompt(
+                          `⚙️ LOAD MATCHING PREFERENCES\n\n` +
+                            `Current Settings:\n` +
+                            `Equipment Types: ${preferences.equipmentTypes.join(', ')}\n` +
+                            `Max Distance: ${preferences.maxDistance} miles\n` +
+                            `Min Rate: $${preferences.minRate}/mile\n` +
+                            `Preferred States: ${preferences.preferredStates.join(', ')}\n` +
+                            `Hazmat Certified: ${preferences.hazmatCertified ? 'Yes' : 'No'}\n\n` +
+                            `To update your minimum rate per mile, enter new rate:`,
+                          preferences.minRate.toString()
+                        );
+
+                        if (
+                          newPreferences &&
+                          !isNaN(parseFloat(newPreferences))
+                        ) {
+                          const newRate = parseFloat(newPreferences);
+                          if (newRate >= 1.5 && newRate <= 5.0) {
+                            const updatedPreferences = {
+                              ...preferences,
+                              minRate: newRate,
+                            };
+
+                            const success =
+                              driverPreferencesService.saveDriverPreferences(
+                                updatedPreferences
+                              );
+
+                            if (success) {
+                              // Add notification
+                              setNotifications((prev) => [
+                                {
+                                  id: Date.now().toString(),
+                                  message: `⚙️ Load preferences updated! Minimum rate set to $${newRate}/mile`,
+                                  timestamp: 'Just now',
+                                  read: false,
+                                },
+                                ...prev.slice(0, 4),
+                              ]);
+
+                              alert(
+                                `✅ PREFERENCES UPDATED\n\n` +
+                                  `Minimum Rate: $${newRate}/mile\n\n` +
+                                  `Your load matching preferences have been saved.\n` +
+                                  `Future load offers will respect your updated settings.`
+                              );
+                            } else {
+                              alert(
+                                '❌ Failed to save preferences. Please try again.'
+                              );
+                            }
+                          } else {
+                            alert(
+                              '❌ Rate must be between $1.50 and $5.00 per mile.'
+                            );
+                          }
+                        } else if (newPreferences !== null) {
+                          alert('❌ Please enter a valid rate amount.');
+                        }
                       }}
                     >
-                      ⚙️ Configure AI Rules
+                      ⚙️ Load Preferences
                     </button>
                     <button
                       style={{
@@ -7905,66 +8196,145 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         transition: 'all 0.3s ease',
                       }}
                       onClick={() => {
-                        alert('📊 Generating performance analytics report...');
+                        const driverId = demoDriver?.driverId || 'driver-001';
+                        const driverName =
+                          demoDriver?.driverName || 'Demo Driver';
+
+                        // Generate detailed performance report
+                        const detailedReport =
+                          driverPreferencesService.generateDetailedReport(
+                            driverId,
+                            driverName
+                          );
+
+                        // Add notification
+                        setNotifications((prev) => [
+                          {
+                            id: Date.now().toString(),
+                            message: `📊 Performance report generated! Check your email for the detailed PDF version.`,
+                            timestamp: 'Just now',
+                            read: false,
+                          },
+                          ...prev.slice(0, 4),
+                        ]);
+
+                        // Show the report
+                        alert(detailedReport);
+
+                        // Simulate saving report to downloads
+                        try {
+                          const reportBlob = new Blob([detailedReport], {
+                            type: 'text/plain',
+                          });
+                          const url = URL.createObjectURL(reportBlob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = `${driverName.replace(/\s+/g, '_')}_Performance_Report_${new Date().toISOString().split('T')[0]}.txt`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(url);
+                        } catch (error) {
+                          console.error('Error downloading report:', error);
+                        }
                       }}
                     >
-                      📊 Generate Report
+                      📊 My Performance Report
                     </button>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={() => {
-                        alert(
-                          '🚨 Emergency override activated - manual dispatch mode enabled'
-                        );
-                      }}
-                    >
-                      🚨 Emergency Override
-                    </button>
+                    {/* Emergency Override - Management Only */}
+                    {currentUser.role?.type === 'fleet_manager' ||
+                    currentUser.role?.type === 'dispatcher' ? (
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #ef4444, #dc2626)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onClick={() => {
+                          const confirmed = confirm(
+                            '🚨 EMERGENCY OVERRIDE\n\nThis will activate manual dispatch mode and override all automated systems.\n\nAre you sure you want to proceed?'
+                          );
+                          if (confirmed) {
+                            try {
+                              const userId = currentUser.id || 'manager-001';
+                              const userRole =
+                                currentUser.role?.type || 'fleet_manager';
+
+                              const success =
+                                driverPreferencesService.activateEmergencyOverride(
+                                  userId,
+                                  userRole
+                                );
+
+                              if (success) {
+                                // Add critical notification
+                                setNotifications((prev) => [
+                                  {
+                                    id: Date.now().toString(),
+                                    message: `🚨 EMERGENCY OVERRIDE ACTIVATED - All automated systems suspended. Manual dispatch mode enabled.`,
+                                    timestamp: 'Just now',
+                                    read: false,
+                                  },
+                                  ...prev.slice(0, 4),
+                                ]);
+
+                                alert(
+                                  '🚨 EMERGENCY OVERRIDE ACTIVATED\n\n' +
+                                    '✅ Manual dispatch mode enabled\n' +
+                                    '⏸️ All automated load assignments suspended\n' +
+                                    '📢 Dispatch team has been notified\n' +
+                                    '📝 Event logged for audit purposes\n\n' +
+                                    'All load assignments must now be handled manually by dispatch staff.\n' +
+                                    'Contact IT to restore automated systems when emergency is resolved.'
+                                );
+                              } else {
+                                alert(
+                                  '❌ Failed to activate emergency override. Please try again or contact IT support.'
+                                );
+                              }
+                            } catch (error) {
+                              alert(`❌ Error: ${error.message}`);
+                            }
+                          }
+                        }}
+                      >
+                        🚨 Emergency Override
+                      </button>
+                    ) : (
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #6b7280, #4b5563)',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          border: 'none',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'not-allowed',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onClick={() => {
+                          alert(
+                            '🔒 Access Denied\n\nEmergency Override requires management authorization.\nContact your fleet manager for assistance.'
+                          );
+                        }}
+                        title='Management access required'
+                      >
+                        🔒 Emergency Override
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Back Button */}
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
-            <Link href='/' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  padding: '15px 30px',
-                  borderRadius: '15px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  backdropFilter: 'blur(10px)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 10px 25px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                ← Back to Dashboard
-              </button>
-            </Link>
           </div>
 
           {/* System Status Indicator */}

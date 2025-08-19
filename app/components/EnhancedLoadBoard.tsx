@@ -180,6 +180,63 @@ export default function EnhancedLoadBoard() {
     { id: 'disp-003', name: 'Lisa Rodriguez' },
   ];
 
+  const handleGenerateRateConfirmation = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `rate-confirmation-${load.id}-${Date.now()}`,
+      type: 'rate-confirmation',
+      loadId: load.id,
+      data: {
+        ...load,
+        carrierName: load.dispatcherName || 'TBD',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with rate confirmation tab
+    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
+  };
+
+  const handleGenerateBOL = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `bill-of-lading-${load.id}-${Date.now()}`,
+      type: 'bill-of-lading',
+      loadId: load.id,
+      data: {
+        ...load,
+        weight: load.weight || '40,000 lbs',
+        equipment: load.equipment || 'Dry Van',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with bill of lading tab
+    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
+  };
+
   const handleDispatcherAssignment = (loadId: string, dispatcherId: string) => {
     if (!dispatcherId) return;
 
@@ -858,20 +915,74 @@ export default function EnhancedLoadBoard() {
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div
+                    style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}
+                  >
                     <button
                       style={{
-                        padding: '8px 16px',
+                        padding: '6px 12px',
                         background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                         color: 'white',
                         border: 'none',
-                        borderRadius: '8px',
+                        borderRadius: '6px',
                         cursor: 'pointer',
-                        fontSize: '12px',
+                        fontSize: '11px',
                         fontWeight: '600',
                       }}
                     >
                       View Details
+                    </button>
+                    <button
+                      onClick={() => handleGenerateRateConfirmation(load)}
+                      style={{
+                        padding: '6px 12px',
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(16, 185, 129, 0.3)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Rate Confirmation'
+                    >
+                      📄 Rate Conf
+                    </button>
+                    <button
+                      onClick={() => handleGenerateBOL(load)}
+                      style={{
+                        padding: '6px 12px',
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(245, 158, 11, 0.3)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Bill of Lading'
+                    >
+                      📋 BOL
                     </button>
                     {load.status === 'Available' && (
                       <select

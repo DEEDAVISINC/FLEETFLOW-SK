@@ -5158,7 +5158,7 @@ export default function AIFlowPlatform() {
               gap: '16px',
             }}
           >
-            {coPilotMessages.map((msg) => (
+            {flowterMessages.map((msg) => (
               <div
                 key={msg.id}
                 style={{
@@ -5289,7 +5289,7 @@ export default function AIFlowPlatform() {
             ))}
 
             {/* Typing indicator */}
-            {coPilotTyping && (
+            {flowterTyping && (
               <div
                 style={{
                   display: 'flex',

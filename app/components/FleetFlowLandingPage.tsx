@@ -546,6 +546,496 @@ export default function FleetFlowLandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Professional Subscription Section */}
+        <div style={{ marginTop: '50px', marginBottom: '60px' }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: '40px',
+              maxWidth: '1200px',
+              margin: '0 auto',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  background:
+                    'linear-gradient(135deg, #3b82f6 0%, #14b8a6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '20px',
+                }}
+              >
+                💼 FleetFlow Professional
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.2rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  lineHeight: '1.6',
+                  marginBottom: '30px',
+                }}
+              >
+                Individual subscriptions for transportation professionals.
+                <br />
+                <strong style={{ color: '#fbbf24' }}>
+                  Start your 14-day free trial
+                </strong>{' '}
+                - no credit card required.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '25px',
+                marginBottom: '40px',
+              }}
+            >
+              {/* FleetFlow University */}
+              <div
+                style={{
+                  background: 'rgba(244, 168, 50, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(244, 168, 50, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🎓
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#f4a832',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  FleetFlow University℠
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $49
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Complete training curriculum</li>
+                  <li>✓ BOL/MBL/HBL documentation</li>
+                  <li>✓ Warehouse operations training</li>
+                  <li>✓ Certification programs</li>
+                  <li>✓ Industry best practices</li>
+                </ul>
+              </div>
+
+              {/* Professional Dispatcher */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(59, 130, 246, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  📋
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#3b82f6',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Professional Dispatcher
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    Starting at
+                  </span>
+                  <br />
+                  $79
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Complete dispatch management</li>
+                  <li>✓ Driver assignment & tracking</li>
+                  <li>✓ Route optimization</li>
+                  <li>✓ CRM integration</li>
+                  <li>✓ Basic AI automation</li>
+                </ul>
+              </div>
+
+              {/* Professional Brokerage - Most Popular */}
+              <div
+                style={{
+                  background: 'rgba(249, 115, 22, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid #f97316',
+                  textAlign: 'center',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background:
+                      'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  ⭐ Most Popular
+                </div>
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🏢
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#f97316',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Professional Brokerage
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    Starting at
+                  </span>
+                  <br />
+                  $249
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Advanced brokerage operations</li>
+                  <li>✓ FreightFlow RFx platform</li>
+                  <li>✓ Load & customer management</li>
+                  <li>✓ Revenue analytics dashboard</li>
+                  <li>✓ AI-powered optimization</li>
+                </ul>
+              </div>
+
+              {/* Enterprise Professional */}
+              <div
+                style={{
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(99, 102, 241, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🌟
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#6366f1',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Enterprise Professional
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.6rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    Starting at
+                  </span>
+                  <br />
+                  $2,499
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Complete platform access</li>
+                  <li>✓ All premium features</li>
+                  <li>✓ Advanced AI automation</li>
+                  <li>✓ Priority support & training</li>
+                  <li>✓ Custom integrations</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* À La Carte Option */}
+            <div
+              style={{
+                background: 'rgba(20, 184, 166, 0.1)',
+                borderRadius: '16px',
+                padding: '25px',
+                border: '1px solid rgba(20, 184, 166, 0.3)',
+                textAlign: 'center',
+                marginBottom: '30px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '1.4rem',
+                  color: '#14b8a6',
+                  marginBottom: '15px',
+                  fontWeight: '700',
+                }}
+              >
+                🎯 À La Carte Professional
+              </h3>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '1rem',
+                  marginBottom: '20px',
+                }}
+              >
+                <strong>Starting at $59/month</strong> for Base Platform + Add
+                only the modules you need
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: '12px',
+                }}
+              >
+                {[
+                  'Dispatch Management +$99',
+                  'CRM Suite +$79',
+                  'RFx Discovery +$149',
+                  'AI Flow Basic +$99',
+                  'Broker Operations +$199',
+                  'Training +$49',
+                  'Analytics +$89',
+                  'Real-Time Tracking +$69',
+                  'API Access +$149',
+                ].map((module, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(20, 184, 166, 0.2)',
+                      color: '#14b8a6',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {module}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Enterprise Solutions */}
+            <div
+              style={{
+                background: 'rgba(168, 85, 247, 0.1)',
+                borderRadius: '16px',
+                padding: '25px',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+                textAlign: 'center',
+                marginBottom: '30px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '1.4rem',
+                  color: '#a855f7',
+                  marginBottom: '15px',
+                  fontWeight: '700',
+                }}
+              >
+                🏢 Enterprise Solutions
+              </h3>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '1rem',
+                  marginBottom: '15px',
+                }}
+              >
+                <strong>$4,999 - $9,999+/month</strong> - Custom enterprise
+                deployments
+              </p>
+              <ul
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '0.9rem',
+                  listStyle: 'none',
+                  padding: 0,
+                  lineHeight: '1.8',
+                  display: 'inline-block',
+                  textAlign: 'left',
+                }}
+              >
+                <li>✓ Dedicated account management</li>
+                <li>✓ Custom integrations & workflows</li>
+                <li>✓ White-label branding options</li>
+                <li>✓ 24/7 priority support</li>
+                <li>✓ On-premise deployment available</li>
+                <li>✓ Multi-location & fleet management</li>
+                <li>✓ Advanced compliance automation</li>
+                <li>✓ Custom training programs</li>
+              </ul>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <Link href='/subscription-management/subscription-dashboard'>
+                <button
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '15px 40px',
+                    borderRadius: '12px',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+                    transition: 'all 0.3s ease',
+                    marginRight: '15px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 35px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  🚀 Start Free Trial
+                </button>
+              </Link>
+              <Link href='/plans'>
+                <button
+                  style={{
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    padding: '15px 40px',
+                    borderRadius: '12px',
+                    fontSize: '1.2rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                  }}
+                >
+                  💰 View All Plans
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Who It's For Section */}
         <div style={{ marginBottom: '60px', maxWidth: '800px' }}>
           <h2

@@ -1024,6 +1024,87 @@ export default function DispatchCentral() {
     setShowInvoiceModal(true);
   };
 
+  const handleGenerateRateConfirmation = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `rate-confirmation-${load.id}-${Date.now()}`,
+      type: 'rate-confirmation',
+      loadId: load.id,
+      data: {
+        ...load,
+        carrierName: load.dispatcherName || 'TBD',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with rate confirmation tab
+    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
+
+    // Show success notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `Rate Confirmation generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        type: 'system_alert',
+        read: false,
+      },
+      ...prev,
+    ]);
+  };
+
+  const handleGenerateBOL = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `bill-of-lading-${load.id}-${Date.now()}`,
+      type: 'bill-of-lading',
+      loadId: load.id,
+      data: {
+        ...load,
+        weight: load.weight || '40,000 lbs',
+        equipment: load.equipment || 'Dry Van',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with bill of lading tab
+    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
+
+    // Show success notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `Bill of Lading generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        type: 'system_alert',
+        read: false,
+      },
+      ...prev,
+    ]);
+  };
+
   const handleInvoiceCreated = (invoiceId: string) => {
     // Update load status or add notification
     setNotifications((prev) => [
@@ -3242,6 +3323,64 @@ export default function DispatchCentral() {
                             alignItems: 'center',
                           }}
                         >
+                          <button
+                            onClick={() =>
+                              handleGenerateRateConfirmation(load as any)
+                            }
+                            style={{
+                              padding: '6px 12px',
+                              background:
+                                'linear-gradient(135deg, #10b981, #059669)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              transition: 'all 0.3s ease',
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform =
+                                'translateY(-2px)';
+                              e.currentTarget.style.boxShadow =
+                                '0 4px 12px rgba(16, 185, 129, 0.4)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                            title='Generate Rate Confirmation'
+                          >
+                            📄 Rate Conf
+                          </button>
+                          <button
+                            onClick={() => handleGenerateBOL(load as any)}
+                            style={{
+                              padding: '6px 12px',
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1e40af)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              transition: 'all 0.3s ease',
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform =
+                                'translateY(-2px)';
+                              e.currentTarget.style.boxShadow =
+                                '0 4px 12px rgba(59, 130, 246, 0.4)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                            title='Generate Bill of Lading'
+                          >
+                            📋 BOL
+                          </button>
                           <button
                             onClick={() => handleCreateInvoice(load as any)}
                             style={{

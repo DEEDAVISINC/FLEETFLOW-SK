@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { checkPermission } from '../../config/access';
+import {
+  companyAccountingService,
+  type CompanyFinancialData,
+} from '../../services/TenantAccountingService';
+import UserDataService from '../../services/user-data-service';
 
 // Enhanced User Interface for comprehensive header
 interface EnhancedAccountingUser {
@@ -11,7 +16,12 @@ interface EnhancedAccountingUser {
   email: string;
   phone: string;
   role: {
-    type: 'accountant' | 'finance_manager' | 'controller' | 'bookkeeper';
+    type:
+      | 'accountant'
+      | 'finance_manager'
+      | 'controller'
+      | 'bookkeeper'
+      | 'guest';
     permissions: string[];
   };
   tenantId: string;
@@ -174,125 +184,105 @@ const MetricCard = ({
   </div>
 );
 
-// Enterprise Financial Dashboard
-const OverviewTab = () => {
+// Enterprise Financial Dashboard - Updated to use tenant data
+const OverviewTab = ({
+  companyData,
+}: {
+  companyData: CompanyFinancialData | null;
+}) => {
   const [timeframe, setTimeframe] = useState('YTD');
 
-  // Enterprise-level financial metrics
-  const kpiMetrics = [
-    {
-      label: 'Revenue (YTD)',
-      value: '$24.7M',
-      change: '+15.3%',
-      trend: 'up',
-      previous: '$21.4M',
-      target: '$28.5M',
-    },
-    {
-      label: 'EBITDA Margin',
-      value: '23.8%',
-      change: '+2.1pp',
-      trend: 'up',
-      previous: '21.7%',
-      target: '25.0%',
-    },
-    {
-      label: 'Cash Position',
-      value: '$8.9M',
-      change: '-5.2%',
-      trend: 'down',
-      previous: '$9.4M',
-      target: '$12.0M',
-    },
-    {
-      label: 'DSO',
-      value: '31 days',
-      change: '-3 days',
-      trend: 'up',
-      previous: '34 days',
-      target: '28 days',
-    },
-    {
-      label: 'Working Capital',
-      value: '$15.2M',
-      change: '+8.7%',
-      trend: 'up',
-      previous: '$14.0M',
-      target: '$18.0M',
-    },
-    {
-      label: 'Burn Rate',
-      value: '$1.2M/mo',
-      change: '+12.5%',
-      trend: 'down',
-      previous: '$1.1M/mo',
-      target: '$1.0M/mo',
-    },
+  // Use real company data or fallback to defaults
+  const kpiMetrics = companyData
+    ? [
+        {
+          label: 'Revenue (YTD)',
+          value: `$${(companyData.kpis.totalRevenue / 1000000).toFixed(1)}M`,
+          change: `${companyData.kpis.revenueChange > 0 ? '+' : ''}${companyData.kpis.revenueChange.toFixed(1)}%`,
+          trend: companyData.kpis.revenueChange > 0 ? 'up' : 'down',
+          previous: `$${((companyData.kpis.totalRevenue * (1 - companyData.kpis.revenueChange / 100)) / 1000000).toFixed(1)}M`,
+          target: `$${((companyData.kpis.totalRevenue * 1.2) / 1000000).toFixed(1)}M`,
+        },
+        {
+          label: 'EBITDA Margin',
+          value: `${companyData.kpis.ebitdaMargin.toFixed(1)}%`,
+          change: `${companyData.kpis.ebitdaChange > 0 ? '+' : ''}${companyData.kpis.ebitdaChange.toFixed(1)}pp`,
+          trend: companyData.kpis.ebitdaChange > 0 ? 'up' : 'down',
+          previous: `${(companyData.kpis.ebitdaMargin - companyData.kpis.ebitdaChange).toFixed(1)}%`,
+          target: `${(companyData.kpis.ebitdaMargin + 2).toFixed(1)}%`,
+        },
+        {
+          label: 'Cash Position',
+          value: `$${(companyData.kpis.cashPosition / 1000000).toFixed(1)}M`,
+          change: `${companyData.kpis.cashChange > 0 ? '+' : ''}${companyData.kpis.cashChange.toFixed(1)}%`,
+          trend: companyData.kpis.cashChange > 0 ? 'up' : 'down',
+          previous: `$${((companyData.kpis.cashPosition * (1 - companyData.kpis.cashChange / 100)) / 1000000).toFixed(1)}M`,
+          target: `$${((companyData.kpis.cashPosition * 1.5) / 1000000).toFixed(1)}M`,
+        },
+        {
+          label: 'DSO',
+          value: `${companyData.kpis.dso} days`,
+          change: `${companyData.kpis.dsoChange > 0 ? '+' : ''}${companyData.kpis.dsoChange} days`,
+          trend: companyData.kpis.dsoChange < 0 ? 'up' : 'down', // Lower DSO is better
+          previous: `${companyData.kpis.dso - companyData.kpis.dsoChange} days`,
+          target: `${Math.max(companyData.kpis.dso - 5, 20)} days`,
+        },
+        {
+          label: 'Working Capital',
+          value: `$${(companyData.kpis.workingCapital / 1000000).toFixed(1)}M`,
+          change: `${companyData.kpis.workingCapitalChange > 0 ? '+' : ''}${companyData.kpis.workingCapitalChange.toFixed(1)}%`,
+          trend: companyData.kpis.workingCapitalChange > 0 ? 'up' : 'down',
+          previous: `$${((companyData.kpis.workingCapital * (1 - companyData.kpis.workingCapitalChange / 100)) / 1000000).toFixed(1)}M`,
+          target: `$${((companyData.kpis.workingCapital * 1.3) / 1000000).toFixed(1)}M`,
+        },
+        {
+          label: 'Collection Rate',
+          value: `${companyData.kpis.collectionRate.toFixed(1)}%`,
+          change: `${companyData.kpis.collectionRateChange > 0 ? '+' : ''}${companyData.kpis.collectionRateChange.toFixed(1)}%`,
+          trend: companyData.kpis.collectionRateChange > 0 ? 'up' : 'down',
+          previous: `${(companyData.kpis.collectionRate - companyData.kpis.collectionRateChange).toFixed(1)}%`,
+          target: '95.0%',
+        },
+      ]
+    : [
+        // Fallback data for loading state
+        {
+          label: 'Revenue (YTD)',
+          value: '$0.0M',
+          change: '+0.0%',
+          trend: 'up',
+          previous: '$0.0M',
+          target: '$0.0M',
+        },
+      ];
+
+  // Use tenant-specific data
+  const arAgingData = companyData?.arAging || [
+    { bucket: 'Current (0-30)', amount: 0, percentage: 0, count: 0 },
+    { bucket: '31-60 days', amount: 0, percentage: 0, count: 0 },
+    { bucket: '61-90 days', amount: 0, percentage: 0, count: 0 },
+    { bucket: '91-120 days', amount: 0, percentage: 0, count: 0 },
+    { bucket: '120+ days', amount: 0, percentage: 0, count: 0 },
   ];
 
-  const arAgingData = [
+  const recentTransactions = companyData?.recentTransactions || [
     {
-      bucket: 'Current (0-30)',
-      amount: 12400000,
-      percentage: 67.2,
-      count: 1847,
-    },
-    { bucket: '31-60 days', amount: 3200000, percentage: 17.3, count: 423 },
-    { bucket: '61-90 days', amount: 1800000, percentage: 9.7, count: 187 },
-    { bucket: '91-120 days', amount: 750000, percentage: 4.1, count: 89 },
-    { bucket: '120+ days', amount: 320000, percentage: 1.7, count: 34 },
-  ];
-
-  const recentTransactions = [
-    {
-      id: 'TXN-89234',
+      id: 'TXN-000',
       type: 'Wire',
-      entity: 'Goldman Sachs Group',
-      amount: 2450000,
-      status: 'Cleared',
-      time: '09:23 EST',
-    },
-    {
-      id: 'TXN-89235',
-      type: 'ACH',
-      entity: 'Microsoft Corporation',
-      amount: 875000,
-      status: 'Pending',
-      time: '09:18 EST',
-    },
-    {
-      id: 'TXN-89236',
-      type: 'Check',
-      entity: 'JPMorgan Chase',
-      amount: 1200000,
-      status: 'Cleared',
-      time: '08:45 EST',
-    },
-    {
-      id: 'TXN-89237',
-      type: 'Wire',
-      entity: 'Apple Inc.',
-      amount: 3200000,
-      status: 'Processing',
-      time: '08:12 EST',
-    },
-    {
-      id: 'TXN-89238',
-      type: 'ACH',
-      entity: 'Berkshire Hathaway',
-      amount: 950000,
-      status: 'Cleared',
-      time: '07:56 EST',
+      entity: 'Loading...',
+      amount: 0,
+      status: 'Loading',
+      time: '--:-- EST',
     },
   ];
 
-  const monthlyPnL = [
-    { month: 'Jan', revenue: 2100000, expenses: 1680000, netIncome: 420000 },
-    { month: 'Feb', revenue: 2350000, expenses: 1740000, netIncome: 610000 },
-    { month: 'Mar', revenue: 2180000, expenses: 1820000, netIncome: 360000 },
-    { month: 'Apr', revenue: 2670000, expenses: 1950000, netIncome: 720000 },
-    { month: 'May', revenue: 2420000, expenses: 1890000, netIncome: 530000 },
-    { month: 'Jun', revenue: 2890000, expenses: 2100000, netIncome: 790000 },
+  const monthlyPnL = companyData?.monthlyPnL || [
+    { month: 'Jan', revenue: 0, expenses: 0, netIncome: 0 },
+    { month: 'Feb', revenue: 0, expenses: 0, netIncome: 0 },
+    { month: 'Mar', revenue: 0, expenses: 0, netIncome: 0 },
+    { month: 'Apr', revenue: 0, expenses: 0, netIncome: 0 },
+    { month: 'May', revenue: 0, expenses: 0, netIncome: 0 },
+    { month: 'Jun', revenue: 0, expenses: 0, netIncome: 0 },
   ];
 
   return (
@@ -846,38 +836,21 @@ const OverviewTab = () => {
   );
 };
 
-// Invoices Tab
-const InvoicesTab = () => {
+// Invoices Tab - Updated to use tenant data
+const InvoicesTab = ({
+  companyData,
+}: {
+  companyData: CompanyFinancialData | null;
+}) => {
   const [filter, setFilter] = useState('all');
 
-  const invoices = [
+  const invoices = companyData?.invoices || [
     {
-      id: 'INV-001',
-      client: 'ABC Manufacturing',
-      amount: 4850,
-      status: 'paid',
-      date: '2024-12-10',
-    },
-    {
-      id: 'INV-002',
-      client: 'Global Electronics',
-      amount: 6200,
-      status: 'sent',
-      date: '2024-12-08',
-    },
-    {
-      id: 'INV-003',
-      client: 'DEF Logistics',
-      amount: 3750,
-      status: 'overdue',
-      date: '2024-11-25',
-    },
-    {
-      id: 'INV-004',
-      client: 'Fresh Foods Corp',
-      amount: 8900,
-      status: 'paid',
-      date: '2024-12-05',
+      id: 'INV-000',
+      client: 'Loading...',
+      amount: 0,
+      status: 'pending' as const,
+      date: '2024-12-01',
     },
   ];
 
@@ -1407,9 +1380,24 @@ export default function ModernAccountingPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [accessGranted, setAccessGranted] = useState(false);
+  const [companyFinancialData, setCompanyFinancialData] =
+    useState<CompanyFinancialData | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
 
   const checkAccess = async () => {
     try {
+      // First check if user is logged in through user management system
+      const userDataService = UserDataService.getInstance();
+      const currentUser = userDataService.getCurrentUser();
+
+      if (!currentUser) {
+        console.warn(
+          'No user logged in. Redirecting to login or using guest mode.'
+        );
+        // In production, redirect to login page
+        // window.location.href = '/login';
+      }
+
       const hasAccess = checkPermission('accounting');
       setAccessGranted(hasAccess);
     } catch (error) {
@@ -1420,44 +1408,147 @@ export default function ModernAccountingPage() {
     }
   };
 
+  const loadCompanyData = async () => {
+    try {
+      setDataLoading(true);
+
+      // Create a demo subscription for the user if they don't have one
+      const userDataService = UserDataService.getInstance();
+      const currentUser = userDataService.getCurrentUser();
+      if (currentUser) {
+        // Import subscription service dynamically to avoid circular dependencies
+        const { SubscriptionManagementService } = await import(
+          '../../services/SubscriptionManagementService'
+        );
+
+        const existingSubscription =
+          SubscriptionManagementService.getUserSubscription(currentUser.id);
+        if (!existingSubscription) {
+          // Create a demo subscription based on user's department
+          const demoTierMap: Record<string, string> = {
+            MGR: 'enterprise-module', // Enterprise Professional $2,499/month
+            DC: 'dispatcher-pro', // Professional Dispatcher $79/month
+            BB: 'broker-elite', // Professional Brokerage $249/month
+            DM: 'university-access', // FleetFlow University $49/month
+          };
+
+          const tierId =
+            demoTierMap[currentUser.departmentCode] || 'dispatcher-pro';
+
+          console.log(
+            `🎯 Creating demo subscription ${tierId} for ${currentUser.name}`
+          );
+          await SubscriptionManagementService.createSubscription(
+            currentUser.id,
+            currentUser.email,
+            currentUser.name,
+            tierId
+          );
+        }
+      }
+
+      const data = await companyAccountingService.getCompanyFinancialData();
+      setCompanyFinancialData(data);
+    } catch (error) {
+      console.error('Failed to load company financial data:', error);
+    } finally {
+      setDataLoading(false);
+    }
+  };
+
   useEffect(() => {
+    // Ensure a user is logged in for demo purposes
+    const userDataService = UserDataService.getInstance();
+    const currentUser = userDataService.getCurrentUser();
+
+    if (!currentUser) {
+      // Auto-login the demo user (Frank Miller - Manager) for accounting page demo
+      console.log('🔐 Auto-logging in demo user for accounting page');
+      userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
+    }
+
     checkAccess();
+    loadCompanyData();
   }, []);
 
-  // Enhanced user data for comprehensive header
-  const currentUser: EnhancedAccountingUser = {
-    id: 'AC-001',
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@fleetflow.com',
-    phone: '(555) 123-4567',
-    role: {
-      type: 'accountant',
-      permissions: ['view_accounting', 'manage_invoices', 'generate_reports'],
-    },
-    tenantId: 'tenant_fleetflow_transport',
-    tenantName: 'FleetFlow Transport LLC',
-    companyInfo: {
-      taxId: '12-3456789',
-      ein: '12-3456789',
-      fiscalYear: '2024',
-      accountingMethod: 'Accrual',
-      operatingStatus: 'Active',
-    },
-    supervisor: {
-      name: 'Michael Chen',
-      phone: '+1 (555) 987-6543',
-      email: 'michael.chen@fleetflow.com',
-      department: 'Finance Department',
-      availability: 'Available 9AM-5PM',
-      responsiveness: 'Avg Response: 2 hours',
-    },
-    photos: {
-      companyLogo:
-        'https://images.unsplash.com/photo-1558618047-f0c1b401b0cf?w=150&h=150&fit=crop&auto=format',
-      userPhoto:
-        'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face&auto=format',
-    },
-  };
+  // Get current logged-in user from user management system
+  const userDataService = UserDataService.getInstance();
+  const loggedInUser = userDataService.getCurrentUser();
+
+  // Enhanced user data using real user profile
+  const currentUser: EnhancedAccountingUser = loggedInUser
+    ? {
+        id: loggedInUser.id,
+        name: loggedInUser.name,
+        email: loggedInUser.email,
+        phone: loggedInUser.phone,
+        role: {
+          type: 'accountant',
+          permissions: Object.keys(loggedInUser.permissions || {}).filter(
+            (key) => loggedInUser.permissions?.[key] === true
+          ),
+        },
+        tenantId: loggedInUser.id,
+        tenantName:
+          companyFinancialData?.companyName || `${loggedInUser.name}'s Company`,
+        companyInfo: companyFinancialData?.companyInfo || {
+          taxId: '12-3456789',
+          ein: '12-3456789',
+          fiscalYear: '2024',
+          accountingMethod: 'Accrual',
+          operatingStatus:
+            loggedInUser.status === 'active' ? 'Active' : 'Inactive',
+        },
+        supervisor: {
+          name: 'Michael Chen',
+          phone: '+1 (555) 987-6543',
+          email: 'michael.chen@fleetflow.com',
+          department: 'Finance Department',
+          availability: 'Available 9AM-5PM',
+          responsiveness: 'Avg Response: 2 hours',
+        },
+        photos: {
+          companyLogo:
+            'https://images.unsplash.com/photo-1558618047-f0c1b401b0cf?w=150&h=150&fit=crop&auto=format',
+          userPhoto:
+            loggedInUser?.profilePhoto ||
+            'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face&auto=format',
+        },
+      }
+    : {
+        // Fallback for guest/non-logged in users
+        id: 'GUEST-001',
+        name: 'Guest User',
+        email: 'guest@fleetflow.com',
+        phone: '(555) 000-0000',
+        role: {
+          type: 'guest',
+          permissions: [],
+        },
+        tenantId: 'guest-tenant',
+        tenantName: 'Demo Access',
+        companyInfo: {
+          taxId: '00-0000000',
+          ein: '00-0000000',
+          fiscalYear: '2024',
+          accountingMethod: 'Cash',
+          operatingStatus: 'Demo',
+        },
+        supervisor: {
+          name: 'Demo Supervisor',
+          phone: '+1 (555) 000-0000',
+          email: 'demo@fleetflow.com',
+          department: 'Demo Department',
+          availability: 'Demo Mode',
+          responsiveness: 'Demo Response',
+        },
+        photos: {
+          companyLogo:
+            'https://images.unsplash.com/photo-1558618047-f0c1b401b0cf?w=150&h=150&fit=crop&auto=format',
+          userPhoto:
+            'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face&auto=format',
+        },
+      };
 
   if (loading) {
     return (
@@ -1883,33 +1974,42 @@ export default function ModernAccountingPage() {
             </div>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <button
+                onClick={loadCompanyData}
+                disabled={dataLoading}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: dataLoading
+                    ? 'rgba(16, 185, 129, 0.6)'
+                    : 'linear-gradient(135deg, #10b981, #059669)',
                   color: 'white',
                   border: 'none',
                   padding: '16px 28px',
                   borderRadius: '16px',
                   fontSize: '16px',
                   fontWeight: '700',
-                  cursor: 'pointer',
+                  cursor: dataLoading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease',
                   boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
                   position: 'relative',
                   overflow: 'hidden',
+                  opacity: dataLoading ? 0.7 : 1,
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #059669, #047857)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 12px 40px rgba(16, 185, 129, 0.4)';
+                  if (!dataLoading) {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #059669, #047857)';
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(16, 185, 129, 0.4)';
+                  }
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #10b981, #059669)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 32px rgba(16, 185, 129, 0.3)';
+                  if (!dataLoading) {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #10b981, #059669)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 32px rgba(16, 185, 129, 0.3)';
+                  }
                 }}
               >
                 <div
@@ -1923,7 +2023,9 @@ export default function ModernAccountingPage() {
                       'linear-gradient(90deg, #10b981, #059669, #047857)',
                   }}
                 />
-                🔄 Refresh Data
+                {dataLoading
+                  ? '🔄 Loading...'
+                  : `🔄 Refresh ${currentUser.name}'s Company Data`}
               </button>
             </div>
           </div>
@@ -2013,7 +2115,12 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                $247,500
+                $
+                {companyFinancialData
+                  ? (
+                      companyFinancialData.kpis.totalRevenue / 1000
+                    ).toLocaleString()
+                  : '0'}
               </div>
               <div
                 style={{
@@ -2058,7 +2165,13 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                $89,200
+                $
+                {companyFinancialData
+                  ? (
+                      (companyFinancialData.kpis.totalRevenue * 0.15) /
+                      1000
+                    ).toLocaleString()
+                  : '0'}
               </div>
               <div
                 style={{
@@ -2103,7 +2216,9 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                94.2%
+                {companyFinancialData
+                  ? `${companyFinancialData.kpis.collectionRate.toFixed(1)}%`
+                  : '0%'}
               </div>
               <div
                 style={{
@@ -2148,7 +2263,9 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                47
+                {companyFinancialData
+                  ? companyFinancialData.invoices.length
+                  : 0}
               </div>
               <div
                 style={{
@@ -2193,7 +2310,11 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                12
+                {companyFinancialData
+                  ? companyFinancialData.invoices.filter(
+                      (inv) => inv.status === 'overdue'
+                    ).length
+                  : 0}
               </div>
               <div
                 style={{
@@ -2238,7 +2359,11 @@ export default function ModernAccountingPage() {
                   marginBottom: '4px',
                 }}
               >
-                3
+                {companyFinancialData
+                  ? companyFinancialData.invoices.filter(
+                      (inv) => inv.status === 'pending'
+                    ).length
+                  : 0}
               </div>
               <div
                 style={{
@@ -2251,17 +2376,140 @@ export default function ModernAccountingPage() {
                 Pending Approval
               </div>
             </div>
+
+            {/* Subscription Revenue Card */}
+            {companyFinancialData?.subscription && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '16px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    color: '#3b82f6',
+                    marginBottom: '8px',
+                  }}
+                >
+                  📱 Subscription Revenue
+                </div>
+                <div
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color: '#1e40af',
+                    marginBottom: '4px',
+                  }}
+                >
+                  ${companyFinancialData.subscription.monthlyRevenue}/month
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: '#1e40af',
+                    opacity: 0.8,
+                  }}
+                >
+                  {companyFinancialData.subscription.tierName}
+                  {companyFinancialData.subscription.trialDaysRemaining && (
+                    <span>
+                      {' '}
+                      • {
+                        companyFinancialData.subscription.trialDaysRemaining
+                      }{' '}
+                      days left in trial
+                    </span>
+                  )}
+                </div>
+                <Link
+                  href='/subscription-management/subscription-dashboard'
+                  style={{
+                    display: 'inline-block',
+                    marginTop: '8px',
+                    padding: '6px 12px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '6px',
+                    color: '#1e40af',
+                    textDecoration: 'none',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                  }}
+                >
+                  Manage Subscription →
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Tab Navigation */}
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
+        {/* CSS Animation for Spinner */}
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+
+        {/* Loading Indicator */}
+        {dataLoading && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '40px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              margin: '20px 0',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                color: 'white',
+                fontSize: '16px',
+              }}
+            >
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  border: '2px solid rgba(16, 185, 129, 0.3)',
+                  borderTop: '2px solid #10b981',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              Loading {currentUser.name}'s company financial data...
+            </div>
+          </div>
+        )}
+
         {/* Tab Content */}
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'invoices' && <InvoicesTab />}
-        {activeTab === 'billing' && <BillingTab />}
-        {activeTab === 'reports' && <ReportsTab />}
+        {!dataLoading && activeTab === 'overview' && (
+          <OverviewTab companyData={companyFinancialData} />
+        )}
+        {!dataLoading && activeTab === 'invoices' && (
+          <InvoicesTab companyData={companyFinancialData} />
+        )}
+        {!dataLoading && activeTab === 'billing' && <BillingTab />}
+        {!dataLoading && activeTab === 'reports' && <ReportsTab />}
       </div>
     </div>
   );

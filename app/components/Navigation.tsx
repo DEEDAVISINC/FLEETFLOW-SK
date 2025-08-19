@@ -656,20 +656,6 @@ export default function ProfessionalNavigation() {
                     📱 OpenELD System
                   </Link>
                   <Link
-                    href='/safety'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#dc2626',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🛡️ Safety & Training
-                  </Link>
-                  <Link
                     href='/fleetguard-demo'
                     onClick={handleDropdownClose}
                     style={{
@@ -984,7 +970,7 @@ export default function ProfessionalNavigation() {
                         💰 Company Financial Management
                       </Link>
                       <Link
-                        href='/subscription-management/subscription-dashboard'
+                        href='/plans'
                         onClick={handleDropdownClose}
                         style={{
                           display: 'block',
@@ -997,7 +983,7 @@ export default function ProfessionalNavigation() {
                           borderLeft: '3px solid #8B5CF6',
                         }}
                       >
-                        💳 Subscription Plans & Billing
+                        🎯 Professional Subscription Plans
                       </Link>
                       <Link
                         href='/billing'
@@ -1077,7 +1063,7 @@ export default function ProfessionalNavigation() {
                     💰 Accounting & Finance
                   </Link>
                   <Link
-                    href='/billing'
+                    href='/subscription-management/subscription-dashboard'
                     onClick={handleDropdownClose}
                     style={{
                       display: 'block',
@@ -1088,7 +1074,7 @@ export default function ProfessionalNavigation() {
                       fontWeight: '500',
                     }}
                   >
-                    💳 Subscriptions
+                    📊 Subscription Management
                   </Link>
                   <Link
                     href='/billing-invoices'

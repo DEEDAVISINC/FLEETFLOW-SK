@@ -23,6 +23,7 @@ import { EnhancedCarrierService } from './enhanced-carrier-service';
 import { LoadDistributionService } from './load-distribution';
 import { RouteOptimizationService } from './route-optimization';
 import { SmartTaskPrioritizationService } from './smart-task-prioritization';
+import { uspsFreightService } from './usps-freight-service';
 
 // Heavy Haul Permit Service interfaces (avoiding import conflicts)
 export interface HeavyHaulLoadDataData {
@@ -151,6 +152,7 @@ export class FleetFlowSystemOrchestrator {
   private carrierService: EnhancedCarrierService;
   private heavyHaulPermitService: HeavyHaulPermitService;
   private taskPrioritization: SmartTaskPrioritizationService;
+  private uspsFreightService = uspsFreightService;
   private workflows: Map<string, IntegratedWorkflow> = new Map();
   private validatedCarriers: Map<string, CarrierValidationResult> = new Map();
   private config: SystemIntegrationConfig;
@@ -791,6 +793,9 @@ export class FleetFlowSystemOrchestrator {
    * System health check
    */
   public async getSystemHealth(): Promise<any> {
+    // Initialize USPS Freight Service and check status
+    const uspsFreightInitialized = uspsFreightService.initialize();
+
     return {
       orchestrator: 'online',
       automation: this.automation ? 'active' : 'inactive',
@@ -809,6 +814,7 @@ export class FleetFlowSystemOrchestrator {
       notifications: this.config.enableAutoNotifications
         ? 'enabled'
         : 'disabled',
+      uspsFreight: uspsFreightInitialized ? 'online' : 'offline',
       activeWorkflows: this.workflows.size,
       validatedCarriers: this.validatedCarriers.size,
       timestamp: new Date().toISOString(),

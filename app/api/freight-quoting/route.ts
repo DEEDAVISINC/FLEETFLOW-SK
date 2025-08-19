@@ -494,7 +494,7 @@ async function handleQuoteHistory(data: any) {
  */
 async function handleRateMonitoring(data: any) {
   try {
-    const { lanes, thresholds } = data;
+    const { lanes, thresholds, notificationMethod } = data;
 
     if (!lanes || !Array.isArray(lanes) || lanes.length === 0) {
       return NextResponse.json(

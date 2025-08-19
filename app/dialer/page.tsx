@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import SimplePhoneDialer from '../components/SimplePhoneDialer';
+import CallCenterAnalyticsDashboard from '../components/CallCenterAnalyticsDashboard';
+import EnhancedPhoneDialer from '../components/EnhancedPhoneDialer';
 
 interface CallStats {
   todaysCalls: number;
@@ -55,10 +56,28 @@ export default function DialerPage() {
   ]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedView, setSelectedView] = useState<'dialer' | 'analytics'>(
+    'dialer'
+  );
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+
+    // Add global error handler for unhandled promise rejections
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      event.preventDefault(); // Prevent the error from being logged to console
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener(
+        'unhandledrejection',
+        handleUnhandledRejection
+      );
+    };
   }, []);
 
   return (
@@ -135,6 +154,52 @@ export default function DialerPage() {
                 gap: '16px',
               }}
             >
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setSelectedView('dialer')}
+                  style={{
+                    background:
+                      selectedView === 'dialer'
+                        ? 'rgba(34, 197, 94, 0.3)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '6px',
+                    padding: '6px 12px',
+                    color:
+                      selectedView === 'dialer'
+                        ? '#22c55e'
+                        : 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  📞 Dialer
+                </button>
+                <button
+                  onClick={() => setSelectedView('analytics')}
+                  style={{
+                    background:
+                      selectedView === 'analytics'
+                        ? 'rgba(59, 130, 246, 0.3)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '6px',
+                    padding: '6px 12px',
+                    color:
+                      selectedView === 'analytics'
+                        ? '#3b82f6'
+                        : 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  📊 Analytics
+                </button>
+              </div>
               <div
                 style={{
                   background: 'rgba(34, 197, 94, 0.2)',
@@ -146,7 +211,7 @@ export default function DialerPage() {
                   color: '#22c55e',
                 }}
               >
-                ✅ Ready to Call
+                ✅ AI Ready
               </div>
             </div>
           </div>
@@ -524,125 +589,133 @@ export default function DialerPage() {
           </div>
         </div>
 
-        {/* Main Dialer Section */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '2fr 1fr',
-            gap: '24px',
-          }}
-        >
-          {/* Phone Dialer */}
+        {/* Main Content */}
+        {selectedView === 'dialer' && (
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '32px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr',
+              gap: '24px',
             }}
           >
-            <SimplePhoneDialer />
-          </div>
-
-          {/* Recent Calls */}
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <h3
+            {/* Enhanced Phone Dialer */}
+            <div
               style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: 'white',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
               }}
             >
-              📞 Recent Calls
-            </h3>
+              <EnhancedPhoneDialer />
+            </div>
+
+            {/* Recent Calls */}
             <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              }}
             >
-              {recentCalls.map((call) => (
-                <div
-                  key={call.id}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                📞 Recent Calls
+              </h3>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                {recentCalls.map((call) => (
                   <div
+                    key={call.id}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '4px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
                   >
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: 'white',
-                          marginBottom: '2px',
-                        }}
-                      >
-                        {call.name || call.number}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '2px',
+                          }}
+                        >
+                          {call.name || call.number}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontFamily: 'monospace',
+                          }}
+                        >
+                          {call.number}
+                        </div>
                       </div>
                       <div
                         style={{
                           fontSize: '12px',
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontFamily: 'monospace',
+                          color:
+                            call.status === 'completed'
+                              ? '#22c55e'
+                              : call.status === 'missed'
+                                ? '#ef4444'
+                                : '#f59e0b',
+                          fontWeight: '600',
                         }}
                       >
-                        {call.number}
+                        {call.status === 'completed' && '✅'}
+                        {call.status === 'missed' && '❌'}
+                        {call.status === 'busy' && '⏰'}
+                        {call.duration}
                       </div>
                     </div>
                     <div
                       style={{
-                        fontSize: '12px',
-                        color:
-                          call.status === 'completed'
-                            ? '#22c55e'
-                            : call.status === 'missed'
-                              ? '#ef4444'
-                              : '#f59e0b',
-                        fontWeight: '600',
+                        fontSize: '11px',
+                        color: 'rgba(255, 255, 255, 0.5)',
                       }}
                     >
-                      {call.status === 'completed' && '✅'}
-                      {call.status === 'missed' && '❌'}
-                      {call.status === 'busy' && '⏰'}
-                      {call.duration}
+                      {call.timestamp}
                     </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                    }}
-                  >
-                    {call.timestamp}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {selectedView === 'analytics' && <CallCenterAnalyticsDashboard />}
       </div>
     </div>
   );

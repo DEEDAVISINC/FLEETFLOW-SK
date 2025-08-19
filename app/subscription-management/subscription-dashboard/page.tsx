@@ -15,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import UserDataService from '../../services/user-data-service';
 
 interface SubscriptionTier {
   id: string;
@@ -46,6 +47,26 @@ interface UserSubscription {
   };
 }
 
+// Helper function to get recommended subscription tier based on user role
+const getRecommendedTier = (
+  departmentCode: string,
+  position: string
+): { name: string; id: string } | null => {
+  const recommendations: Record<string, { name: string; id: string }> = {
+    MGR: { name: 'Enterprise Professional', id: 'enterprise-module' }, // Management gets full access
+    DC: { name: 'Professional Dispatcher', id: 'dispatcher-pro' }, // Dispatch gets dispatcher tools
+    BB: { name: 'Professional Brokerage', id: 'broker-elite' }, // Brokerage gets broker tools
+    DM: { name: 'FleetFlow University℠', id: 'university-access' }, // Driver Management gets training
+  };
+
+  return (
+    recommendations[departmentCode] || {
+      name: 'Professional Dispatcher',
+      id: 'dispatcher-pro',
+    }
+  );
+};
+
 export default function SubscriptionDashboard() {
   const [subscription, setSubscription] = useState<UserSubscription | null>(
     null
@@ -58,14 +79,30 @@ export default function SubscriptionDashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedTier, setSelectedTier] = useState<string>('');
 
-  // Mock user data - in production this would come from auth context
-  const currentUser = {
-    userId: 'user_123',
-    userName: 'John Dispatcher',
-    userEmail: 'john@example.com',
-  };
+  // Get current logged-in user from user management system
+  const userDataService = UserDataService.getInstance();
+  const loggedInUser = userDataService.getCurrentUser();
+
+  // Use real user data or fallback to demo user
+  const currentUser = loggedInUser
+    ? {
+        userId: loggedInUser.id,
+        userName: loggedInUser.name,
+        userEmail: loggedInUser.email,
+      }
+    : {
+        userId: 'demo_user',
+        userName: 'Demo User',
+        userEmail: 'demo@fleetflow.com',
+      };
 
   useEffect(() => {
+    // Ensure a user is logged in for demo purposes
+    if (!loggedInUser) {
+      console.log('🔐 Auto-logging in demo user for subscription dashboard');
+      userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
+    }
+
     loadSubscriptionData();
   }, []);
 
@@ -189,45 +226,117 @@ export default function SubscriptionDashboard() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)',
+        color: 'white',
+      }}
+    >
       {/* Header */}
-      <div className='border-b bg-white shadow-sm'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <div className='py-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <h1 className='text-2xl font-bold text-gray-900'>
-                  FleetFlow Professional
-                </h1>
-                <p className='text-gray-600'>
-                  Manage your subscription and unlock professional tools
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          padding: '20px 0',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 20px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <h1
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  background:
+                    'linear-gradient(135deg, #3b82f6 0%, #14b8a6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '8px',
+                }}
+              >
+                💼 FleetFlow Professional
+              </h1>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '1.1rem',
+                  marginBottom: '4px',
+                }}
+              >
+                Welcome back, {currentUser.userName} • {currentUser.userEmail}
+              </p>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: '0.9rem',
+                }}
+              >
+                Manage your subscription and unlock professional tools
+              </p>
+            </div>
+            {subscription?.trialStatus?.isInTrial && (
+              <div
+                style={{
+                  background: 'rgba(244, 168, 50, 0.1)',
+                  border: '1px solid rgba(244, 168, 50, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <Gift size={24} color='#f4a832' />
+                  <span
+                    style={{
+                      fontSize: '1.3rem',
+                      fontWeight: '700',
+                      color: '#f4a832',
+                    }}
+                  >
+                    {subscription.trialStatus.daysRemaining} days left in trial
+                  </span>
+                </div>
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Upgrade now to continue using premium features
                 </p>
               </div>
-              {subscription?.trialStatus?.isInTrial && (
-                <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
-                  <div className='flex items-center gap-2'>
-                    <Gift className='h-5 w-5 text-yellow-600' />
-                    <div>
-                      <p className='font-medium text-yellow-800'>
-                        {subscription.trialStatus.daysRemaining} days left in
-                        trial
-                      </p>
-                      <p className='text-sm text-yellow-600'>
-                        Upgrade now to continue using premium features
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <div className='border-b border-gray-200'>
-          <nav className='-mb-px flex space-x-8'>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <nav style={{ display: 'flex', gap: '32px' }}>
             {[
               { id: 'overview', name: 'Overview', icon: BarChart3 },
               { id: 'billing', name: 'Billing', icon: CreditCard },
@@ -237,13 +346,26 @@ export default function SubscriptionDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium ${
-                  activeTab === tab.id
-                    ? 'border-teal-500 text-teal-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '16px 4px',
+                  borderBottom:
+                    activeTab === tab.id
+                      ? '2px solid #14b8a6'
+                      : '2px solid transparent',
+                  color:
+                    activeTab === tab.id ? '#14b8a6' : 'rgba(255,255,255,0.7)',
+                  fontSize: '0.95rem',
+                  fontWeight: '600',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
               >
-                <tab.icon className='h-5 w-5' />
+                <tab.icon size={20} />
                 {tab.name}
               </button>
             ))}
@@ -252,13 +374,129 @@ export default function SubscriptionDashboard() {
       </div>
 
       {/* Content */}
-      <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+      <div
+        style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}
+      >
         {activeTab === 'overview' && (
-          <div className='space-y-6'>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
+          >
+            {/* User Profile Card */}
+            {loggedInUser && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(15px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  padding: '30px',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '20px' }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      background:
+                        'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+                      fontSize: '1.8rem',
+                      fontWeight: 'bold',
+                      color: 'white',
+                    }}
+                  >
+                    {loggedInUser.firstName?.[0]}
+                    {loggedInUser.lastName?.[0]}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: 'white',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      {loggedInUser.name}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '1rem',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {loggedInUser.email}
+                    </p>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.6)',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {loggedInUser.position} • {loggedInUser.department}{' '}
+                      Department
+                    </p>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        background:
+                          loggedInUser.status === 'active'
+                            ? 'rgba(16, 185, 129, 0.2)'
+                            : 'rgba(107, 114, 128, 0.2)',
+                        color:
+                          loggedInUser.status === 'active'
+                            ? '#10b981'
+                            : '#6b7280',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {loggedInUser.status === 'active' ? '✅' : '⚪'}{' '}
+                      {loggedInUser.status.charAt(0).toUpperCase() +
+                        loggedInUser.status.slice(1)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Current Subscription */}
-            <div className='rounded-lg border bg-white p-6 shadow-sm'>
-              <div className='mb-4 flex items-center justify-between'>
-                <h2 className='text-lg font-semibold text-gray-900'>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(15px)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                padding: '30px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '20px',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '1.4rem',
+                    fontWeight: '700',
+                    color: 'white',
+                  }}
+                >
                   Current Subscription
                 </h2>
                 {subscription &&
@@ -340,6 +578,57 @@ export default function SubscriptionDashboard() {
               )}
             </div>
 
+            {/* Personalized Recommendations */}
+            {!subscription && loggedInUser && (
+              <div className='rounded-lg border bg-white p-6 shadow-sm'>
+                <h2 className='mb-4 text-lg font-semibold text-gray-900'>
+                  Recommended for {loggedInUser.position}s
+                </h2>
+                <div className='space-y-4'>
+                  {getRecommendedTier(
+                    loggedInUser.departmentCode,
+                    loggedInUser.position
+                  ) && (
+                    <div className='rounded-lg bg-teal-50 p-4'>
+                      <div className='flex items-center justify-between'>
+                        <div>
+                          <h3 className='font-medium text-teal-900'>
+                            {
+                              getRecommendedTier(
+                                loggedInUser.departmentCode,
+                                loggedInUser.position
+                              )?.name
+                            }
+                          </h3>
+                          <p className='text-sm text-teal-700'>
+                            Perfect for {loggedInUser.position}s in{' '}
+                            {loggedInUser.department}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() =>
+                            handleStartTrial(
+                              getRecommendedTier(
+                                loggedInUser.departmentCode,
+                                loggedInUser.position
+                              )?.id || ''
+                            )
+                          }
+                          className='rounded-lg bg-teal-600 px-4 py-2 text-white hover:bg-teal-700'
+                        >
+                          Start Free Trial
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  <p className='text-sm text-gray-600'>
+                    All plans include a 14-day free trial • No credit card
+                    required
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Quick Actions */}
             {subscription && (
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
@@ -375,6 +664,59 @@ export default function SubscriptionDashboard() {
                 </button>
               </div>
             )}
+
+            {/* Features & Access */}
+            <div className='rounded-lg border bg-white p-6 shadow-sm'>
+              <h2 className='mb-4 text-lg font-semibold text-gray-900'>
+                Your Access & Features
+              </h2>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                {subscription ? (
+                  // Show actual subscription features
+                  subscription.tierDetails?.features
+                    .slice(0, 8)
+                    .map((feature, index) => (
+                      <div key={index} className='flex items-center gap-2'>
+                        <CheckCircle className='h-4 w-4 flex-shrink-0 text-green-500' />
+                        <span className='text-sm text-gray-700'>
+                          {feature.replace(/\./g, ' ').replace(/[_-]/g, ' ')}
+                        </span>
+                      </div>
+                    ))
+                ) : (
+                  // Show features they could get with recommended tier
+                  <>
+                    <div className='col-span-full mb-2'>
+                      <p className='text-sm text-gray-600'>
+                        Features you'll get with{' '}
+                        {
+                          getRecommendedTier(
+                            loggedInUser?.departmentCode || 'DC',
+                            loggedInUser?.position || 'User'
+                          )?.name
+                        }
+                        :
+                      </p>
+                    </div>
+                    {[
+                      'Basic platform access',
+                      'Live tracking',
+                      'AI automation',
+                      'Advanced analytics',
+                      'CRM suite',
+                      'Training modules',
+                      '24/7 support',
+                      'Mobile app',
+                    ].map((feature, index) => (
+                      <div key={index} className='flex items-center gap-2'>
+                        <Clock className='h-4 w-4 flex-shrink-0 text-yellow-500' />
+                        <span className='text-sm text-gray-700'>{feature}</span>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

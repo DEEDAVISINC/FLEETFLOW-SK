@@ -71,6 +71,63 @@ export default function CarrierPortal() {
     );
   });
 
+  const handleGenerateRateConfirmation = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `rate-confirmation-${load.id}-${Date.now()}`,
+      type: 'rate-confirmation',
+      loadId: load.id,
+      data: {
+        ...load,
+        carrierName: 'Your Company', // This would come from user profile in production
+        pickupDate: load.pickupDate || new Date().toLocaleDateString(),
+        deliveryDate:
+          load.deliveryDate ||
+          new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with rate confirmation tab
+    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
+  };
+
+  const handleGenerateBOL = (load: Load) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `bill-of-lading-${load.id}-${Date.now()}`,
+      type: 'bill-of-lading',
+      loadId: load.id,
+      data: {
+        ...load,
+        weight: load.weight || '40,000 lbs',
+        equipment: load.equipment || 'Dry Van',
+        pickupDate: load.pickupDate || new Date().toLocaleDateString(),
+        deliveryDate:
+          load.deliveryDate ||
+          new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with bill of lading tab
+    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
+  };
+
   const handleBidOnLoad = (load: Load) => {
     alert(
       `Bid feature coming soon for load ${load.id}! This will allow carriers to submit competitive bids.`
@@ -151,48 +208,207 @@ export default function CarrierPortal() {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
+        {/* Header and Compliance Widget Row */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(15px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '20px',
-            padding: '32px',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
+            gap: '24px',
             marginBottom: '32px',
-            textAlign: 'center',
           }}
         >
-          <h1
+          {/* Main Header */}
+          <div
             style={{
-              fontSize: '48px',
-              fontWeight: 'bold',
-              color: 'white',
-              margin: '0 0 12px 0',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(15px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '20px',
+              padding: '32px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
             }}
           >
-            🚚 CARRIER PORTAL
-          </h1>
-          <p
+            <h1
+              style={{
+                fontSize: '48px',
+                fontWeight: 'bold',
+                color: 'white',
+                margin: '0 0 12px 0',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              }}
+            >
+              🚚 CARRIER PORTAL
+            </h1>
+            <p
+              style={{
+                fontSize: '20px',
+                color: 'rgba(255, 255, 255, 0.9)',
+                margin: '0 0 8px 0',
+              }}
+            >
+              Available Loads & Freight Opportunities - Book High-Paying Loads
+            </p>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(139, 92, 246, 0.9)',
+                margin: 0,
+                fontWeight: '600',
+              }}
+            >
+              🛡️ Enhanced with FACIS™ Carrier Intelligence & Verification
+            </p>
+          </div>
+
+          {/* Compliance Widget */}
+          <div
             style={{
-              fontSize: '20px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              margin: '0 0 8px 0',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            Available Loads & Freight Opportunities - Book High-Paying Loads
-          </p>
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(139, 92, 246, 0.9)',
-              margin: 0,
-              fontWeight: '600',
-            }}
-          >
-            🛡️ Enhanced with FACIS™ Carrier Intelligence & Verification
-          </p>
+            <Link
+              href='/carriers/compliance'
+              style={{ textDecoration: 'none', height: '100%' }}
+            >
+              <div
+                style={{
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(220, 38, 38, 0.2)',
+                  padding: '16px',
+                  height: '100%',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 10px 25px -5px rgba(0, 0, 0, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: 'white',
+                      fontSize: '1.1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    🚨 DOT Compliance Status
+                  </h3>
+                  <div
+                    style={{
+                      background: '#dc2626',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '9999px',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ACTION REQUIRED
+                  </div>
+                </div>
+
+                <div style={{ color: 'white', marginBottom: '16px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                        Compliance Score
+                      </span>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                        76%
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                        Status
+                      </span>
+                      <div
+                        style={{
+                          fontSize: '1rem',
+                          fontWeight: 'bold',
+                          color: '#f59e0b',
+                        }}
+                      >
+                        REQUIRES ATTENTION
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    fontSize: '0.8rem',
+                    color: 'white',
+                  }}
+                >
+                  <strong>🚨 Critical Issues:</strong>
+                  <p style={{ margin: '4px 0 0' }}>
+                    Insurance certificate expires in 15 days
+                  </p>
+                </div>
+
+                <div style={{ marginTop: '12px', textAlign: 'center' }}>
+                  <span
+                    style={{
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    View Full Compliance Dashboard
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='16'
+                      height='16'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      style={{ marginLeft: '4px' }}
+                    >
+                      <path d='M5 12h14'></path>
+                      <path d='M12 5l7 7-7 7'></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
 
         {/* Stats Dashboard */}
@@ -641,35 +857,103 @@ export default function CarrierPortal() {
                           <td
                             style={{ padding: '16px 24px', fontSize: '14px' }}
                           >
-                            <button
-                              onClick={() => handleBidOnLoad(load)}
+                            <div
                               style={{
-                                background:
-                                  'linear-gradient(135deg, #10b981, #059669)',
-                                color: 'white',
-                                padding: '8px 16px',
-                                borderRadius: '8px',
-                                border: 'none',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                              }}
-                              onMouseOver={(e) => {
-                                e.currentTarget.style.background =
-                                  'linear-gradient(135deg, #059669, #047857)';
-                                e.currentTarget.style.transform =
-                                  'translateY(-1px)';
-                              }}
-                              onMouseOut={(e) => {
-                                e.currentTarget.style.background =
-                                  'linear-gradient(135deg, #10b981, #059669)';
-                                e.currentTarget.style.transform =
-                                  'translateY(0)';
+                                display: 'flex',
+                                gap: '8px',
+                                flexWrap: 'wrap',
                               }}
                             >
-                              Book Load
-                            </button>
+                              <button
+                                onClick={() =>
+                                  handleGenerateRateConfirmation(load)
+                                }
+                                style={{
+                                  background:
+                                    'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                  color: 'white',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  fontSize: '11px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.transform =
+                                    'translateY(-1px)';
+                                  e.currentTarget.style.boxShadow =
+                                    '0 4px 12px rgba(59, 130, 246, 0.3)';
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.transform =
+                                    'translateY(0)';
+                                  e.currentTarget.style.boxShadow = 'none';
+                                }}
+                                title='Generate Rate Confirmation'
+                              >
+                                📄 Rate Conf
+                              </button>
+                              <button
+                                onClick={() => handleGenerateBOL(load)}
+                                style={{
+                                  background:
+                                    'linear-gradient(135deg, #f59e0b, #d97706)',
+                                  color: 'white',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  fontSize: '11px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.transform =
+                                    'translateY(-1px)';
+                                  e.currentTarget.style.boxShadow =
+                                    '0 4px 12px rgba(245, 158, 11, 0.3)';
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.transform =
+                                    'translateY(0)';
+                                  e.currentTarget.style.boxShadow = 'none';
+                                }}
+                                title='Generate Bill of Lading'
+                              >
+                                📋 BOL
+                              </button>
+                              <button
+                                onClick={() => handleBidOnLoad(load)}
+                                style={{
+                                  background:
+                                    'linear-gradient(135deg, #10b981, #059669)',
+                                  color: 'white',
+                                  padding: '8px 16px',
+                                  borderRadius: '8px',
+                                  border: 'none',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.background =
+                                    'linear-gradient(135deg, #059669, #047857)';
+                                  e.currentTarget.style.transform =
+                                    'translateY(-1px)';
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.background =
+                                    'linear-gradient(135deg, #10b981, #059669)';
+                                  e.currentTarget.style.transform =
+                                    'translateY(0)';
+                                }}
+                              >
+                                Book Load
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ));

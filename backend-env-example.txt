@@ -65,6 +65,13 @@ MAPBOX_ACCESS_TOKEN=your_mapbox_token
 FMCSA_API_KEY=your_fmcsa_api_key
 DOT_API_ENDPOINT=https://mobile.fmcsa.dot.gov/qc/services/carriers
 
+# USPS Freight API Configuration
+USPS_FREIGHT_USERNAME=your_usps_username
+USPS_FREIGHT_PASSWORD=your_usps_password
+USPS_FREIGHT_API_URL=https://api.usps.com/freight/v1
+USPS_FREIGHT_API_KEY=your_usps_api_key
+USPS_FREIGHT_ACCOUNT_NUMBER=your_usps_account_number
+
 # Real-time Features
 ENABLE_WEBSOCKETS=true
 WEBSOCKET_PORT=8001

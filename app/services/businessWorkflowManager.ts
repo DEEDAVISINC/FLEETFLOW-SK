@@ -299,7 +299,7 @@ class BusinessWorkflowManager {
       {
         stepId,
         workflowId,
-        completedBy: userId,
+        completedBy: completedBy,
       },
       'BusinessWorkflowManager'
     );

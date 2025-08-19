@@ -1,8 +1,17 @@
 'use client';
 
+import { useState } from 'react';
+import ComplianceLoadFilter, {
+  ComplianceFilterOptions,
+} from '../components/ComplianceLoadFilter';
+
 // Test page to isolate the load board section
 export default function TestLoadBoard() {
-  const loads = [
+  const [complianceFilter, setComplianceFilter] =
+    useState<ComplianceFilterOptions>({});
+
+  // Full load dataset
+  const allLoads = [
     {
       id: 'LD-2024-001',
       origin: 'Los Angeles, CA',
@@ -13,6 +22,13 @@ export default function TestLoadBoard() {
       status: 'Available',
       statusColor: '#22c55e',
       loadBoardNumber: '100001',
+      compliance: {
+        safetyScore: 87,
+        riskLevel: 'low',
+        hasValidAuthority: true,
+        hasValidInsurance: true,
+        safetyRating: 'SATISFACTORY',
+      },
     },
     {
       id: 'LD-2024-002',
@@ -24,6 +40,13 @@ export default function TestLoadBoard() {
       status: 'Assigned',
       statusColor: '#3b82f6',
       loadBoardNumber: '100002',
+      compliance: {
+        safetyScore: 76,
+        riskLevel: 'medium',
+        hasValidAuthority: true,
+        hasValidInsurance: true,
+        safetyRating: 'CONDITIONAL',
+      },
     },
     {
       id: 'LD-2024-003',
@@ -35,8 +58,111 @@ export default function TestLoadBoard() {
       status: 'Available',
       statusColor: '#22c55e',
       loadBoardNumber: '100003',
+      compliance: {
+        safetyScore: 92,
+        riskLevel: 'low',
+        hasValidAuthority: true,
+        hasValidInsurance: true,
+        safetyRating: 'SATISFACTORY',
+      },
+    },
+    {
+      id: 'LD-2024-004',
+      origin: 'Miami, FL',
+      destination: 'Nashville, TN',
+      rate: '$1,875',
+      miles: '856',
+      pickup: 'Jan 18',
+      status: 'Available',
+      statusColor: '#22c55e',
+      loadBoardNumber: '100004',
+      compliance: {
+        safetyScore: 65,
+        riskLevel: 'medium',
+        hasValidAuthority: true,
+        hasValidInsurance: false,
+        safetyRating: 'UNRATED',
+      },
+    },
+    {
+      id: 'LD-2024-005',
+      origin: 'Seattle, WA',
+      destination: 'Portland, OR',
+      rate: '$1,200',
+      miles: '173',
+      pickup: 'Jan 19',
+      status: 'Available',
+      statusColor: '#22c55e',
+      loadBoardNumber: '100005',
+      compliance: {
+        safetyScore: 54,
+        riskLevel: 'high',
+        hasValidAuthority: false,
+        hasValidInsurance: true,
+        safetyRating: 'CONDITIONAL',
+      },
     },
   ];
+
+  // Filter loads based on compliance filters
+  const loads = allLoads.filter((load) => {
+    // Safety Score Filter
+    if (
+      complianceFilter.minSafetyScore !== undefined &&
+      load.compliance.safetyScore < complianceFilter.minSafetyScore
+    ) {
+      return false;
+    }
+
+    // Risk Level Filter
+    if (complianceFilter.maxRiskLevel) {
+      if (
+        complianceFilter.maxRiskLevel === 'low' &&
+        load.compliance.riskLevel !== 'low'
+      ) {
+        return false;
+      }
+      if (
+        complianceFilter.maxRiskLevel === 'medium' &&
+        load.compliance.riskLevel === 'high'
+      ) {
+        return false;
+      }
+    }
+
+    // Authority Filter
+    if (
+      complianceFilter.requireValidAuthority &&
+      !load.compliance.hasValidAuthority
+    ) {
+      return false;
+    }
+
+    // Insurance Filter
+    if (
+      complianceFilter.requireValidInsurance &&
+      !load.compliance.hasValidInsurance
+    ) {
+      return false;
+    }
+
+    // Rating Filters
+    if (
+      complianceFilter.excludeConditionalRatings &&
+      load.compliance.safetyRating === 'CONDITIONAL'
+    ) {
+      return false;
+    }
+
+    if (
+      complianceFilter.excludeUnratedCarriers &&
+      load.compliance.safetyRating === 'UNRATED'
+    ) {
+      return false;
+    }
+
+    return true;
+  });
 
   return (
     <div
@@ -53,10 +179,40 @@ export default function TestLoadBoard() {
         }}
       >
         <h1
-          style={{ color: 'white', textAlign: 'center', marginBottom: '40px' }}
+          style={{ color: 'white', textAlign: 'center', marginBottom: '20px' }}
         >
           Load Board Test
         </h1>
+
+        {/* Compliance Filter */}
+        <div style={{ marginBottom: '24px' }}>
+          <ComplianceLoadFilter
+            onFilterChange={setComplianceFilter}
+            initialFilter={{}}
+            compact={true}
+          />
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '10px 16px',
+              borderRadius: '8px',
+              color: 'white',
+              fontSize: '0.9rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span>
+              Showing {loads.length} of {allLoads.length} loads
+            </span>
+            {loads.length < allLoads.length && (
+              <span>
+                <span style={{ color: '#fbbf24', marginRight: '4px' }}>⚠️</span>
+                Some loads hidden by compliance filters
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* General Load Board */}
         <div
@@ -139,7 +295,73 @@ export default function TestLoadBoard() {
                 {load.loadBoardNumber || '000000'}
               </div>
               <div style={{ fontWeight: '600' }}>{load.id}</div>
-              <div>{load.origin}</div>
+              <div>
+                <div>{load.origin}</div>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '4px',
+                    marginTop: '2px',
+                  }}
+                >
+                  {load.compliance.riskLevel === 'low' && (
+                    <span
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#10b981',
+                        fontSize: '10px',
+                        padding: '1px 4px',
+                        borderRadius: '4px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      LOW RISK
+                    </span>
+                  )}
+                  {load.compliance.riskLevel === 'medium' && (
+                    <span
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.2)',
+                        color: '#f59e0b',
+                        fontSize: '10px',
+                        padding: '1px 4px',
+                        borderRadius: '4px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      MED RISK
+                    </span>
+                  )}
+                  {load.compliance.riskLevel === 'high' && (
+                    <span
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        color: '#ef4444',
+                        fontSize: '10px',
+                        padding: '1px 4px',
+                        borderRadius: '4px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      HIGH RISK
+                    </span>
+                  )}
+                  {!load.compliance.hasValidInsurance && (
+                    <span
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        color: '#ef4444',
+                        fontSize: '10px',
+                        padding: '1px 4px',
+                        borderRadius: '4px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      NO INSURANCE
+                    </span>
+                  )}
+                </div>
+              </div>
               <div>{load.destination}</div>
               <div style={{ fontWeight: '600', color: '#10b981' }}>
                 {load.rate}
