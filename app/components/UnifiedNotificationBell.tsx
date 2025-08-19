@@ -1,9 +1,20 @@
 'use client';
 
-import { Bell, Settings, CheckCircle, AlertTriangle, AlertCircle, Clock, Mail, Phone, Smartphone } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  Bell,
+  Clock,
+  Mail,
+  Settings,
+  Smartphone,
+} from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
-import fleetFlowNotificationManager, { FleetFlowNotification, NotificationStats } from '../services/FleetFlowNotificationManager';
+import { useEffect, useRef, useState } from 'react';
+import fleetFlowNotificationManager, {
+  FleetFlowNotification,
+  NotificationStats,
+} from '../services/FleetFlowNotificationManager';
 
 interface UnifiedNotificationBellProps {
   userId?: string;
@@ -18,10 +29,10 @@ interface UnifiedNotificationBellProps {
 
 const PRIORITY_COLORS = {
   low: '#6b7280',
-  normal: '#3b82f6', 
+  normal: '#3b82f6',
   high: '#f59e0b',
   urgent: '#ef4444',
-  critical: '#dc2626'
+  critical: '#dc2626',
 };
 
 const PRIORITY_ICONS = {
@@ -29,7 +40,7 @@ const PRIORITY_ICONS = {
   normal: Bell,
   high: AlertTriangle,
   urgent: AlertCircle,
-  critical: AlertCircle
+  critical: AlertCircle,
 };
 
 const TYPE_ICONS = {
@@ -50,7 +61,7 @@ const TYPE_ICONS = {
   eta_update: '⏰',
   document_required: '📄',
   approval_needed: '✅',
-  onboarding_update: '🎓'
+  onboarding_update: '🎓',
 };
 
 export default function UnifiedNotificationBell({
@@ -61,9 +72,11 @@ export default function UnifiedNotificationBell({
   theme = 'auto',
   showBadge = true,
   showDropdown = true,
-  maxNotifications = 10
+  maxNotifications = 10,
 }: UnifiedNotificationBellProps) {
-  const [notifications, setNotifications] = useState<FleetFlowNotification[]>([]);
+  const [notifications, setNotifications] = useState<FleetFlowNotification[]>(
+    []
+  );
   const [stats, setStats] = useState<NotificationStats>({
     totalSent: 0,
     totalRead: 0,
@@ -72,12 +85,16 @@ export default function UnifiedNotificationBell({
     byPriority: {},
     byChannel: {},
     readRate: 0,
-    avgResponseTime: 0
+    avgResponseTime: 0,
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState({ connected: false, websocket: false, lastSync: '' });
-  
+  const [connectionStatus, setConnectionStatus] = useState({
+    connected: false,
+    websocket: false,
+    lastSync: '',
+  });
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const bellRef = useRef<HTMLButtonElement>(null);
 
@@ -85,23 +102,32 @@ export default function UnifiedNotificationBell({
   useEffect(() => {
     const loadNotifications = () => {
       const userNotifications = fleetFlowNotificationManager.getNotifications(
-        userId, 
-        portal, 
+        userId,
+        portal,
         { limit: maxNotifications }
       );
       setNotifications(userNotifications);
-      
+
       const userStats = fleetFlowNotificationManager.getStats(userId, portal);
       setStats(userStats);
     };
 
     // Initial load
     loadNotifications();
-    
+
     // Subscribe to real-time updates
-    const unsubscribeAdded = fleetFlowNotificationManager.subscribe('notification_added', loadNotifications);
-    const unsubscribeRead = fleetFlowNotificationManager.subscribe('notification_read', loadNotifications);
-    const unsubscribeDeleted = fleetFlowNotificationManager.subscribe('notification_deleted', loadNotifications);
+    const unsubscribeAdded = fleetFlowNotificationManager.subscribe(
+      'notification_added',
+      loadNotifications
+    );
+    const unsubscribeRead = fleetFlowNotificationManager.subscribe(
+      'notification_read',
+      loadNotifications
+    );
+    const unsubscribeDeleted = fleetFlowNotificationManager.subscribe(
+      'notification_deleted',
+      loadNotifications
+    );
 
     // Update connection status every 10 seconds
     const statusInterval = setInterval(() => {
@@ -124,7 +150,7 @@ export default function UnifiedNotificationBell({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node) &&
         bellRef.current &&
         !bellRef.current.contains(event.target as Node)
@@ -142,11 +168,11 @@ export default function UnifiedNotificationBell({
     if (!notification.read) {
       fleetFlowNotificationManager.markAsRead(notification.id);
     }
-    
+
     // Handle actions
     if (notification.actions && notification.actions.length > 0) {
       const primaryAction = notification.actions[0];
-      if (primaryAction.url) {
+      if (primaryAction.url && typeof window !== 'undefined') {
         window.open(primaryAction.url, '_blank');
       }
     }
@@ -173,36 +199,48 @@ export default function UnifiedNotificationBell({
 
   // Get theme styles
   const getThemeStyles = () => {
-    const isDark = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
+    const isDark =
+      theme === 'dark' ||
+      (theme === 'auto' &&
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+
     return {
       bell: {
-        background: isDark ? 'rgba(31, 41, 55, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+        background: isDark
+          ? 'rgba(31, 41, 55, 0.8)'
+          : 'rgba(255, 255, 255, 0.9)',
         color: isDark ? '#f3f4f6' : '#1f2937',
-        border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(209, 213, 219, 0.3)'}`
+        border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(209, 213, 219, 0.3)'}`,
       },
       dropdown: {
-        background: isDark ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        background: isDark
+          ? 'rgba(17, 24, 39, 0.95)'
+          : 'rgba(255, 255, 255, 0.95)',
         border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.8)'}`,
-        color: isDark ? '#f3f4f6' : '#1f2937'
+        color: isDark ? '#f3f4f6' : '#1f2937',
       },
       notification: {
-        background: isDark ? 'rgba(31, 41, 55, 0.6)' : 'rgba(249, 250, 251, 0.8)',
+        background: isDark
+          ? 'rgba(31, 41, 55, 0.6)'
+          : 'rgba(249, 250, 251, 0.8)',
         hover: isDark ? 'rgba(55, 65, 81, 0.8)' : 'rgba(243, 244, 246, 0.9)',
-        border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.2)' : 'rgba(229, 231, 235, 0.6)'}`
-      }
+        border: `1px solid ${isDark ? 'rgba(75, 85, 99, 0.2)' : 'rgba(229, 231, 235, 0.6)'}`,
+      },
     };
   };
 
   const themeStyles = getThemeStyles();
   const unreadCount = stats.totalUnread;
-  const hasUrgent = notifications.some(n => !n.read && ['urgent', 'critical'].includes(n.priority));
+  const hasUrgent = notifications.some(
+    (n) => !n.read && ['urgent', 'critical'].includes(n.priority)
+  );
 
   // Size configurations
   const sizeConfig = {
     sm: { bell: 32, icon: 16, badge: 16 },
     md: { bell: 40, icon: 20, badge: 20 },
-    lg: { bell: 48, icon: 24, badge: 24 }
+    lg: { bell: 48, icon: 24, badge: 24 },
   };
 
   const config = sizeConfig[size];
@@ -226,13 +264,14 @@ export default function UnifiedNotificationBell({
           justifyContent: 'center',
           transition: 'all 0.3s ease',
           transform: 'scale(1)',
-          animation: hasUrgent ? 'pulse 2s infinite' : 'none'
+          animation: hasUrgent ? 'pulse 2s infinite' : 'none',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'scale(1.05)';
-          e.currentTarget.style.background = theme === 'dark' 
-            ? 'rgba(55, 65, 81, 0.9)' 
-            : 'rgba(243, 244, 246, 0.95)';
+          e.currentTarget.style.background =
+            theme === 'dark'
+              ? 'rgba(55, 65, 81, 0.9)'
+              : 'rgba(243, 244, 246, 0.95)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'scale(1)';
@@ -241,14 +280,14 @@ export default function UnifiedNotificationBell({
         aria-label={`Notifications (${unreadCount} unread)`}
         title={`${unreadCount} unread notifications`}
       >
-        <Bell 
-          size={config.icon} 
-          style={{ 
+        <Bell
+          size={config.icon}
+          style={{
             color: hasUrgent ? '#ef4444' : 'currentColor',
-            animation: hasUrgent ? 'shake 0.5s ease-in-out infinite' : 'none'
-          }} 
+            animation: hasUrgent ? 'shake 0.5s ease-in-out infinite' : 'none',
+          }}
         />
-        
+
         {/* Badge */}
         {showBadge && unreadCount > 0 && (
           <div
@@ -259,8 +298,8 @@ export default function UnifiedNotificationBell({
               minWidth: `${config.badge}px`,
               height: `${config.badge}px`,
               borderRadius: '50%',
-              background: hasUrgent 
-                ? 'linear-gradient(135deg, #dc2626, #ef4444)' 
+              background: hasUrgent
+                ? 'linear-gradient(135deg, #dc2626, #ef4444)'
                 : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
               color: 'white',
               fontSize: `${config.badge - 8}px`,
@@ -270,7 +309,7 @@ export default function UnifiedNotificationBell({
               justifyContent: 'center',
               boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
               animation: 'pulse 2s infinite',
-              zIndex: 10
+              zIndex: 10,
             }}
           >
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -286,11 +325,13 @@ export default function UnifiedNotificationBell({
             width: '6px',
             height: '6px',
             borderRadius: '50%',
-            background: connectionStatus.connected 
-              ? 'linear-gradient(135deg, #10b981, #059669)' 
+            background: connectionStatus.connected
+              ? 'linear-gradient(135deg, #10b981, #059669)'
               : 'linear-gradient(135deg, #f59e0b, #d97706)',
             boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-            animation: connectionStatus.websocket ? 'pulse 3s infinite' : 'none'
+            animation: connectionStatus.websocket
+              ? 'pulse 3s infinite'
+              : 'none',
           }}
           title={`Connection: ${connectionStatus.connected ? 'Connected' : 'Disconnected'}`}
         />
@@ -314,7 +355,7 @@ export default function UnifiedNotificationBell({
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             zIndex: 1000,
             overflow: 'hidden',
-            animation: 'fadeInDown 0.3s ease-out'
+            animation: 'fadeInDown 0.3s ease-out',
           }}
         >
           {/* Header */}
@@ -323,27 +364,40 @@ export default function UnifiedNotificationBell({
               background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
               color: 'white',
               padding: '16px 20px',
-              borderRadius: '16px 16px 0 0'
+              borderRadius: '16px 16px 0 0',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <div>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600' }}>
                   🔔 Notifications
                 </h3>
-                <p style={{ margin: '2px 0 0 0', fontSize: '12px', opacity: 0.8 }}>
-                  {unreadCount} unread • {portal.charAt(0).toUpperCase() + portal.slice(1)} Portal
+                <p
+                  style={{
+                    margin: '2px 0 0 0',
+                    fontSize: '12px',
+                    opacity: 0.8,
+                  }}
+                >
+                  {unreadCount} unread •{' '}
+                  {portal.charAt(0).toUpperCase() + portal.slice(1)} Portal
                 </p>
               </div>
-              
+
               {/* Connection Status */}
-              <div 
+              <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   fontSize: '10px',
-                  opacity: 0.9
+                  opacity: 0.9,
                 }}
                 title={`Last sync: ${new Date(connectionStatus.lastSync).toLocaleTimeString()}`}
               >
@@ -352,8 +406,12 @@ export default function UnifiedNotificationBell({
                     width: '6px',
                     height: '6px',
                     borderRadius: '50%',
-                    background: connectionStatus.connected ? '#10b981' : '#f59e0b',
-                    animation: connectionStatus.websocket ? 'pulse 2s infinite' : 'none'
+                    background: connectionStatus.connected
+                      ? '#10b981'
+                      : '#f59e0b',
+                    animation: connectionStatus.websocket
+                      ? 'pulse 2s infinite'
+                      : 'none',
                   }}
                 />
                 {connectionStatus.connected ? 'Live' : 'Offline'}
@@ -366,7 +424,7 @@ export default function UnifiedNotificationBell({
             style={{
               padding: '12px 20px',
               background: 'rgba(20, 184, 166, 0.1)',
-              borderBottom: `1px solid ${themeStyles.dropdown.border.split(' ')[2]}`
+              borderBottom: `1px solid ${themeStyles.dropdown.border.split(' ')[2]}`,
             }}
           >
             <div style={{ display: 'flex', gap: '16px', fontSize: '11px' }}>
@@ -383,7 +441,7 @@ export default function UnifiedNotificationBell({
               padding: '12px 20px',
               borderBottom: `1px solid ${themeStyles.dropdown.border.split(' ')[2]}`,
               display: 'flex',
-              gap: '8px'
+              gap: '8px',
             }}
           >
             <button
@@ -392,20 +450,23 @@ export default function UnifiedNotificationBell({
               style={{
                 flex: 1,
                 padding: '6px 12px',
-                background: isLoading ? 'rgba(156, 163, 175, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+                background: isLoading
+                  ? 'rgba(156, 163, 175, 0.3)'
+                  : 'rgba(16, 185, 129, 0.2)',
                 color: isLoading ? '#9ca3af' : '#059669',
                 border: `1px solid ${isLoading ? 'rgba(156, 163, 175, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
                 borderRadius: '8px',
                 fontSize: '11px',
                 fontWeight: '600',
-                cursor: isLoading || unreadCount === 0 ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s ease'
+                cursor:
+                  isLoading || unreadCount === 0 ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
               }}
             >
               {isLoading ? '⏳' : '✅'} Mark All Read
             </button>
-            
-            <Link href="/notifications">
+
+            <Link href='/notifications'>
               <button
                 style={{
                   padding: '6px 12px',
@@ -416,7 +477,7 @@ export default function UnifiedNotificationBell({
                   fontSize: '11px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
                 }}
                 onClick={() => setIsOpen(false)}
               >
@@ -429,14 +490,16 @@ export default function UnifiedNotificationBell({
               disabled={isLoading}
               style={{
                 padding: '6px 12px',
-                background: isLoading ? 'rgba(156, 163, 175, 0.3)' : 'rgba(245, 158, 11, 0.2)',
+                background: isLoading
+                  ? 'rgba(156, 163, 175, 0.3)'
+                  : 'rgba(245, 158, 11, 0.2)',
                 color: isLoading ? '#9ca3af' : '#d97706',
                 border: `1px solid ${isLoading ? 'rgba(156, 163, 175, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
                 borderRadius: '8px',
                 fontSize: '11px',
                 fontWeight: '600',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
               }}
             >
               🧪 Test
@@ -451,18 +514,23 @@ export default function UnifiedNotificationBell({
                   padding: '40px 20px',
                   textAlign: 'center',
                   color: 'rgba(156, 163, 175, 0.8)',
-                  fontSize: '14px'
+                  fontSize: '14px',
                 }}
               >
-                <Bell size={32} style={{ opacity: 0.3, marginBottom: '12px' }} />
+                <Bell
+                  size={32}
+                  style={{ opacity: 0.3, marginBottom: '12px' }}
+                />
                 <p style={{ margin: 0 }}>No notifications yet</p>
-                <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>Stay tuned for updates!</p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>
+                  Stay tuned for updates!
+                </p>
               </div>
             ) : (
               notifications.map((notification, index) => {
                 const PriorityIcon = PRIORITY_ICONS[notification.priority];
                 const typeIcon = TYPE_ICONS[notification.type] || '🔔';
-                
+
                 return (
                   <div
                     key={notification.id}
@@ -470,38 +538,54 @@ export default function UnifiedNotificationBell({
                     style={{
                       padding: '16px 20px',
                       ...themeStyles.notification,
-                      borderBottom: index < notifications.length - 1 
-                        ? `1px solid ${themeStyles.notification.border.split(' ')[2]}`
-                        : 'none',
+                      borderBottom:
+                        index < notifications.length - 1
+                          ? `1px solid ${themeStyles.notification.border.split(' ')[2]}`
+                          : 'none',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       opacity: notification.read ? 0.7 : 1,
-                      borderLeft: !notification.read 
+                      borderLeft: !notification.read
                         ? `4px solid ${PRIORITY_COLORS[notification.priority]}`
-                        : '4px solid transparent'
+                        : '4px solid transparent',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = themeStyles.notification.hover;
+                      e.currentTarget.style.background =
+                        themeStyles.notification.hover;
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = themeStyles.notification.background;
+                      e.currentTarget.style.background =
+                        themeStyles.notification.background;
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px',
+                      }}
+                    >
                       {/* Type Icon */}
                       <div
                         style={{
                           fontSize: '18px',
                           lineHeight: 1,
-                          marginTop: '2px'
+                          marginTop: '2px',
                         }}
                       >
                         {typeIcon}
                       </div>
-                      
+
                       {/* Content */}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '4px',
+                          }}
+                        >
                           <h4
                             style={{
                               margin: 0,
@@ -511,22 +595,22 @@ export default function UnifiedNotificationBell({
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
-                              flex: 1
+                              flex: 1,
                             }}
                           >
                             {notification.title}
                           </h4>
-                          
+
                           {/* Priority Indicator */}
-                          <PriorityIcon 
-                            size={12} 
-                            style={{ 
+                          <PriorityIcon
+                            size={12}
+                            style={{
                               color: PRIORITY_COLORS[notification.priority],
-                              flexShrink: 0
-                            }} 
+                              flexShrink: 0,
+                            }}
                           />
                         </div>
-                        
+
                         <p
                           style={{
                             margin: '0 0 8px 0',
@@ -537,25 +621,51 @@ export default function UnifiedNotificationBell({
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
                           }}
                         >
                           {notification.message}
                         </p>
-                        
+
                         {/* Meta Info */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', opacity: 0.6 }}>
-                            <span>⏰ {new Date(notification.timestamp).toLocaleTimeString()}</span>
-                            
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '8px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              fontSize: '10px',
+                              opacity: 0.6,
+                            }}
+                          >
+                            <span>
+                              ⏰{' '}
+                              {new Date(
+                                notification.timestamp
+                              ).toLocaleTimeString()}
+                            </span>
+
                             {/* Channel indicators */}
                             <div style={{ display: 'flex', gap: '4px' }}>
-                              {notification.channels.sms && <Smartphone size={10} title="SMS sent" />}
-                              {notification.channels.email && <Mail size={10} title="Email sent" />}
-                              {notification.channels.push && <Bell size={10} title="Push notification" />}
+                              {notification.channels.sms && (
+                                <Smartphone size={10} title='SMS sent' />
+                              )}
+                              {notification.channels.email && (
+                                <Mail size={10} title='Email sent' />
+                              )}
+                              {notification.channels.push && (
+                                <Bell size={10} title='Push notification' />
+                              )}
                             </div>
                           </div>
-                          
+
                           {/* Read Status */}
                           {!notification.read && (
                             <div
@@ -563,44 +673,58 @@ export default function UnifiedNotificationBell({
                                 width: '8px',
                                 height: '8px',
                                 borderRadius: '50%',
-                                background: PRIORITY_COLORS[notification.priority],
-                                flexShrink: 0
+                                background:
+                                  PRIORITY_COLORS[notification.priority],
+                                flexShrink: 0,
                               }}
                             />
                           )}
                         </div>
 
                         {/* Actions */}
-                        {notification.actions && notification.actions.length > 0 && (
-                          <div style={{ marginTop: '8px', display: 'flex', gap: '6px' }}>
-                            {notification.actions.slice(0, 2).map((action) => (
-                              <button
-                                key={action.id}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (action.url) {
-                                    window.open(action.url, '_blank');
-                                  }
-                                }}
-                                style={{
-                                  padding: '4px 8px',
-                                  fontSize: '10px',
-                                  fontWeight: '600',
-                                  borderRadius: '4px',
-                                  border: 'none',
-                                  background: action.style === 'danger' 
-                                    ? 'rgba(239, 68, 68, 0.2)' 
-                                    : 'rgba(59, 130, 246, 0.2)',
-                                  color: action.style === 'danger' ? '#dc2626' : '#2563eb',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.2s ease'
-                                }}
-                              >
-                                {action.label}
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {notification.actions &&
+                          notification.actions.length > 0 && (
+                            <div
+                              style={{
+                                marginTop: '8px',
+                                display: 'flex',
+                                gap: '6px',
+                              }}
+                            >
+                              {notification.actions
+                                .slice(0, 2)
+                                .map((action) => (
+                                  <button
+                                    key={action.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (action.url) {
+                                        window.open(action.url, '_blank');
+                                      }
+                                    }}
+                                    style={{
+                                      padding: '4px 8px',
+                                      fontSize: '10px',
+                                      fontWeight: '600',
+                                      borderRadius: '4px',
+                                      border: 'none',
+                                      background:
+                                        action.style === 'danger'
+                                          ? 'rgba(239, 68, 68, 0.2)'
+                                          : 'rgba(59, 130, 246, 0.2)',
+                                      color:
+                                        action.style === 'danger'
+                                          ? '#dc2626'
+                                          : '#2563eb',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                    }}
+                                  >
+                                    {action.label}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -619,21 +743,19 @@ export default function UnifiedNotificationBell({
               alignItems: 'center',
               justifyContent: 'space-between',
               fontSize: '10px',
-              opacity: 0.8
+              opacity: 0.8,
             }}
           >
-            <div>
-              FleetFlow Unified Notifications
-            </div>
-            <Link 
-              href="/settings/notifications"
+            <div>FleetFlow Unified Notifications</div>
+            <Link
+              href='/settings/notifications'
               style={{
                 color: '#14b8a6',
                 textDecoration: 'none',
                 fontWeight: '600',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '4px',
               }}
               onClick={() => setIsOpen(false)}
             >
@@ -647,24 +769,36 @@ export default function UnifiedNotificationBell({
       {/* CSS Animations */}
       <style jsx>{`
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-        
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        @keyframes fadeInDown {
-          from { 
-            opacity: 0; 
-            transform: translateY(-10px); 
+          0%,
+          100% {
+            opacity: 1;
           }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
+          50% {
+            opacity: 0.7;
+          }
+        }
+
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-2px);
+          }
+          75% {
+            transform: translateX(2px);
+          }
+        }
+
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
       `}</style>
