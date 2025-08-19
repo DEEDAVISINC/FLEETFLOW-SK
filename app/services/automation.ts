@@ -1,19 +1,19 @@
 // Conditional import for server-side only
 const cron = typeof window === 'undefined' ? require('node-cron') : null;
+import { fmcsaShipperIntelligence } from './FMCSAShipperIntelligenceService';
+import { rfxAutomation } from './RFxAutomationService';
+import { samGovMonitor } from './SAMGovOpportunityMonitor';
+import { thomasNetAutomation } from './ThomasNetAutomationService';
 import { fleetAI } from './ai';
 import { smsService } from './sms';
 import { sendInvoiceEmail } from './email';
-import { samGovMonitor } from './SAMGovOpportunityMonitor';
-import { fmcsaShipperIntelligence } from './FMCSAShipperIntelligenceService';
-import { thomasNetAutomation } from './ThomasNetAutomationService';
-import { rfxAutomation } from './RFxAutomationService';
 // Add route generation template integration
-import { 
-  generateUniversalPickupDocument, 
+import {
+  generateAgriculturalRouteDocument,
   generateClaudeStyleRouteDocument,
-  generateSamsClubDeliveryDocument,
   generateManufacturingRouteDocument,
-  generateAgriculturalRouteDocument
+  generateSamsClubDeliveryDocument,
+  generateUniversalPickupDocument,
 } from '../../src/route-generator/templates/route-generators.js';
 
 // AI Automation Engine for FleetFlow
@@ -28,7 +28,9 @@ export class AIAutomationEngine {
   // Start all automation tasks (server-side only)
   start() {
     if (typeof window !== 'undefined') {
-      console.log('⏭️ Automation engine runs server-side only, skipping client-side start');
+      console.log(
+        '⏭️ Automation engine runs server-side only, skipping client-side start'
+      );
       return;
     }
 
@@ -111,7 +113,9 @@ export class AIAutomationEngine {
   // Stop all automation tasks (server-side only)
   stop() {
     if (typeof window !== 'undefined') {
-      console.log('⏭️ Automation engine runs server-side only, skipping client-side stop');
+      console.log(
+        '⏭️ Automation engine runs server-side only, skipping client-side stop'
+      );
       return;
     }
 
@@ -138,7 +142,7 @@ export class AIAutomationEngine {
       // Only schedule tasks on server-side (Node.js environment)
       if (typeof window === 'undefined' && cron) {
         const task = cron.schedule(schedule, callback, {
-          timezone: "America/New_York"
+          timezone: 'America/New_York',
         });
 
         this.tasks.set(name, task);
@@ -154,20 +158,20 @@ export class AIAutomationEngine {
   // Run predictive maintenance analysis
   private async runPredictiveMaintenance() {
     console.log('🔧 Running AI Predictive Maintenance Analysis...');
-    
+
     try {
       // Get vehicle data (in real app, this would come from database)
       const vehicles = await this.getVehicleData();
-      
+
       for (const vehicle of vehicles) {
         const analysis = await fleetAI.predictMaintenance(vehicle);
-        
+
         // Send alerts for high-risk vehicles
         if (analysis.riskLevel === 'high') {
           await this.sendMaintenanceAlert(vehicle, analysis);
         }
       }
-      
+
       console.log('✅ Predictive maintenance analysis completed');
     } catch (error) {
       console.error('❌ Predictive maintenance analysis failed:', error);
@@ -177,18 +181,21 @@ export class AIAutomationEngine {
   // Run route optimization
   private async runRouteOptimization() {
     console.log('🗺️ Running AI Route Optimization...');
-    
+
     try {
       const vehicles = await this.getActiveVehicles();
       const destinations = await this.getPendingDestinations();
-      
+
       if (vehicles.length > 0 && destinations.length > 0) {
-        const optimization = await fleetAI.optimizeRoute(vehicles, destinations);
-        
+        const optimization = await fleetAI.optimizeRoute(
+          vehicles,
+          destinations
+        );
+
         // Notify dispatch team of optimized routes
         await this.sendRouteOptimizationAlert(optimization);
       }
-      
+
       console.log('✅ Route optimization completed');
     } catch (error) {
       console.error('❌ Route optimization failed:', error);
@@ -198,19 +205,19 @@ export class AIAutomationEngine {
   // Run driver performance analysis
   private async runDriverAnalysis() {
     console.log('👨‍💼 Running AI Driver Performance Analysis...');
-    
+
     try {
       const drivers = await this.getDriverData();
-      
+
       for (const driver of drivers) {
         const analysis = await fleetAI.analyzeDriverPerformance(driver);
-        
+
         // Send performance reports to management
         if (analysis.performanceScore < 70) {
           await this.sendDriverPerformanceAlert(driver, analysis);
         }
       }
-      
+
       console.log('✅ Driver performance analysis completed');
     } catch (error) {
       console.error('❌ Driver performance analysis failed:', error);
@@ -220,14 +227,14 @@ export class AIAutomationEngine {
   // Run cost optimization analysis
   private async runCostOptimization() {
     console.log('💰 Running AI Cost Optimization Analysis...');
-    
+
     try {
       const fleetData = await this.getFleetData();
       const optimization = await fleetAI.optimizeCosts(fleetData);
-      
+
       // Send cost optimization recommendations to management
       await this.sendCostOptimizationReport(optimization);
-      
+
       console.log('✅ Cost optimization analysis completed');
     } catch (error) {
       console.error('❌ Cost optimization analysis failed:', error);
@@ -237,16 +244,17 @@ export class AIAutomationEngine {
   // Run smart monitoring
   private async runSmartMonitoring() {
     console.log('🧠 Running Smart Monitoring...');
-    
+
     try {
       // Monitor various fleet metrics
       const alerts = await this.checkForAnomalies();
-      
+
       for (const alert of alerts) {
-        const smartNotification = await fleetAI.generateSmartNotification(alert);
+        const smartNotification =
+          await fleetAI.generateSmartNotification(alert);
         await this.sendSmartAlert(smartNotification);
       }
-      
+
       console.log('✅ Smart monitoring completed');
     } catch (error) {
       console.error('❌ Smart monitoring failed:', error);
@@ -256,18 +264,18 @@ export class AIAutomationEngine {
   // NEW: Run automated route document generation
   private async runAutomatedRouteDocumentGeneration() {
     console.log('📋 Running Automated Route Document Generation...');
-    
+
     try {
       const pendingRoutes = await this.getPendingRoutes();
-      
+
       for (const route of pendingRoutes) {
         // Auto-detect pickup location type and generate appropriate document
         const routeDocument = await this.generateRouteDocumentByType(route);
-        
+
         // Save generated document and notify relevant parties
         await this.saveAndDistributeRouteDocument(route, routeDocument);
       }
-      
+
       console.log('✅ Automated route document generation completed');
     } catch (error) {
       console.error('❌ Automated route document generation failed:', error);
@@ -277,20 +285,25 @@ export class AIAutomationEngine {
   // NEW: Run driver brief generation
   private async runDriverBriefGeneration() {
     console.log('👨‍💼 Running Driver Brief Generation...');
-    
+
     try {
       const drivers = await this.getDriverData();
       const routes = await this.getPendingRoutes();
-      
+
       for (const driver of drivers) {
-        const driverRoutes = routes.filter(route => route.driverId === driver.id);
-        
+        const driverRoutes = routes.filter(
+          (route) => route.driverId === driver.id
+        );
+
         if (driverRoutes.length > 0) {
-          const driverBrief = await this.generateDriverBrief(driver, driverRoutes);
+          const driverBrief = await this.generateDriverBrief(
+            driver,
+            driverRoutes
+          );
           await this.sendDriverBrief(driver, driverBrief);
         }
       }
-      
+
       console.log('✅ Driver brief generation completed');
     } catch (error) {
       console.error('❌ Driver brief generation failed:', error);
@@ -300,49 +313,64 @@ export class AIAutomationEngine {
   // NEW: Run SAM.gov opportunity monitoring
   private async runSAMGovMonitoring() {
     console.log('🏛️ Running SAM.gov Opportunity Monitoring...');
-    
+
     try {
       const result = await samGovMonitor.checkForNewOpportunities();
-      
+
       if (result.newOpportunities.length > 0) {
-        console.log(`✅ Found ${result.newOpportunities.length} new government contract opportunities`);
-        console.log(`📱 Sent ${result.notificationsSent} notifications to stakeholders`);
-        
+        console.log(
+          `✅ Found ${result.newOpportunities.length} new government contract opportunities`
+        );
+        console.log(
+          `📱 Sent ${result.notificationsSent} notifications to stakeholders`
+        );
+
         // Log opportunity details
-        result.newOpportunities.forEach(opp => {
-          console.log(`📋 New Opportunity: ${opp.title} - ${opp.agency} (Due: ${opp.responseDeadline})`);
+        result.newOpportunities.forEach((opp) => {
+          console.log(
+            `📋 New Opportunity: ${opp.title} - ${opp.agency} (Due: ${opp.responseDeadline})`
+          );
         });
       } else {
         console.log('ℹ️ No new government contract opportunities found');
       }
-      
-      console.log(`📊 Total opportunities tracked: ${result.totalOpportunities}`);
+
+      console.log(
+        `📊 Total opportunities tracked: ${result.totalOpportunities}`
+      );
     } catch (error) {
       console.error('❌ SAM.gov opportunity monitoring failed:', error);
     }
   }
 
-
   // NEW: Run FMCSA Shipper Intelligence Discovery
   private async runFMCSAShipperIntelligence() {
     console.log('🧠 Running FMCSA Shipper Intelligence Discovery...');
-    
+
     try {
-      const discoveredShippers = await fmcsaShipperIntelligence.discoverShippersFromCarriers({
-        location: 'nationwide',
-        industryFocus: 'manufacturing,retail,e-commerce',
-        maxResults: 100
-      });
-      
+      const discoveredShippers =
+        await fmcsaShipperIntelligence.discoverShippersFromCarriers({
+          location: 'nationwide',
+          industryFocus: 'manufacturing,retail,e-commerce',
+          maxResults: 100,
+        });
+
       // Filter high-value prospects
-      const topProspects = discoveredShippers.filter(s => s.aiAnalysis.prospectScore >= 80);
-      
+      const topProspects = discoveredShippers.filter(
+        (s) => s.aiAnalysis.prospectScore >= 80
+      );
+
       // Export to lead generation (simulate integration)
       if (topProspects.length > 0) {
-        const exportResult = await fmcsaShipperIntelligence.exportShippersToLeadGeneration(topProspects);
-        
-        console.log(`✅ FMCSA Intelligence: Discovered ${exportResult.summary.totalShippers} shippers, ${exportResult.summary.highValueProspects} high-value prospects`);
-        
+        const exportResult =
+          await fmcsaShipperIntelligence.exportShippersToLeadGeneration(
+            topProspects
+          );
+
+        console.log(
+          `✅ FMCSA Intelligence: Discovered ${exportResult.summary.totalShippers} shippers, ${exportResult.summary.highValueProspects} high-value prospects`
+        );
+
         // Send summary notification
         await this.sendSMSNotification(
           process.env.BUSINESS_DEV_PHONE || '+1234567890',
@@ -352,7 +380,6 @@ export class AIAutomationEngine {
       } else {
         console.log('ℹ️ No high-value shipper prospects found today');
       }
-      
     } catch (error) {
       console.error('❌ FMCSA shipper intelligence failed:', error);
     }
@@ -361,22 +388,30 @@ export class AIAutomationEngine {
   // NEW: Run ThomasNet Manufacturer Processing
   private async runThomasNetAutomation() {
     console.log('🏭 Running ThomasNet Manufacturer Data Processing...');
-    
+
     try {
       // Check for new CSV files (simulate file system check)
       const csvFiles = await this.checkForThomasNetFiles();
-      
+
       for (const csvContent of csvFiles) {
-        const result = await thomasNetAutomation.processThomasNetCSV(csvContent);
-        
-        console.log(`📊 ThomasNet Processing: ${result.totalProcessed} manufacturers processed, ${result.qualified} qualified, ${result.highPotential} high-potential`);
-        
+        const result =
+          await thomasNetAutomation.processThomasNetCSV(csvContent);
+
+        console.log(
+          `📊 ThomasNet Processing: ${result.totalProcessed} manufacturers processed, ${result.qualified} qualified, ${result.highPotential} high-potential`
+        );
+
         // Export qualified manufacturers
         if (result.qualified > 0) {
-          const exportResult = await thomasNetAutomation.exportToLeadGeneration(result.manufacturers, 75);
-          
-          console.log(`📈 Exported ${exportResult.summary.totalExported} qualified manufacturers to lead generation`);
-          
+          const exportResult = await thomasNetAutomation.exportToLeadGeneration(
+            result.manufacturers,
+            75
+          );
+
+          console.log(
+            `📈 Exported ${exportResult.summary.totalExported} qualified manufacturers to lead generation`
+          );
+
           // Send summary notification
           await this.sendSMSNotification(
             process.env.BUSINESS_DEV_PHONE || '+1234567890',
@@ -385,7 +420,6 @@ export class AIAutomationEngine {
           );
         }
       }
-      
     } catch (error) {
       console.error('❌ ThomasNet automation failed:', error);
     }
@@ -394,21 +428,25 @@ export class AIAutomationEngine {
   // NEW: Run Automated RFx Bidding
   private async runAutomatedRFxBidding() {
     console.log('📋 Running Automated RFx Bidding...');
-    
+
     try {
       const results = await rfxAutomation.runAutomatedRFxDiscovery();
-      
+
       console.log(`🤖 RFx Automation Results:`);
       console.log(`  📊 Total Opportunities: ${results.discovered.length}`);
       console.log(`  🚀 Auto-Submitted: ${results.autoSubmitted.length}`);
       console.log(`  📋 Queued for Review: ${results.queuedForReview.length}`);
       console.log(`  ❌ Declined: ${results.declined.length}`);
-      console.log(`  💰 Est. Revenue Generated: $${Math.round(results.metrics.revenueGenerated)}`);
-      
+      console.log(
+        `  💰 Est. Revenue Generated: $${Math.round(results.metrics.revenueGenerated)}`
+      );
+
       // Send notifications for high-value auto-submissions
       if (results.autoSubmitted.length > 0) {
-        const highValue = results.autoSubmitted.filter(op => op.estimatedValue > 500000);
-        
+        const highValue = results.autoSubmitted.filter(
+          (op) => op.estimatedValue > 500000
+        );
+
         if (highValue.length > 0) {
           await this.sendSMSNotification(
             process.env.SALES_MANAGER_PHONE || '+1234567890',
@@ -417,7 +455,7 @@ export class AIAutomationEngine {
           );
         }
       }
-      
+
       // Alert for opportunities needing review
       if (results.queuedForReview.length > 0) {
         await this.sendSMSNotification(
@@ -426,7 +464,6 @@ export class AIAutomationEngine {
           'normal'
         );
       }
-      
     } catch (error) {
       console.error('❌ Automated RFx bidding failed:', error);
     }
@@ -435,19 +472,24 @@ export class AIAutomationEngine {
   // NEW: Run RFx Opportunity Discovery
   private async runRFxOpportunityDiscovery() {
     console.log('🔍 Running RFx Opportunity Discovery...');
-    
+
     try {
       const dashboard = await rfxAutomation.getAutomationDashboard();
-      
+
       console.log(`📊 RFx Discovery Status: ${dashboard.currentStatus}`);
-      console.log(`📈 Today Processed: ${dashboard.todayProcessed} opportunities`);
-      console.log(`🎯 Top Opportunities: ${dashboard.topOpportunities.length} high-scoring`);
-      
+      console.log(
+        `📈 Today Processed: ${dashboard.todayProcessed} opportunities`
+      );
+      console.log(
+        `🎯 Top Opportunities: ${dashboard.topOpportunities.length} high-scoring`
+      );
+
       // Log top opportunities for visibility
-      dashboard.topOpportunities.slice(0, 3).forEach(op => {
-        console.log(`  🏆 ${op.title} - Score: ${op.aiScore.score}, Value: $${op.estimatedValue}`);
+      dashboard.topOpportunities.slice(0, 3).forEach((op) => {
+        console.log(
+          `  🏆 ${op.title} - Score: ${op.aiScore.score}, Value: $${op.estimatedValue}`
+        );
       });
-      
     } catch (error) {
       console.error('❌ RFx opportunity discovery failed:', error);
     }
@@ -460,11 +502,15 @@ export class AIAutomationEngine {
     const mockCSV = `Company Name,Industry,Category,Products,Address,City,State,Zip,Phone,Website,Employees,Year,Description
 Southeast Manufacturing Inc,Automotive,Auto Parts,Brake Components;Engine Parts,123 Industrial Blvd,Atlanta,GA,30309,(555) 123-4567,www.southeastmfg.com,100-500,1985,Leading automotive parts manufacturer
 Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverages,456 Commerce Dr,Chicago,IL,60601,(555) 987-6543,www.midwestdist.com,50-100,1992,Regional food distributor serving Midwest markets`;
-    
+
     return [mockCSV]; // Return mock data - in production would return actual file contents
   }
   // Helper function to send SMS notifications
-  private async sendSMSNotification(to: string, message: string, priority: string = 'normal') {
+  private async sendSMSNotification(
+    to: string,
+    message: string,
+    priority: string = 'normal'
+  ) {
     try {
       const response = await fetch('/api/notifications/send', {
         method: 'POST',
@@ -473,8 +519,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
           type: 'sms',
           to,
           message,
-          priority
-        })
+          priority,
+        }),
       });
       return await response.json();
     } catch (error) {
@@ -483,7 +529,12 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   }
 
   // Helper function to send email notifications
-  private async sendEmailNotification(to: string, subject: string, htmlMessage: string, type: string = 'notification') {
+  private async sendEmailNotification(
+    to: string,
+    subject: string,
+    htmlMessage: string,
+    type: string = 'notification'
+  ) {
     try {
       const response = await fetch('/api/notifications/send', {
         method: 'POST',
@@ -493,8 +544,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
           to,
           subject,
           htmlMessage,
-          emailType: type
-        })
+          emailType: type,
+        }),
       });
       return await response.json();
     } catch (error) {
@@ -505,7 +556,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Send maintenance alert
   private async sendMaintenanceAlert(vehicle: any, analysis: any) {
     const message = `🚨 HIGH MAINTENANCE RISK: Vehicle ${vehicle.name} requires immediate attention. Risk: ${analysis.riskLevel}. Next service due: ${analysis.nextServiceDue}`;
-    
+
     // Log alert (SMS/Email functionality temporarily disabled for TS compatibility)
     console.log('MAINTENANCE ALERT:', message);
     console.log('Vehicle:', vehicle);
@@ -515,7 +566,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Send route optimization alert
   private async sendRouteOptimizationAlert(optimization: any) {
     const message = `🗺️ AI Route Optimization Complete! Efficiency Score: ${optimization.efficiencyScore}%. Estimated savings: $${optimization.totalEstimatedCost}`;
-    
+
     // Log alert (SMS functionality temporarily disabled for TS compatibility)
     console.log('ROUTE OPTIMIZATION ALERT:', message);
     console.log('Optimization:', optimization);
@@ -524,7 +575,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Send driver performance alert
   private async sendDriverPerformanceAlert(driver: any, analysis: any) {
     const subject = `📊 Driver Performance Review: ${driver.name}`;
-    
+
     // Log alert (Email functionality temporarily disabled for TS compatibility)
     console.log('DRIVER PERFORMANCE ALERT:', subject);
     console.log('Driver:', driver);
@@ -534,7 +585,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Send cost optimization report
   private async sendCostOptimizationReport(optimization: any) {
     const subject = `💰 Monthly Cost Optimization Report - Potential Savings: ${optimization.totalPotentialSavings}`;
-    
+
     // Log report (Email functionality temporarily disabled for TS compatibility)
     console.log('COST OPTIMIZATION REPORT:', subject);
     console.log('Optimization:', optimization);
@@ -542,7 +593,10 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
 
   // Send smart alert
   private async sendSmartAlert(notification: any) {
-    if (notification.priority === 'critical' || notification.priority === 'high') {
+    if (
+      notification.priority === 'critical' ||
+      notification.priority === 'high'
+    ) {
       // Log alert (SMS functionality temporarily disabled for TS compatibility)
       console.log('SMART ALERT:', notification.message);
       console.log('Priority:', notification.priority);
@@ -559,7 +613,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         mileage: 125000,
         lastMaintenance: '2024-05-15',
         fuelEfficiency: 8.5,
-        status: 'active'
+        status: 'active',
       },
       {
         id: 'V002',
@@ -568,8 +622,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         mileage: 89000,
         lastMaintenance: '2024-06-20',
         fuelEfficiency: 12.3,
-        status: 'maintenance'
-      }
+        status: 'maintenance',
+      },
     ];
   }
 
@@ -586,7 +640,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         pickupLocationName: 'Detroit Steel Plant #3',
         pickupAddress: '1234 Industrial Blvd, Detroit, MI 48201',
         locationType: 'Manufacturing Plant',
-        rate: 450.00,
+        rate: 450.0,
         totalMiles: 177,
         confirmationNumber: 'DS-789012',
         status: 'pending_documentation',
@@ -595,25 +649,25 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
             name: 'Construction Site Alpha',
             address: '567 Construction Ave, Warren, MI 48089',
             deliveryTime: '9:00 AM - 10:00 AM',
-            items: '10 tons structural steel beams'
-          }
-        ]
+            items: '10 tons structural steel beams',
+          },
+        ],
       },
       {
         id: 'R002',
         routeNumber: '2',
-        routeName: 'Sam\'s Club Express',
+        routeName: "Sam's Club Express",
         companyName: 'FleetFlow Logistics',
         mcNumber: 'MC-123456',
         driverId: 'D002',
-        pickupLocationName: 'Sam\'s Club #4567',
-        pickupAddress: '2000 Sam\'s Club Drive, Southfield, MI 48075',
+        pickupLocationName: "Sam's Club #4567",
+        pickupAddress: "2000 Sam's Club Drive, Southfield, MI 48075",
         locationType: 'Retail Warehouse',
-        rate: 425.00,
+        rate: 425.0,
         totalMiles: 203,
         confirmationNumber: 'SC-445566',
-        status: 'pending_documentation'
-      }
+        status: 'pending_documentation',
+      },
     ];
   }
 
@@ -621,8 +675,10 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   private async generateRouteDocumentByType(route: any): Promise<string> {
     try {
       // Add calculated fields
-      route.ratePerMile = route.rate && route.totalMiles ? 
-        (route.rate / route.totalMiles).toFixed(2) : 'TBD';
+      route.ratePerMile =
+        route.rate && route.totalMiles
+          ? (route.rate / route.totalMiles).toFixed(2)
+          : 'TBD';
       route.totalAmount = route.rate || 'TBD';
       route.generatedDate = new Date().toLocaleDateString();
       route.driverName = await this.getDriverNameById(route.driverId);
@@ -632,17 +688,17 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
       switch (route.locationType) {
         case 'Manufacturing Plant':
           return generateManufacturingRouteDocument(route);
-        
+
         case 'Agricultural Facility':
           return generateAgriculturalRouteDocument(route);
-        
+
         case 'Retail Warehouse':
           // Check if it's Sam's Club specifically
-          if (route.pickupLocationName?.toLowerCase().includes('sam\'s club')) {
+          if (route.pickupLocationName?.toLowerCase().includes("sam's club")) {
             return generateSamsClubDeliveryDocument(route);
           }
           return generateUniversalPickupDocument(route);
-        
+
         default:
           // Use universal template for any other location type
           return generateUniversalPickupDocument(route);
@@ -659,8 +715,11 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
     try {
       // Log the generated document (in real app, save to database)
       console.log(`📋 Route document generated for ${route.routeName}`);
-      console.log('Document preview (first 200 chars):', document.substring(0, 200) + '...');
-      
+      console.log(
+        'Document preview (first 200 chars):',
+        document.substring(0, 200) + '...'
+      );
+
       // Send to driver via email/SMS
       const driverEmail = await this.getDriverEmailById(route.driverId);
       if (driverEmail) {
@@ -679,20 +738,29 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         this.generateRouteDocumentEmailHTML(route, document),
         'route_notification'
       );
-
     } catch (error) {
       console.error('Failed to save/distribute route document:', error);
     }
   }
 
   // NEW: Generate driver brief
-  private async generateDriverBrief(driver: any, routes: any[]): Promise<string> {
-    const totalStops = routes.reduce((sum, route) => sum + (route.stops?.length || 1), 0);
-    const totalMiles = routes.reduce((sum, route) => sum + (route.totalMiles || 0), 0);
+  private async generateDriverBrief(
+    driver: any,
+    routes: any[]
+  ): Promise<string> {
+    const totalStops = routes.reduce(
+      (sum, route) => sum + (route.stops?.length || 1),
+      0
+    );
+    const totalMiles = routes.reduce(
+      (sum, route) => sum + (route.totalMiles || 0),
+      0
+    );
     const estimatedTime = Math.ceil(totalMiles / 45) + ' hours'; // Estimate based on 45 mph average
 
     const driverBriefData = {
-      routeName: routes.length > 1 ? `${routes.length} Routes` : routes[0]?.routeName,
+      routeName:
+        routes.length > 1 ? `${routes.length} Routes` : routes[0]?.routeName,
       deliveryDate: new Date().toLocaleDateString(),
       driverName: driver.name,
       vehicleNumber: `T-${driver.id.slice(-3)}`,
@@ -705,7 +773,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
       supervisorNumber: '(555) 987-6543',
       dispatchPhone: '(555) 123-4567',
       supervisorPhone: '(555) 987-6543',
-      customerServicePhone: '(555) 111-2222'
+      customerServicePhone: '(555) 111-2222',
     };
 
     // Generate simple driver brief template
@@ -716,7 +784,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   private async sendDriverBrief(driver: any, brief: string) {
     try {
       console.log(`📱 Driver brief generated for ${driver.name}`);
-      
+
       // Send via SMS for quick mobile access
       const driverPhone = await this.getDriverPhoneById(driver.id);
       if (driverPhone) {
@@ -734,7 +802,6 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
           'driver_brief'
         );
       }
-
     } catch (error) {
       console.error('Failed to send driver brief:', error);
     }
@@ -743,7 +810,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Helper methods for driver data
   private async getDriverNameById(driverId: string): Promise<string> {
     const drivers = await this.getDriverData();
-    const driver = drivers.find(d => d.id === driverId);
+    const driver = drivers.find((d) => d.id === driverId);
     return driver?.name || 'Driver TBD';
   }
 
@@ -759,7 +826,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
 
   private async getActiveVehicles() {
     const vehicles = await this.getVehicleData();
-    return vehicles.filter(v => v.status === 'active');
+    return vehicles.filter((v) => v.status === 'active');
   }
 
   private async getPendingDestinations() {
@@ -767,7 +834,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
       'New York, NY',
       'Philadelphia, PA',
       'Baltimore, MD',
-      'Washington, DC'
+      'Washington, DC',
     ];
   }
 
@@ -779,7 +846,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         experience: 5,
         safetyRecord: 98,
         deliveryRate: 94,
-        fuelEfficiency: 87
+        fuelEfficiency: 87,
       },
       {
         id: 'D002',
@@ -787,8 +854,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         experience: 3,
         safetyRecord: 92,
         deliveryRate: 89,
-        fuelEfficiency: 91
-      }
+        fuelEfficiency: 91,
+      },
     ];
   }
 
@@ -798,14 +865,14 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
       totalDrivers: 30,
       monthlyFuelCost: 45000,
       monthlyMaintenanceCost: 12000,
-      averageUtilization: 78
+      averageUtilization: 78,
     };
   }
 
   private async checkForAnomalies() {
     // Check for various anomalies
     const alerts = [];
-    
+
     // Example: Check fuel efficiency drop
     const vehicles = await this.getVehicleData();
     for (const vehicle of vehicles) {
@@ -813,11 +880,11 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
         alerts.push({
           type: 'fuel_efficiency_drop',
           vehicle: vehicle,
-          severity: 'medium'
+          severity: 'medium',
         });
       }
     }
-    
+
     return alerts;
   }
 
@@ -874,8 +941,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // Template generators for route automation
   private generateDriverBriefTemplate(data: any): string {
     return `# Driver Brief: ${data.routeName}
-**Date:** ${data.deliveryDate}  
-**Driver:** ${data.driverName}  
+**Date:** ${data.deliveryDate}
+**Driver:** ${data.driverName}
 **Vehicle:** ${data.vehicleNumber}
 
 ## ⚡ **CRITICAL INFORMATION**

@@ -8,8 +8,8 @@ export const ORDER_CONFIRMATION_TEMPLATES = {
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
 
-## 💰 **RATE: ${totalAmount}**
-**Miles:** {totalMiles} | **Rate/Mile:** ${ratePerMile}
+## 💰 **RATE: {totalAmount}**
+**Miles:** {totalMiles} | **Rate/Mile:** {ratePerMile}
 
 ---
 
@@ -66,8 +66,8 @@ export const ORDER_CONFIRMATION_TEMPLATES = {
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
 
-## 💰 **RATE: ${totalAmount}**
-**Miles:** {totalMiles} | **Rate/Mile:** ${ratePerMile}
+## 💰 **RATE: {totalAmount}**
+**Miles:** {totalMiles} | **Rate/Mile:** {ratePerMile}
 
 ---
 
@@ -108,8 +108,8 @@ export const ORDER_CONFIRMATION_TEMPLATES = {
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
 
-## 💰 **RATE: ${totalAmount}**
-**Miles:** {totalMiles} | **Rate/Mile:** ${ratePerMile}
+## 💰 **RATE: {totalAmount}**
+**Miles:** {totalMiles} | **Rate/Mile:** {ratePerMile}
 
 ---
 
@@ -150,8 +150,8 @@ export const ORDER_CONFIRMATION_TEMPLATES = {
 ## 🏢 **{companyName}**
 **MC# {mcNumber}** | 📞 **{contactPhone}**
 
-## 💰 **RATE: ${totalAmount}**
-**Miles:** {totalMiles} | **Rate/Mile:** ${ratePerMile}
+## 💰 **RATE: {totalAmount}**
+**Miles:** {totalMiles} | **Rate/Mile:** {ratePerMile}
 
 ---
 
