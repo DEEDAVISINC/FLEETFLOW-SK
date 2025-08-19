@@ -1290,9 +1290,79 @@ export default function AICompanyDashboard() {
         )}
 
         {activeTab === 'financial' && (
-          <div className='text-center text-white'>
-            <h3 className='text-2xl font-bold mb-4'>💰 Financial Command</h3>
-            <p>Advanced Financial Management - Coming Next!</p>
+          <div className='space-y-8'>
+            
+            {/* Financial Overview Dashboard */}
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+              <h3 className='mb-6 text-2xl font-bold text-white'>
+                💰 Financial Command Center - Multi-Tenant CFO Intelligence
+              </h3>
+              
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-4'>
+                {/* Total Revenue */}
+                <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-green-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-green-400'>Total Revenue</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>{formatCurrency(1247850)}</div>
+                  <div className='space-y-1'>
+                    <div className='text-sm text-green-400'>+23.4% month-over-month</div>
+                    <div className='text-sm text-green-400'>+156% year-over-year</div>
+                    <div className='text-sm text-white/70'>Q4 target: 89% achieved</div>
+                  </div>
+                </div>
+
+                {/* Cash Flow */}
+                <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-blue-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-blue-400'>Cash Flow</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>{formatCurrency(285510)}</div>
+                  <div className='space-y-1'>
+                    <div className='text-sm text-blue-400'>Net positive flow</div>
+                    <div className='text-sm text-blue-400'>18.2 months runway</div>
+                    <div className='text-sm text-white/70'>Burn: {formatCurrency(45600)}/mo</div>
+                  </div>
+                </div>
+
+                {/* Outstanding Invoices */}
+                <div className='rounded-lg border border-orange-500/20 bg-orange-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-orange-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-orange-400'>Outstanding AR</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>{formatCurrency(234800)}</div>
+                  <div className='space-y-1'>
+                    <div className='text-sm text-orange-400'>34 pending invoices</div>
+                    <div className='text-sm text-green-400'>98.7% collection rate</div>
+                    <div className='text-sm text-white/70'>Avg: 12.3 days to collect</div>
+                  </div>
+                </div>
+
+                {/* Profit Margin */}
+                <div className='rounded-lg border border-purple-500/20 bg-purple-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-purple-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-purple-400'>Net Margin</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>22.9%</div>
+                  <div className='space-y-1'>
+                    <div className='text-sm text-purple-400'>Above industry avg</div>
+                    <div className='text-sm text-green-400'>Target: 20% (exceeded)</div>
+                    <div className='text-sm text-white/70'>Trending upward</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Placeholder for additional sections */}
+            <div className='text-center text-white/70'>
+              <h4 className='text-lg font-semibold mb-2'>💳 Advanced Financial Analytics</h4>
+              <p>Multi-tenant tracking, Square integration, and CFO-level forecasting - expanding next...</p>
+            </div>
+
           </div>
         )}
 
