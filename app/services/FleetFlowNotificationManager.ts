@@ -245,7 +245,8 @@ export class FleetFlowNotificationManager {
     // Notify local subscribers
     this.notifySubscribers('notification_added', notification);
 
-    console.log(`✅ Notification created: ${notification.title}`);
+    // Reduced logging to prevent console spam
+    // console.log(`✅ Notification created: ${notification.title}`);
   }
 
   // 🎯 FILTER NOTIFICATIONS BY USER PREFERENCES
@@ -337,7 +338,8 @@ export class FleetFlowNotificationManager {
           console.log(`Email Content: ${this.generateEmailTemplate(notification)}`);
         }
 
-        console.log(`📤 Notification sent to ${target} via enabled channels`);
+        // Reduced logging for production
+      // console.log(`📤 Notification sent to ${target} via enabled channels`);
       } catch (error) {
         console.error(`❌ Failed to send notification to ${target}:`, error);
       }
@@ -471,7 +473,7 @@ export class FleetFlowNotificationManager {
     const highValueLoads = loads.filter(
       (load) =>
         load.status === 'Available' &&
-        parseFloat(load.rate?.replace(/[^0-9.]/g, '') || '0') > 2000
+        parseFloat(String(load.rate || '0').replace(/[^0-9.]/g, '') || '0') > 2000
     );
 
     for (const load of highValueLoads) {
@@ -484,7 +486,7 @@ export class FleetFlowNotificationManager {
         targetPortals: ['driver', 'dispatch'],
         metadata: {
           loadId: load.id,
-          loadValue: parseFloat(load.rate?.replace(/[^0-9.]/g, '') || '0'),
+          loadValue: parseFloat(String(load.rate || '0').replace(/[^0-9.]/g, '') || '0'),
           actionRequired: true,
         },
         actions: [
