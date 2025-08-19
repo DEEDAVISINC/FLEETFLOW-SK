@@ -3,7 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ReceiverNotificationService from '../services/ReceiverNotificationService';
-import { Load, getMainDashboardLoads } from '../services/loadService';
+import { 
+  Load, 
+  getMainDashboardLoads, 
+  getShipperLoads, 
+  getShipperDashboardSummary 
+} from '../services/loadService';
+import { MultiTenantSquareService } from '../services/MultiTenantSquareService';
+import { calculateFinancialMetrics } from '../services/settlementService';
 
 interface VendorSession {
   shipperId: string;
@@ -232,6 +239,11 @@ export default function VendorPortalPage() {
     companyName: 'Demo Shipper Corp',
     loginTime: new Date().toISOString(),
   });
+
+  // Initialize real FleetFlow services
+  const [squareService] = useState(() => new MultiTenantSquareService());
+  const [realTimeLoads, setRealTimeLoads] = useState<Load[]>([]);
+  const [realFinancialData, setRealFinancialData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<
     | 'dashboard'
     | 'operations'
@@ -243,6 +255,8 @@ export default function VendorPortalPage() {
     | 'receiver-tracking'
   >('dashboard');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [newUserData, setNewUserData] = useState({});
   const [userAccess, setUserAccess] = useState([
@@ -799,16 +813,77 @@ export default function VendorPortalPage() {
   const [loads, setLoads] = useState<Load[]>([]);
   const [isLoadingLoads, setIsLoadingLoads] = useState(true);
 
-  // Load real-time load data
+  // Load real-time data from FleetFlow services
   useEffect(() => {
     const loadRealTimeData = async () => {
+      if (!session) return;
+      
       try {
         setIsLoadingLoads(true);
-        // Get all active loads that this vendor/shipper is involved with
-        const allLoads = await getMainDashboardLoads();
+        
+        // 1. Load real shipment data for this vendor
+        console.log('🔄 Loading real-time data for vendor:', session.shipperId);
+        
+        const [shipperLoads, dashboardSummary, allLoads] = await Promise.all([
+          getShipperLoads(session.shipperId),
+          getShipperDashboardSummary(session.shipperId),
+          getMainDashboardLoads()
+        ]);
+        
+        // Set real load data
+        setRealTimeLoads(allLoads);
         setLoads(allLoads);
+        
+        // 2. Load real financial data from Square billing
+        try {
+          const tenantId = `tenant-${session.shipperId}`;
+          const invoices = await squareService.listInvoices(tenantId, {
+            limit: 20
+          });
+          
+          // Calculate real financial metrics
+          const financialMetrics = calculateFinancialMetrics(
+            'broker',
+            'monthly', 
+            session.shipperId
+          );
+          
+          setRealFinancialData({
+            invoices: invoices.invoices || [],
+            metrics: financialMetrics,
+            dashboardSummary,
+            shipperLoads,
+            totalRevenue: financialMetrics.revenue.total,
+            avgInvoiceValue: financialMetrics.revenue.total / (invoices.invoices?.length || 1),
+            paymentStatus: 'current'
+          });
+          
+          console.log('✅ Real-time data loaded successfully:', {
+            loads: allLoads.length,
+            shipperSpecificLoads: shipperLoads.length,
+            invoices: invoices.invoices?.length || 0,
+            revenue: financialMetrics.revenue.total
+          });
+          
+        } catch (billingError) {
+          console.warn('⚠️ Square billing unavailable, using calculated metrics:', billingError);
+          const financialMetrics = calculateFinancialMetrics('broker', 'monthly', session.shipperId);
+          setRealFinancialData({
+            invoices: [],
+            metrics: financialMetrics,
+            dashboardSummary,
+            shipperLoads,
+            totalRevenue: financialMetrics.revenue.total,
+            avgInvoiceValue: financialMetrics.revenue.total / 10,
+            paymentStatus: 'calculated'
+          });
+        }
+        
       } catch (error) {
-        console.error('Error loading real-time load data:', error);
+        console.error('❌ Error loading real-time data:', error);
+        // Fallback to existing behavior on error
+        const allLoads = getMainDashboardLoads();
+        setLoads(allLoads);
       } finally {
         setIsLoadingLoads(false);
       }
@@ -820,13 +895,29 @@ export default function VendorPortalPage() {
     const interval = setInterval(loadRealTimeData, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [session, squareService]);
 
   const router = useRouter();
 
   useEffect(() => {
     // Simulate loading
     setIsLoading(false);
+  }, []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   if (isLoading) {
@@ -962,7 +1053,7 @@ export default function VendorPortalPage() {
               borderRadius: '8px',
               padding: '8px 16px',
               cursor: 'pointer',
-              fontSize: '0.9rem',
+              fontSize: isMobile ? '1rem' : '0.9rem',
               fontWeight: '500',
               display: 'flex',
               alignItems: 'center',
@@ -979,7 +1070,7 @@ export default function VendorPortalPage() {
               borderRadius: '8px',
               padding: '8px 16px',
               cursor: 'pointer',
-              fontSize: '0.9rem',
+              fontSize: isMobile ? '1rem' : '0.9rem',
               fontWeight: '500',
               display: 'flex',
               alignItems: 'center',
@@ -1016,7 +1107,7 @@ export default function VendorPortalPage() {
               padding: '8px 16px',
               color: 'white',
               cursor: 'pointer',
-              fontSize: '0.9rem',
+              fontSize: isMobile ? '1rem' : '0.9rem',
               fontWeight: '500',
             }}
           >
@@ -1025,306 +1116,442 @@ export default function VendorPortalPage() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          style={{
-            background:
-              activeTab === 'dashboard'
-                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'dashboard'
-                ? '#60a5fa'
-                : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'dashboard'
-                ? '1px solid rgba(59, 130, 246, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'dashboard') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(59, 130, 246, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'dashboard') {
+      {/* Mobile & Desktop Navigation */}
+      <div style={{ marginBottom: '24px' }}>
+        {/* Mobile Hamburger Button */}
+        {isMobile && (
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12px',
+              padding: '16px 20px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '600',
+              marginBottom: '12px',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          📊 Dashboard & Operations
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Overview & Management
-          </div>
-        </button>
+            }}
+          >
+            <span
+              style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  transform: isMobileMenuOpen
+                    ? 'rotate(90deg)'
+                    : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease',
+                  fontSize: '1.2rem',
+                }}
+              >
+                {isMobileMenuOpen ? '✕' : '☰'}
+              </span>
+              <span>{isMobileMenuOpen ? 'Close Menu' : 'Navigation Menu'}</span>
+            </span>
+            <span
+              style={{
+                fontSize: '0.8rem',
+                opacity: 0.8,
+                background: 'rgba(59, 130, 246, 0.2)',
+                padding: '4px 8px',
+                borderRadius: '6px',
+              }}
+            >
+              {Object.values({
+                dashboard: '📊',
+                financials: '💰',
+                analytics: '📈',
+                integrations: '🔗',
+                settings: '⚙️',
+                warehouse: '🏭',
+                'receiver-tracking': '📞',
+              }).find(
+                (_, index) =>
+                  Object.keys({
+                    dashboard: '📊',
+                    financials: '💰',
+                    analytics: '📈',
+                    integrations: '🔗',
+                    settings: '⚙️',
+                    warehouse: '🏭',
+                    'receiver-tracking': '📞',
+                  })[index] === activeTab
+              )}{' '}
+              {activeTab.replace('-', ' ').toUpperCase()}
+            </span>
+          </button>
+        )}
 
-        <button
-          onClick={() => setActiveTab('financials')}
+        {/* Navigation Tabs Container */}
+        <div
           style={{
+            display: !isMobile || isMobileMenuOpen ? 'flex' : 'none',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '12px' : '8px',
+            flexWrap: !isMobile ? 'wrap' : 'nowrap',
             background:
-              activeTab === 'financials'
-                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'financials'
-                ? '#34d399'
-                : 'rgba(255, 255, 255, 0.8)',
+              isMobile && isMobileMenuOpen
+                ? 'rgba(0, 0, 0, 0.9)'
+                : 'transparent',
+            padding: isMobile && isMobileMenuOpen ? '24px' : '0',
+            borderRadius: isMobile && isMobileMenuOpen ? '16px' : '0',
+            backdropFilter:
+              isMobile && isMobileMenuOpen ? 'blur(20px)' : 'none',
             border:
-              activeTab === 'financials'
-                ? '1px solid rgba(16, 185, 129, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'financials') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(16, 185, 129, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'financials') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
+              isMobile && isMobileMenuOpen
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : 'none',
+            boxShadow:
+              isMobile && isMobileMenuOpen
+                ? '0 10px 40px rgba(0, 0, 0, 0.3)'
+                : 'none',
           }}
         >
-          💰 Financials
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Billing & Payments
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('dashboard');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'dashboard'
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'dashboard'
+                  ? '#60a5fa'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'dashboard'
+                  ? '1px solid rgba(59, 130, 246, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'dashboard') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(59, 130, 246, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'dashboard') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            📊 Dashboard & Operations
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Overview & Management
+            </div>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('analytics')}
-          style={{
-            background:
-              activeTab === 'analytics'
-                ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'analytics'
-                ? '#a78bfa'
-                : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'analytics'
-                ? '1px solid rgba(99, 102, 241, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'analytics') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(99, 102, 241, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'analytics') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          📈 Analytics
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Performance & Insights
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('financials');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'financials'
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'financials'
+                  ? '#34d399'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'financials'
+                  ? '1px solid rgba(16, 185, 129, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'financials') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(16, 185, 129, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'financials') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            💰 Financials
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Billing & Payments
+            </div>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('integrations')}
-          style={{
-            background:
-              activeTab === 'integrations'
-                ? 'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(217, 119, 6, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'integrations'
-                ? '#fb923c'
-                : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'integrations'
-                ? '1px solid rgba(249, 115, 22, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'integrations') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(249, 115, 22, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'integrations') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          🔗 Integrations
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            ERP & Systems
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('analytics');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'analytics'
+                  ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'analytics'
+                  ? '#a78bfa'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'analytics'
+                  ? '1px solid rgba(99, 102, 241, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'analytics') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(99, 102, 241, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'analytics') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            📈 Analytics
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Performance & Insights
+            </div>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('settings')}
-          style={{
-            background:
-              activeTab === 'settings'
-                ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'settings' ? '#c4b5fd' : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'settings'
-                ? '1px solid rgba(139, 92, 246, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'settings') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(139, 92, 246, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'settings') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          ⚙️ Settings
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Configuration
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('integrations');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'integrations'
+                  ? 'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(217, 119, 6, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'integrations'
+                  ? '#fb923c'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'integrations'
+                  ? '1px solid rgba(249, 115, 22, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'integrations') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(249, 115, 22, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'integrations') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            🔗 Integrations
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              ERP & Systems
+            </div>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('warehouse')}
-          style={{
-            background:
-              activeTab === 'warehouse'
-                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'warehouse'
-                ? '#34d399'
-                : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'warehouse'
-                ? '1px solid rgba(16, 185, 129, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'warehouse') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(16, 185, 129, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'warehouse') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          🏭 Warehouse
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Inventory & Operations
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('settings');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'settings'
+                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'settings'
+                  ? '#c4b5fd'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'settings'
+                  ? '1px solid rgba(139, 92, 246, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'settings') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(139, 92, 246, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'settings') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            ⚙️ Settings
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Configuration
+            </div>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('receiver-tracking')}
-          style={{
-            background:
-              activeTab === 'receiver-tracking'
-                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
-                : 'rgba(255, 255, 255, 0.1)',
-            color:
-              activeTab === 'receiver-tracking'
-                ? '#60a5fa'
-                : 'rgba(255, 255, 255, 0.8)',
-            border:
-              activeTab === 'receiver-tracking'
-                ? '1px solid rgba(59, 130, 246, 0.3)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (activeTab !== 'receiver-tracking') {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(59, 130, 246, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeTab !== 'receiver-tracking') {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
-        >
-          📞 Receiver Tracking
-          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-            Live Delivery Coordination
-          </div>
-        </button>
+          <button
+            onClick={() => {
+              setActiveTab('warehouse');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'warehouse'
+                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'warehouse'
+                  ? '#34d399'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'warehouse'
+                  ? '1px solid rgba(16, 185, 129, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'warehouse') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(16, 185, 129, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'warehouse') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            🏭 Warehouse
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Inventory & Operations
+            </div>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('receiver-tracking');
+              if (isMobile) setIsMobileMenuOpen(false);
+            }}
+            style={{
+              background:
+                activeTab === 'receiver-tracking'
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                activeTab === 'receiver-tracking'
+                  ? '#60a5fa'
+                  : 'rgba(255, 255, 255, 0.8)',
+              border:
+                activeTab === 'receiver-tracking'
+                  ? '1px solid rgba(59, 130, 246, 0.3)'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+              padding: isMobile ? '16px 20px' : '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '1rem' : '0.9rem',
+              fontWeight: '600',
+              minHeight: isMobile ? '60px' : 'auto',
+              width: isMobile ? '100%' : 'auto',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'receiver-tracking') {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(59, 130, 246, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'receiver-tracking') {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
+            }}
+          >
+            📞 Receiver Tracking
+            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+              Live Delivery Coordination
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Content Sections */}
@@ -1351,6 +1578,34 @@ export default function VendorPortalPage() {
                 position: 'relative',
               }}
             >
+              {/* Real-Time Data Integration Status */}
+              <div style={{ 
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'rgba(16, 185, 129, 0.2)',
+                padding: '6px 12px',
+                borderRadius: '20px',
+                border: '1px solid rgba(16, 185, 129, 0.3)'
+              }}>
+                <div style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#10b981',
+                  animation: 'pulse 2s infinite'
+                }} />
+                <span style={{ 
+                  fontSize: '0.75rem', 
+                  fontWeight: '600', 
+                  color: '#10b981' 
+                }}>
+                  LIVE DATA
+                </span>
+              </div>
               <div
                 style={{
                   position: 'absolute',
@@ -1451,7 +1706,7 @@ export default function VendorPortalPage() {
                   padding: '12px 16px',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '1rem' : '0.9rem',
                   fontWeight: '600',
                   transition: 'all 0.3s ease',
                 }}
@@ -1467,7 +1722,7 @@ export default function VendorPortalPage() {
                   padding: '12px 16px',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '1rem' : '0.9rem',
                   fontWeight: '600',
                   transition: 'all 0.3s ease',
                 }}
@@ -1483,7 +1738,7 @@ export default function VendorPortalPage() {
                   padding: '12px 16px',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '1rem' : '0.9rem',
                   fontWeight: '600',
                   transition: 'all 0.3s ease',
                 }}
@@ -1499,7 +1754,7 @@ export default function VendorPortalPage() {
                   padding: '12px 16px',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '1rem' : '0.9rem',
                   fontWeight: '600',
                   transition: 'all 0.3s ease',
                 }}
@@ -1596,7 +1851,7 @@ export default function VendorPortalPage() {
                           style={{
                             color: 'rgba(255, 255, 255, 0.8)',
                             margin: 0,
-                            fontSize: '0.9rem',
+                            fontSize: isMobile ? '1rem' : '0.9rem',
                           }}
                         >
                           {load.origin} → {load.destination}
@@ -1867,7 +2122,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Name:
@@ -1880,7 +2135,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Email:
@@ -1893,7 +2148,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Phone:
@@ -1954,7 +2209,7 @@ export default function VendorPortalPage() {
                       padding: '12px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
@@ -1971,7 +2226,7 @@ export default function VendorPortalPage() {
                       padding: '12px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
@@ -1988,7 +2243,7 @@ export default function VendorPortalPage() {
                       padding: '12px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
@@ -2044,7 +2299,7 @@ export default function VendorPortalPage() {
                         <span
                           style={{
                             color: 'white',
-                            fontSize: '0.9rem',
+                            fontSize: isMobile ? '1rem' : '0.9rem',
                             fontWeight: '500',
                           }}
                         >
@@ -2159,7 +2414,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Company Name:
@@ -2172,7 +2427,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Shipper ID:
@@ -2185,7 +2440,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Member Since:
@@ -2242,7 +2497,7 @@ export default function VendorPortalPage() {
                         <span
                           style={{
                             color: 'white',
-                            fontSize: '0.9rem',
+                            fontSize: isMobile ? '1rem' : '0.9rem',
                             fontWeight: '500',
                           }}
                         >
@@ -2309,10 +2564,10 @@ export default function VendorPortalPage() {
                     background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                     border: 'none',
                     borderRadius: '8px',
-                    padding: '12px 20px',
+                    padding: isMobile ? '16px 20px' : '12px 20px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                   }}
                 >
@@ -2428,7 +2683,7 @@ export default function VendorPortalPage() {
                         border: '1px solid rgba(255, 255, 255, 0.3)',
                         background: 'rgba(255, 255, 255, 0.1)',
                         color: 'white',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     />
                   </div>
@@ -2453,7 +2708,7 @@ export default function VendorPortalPage() {
                         border: '1px solid rgba(255, 255, 255, 0.3)',
                         background: 'rgba(255, 255, 255, 0.1)',
                         color: 'white',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     />
                   </div>
@@ -2486,7 +2741,7 @@ export default function VendorPortalPage() {
                           border: '1px solid rgba(255, 255, 255, 0.3)',
                           background: 'rgba(255, 255, 255, 0.1)',
                           color: 'white',
-                          fontSize: '0.9rem',
+                          fontSize: isMobile ? '1rem' : '0.9rem',
                         }}
                       />
                     </div>
@@ -2508,7 +2763,7 @@ export default function VendorPortalPage() {
                           border: '1px solid rgba(255, 255, 255, 0.3)',
                           background: 'rgba(255, 255, 255, 0.1)',
                           color: 'white',
-                          fontSize: '0.9rem',
+                          fontSize: isMobile ? '1rem' : '0.9rem',
                         }}
                       >
                         <option value='dry-van'>Dry Van</option>
@@ -2538,7 +2793,7 @@ export default function VendorPortalPage() {
                         border: '1px solid rgba(255, 255, 255, 0.3)',
                         background: 'rgba(255, 255, 255, 0.1)',
                         color: 'white',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     />
                   </div>
@@ -2723,7 +2978,7 @@ export default function VendorPortalPage() {
                         <div
                           style={{
                             color: '#34d399',
-                            fontSize: '0.9rem',
+                            fontSize: isMobile ? '1rem' : '0.9rem',
                             fontWeight: '500',
                           }}
                         >
@@ -2818,7 +3073,7 @@ export default function VendorPortalPage() {
                         <div
                           style={{
                             color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '0.9rem',
+                            fontSize: isMobile ? '1rem' : '0.9rem',
                           }}
                         >
                           {request.driver
@@ -2909,6 +3164,92 @@ export default function VendorPortalPage() {
                 analytics
               </p>
             </div>
+            {/* Real-Time Data Integration Status */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+              borderRadius: '16px',
+              padding: '20px',
+              marginBottom: '24px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              position: 'relative'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ 
+                    color: '#10b981', 
+                    fontSize: '1.2rem', 
+                    fontWeight: '700',
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      background: '#10b981',
+                      animation: 'pulse 2s infinite'
+                    }} />
+                    🔄 Live FleetFlow Integration
+                  </h3>
+                  <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0, fontSize: '0.9rem' }}>
+                    Connected to real FleetFlow services • Updates every 30 seconds
+                  </p>
+                </div>
+                <div style={{ 
+                  fontSize: '0.75rem', 
+                  color: '#10b981',
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  padding: '4px 8px',
+                  borderRadius: '12px',
+                  fontWeight: '600'
+                }}>
+                  {new Date().toLocaleTimeString()}
+                </div>
+              </div>
+              
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+                gap: '12px',
+                marginTop: '16px'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    {realTimeLoads.length}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Live Loads
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    {realFinancialData ? `$${Math.round(realFinancialData.totalRevenue / 1000)}K` : '---'}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Revenue
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    {realFinancialData?.invoices.length || '---'}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Invoices
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: realFinancialData?.paymentStatus === 'current' ? '#10b981' : '#fbbf24' }}>
+                    {realFinancialData?.paymentStatus === 'current' ? '✅' : '⚠️'}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Square API
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Financial KPI Cards */}
             <div
               style={{
@@ -2952,7 +3293,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#10b981',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -2995,7 +3336,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#3b82f6',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -3037,7 +3378,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#f59e0b',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -3105,7 +3446,7 @@ export default function VendorPortalPage() {
                               : invoice.status === 'pending'
                                 ? '#f59e0b'
                                 : '#10b981',
-                          fontSize: '0.9rem',
+                          fontSize: isMobile ? '1rem' : '0.9rem',
                           fontWeight: '600',
                           textTransform: 'uppercase',
                         }}
@@ -3116,7 +3457,7 @@ export default function VendorPortalPage() {
                     <div
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                         marginBottom: '4px',
                       }}
                     >
@@ -3205,7 +3546,7 @@ export default function VendorPortalPage() {
                       <span
                         style={{
                           color: '#10b981',
-                          fontSize: '0.9rem',
+                          fontSize: isMobile ? '1rem' : '0.9rem',
                           fontWeight: '600',
                         }}
                       >
@@ -3215,7 +3556,7 @@ export default function VendorPortalPage() {
                     <div
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                         marginBottom: '4px',
                       }}
                     >
@@ -3345,7 +3686,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#6366f1',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -3387,7 +3728,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#10b981',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -3429,7 +3770,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: '#f59e0b',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '500',
                   }}
                 >
@@ -3489,7 +3830,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Average Distance
@@ -3516,7 +3857,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Average Transit Time
@@ -3543,7 +3884,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Customer Satisfaction
@@ -3603,7 +3944,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: '#10b981',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                         fontWeight: '600',
                       }}
                     >
@@ -3613,7 +3954,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       marginBottom: '4px',
                     }}
                   >
@@ -3657,7 +3998,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: '#f59e0b',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                         fontWeight: '600',
                       }}
                     >
@@ -3667,7 +4008,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       marginBottom: '4px',
                     }}
                   >
@@ -3786,7 +4127,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     marginBottom: '8px',
                   }}
                 >
@@ -3843,7 +4184,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     marginBottom: '8px',
                   }}
                 >
@@ -3900,7 +4241,7 @@ export default function VendorPortalPage() {
                 <div
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     marginBottom: '8px',
                   }}
                 >
@@ -3956,7 +4297,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -3973,7 +4314,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -3990,7 +4331,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -4007,7 +4348,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -4233,7 +4574,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Email notifications
@@ -4258,7 +4599,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       SMS alerts
@@ -4281,7 +4622,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Push notifications
@@ -4326,7 +4667,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Real-time updates
@@ -4351,7 +4692,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Auto-refresh data
@@ -4374,7 +4715,7 @@ export default function VendorPortalPage() {
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       Dark mode only
@@ -4435,7 +4776,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       marginBottom: '12px',
                     }}
                   >
@@ -4449,7 +4790,7 @@ export default function VendorPortalPage() {
                       padding: '8px 16px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                     }}
                   >
@@ -4478,7 +4819,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       marginBottom: '12px',
                     }}
                   >
@@ -4492,7 +4833,7 @@ export default function VendorPortalPage() {
                       padding: '8px 16px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                     }}
                   >
@@ -4539,7 +4880,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -4556,7 +4897,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -4573,7 +4914,7 @@ export default function VendorPortalPage() {
                     padding: '16px',
                     color: 'white',
                     cursor: 'pointer',
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '1rem' : '0.9rem',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
@@ -4654,7 +4995,7 @@ export default function VendorPortalPage() {
                       padding: '10px 16px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                     }}
                   >
@@ -4668,7 +5009,7 @@ export default function VendorPortalPage() {
                       padding: '10px 16px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                     }}
                   >
@@ -4913,7 +5254,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Total Inventory Items
@@ -4955,7 +5296,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Active Picking Orders
@@ -4997,7 +5338,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Labeling in Progress
@@ -5035,7 +5376,7 @@ export default function VendorPortalPage() {
                   <div
                     style={{
                       color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                     }}
                   >
                     Order Accuracy Rate
@@ -5070,7 +5411,7 @@ export default function VendorPortalPage() {
                       padding: '8px 16px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '1rem' : '0.9rem',
                       fontWeight: '600',
                     }}
                   >
@@ -5252,7 +5593,7 @@ export default function VendorPortalPage() {
                             <p
                               style={{
                                 color: 'rgba(255, 255, 255, 0.8)',
-                                fontSize: '0.9rem',
+                                fontSize: isMobile ? '1rem' : '0.9rem',
                                 margin: 0,
                               }}
                             >
@@ -5299,7 +5640,7 @@ export default function VendorPortalPage() {
                               <div
                                 style={{
                                   color: 'white',
-                                  fontSize: '0.9rem',
+                                  fontSize: isMobile ? '1rem' : '0.9rem',
                                   fontWeight: '600',
                                   marginBottom: '4px',
                                 }}
@@ -5426,7 +5767,7 @@ export default function VendorPortalPage() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       <span>Picking Efficiency</span>
@@ -5439,7 +5780,7 @@ export default function VendorPortalPage() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       <span>Order Accuracy</span>
@@ -5452,7 +5793,7 @@ export default function VendorPortalPage() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       <span>Labeling Speed</span>
@@ -5465,7 +5806,7 @@ export default function VendorPortalPage() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       <span>Space Utilization</span>
@@ -5727,7 +6068,7 @@ export default function VendorPortalPage() {
                     <div
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
+                        fontSize: isMobile ? '1rem' : '0.9rem',
                       }}
                     >
                       📱 {shipment.receiverPhone} | 📧 {shipment.receiverEmail}
