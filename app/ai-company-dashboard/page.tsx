@@ -1066,9 +1066,226 @@ export default function AICompanyDashboard() {
         )}
 
         {activeTab === 'operations' && (
-          <div className='text-center text-white'>
-            <h3 className='text-2xl font-bold mb-4'>⚡ Operations Center</h3>
-            <p>Live Workflow Management - Coming Next!</p>
+          <div className='space-y-8'>
+            
+            {/* Live Operations Dashboard */}
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+              <h3 className='mb-6 text-2xl font-bold text-white'>
+                ⚡ Operations Command Center - Live System Status
+              </h3>
+              
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-4'>
+                {/* Active Loads Monitor */}
+                <div className='rounded-lg border border-blue-500/20 bg-blue-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-blue-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-blue-400'>Active Loads</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>23</div>
+                  <div className='space-y-2'>
+                    <div className='text-sm text-blue-400'>• 18 in-transit</div>
+                    <div className='text-sm text-blue-400'>• 3 at pickup</div>
+                    <div className='text-sm text-blue-400'>• 2 at delivery</div>
+                    <div className='text-sm text-green-400'>• 99.7% on-time</div>
+                  </div>
+                </div>
+
+                {/* Driver Status */}
+                <div className='rounded-lg border border-green-500/20 bg-green-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-green-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-green-400'>Driver Fleet</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>87</div>
+                  <div className='space-y-2'>
+                    <div className='text-sm text-green-400'>• 45 active driving</div>
+                    <div className='text-sm text-yellow-400'>• 23 on break/rest</div>
+                    <div className='text-sm text-blue-400'>• 12 available</div>
+                    <div className='text-sm text-gray-400'>• 7 off duty</div>
+                  </div>
+                </div>
+
+                {/* Carrier Network */}
+                <div className='rounded-lg border border-purple-500/20 bg-purple-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-purple-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-purple-400'>Carrier Network</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>156</div>
+                  <div className='space-y-2'>
+                    <div className='text-sm text-purple-400'>• 89 active carriers</div>
+                    <div className='text-sm text-green-400'>• 134 compliant</div>
+                    <div className='text-sm text-orange-400'>• 5 pending verification</div>
+                    <div className='text-sm text-blue-400'>• 98.4% reliability score</div>
+                  </div>
+                </div>
+
+                {/* Emergency Alerts */}
+                <div className='rounded-lg border border-red-500/20 bg-red-500/10 p-4'>
+                  <div className='mb-3 flex items-center gap-2'>
+                    <div className='h-3 w-3 rounded-full bg-red-500 animate-pulse'></div>
+                    <h4 className='font-semibold text-red-400'>System Alerts</h4>
+                  </div>
+                  <div className='text-3xl font-bold text-white mb-2'>2</div>
+                  <div className='space-y-2'>
+                    <div className='text-sm text-orange-400'>• Weather delay I-75</div>
+                    <div className='text-sm text-yellow-400'>• Maintenance due (3 units)</div>
+                    <div className='text-sm text-green-400'>• No critical issues</div>
+                    <div className='text-sm text-blue-400'>• 98.7% system health</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Workflow Management */}
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              
+              {/* Active Workflows */}
+              <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+                <h4 className='mb-4 text-xl font-bold text-white'>🔄 Live Workflow Status</h4>
+                
+                <div className='space-y-4'>
+                  {[
+                    { 
+                      workflow: 'Load Assignment & Dispatch', 
+                      stage: '3 of 5 - Driver Assignment', 
+                      progress: 60, 
+                      status: 'active',
+                      details: '8 loads matched, 5 drivers assigned, 3 pending',
+                      urgency: 'medium'
+                    },
+                    { 
+                      workflow: 'Carrier Onboarding Process', 
+                      stage: '2 of 5 - Document Verification', 
+                      progress: 40, 
+                      status: 'busy',
+                      details: '5 new carriers, FMCSA verification in progress',
+                      urgency: 'low'
+                    },
+                    { 
+                      workflow: 'Emergency Load Reallocation', 
+                      stage: '1 of 3 - Assessment Complete', 
+                      progress: 90, 
+                      status: 'critical',
+                      details: 'I-75 weather delay - 3 loads reassigned to alternate routes',
+                      urgency: 'high'
+                    },
+                    { 
+                      workflow: 'BOL Document Processing', 
+                      stage: '4 of 4 - Final Review', 
+                      progress: 95, 
+                      status: 'completing',
+                      details: '23 BOLs processed, 2 pending signatures',
+                      urgency: 'low'
+                    }
+                  ].map((workflow, idx) => (
+                    <div key={idx} className={`rounded-lg border-l-4 p-4 ${
+                      workflow.urgency === 'high' ? 'border-l-red-500 bg-red-500/10' :
+                      workflow.urgency === 'medium' ? 'border-l-orange-500 bg-orange-500/10' :
+                      'border-l-green-500 bg-green-500/10'
+                    }`}>
+                      <div className='flex items-center justify-between mb-2'>
+                        <h5 className='font-semibold text-white text-sm'>{workflow.workflow}</h5>
+                        <div className={`rounded px-2 py-1 text-xs font-medium ${
+                          workflow.urgency === 'high' ? 'bg-red-500/20 text-red-400' :
+                          workflow.urgency === 'medium' ? 'bg-orange-500/20 text-orange-400' :
+                          'bg-green-500/20 text-green-400'
+                        }`}>
+                          {workflow.urgency.toUpperCase()}
+                        </div>
+                      </div>
+                      
+                      <div className='mb-2 text-xs text-white/70'>{workflow.stage}</div>
+                      
+                      {/* Progress Bar */}
+                      <div className='mb-2 w-full bg-white/10 rounded-full h-2'>
+                        <div 
+                          className={`h-2 rounded-full ${
+                            workflow.urgency === 'high' ? 'bg-red-500' :
+                            workflow.urgency === 'medium' ? 'bg-orange-500' :
+                            'bg-green-500'
+                          }`}
+                          style={{ width: `${workflow.progress}%` }}
+                        ></div>
+                      </div>
+                      
+                      <div className='text-xs text-white/80'>{workflow.details}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* System Orchestrator Integration */}
+              <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+                <h4 className='mb-4 text-xl font-bold text-white'>🎯 AI System Orchestrator</h4>
+                
+                <div className='space-y-4'>
+                  {/* Orchestrator Status */}
+                  <div className='rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-4'>
+                    <div className='flex items-center gap-3 mb-3'>
+                      <div className='h-4 w-4 rounded-full bg-green-500 animate-pulse'></div>
+                      <div className='font-semibold text-green-400'>System Orchestrator: ACTIVE</div>
+                    </div>
+                    <div className='space-y-2 text-sm text-white/80'>
+                      <div>• Processing 47 concurrent workflows</div>
+                      <div>• 23 AI staff coordination tasks active</div>
+                      <div>• 8 predictive optimizations running</div>
+                      <div>• 99.2% uptime (last 30 days)</div>
+                    </div>
+                  </div>
+
+                  {/* AI Recommendations */}
+                  <div className='space-y-3'>
+                    <h5 className='font-medium text-white'>🤖 Live AI Recommendations</h5>
+                    
+                    {[
+                      { 
+                        title: 'Route Optimization Alert',
+                        message: 'I-95 corridor - suggest 3 alternate routes to avoid 2hr delays',
+                        action: 'Auto-reroute 5 affected loads',
+                        confidence: 94,
+                        type: 'optimization'
+                      },
+                      { 
+                        title: 'Capacity Prediction',
+                        message: 'High demand spike predicted for next 4 hours based on historical patterns',
+                        action: 'Activate 7 standby drivers',
+                        confidence: 87,
+                        type: 'prediction'
+                      },
+                      { 
+                        title: 'Cost Savings Opportunity', 
+                        message: 'Fuel price drop detected - recommend immediate procurement',
+                        action: 'Alert finance team for bulk purchase',
+                        confidence: 91,
+                        type: 'financial'
+                      }
+                    ].map((rec, idx) => (
+                      <div key={idx} className='rounded bg-white/5 p-3 border-l-2 border-l-blue-500'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div className='font-medium text-blue-400 text-sm'>{rec.title}</div>
+                          <div className='text-xs text-green-400'>{rec.confidence}% confidence</div>
+                        </div>
+                        <div className='text-xs text-white/80 mb-2'>{rec.message}</div>
+                        <div className='flex items-center gap-2'>
+                          <button className='rounded bg-blue-500/20 px-2 py-1 text-xs text-blue-400 hover:bg-blue-500/30 transition-colors'>
+                            {rec.action}
+                          </button>
+                          <div className={`text-xs ${
+                            rec.type === 'optimization' ? 'text-purple-400' :
+                            rec.type === 'prediction' ? 'text-orange-400' :
+                            'text-green-400'
+                          }`}>
+                            {rec.type}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 
