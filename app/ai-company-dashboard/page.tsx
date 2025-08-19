@@ -812,10 +812,254 @@ export default function AICompanyDashboard() {
               </div>
             </div>
 
-            {/* Placeholder for expanded staff directory */}
-            <div className='text-center text-white/70'>
-              <h4 className='text-lg font-semibold mb-2'>🗂️ Complete Staff Directory</h4>
-              <p>Detailed 87 AI staff members with individual performance metrics - expanding next...</p>
+            {/* Complete AI Staff Directory */}
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+              <h4 className='mb-6 text-xl font-bold text-white'>🗂️ Individual AI Staff Directory</h4>
+              
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+                
+                {/* Sales Department Staff */}
+                <div className='rounded-lg border border-green-500/20 bg-green-500/5 p-4'>
+                  <h5 className='mb-4 flex items-center gap-2 font-semibold text-green-400'>
+                    <div className='h-3 w-3 rounded-full bg-green-500 animate-pulse'></div>
+                    Sales Department (25 Staff) - $892.4K Revenue
+                  </h5>
+                  <div className='space-y-3'>
+                    {[
+                      { name: 'AI Revenue Optimizer', role: 'Revenue Director', revenue: 234500, efficiency: 98.9, status: 'active', task: 'Analyzing $2.3M pipeline - 12 high-conversion opportunities' },
+                      { name: 'AI Lead Generator Pro', role: 'Lead Generation Specialist', revenue: 189700, efficiency: 97.4, status: 'busy', task: 'Processing 450 ThomasNet prospects - 23 qualified leads' },
+                      { name: 'AI Contract Negotiator', role: 'Deal Closing Expert', revenue: 156800, efficiency: 96.8, status: 'active', task: 'Negotiating $125K Walmart contract - 87% close probability' },
+                      { name: 'AI Customer Acquisition', role: 'New Client Specialist', revenue: 134200, efficiency: 95.7, status: 'active', task: 'Converting 23 warm leads - $890K potential value' },
+                      { name: 'AI Pipeline Manager', role: 'Sales Pipeline Optimizer', revenue: 98500, efficiency: 94.3, status: 'busy', task: 'Optimizing Q1 funnel - 15% conversion improvement' },
+                      { name: 'AI Proposal Writer', role: 'RFx Response Expert', revenue: 78200, efficiency: 93.8, status: 'active', task: 'Generating 8 RFx responses - $2.1M total value' }
+                    ].map((staff, idx) => (
+                      <div key={idx} className='rounded bg-white/5 p-3 border-l-2 border-l-green-500/50'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div>
+                            <div className='font-medium text-white text-sm'>{staff.name}</div>
+                            <div className='text-xs text-green-400'>{staff.role}</div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-sm font-semibold text-green-400'>{formatCurrency(staff.revenue)}</div>
+                            <div className='text-xs text-white/70'>{staff.efficiency}%</div>
+                          </div>
+                        </div>
+                        <div className='text-xs text-white/80 mt-1'>{staff.task}</div>
+                      </div>
+                    ))}
+                    <div className='text-center text-xs text-green-400 bg-green-500/10 rounded p-2'>
+                      + 19 more Sales AI: Account Managers, Territory Specialists, Cold Outreach Experts
+                    </div>
+                  </div>
+                </div>
+
+                {/* Operations Department Staff */}  
+                <div className='rounded-lg border border-blue-500/20 bg-blue-500/5 p-4'>
+                  <h5 className='mb-4 flex items-center gap-2 font-semibold text-blue-400'>
+                    <div className='h-3 w-3 rounded-full bg-blue-500 animate-pulse'></div>
+                    Operations Department (30 Staff) - $634.2K Revenue
+                  </h5>
+                  <div className='space-y-3'>
+                    {[
+                      { name: 'AI Dispatch Commander', role: 'Operations Director', revenue: 156780, efficiency: 99.2, status: 'busy', task: 'Coordinating 23 active loads - 99.7% on-time delivery' },
+                      { name: 'AI Route Optimizer', role: 'Logistics Specialist', revenue: 98450, efficiency: 98.1, status: 'active', task: 'Saved 247 miles across 15 routes - $1.8K fuel savings' },
+                      { name: 'AI Load Coordinator', role: 'Load Management Expert', revenue: 145600, efficiency: 97.6, status: 'active', task: 'Matching 8 loads with carriers - optimal capacity utilization' },
+                      { name: 'AI Fleet Manager', role: 'Fleet Optimization Lead', revenue: 112300, efficiency: 97.8, status: 'active', task: 'Managing 87 vehicle statuses - 3 maintenance alerts resolved' },
+                      { name: 'AI Tracking Specialist', role: 'Real-time Monitoring', revenue: 89400, efficiency: 98.5, status: 'busy', task: 'Monitoring 23 live deliveries - all on schedule' },
+                      { name: 'AI Carrier Coordinator', role: 'Carrier Relations Manager', revenue: 67200, efficiency: 96.4, status: 'active', task: 'Onboarding 5 new carriers - FMCSA verification complete' }
+                    ].map((staff, idx) => (
+                      <div key={idx} className='rounded bg-white/5 p-3 border-l-2 border-l-blue-500/50'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div>
+                            <div className='font-medium text-white text-sm'>{staff.name}</div>
+                            <div className='text-xs text-blue-400'>{staff.role}</div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-sm font-semibold text-green-400'>{formatCurrency(staff.revenue)}</div>
+                            <div className='text-xs text-white/70'>{staff.efficiency}%</div>
+                          </div>
+                        </div>
+                        <div className='text-xs text-white/80 mt-1'>{staff.task}</div>
+                      </div>
+                    ))}
+                    <div className='text-center text-xs text-blue-400 bg-blue-500/10 rounded p-2'>
+                      + 24 more Operations AI: Dispatchers, Schedulers, Logistics Coordinators, Safety Monitors
+                    </div>
+                  </div>
+                </div>
+
+                {/* Finance & Other Departments */}
+                <div className='rounded-lg border border-purple-500/20 bg-purple-500/5 p-4'>
+                  <h5 className='mb-4 flex items-center gap-2 font-semibold text-purple-400'>
+                    <div className='h-3 w-3 rounded-full bg-purple-500 animate-pulse'></div>
+                    Finance Department (15 Staff) - $445.8K Revenue
+                  </h5>
+                  <div className='space-y-3'>
+                    {[
+                      { name: 'AI Financial Controller', role: 'Finance Director', revenue: 287400, efficiency: 99.1, status: 'active', task: 'Processing $456K invoices - 3 billing discrepancies detected' },
+                      { name: 'AI Billing Specialist', role: 'Invoice Management', revenue: 78200, efficiency: 98.7, status: 'busy', task: 'Auto-generating 34 invoices - $892K total value' },
+                      { name: 'AI Payment Processor', role: 'Collections Expert', revenue: 56800, efficiency: 97.9, status: 'active', task: 'Processing $234K payments - 98.7% collection rate' },
+                      { name: 'AI Budget Analyst', role: 'Financial Planning', revenue: 23400, efficiency: 96.8, status: 'active', task: 'Preparing 2025 budget - $2.1M revenue projection' }
+                    ].map((staff, idx) => (
+                      <div key={idx} className='rounded bg-white/5 p-3 border-l-2 border-l-purple-500/50'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div>
+                            <div className='font-medium text-white text-sm'>{staff.name}</div>
+                            <div className='text-xs text-purple-400'>{staff.role}</div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-sm font-semibold text-green-400'>{formatCurrency(staff.revenue)}</div>
+                            <div className='text-xs text-white/70'>{staff.efficiency}%</div>
+                          </div>
+                        </div>
+                        <div className='text-xs text-white/80 mt-1'>{staff.task}</div>
+                      </div>
+                    ))}
+                    <div className='text-center text-xs text-purple-400 bg-purple-500/10 rounded p-2'>
+                      + 11 more Finance AI: Accountants, Auditors, Tax Specialists, Cost Analysts
+                    </div>
+                  </div>
+                </div>
+
+                {/* Compliance & Customer Service Combined */}
+                <div className='rounded-lg border border-red-500/20 bg-red-500/5 p-4'>
+                  <h5 className='mb-4 flex items-center gap-2 font-semibold text-red-400'>
+                    <div className='h-3 w-3 rounded-full bg-red-500 animate-pulse'></div>
+                    Compliance (10) + Customer Service (7) - $402.3K Revenue
+                  </h5>
+                  <div className='space-y-3'>
+                    {/* Compliance Staff */}
+                    {[
+                      { name: 'AI Compliance Monitor', role: 'Compliance Director', revenue: 67800, efficiency: 99.5, status: 'active', task: 'FMCSA monitoring - all 87 drivers compliant', dept: 'Compliance' },
+                      { name: 'AI DOT Specialist', role: 'DOT Expert', revenue: 45600, efficiency: 98.9, status: 'active', task: 'Processing 15 DOT inspections - zero violations', dept: 'Compliance' },
+                      { name: 'AI Safety Manager', role: 'Safety Lead', revenue: 34800, efficiency: 99.1, status: 'busy', task: 'Analyzing safety data - 12% accident reduction', dept: 'Compliance' }
+                    ].map((staff, idx) => (
+                      <div key={idx} className='rounded bg-white/5 p-3 border-l-2 border-l-red-500/50'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div>
+                            <div className='font-medium text-white text-sm'>{staff.name}</div>
+                            <div className='text-xs text-red-400'>{staff.role} • {staff.dept}</div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-sm font-semibold text-green-400'>{formatCurrency(staff.revenue)}</div>
+                            <div className='text-xs text-white/70'>{staff.efficiency}%</div>
+                          </div>
+                        </div>
+                        <div className='text-xs text-white/80 mt-1'>{staff.task}</div>
+                      </div>
+                    ))}
+                    {/* Customer Service Staff */}
+                    {[
+                      { name: 'AI Support Director', role: 'Customer Success Lead', revenue: 78900, efficiency: 97.3, status: 'active', task: '24/7 support - 4.8/5 satisfaction rating', dept: 'Customer Service' },
+                      { name: 'AI Chat Assistant', role: 'Live Chat Expert', revenue: 56400, efficiency: 96.8, status: 'busy', task: 'Handling 145 live chats - 2min avg response', dept: 'Customer Service' }
+                    ].map((staff, idx) => (
+                      <div key={idx + 10} className='rounded bg-white/5 p-3 border-l-2 border-l-orange-500/50'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <div>
+                            <div className='font-medium text-white text-sm'>{staff.name}</div>
+                            <div className='text-xs text-orange-400'>{staff.role} • {staff.dept}</div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-sm font-semibold text-green-400'>{formatCurrency(staff.revenue)}</div>
+                            <div className='text-xs text-white/70'>{staff.efficiency}%</div>
+                          </div>
+                        </div>
+                        <div className='text-xs text-white/80 mt-1'>{staff.task}</div>
+                      </div>
+                    ))}
+                    <div className='text-center text-xs text-red-400 bg-red-500/10 rounded p-2 mb-2'>
+                      + 7 more Compliance AI: Auditors, Risk Analysts, Document Specialists
+                    </div>
+                    <div className='text-center text-xs text-orange-400 bg-orange-500/10 rounded p-2'>
+                      + 5 more Customer Service AI: Support Agents, Account Managers, Escalation Specialists
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* AI Performance Analytics Dashboard */}
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+              <h4 className='mb-6 text-xl font-bold text-white'>📊 AI Performance Analytics & Optimization</h4>
+              
+              <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+                
+                {/* Top Performers */}
+                <div className='rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-4 border border-green-500/20'>
+                  <h5 className='mb-4 font-semibold text-green-400'>🏆 Top Performers (99%+ Efficiency)</h5>
+                  <div className='space-y-2'>
+                    {[
+                      { name: 'AI Compliance Monitor', efficiency: 99.5, dept: 'Compliance', revenue: 67800 },
+                      { name: 'AI Dispatch Commander', efficiency: 99.2, dept: 'Operations', revenue: 156780 },
+                      { name: 'AI Financial Controller', efficiency: 99.1, dept: 'Finance', revenue: 287400 },
+                      { name: 'AI Safety Manager', efficiency: 99.1, dept: 'Compliance', revenue: 34800 }
+                    ].map((performer, idx) => (
+                      <div key={idx} className='flex items-center justify-between rounded bg-green-500/10 p-2 border-l-2 border-l-green-500'>
+                        <div>
+                          <div className='text-sm font-medium text-white'>{performer.name}</div>
+                          <div className='text-xs text-green-400'>{performer.dept} • {formatCurrency(performer.revenue)}</div>
+                        </div>
+                        <div className='font-bold text-green-400'>{performer.efficiency}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Revenue Leaders */}
+                <div className='rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-4 border border-blue-500/20'>
+                  <h5 className='mb-4 font-semibold text-blue-400'>💰 Revenue Leaders (Top 6)</h5>
+                  <div className='space-y-2'>
+                    {[
+                      { name: 'AI Financial Controller', revenue: 287400, dept: 'Finance', efficiency: 99.1 },
+                      { name: 'AI Revenue Optimizer', revenue: 234500, dept: 'Sales', efficiency: 98.9 },
+                      { name: 'AI Lead Generator Pro', revenue: 189700, dept: 'Sales', efficiency: 97.4 },
+                      { name: 'AI Contract Negotiator', revenue: 156800, dept: 'Sales', efficiency: 96.8 },
+                      { name: 'AI Dispatch Commander', revenue: 156780, dept: 'Operations', efficiency: 99.2 },
+                      { name: 'AI Load Coordinator', revenue: 145600, dept: 'Operations', efficiency: 97.6 }
+                    ].map((leader, idx) => (
+                      <div key={idx} className='flex items-center justify-between rounded bg-blue-500/10 p-2 border-l-2 border-l-blue-500'>
+                        <div>
+                          <div className='text-sm font-medium text-white'>{leader.name}</div>
+                          <div className='text-xs text-blue-400'>{leader.dept} • {leader.efficiency}%</div>
+                        </div>
+                        <div className='font-bold text-green-400'>{formatCurrency(leader.revenue)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Optimization Recommendations */}
+                <div className='rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-4 border border-purple-500/20'>
+                  <h5 className='mb-4 font-semibold text-purple-400'>🚀 Executive AI Optimization</h5>
+                  <div className='space-y-3'>
+                    <div className='rounded bg-white/10 p-3 border-l-2 border-l-purple-500'>
+                      <div className='text-sm font-medium text-white mb-1'>Scale Top Performers</div>
+                      <div className='text-xs text-white/70 mb-2'>Deploy 5 more AI staff based on Compliance Monitor model</div>
+                      <div className='text-xs text-green-400'>Projected: +$340K revenue, 99%+ efficiency</div>
+                    </div>
+                    
+                    <div className='rounded bg-white/10 p-3 border-l-2 border-l-blue-500'>
+                      <div className='text-sm font-medium text-white mb-1'>Cross-Department Training</div>
+                      <div className='text-xs text-white/70 mb-2'>Train Sales AI with Operations optimization skills</div>
+                      <div className='text-xs text-blue-400'>Projected: 15% efficiency boost across departments</div>
+                    </div>
+                    
+                    <div className='rounded bg-white/10 p-3 border-l-2 border-l-green-500'>
+                      <div className='text-sm font-medium text-white mb-1'>Revenue Multiplier Strategy</div>
+                      <div className='text-xs text-white/70 mb-2'>Clone top 3 revenue performers for new territories</div>
+                      <div className='text-xs text-green-400'>Projected: +$890K additional revenue stream</div>
+                    </div>
+                    
+                    <div className='rounded bg-white/10 p-3 border-l-2 border-l-orange-500'>
+                      <div className='text-sm font-medium text-white mb-1'>24/7 Operations Expansion</div>
+                      <div className='text-xs text-white/70 mb-2'>Deploy night shift AI staff for global operations</div>
+                      <div className='text-xs text-orange-400'>Projected: 40% capacity increase, $1.2M revenue</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
           </div>
