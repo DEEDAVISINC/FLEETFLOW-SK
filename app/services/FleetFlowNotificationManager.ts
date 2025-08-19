@@ -1,6 +1,5 @@
 'use client';
 
-import { ReceiverNotificationService } from './ReceiverNotificationService';
 import { getMainDashboardLoads } from './loadService';
 import { FleetFlowSystemOrchestrator } from './system-orchestrator';
 
@@ -122,8 +121,8 @@ export class FleetFlowNotificationManager {
     this.initializeWebSocket();
     this.initializeDefaultPreferences();
 
-    // Auto-sync with FleetFlow services every 30 seconds
-    setInterval(() => this.syncWithFleetFlowServices(), 30000);
+    // TEMPORARILY DISABLE auto-sync to prevent console spam and page rendering issues
+    // setInterval(() => this.syncWithFleetFlowServices(), 30000);
 
     console.log('✅ FleetFlowNotificationManager initialized');
   }
@@ -329,17 +328,23 @@ export class FleetFlowNotificationManager {
       try {
         // SMS Channel (using console for now - will be connected to SMS service)
         if (channels.sms && notification.channels.sms) {
-          console.log(`📱 SMS to ${target}: 🚨 FleetFlow: ${notification.title}\n${notification.message.substring(0, 140)}...`);
+          console.log(
+            `📱 SMS to ${target}: 🚨 FleetFlow: ${notification.title}\n${notification.message.substring(0, 140)}...`
+          );
         }
 
         // Email Channel (using console for now - will be connected to email service)
         if (channels.email && notification.channels.email) {
-          console.log(`📧 Email to ${target}: FleetFlow Alert: ${notification.title}`);
-          console.log(`Email Content: ${this.generateEmailTemplate(notification)}`);
+          console.log(
+            `📧 Email to ${target}: FleetFlow Alert: ${notification.title}`
+          );
+          console.log(
+            `Email Content: ${this.generateEmailTemplate(notification)}`
+          );
         }
 
         // Reduced logging for production
-      // console.log(`📤 Notification sent to ${target} via enabled channels`);
+        // console.log(`📤 Notification sent to ${target} via enabled channels`);
       } catch (error) {
         console.error(`❌ Failed to send notification to ${target}:`, error);
       }
@@ -473,7 +478,8 @@ export class FleetFlowNotificationManager {
     const highValueLoads = loads.filter(
       (load) =>
         load.status === 'Available' &&
-        parseFloat(String(load.rate || '0').replace(/[^0-9.]/g, '') || '0') > 2000
+        parseFloat(String(load.rate || '0').replace(/[^0-9.]/g, '') || '0') >
+          2000
     );
 
     for (const load of highValueLoads) {
@@ -486,7 +492,9 @@ export class FleetFlowNotificationManager {
         targetPortals: ['driver', 'dispatch'],
         metadata: {
           loadId: load.id,
-          loadValue: parseFloat(String(load.rate || '0').replace(/[^0-9.]/g, '') || '0'),
+          loadValue: parseFloat(
+            String(load.rate || '0').replace(/[^0-9.]/g, '') || '0'
+          ),
           actionRequired: true,
         },
         actions: [
@@ -836,4 +844,3 @@ export class FleetFlowNotificationManager {
 export const fleetFlowNotificationManager =
   FleetFlowNotificationManager.getInstance();
 export default fleetFlowNotificationManager;
-
