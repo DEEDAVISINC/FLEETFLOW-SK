@@ -1,4 +1,5 @@
-import * as cron from 'node-cron';
+// Conditional import for server-side only
+const cron = typeof window === 'undefined' ? require('node-cron') : null;
 import { fleetAI } from './ai';
 import { smsService } from './sms';
 import { sendInvoiceEmail } from './email';
@@ -24,15 +25,25 @@ export class AIAutomationEngine {
     console.log('🤖 AI Automation Engine initialized');
   }
 
-  // Start all automation tasks
+  // Start all automation tasks (server-side only)
   start() {
+    if (typeof window !== 'undefined') {
+      console.log('⏭️ Automation engine runs server-side only, skipping client-side start');
+      return;
+    }
+
     if (this.isRunning) {
       console.log('⚠️ Automation engine already running');
       return;
     }
 
+    if (!cron) {
+      console.log('⚠️ node-cron not available, automation engine disabled');
+      return;
+    }
+
     this.isRunning = true;
-    console.log('🚀 Starting AI Automation Engine...');
+    console.log('🚀 Starting AI Automation Engine (Server-Side)...');
 
     // Schedule predictive maintenance checks (daily at 6 AM)
     this.scheduleTask('predictive-maintenance', '0 6 * * *', () => {
@@ -97,16 +108,23 @@ export class AIAutomationEngine {
     console.log('✅ All AI automation tasks scheduled');
   }
 
-  // Stop all automation tasks
+  // Stop all automation tasks (server-side only)
   stop() {
+    if (typeof window !== 'undefined') {
+      console.log('⏭️ Automation engine runs server-side only, skipping client-side stop');
+      return;
+    }
+
     if (!this.isRunning) {
       console.log('⚠️ Automation engine not running');
       return;
     }
 
     this.tasks.forEach((task, name) => {
-      task.stop();
-      console.log(`🛑 Stopped task: ${name}`);
+      if (task && task.stop) {
+        task.stop();
+        console.log(`🛑 Stopped task: ${name}`);
+      }
     });
 
     this.tasks.clear();
@@ -117,12 +135,17 @@ export class AIAutomationEngine {
   // Schedule a new automation task
   private scheduleTask(name: string, schedule: string, callback: () => void) {
     try {
-      const task = cron.schedule(schedule, callback, {
-        timezone: "America/New_York"
-      });
+      // Only schedule tasks on server-side (Node.js environment)
+      if (typeof window === 'undefined' && cron) {
+        const task = cron.schedule(schedule, callback, {
+          timezone: "America/New_York"
+        });
 
-      this.tasks.set(name, task);
-      console.log(`📅 Scheduled task: ${name} (${schedule})`);
+        this.tasks.set(name, task);
+        console.log(`📅 Scheduled task: ${name} (${schedule})`);
+      } else {
+        console.log(`⏭️ Skipping client-side scheduling for: ${name}`);
+      }
     } catch (error) {
       console.error(`❌ Failed to schedule task ${name}:`, error);
     }

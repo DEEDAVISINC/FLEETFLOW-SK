@@ -3,14 +3,13 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
-import fleetFlowNotificationManager from '../services/FleetFlowNotificationManager';
 import { MultiTenantSquareService } from '../services/MultiTenantSquareService';
 import ReceiverNotificationService from '../services/ReceiverNotificationService';
 import {
-  Load,
-  getMainDashboardLoads,
-  getShipperDashboardSummary,
-  getShipperLoads,
+    Load,
+    getMainDashboardLoads,
+    getShipperDashboardSummary,
+    getShipperLoads,
 } from '../services/loadService';
 import { calculateFinancialMetrics } from '../services/settlementService';
 
@@ -1388,7 +1387,7 @@ export default function VendorPortalPage() {
           }}
         >
           {/* Unified Notification Bell */}
-          <UnifiedNotificationBell 
+          <UnifiedNotificationBell
             userId={session?.shipperId || 'vendor-demo'}
             portal="vendor"
             position="navigation"
@@ -1855,7 +1854,7 @@ export default function VendorPortalPage() {
         {isMobile && (
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        style={{
+            style={{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12px',
