@@ -776,11 +776,48 @@ export default function AICompanyDashboard() {
           </div>
         )}
 
-        {/* Placeholder for other tabs */}
+        {/* AI Staff Management Tab */}
         {activeTab === 'staff' && (
-          <div className='text-center text-white'>
-            <h3 className='text-2xl font-bold mb-4'>👥 AI Staff Management</h3>
-            <p>Full 87 AI Staff Dashboard - Coming Next!</p>
+          <div className='space-y-8'>
+            
+            {/* Department Performance Overview */}
+            <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md'>
+              <h3 className='mb-6 text-2xl font-bold text-white'>
+                👥 AI Workforce Management - 87 Staff Members
+              </h3>
+              
+              <div className='grid grid-cols-1 gap-4 lg:grid-cols-6'>
+                {[
+                  { dept: 'Sales', count: 25, revenue: 892400, efficiency: 96.8, color: 'bg-green-500' },
+                  { dept: 'Operations', count: 30, revenue: 634200, efficiency: 98.1, color: 'bg-blue-500' },
+                  { dept: 'Finance', count: 15, revenue: 445800, efficiency: 99.2, color: 'bg-purple-500' },
+                  { dept: 'Compliance', count: 10, revenue: 234500, efficiency: 99.5, color: 'bg-red-500' },
+                  { dept: 'Customer Service', count: 7, revenue: 167800, efficiency: 97.3, color: 'bg-orange-500' },
+                ].map((dept, index) => (
+                  <div key={index} className='rounded-lg border border-white/20 bg-white/5 p-4'>
+                    <div className='mb-3 flex items-center gap-2'>
+                      <div className={`h-3 w-3 rounded-full ${dept.color} animate-pulse`}></div>
+                      <h4 className='font-semibold text-white'>{dept.dept}</h4>
+                    </div>
+                    <div className='space-y-2'>
+                      <div className='text-2xl font-bold text-white'>{dept.count}</div>
+                      <div className='text-sm text-white/70'>Staff Members</div>
+                      <div className='text-lg font-semibold text-green-400'>
+                        {formatCurrency(dept.revenue)}
+                      </div>
+                      <div className='text-sm text-blue-400'>{dept.efficiency}% efficiency</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Placeholder for expanded staff directory */}
+            <div className='text-center text-white/70'>
+              <h4 className='text-lg font-semibold mb-2'>🗂️ Complete Staff Directory</h4>
+              <p>Detailed 87 AI staff members with individual performance metrics - expanding next...</p>
+            </div>
+
           </div>
         )}
 
