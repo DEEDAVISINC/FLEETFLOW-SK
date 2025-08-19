@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
+import fleetFlowNotificationManager from '../services/FleetFlowNotificationManager';
 import { MultiTenantSquareService } from '../services/MultiTenantSquareService';
 import ReceiverNotificationService from '../services/ReceiverNotificationService';
 import {
@@ -270,14 +272,14 @@ export default function VendorPortalPage() {
     customFilters: {
       timeRange: 'business_hours', // anytime, business_hours, urgent_only
       loadValueThreshold: 1000, // Only notify for loads above this value
-      routePreferences: [] // Specific routes to prioritize
-    }
+      routePreferences: [], // Specific routes to prioritize
+    },
   });
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
   const [notificationStats, setNotificationStats] = useState({
     unread: 0,
     urgent: 0,
-    today: 0
+    today: 0,
   });
 
   // Analytics Data Processing Functions
@@ -411,7 +413,7 @@ export default function VendorPortalPage() {
     const now = new Date();
 
     // 1. Delivery ETA Updates (High Priority)
-    realTimeLoads.forEach(load => {
+    realTimeLoads.forEach((load) => {
       if (load.status === 'In Transit' && Math.random() > 0.7) {
         notifications.push({
           id: `eta-${load.id}`,
@@ -419,10 +421,12 @@ export default function VendorPortalPage() {
           priority: 'high',
           title: '🚛 Delivery ETA Update',
           message: `Load ${load.id} ETA updated: ${load.destination} by 3:30 PM`,
-          timestamp: new Date(now.getTime() - Math.random() * 60000).toISOString(),
+          timestamp: new Date(
+            now.getTime() - Math.random() * 60000
+          ).toISOString(),
           loadId: load.id,
           actionRequired: false,
-          channels: ['sms', 'email', 'inApp']
+          channels: ['sms', 'email', 'inApp'],
         });
       }
     });
@@ -430,17 +434,20 @@ export default function VendorPortalPage() {
     // 2. Payment Notifications (Critical Priority)
     if (realFinancialData?.invoices?.length > 0) {
       realFinancialData.invoices.forEach((invoice: any, index: number) => {
-        if (index < 2) { // Only show recent payment notifications
+        if (index < 2) {
+          // Only show recent payment notifications
           notifications.push({
             id: `payment-${invoice.id || index}`,
             type: 'payment_notification',
             priority: 'critical',
             title: '💰 Payment Processing',
             message: `Invoice ${invoice.id || `INV-${index + 1}`} processed via Square - $${Math.round(Math.random() * 5000 + 1000).toLocaleString()}`,
-            timestamp: new Date(now.getTime() - Math.random() * 3600000).toISOString(),
+            timestamp: new Date(
+              now.getTime() - Math.random() * 3600000
+            ).toISOString(),
             invoiceId: invoice.id,
             actionRequired: false,
-            channels: ['email', 'inApp']
+            channels: ['email', 'inApp'],
           });
         }
       });
@@ -454,10 +461,12 @@ export default function VendorPortalPage() {
         priority: 'normal',
         title: '📦 Inventory Status',
         message: `Warehouse Zone A-3: Low stock alert - 15% capacity remaining`,
-        timestamp: new Date(now.getTime() - Math.random() * 1800000).toISOString(),
+        timestamp: new Date(
+          now.getTime() - Math.random() * 1800000
+        ).toISOString(),
         warehouseId: 'WH-001',
         actionRequired: true,
-        channels: ['inApp']
+        channels: ['inApp'],
       });
     }
 
@@ -469,10 +478,12 @@ export default function VendorPortalPage() {
         priority: 'urgent',
         title: '🌩️ Weather Alert',
         message: `Severe weather warning affecting Route I-75 corridor. 3 active shipments may be delayed.`,
-        timestamp: new Date(now.getTime() - Math.random() * 900000).toISOString(),
+        timestamp: new Date(
+          now.getTime() - Math.random() * 900000
+        ).toISOString(),
         routeId: 'I-75',
         actionRequired: true,
-        channels: ['sms', 'email', 'inApp']
+        channels: ['sms', 'email', 'inApp'],
       });
     }
 
@@ -484,40 +495,68 @@ export default function VendorPortalPage() {
         priority: 'high',
         title: '🎯 Premium Load Available',
         message: `High-value load: ${realTimeLoads[0]?.origin || 'Atlanta'} to ${realTimeLoads[0]?.destination || 'Miami'} - $${Math.round(Math.random() * 3000 + 2000).toLocaleString()}`,
-        timestamp: new Date(now.getTime() - Math.random() * 600000).toISOString(),
+        timestamp: new Date(
+          now.getTime() - Math.random() * 600000
+        ).toISOString(),
         loadId: realTimeLoads[0]?.id,
         actionRequired: true,
-        channels: ['sms', 'inApp']
+        channels: ['sms', 'inApp'],
       });
     }
 
     // Filter by preferences
     return notifications
-      .filter(notif => {
+      .filter((notif) => {
         // Priority filtering
         const priorityLevels = ['low', 'normal', 'high', 'urgent', 'critical'];
-        const userMinPriority = priorityLevels.indexOf(notificationPreferences.priorityLevel);
+        const userMinPriority = priorityLevels.indexOf(
+          notificationPreferences.priorityLevel
+        );
         const notifPriority = priorityLevels.indexOf(notif.priority);
-        
+
         if (notifPriority < userMinPriority) return false;
 
         // Type filtering based on preferences
-        if (notif.type === 'delivery_update' && !notificationPreferences.deliveryUpdates) return false;
-        if (notif.type === 'payment_notification' && !notificationPreferences.paymentNotifications) return false;
-        if (notif.type === 'emergency_alert' && !notificationPreferences.emergencyAlerts) return false;
-        if (notif.type === 'warehouse_alert' && !notificationPreferences.warehouseAlerts) return false;
+        if (
+          notif.type === 'delivery_update' &&
+          !notificationPreferences.deliveryUpdates
+        )
+          return false;
+        if (
+          notif.type === 'payment_notification' &&
+          !notificationPreferences.paymentNotifications
+        )
+          return false;
+        if (
+          notif.type === 'emergency_alert' &&
+          !notificationPreferences.emergencyAlerts
+        )
+          return false;
+        if (
+          notif.type === 'warehouse_alert' &&
+          !notificationPreferences.warehouseAlerts
+        )
+          return false;
 
         return true;
       })
       .sort((a, b) => {
         // Sort by priority, then by timestamp
-        const priorityOrder: Record<string, number> = { critical: 5, urgent: 4, high: 3, normal: 2, low: 1 };
+        const priorityOrder: Record<string, number> = {
+          critical: 5,
+          urgent: 4,
+          high: 3,
+          normal: 2,
+          low: 1,
+        };
         const aPriority = priorityOrder[a.priority] || 1;
         const bPriority = priorityOrder[b.priority] || 1;
         if (aPriority !== bPriority) {
           return bPriority - aPriority;
         }
-        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        return (
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
       });
   }, [realTimeLoads, realFinancialData, notificationPreferences, session]);
 
@@ -525,15 +564,19 @@ export default function VendorPortalPage() {
   useEffect(() => {
     const notifications = generateSmartNotifications;
     setVendorNotifications(notifications);
-    
+
     // Update notification stats
     const now = new Date();
     const today = now.toDateString();
-    
+
     setNotificationStats({
-      unread: notifications.filter(n => !n.read).length,
-      urgent: notifications.filter(n => ['urgent', 'critical'].includes(n.priority)).length,
-      today: notifications.filter(n => new Date(n.timestamp).toDateString() === today).length
+      unread: notifications.filter((n) => !n.read).length,
+      urgent: notifications.filter((n) =>
+        ['urgent', 'critical'].includes(n.priority)
+      ).length,
+      today: notifications.filter(
+        (n) => new Date(n.timestamp).toDateString() === today
+      ).length,
     });
   }, [generateSmartNotifications]);
 
@@ -1344,17 +1387,28 @@ export default function VendorPortalPage() {
             gap: '12px',
           }}
         >
-          {/* Smart Notification Center */}
-          <div style={{ position: 'relative' }}>
+          {/* Unified Notification Bell */}
+          <UnifiedNotificationBell 
+            userId={session?.shipperId || 'vendor-demo'}
+            portal="vendor"
+            position="navigation"
+            size="md"
+            theme="dark"
+            showBadge={true}
+            showDropdown={true}
+            maxNotifications={20}
+          />
             <button
               onClick={() => setShowNotificationCenter(!showNotificationCenter)}
               style={{
-                background: notificationStats.urgent > 0 
-                  ? 'rgba(239, 68, 68, 0.2)' 
-                  : 'rgba(255, 255, 255, 0.1)',
-                border: notificationStats.urgent > 0 
-                  ? '1px solid rgba(239, 68, 68, 0.3)' 
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+                background:
+                  notificationStats.urgent > 0
+                    ? 'rgba(239, 68, 68, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  notificationStats.urgent > 0
+                    ? '1px solid rgba(239, 68, 68, 0.3)'
+                    : '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '12px',
                 padding: '12px',
                 cursor: 'pointer',
@@ -1362,58 +1416,71 @@ export default function VendorPortalPage() {
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '8px',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = notificationStats.urgent > 0 
-                  ? 'rgba(239, 68, 68, 0.3)' 
-                  : 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.background =
+                  notificationStats.urgent > 0
+                    ? 'rgba(239, 68, 68, 0.3)'
+                    : 'rgba(255, 255, 255, 0.15)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = notificationStats.urgent > 0 
-                  ? 'rgba(239, 68, 68, 0.2)' 
-                  : 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.background =
+                  notificationStats.urgent > 0
+                    ? 'rgba(239, 68, 68, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               {/* Notification Icon */}
-              <div style={{ 
-                fontSize: '1.2rem', 
-                color: notificationStats.urgent > 0 ? '#ef4444' : 'white' 
-              }}>
+              <div
+                style={{
+                  fontSize: '1.2rem',
+                  color: notificationStats.urgent > 0 ? '#ef4444' : 'white',
+                }}
+              >
                 🔔
               </div>
-              
+
               {/* Badge Count */}
               {notificationStats.unread > 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-4px',
-                  right: '-4px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                  color: 'white',
-                  fontSize: '0.7rem',
-                  fontWeight: '700',
-                  minWidth: '18px',
-                  height: '18px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  animation: notificationStats.urgent > 0 ? 'pulse 2s infinite' : 'none'
-                }}>
-                  {notificationStats.unread > 99 ? '99+' : notificationStats.unread}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-4px',
+                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    color: 'white',
+                    fontSize: '0.7rem',
+                    fontWeight: '700',
+                    minWidth: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    animation:
+                      notificationStats.urgent > 0
+                        ? 'pulse 2s infinite'
+                        : 'none',
+                  }}
+                >
+                  {notificationStats.unread > 99
+                    ? '99+'
+                    : notificationStats.unread}
                 </div>
               )}
-              
+
               {/* Mobile label */}
               {!isMobile && (
-                <span style={{ 
-                  color: notificationStats.urgent > 0 ? '#ef4444' : 'white', 
-                  fontSize: '0.9rem', 
-                  fontWeight: '600' 
-                }}>
+                <span
+                  style={{
+                    color: notificationStats.urgent > 0 ? '#ef4444' : 'white',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                  }}
+                >
                   {notificationStats.urgent > 0 ? 'URGENT' : 'Notifications'}
                 </span>
               )}
@@ -1421,48 +1488,57 @@ export default function VendorPortalPage() {
 
             {/* Smart Notification Dropdown */}
             {showNotificationCenter && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                right: '0',
-                marginTop: '8px',
-                width: isMobile ? '320px' : '400px',
-                maxHeight: '500px',
-                background: 'rgba(0, 0, 0, 0.95)',
-                backdropFilter: 'blur(20px)',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-                zIndex: 1000,
-                overflow: 'hidden'
-              }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: '0',
+                  marginTop: '8px',
+                  width: isMobile ? '320px' : '400px',
+                  maxHeight: '500px',
+                  background: 'rgba(0, 0, 0, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                  zIndex: 1000,
+                  overflow: 'hidden',
+                }}
+              >
                 {/* Notification Header */}
-                <div style={{ 
-                  padding: '16px 20px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}>
-                  <h4 style={{ 
-                    color: 'white', 
-                    fontSize: '1.1rem', 
-                    fontWeight: '700', 
-                    margin: 0,
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      margin: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     🔔 Smart Notifications
                     {notificationStats.urgent > 0 && (
-                      <div style={{
-                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                        color: 'white',
-                        fontSize: '0.7rem',
-                        padding: '2px 6px',
-                        borderRadius: '8px',
-                        fontWeight: '600'
-                      }}>
+                      <div
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #ef4444, #dc2626)',
+                          color: 'white',
+                          fontSize: '0.7rem',
+                          padding: '2px 6px',
+                          borderRadius: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
                         {notificationStats.urgent} URGENT
                       </div>
                     )}
@@ -1474,7 +1550,7 @@ export default function VendorPortalPage() {
                       border: 'none',
                       color: 'rgba(255,255,255,0.7)',
                       cursor: 'pointer',
-                      fontSize: '1.2rem'
+                      fontSize: '1.2rem',
                     }}
                   >
                     ✕
@@ -1482,137 +1558,184 @@ export default function VendorPortalPage() {
                 </div>
 
                 {/* Notification List */}
-                <div style={{ 
-                  maxHeight: '350px', 
-                  overflowY: 'auto',
-                  padding: '8px'
-                }}>
+                <div
+                  style={{
+                    maxHeight: '350px',
+                    overflowY: 'auto',
+                    padding: '8px',
+                  }}
+                >
                   {vendorNotifications.length > 0 ? (
-                    vendorNotifications.slice(0, 10).map((notification, index) => (
-                      <div
-                        key={notification.id}
-                        style={{
-                          background: notification.priority === 'urgent' || notification.priority === 'critical'
-                            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15))'
-                            : notification.priority === 'high'
-                            ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.15))'
-                            : 'rgba(255, 255, 255, 0.05)',
-                          borderRadius: '12px',
-                          padding: '16px',
-                          margin: '8px',
-                          border: `1px solid ${
-                            notification.priority === 'urgent' || notification.priority === 'critical'
-                              ? 'rgba(239, 68, 68, 0.3)'
-                              : notification.priority === 'high'
-                              ? 'rgba(251, 146, 60, 0.3)'
-                              : 'rgba(255, 255, 255, 0.1)'
-                          }`,
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateX(4px)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateX(0)';
-                        }}
-                        onClick={() => {
-                          // Mark as read and handle action
-                          console.log('Notification clicked:', notification);
-                          if (notification.actionRequired) {
-                            alert(`Action required for: ${notification.title}`);
-                          }
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ 
-                              color: 'white', 
-                              fontSize: '0.9rem', 
-                              fontWeight: '600',
-                              marginBottom: '4px',
+                    vendorNotifications
+                      .slice(0, 10)
+                      .map((notification, index) => (
+                        <div
+                          key={notification.id}
+                          style={{
+                            background:
+                              notification.priority === 'urgent' ||
+                              notification.priority === 'critical'
+                                ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15))'
+                                : notification.priority === 'high'
+                                  ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.15))'
+                                  : 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            margin: '8px',
+                            border: `1px solid ${
+                              notification.priority === 'urgent' ||
+                              notification.priority === 'critical'
+                                ? 'rgba(239, 68, 68, 0.3)'
+                                : notification.priority === 'high'
+                                  ? 'rgba(251, 146, 60, 0.3)'
+                                  : 'rgba(255, 255, 255, 0.1)'
+                            }`,
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateX(4px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateX(0)';
+                          }}
+                          onClick={() => {
+                            // Mark as read and handle action
+                            console.log('Notification clicked:', notification);
+                            if (notification.actionRequired) {
+                              alert(
+                                `Action required for: ${notification.title}`
+                              );
+                            }
+                          }}
+                        >
+                          <div
+                            style={{
                               display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px'
-                            }}>
-                              {notification.title}
-                              {notification.actionRequired && (
-                                <span style={{
-                                  background: 'rgba(251, 146, 60, 0.3)',
-                                  color: '#fb923c',
-                                  fontSize: '0.6rem',
-                                  padding: '2px 6px',
-                                  borderRadius: '6px',
-                                  fontWeight: '600'
-                                }}>
-                                  ACTION
-                                </span>
-                              )}
-                            </div>
-                            <div style={{ 
-                              color: 'rgba(255,255,255,0.8)', 
-                              fontSize: '0.8rem',
-                              marginBottom: '8px'
-                            }}>
-                              {notification.message}
-                            </div>
-                            <div style={{ 
-                              color: 'rgba(255,255,255,0.6)', 
-                              fontSize: '0.7rem',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between'
-                            }}>
-                              <span>{new Date(notification.timestamp).toLocaleTimeString()}</span>
-                              <div style={{ display: 'flex', gap: '4px' }}>
-                                {notification.channels.map((channel: string) => (
-                                  <span key={channel} style={{
-                                    background: 'rgba(255, 255, 255, 0.1)',
-                                    padding: '2px 4px',
-                                    borderRadius: '4px',
-                                    fontSize: '0.6rem'
-                                  }}>
-                                    {channel === 'sms' ? '📱' : channel === 'email' ? '✉️' : '🔔'}
+                              alignItems: 'flex-start',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <div style={{ flex: 1 }}>
+                              <div
+                                style={{
+                                  color: 'white',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                {notification.title}
+                                {notification.actionRequired && (
+                                  <span
+                                    style={{
+                                      background: 'rgba(251, 146, 60, 0.3)',
+                                      color: '#fb923c',
+                                      fontSize: '0.6rem',
+                                      padding: '2px 6px',
+                                      borderRadius: '6px',
+                                      fontWeight: '600',
+                                    }}
+                                  >
+                                    ACTION
                                   </span>
-                                ))}
+                                )}
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255,255,255,0.8)',
+                                  fontSize: '0.8rem',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                {notification.message}
+                              </div>
+                              <div
+                                style={{
+                                  color: 'rgba(255,255,255,0.6)',
+                                  fontSize: '0.7rem',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span>
+                                  {new Date(
+                                    notification.timestamp
+                                  ).toLocaleTimeString()}
+                                </span>
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  {notification.channels.map(
+                                    (channel: string) => (
+                                      <span
+                                        key={channel}
+                                        style={{
+                                          background:
+                                            'rgba(255, 255, 255, 0.1)',
+                                          padding: '2px 4px',
+                                          borderRadius: '4px',
+                                          fontSize: '0.6rem',
+                                        }}
+                                      >
+                                        {channel === 'sms'
+                                          ? '📱'
+                                          : channel === 'email'
+                                            ? '✉️'
+                                            : '🔔'}
+                                      </span>
+                                    )
+                                  )}
+                                </div>
                               </div>
                             </div>
+                            <div
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background:
+                                  notification.priority === 'urgent' ||
+                                  notification.priority === 'critical'
+                                    ? '#ef4444'
+                                    : notification.priority === 'high'
+                                      ? '#fb923c'
+                                      : '#10b981',
+                                marginLeft: '8px',
+                                flexShrink: 0,
+                              }}
+                            />
                           </div>
-                          <div style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: notification.priority === 'urgent' || notification.priority === 'critical'
-                              ? '#ef4444'
-                              : notification.priority === 'high'
-                              ? '#fb923c'
-                              : '#10b981',
-                            marginLeft: '8px',
-                            flexShrink: 0
-                          }} />
                         </div>
-                      </div>
-                    ))
+                      ))
                   ) : (
-                    <div style={{ 
-                      padding: '40px 20px',
-                      textAlign: 'center',
-                      color: 'rgba(255,255,255,0.7)'
-                    }}>
-                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔕</div>
+                    <div
+                      style={{
+                        padding: '40px 20px',
+                        textAlign: 'center',
+                        color: 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                        🔕
+                      </div>
                       <div>No new notifications</div>
                     </div>
                   )}
                 </div>
 
                 {/* Notification Footer */}
-                <div style={{ 
-                  padding: '12px 20px',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
+                <div
+                  style={{
+                    padding: '12px 20px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
                   <button
                     onClick={() => {
                       // Navigate to full notification hub
@@ -1624,7 +1747,7 @@ export default function VendorPortalPage() {
                       color: '#14b8a6',
                       fontSize: '0.8rem',
                       fontWeight: '600',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                   >
                     📋 View All Notifications
@@ -1632,8 +1755,10 @@ export default function VendorPortalPage() {
                   <button
                     onClick={() => {
                       // Mark all as read
-                      setVendorNotifications(prev => prev.map(n => ({ ...n, read: true })));
-                      setNotificationStats(prev => ({ ...prev, unread: 0 }));
+                      setVendorNotifications((prev) =>
+                        prev.map((n) => ({ ...n, read: true }))
+                      );
+                      setNotificationStats((prev) => ({ ...prev, unread: 0 }));
                     }}
                     style={{
                       background: 'rgba(16, 185, 129, 0.2)',
@@ -1643,7 +1768,7 @@ export default function VendorPortalPage() {
                       borderRadius: '6px',
                       fontSize: '0.7rem',
                       fontWeight: '600',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                   >
                     ✅ Mark All Read
@@ -1652,7 +1777,7 @@ export default function VendorPortalPage() {
               </div>
             )}
           </div>
-          
+
           <button
             style={{
               background: 'rgba(59, 130, 246, 0.2)',
@@ -1730,7 +1855,7 @@ export default function VendorPortalPage() {
         {isMobile && (
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            style={{
+        style={{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12px',
@@ -1742,7 +1867,7 @@ export default function VendorPortalPage() {
               marginBottom: '12px',
               transition: 'all 0.3s ease',
               width: '100%',
-              display: 'flex',
+          display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
@@ -1829,336 +1954,336 @@ export default function VendorPortalPage() {
               isMobile && isMobileMenuOpen
                 ? '0 10px 40px rgba(0, 0, 0, 0.3)'
                 : 'none',
-          }}
-        >
-          <button
+        }}
+      >
+        <button
             onClick={() => {
               setActiveTab('dashboard');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'dashboard'
-                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'dashboard'
-                  ? '#60a5fa'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'dashboard'
-                  ? '1px solid rgba(59, 130, 246, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'dashboard'
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'dashboard'
+                ? '#60a5fa'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'dashboard'
+                ? '1px solid rgba(59, 130, 246, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'dashboard') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(59, 130, 246, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'dashboard') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            📊 Dashboard & Operations
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Overview & Management
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'dashboard') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(59, 130, 246, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'dashboard') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          📊 Dashboard & Operations
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Overview & Management
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('financials');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'financials'
-                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'financials'
-                  ? '#34d399'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'financials'
-                  ? '1px solid rgba(16, 185, 129, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'financials'
+                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'financials'
+                ? '#34d399'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'financials'
+                ? '1px solid rgba(16, 185, 129, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'financials') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(16, 185, 129, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'financials') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            💰 Financials
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Billing & Payments
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'financials') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(16, 185, 129, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'financials') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          💰 Financials
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Billing & Payments
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('analytics');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'analytics'
-                  ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'analytics'
-                  ? '#a78bfa'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'analytics'
-                  ? '1px solid rgba(99, 102, 241, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'analytics'
+                ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'analytics'
+                ? '#a78bfa'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'analytics'
+                ? '1px solid rgba(99, 102, 241, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'analytics') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(99, 102, 241, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'analytics') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            📈 Analytics
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Performance & Insights
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'analytics') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(99, 102, 241, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'analytics') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          📈 Analytics
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Performance & Insights
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('integrations');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'integrations'
-                  ? 'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(217, 119, 6, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'integrations'
-                  ? '#fb923c'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'integrations'
-                  ? '1px solid rgba(249, 115, 22, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'integrations'
+                ? 'linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(217, 119, 6, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'integrations'
+                ? '#fb923c'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'integrations'
+                ? '1px solid rgba(249, 115, 22, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'integrations') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(249, 115, 22, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'integrations') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            🔗 Integrations
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              ERP & Systems
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'integrations') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(249, 115, 22, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'integrations') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          🔗 Integrations
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            ERP & Systems
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('settings');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'settings'
-                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
+          style={{
+            background:
+              activeTab === 'settings'
+                ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
                 activeTab === 'settings'
                   ? '#c4b5fd'
                   : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'settings'
-                  ? '1px solid rgba(139, 92, 246, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+            border:
+              activeTab === 'settings'
+                ? '1px solid rgba(139, 92, 246, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'settings') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(139, 92, 246, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'settings') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            ⚙️ Settings
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Configuration
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'settings') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(139, 92, 246, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'settings') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          ⚙️ Settings
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Configuration
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('warehouse');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'warehouse'
-                  ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'warehouse'
-                  ? '#34d399'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'warehouse'
-                  ? '1px solid rgba(16, 185, 129, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'warehouse'
+                ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'warehouse'
+                ? '#34d399'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'warehouse'
+                ? '1px solid rgba(16, 185, 129, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'warehouse') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(16, 185, 129, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'warehouse') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            🏭 Warehouse
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Inventory & Operations
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'warehouse') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(16, 185, 129, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'warehouse') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          🏭 Warehouse
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Inventory & Operations
+          </div>
+        </button>
 
-          <button
+        <button
             onClick={() => {
               setActiveTab('receiver-tracking');
               if (isMobile) setIsMobileMenuOpen(false);
             }}
-            style={{
-              background:
-                activeTab === 'receiver-tracking'
-                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                activeTab === 'receiver-tracking'
-                  ? '#60a5fa'
-                  : 'rgba(255, 255, 255, 0.8)',
-              border:
-                activeTab === 'receiver-tracking'
-                  ? '1px solid rgba(59, 130, 246, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+          style={{
+            background:
+              activeTab === 'receiver-tracking'
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))'
+                : 'rgba(255, 255, 255, 0.1)',
+            color:
+              activeTab === 'receiver-tracking'
+                ? '#60a5fa'
+                : 'rgba(255, 255, 255, 0.8)',
+            border:
+              activeTab === 'receiver-tracking'
+                ? '1px solid rgba(59, 130, 246, 0.3)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
               padding: isMobile ? '16px 20px' : '12px 20px',
-              borderRadius: '12px',
-              cursor: 'pointer',
+            borderRadius: '12px',
+            cursor: 'pointer',
               fontSize: isMobile ? '1rem' : '0.9rem',
-              fontWeight: '600',
+            fontWeight: '600',
               minHeight: isMobile ? '60px' : 'auto',
               width: isMobile ? '100%' : 'auto',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== 'receiver-tracking') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(59, 130, 246, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== 'receiver-tracking') {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
-            }}
-          >
-            📞 Receiver Tracking
-            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
-              Live Delivery Coordination
-            </div>
-          </button>
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'receiver-tracking') {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(59, 130, 246, 0.3)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'receiver-tracking') {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }
+          }}
+        >
+          📞 Receiver Tracking
+          <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '2px' }}>
+            Live Delivery Coordination
+          </div>
+        </button>
         </div>
       </div>
 
@@ -5991,94 +6116,167 @@ export default function VendorPortalPage() {
                 Manage user access, portal settings, and system configuration
               </p>
             </div>
-            
+
             {/* Smart Notification Preferences */}
             <div
               style={{
-                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15))',
+                background:
+                  'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15))',
                 borderRadius: '16px',
                 padding: '24px',
                 border: '1px solid rgba(139, 92, 246, 0.3)',
                 marginBottom: '24px',
               }}
             >
-              <h3 style={{ 
-                color: '#c4b5fd', 
-                fontSize: '1.3rem', 
-                fontWeight: '700', 
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
+              <h3
+                style={{
+                  color: '#c4b5fd',
+                  fontSize: '1.3rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 🔔 Smart Notification Preferences
-                <div style={{
-                  fontSize: '0.7rem',
-                  background: 'rgba(139, 92, 246, 0.2)',
-                  padding: '2px 6px',
-                  borderRadius: '8px',
-                  color: '#c4b5fd'
-                }}>
+                <div
+                  style={{
+                    fontSize: '0.7rem',
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '8px',
+                    color: '#c4b5fd',
+                  }}
+                >
                   CUSTOMIZABLE
                 </div>
               </h3>
 
               {/* Notification Channels */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                  }}
+                >
                   📡 Notification Channels
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
                   {[
-                    { key: 'smsEnabled', icon: '📱', label: 'SMS Notifications', desc: 'Urgent delivery updates via text' },
-                    { key: 'emailEnabled', icon: '✉️', label: 'Email Notifications', desc: 'Detailed reports and summaries' },
-                    { key: 'inAppEnabled', icon: '🔔', label: 'In-App Notifications', desc: 'Real-time portal alerts' }
-                  ].map(channel => (
-                    <div key={channel.key} style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onClick={() => setNotificationPreferences(prev => ({ 
-                      ...prev, 
-                      [channel.key]: !prev[channel.key as keyof typeof prev] 
-                    }))}
+                    {
+                      key: 'smsEnabled',
+                      icon: '📱',
+                      label: 'SMS Notifications',
+                      desc: 'Urgent delivery updates via text',
+                    },
+                    {
+                      key: 'emailEnabled',
+                      icon: '✉️',
+                      label: 'Email Notifications',
+                      desc: 'Detailed reports and summaries',
+                    },
+                    {
+                      key: 'inAppEnabled',
+                      icon: '🔔',
+                      label: 'In-App Notifications',
+                      desc: 'Real-time portal alerts',
+                    },
+                  ].map((channel) => (
+                    <div
+                      key={channel.key}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() =>
+                        setNotificationPreferences((prev) => ({
+                          ...prev,
+                          [channel.key]:
+                            !prev[channel.key as keyof typeof prev],
+                        }))
+                      }
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '1.2rem' }}>{channel.icon}</span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          <span style={{ fontSize: '1.2rem' }}>
+                            {channel.icon}
+                          </span>
                           <div>
-                            <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600' }}>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '0.9rem',
+                                fontWeight: '600',
+                              }}
+                            >
                               {channel.label}
                             </div>
-                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
+                            <div
+                              style={{
+                                color: 'rgba(255,255,255,0.7)',
+                                fontSize: '0.7rem',
+                              }}
+                            >
                               {channel.desc}
                             </div>
                           </div>
                         </div>
-                        <div style={{
-                          width: '40px',
-                          height: '20px',
-                          borderRadius: '10px',
-                          background: notificationPreferences[channel.key as keyof typeof notificationPreferences] 
-                            ? 'linear-gradient(135deg, #10b981, #34d399)' 
-                            : 'rgba(255, 255, 255, 0.1)',
-                          position: 'relative',
-                          transition: 'all 0.3s ease'
-                        }}>
-                          <div style={{
-                            width: '16px',
-                            height: '16px',
-                            borderRadius: '50%',
-                            background: 'white',
-                            position: 'absolute',
-                            top: '2px',
-                            left: notificationPreferences[channel.key as keyof typeof notificationPreferences] ? '22px' : '2px',
-                            transition: 'all 0.3s ease'
-                          }} />
+                        <div
+                          style={{
+                            width: '40px',
+                            height: '20px',
+                            borderRadius: '10px',
+                            background: notificationPreferences[
+                              channel.key as keyof typeof notificationPreferences
+                            ]
+                              ? 'linear-gradient(135deg, #10b981, #34d399)'
+                              : 'rgba(255, 255, 255, 0.1)',
+                            position: 'relative',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              borderRadius: '50%',
+                              background: 'white',
+                              position: 'absolute',
+                              top: '2px',
+                              left: notificationPreferences[
+                                channel.key as keyof typeof notificationPreferences
+                              ]
+                                ? '22px'
+                                : '2px',
+                              transition: 'all 0.3s ease',
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
@@ -6088,110 +6286,208 @@ export default function VendorPortalPage() {
 
               {/* Priority Level */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                  }}
+                >
                   🎯 Priority Level Filter
                 </h4>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {['low', 'normal', 'high', 'urgent', 'critical'].map(priority => (
-                    <button
-                      key={priority}
-                      onClick={() => setNotificationPreferences(prev => ({ ...prev, priorityLevel: priority }))}
-                      style={{
-                        background: notificationPreferences.priorityLevel === priority 
-                          ? priority === 'critical' || priority === 'urgent'
-                            ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-                            : priority === 'high'
-                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                            : 'linear-gradient(135deg, #139, 92, 246, #124, 58, 237)'
-                          : 'rgba(255, 255, 255, 0.1)',
-                        border: `1px solid ${
-                          notificationPreferences.priorityLevel === priority 
-                            ? priority === 'critical' || priority === 'urgent'
-                              ? 'rgba(239, 68, 68, 0.5)'
-                              : priority === 'high'
-                              ? 'rgba(245, 158, 11, 0.5)'
-                              : 'rgba(139, 92, 246, 0.5)'
-                            : 'rgba(255, 255, 255, 0.2)'
-                        }`,
-                        color: notificationPreferences.priorityLevel === priority ? 'white' : 'rgba(255,255,255,0.8)',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      {priority}
-                    </button>
-                  ))}
+                  {['low', 'normal', 'high', 'urgent', 'critical'].map(
+                    (priority) => (
+                      <button
+                        key={priority}
+                        onClick={() =>
+                          setNotificationPreferences((prev) => ({
+                            ...prev,
+                            priorityLevel: priority,
+                          }))
+                        }
+                        style={{
+                          background:
+                            notificationPreferences.priorityLevel === priority
+                              ? priority === 'critical' || priority === 'urgent'
+                                ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                                : priority === 'high'
+                                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                                  : 'linear-gradient(135deg, #139, 92, 246, #124, 58, 237)'
+                              : 'rgba(255, 255, 255, 0.1)',
+                          border: `1px solid ${
+                            notificationPreferences.priorityLevel === priority
+                              ? priority === 'critical' || priority === 'urgent'
+                                ? 'rgba(239, 68, 68, 0.5)'
+                                : priority === 'high'
+                                  ? 'rgba(245, 158, 11, 0.5)'
+                                  : 'rgba(139, 92, 246, 0.5)'
+                              : 'rgba(255, 255, 255, 0.2)'
+                          }`,
+                          color:
+                            notificationPreferences.priorityLevel === priority
+                              ? 'white'
+                              : 'rgba(255,255,255,0.8)',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {priority}
+                      </button>
+                    )
+                  )}
                 </div>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', marginTop: '8px' }}>
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: '0.8rem',
+                    marginTop: '8px',
+                  }}
+                >
                   Only show notifications at or above this priority level
                 </p>
               </div>
 
               {/* Notification Types */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                  }}
+                >
                   📋 Notification Types
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
                   {[
-                    { key: 'deliveryUpdates', icon: '🚛', label: 'Delivery Updates', desc: 'ETA changes, status updates' },
-                    { key: 'paymentNotifications', icon: '💰', label: 'Payment Alerts', desc: 'Invoice processing, payments' },
-                    { key: 'emergencyAlerts', icon: '🚨', label: 'Emergency Alerts', desc: 'Weather, accidents, delays' },
-                    { key: 'warehouseAlerts', icon: '📦', label: 'Warehouse Alerts', desc: 'Inventory, capacity updates' }
-                  ].map(type => (
-                    <div key={type.key} style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: `1px solid ${
-                        notificationPreferences[type.key as keyof typeof notificationPreferences] 
-                          ? 'rgba(139, 92, 246, 0.3)' 
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }`,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onClick={() => setNotificationPreferences(prev => ({ 
-                      ...prev, 
-                      [type.key]: !prev[type.key as keyof typeof prev] 
-                    }))}
+                    {
+                      key: 'deliveryUpdates',
+                      icon: '🚛',
+                      label: 'Delivery Updates',
+                      desc: 'ETA changes, status updates',
+                    },
+                    {
+                      key: 'paymentNotifications',
+                      icon: '💰',
+                      label: 'Payment Alerts',
+                      desc: 'Invoice processing, payments',
+                    },
+                    {
+                      key: 'emergencyAlerts',
+                      icon: '🚨',
+                      label: 'Emergency Alerts',
+                      desc: 'Weather, accidents, delays',
+                    },
+                    {
+                      key: 'warehouseAlerts',
+                      icon: '📦',
+                      label: 'Warehouse Alerts',
+                      desc: 'Inventory, capacity updates',
+                    },
+                  ].map((type) => (
+                    <div
+                      key={type.key}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        border: `1px solid ${
+                          notificationPreferences[
+                            type.key as keyof typeof notificationPreferences
+                          ]
+                            ? 'rgba(139, 92, 246, 0.3)'
+                            : 'rgba(255, 255, 255, 0.1)'
+                        }`,
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() =>
+                        setNotificationPreferences((prev) => ({
+                          ...prev,
+                          [type.key]: !prev[type.key as keyof typeof prev],
+                        }))
+                      }
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '1.2rem' }}>{type.icon}</span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          <span style={{ fontSize: '1.2rem' }}>
+                            {type.icon}
+                          </span>
                           <div>
-                            <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600' }}>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '0.9rem',
+                                fontWeight: '600',
+                              }}
+                            >
                               {type.label}
                             </div>
-                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
+                            <div
+                              style={{
+                                color: 'rgba(255,255,255,0.7)',
+                                fontSize: '0.7rem',
+                              }}
+                            >
                               {type.desc}
                             </div>
                           </div>
                         </div>
-                        <div style={{
-                          width: '40px',
-                          height: '20px',
-                          borderRadius: '10px',
-                          background: notificationPreferences[type.key as keyof typeof notificationPreferences] 
-                            ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' 
-                            : 'rgba(255, 255, 255, 0.1)',
-                          position: 'relative',
-                          transition: 'all 0.3s ease'
-                        }}>
-                          <div style={{
-                            width: '16px',
-                            height: '16px',
-                            borderRadius: '50%',
-                            background: 'white',
-                            position: 'absolute',
-                            top: '2px',
-                            left: notificationPreferences[type.key as keyof typeof notificationPreferences] ? '22px' : '2px',
-                            transition: 'all 0.3s ease'
-                          }} />
+                        <div
+                          style={{
+                            width: '40px',
+                            height: '20px',
+                            borderRadius: '10px',
+                            background: notificationPreferences[
+                              type.key as keyof typeof notificationPreferences
+                            ]
+                              ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                              : 'rgba(255, 255, 255, 0.1)',
+                            position: 'relative',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              borderRadius: '50%',
+                              background: 'white',
+                              position: 'absolute',
+                              top: '2px',
+                              left: notificationPreferences[
+                                type.key as keyof typeof notificationPreferences
+                              ]
+                                ? '22px'
+                                : '2px',
+                              transition: 'all 0.3s ease',
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
@@ -6201,26 +6497,54 @@ export default function VendorPortalPage() {
 
               {/* Advanced Preferences */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                  }}
+                >
                   🎛️ Advanced Preferences
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
                   {/* Time Range */}
-                  <div style={{ 
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <label style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600', marginBottom: '8px', display: 'block' }}>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
                       ⏰ Notification Hours
                     </label>
                     <select
                       value={notificationPreferences.customFilters.timeRange}
-                      onChange={(e) => setNotificationPreferences(prev => ({ 
-                        ...prev, 
-                        customFilters: { ...prev.customFilters, timeRange: e.target.value }
-                      }))}
+                      onChange={(e) =>
+                        setNotificationPreferences((prev) => ({
+                          ...prev,
+                          customFilters: {
+                            ...prev.customFilters,
+                            timeRange: e.target.value,
+                          },
+                        }))
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -6228,32 +6552,51 @@ export default function VendorPortalPage() {
                         padding: '8px 12px',
                         borderRadius: '8px',
                         fontSize: '0.9rem',
-                        width: '100%'
+                        width: '100%',
                       }}
                     >
-                      <option value="anytime">24/7 - Anytime</option>
-                      <option value="business_hours">Business Hours Only</option>
-                      <option value="urgent_only">Urgent Only (24/7)</option>
+                      <option value='anytime'>24/7 - Anytime</option>
+                      <option value='business_hours'>
+                        Business Hours Only
+                      </option>
+                      <option value='urgent_only'>Urgent Only (24/7)</option>
                     </select>
                   </div>
 
                   {/* Load Value Threshold */}
-                  <div style={{ 
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <label style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600', marginBottom: '8px', display: 'block' }}>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
                       💵 Min Load Value Alert
                     </label>
                     <input
-                      type="number"
-                      value={notificationPreferences.customFilters.loadValueThreshold}
-                      onChange={(e) => setNotificationPreferences(prev => ({ 
-                        ...prev, 
-                        customFilters: { ...prev.customFilters, loadValueThreshold: parseInt(e.target.value) || 0 }
-                      }))}
+                      type='number'
+                      value={
+                        notificationPreferences.customFilters.loadValueThreshold
+                      }
+                      onChange={(e) =>
+                        setNotificationPreferences((prev) => ({
+                          ...prev,
+                          customFilters: {
+                            ...prev.customFilters,
+                            loadValueThreshold: parseInt(e.target.value) || 0,
+                          },
+                        }))
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -6261,11 +6604,17 @@ export default function VendorPortalPage() {
                         padding: '8px 12px',
                         borderRadius: '8px',
                         fontSize: '0.9rem',
-                        width: '100%'
+                        width: '100%',
                       }}
-                      placeholder="Enter minimum load value"
+                      placeholder='Enter minimum load value'
                     />
-                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', marginTop: '4px' }}>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.7)',
+                        fontSize: '0.7rem',
+                        marginTop: '4px',
+                      }}
+                    >
                       Only notify for loads above this dollar amount
                     </p>
                   </div>
@@ -6273,14 +6622,23 @@ export default function VendorPortalPage() {
               </div>
 
               {/* Quick Actions */}
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                marginBottom: '24px'
-              }}>
-                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  marginBottom: '24px',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                  }}
+                >
                   ⚡ Quick Actions
                 </h4>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -6288,20 +6646,29 @@ export default function VendorPortalPage() {
                     onClick={async () => {
                       // Test notification via ReceiverNotificationService
                       try {
-                        const testResult = await ReceiverNotificationService.sendSMSNotification({
-                          receiverPhone: '+1234567890',
-                          receiverEmail: session?.companyName?.toLowerCase().replace(/\s+/g, '') + '@example.com',
-                          receiverName: session?.companyName || 'Demo Vendor',
-                          shipmentId: 'TEST-001',
-                          loadId: realTimeLoads[0]?.id || 'DEMO-LOAD',
-                          vendorName: session?.companyName || 'Demo Vendor',
-                          driverName: 'John Driver',
-                          driverPhone: '+1987654321',
-                          estimatedArrival: '3:30 PM',
-                          notificationType: 'eta_update'
-                        });
-                        
-                        alert(`Test notification sent! ${testResult.success ? 'Success ✅' : 'Failed ❌'}`);
+                        const testResult =
+                          await ReceiverNotificationService.sendSMSNotification(
+                            {
+                              receiverPhone: '+1234567890',
+                              receiverEmail:
+                                session?.companyName
+                                  ?.toLowerCase()
+                                  .replace(/\s+/g, '') + '@example.com',
+                              receiverName:
+                                session?.companyName || 'Demo Vendor',
+                              shipmentId: 'TEST-001',
+                              loadId: realTimeLoads[0]?.id || 'DEMO-LOAD',
+                              vendorName: session?.companyName || 'Demo Vendor',
+                              driverName: 'John Driver',
+                              driverPhone: '+1987654321',
+                              estimatedArrival: '3:30 PM',
+                              notificationType: 'eta_update',
+                            }
+                          );
+
+                        alert(
+                          `Test notification sent! ${testResult.success ? 'Success ✅' : 'Failed ❌'}`
+                        );
                       } catch (error) {
                         alert('Test notification failed: ' + error);
                       }
@@ -6314,7 +6681,7 @@ export default function VendorPortalPage() {
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     📱 Test SMS Notification
@@ -6334,8 +6701,8 @@ export default function VendorPortalPage() {
                         customFilters: {
                           timeRange: 'business_hours',
                           loadValueThreshold: 1000,
-                          routePreferences: []
-                        }
+                          routePreferences: [],
+                        },
                       });
                       alert('Notification preferences reset to defaults ✅');
                     }}
@@ -6347,7 +6714,7 @@ export default function VendorPortalPage() {
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     🔄 Reset to Defaults
@@ -6365,7 +6732,7 @@ export default function VendorPortalPage() {
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     🏢 Open Notification Hub
