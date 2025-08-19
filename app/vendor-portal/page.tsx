@@ -2,14 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ReceiverNotificationService from '../services/ReceiverNotificationService';
-import { 
-  Load, 
-  getMainDashboardLoads, 
-  getShipperLoads, 
-  getShipperDashboardSummary 
-} from '../services/loadService';
+import React from 'react';
 import { MultiTenantSquareService } from '../services/MultiTenantSquareService';
+import ReceiverNotificationService from '../services/ReceiverNotificationService';
+import {
+  Load,
+  getMainDashboardLoads,
+  getShipperDashboardSummary,
+  getShipperLoads,
+} from '../services/loadService';
 import { calculateFinancialMetrics } from '../services/settlementService';
 
 interface VendorSession {
@@ -244,6 +245,114 @@ export default function VendorPortalPage() {
   const [squareService] = useState(() => new MultiTenantSquareService());
   const [realTimeLoads, setRealTimeLoads] = useState<Load[]>([]);
   const [realFinancialData, setRealFinancialData] = useState<any>(null);
+
+  // Enhanced Analytics State
+  const [analyticsFilters, setAnalyticsFilters] = useState({
+    dateRange: '30days', // 7days, 30days, 90days, 12months
+    loadType: 'all', // all, dry_van, refrigerated, flatbed, etc.
+    status: 'all', // all, pending, in_transit, delivered
+    sortBy: 'date', // date, revenue, distance
+    chartType: 'line' // line, bar, area
+  });
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+
+  // Analytics Data Processing Functions
+  const processAnalyticsData = React.useMemo(() => {
+    if (!realTimeLoads.length || !realFinancialData) {
+      return {
+        revenueChart: [],
+        loadChart: [],
+        performanceMetrics: {},
+        filteredLoads: []
+      };
+    }
+
+    // Filter loads based on current filters
+    const filteredLoads = realTimeLoads.filter(load => {
+      // Date filtering
+      const loadDate = new Date(load.createdAt || Date.now());
+      const now = new Date();
+      const daysDiff = Math.floor((now.getTime() - loadDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      let dateMatch = true;
+      switch (analyticsFilters.dateRange) {
+        case '7days': dateMatch = daysDiff <= 7; break;
+        case '30days': dateMatch = daysDiff <= 30; break;
+        case '90days': dateMatch = daysDiff <= 90; break;
+        case '12months': dateMatch = daysDiff <= 365; break;
+      }
+
+      // Load type filtering
+      const typeMatch = analyticsFilters.loadType === 'all' || load.equipment === analyticsFilters.loadType;
+      
+      // Status filtering  
+      const statusMatch = analyticsFilters.status === 'all' || load.status === analyticsFilters.status;
+
+      return dateMatch && typeMatch && statusMatch;
+    });
+
+    // Generate chart data points
+    const chartData = filteredLoads.map((load, index) => {
+      const date = new Date(load.createdAt || Date.now() - (index * 24 * 60 * 60 * 1000));
+      return {
+        date: date.toLocaleDateString(),
+        revenue: parseFloat(load.rate?.toString() || '0'),
+        loadCount: 1,
+        distance: parseFloat(load.distance?.replace(/[^\d.]/g, '') || '0'),
+        status: load.status,
+        equipment: load.equipment,
+        route: `${load.origin} → ${load.destination}`,
+        loadId: load.id
+      };
+    });
+
+    // Aggregate data by date for charts
+    const aggregatedData = chartData.reduce((acc: any, curr) => {
+      const existing = acc.find((item: any) => item.date === curr.date);
+      if (existing) {
+        existing.revenue += curr.revenue;
+        existing.loadCount += 1;
+        existing.distance += curr.distance;
+      } else {
+        acc.push({
+          date: curr.date,
+          revenue: curr.revenue,
+          loadCount: curr.loadCount,
+          distance: curr.distance,
+          details: [curr]
+        });
+      }
+      return acc;
+    }, []);
+
+    // Sort data
+    const sortedData = aggregatedData.sort((a: any, b: any) => {
+      switch (analyticsFilters.sortBy) {
+        case 'revenue': return b.revenue - a.revenue;
+        case 'distance': return b.distance - a.distance;
+        default: return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+    });
+
+    // Performance metrics
+    const performanceMetrics = {
+      totalRevenue: chartData.reduce((sum, item) => sum + item.revenue, 0),
+      avgRevenuePerLoad: chartData.length > 0 ? chartData.reduce((sum, item) => sum + item.revenue, 0) / chartData.length : 0,
+      totalLoads: chartData.length,
+      avgDistance: chartData.length > 0 ? chartData.reduce((sum, item) => sum + item.distance, 0) / chartData.length : 0,
+      onTimeDelivery: Math.random() * 100 + 85, // Mock for now
+      customerSatisfaction: Math.random() * 20 + 80 // Mock for now
+    };
+
+    return {
+      revenueChart: sortedData,
+      loadChart: sortedData, 
+      performanceMetrics,
+      filteredLoads
+    };
+  }, [realTimeLoads, realFinancialData, analyticsFilters]);
+
   const [activeTab, setActiveTab] = useState<
     | 'dashboard'
     | 'operations'
@@ -817,57 +926,64 @@ export default function VendorPortalPage() {
   useEffect(() => {
     const loadRealTimeData = async () => {
       if (!session) return;
-      
+
       try {
         setIsLoadingLoads(true);
-        
+
         // 1. Load real shipment data for this vendor
         console.log('🔄 Loading real-time data for vendor:', session.shipperId);
-        
+
         const [shipperLoads, dashboardSummary, allLoads] = await Promise.all([
           getShipperLoads(session.shipperId),
           getShipperDashboardSummary(session.shipperId),
-          getMainDashboardLoads()
+          getMainDashboardLoads(),
         ]);
-        
+
         // Set real load data
         setRealTimeLoads(allLoads);
         setLoads(allLoads);
-        
+
         // 2. Load real financial data from Square billing
         try {
           const tenantId = `tenant-${session.shipperId}`;
           const invoices = await squareService.listInvoices(tenantId, {
-            limit: 20
+            limit: 20,
           });
-          
+
           // Calculate real financial metrics
           const financialMetrics = calculateFinancialMetrics(
             'broker',
-            'monthly', 
+            'monthly',
             session.shipperId
           );
-          
+
           setRealFinancialData({
             invoices: invoices.invoices || [],
             metrics: financialMetrics,
             dashboardSummary,
             shipperLoads,
             totalRevenue: financialMetrics.revenue.total,
-            avgInvoiceValue: financialMetrics.revenue.total / (invoices.invoices?.length || 1),
-            paymentStatus: 'current'
+            avgInvoiceValue:
+              financialMetrics.revenue.total / (invoices.invoices?.length || 1),
+            paymentStatus: 'current',
           });
-          
+
           console.log('✅ Real-time data loaded successfully:', {
             loads: allLoads.length,
             shipperSpecificLoads: shipperLoads.length,
             invoices: invoices.invoices?.length || 0,
-            revenue: financialMetrics.revenue.total
+            revenue: financialMetrics.revenue.total,
           });
-          
         } catch (billingError) {
-          console.warn('⚠️ Square billing unavailable, using calculated metrics:', billingError);
-          const financialMetrics = calculateFinancialMetrics('broker', 'monthly', session.shipperId);
+          console.warn(
+            '⚠️ Square billing unavailable, using calculated metrics:',
+            billingError
+          );
+          const financialMetrics = calculateFinancialMetrics(
+            'broker',
+            'monthly',
+            session.shipperId
+          );
           setRealFinancialData({
             invoices: [],
             metrics: financialMetrics,
@@ -875,10 +991,9 @@ export default function VendorPortalPage() {
             shipperLoads,
             totalRevenue: financialMetrics.revenue.total,
             avgInvoiceValue: financialMetrics.revenue.total / 10,
-            paymentStatus: 'calculated'
+            paymentStatus: 'calculated',
           });
         }
-        
       } catch (error) {
         console.error('❌ Error loading real-time data:', error);
         // Fallback to existing behavior on error
@@ -1579,30 +1694,36 @@ export default function VendorPortalPage() {
               }}
             >
               {/* Real-Time Data Integration Status */}
-              <div style={{ 
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'rgba(16, 185, 129, 0.2)',
-                padding: '6px 12px',
-                borderRadius: '20px',
-                border: '1px solid rgba(16, 185, 129, 0.3)'
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#10b981',
-                  animation: 'pulse 2s infinite'
-                }} />
-                <span style={{ 
-                  fontSize: '0.75rem', 
-                  fontWeight: '600', 
-                  color: '#10b981' 
-                }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: '#10b981',
+                    animation: 'pulse 2s infinite',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
                   LIVE DATA
                 </span>
               </div>
@@ -3165,85 +3286,160 @@ export default function VendorPortalPage() {
               </p>
             </div>
             {/* Real-Time Data Integration Status */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
-              borderRadius: '16px',
-              padding: '20px',
-              marginBottom: '24px',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              position: 'relative'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '24px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <div>
-                  <h3 style={{ 
-                    color: '#10b981', 
-                    fontSize: '1.2rem', 
-                    fontWeight: '700',
-                    marginBottom: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <div style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: '#10b981',
-                      animation: 'pulse 2s infinite'
-                    }} />
+                  <h3
+                    style={{
+                      color: '#10b981',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        background: '#10b981',
+                        animation: 'pulse 2s infinite',
+                      }}
+                    />
                     🔄 Live FleetFlow Integration
                   </h3>
-                  <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0, fontSize: '0.9rem' }}>
-                    Connected to real FleetFlow services • Updates every 30 seconds
+                  <p
+                    style={{
+                      color: 'rgba(255,255,255,0.8)',
+                      margin: 0,
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Connected to real FleetFlow services • Updates every 30
+                    seconds
                   </p>
                 </div>
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  color: '#10b981',
-                  background: 'rgba(16, 185, 129, 0.2)',
-                  padding: '4px 8px',
-                  borderRadius: '12px',
-                  fontWeight: '600'
-                }}>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#10b981',
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                  }}
+                >
                   {new Date().toLocaleTimeString()}
                 </div>
               </div>
-              
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
-                gap: '12px',
-                marginTop: '16px'
-              }}>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '12px',
+                  marginTop: '16px',
+                }}
+              >
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                  <div
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
                     {realTimeLoads.length}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Live Loads
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
-                    {realFinancialData ? `$${Math.round(realFinancialData.totalRevenue / 1000)}K` : '---'}
+                  <div
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    {realFinancialData
+                      ? `$${Math.round(realFinancialData.totalRevenue / 1000)}K`
+                      : '---'}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Revenue
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                  <div
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
                     {realFinancialData?.invoices.length || '---'}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Invoices
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: realFinancialData?.paymentStatus === 'current' ? '#10b981' : '#fbbf24' }}>
-                    {realFinancialData?.paymentStatus === 'current' ? '✅' : '⚠️'}
+                  <div
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color:
+                        realFinancialData?.paymentStatus === 'current'
+                          ? '#10b981'
+                          : '#fbbf24',
+                    }}
+                  >
+                    {realFinancialData?.paymentStatus === 'current'
+                      ? '✅'
+                      : '⚠️'}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Square API
                   </div>
                 </div>
@@ -3643,7 +3839,496 @@ export default function VendorPortalPage() {
                 View detailed analytics and performance metrics
               </p>
             </div>
-            {/* Analytics KPI Cards */}
+            {/* Interactive Analytics Controls */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+              borderRadius: '16px',
+              padding: '20px',
+              marginBottom: '24px',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h3 style={{ 
+                  color: '#a78bfa', 
+                  fontSize: '1.2rem', 
+                  fontWeight: '700',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  📊 Interactive Analytics Dashboard
+                  <div style={{
+                    fontSize: '0.7rem',
+                    background: 'rgba(99, 102, 241, 0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '8px',
+                    color: '#c4b5fd'
+                  }}>
+                    REAL-TIME
+                  </div>
+                </h3>
+                <button
+                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                  style={{
+                    background: 'rgba(99, 102, 241, 0.2)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    color: '#a78bfa',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}
+                >
+                  {showAdvancedFilters ? '🔽 Hide Filters' : '🔼 Show Filters'}
+                </button>
+              </div>
+
+              {/* Quick Filter Buttons */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                {['7days', '30days', '90days', '12months'].map(range => (
+                  <button
+                    key={range}
+                    onClick={() => setAnalyticsFilters(prev => ({ ...prev, dateRange: range }))}
+                    style={{
+                      background: analyticsFilters.dateRange === range 
+                        ? 'rgba(99, 102, 241, 0.3)' 
+                        : 'rgba(255, 255, 255, 0.1)',
+                      border: analyticsFilters.dateRange === range 
+                        ? '1px solid rgba(99, 102, 241, 0.5)' 
+                        : '1px solid rgba(255, 255, 255, 0.2)',
+                      color: analyticsFilters.dateRange === range ? '#c4b5fd' : 'rgba(255,255,255,0.8)',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    {range === '7days' ? 'Last 7 Days' : 
+                     range === '30days' ? 'Last 30 Days' :
+                     range === '90days' ? 'Last 90 Days' : 'Last 12 Months'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Advanced Filters */}
+              {showAdvancedFilters && (
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                  padding: '16px',
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  marginBottom: '16px'
+                }}>
+                  {/* Load Type Filter */}
+                  <div>
+                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                      Load Type
+                    </label>
+                    <select
+                      value={analyticsFilters.loadType}
+                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, loadType: e.target.value }))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '6px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.9rem',
+                        width: '100%'
+                      }}
+                    >
+                      <option value="all">All Types</option>
+                      <option value="Dry Van">Dry Van</option>
+                      <option value="Reefer">Refrigerated</option>
+                      <option value="Flatbed">Flatbed</option>
+                      <option value="Step Deck">Step Deck</option>
+                    </select>
+                  </div>
+
+                  {/* Status Filter */}
+                  <div>
+                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                      Status
+                    </label>
+                    <select
+                      value={analyticsFilters.status}
+                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, status: e.target.value }))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '6px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.9rem',
+                        width: '100%'
+                      }}
+                    >
+                      <option value="all">All Status</option>
+                      <option value="Available">Available</option>
+                      <option value="Assigned">Assigned</option>
+                      <option value="In Transit">In Transit</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </div>
+
+                  {/* Chart Type */}
+                  <div>
+                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                      Chart Type
+                    </label>
+                    <select
+                      value={analyticsFilters.chartType}
+                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, chartType: e.target.value }))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '6px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.9rem',
+                        width: '100%'
+                      }}
+                    >
+                      <option value="line">Line Chart</option>
+                      <option value="bar">Bar Chart</option>
+                      <option value="area">Area Chart</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Performance Summary */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+                gap: '12px',
+                marginBottom: '16px'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
+                    ${Math.round((processAnalyticsData.performanceMetrics as any)?.totalRevenue || 0).toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Total Revenue
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
+                    {(processAnalyticsData.performanceMetrics as any)?.totalLoads || 0}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Total Loads
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
+                    ${Math.round((processAnalyticsData.performanceMetrics as any)?.avgRevenuePerLoad || 0).toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Avg per Load
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
+                    {Math.round((processAnalyticsData.performanceMetrics as any)?.avgDistance || 0)}mi
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Avg Distance
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Charts */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+              gap: '24px',
+              marginBottom: '24px'
+            }}>
+              {/* Revenue Trend Chart */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+              }}>
+                <h4 style={{ color: '#a78bfa', fontSize: '1.1rem', fontWeight: '700', marginBottom: '16px' }}>
+                  📈 Revenue Trend
+                </h4>
+                <div style={{ 
+                  height: '250px',
+                  position: 'relative',
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {processAnalyticsData.revenueChart.length > 0 ? (
+                    <div style={{ 
+                      width: '100%', 
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'end',
+                      justifyContent: 'space-around',
+                      gap: '4px'
+                    }}>
+                      {processAnalyticsData.revenueChart.slice(0, 8).map((point: any, index: number) => {
+                        const maxRevenue = Math.max(...processAnalyticsData.revenueChart.map((p: any) => p.revenue));
+                        const height = maxRevenue > 0 ? (point.revenue / maxRevenue) * 100 : 0;
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => setSelectedDataPoint(point)}
+                            style={{
+                              background: selectedDataPoint?.date === point.date 
+                                ? 'linear-gradient(135deg, #a78bfa, #c4b5fd)'
+                                : 'linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(196, 181, 253, 0.6))',
+                              height: `${height}%`,
+                              minHeight: '8px',
+                              flex: 1,
+                              borderRadius: '4px 4px 0 0',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              position: 'relative'
+                            }}
+                            title={`${point.date}: $${point.revenue.toLocaleString()}`}
+                          >
+                            <div style={{
+                              position: 'absolute',
+                              bottom: '-20px',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              fontSize: '0.7rem',
+                              color: 'rgba(255,255,255,0.6)',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              {point.date.split('/')[1]}/{point.date.split('/')[2]}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📊</div>
+                      <div>No data available for current filters</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Load Count Chart */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+              }}>
+                <h4 style={{ color: '#a78bfa', fontSize: '1.1rem', fontWeight: '700', marginBottom: '16px' }}>
+                  🚛 Load Volume
+                </h4>
+                <div style={{ 
+                  height: '250px',
+                  position: 'relative',
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {processAnalyticsData.loadChart.length > 0 ? (
+                    <div style={{ 
+                      width: '100%', 
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'end',
+                      justifyContent: 'space-around',
+                      gap: '4px'
+                    }}>
+                      {processAnalyticsData.loadChart.slice(0, 8).map((point: any, index: number) => {
+                        const maxLoads = Math.max(...processAnalyticsData.loadChart.map((p: any) => p.loadCount));
+                        const height = maxLoads > 0 ? (point.loadCount / maxLoads) * 100 : 0;
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => setSelectedDataPoint(point)}
+                            style={{
+                              background: selectedDataPoint?.date === point.date 
+                                ? 'linear-gradient(135deg, #10b981, #34d399)'
+                                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(52, 211, 153, 0.6))',
+                              height: `${height}%`,
+                              minHeight: '8px',
+                              flex: 1,
+                              borderRadius: '4px 4px 0 0',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              position: 'relative'
+                            }}
+                            title={`${point.date}: ${point.loadCount} loads`}
+                          >
+                            <div style={{
+                              position: 'absolute',
+                              bottom: '-20px',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              fontSize: '0.7rem',
+                              color: 'rgba(255,255,255,0.6)',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              {point.date.split('/')[1]}/{point.date.split('/')[2]}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🚛</div>
+                      <div>No data available for current filters</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Data Point Details */}
+            {selectedDataPoint && (
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '24px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <h4 style={{ color: '#10b981', fontSize: '1.1rem', fontWeight: '700', margin: 0 }}>
+                    📊 Details for {selectedDataPoint.date}
+                  </h4>
+                  <button
+                    onClick={() => setSelectedDataPoint(null)}
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: 'none',
+                      color: '#10b981',
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                  gap: '16px'
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                      ${selectedDataPoint.revenue.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Revenue</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                      {selectedDataPoint.loadCount}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Loads</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                      {Math.round(selectedDataPoint.distance)}mi
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Distance</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                      ${Math.round(selectedDataPoint.revenue / selectedDataPoint.loadCount).toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Avg/Load</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Export Options */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                <div>
+                  <h5 style={{ color: 'white', fontSize: '1rem', fontWeight: '600', margin: '0 0 4px 0' }}>
+                    📋 Export Analytics
+                  </h5>
+                  <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', margin: 0 }}>
+                    Download current analytics data and charts
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => {
+                      // Mock CSV export
+                      const csvData = processAnalyticsData.revenueChart.map((point: any) => 
+                        `${point.date},${point.revenue},${point.loadCount},${point.distance}`
+                      ).join('\n');
+                      const blob = new Blob([`Date,Revenue,Loads,Distance\n${csvData}`], { type: 'text/csv' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'analytics-data.csv';
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      color: '#10b981',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    📊 Export CSV
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Mock PDF export
+                      alert('PDF export would generate a comprehensive analytics report with charts and insights.');
+                    }}
+                    style={{
+                      background: 'rgba(99, 102, 241, 0.2)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      color: '#a78bfa',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    📄 Export PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Original Analytics KPI Cards */}
             <div
               style={{
                 display: 'grid',
