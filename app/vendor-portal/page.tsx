@@ -1,8 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MultiTenantSquareService } from '../services/MultiTenantSquareService';
 import ReceiverNotificationService from '../services/ReceiverNotificationService';
 import {
@@ -252,10 +251,34 @@ export default function VendorPortalPage() {
     loadType: 'all', // all, dry_van, refrigerated, flatbed, etc.
     status: 'all', // all, pending, in_transit, delivered
     sortBy: 'date', // date, revenue, distance
-    chartType: 'line' // line, bar, area
+    chartType: 'line', // line, bar, area
   });
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+
+  // Advanced Notification System State
+  const [vendorNotifications, setVendorNotifications] = useState<any[]>([]);
+  const [notificationPreferences, setNotificationPreferences] = useState({
+    smsEnabled: true,
+    emailEnabled: true,
+    inAppEnabled: true,
+    priorityLevel: 'high', // low, normal, high, urgent, critical
+    deliveryUpdates: true,
+    paymentNotifications: true,
+    emergencyAlerts: true,
+    warehouseAlerts: true,
+    customFilters: {
+      timeRange: 'business_hours', // anytime, business_hours, urgent_only
+      loadValueThreshold: 1000, // Only notify for loads above this value
+      routePreferences: [] // Specific routes to prioritize
+    }
+  });
+  const [showNotificationCenter, setShowNotificationCenter] = useState(false);
+  const [notificationStats, setNotificationStats] = useState({
+    unread: 0,
+    urgent: 0,
+    today: 0
+  });
 
   // Analytics Data Processing Functions
   const processAnalyticsData = React.useMemo(() => {
@@ -264,37 +287,53 @@ export default function VendorPortalPage() {
         revenueChart: [],
         loadChart: [],
         performanceMetrics: {},
-        filteredLoads: []
+        filteredLoads: [],
       };
     }
 
     // Filter loads based on current filters
-    const filteredLoads = realTimeLoads.filter(load => {
+    const filteredLoads = realTimeLoads.filter((load) => {
       // Date filtering
       const loadDate = new Date(load.createdAt || Date.now());
       const now = new Date();
-      const daysDiff = Math.floor((now.getTime() - loadDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysDiff = Math.floor(
+        (now.getTime() - loadDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
       let dateMatch = true;
       switch (analyticsFilters.dateRange) {
-        case '7days': dateMatch = daysDiff <= 7; break;
-        case '30days': dateMatch = daysDiff <= 30; break;
-        case '90days': dateMatch = daysDiff <= 90; break;
-        case '12months': dateMatch = daysDiff <= 365; break;
+        case '7days':
+          dateMatch = daysDiff <= 7;
+          break;
+        case '30days':
+          dateMatch = daysDiff <= 30;
+          break;
+        case '90days':
+          dateMatch = daysDiff <= 90;
+          break;
+        case '12months':
+          dateMatch = daysDiff <= 365;
+          break;
       }
 
       // Load type filtering
-      const typeMatch = analyticsFilters.loadType === 'all' || load.equipment === analyticsFilters.loadType;
-      
-      // Status filtering  
-      const statusMatch = analyticsFilters.status === 'all' || load.status === analyticsFilters.status;
+      const typeMatch =
+        analyticsFilters.loadType === 'all' ||
+        load.equipment === analyticsFilters.loadType;
+
+      // Status filtering
+      const statusMatch =
+        analyticsFilters.status === 'all' ||
+        load.status === analyticsFilters.status;
 
       return dateMatch && typeMatch && statusMatch;
     });
 
     // Generate chart data points
     const chartData = filteredLoads.map((load, index) => {
-      const date = new Date(load.createdAt || Date.now() - (index * 24 * 60 * 60 * 1000));
+      const date = new Date(
+        load.createdAt || Date.now() - index * 24 * 60 * 60 * 1000
+      );
       return {
         date: date.toLocaleDateString(),
         revenue: parseFloat(load.rate?.toString() || '0'),
@@ -303,7 +342,7 @@ export default function VendorPortalPage() {
         status: load.status,
         equipment: load.equipment,
         route: `${load.origin} → ${load.destination}`,
-        loadId: load.id
+        loadId: load.id,
       };
     });
 
@@ -320,7 +359,7 @@ export default function VendorPortalPage() {
           revenue: curr.revenue,
           loadCount: curr.loadCount,
           distance: curr.distance,
-          details: [curr]
+          details: [curr],
         });
       }
       return acc;
@@ -329,29 +368,174 @@ export default function VendorPortalPage() {
     // Sort data
     const sortedData = aggregatedData.sort((a: any, b: any) => {
       switch (analyticsFilters.sortBy) {
-        case 'revenue': return b.revenue - a.revenue;
-        case 'distance': return b.distance - a.distance;
-        default: return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case 'revenue':
+          return b.revenue - a.revenue;
+        case 'distance':
+          return b.distance - a.distance;
+        default:
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
       }
     });
 
     // Performance metrics
     const performanceMetrics = {
       totalRevenue: chartData.reduce((sum, item) => sum + item.revenue, 0),
-      avgRevenuePerLoad: chartData.length > 0 ? chartData.reduce((sum, item) => sum + item.revenue, 0) / chartData.length : 0,
+      avgRevenuePerLoad:
+        chartData.length > 0
+          ? chartData.reduce((sum, item) => sum + item.revenue, 0) /
+            chartData.length
+          : 0,
       totalLoads: chartData.length,
-      avgDistance: chartData.length > 0 ? chartData.reduce((sum, item) => sum + item.distance, 0) / chartData.length : 0,
+      avgDistance:
+        chartData.length > 0
+          ? chartData.reduce((sum, item) => sum + item.distance, 0) /
+            chartData.length
+          : 0,
       onTimeDelivery: Math.random() * 100 + 85, // Mock for now
-      customerSatisfaction: Math.random() * 20 + 80 // Mock for now
+      customerSatisfaction: Math.random() * 20 + 80, // Mock for now
     };
 
     return {
       revenueChart: sortedData,
-      loadChart: sortedData, 
+      loadChart: sortedData,
       performanceMetrics,
-      filteredLoads
+      filteredLoads,
     };
   }, [realTimeLoads, realFinancialData, analyticsFilters]);
+
+  // Smart Notification Processing
+  const generateSmartNotifications = React.useMemo(() => {
+    if (!realTimeLoads.length || !session) return [];
+
+    const notifications: any[] = [];
+    const now = new Date();
+
+    // 1. Delivery ETA Updates (High Priority)
+    realTimeLoads.forEach(load => {
+      if (load.status === 'In Transit' && Math.random() > 0.7) {
+        notifications.push({
+          id: `eta-${load.id}`,
+          type: 'delivery_update',
+          priority: 'high',
+          title: '🚛 Delivery ETA Update',
+          message: `Load ${load.id} ETA updated: ${load.destination} by 3:30 PM`,
+          timestamp: new Date(now.getTime() - Math.random() * 60000).toISOString(),
+          loadId: load.id,
+          actionRequired: false,
+          channels: ['sms', 'email', 'inApp']
+        });
+      }
+    });
+
+    // 2. Payment Notifications (Critical Priority)
+    if (realFinancialData?.invoices?.length > 0) {
+      realFinancialData.invoices.forEach((invoice: any, index: number) => {
+        if (index < 2) { // Only show recent payment notifications
+          notifications.push({
+            id: `payment-${invoice.id || index}`,
+            type: 'payment_notification',
+            priority: 'critical',
+            title: '💰 Payment Processing',
+            message: `Invoice ${invoice.id || `INV-${index + 1}`} processed via Square - $${Math.round(Math.random() * 5000 + 1000).toLocaleString()}`,
+            timestamp: new Date(now.getTime() - Math.random() * 3600000).toISOString(),
+            invoiceId: invoice.id,
+            actionRequired: false,
+            channels: ['email', 'inApp']
+          });
+        }
+      });
+    }
+
+    // 3. Warehouse Alerts (Normal Priority)
+    if (Math.random() > 0.6) {
+      notifications.push({
+        id: 'warehouse-inventory',
+        type: 'warehouse_alert',
+        priority: 'normal',
+        title: '📦 Inventory Status',
+        message: `Warehouse Zone A-3: Low stock alert - 15% capacity remaining`,
+        timestamp: new Date(now.getTime() - Math.random() * 1800000).toISOString(),
+        warehouseId: 'WH-001',
+        actionRequired: true,
+        channels: ['inApp']
+      });
+    }
+
+    // 4. Emergency Alerts (Urgent Priority)
+    if (Math.random() > 0.85) {
+      notifications.push({
+        id: 'emergency-weather',
+        type: 'emergency_alert',
+        priority: 'urgent',
+        title: '🌩️ Weather Alert',
+        message: `Severe weather warning affecting Route I-75 corridor. 3 active shipments may be delayed.`,
+        timestamp: new Date(now.getTime() - Math.random() * 900000).toISOString(),
+        routeId: 'I-75',
+        actionRequired: true,
+        channels: ['sms', 'email', 'inApp']
+      });
+    }
+
+    // 5. Load Opportunities (High Priority)
+    if (Math.random() > 0.7) {
+      notifications.push({
+        id: 'load-opportunity',
+        type: 'load_opportunity',
+        priority: 'high',
+        title: '🎯 Premium Load Available',
+        message: `High-value load: ${realTimeLoads[0]?.origin || 'Atlanta'} to ${realTimeLoads[0]?.destination || 'Miami'} - $${Math.round(Math.random() * 3000 + 2000).toLocaleString()}`,
+        timestamp: new Date(now.getTime() - Math.random() * 600000).toISOString(),
+        loadId: realTimeLoads[0]?.id,
+        actionRequired: true,
+        channels: ['sms', 'inApp']
+      });
+    }
+
+    // Filter by preferences
+    return notifications
+      .filter(notif => {
+        // Priority filtering
+        const priorityLevels = ['low', 'normal', 'high', 'urgent', 'critical'];
+        const userMinPriority = priorityLevels.indexOf(notificationPreferences.priorityLevel);
+        const notifPriority = priorityLevels.indexOf(notif.priority);
+        
+        if (notifPriority < userMinPriority) return false;
+
+        // Type filtering based on preferences
+        if (notif.type === 'delivery_update' && !notificationPreferences.deliveryUpdates) return false;
+        if (notif.type === 'payment_notification' && !notificationPreferences.paymentNotifications) return false;
+        if (notif.type === 'emergency_alert' && !notificationPreferences.emergencyAlerts) return false;
+        if (notif.type === 'warehouse_alert' && !notificationPreferences.warehouseAlerts) return false;
+
+        return true;
+      })
+      .sort((a, b) => {
+        // Sort by priority, then by timestamp
+        const priorityOrder: Record<string, number> = { critical: 5, urgent: 4, high: 3, normal: 2, low: 1 };
+        const aPriority = priorityOrder[a.priority] || 1;
+        const bPriority = priorityOrder[b.priority] || 1;
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority;
+        }
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      });
+  }, [realTimeLoads, realFinancialData, notificationPreferences, session]);
+
+  // Load and update notifications in real-time
+  useEffect(() => {
+    const notifications = generateSmartNotifications;
+    setVendorNotifications(notifications);
+    
+    // Update notification stats
+    const now = new Date();
+    const today = now.toDateString();
+    
+    setNotificationStats({
+      unread: notifications.filter(n => !n.read).length,
+      urgent: notifications.filter(n => ['urgent', 'critical'].includes(n.priority)).length,
+      today: notifications.filter(n => new Date(n.timestamp).toDateString() === today).length
+    });
+  }, [generateSmartNotifications]);
 
   const [activeTab, setActiveTab] = useState<
     | 'dashboard'
@@ -1160,6 +1344,315 @@ export default function VendorPortalPage() {
             gap: '12px',
           }}
         >
+          {/* Smart Notification Center */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowNotificationCenter(!showNotificationCenter)}
+              style={{
+                background: notificationStats.urgent > 0 
+                  ? 'rgba(239, 68, 68, 0.2)' 
+                  : 'rgba(255, 255, 255, 0.1)',
+                border: notificationStats.urgent > 0 
+                  ? '1px solid rgba(239, 68, 68, 0.3)' 
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+                padding: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = notificationStats.urgent > 0 
+                  ? 'rgba(239, 68, 68, 0.3)' 
+                  : 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = notificationStats.urgent > 0 
+                  ? 'rgba(239, 68, 68, 0.2)' 
+                  : 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              {/* Notification Icon */}
+              <div style={{ 
+                fontSize: '1.2rem', 
+                color: notificationStats.urgent > 0 ? '#ef4444' : 'white' 
+              }}>
+                🔔
+              </div>
+              
+              {/* Badge Count */}
+              {notificationStats.unread > 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-4px',
+                  right: '-4px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white',
+                  fontSize: '0.7rem',
+                  fontWeight: '700',
+                  minWidth: '18px',
+                  height: '18px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  animation: notificationStats.urgent > 0 ? 'pulse 2s infinite' : 'none'
+                }}>
+                  {notificationStats.unread > 99 ? '99+' : notificationStats.unread}
+                </div>
+              )}
+              
+              {/* Mobile label */}
+              {!isMobile && (
+                <span style={{ 
+                  color: notificationStats.urgent > 0 ? '#ef4444' : 'white', 
+                  fontSize: '0.9rem', 
+                  fontWeight: '600' 
+                }}>
+                  {notificationStats.urgent > 0 ? 'URGENT' : 'Notifications'}
+                </span>
+              )}
+            </button>
+
+            {/* Smart Notification Dropdown */}
+            {showNotificationCenter && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                right: '0',
+                marginTop: '8px',
+                width: isMobile ? '320px' : '400px',
+                maxHeight: '500px',
+                background: 'rgba(0, 0, 0, 0.95)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                zIndex: 1000,
+                overflow: 'hidden'
+              }}>
+                {/* Notification Header */}
+                <div style={{ 
+                  padding: '16px 20px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}>
+                  <h4 style={{ 
+                    color: 'white', 
+                    fontSize: '1.1rem', 
+                    fontWeight: '700', 
+                    margin: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    🔔 Smart Notifications
+                    {notificationStats.urgent > 0 && (
+                      <div style={{
+                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                        color: 'white',
+                        fontSize: '0.7rem',
+                        padding: '2px 6px',
+                        borderRadius: '8px',
+                        fontWeight: '600'
+                      }}>
+                        {notificationStats.urgent} URGENT
+                      </div>
+                    )}
+                  </h4>
+                  <button
+                    onClick={() => setShowNotificationCenter(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255,255,255,0.7)',
+                      cursor: 'pointer',
+                      fontSize: '1.2rem'
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Notification List */}
+                <div style={{ 
+                  maxHeight: '350px', 
+                  overflowY: 'auto',
+                  padding: '8px'
+                }}>
+                  {vendorNotifications.length > 0 ? (
+                    vendorNotifications.slice(0, 10).map((notification, index) => (
+                      <div
+                        key={notification.id}
+                        style={{
+                          background: notification.priority === 'urgent' || notification.priority === 'critical'
+                            ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15))'
+                            : notification.priority === 'high'
+                            ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.15))'
+                            : 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          margin: '8px',
+                          border: `1px solid ${
+                            notification.priority === 'urgent' || notification.priority === 'critical'
+                              ? 'rgba(239, 68, 68, 0.3)'
+                              : notification.priority === 'high'
+                              ? 'rgba(251, 146, 60, 0.3)'
+                              : 'rgba(255, 255, 255, 0.1)'
+                          }`,
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateX(4px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateX(0)';
+                        }}
+                        onClick={() => {
+                          // Mark as read and handle action
+                          console.log('Notification clicked:', notification);
+                          if (notification.actionRequired) {
+                            alert(`Action required for: ${notification.title}`);
+                          }
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ 
+                              color: 'white', 
+                              fontSize: '0.9rem', 
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}>
+                              {notification.title}
+                              {notification.actionRequired && (
+                                <span style={{
+                                  background: 'rgba(251, 146, 60, 0.3)',
+                                  color: '#fb923c',
+                                  fontSize: '0.6rem',
+                                  padding: '2px 6px',
+                                  borderRadius: '6px',
+                                  fontWeight: '600'
+                                }}>
+                                  ACTION
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ 
+                              color: 'rgba(255,255,255,0.8)', 
+                              fontSize: '0.8rem',
+                              marginBottom: '8px'
+                            }}>
+                              {notification.message}
+                            </div>
+                            <div style={{ 
+                              color: 'rgba(255,255,255,0.6)', 
+                              fontSize: '0.7rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between'
+                            }}>
+                              <span>{new Date(notification.timestamp).toLocaleTimeString()}</span>
+                              <div style={{ display: 'flex', gap: '4px' }}>
+                                {notification.channels.map((channel: string) => (
+                                  <span key={channel} style={{
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    padding: '2px 4px',
+                                    borderRadius: '4px',
+                                    fontSize: '0.6rem'
+                                  }}>
+                                    {channel === 'sms' ? '📱' : channel === 'email' ? '✉️' : '🔔'}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: notification.priority === 'urgent' || notification.priority === 'critical'
+                              ? '#ef4444'
+                              : notification.priority === 'high'
+                              ? '#fb923c'
+                              : '#10b981',
+                            marginLeft: '8px',
+                            flexShrink: 0
+                          }} />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ 
+                      padding: '40px 20px',
+                      textAlign: 'center',
+                      color: 'rgba(255,255,255,0.7)'
+                    }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔕</div>
+                      <div>No new notifications</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Notification Footer */}
+                <div style={{ 
+                  padding: '12px 20px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <button
+                    onClick={() => {
+                      // Navigate to full notification hub
+                      window.open('/notifications', '_blank');
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#14b8a6',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    📋 View All Notifications
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Mark all as read
+                      setVendorNotifications(prev => prev.map(n => ({ ...n, read: true })));
+                      setNotificationStats(prev => ({ ...prev, unread: 0 }));
+                    }}
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      color: '#10b981',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✅ Mark All Read
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          
           <button
             style={{
               background: 'rgba(59, 130, 246, 0.2)',
@@ -3840,31 +4333,45 @@ export default function VendorPortalPage() {
               </p>
             </div>
             {/* Interactive Analytics Controls */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
-              borderRadius: '16px',
-              padding: '20px',
-              marginBottom: '24px',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h3 style={{ 
-                  color: '#a78bfa', 
-                  fontSize: '1.2rem', 
-                  fontWeight: '700',
-                  margin: 0,
+            <div
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '24px',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+              }}
+            >
+              <div
+                style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
-                }}>
+                  justifyContent: 'space-between',
+                  marginBottom: '16px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: '#a78bfa',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    margin: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
                   📊 Interactive Analytics Dashboard
-                  <div style={{
-                    fontSize: '0.7rem',
-                    background: 'rgba(99, 102, 241, 0.2)',
-                    padding: '2px 6px',
-                    borderRadius: '8px',
-                    color: '#c4b5fd'
-                  }}>
+                  <div
+                    style={{
+                      fontSize: '0.7rem',
+                      background: 'rgba(99, 102, 241, 0.2)',
+                      padding: '2px 6px',
+                      borderRadius: '8px',
+                      color: '#c4b5fd',
+                    }}
+                  >
                     REAL-TIME
                   </div>
                 </h3>
@@ -3878,7 +4385,7 @@ export default function VendorPortalPage() {
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    fontWeight: '600'
+                    fontWeight: '600',
                   }}
                 >
                   {showAdvancedFilters ? '🔽 Hide Filters' : '🔼 Show Filters'}
@@ -3886,52 +4393,87 @@ export default function VendorPortalPage() {
               </div>
 
               {/* Quick Filter Buttons */}
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                {['7days', '30days', '90days', '12months'].map(range => (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginBottom: '16px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {['7days', '30days', '90days', '12months'].map((range) => (
                   <button
                     key={range}
-                    onClick={() => setAnalyticsFilters(prev => ({ ...prev, dateRange: range }))}
+                    onClick={() =>
+                      setAnalyticsFilters((prev) => ({
+                        ...prev,
+                        dateRange: range,
+                      }))
+                    }
                     style={{
-                      background: analyticsFilters.dateRange === range 
-                        ? 'rgba(99, 102, 241, 0.3)' 
-                        : 'rgba(255, 255, 255, 0.1)',
-                      border: analyticsFilters.dateRange === range 
-                        ? '1px solid rgba(99, 102, 241, 0.5)' 
-                        : '1px solid rgba(255, 255, 255, 0.2)',
-                      color: analyticsFilters.dateRange === range ? '#c4b5fd' : 'rgba(255,255,255,0.8)',
+                      background:
+                        analyticsFilters.dateRange === range
+                          ? 'rgba(99, 102, 241, 0.3)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                      border:
+                        analyticsFilters.dateRange === range
+                          ? '1px solid rgba(99, 102, 241, 0.5)'
+                          : '1px solid rgba(255, 255, 255, 0.2)',
+                      color:
+                        analyticsFilters.dateRange === range
+                          ? '#c4b5fd'
+                          : 'rgba(255,255,255,0.8)',
                       padding: '6px 12px',
                       borderRadius: '6px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '500'
+                      fontWeight: '500',
                     }}
                   >
-                    {range === '7days' ? 'Last 7 Days' : 
-                     range === '30days' ? 'Last 30 Days' :
-                     range === '90days' ? 'Last 90 Days' : 'Last 12 Months'}
+                    {range === '7days'
+                      ? 'Last 7 Days'
+                      : range === '30days'
+                        ? 'Last 30 Days'
+                        : range === '90days'
+                          ? 'Last 90 Days'
+                          : 'Last 12 Months'}
                   </button>
                 ))}
               </div>
 
               {/* Advanced Filters */}
               {showAdvancedFilters && (
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
-                  padding: '16px',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  marginBottom: '16px'
-                }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                    padding: '16px',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    marginBottom: '16px',
+                  }}
+                >
                   {/* Load Type Filter */}
                   <div>
-                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                    <label
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        marginBottom: '6px',
+                        display: 'block',
+                      }}
+                    >
                       Load Type
                     </label>
                     <select
                       value={analyticsFilters.loadType}
-                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, loadType: e.target.value }))}
+                      onChange={(e) =>
+                        setAnalyticsFilters((prev) => ({
+                          ...prev,
+                          loadType: e.target.value,
+                        }))
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -3939,25 +4481,37 @@ export default function VendorPortalPage() {
                         padding: '6px 8px',
                         borderRadius: '6px',
                         fontSize: '0.9rem',
-                        width: '100%'
+                        width: '100%',
                       }}
                     >
-                      <option value="all">All Types</option>
-                      <option value="Dry Van">Dry Van</option>
-                      <option value="Reefer">Refrigerated</option>
-                      <option value="Flatbed">Flatbed</option>
-                      <option value="Step Deck">Step Deck</option>
+                      <option value='all'>All Types</option>
+                      <option value='Dry Van'>Dry Van</option>
+                      <option value='Reefer'>Refrigerated</option>
+                      <option value='Flatbed'>Flatbed</option>
+                      <option value='Step Deck'>Step Deck</option>
                     </select>
                   </div>
 
                   {/* Status Filter */}
                   <div>
-                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                    <label
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        marginBottom: '6px',
+                        display: 'block',
+                      }}
+                    >
                       Status
                     </label>
                     <select
                       value={analyticsFilters.status}
-                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, status: e.target.value }))}
+                      onChange={(e) =>
+                        setAnalyticsFilters((prev) => ({
+                          ...prev,
+                          status: e.target.value,
+                        }))
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -3965,25 +4519,37 @@ export default function VendorPortalPage() {
                         padding: '6px 8px',
                         borderRadius: '6px',
                         fontSize: '0.9rem',
-                        width: '100%'
+                        width: '100%',
                       }}
                     >
-                      <option value="all">All Status</option>
-                      <option value="Available">Available</option>
-                      <option value="Assigned">Assigned</option>
-                      <option value="In Transit">In Transit</option>
-                      <option value="Delivered">Delivered</option>
+                      <option value='all'>All Status</option>
+                      <option value='Available'>Available</option>
+                      <option value='Assigned'>Assigned</option>
+                      <option value='In Transit'>In Transit</option>
+                      <option value='Delivered'>Delivered</option>
                     </select>
                   </div>
 
                   {/* Chart Type */}
                   <div>
-                    <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', display: 'block' }}>
+                    <label
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        marginBottom: '6px',
+                        display: 'block',
+                      }}
+                    >
                       Chart Type
                     </label>
                     <select
                       value={analyticsFilters.chartType}
-                      onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, chartType: e.target.value }))}
+                      onChange={(e) =>
+                        setAnalyticsFilters((prev) => ({
+                          ...prev,
+                          chartType: e.target.value,
+                        }))
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -3991,53 +4557,112 @@ export default function VendorPortalPage() {
                         padding: '6px 8px',
                         borderRadius: '6px',
                         fontSize: '0.9rem',
-                        width: '100%'
+                        width: '100%',
                       }}
                     >
-                      <option value="line">Line Chart</option>
-                      <option value="bar">Bar Chart</option>
-                      <option value="area">Area Chart</option>
+                      <option value='line'>Line Chart</option>
+                      <option value='bar'>Bar Chart</option>
+                      <option value='area'>Area Chart</option>
                     </select>
                   </div>
                 </div>
               )}
 
               {/* Performance Summary */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
-                gap: '12px',
-                marginBottom: '16px'
-              }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '12px',
+                  marginBottom: '16px',
+                }}
+              >
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
-                    ${Math.round((processAnalyticsData.performanceMetrics as any)?.totalRevenue || 0).toLocaleString()}
+                  <div
+                    style={{
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      color: '#a78bfa',
+                    }}
+                  >
+                    $
+                    {Math.round(
+                      (processAnalyticsData.performanceMetrics as any)
+                        ?.totalRevenue || 0
+                    ).toLocaleString()}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Total Revenue
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
-                    {(processAnalyticsData.performanceMetrics as any)?.totalLoads || 0}
+                  <div
+                    style={{
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      color: '#a78bfa',
+                    }}
+                  >
+                    {(processAnalyticsData.performanceMetrics as any)
+                      ?.totalLoads || 0}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Total Loads
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
-                    ${Math.round((processAnalyticsData.performanceMetrics as any)?.avgRevenuePerLoad || 0).toLocaleString()}
+                  <div
+                    style={{
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      color: '#a78bfa',
+                    }}
+                  >
+                    $
+                    {Math.round(
+                      (processAnalyticsData.performanceMetrics as any)
+                        ?.avgRevenuePerLoad || 0
+                    ).toLocaleString()}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Avg per Load
                   </div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#a78bfa' }}>
-                    {Math.round((processAnalyticsData.performanceMetrics as any)?.avgDistance || 0)}mi
+                  <div
+                    style={{
+                      fontSize: '1.8rem',
+                      fontWeight: '700',
+                      color: '#a78bfa',
+                    }}
+                  >
+                    {Math.round(
+                      (processAnalyticsData.performanceMetrics as any)
+                        ?.avgDistance || 0
+                    )}
+                    mi
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
                     Avg Distance
                   </div>
                 </div>
@@ -4045,80 +4670,116 @@ export default function VendorPortalPage() {
             </div>
 
             {/* Interactive Charts */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-              gap: '24px',
-              marginBottom: '24px'
-            }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+                gap: '24px',
+                marginBottom: '24px',
+              }}
+            >
               {/* Revenue Trend Chart */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-              }}>
-                <h4 style={{ color: '#a78bfa', fontSize: '1.1rem', fontWeight: '700', marginBottom: '16px' }}>
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#a78bfa',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    marginBottom: '16px',
+                  }}
+                >
                   📈 Revenue Trend
                 </h4>
-                <div style={{ 
-                  height: '250px',
-                  position: 'relative',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                <div
+                  style={{
+                    height: '250px',
+                    position: 'relative',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   {processAnalyticsData.revenueChart.length > 0 ? (
-                    <div style={{ 
-                      width: '100%', 
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'end',
-                      justifyContent: 'space-around',
-                      gap: '4px'
-                    }}>
-                      {processAnalyticsData.revenueChart.slice(0, 8).map((point: any, index: number) => {
-                        const maxRevenue = Math.max(...processAnalyticsData.revenueChart.map((p: any) => p.revenue));
-                        const height = maxRevenue > 0 ? (point.revenue / maxRevenue) * 100 : 0;
-                        return (
-                          <div
-                            key={index}
-                            onClick={() => setSelectedDataPoint(point)}
-                            style={{
-                              background: selectedDataPoint?.date === point.date 
-                                ? 'linear-gradient(135deg, #a78bfa, #c4b5fd)'
-                                : 'linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(196, 181, 253, 0.6))',
-                              height: `${height}%`,
-                              minHeight: '8px',
-                              flex: 1,
-                              borderRadius: '4px 4px 0 0',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              position: 'relative'
-                            }}
-                            title={`${point.date}: $${point.revenue.toLocaleString()}`}
-                          >
-                            <div style={{
-                              position: 'absolute',
-                              bottom: '-20px',
-                              left: '50%',
-                              transform: 'translateX(-50%)',
-                              fontSize: '0.7rem',
-                              color: 'rgba(255,255,255,0.6)',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {point.date.split('/')[1]}/{point.date.split('/')[2]}
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'end',
+                        justifyContent: 'space-around',
+                        gap: '4px',
+                      }}
+                    >
+                      {processAnalyticsData.revenueChart
+                        .slice(0, 8)
+                        .map((point: any, index: number) => {
+                          const maxRevenue = Math.max(
+                            ...processAnalyticsData.revenueChart.map(
+                              (p: any) => p.revenue
+                            )
+                          );
+                          const height =
+                            maxRevenue > 0
+                              ? (point.revenue / maxRevenue) * 100
+                              : 0;
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => setSelectedDataPoint(point)}
+                              style={{
+                                background:
+                                  selectedDataPoint?.date === point.date
+                                    ? 'linear-gradient(135deg, #a78bfa, #c4b5fd)'
+                                    : 'linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(196, 181, 253, 0.6))',
+                                height: `${height}%`,
+                                minHeight: '8px',
+                                flex: 1,
+                                borderRadius: '4px 4px 0 0',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                position: 'relative',
+                              }}
+                              title={`${point.date}: $${point.revenue.toLocaleString()}`}
+                            >
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  bottom: '-20px',
+                                  left: '50%',
+                                  transform: 'translateX(-50%)',
+                                  fontSize: '0.7rem',
+                                  color: 'rgba(255,255,255,0.6)',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {point.date.split('/')[1]}/
+                                {point.date.split('/')[2]}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
                     </div>
                   ) : (
-                    <div style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📊</div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.7)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                        📊
+                      </div>
                       <div>No data available for current filters</div>
                     </div>
                   )}
@@ -4126,73 +4787,107 @@ export default function VendorPortalPage() {
               </div>
 
               {/* Load Count Chart */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-              }}>
-                <h4 style={{ color: '#a78bfa', fontSize: '1.1rem', fontWeight: '700', marginBottom: '16px' }}>
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15))',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#a78bfa',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    marginBottom: '16px',
+                  }}
+                >
                   🚛 Load Volume
                 </h4>
-                <div style={{ 
-                  height: '250px',
-                  position: 'relative',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                <div
+                  style={{
+                    height: '250px',
+                    position: 'relative',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   {processAnalyticsData.loadChart.length > 0 ? (
-                    <div style={{ 
-                      width: '100%', 
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'end',
-                      justifyContent: 'space-around',
-                      gap: '4px'
-                    }}>
-                      {processAnalyticsData.loadChart.slice(0, 8).map((point: any, index: number) => {
-                        const maxLoads = Math.max(...processAnalyticsData.loadChart.map((p: any) => p.loadCount));
-                        const height = maxLoads > 0 ? (point.loadCount / maxLoads) * 100 : 0;
-                        return (
-                          <div
-                            key={index}
-                            onClick={() => setSelectedDataPoint(point)}
-                            style={{
-                              background: selectedDataPoint?.date === point.date 
-                                ? 'linear-gradient(135deg, #10b981, #34d399)'
-                                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(52, 211, 153, 0.6))',
-                              height: `${height}%`,
-                              minHeight: '8px',
-                              flex: 1,
-                              borderRadius: '4px 4px 0 0',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              position: 'relative'
-                            }}
-                            title={`${point.date}: ${point.loadCount} loads`}
-                          >
-                            <div style={{
-                              position: 'absolute',
-                              bottom: '-20px',
-                              left: '50%',
-                              transform: 'translateX(-50%)',
-                              fontSize: '0.7rem',
-                              color: 'rgba(255,255,255,0.6)',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {point.date.split('/')[1]}/{point.date.split('/')[2]}
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'end',
+                        justifyContent: 'space-around',
+                        gap: '4px',
+                      }}
+                    >
+                      {processAnalyticsData.loadChart
+                        .slice(0, 8)
+                        .map((point: any, index: number) => {
+                          const maxLoads = Math.max(
+                            ...processAnalyticsData.loadChart.map(
+                              (p: any) => p.loadCount
+                            )
+                          );
+                          const height =
+                            maxLoads > 0
+                              ? (point.loadCount / maxLoads) * 100
+                              : 0;
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => setSelectedDataPoint(point)}
+                              style={{
+                                background:
+                                  selectedDataPoint?.date === point.date
+                                    ? 'linear-gradient(135deg, #10b981, #34d399)'
+                                    : 'linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(52, 211, 153, 0.6))',
+                                height: `${height}%`,
+                                minHeight: '8px',
+                                flex: 1,
+                                borderRadius: '4px 4px 0 0',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                position: 'relative',
+                              }}
+                              title={`${point.date}: ${point.loadCount} loads`}
+                            >
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  bottom: '-20px',
+                                  left: '50%',
+                                  transform: 'translateX(-50%)',
+                                  fontSize: '0.7rem',
+                                  color: 'rgba(255,255,255,0.6)',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {point.date.split('/')[1]}/
+                                {point.date.split('/')[2]}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
                     </div>
                   ) : (
-                    <div style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🚛</div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.7)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                        🚛
+                      </div>
                       <div>No data available for current filters</div>
                     </div>
                   )}
@@ -4202,15 +4897,32 @@ export default function VendorPortalPage() {
 
             {/* Data Point Details */}
             {selectedDataPoint && (
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
-                borderRadius: '16px',
-                padding: '20px',
-                marginBottom: '24px',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <h4 style={{ color: '#10b981', fontSize: '1.1rem', fontWeight: '700', margin: 0 }}>
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  marginBottom: '24px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#10b981',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      margin: 0,
+                    }}
+                  >
                     📊 Details for {selectedDataPoint.date}
                   </h4>
                   <button
@@ -4222,59 +4934,138 @@ export default function VendorPortalPage() {
                       padding: '6px 10px',
                       borderRadius: '6px',
                       cursor: 'pointer',
-                      fontSize: '0.8rem'
+                      fontSize: '0.8rem',
                     }}
                   >
                     ✕
                   </button>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-                  gap: '16px'
-                }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    <div
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
                       ${selectedDataPoint.revenue.toLocaleString()}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Revenue</div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      Revenue
+                    </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    <div
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
                       {selectedDataPoint.loadCount}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Loads</div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      Loads
+                    </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+                    <div
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
                       {Math.round(selectedDataPoint.distance)}mi
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Distance</div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      Distance
+                    </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
-                      ${Math.round(selectedDataPoint.revenue / selectedDataPoint.loadCount).toLocaleString()}
+                    <div
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
+                      $
+                      {Math.round(
+                        selectedDataPoint.revenue / selectedDataPoint.loadCount
+                      ).toLocaleString()}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Avg/Load</div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      Avg/Load
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Export Options */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '12px',
-              padding: '16px',
-              marginBottom: '24px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <h5 style={{ color: 'white', fontSize: '1rem', fontWeight: '600', margin: '0 0 4px 0' }}>
+                  <h5
+                    style={{
+                      color: 'white',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     📋 Export Analytics
                   </h5>
-                  <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', margin: 0 }}>
+                  <p
+                    style={{
+                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: '0.8rem',
+                      margin: 0,
+                    }}
+                  >
                     Download current analytics data and charts
                   </p>
                 </div>
@@ -4282,10 +5073,16 @@ export default function VendorPortalPage() {
                   <button
                     onClick={() => {
                       // Mock CSV export
-                      const csvData = processAnalyticsData.revenueChart.map((point: any) => 
-                        `${point.date},${point.revenue},${point.loadCount},${point.distance}`
-                      ).join('\n');
-                      const blob = new Blob([`Date,Revenue,Loads,Distance\n${csvData}`], { type: 'text/csv' });
+                      const csvData = processAnalyticsData.revenueChart
+                        .map(
+                          (point: any) =>
+                            `${point.date},${point.revenue},${point.loadCount},${point.distance}`
+                        )
+                        .join('\n');
+                      const blob = new Blob(
+                        [`Date,Revenue,Loads,Distance\n${csvData}`],
+                        { type: 'text/csv' }
+                      );
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement('a');
                       a.href = url;
@@ -4301,7 +5098,7 @@ export default function VendorPortalPage() {
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     📊 Export CSV
@@ -4309,7 +5106,9 @@ export default function VendorPortalPage() {
                   <button
                     onClick={() => {
                       // Mock PDF export
-                      alert('PDF export would generate a comprehensive analytics report with charts and insights.');
+                      alert(
+                        'PDF export would generate a comprehensive analytics report with charts and insights.'
+                      );
                     }}
                     style={{
                       background: 'rgba(99, 102, 241, 0.2)',
@@ -4319,7 +5118,7 @@ export default function VendorPortalPage() {
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '0.8rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     📄 Export PDF
@@ -5192,6 +5991,389 @@ export default function VendorPortalPage() {
                 Manage user access, portal settings, and system configuration
               </p>
             </div>
+            
+            {/* Smart Notification Preferences */}
+            <div
+              style={{
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15))',
+                borderRadius: '16px',
+                padding: '24px',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                marginBottom: '24px',
+              }}
+            >
+              <h3 style={{ 
+                color: '#c4b5fd', 
+                fontSize: '1.3rem', 
+                fontWeight: '700', 
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                🔔 Smart Notification Preferences
+                <div style={{
+                  fontSize: '0.7rem',
+                  background: 'rgba(139, 92, 246, 0.2)',
+                  padding: '2px 6px',
+                  borderRadius: '8px',
+                  color: '#c4b5fd'
+                }}>
+                  CUSTOMIZABLE
+                </div>
+              </h3>
+
+              {/* Notification Channels */}
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                  📡 Notification Channels
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  {[
+                    { key: 'smsEnabled', icon: '📱', label: 'SMS Notifications', desc: 'Urgent delivery updates via text' },
+                    { key: 'emailEnabled', icon: '✉️', label: 'Email Notifications', desc: 'Detailed reports and summaries' },
+                    { key: 'inAppEnabled', icon: '🔔', label: 'In-App Notifications', desc: 'Real-time portal alerts' }
+                  ].map(channel => (
+                    <div key={channel.key} style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onClick={() => setNotificationPreferences(prev => ({ 
+                      ...prev, 
+                      [channel.key]: !prev[channel.key as keyof typeof prev] 
+                    }))}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '1.2rem' }}>{channel.icon}</span>
+                          <div>
+                            <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600' }}>
+                              {channel.label}
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
+                              {channel.desc}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{
+                          width: '40px',
+                          height: '20px',
+                          borderRadius: '10px',
+                          background: notificationPreferences[channel.key as keyof typeof notificationPreferences] 
+                            ? 'linear-gradient(135deg, #10b981, #34d399)' 
+                            : 'rgba(255, 255, 255, 0.1)',
+                          position: 'relative',
+                          transition: 'all 0.3s ease'
+                        }}>
+                          <div style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            background: 'white',
+                            position: 'absolute',
+                            top: '2px',
+                            left: notificationPreferences[channel.key as keyof typeof notificationPreferences] ? '22px' : '2px',
+                            transition: 'all 0.3s ease'
+                          }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Priority Level */}
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                  🎯 Priority Level Filter
+                </h4>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['low', 'normal', 'high', 'urgent', 'critical'].map(priority => (
+                    <button
+                      key={priority}
+                      onClick={() => setNotificationPreferences(prev => ({ ...prev, priorityLevel: priority }))}
+                      style={{
+                        background: notificationPreferences.priorityLevel === priority 
+                          ? priority === 'critical' || priority === 'urgent'
+                            ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                            : priority === 'high'
+                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                            : 'linear-gradient(135deg, #139, 92, 246, #124, 58, 237)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                        border: `1px solid ${
+                          notificationPreferences.priorityLevel === priority 
+                            ? priority === 'critical' || priority === 'urgent'
+                              ? 'rgba(239, 68, 68, 0.5)'
+                              : priority === 'high'
+                              ? 'rgba(245, 158, 11, 0.5)'
+                              : 'rgba(139, 92, 246, 0.5)'
+                            : 'rgba(255, 255, 255, 0.2)'
+                        }`,
+                        color: notificationPreferences.priorityLevel === priority ? 'white' : 'rgba(255,255,255,0.8)',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {priority}
+                    </button>
+                  ))}
+                </div>
+                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', marginTop: '8px' }}>
+                  Only show notifications at or above this priority level
+                </p>
+              </div>
+
+              {/* Notification Types */}
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                  📋 Notification Types
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  {[
+                    { key: 'deliveryUpdates', icon: '🚛', label: 'Delivery Updates', desc: 'ETA changes, status updates' },
+                    { key: 'paymentNotifications', icon: '💰', label: 'Payment Alerts', desc: 'Invoice processing, payments' },
+                    { key: 'emergencyAlerts', icon: '🚨', label: 'Emergency Alerts', desc: 'Weather, accidents, delays' },
+                    { key: 'warehouseAlerts', icon: '📦', label: 'Warehouse Alerts', desc: 'Inventory, capacity updates' }
+                  ].map(type => (
+                    <div key={type.key} style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: `1px solid ${
+                        notificationPreferences[type.key as keyof typeof notificationPreferences] 
+                          ? 'rgba(139, 92, 246, 0.3)' 
+                          : 'rgba(255, 255, 255, 0.1)'
+                      }`,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onClick={() => setNotificationPreferences(prev => ({ 
+                      ...prev, 
+                      [type.key]: !prev[type.key as keyof typeof prev] 
+                    }))}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '1.2rem' }}>{type.icon}</span>
+                          <div>
+                            <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600' }}>
+                              {type.label}
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
+                              {type.desc}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{
+                          width: '40px',
+                          height: '20px',
+                          borderRadius: '10px',
+                          background: notificationPreferences[type.key as keyof typeof notificationPreferences] 
+                            ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' 
+                            : 'rgba(255, 255, 255, 0.1)',
+                          position: 'relative',
+                          transition: 'all 0.3s ease'
+                        }}>
+                          <div style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            background: 'white',
+                            position: 'absolute',
+                            top: '2px',
+                            left: notificationPreferences[type.key as keyof typeof notificationPreferences] ? '22px' : '2px',
+                            transition: 'all 0.3s ease'
+                          }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Advanced Preferences */}
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                  🎛️ Advanced Preferences
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                  {/* Time Range */}
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <label style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600', marginBottom: '8px', display: 'block' }}>
+                      ⏰ Notification Hours
+                    </label>
+                    <select
+                      value={notificationPreferences.customFilters.timeRange}
+                      onChange={(e) => setNotificationPreferences(prev => ({ 
+                        ...prev, 
+                        customFilters: { ...prev.customFilters, timeRange: e.target.value }
+                      }))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        width: '100%'
+                      }}
+                    >
+                      <option value="anytime">24/7 - Anytime</option>
+                      <option value="business_hours">Business Hours Only</option>
+                      <option value="urgent_only">Urgent Only (24/7)</option>
+                    </select>
+                  </div>
+
+                  {/* Load Value Threshold */}
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <label style={{ color: 'white', fontSize: '0.9rem', fontWeight: '600', marginBottom: '8px', display: 'block' }}>
+                      💵 Min Load Value Alert
+                    </label>
+                    <input
+                      type="number"
+                      value={notificationPreferences.customFilters.loadValueThreshold}
+                      onChange={(e) => setNotificationPreferences(prev => ({ 
+                        ...prev, 
+                        customFilters: { ...prev.customFilters, loadValueThreshold: parseInt(e.target.value) || 0 }
+                      }))}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        color: 'white',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        width: '100%'
+                      }}
+                      placeholder="Enter minimum load value"
+                    />
+                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', marginTop: '4px' }}>
+                      Only notify for loads above this dollar amount
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                marginBottom: '24px'
+              }}>
+                <h4 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px' }}>
+                  ⚡ Quick Actions
+                </h4>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={async () => {
+                      // Test notification via ReceiverNotificationService
+                      try {
+                        const testResult = await ReceiverNotificationService.sendSMSNotification({
+                          receiverPhone: '+1234567890',
+                          receiverEmail: session?.companyName?.toLowerCase().replace(/\s+/g, '') + '@example.com',
+                          receiverName: session?.companyName || 'Demo Vendor',
+                          shipmentId: 'TEST-001',
+                          loadId: realTimeLoads[0]?.id || 'DEMO-LOAD',
+                          vendorName: session?.companyName || 'Demo Vendor',
+                          driverName: 'John Driver',
+                          driverPhone: '+1987654321',
+                          estimatedArrival: '3:30 PM',
+                          notificationType: 'eta_update'
+                        });
+                        
+                        alert(`Test notification sent! ${testResult.success ? 'Success ✅' : 'Failed ❌'}`);
+                      } catch (error) {
+                        alert('Test notification failed: ' + error);
+                      }
+                    }}
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      color: '#10b981',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    📱 Test SMS Notification
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Reset to defaults
+                      setNotificationPreferences({
+                        smsEnabled: true,
+                        emailEnabled: true,
+                        inAppEnabled: true,
+                        priorityLevel: 'high',
+                        deliveryUpdates: true,
+                        paymentNotifications: true,
+                        emergencyAlerts: true,
+                        warehouseAlerts: true,
+                        customFilters: {
+                          timeRange: 'business_hours',
+                          loadValueThreshold: 1000,
+                          routePreferences: []
+                        }
+                      });
+                      alert('Notification preferences reset to defaults ✅');
+                    }}
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.2)',
+                      border: '1px solid rgba(139, 92, 246, 0.3)',
+                      color: '#c4b5fd',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🔄 Reset to Defaults
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Navigate to full notification hub
+                      window.open('/notifications', '_blank');
+                    }}
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      color: '#60a5fa',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}
+                  >
+                    🏢 Open Notification Hub
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Portal Settings */}
             <div
               style={{
