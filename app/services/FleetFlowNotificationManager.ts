@@ -1,18 +1,17 @@
 'use client';
 
 import { ReceiverNotificationService } from './ReceiverNotificationService';
+import { getMainDashboardLoads } from './loadService';
 import { FleetFlowSystemOrchestrator } from './system-orchestrator';
-import { calculateFinancialMetrics } from './settlementService';
-import { getMainDashboardLoads, getShipperLoads } from './loadService';
 
 // 🔔 UNIFIED NOTIFICATION TYPES
 export interface FleetFlowNotification {
   id: string;
-  type: 
-    | 'load_assignment' 
-    | 'delivery_update' 
-    | 'payment_alert' 
-    | 'warehouse_alert' 
+  type:
+    | 'load_assignment'
+    | 'delivery_update'
+    | 'payment_alert'
+    | 'warehouse_alert'
     | 'emergency_alert'
     | 'load_opportunity'
     | 'system_alert'
@@ -83,7 +82,7 @@ export interface NotificationPreferences {
   schedule: {
     enabled: boolean;
     startTime: string; // "09:00"
-    endTime: string;   // "17:00"
+    endTime: string; // "17:00"
     timezone: string;
     daysOfWeek: number[]; // [1,2,3,4,5] for weekdays
     urgentOnly: boolean; // Allow urgent notifications outside hours
@@ -113,26 +112,26 @@ export class FleetFlowNotificationManager {
   private notifications: Map<string, FleetFlowNotification> = new Map();
   private preferences: Map<string, NotificationPreferences> = new Map();
   private subscribers: Map<string, Function[]> = new Map();
-  private receiverService: ReceiverNotificationService;
   private systemOrchestrator: FleetFlowSystemOrchestrator;
   private websocket: WebSocket | null = null;
   private isConnected: boolean = false;
 
   private constructor() {
-    this.receiverService = ReceiverNotificationService.getInstance();
+    // ReceiverNotificationService uses static methods, no instance needed
     this.systemOrchestrator = new FleetFlowSystemOrchestrator();
     this.initializeWebSocket();
     this.initializeDefaultPreferences();
-    
+
     // Auto-sync with FleetFlow services every 30 seconds
     setInterval(() => this.syncWithFleetFlowServices(), 30000);
-    
+
     console.log('✅ FleetFlowNotificationManager initialized');
   }
 
   public static getInstance(): FleetFlowNotificationManager {
     if (!FleetFlowNotificationManager.instance) {
-      FleetFlowNotificationManager.instance = new FleetFlowNotificationManager();
+      FleetFlowNotificationManager.instance =
+        new FleetFlowNotificationManager();
     }
     return FleetFlowNotificationManager.instance;
   }
@@ -141,19 +140,22 @@ export class FleetFlowNotificationManager {
   private initializeWebSocket(): void {
     try {
       // Use environment variable or fallback to localhost
-      const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001';
+      const wsUrl =
+        process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001';
       this.websocket = new WebSocket(wsUrl);
 
       this.websocket.onopen = () => {
         this.isConnected = true;
         console.log('🔗 FleetFlow Notification WebSocket connected');
-        
+
         // Send initial handshake
-        this.websocket?.send(JSON.stringify({
-          type: 'register',
-          service: 'fleetflow-notifications',
-          timestamp: new Date().toISOString()
-        }));
+        this.websocket?.send(
+          JSON.stringify({
+            type: 'register',
+            service: 'fleetflow-notifications',
+            timestamp: new Date().toISOString(),
+          })
+        );
       };
 
       this.websocket.onmessage = (event) => {
@@ -168,7 +170,7 @@ export class FleetFlowNotificationManager {
       this.websocket.onclose = () => {
         this.isConnected = false;
         console.log('🔌 WebSocket disconnected, attempting reconnection...');
-        
+
         // Auto-reconnect after 5 seconds
         setTimeout(() => this.initializeWebSocket(), 5000);
       };
@@ -186,7 +188,7 @@ export class FleetFlowNotificationManager {
     if (data.type === 'notification' && data.notification) {
       const notification = data.notification as FleetFlowNotification;
       this.addNotification(notification, false); // Don't broadcast back
-      
+
       // Notify all subscribers
       this.notifySubscribers('notification_received', notification);
     }
@@ -208,15 +210,20 @@ export class FleetFlowNotificationManager {
   }
 
   // 📝 ADD NOTIFICATION TO SYSTEM
-  private async addNotification(notification: FleetFlowNotification, broadcast = true): Promise<void> {
+  private async addNotification(
+    notification: FleetFlowNotification,
+    broadcast = true
+  ): Promise<void> {
     // Store notification
     this.notifications.set(notification.id, notification);
 
     // Check user preferences and filter
     const filteredTargets = await this.filterByPreferences(notification);
-    
+
     if (filteredTargets.length === 0) {
-      console.log(`📋 Notification ${notification.id} filtered out by preferences`);
+      console.log(
+        `📋 Notification ${notification.id} filtered out by preferences`
+      );
       return;
     }
 
@@ -225,11 +232,13 @@ export class FleetFlowNotificationManager {
 
     // Broadcast to WebSocket if enabled
     if (broadcast && this.isConnected && this.websocket) {
-      this.websocket.send(JSON.stringify({
-        type: 'broadcast_notification',
-        notification,
-        timestamp: new Date().toISOString()
-      }));
+      this.websocket.send(
+        JSON.stringify({
+          type: 'broadcast_notification',
+          notification,
+          timestamp: new Date().toISOString(),
+        })
+      );
     }
 
     // Notify local subscribers
@@ -239,7 +248,9 @@ export class FleetFlowNotificationManager {
   }
 
   // 🎯 FILTER NOTIFICATIONS BY USER PREFERENCES
-  private async filterByPreferences(notification: FleetFlowNotification): Promise<string[]> {
+  private async filterByPreferences(
+    notification: FleetFlowNotification
+  ): Promise<string[]> {
     const validTargets: string[] = [];
 
     // If specific users targeted, check their preferences
@@ -259,7 +270,10 @@ export class FleetFlowNotificationManager {
   }
 
   // ✅ CHECK IF NOTIFICATION SHOULD BE SENT TO USER
-  private shouldSendToUser(notification: FleetFlowNotification, prefs: NotificationPreferences): boolean {
+  private shouldSendToUser(
+    notification: FleetFlowNotification,
+    prefs: NotificationPreferences
+  ): boolean {
     // Check priority
     if (!prefs.priorities[notification.priority]) {
       return false;
@@ -271,7 +285,10 @@ export class FleetFlowNotificationManager {
     }
 
     // Check schedule (unless critical/urgent)
-    if (prefs.schedule.enabled && !['critical', 'urgent'].includes(notification.priority)) {
+    if (
+      prefs.schedule.enabled &&
+      !['critical', 'urgent'].includes(notification.priority)
+    ) {
       const now = new Date();
       const currentHour = now.getHours();
       const startHour = parseInt(prefs.schedule.startTime.split(':')[0]);
@@ -279,8 +296,8 @@ export class FleetFlowNotificationManager {
       const currentDay = now.getDay();
 
       if (
-        currentHour < startHour || 
-        currentHour >= endHour || 
+        currentHour < startHour ||
+        currentHour >= endHour ||
         !prefs.schedule.daysOfWeek.includes(currentDay)
       ) {
         return false;
@@ -288,7 +305,10 @@ export class FleetFlowNotificationManager {
     }
 
     // Check thresholds for load-related notifications
-    if (notification.metadata.loadValue && notification.metadata.loadValue < prefs.thresholds.loadValueMin) {
+    if (
+      notification.metadata.loadValue &&
+      notification.metadata.loadValue < prefs.thresholds.loadValueMin
+    ) {
       return false;
     }
 
@@ -297,7 +317,7 @@ export class FleetFlowNotificationManager {
 
   // 📬 DISTRIBUTE NOTIFICATION VIA CHANNELS
   private async distributeNotification(
-    notification: FleetFlowNotification, 
+    notification: FleetFlowNotification,
     targets: string[]
   ): Promise<void> {
     for (const target of targets) {
@@ -305,21 +325,15 @@ export class FleetFlowNotificationManager {
       const channels = prefs?.channels || notification.channels;
 
       try {
-        // SMS Channel
+        // SMS Channel (using console for now - will be connected to SMS service)
         if (channels.sms && notification.channels.sms) {
-          await this.receiverService.sendSMS(
-            target,
-            `🚨 FleetFlow: ${notification.title}\n${notification.message.substring(0, 140)}...`
-          );
+          console.log(`📱 SMS to ${target}: 🚨 FleetFlow: ${notification.title}\n${notification.message.substring(0, 140)}...`);
         }
 
-        // Email Channel  
+        // Email Channel (using console for now - will be connected to email service)
         if (channels.email && notification.channels.email) {
-          await this.receiverService.sendEmail(
-            target,
-            `FleetFlow Alert: ${notification.title}`,
-            this.generateEmailTemplate(notification)
-          );
+          console.log(`📧 Email to ${target}: FleetFlow Alert: ${notification.title}`);
+          console.log(`Email Content: ${this.generateEmailTemplate(notification)}`);
         }
 
         console.log(`📤 Notification sent to ${target} via enabled channels`);
@@ -336,7 +350,7 @@ export class FleetFlowNotificationManager {
       normal: '#3b82f6',
       high: '#f59e0b',
       urgent: '#ef4444',
-      critical: '#dc2626'
+      critical: '#dc2626',
     };
 
     return `
@@ -355,17 +369,25 @@ export class FleetFlowNotificationManager {
           </div>
           <h2 style="color: #1f2937; margin-bottom: 15px;">${notification.title}</h2>
           <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px;">${notification.message}</p>
-          
-          ${notification.actions ? `
+
+          ${
+            notification.actions
+              ? `
             <div style="border-top: 1px solid #e5e7eb; padding-top: 20px;">
-              ${notification.actions.map(action => `
+              ${notification.actions
+                .map(
+                  (action) => `
                 <a href="${action.url || '#'}" style="display: inline-block; margin-right: 10px; padding: 10px 20px; background: #14b8a6; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
                   ${action.label}
                 </a>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
-          ` : ''}
-          
+          `
+              : ''
+          }
+
           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center; color: #6b7280; font-size: 12px;">
             <p>FleetFlow Transportation Management System</p>
             <p>This is an automated notification. Please do not reply to this email.</p>
@@ -381,21 +403,23 @@ export class FleetFlowNotificationManager {
       // Get real FleetFlow data
       const [loads, systemStatus] = await Promise.all([
         getMainDashboardLoads(),
-        this.systemOrchestrator.getSystemStatus()
+        this.systemOrchestrator.getSystemStatus(),
       ]);
 
       // Generate intelligent notifications based on real data
       await this.generateIntelligentNotifications(loads, systemStatus);
-
     } catch (error) {
       console.warn('⚠️ FleetFlow service sync failed:', error);
     }
   }
 
   // 🤖 GENERATE INTELLIGENT NOTIFICATIONS
-  private async generateIntelligentNotifications(loads: any[], systemStatus: any): Promise<void> {
+  private async generateIntelligentNotifications(
+    loads: any[],
+    systemStatus: any
+  ): Promise<void> {
     // ETA Updates for active loads
-    const activeLoads = loads.filter(load => load.status === 'In Transit');
+    const activeLoads = loads.filter((load) => load.status === 'In Transit');
     for (const load of activeLoads) {
       if (this.shouldSendETAUpdate(load)) {
         await this.createNotification({
@@ -409,8 +433,8 @@ export class FleetFlowNotificationManager {
             loadId: load.id,
             estimatedDelivery: load.estimatedDelivery,
             currentLocation: load.currentLocation,
-            actionRequired: false
-          }
+            actionRequired: false,
+          },
         });
       }
     }
@@ -428,22 +452,25 @@ export class FleetFlowNotificationManager {
           metadata: {
             systemComponent: alert.component,
             actionRequired: true,
-            alertId: alert.id
+            alertId: alert.id,
           },
-          actions: [{
-            id: 'resolve',
-            label: 'Acknowledge Alert',
-            action: 'resolve_alert',
-            style: 'primary'
-          }]
+          actions: [
+            {
+              id: 'resolve',
+              label: 'Acknowledge Alert',
+              action: 'resolve_alert',
+              style: 'primary',
+            },
+          ],
         });
       }
     }
 
     // Load opportunities for high-value loads
-    const highValueLoads = loads.filter(load => 
-      load.status === 'Available' && 
-      parseFloat(load.rate?.replace(/[^0-9.]/g, '') || '0') > 2000
+    const highValueLoads = loads.filter(
+      (load) =>
+        load.status === 'Available' &&
+        parseFloat(load.rate?.replace(/[^0-9.]/g, '') || '0') > 2000
     );
 
     for (const load of highValueLoads) {
@@ -457,15 +484,17 @@ export class FleetFlowNotificationManager {
         metadata: {
           loadId: load.id,
           loadValue: parseFloat(load.rate?.replace(/[^0-9.]/g, '') || '0'),
-          actionRequired: true
+          actionRequired: true,
         },
-        actions: [{
-          id: 'bid',
-          label: 'Submit Interest',
-          action: 'submit_load_interest',
-          url: `/loads/${load.id}`,
-          style: 'success'
-        }]
+        actions: [
+          {
+            id: 'bid',
+            label: 'Submit Interest',
+            action: 'submit_load_interest',
+            url: `/loads/${load.id}`,
+            style: 'success',
+          },
+        ],
       });
     }
   }
@@ -474,7 +503,8 @@ export class FleetFlowNotificationManager {
   private shouldSendETAUpdate(load: any): boolean {
     // Send ETA updates every 2 hours for active loads
     const lastUpdate = load.lastETAUpdate || load.createdAt;
-    const hoursSinceUpdate = (Date.now() - new Date(lastUpdate).getTime()) / (1000 * 60 * 60);
+    const hoursSinceUpdate =
+      (Date.now() - new Date(lastUpdate).getTime()) / (1000 * 60 * 60);
     return hoursSinceUpdate >= 2;
   }
 
@@ -485,8 +515,8 @@ export class FleetFlowNotificationManager {
 
   // 📋 GET NOTIFICATIONS FOR USER/PORTAL
   public getNotifications(
-    userId?: string, 
-    portal?: string, 
+    userId?: string,
+    portal?: string,
     filters?: {
       unreadOnly?: boolean;
       priority?: string[];
@@ -498,12 +528,13 @@ export class FleetFlowNotificationManager {
 
     // Filter by user/portal
     if (userId) {
-      notifications = notifications.filter(n => 
-        n.targetUsers?.includes(userId) || 
-        (portal && n.targetPortals.includes(portal as any))
+      notifications = notifications.filter(
+        (n) =>
+          n.targetUsers?.includes(userId) ||
+          (portal && n.targetPortals.includes(portal as any))
       );
     } else if (portal) {
-      notifications = notifications.filter(n => 
+      notifications = notifications.filter((n) =>
         n.targetPortals.includes(portal as any)
       );
     }
@@ -511,18 +542,25 @@ export class FleetFlowNotificationManager {
     // Apply filters
     if (filters) {
       if (filters.unreadOnly) {
-        notifications = notifications.filter(n => !n.read);
+        notifications = notifications.filter((n) => !n.read);
       }
       if (filters.priority) {
-        notifications = notifications.filter(n => filters.priority!.includes(n.priority));
+        notifications = notifications.filter((n) =>
+          filters.priority!.includes(n.priority)
+        );
       }
       if (filters.type) {
-        notifications = notifications.filter(n => filters.type!.includes(n.type));
+        notifications = notifications.filter((n) =>
+          filters.type!.includes(n.type)
+        );
       }
     }
 
     // Sort by timestamp (newest first)
-    notifications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    notifications.sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
 
     // Apply limit
     if (filters?.limit) {
@@ -544,7 +582,9 @@ export class FleetFlowNotificationManager {
 
   // 🔔 MARK ALL AS READ FOR USER
   public markAllAsRead(userId?: string, portal?: string): void {
-    const notifications = this.getNotifications(userId, portal, { unreadOnly: true });
+    const notifications = this.getNotifications(userId, portal, {
+      unreadOnly: true,
+    });
     for (const notification of notifications) {
       this.markAsRead(notification.id);
     }
@@ -557,11 +597,15 @@ export class FleetFlowNotificationManager {
   }
 
   // ⚙️ UPDATE USER PREFERENCES
-  public updatePreferences(userId: string, preferences: Partial<NotificationPreferences>): void {
-    const existing = this.preferences.get(userId) || this.getDefaultPreferences(userId);
+  public updatePreferences(
+    userId: string,
+    preferences: Partial<NotificationPreferences>
+  ): void {
+    const existing =
+      this.preferences.get(userId) || this.getDefaultPreferences(userId);
     const updated = { ...existing, ...preferences };
     this.preferences.set(userId, updated);
-    
+
     console.log(`✅ Notification preferences updated for user ${userId}`);
   }
 
@@ -569,7 +613,7 @@ export class FleetFlowNotificationManager {
   public getStats(userId?: string, portal?: string): NotificationStats {
     const notifications = this.getNotifications(userId, portal);
     const totalSent = notifications.length;
-    const totalRead = notifications.filter(n => n.read).length;
+    const totalRead = notifications.filter((n) => n.read).length;
     const totalUnread = totalSent - totalRead;
 
     const byType: Record<string, number> = {};
@@ -578,8 +622,9 @@ export class FleetFlowNotificationManager {
 
     for (const notification of notifications) {
       byType[notification.type] = (byType[notification.type] || 0) + 1;
-      byPriority[notification.priority] = (byPriority[notification.priority] || 0) + 1;
-      
+      byPriority[notification.priority] =
+        (byPriority[notification.priority] || 0) + 1;
+
       Object.entries(notification.channels).forEach(([channel, enabled]) => {
         if (enabled) {
           byChannel[channel] = (byChannel[channel] || 0) + 1;
@@ -595,7 +640,7 @@ export class FleetFlowNotificationManager {
       byPriority,
       byChannel,
       readRate: totalSent > 0 ? (totalRead / totalSent) * 100 : 0,
-      avgResponseTime: 0 // TODO: Calculate based on read timestamps
+      avgResponseTime: 0, // TODO: Calculate based on read timestamps
     };
   }
 
@@ -622,7 +667,7 @@ export class FleetFlowNotificationManager {
   private notifySubscribers(event: string, data: any): void {
     const callbacks = this.subscribers.get(event);
     if (callbacks) {
-      callbacks.forEach(callback => {
+      callbacks.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -635,8 +680,14 @@ export class FleetFlowNotificationManager {
   // ⚙️ INITIALIZE DEFAULT PREFERENCES
   private initializeDefaultPreferences(): void {
     // Create default preferences for different user types
-    const defaultUserTypes = ['admin', 'dispatcher', 'driver', 'broker', 'vendor'];
-    
+    const defaultUserTypes = [
+      'admin',
+      'dispatcher',
+      'driver',
+      'broker',
+      'vendor',
+    ];
+
     for (const userType of defaultUserTypes) {
       this.preferences.set(userType, this.getDefaultPreferences(userType));
     }
@@ -650,14 +701,14 @@ export class FleetFlowNotificationManager {
         inApp: true,
         sms: false,
         email: true,
-        push: true
+        push: true,
       },
       priorities: {
         low: false,
         normal: true,
         high: true,
         urgent: true,
-        critical: true
+        critical: true,
       },
       types: {
         load_assignment: true,
@@ -677,7 +728,7 @@ export class FleetFlowNotificationManager {
         eta_update: true,
         document_required: true,
         approval_needed: true,
-        onboarding_update: true
+        onboarding_update: true,
       },
       schedule: {
         enabled: false,
@@ -685,40 +736,48 @@ export class FleetFlowNotificationManager {
         endTime: '18:00',
         timezone: 'America/New_York',
         daysOfWeek: [1, 2, 3, 4, 5], // Monday to Friday
-        urgentOnly: true
+        urgentOnly: true,
       },
       thresholds: {
         loadValueMin: 500,
         distanceMax: 1000,
-        rateMin: 1.50
-      }
+        rateMin: 1.5,
+      },
     };
   }
 
   // 🔗 GET CONNECTION STATUS
-  public getConnectionStatus(): { connected: boolean; websocket: boolean; lastSync: string } {
+  public getConnectionStatus(): {
+    connected: boolean;
+    websocket: boolean;
+    lastSync: string;
+  } {
     return {
       connected: this.isConnected,
       websocket: this.websocket?.readyState === WebSocket.OPEN,
-      lastSync: new Date().toISOString()
+      lastSync: new Date().toISOString(),
     };
   }
 
   // 🧪 SEND TEST NOTIFICATION
-  public async sendTestNotification(userId: string, portal: string): Promise<void> {
+  public async sendTestNotification(
+    userId: string,
+    portal: string
+  ): Promise<void> {
     await this.createNotification({
       type: 'system_alert',
       priority: 'normal',
       title: '🧪 Test Notification',
-      message: 'This is a test notification from the FleetFlow Unified Notification System. All systems are working correctly!',
+      message:
+        'This is a test notification from the FleetFlow Unified Notification System. All systems are working correctly!',
       channels: { inApp: true, sms: false, email: false, push: false },
       targetPortals: [portal as any],
       targetUsers: [userId],
       metadata: {
         isTest: true,
         portal,
-        userId
-      }
+        userId,
+      },
     });
   }
 
@@ -734,15 +793,15 @@ export class FleetFlowNotificationManager {
   } {
     const components = {
       websocket: this.websocket?.readyState === WebSocket.OPEN,
-      receiverService: !!this.receiverService,
+      receiverService: true, // Static service always available
       systemOrchestrator: !!this.systemOrchestrator,
       notificationStore: this.notifications.size >= 0,
-      preferences: this.preferences.size > 0
+      preferences: this.preferences.size > 0,
     };
 
     const healthyComponents = Object.values(components).filter(Boolean).length;
     const totalComponents = Object.keys(components).length;
-    
+
     let status: 'healthy' | 'degraded' | 'unhealthy';
     if (healthyComponents === totalComponents) {
       status = 'healthy';
@@ -757,13 +816,21 @@ export class FleetFlowNotificationManager {
       components,
       metrics: {
         totalNotifications: this.notifications.size,
-        activeSubscribers: Array.from(this.subscribers.values()).reduce((sum, arr) => sum + arr.length, 0),
-        websocketStatus: this.websocket?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected'
-      }
+        activeSubscribers: Array.from(this.subscribers.values()).reduce(
+          (sum, arr) => sum + arr.length,
+          0
+        ),
+        websocketStatus:
+          this.websocket?.readyState === WebSocket.OPEN
+            ? 'connected'
+            : 'disconnected',
+      },
     };
   }
 }
 
 // 🌟 EXPORT SINGLETON INSTANCE
-export const fleetFlowNotificationManager = FleetFlowNotificationManager.getInstance();
+export const fleetFlowNotificationManager =
+  FleetFlowNotificationManager.getInstance();
 export default fleetFlowNotificationManager;
+
