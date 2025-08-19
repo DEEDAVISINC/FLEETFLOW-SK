@@ -193,7 +193,8 @@ export class ContractLifecycleService {
     // Set up automated contract monitoring
     this.scheduleContractMonitoring();
     this.initializeRenewalWorkflows();
-    this.setupPerformanceReviews();
+    // DISABLED: Performance reviews causing console spam
+    // this.setupPerformanceReviews();
   }
 
   // ========================================

@@ -121,8 +121,9 @@ export class FleetFlowNotificationManager {
     this.initializeWebSocket();
     this.initializeDefaultPreferences();
 
-    // TEMPORARILY DISABLE auto-sync to prevent console spam and page rendering issues
+    // DISABLED: Auto-sync completely disabled to prevent console spam
     // setInterval(() => this.syncWithFleetFlowServices(), 30000);
+    console.log('🔇 FleetFlow sync disabled to prevent console spam');
 
     console.log('✅ FleetFlowNotificationManager initialized');
   }
