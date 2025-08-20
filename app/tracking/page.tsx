@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CanadaCrossBorderView from './components/CanadaCrossBorderView';
 import MaritimeIntelligenceView from './components/MaritimeIntelligenceView';
 import MexicoCrossBorderView from './components/MexicoCrossBorderView';
@@ -401,24 +401,60 @@ export default function LiveTrackingPage() {
 
   const [selectedPreset, setSelectedPreset] = useState<string>('all');
 
-  // Auto-refresh for live updates - TEMPORARILY DISABLED TO FIX INFINITE RENDER
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setShipments(prev => prev.map(shipment => {
-  //       if (shipment.status === 'in-transit') {
-  //         const newProgress = Math.min(100, shipment.progress + Math.random() * 2)
-  //         return {
-  //           ...shipment,
-  //           progress: newProgress,
-  //           lastUpdate: new Date().toISOString().slice(0, 16).replace('T', ' ')
-  //         }
-  //       }
-  //       return shipment
-  //     }))
-  //   }, 30000) // Update every 30 seconds
+  // Auto-refresh for live updates - RE-ENABLED WITH IMPROVEMENTS
+  const [isLiveUpdating, setIsLiveUpdating] = useState(true);
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
 
-  //   return () => clearInterval(interval)
-  // }, [])
+  useEffect(() => {
+    if (!isLiveUpdating) return;
+
+    const interval = setInterval(() => {
+      setShipments((prev) =>
+        prev.map((shipment) => {
+          if (shipment.status === 'in-transit') {
+            // Simulate realistic progress updates
+            const progressIncrease = Math.random() * 1.5; // 0-1.5% per 30 seconds
+            const newProgress = Math.min(
+              100,
+              shipment.progress + progressIncrease
+            );
+
+            // Simulate small location updates for in-transit shipments
+            const latAdjustment = (Math.random() - 0.5) * 0.01; // Small GPS variation
+            const lngAdjustment = (Math.random() - 0.5) * 0.01;
+            const newLocation: [number, number] = [
+              shipment.currentLocation[0] + latAdjustment,
+              shipment.currentLocation[1] + lngAdjustment,
+            ];
+
+            // Update speed randomly for in-transit vehicles
+            const speedVariation = Math.random() * 10 - 5; // -5 to +5 mph variation
+            const newSpeed = Math.max(
+              0,
+              Math.min(75, shipment.speed + speedVariation)
+            );
+
+            return {
+              ...shipment,
+              progress: newProgress,
+              currentLocation: newLocation,
+              speed: newSpeed,
+              lastUpdate: new Date()
+                .toISOString()
+                .slice(0, 16)
+                .replace('T', ' '),
+            };
+          }
+          return shipment;
+        })
+      );
+
+      // Update last refresh time
+      setLastUpdateTime(new Date());
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [isLiveUpdating]); // Only depend on isLiveUpdating to prevent infinite renders
 
   // Handle bulk selection
   const handleBulkSelect = (shipmentId: string, isSelected: boolean) => {
@@ -737,521 +773,749 @@ export default function LiveTrackingPage() {
   }, [shipments]);
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: `
+    <>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+          }
+        `,
+        }}
+      />
+      <div
+        style={{
+          minHeight: '100vh',
+          background: `
         linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
         radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
         radial-gradient(circle at 40% 60%, rgba(168, 85, 247, 0.04) 0%, transparent 50%)
       `,
-        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
-        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      }}
-    >
-      {/* Back Button */}
-      <div style={{ padding: '16px 24px' }}>
-        <Link href='/'>
-          <button
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <span style={{ marginRight: '8px' }}>←</span>
-            Back to Dashboard
-          </button>
-        </Link>
-      </div>
-
-      {/* Main Container */}
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '0 24px 32px',
+          backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+          backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }}
       >
-        {/* Header */}
+        {/* Back Button */}
+        <div style={{ padding: '16px 24px' }}>
+          <Link href='/'>
+            <button
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <span style={{ marginRight: '8px' }}>←</span>
+              Back to Dashboard
+            </button>
+          </Link>
+        </div>
+
+        {/* Main Container */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '32px',
-            marginBottom: '32px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '0 24px 32px',
           }}
         >
+          {/* Header */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              marginBottom: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <div
+                style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+              >
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <span style={{ fontSize: '32px' }}>📍</span>
+                </div>
+                <div>
+                  <h1
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                      textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    Live Load Tracking Center
+                  </h1>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '18px',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Real-time shipment monitoring & intelligent logistics
+                    management
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '24px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          background: '#10b981',
+                          borderRadius: '50%',
+                          boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                          animation: 'pulse 2s infinite',
+                        }}
+                      />
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Live Tracking Active
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Last updated: {new Date().toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  📊 Reports
+                </button>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #059669, #047857)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #10b981, #059669)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  + New Shipment
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
+            {[
+              { id: 'overview', label: 'Overview', icon: '📊' },
+              { id: 'tracking', label: 'Live Tracking', icon: '🗺️' },
+              { id: 'analytics', label: 'Analytics', icon: '📈' },
+              { id: 'maritime', label: 'Maritime Intelligence', icon: '🚢' },
+              { id: 'canada', label: 'Canada Cross-Border', icon: '🇨🇦' },
+              { id: 'mexico', label: 'Mexico Cross-Border', icon: '🇲🇽' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveView(tab.id as any)}
                 style={{
-                  padding: '16px',
-                  background: 'rgba(255, 255, 255, 0.2)',
+                  padding: '16px 24px',
                   borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  background:
+                    activeView === tab.id
+                      ? 'rgba(255, 255, 255, 0.9)'
+                      : 'rgba(255, 255, 255, 0.15)',
+                  color: activeView === tab.id ? '#1e40af' : 'white',
+                  backdropFilter: 'blur(10px)',
+                  border:
+                    activeView === tab.id
+                      ? '1px solid rgba(255, 255, 255, 0.4)'
+                      : '1px solid rgba(255, 255, 255, 0.2)',
+                  transform:
+                    activeView === tab.id
+                      ? 'translateY(-2px)'
+                      : 'translateY(0)',
+                  boxShadow:
+                    activeView === tab.id
+                      ? '0 8px 25px rgba(0, 0, 0, 0.2)'
+                      : 'none',
                 }}
               >
-                <span style={{ fontSize: '32px' }}>📍</span>
-              </div>
-              <div>
-                <h1
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: 'bold',
-                    color: 'white',
-                    margin: '0 0 8px 0',
-                    textShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                  }}
-                >
-                  Live Load Tracking Center
-                </h1>
-                <p
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '18px',
-                    margin: '0 0 16px 0',
-                  }}
-                >
-                  Real-time shipment monitoring & intelligent logistics
-                  management
-                </p>
+                <span style={{ marginRight: '8px' }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Overview Tab */}
+          {activeView === 'overview' && (
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+            >
+              {/* Stats Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                {/* Total Shipments */}
                 <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                  }}
                 >
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
+                      justifyContent: 'space-between',
                     }}
                   >
+                    <div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                          margin: '0 0 8px 0',
+                          fontWeight: '500',
+                        }}
+                      >
+                        Total Shipments
+                      </p>
+                      <p
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          margin: '0 0 4px 0',
+                        }}
+                      >
+                        {stats.totalShipments}
+                      </p>
+                      <p
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '12px',
+                          margin: 0,
+                        }}
+                      >
+                        Active tracking
+                      </p>
+                    </div>
                     <div
                       style={{
-                        width: '12px',
-                        height: '12px',
-                        background: '#10b981',
-                        borderRadius: '50%',
-                        boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
-                        animation: 'pulse 2s infinite',
-                      }}
-                     />
-                    <span
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '14px',
+                        padding: '12px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '12px',
                       }}
                     >
-                      Live Tracking Active
-                    </span>
+                      <span style={{ fontSize: '24px' }}>📦</span>
+                    </div>
                   </div>
+                </div>
+
+                {/* In Transit */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
                   <div
                     style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                          margin: '0 0 8px 0',
+                          fontWeight: '500',
+                        }}
+                      >
+                        In Transit
+                      </p>
+                      <p
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          margin: '0 0 4px 0',
+                        }}
+                      >
+                        {stats.inTransit}
+                      </p>
+                      <p
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '12px',
+                          margin: 0,
+                        }}
+                      >
+                        Moving now
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>🚛</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivered */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                          margin: '0 0 8px 0',
+                          fontWeight: '500',
+                        }}
+                      >
+                        Delivered
+                      </p>
+                      <p
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          margin: '0 0 4px 0',
+                        }}
+                      >
+                        {stats.delivered}
+                      </p>
+                      <p
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '12px',
+                          margin: 0,
+                        }}
+                      >
+                        Completed
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>✅</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total Value */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                          margin: '0 0 8px 0',
+                          fontWeight: '500',
+                        }}
+                      >
+                        Total Value
+                      </p>
+                      <p
+                        style={{
+                          color: 'white',
+                          fontSize: '32px',
+                          fontWeight: 'bold',
+                          margin: '0 0 4px 0',
+                        }}
+                      >
+                        {formatCurrency(stats.totalValue)}
+                      </p>
+                      <p
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '12px',
+                          margin: 0,
+                        }}
+                      >
+                        Cargo value
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        padding: '12px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <span style={{ fontSize: '24px' }}>💰</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Shipments */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <h2
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      margin: 0,
+                    }}
+                  >
+                    Recent Shipments
+                  </h2>
+                  <button
+                    onClick={() => setActiveView('tracking')}
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
                       fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    Last updated: {new Date().toLocaleTimeString()}
-                  </div>
+                    View All
+                  </button>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                >
+                  {sortedShipments.slice(0, 5).map((shipment) => (
+                    <div
+                      key={shipment.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '20px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        transition: 'all 0.3s ease',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '48px',
+                            height: '48px',
+                            background: getStatusColor(shipment.status),
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {shipment.id.split('-')[1]}
+                        </div>
+                        <div>
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              margin: '0 0 4px 0',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {shipment.origin} → {shipment.destination}
+                          </h3>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                              fontSize: '14px',
+                            }}
+                          >
+                            {shipment.carrier} • {shipment.driverName}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '32px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <p
+                            style={{
+                              color: 'white',
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {shipment.progress}%
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '12px',
+                              margin: 0,
+                            }}
+                          >
+                            Progress
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p
+                            style={{
+                              color: getStatusColor(shipment.status),
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {formatStatus(shipment.status)}
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '12px',
+                              margin: 0,
+                            }}
+                          >
+                            Status
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p
+                            style={{
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {formatCurrency(shipment.value)}
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '12px',
+                              margin: 0,
+                            }}
+                          >
+                            Value
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  backdropFilter: 'blur(10px)',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                📊 Reports
-              </button>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #059669, #047857)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #10b981, #059669)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                + New Shipment
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* Navigation Tabs */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
-          {[
-            { id: 'overview', label: 'Overview', icon: '📊' },
-            { id: 'tracking', label: 'Live Tracking', icon: '🗺️' },
-            { id: 'analytics', label: 'Analytics', icon: '📈' },
-            { id: 'maritime', label: 'Maritime Intelligence', icon: '🚢' },
-            { id: 'canada', label: 'Canada Cross-Border', icon: '🇨🇦' },
-            { id: 'mexico', label: 'Mexico Cross-Border', icon: '🇲🇽' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveView(tab.id as any)}
-              style={{
-                padding: '16px 24px',
-                borderRadius: '12px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                background:
-                  activeView === tab.id
-                    ? 'rgba(255, 255, 255, 0.9)'
-                    : 'rgba(255, 255, 255, 0.15)',
-                color: activeView === tab.id ? '#1e40af' : 'white',
-                backdropFilter: 'blur(10px)',
-                border:
-                  activeView === tab.id
-                    ? '1px solid rgba(255, 255, 255, 0.4)'
-                    : '1px solid rgba(255, 255, 255, 0.2)',
-                transform:
-                  activeView === tab.id ? 'translateY(-2px)' : 'translateY(0)',
-                boxShadow:
-                  activeView === tab.id
-                    ? '0 8px 25px rgba(0, 0, 0, 0.2)'
-                    : 'none',
-              }}
-            >
-              <span style={{ marginRight: '8px' }}>{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Overview Tab */}
-        {activeView === 'overview' && (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
-          >
-            {/* Stats Cards */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
-              }}
-            >
-              {/* Total Shipments */}
+              {/* Quick Actions */}
               <div
                 style={{
                   background: 'rgba(255, 255, 255, 0.15)',
                   backdropFilter: 'blur(10px)',
                   borderRadius: '16px',
-                  padding: '24px',
+                  padding: '32px',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                        margin: '0 0 8px 0',
-                        fontWeight: '500',
-                      }}
-                    >
-                      Total Shipments
-                    </p>
-                    <p
-                      style={{
-                        color: 'white',
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                        margin: '0 0 4px 0',
-                      }}
-                    >
-                      {stats.totalShipments}
-                    </p>
-                    <p
-                      style={{ color: '#4ade80', fontSize: '12px', margin: 0 }}
-                    >
-                      Active tracking
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      padding: '12px',
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <span style={{ fontSize: '24px' }}>📦</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* In Transit */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                        margin: '0 0 8px 0',
-                        fontWeight: '500',
-                      }}
-                    >
-                      In Transit
-                    </p>
-                    <p
-                      style={{
-                        color: 'white',
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                        margin: '0 0 4px 0',
-                      }}
-                    >
-                      {stats.inTransit}
-                    </p>
-                    <p
-                      style={{ color: '#4ade80', fontSize: '12px', margin: 0 }}
-                    >
-                      Moving now
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      padding: '12px',
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <span style={{ fontSize: '24px' }}>🚛</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Delivered */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                        margin: '0 0 8px 0',
-                        fontWeight: '500',
-                      }}
-                    >
-                      Delivered
-                    </p>
-                    <p
-                      style={{
-                        color: 'white',
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                        margin: '0 0 4px 0',
-                      }}
-                    >
-                      {stats.delivered}
-                    </p>
-                    <p
-                      style={{ color: '#4ade80', fontSize: '12px', margin: 0 }}
-                    >
-                      Completed
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      padding: '12px',
-                      background: 'rgba(16, 185, 129, 0.2)',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <span style={{ fontSize: '24px' }}>✅</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Total Value */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                        margin: '0 0 8px 0',
-                        fontWeight: '500',
-                      }}
-                    >
-                      Total Value
-                    </p>
-                    <p
-                      style={{
-                        color: 'white',
-                        fontSize: '32px',
-                        fontWeight: 'bold',
-                        margin: '0 0 4px 0',
-                      }}
-                    >
-                      {formatCurrency(stats.totalValue)}
-                    </p>
-                    <p
-                      style={{ color: '#4ade80', fontSize: '12px', margin: 0 }}
-                    >
-                      Cargo value
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      padding: '12px',
-                      background: 'rgba(34, 197, 94, 0.2)',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <span style={{ fontSize: '24px' }}>💰</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Shipments */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '16px',
-                padding: '32px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '32px',
                 }}
               >
                 <h2
@@ -1259,410 +1523,293 @@ export default function LiveTrackingPage() {
                     color: 'white',
                     fontSize: '24px',
                     fontWeight: 'bold',
-                    margin: 0,
+                    margin: '0 0 24px 0',
                   }}
                 >
-                  Recent Shipments
+                  Quick Actions
                 </h2>
-                <button
-                  onClick={() => setActiveView('tracking')}
+                <div
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 25px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '24px',
                   }}
                 >
-                  View All
-                </button>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
-                }}
-              >
-                {sortedShipments.slice(0, 5).map((shipment) => (
-                  <div
-                    key={shipment.id}
+                  <button
+                    onClick={() => setActiveView('tracking')}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '20px',
-                      background: 'rgba(255, 255, 255, 0.1)',
+                      padding: '24px',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
                       borderRadius: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
                       transition: 'all 0.3s ease',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      textAlign: 'left',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 40px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <div
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>
+                      🗺️
+                    </div>
+                    <h3
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        margin: '0 0 8px 0',
                       }}
                     >
-                      <div
-                        style={{
-                          width: '48px',
-                          height: '48px',
-                          background: getStatusColor(shipment.status),
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          fontSize: '14px',
-                        }}
-                      >
-                        {shipment.id.split('-')[1]}
-                      </div>
-                      <div>
-                        <h3
-                          style={{
-                            color: 'white',
-                            fontWeight: '600',
-                            margin: '0 0 4px 0',
-                            fontSize: '16px',
-                          }}
-                        >
-                          {shipment.origin} → {shipment.destination}
-                        </h3>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            margin: 0,
-                            fontSize: '14px',
-                          }}
-                        >
-                          {shipment.carrier} • {shipment.driverName}
-                        </p>
-                      </div>
-                    </div>
-                    <div
+                      Live Tracking Map
+                    </h3>
+                    <p
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '32px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        margin: 0,
                       }}
                     >
-                      <div style={{ textAlign: 'center' }}>
-                        <p
-                          style={{
-                            color: 'white',
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            margin: '0 0 4px 0',
-                          }}
-                        >
-                          {shipment.progress}%
-                        </p>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '12px',
-                            margin: 0,
-                          }}
-                        >
-                          Progress
-                        </p>
-                      </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <p
-                          style={{
-                            color: getStatusColor(shipment.status),
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            margin: '0 0 4px 0',
-                          }}
-                        >
-                          {formatStatus(shipment.status)}
-                        </p>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '12px',
-                            margin: 0,
-                          }}
-                        >
-                          Status
-                        </p>
-                      </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <p
-                          style={{
-                            color: 'white',
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            margin: '0 0 4px 0',
-                          }}
-                        >
-                          {formatCurrency(shipment.value)}
-                        </p>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '12px',
-                            margin: 0,
-                          }}
-                        >
-                          Value
-                        </p>
-                      </div>
+                      Real-time visualization of all shipments
+                    </p>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveView('analytics')}
+                    style={{
+                      padding: '24px',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      borderRadius: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      textAlign: 'left',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 40px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>
+                      📈
                     </div>
-                  </div>
-                ))}
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      Analytics Dashboard
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Performance insights and reports
+                    </p>
+                  </button>
+
+                  <button
+                    onClick={handleExportCSV}
+                    style={{
+                      padding: '24px',
+                      background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                      color: 'white',
+                      borderRadius: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      textAlign: 'left',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 40px rgba(0, 0, 0, 0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>
+                      📊
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      Export Data
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Download shipment reports as CSV
+                    </p>
+                  </button>
+
+                  <button
+                    onClick={() => setIsLiveUpdating(!isLiveUpdating)}
+                    style={{
+                      padding: '24px',
+                      background: isLiveUpdating
+                        ? 'linear-gradient(135deg, #10b981, #059669)'
+                        : 'linear-gradient(135deg, #6b7280, #4b5563)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      color: 'white',
+                      flex: '1',
+                      minHeight: '120px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>
+                      {isLiveUpdating ? '📡' : '⏸️'}
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      {isLiveUpdating ? 'Live Updates ON' : 'Live Updates OFF'}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      {isLiveUpdating
+                        ? 'Updating every 30 seconds'
+                        : 'Click to resume updates'}
+                    </p>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginTop: '8px',
+                      }}
+                    >
+                      Last: {lastUpdateTime.toLocaleTimeString()}
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Quick Actions */}
+          {/* Live Tracking Tab */}
+          {activeView === 'tracking' && (
             <div
               style={{
                 background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '16px',
-                padding: '32px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                overflow: 'hidden',
               }}
             >
-              <h2
-                style={{
-                  color: 'white',
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  margin: '0 0 24px 0',
-                }}
-              >
-                Quick Actions
-              </h2>
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '24px',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  padding: '24px 32px',
                 }}
               >
-                <button
-                  onClick={() => setActiveView('tracking')}
+                <h2
                   style={{
-                    padding: '24px',
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    color: 'white',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    textAlign: 'left',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 12px 40px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    margin: '0 0 8px 0',
                   }}
                 >
-                  <div style={{ fontSize: '32px', marginBottom: '16px' }}>
-                    🗺️
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      margin: '0 0 8px 0',
-                    }}
-                  >
-                    Live Tracking Map
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    Real-time visualization of all shipments
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => setActiveView('analytics')}
-                  style={{
-                    padding: '24px',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    color: 'white',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    textAlign: 'left',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 12px 40px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '16px' }}>
-                    📈
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      margin: '0 0 8px 0',
-                    }}
-                  >
-                    Analytics Dashboard
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    Performance insights and reports
-                  </p>
-                </button>
-
-                <button
-                  onClick={handleExportCSV}
-                  style={{
-                    padding: '24px',
-                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                    color: 'white',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    textAlign: 'left',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 12px 40px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '16px' }}>
-                    📊
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      margin: '0 0 8px 0',
-                    }}
-                  >
-                    Export Data
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    Download shipment reports as CSV
-                  </p>
-                </button>
+                  🗺️ Live Tracking Map
+                </h2>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+                  Real-time shipment monitoring with interactive map
+                  visualization
+                </p>
               </div>
-            </div>
-          </div>
-        )}
 
-        {/* Live Tracking Tab */}
-        {activeView === 'tracking' && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                color: 'white',
-                padding: '24px 32px',
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  margin: '0 0 8px 0',
-                }}
-              >
-                🗺️ Live Tracking Map
-              </h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
-                Real-time shipment monitoring with interactive map visualization
-              </p>
-            </div>
-
-            <div style={{ padding: '32px' }}>
-              {/* Filter Presets */}
-              <div style={{ marginBottom: '24px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <span
+              <div style={{ padding: '32px' }}>
+                {/* Filter Presets */}
+                <div style={{ marginBottom: '24px' }}>
+                  <div
                     style={{
-                      color: 'white',
-                      fontSize: '14px',
-                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '16px',
                     }}
                   >
-                    Filter Presets:
-                  </span>
-                  {filterPresets.map((preset) => (
-                    <button
-                      key={preset.id}
-                      onClick={() => applyFilterPreset(preset.id)}
+                    <span
                       style={{
-                        background:
-                          selectedPreset === preset.id
-                            ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
-                            : 'rgba(255, 255, 255, 0.1)',
                         color: 'white',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Filter Presets:
+                    </span>
+                    {filterPresets.map((preset) => (
+                      <button
+                        key={preset.id}
+                        onClick={() => applyFilterPreset(preset.id)}
+                        style={{
+                          background:
+                            selectedPreset === preset.id
+                              ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                              : 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                    <button
+                      onClick={clearAllFilters}
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        color: '#ef4444',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
                         padding: '8px 16px',
                         borderRadius: '8px',
                         fontSize: '12px',
@@ -1670,829 +1817,848 @@ export default function LiveTrackingPage() {
                         transition: 'all 0.3s ease',
                       }}
                     >
-                      {preset.name}
+                      Clear All
                     </button>
-                  ))}
-                  <button
-                    onClick={clearAllFilters}
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.2)',
-                      color: '#ef4444',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    Clear All
-                  </button>
-                </div>
-              </div>
-
-              {/* Search and Filters */}
-              <div style={{ marginBottom: '24px' }}>
-                <div
-                  style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}
-                >
-                  <input
-                    type='text'
-                    placeholder='Search shipments, carriers, drivers, customers, commodities...'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                      flex: 1,
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <button
-                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
-                  </button>
+                  </div>
                 </div>
 
-                {/* Advanced Filters */}
-                {showAdvancedFilters && (
+                {/* Search and Filters */}
+                <div style={{ marginBottom: '24px' }}>
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      display: 'flex',
                       gap: '16px',
+                      marginBottom: '16px',
                     }}
                   >
-                    {/* Date Range Filter */}
-                    <div>
-                      <label
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '12px',
-                          display: 'block',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Date Range:
-                      </label>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <input
-                          type='date'
-                          value={dateRange?.start || ''}
-                          onChange={(e) =>
-                            setDateRange((prev) => ({
-                              ...prev,
-                              start: e.target.value,
-                              end: prev?.end || '',
-                            }))
-                          }
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        />
-                        <input
-                          type='date'
-                          value={dateRange?.end || ''}
-                          onChange={(e) =>
-                            setDateRange((prev) => ({
-                              ...prev,
-                              end: e.target.value,
-                              start: prev?.start || '',
-                            }))
-                          }
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Value Range Filter */}
-                    <div>
-                      <label
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '12px',
-                          display: 'block',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Value Range:
-                      </label>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <input
-                          type='number'
-                          placeholder='Min'
-                          value={valueRange?.min || ''}
-                          onChange={(e) =>
-                            setValueRange((prev) => ({
-                              ...prev,
-                              min: parseInt(e.target.value) || 0,
-                              max: prev?.max || 1000000,
-                            }))
-                          }
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        />
-                        <input
-                          type='number'
-                          placeholder='Max'
-                          value={valueRange?.max || ''}
-                          onChange={(e) =>
-                            setValueRange((prev) => ({
-                              ...prev,
-                              max: parseInt(e.target.value) || 1000000,
-                              min: prev?.min || 0,
-                            }))
-                          }
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Sort Options */}
-                    <div>
-                      <label
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '12px',
-                          display: 'block',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Sort By:
-                      </label>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <select
-                          value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value as any)}
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        >
-                          <option value='id'>ID</option>
-                          <option value='status'>Status</option>
-                          <option value='eta'>ETA</option>
-                          <option value='progress'>Progress</option>
-                          <option value='created'>Created Date</option>
-                          <option value='miles'>Miles</option>
-                        </select>
-                        <select
-                          value={sortOrder}
-                          onChange={(e) => setSortOrder(e.target.value as any)}
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontSize: '12px',
-                          }}
-                        >
-                          <option value='asc'>Ascending</option>
-                          <option value='desc'>Descending</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Bulk Operations */}
-              {selectedShipments.size > 0 && (
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    marginBottom: '24px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <span style={{ color: 'white', fontSize: '14px' }}>
-                    {selectedShipments.size} of {filteredShipments.length}{' '}
-                    selected
-                  </span>
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <button
-                      onClick={handleExportCSV}
+                    <input
+                      type='text'
+                      placeholder='Search shipments, carriers, drivers, customers, commodities...'
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       style={{
-                        background: 'rgba(16, 185, 129, 0.2)',
-                        color: '#10b981',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        padding: '8px 16px',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        cursor: 'pointer',
+                        flex: 1,
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
                       }}
-                    >
-                      Export Selected
-                    </button>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          handleBulkStatusUpdate(e.target.value);
-                          e.target.value = '';
-                        }
-                      }}
+                    />
+                    <button
+                      onClick={() =>
+                        setShowAdvancedFilters(!showAdvancedFilters)
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         color: 'white',
                         border: '1px solid rgba(255, 255, 255, 0.2)',
-                        padding: '8px 16px',
-                        borderRadius: '6px',
-                        fontSize: '12px',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
                       }}
                     >
-                      <option value=''>Update Status</option>
-                      <option value='in-transit'>In Transit</option>
-                      <option value='delivered'>Delivered</option>
-                      <option value='delayed'>Delayed</option>
-                      <option value='loading'>Loading</option>
-                      <option value='unloading'>Unloading</option>
-                    </select>
+                      {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                    </button>
                   </div>
-                </div>
-              )}
 
-              {/* Map and Shipment List */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 400px',
-                  gap: '24px',
-                  minHeight: '600px',
-                }}
-              >
-                {/* Map */}
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <MapComponent
-                    shipments={sortedShipments}
-                    selectedShipment={selectedShipment?.id || null}
-                    onSelectShipment={(shipmentId) => {
-                      const shipment = shipmentId
-                        ? sortedShipments.find((s) => s.id === shipmentId)
-                        : null;
-                      setSelectedShipment(shipment || null);
-                    }}
-                    autoTracking={true}
-                    showRoutes={true}
-                    mapFeatures={mapFeatures}
-                  />
+                  {/* Advanced Filters */}
+                  {showAdvancedFilters && (
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '16px',
+                      }}
+                    >
+                      {/* Date Range Filter */}
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Date Range:
+                        </label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input
+                            type='date'
+                            value={dateRange?.start || ''}
+                            onChange={(e) =>
+                              setDateRange((prev) => ({
+                                ...prev,
+                                start: e.target.value,
+                                end: prev?.end || '',
+                              }))
+                            }
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          />
+                          <input
+                            type='date'
+                            value={dateRange?.end || ''}
+                            onChange={(e) =>
+                              setDateRange((prev) => ({
+                                ...prev,
+                                end: e.target.value,
+                                start: prev?.start || '',
+                              }))
+                            }
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Value Range Filter */}
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Value Range:
+                        </label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input
+                            type='number'
+                            placeholder='Min'
+                            value={valueRange?.min || ''}
+                            onChange={(e) =>
+                              setValueRange((prev) => ({
+                                ...prev,
+                                min: parseInt(e.target.value) || 0,
+                                max: prev?.max || 1000000,
+                              }))
+                            }
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          />
+                          <input
+                            type='number'
+                            placeholder='Max'
+                            value={valueRange?.max || ''}
+                            onChange={(e) =>
+                              setValueRange((prev) => ({
+                                ...prev,
+                                max: parseInt(e.target.value) || 1000000,
+                                min: prev?.min || 0,
+                              }))
+                            }
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Sort Options */}
+                      <div>
+                        <label
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Sort By:
+                        </label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <option value='id'>ID</option>
+                            <option value='status'>Status</option>
+                            <option value='eta'>ETA</option>
+                            <option value='progress'>Progress</option>
+                            <option value='created'>Created Date</option>
+                            <option value='miles'>Miles</option>
+                          </select>
+                          <select
+                            value={sortOrder}
+                            onChange={(e) =>
+                              setSortOrder(e.target.value as any)
+                            }
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <option value='asc'>Ascending</option>
+                            <option value='desc'>Descending</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Shipment List */}
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    overflow: 'hidden',
-                  }}
-                >
+                {/* Bulk Operations */}
+                {selectedShipments.size > 0 && (
                   <div
                     style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      borderRadius: '8px',
                       padding: '16px',
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      marginBottom: '24px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}
                   >
+                    <span style={{ color: 'white', fontSize: '14px' }}>
+                      {selectedShipments.size} of {filteredShipments.length}{' '}
+                      selected
+                    </span>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        onClick={handleExportCSV}
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.2)',
+                          color: '#10b981',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Export Selected
+                      </button>
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleBulkStatusUpdate(e.target.value);
+                            e.target.value = '';
+                          }
+                        }}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                        }}
+                      >
+                        <option value=''>Update Status</option>
+                        <option value='in-transit'>In Transit</option>
+                        <option value='delivered'>Delivered</option>
+                        <option value='delayed'>Delayed</option>
+                        <option value='loading'>Loading</option>
+                        <option value='unloading'>Unloading</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* Map and Shipment List */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 400px',
+                    gap: '24px',
+                    minHeight: '600px',
+                  }}
+                >
+                  {/* Map */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <MapComponent
+                      shipments={sortedShipments}
+                      selectedShipment={selectedShipment?.id || null}
+                      onSelectShipment={(shipmentId) => {
+                        const shipment = shipmentId
+                          ? sortedShipments.find((s) => s.id === shipmentId)
+                          : null;
+                        setSelectedShipment(shipment || null);
+                      }}
+                      autoTracking={true}
+                      showRoutes={true}
+                      mapFeatures={mapFeatures}
+                    />
+                  </div>
+
+                  {/* Shipment List */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          margin: 0,
+                        }}
+                      >
+                        Shipments ({filteredShipments.length})
+                        {isLiveUpdating && (
+                          <span
+                            style={{
+                              marginLeft: '12px',
+                              fontSize: '12px',
+                              color: '#10b981',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background: '#10b981',
+                                animation: 'pulse 2s infinite',
+                              }}
+                            />
+                            LIVE
+                          </span>
+                        )}
+                      </h3>
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        <input
+                          type='checkbox'
+                          checked={
+                            selectedShipments.size ===
+                              filteredShipments.length &&
+                            filteredShipments.length > 0
+                          }
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                          style={{ margin: 0 }}
+                        />
+                        Select All
+                      </label>
+                    </div>
+                    <div
+                      style={{
+                        maxHeight: '540px',
+                        overflowY: 'auto',
+                        padding: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {sortedShipments.map((shipment) => (
+                        <ShipmentCard
+                          key={shipment.id}
+                          shipment={shipment}
+                          isSelected={selectedShipment?.id === shipment.id}
+                          onSelect={() => setSelectedShipment(shipment)}
+                          getStatusColor={getStatusColor}
+                          formatStatus={formatStatus}
+                          getPriorityColor={getPriorityColor}
+                          formatCurrency={formatCurrency}
+                          isSelectedForBulk={selectedShipments.has(shipment.id)}
+                          onBulkSelect={handleBulkSelect}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Analytics Tab */}
+          {activeView === 'analytics' && (
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  color: 'white',
+                  padding: '24px 32px',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  📈 Analytics Dashboard
+                </h2>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
+                  Performance insights and comprehensive shipping analytics
+                </p>
+              </div>
+
+              <div style={{ padding: '32px' }}>
+                {/* KPI Cards */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '24px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      ⚡
+                    </div>
                     <h3
                       style={{
                         color: 'white',
-                        fontSize: '16px',
-                        fontWeight: '600',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {Math.round(stats.avgProgress)}%
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
                         margin: 0,
                       }}
                     >
-                      Shipments ({filteredShipments.length})
-                    </h3>
-                    <label
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        fontSize: '12px',
-                      }}
-                    >
-                      <input
-                        type='checkbox'
-                        checked={
-                          selectedShipments.size === filteredShipments.length &&
-                          filteredShipments.length > 0
-                        }
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                        style={{ margin: 0 }}
-                      />
-                      Select All
-                    </label>
+                      Avg Progress
+                    </p>
                   </div>
+
                   <div
                     style={{
-                      maxHeight: '540px',
-                      overflowY: 'auto',
-                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🎯
+                    </div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {stats.onTimeRate}%
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      On-Time Rate
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🚚
+                    </div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {stats.totalMiles.toLocaleString()}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Total Miles
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      ⚠️
+                    </div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {stats.highPriority}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      High Priority
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status Distribution */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    marginBottom: '32px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Status Distribution
+                  </h3>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(120px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    {[
+                      {
+                        status: 'in-transit',
+                        count: stats.inTransit,
+                        color: '#3b82f6',
+                      },
+                      {
+                        status: 'delivered',
+                        count: stats.delivered,
+                        color: '#10b981',
+                      },
+                      {
+                        status: 'delayed',
+                        count: stats.delayed,
+                        color: '#ef4444',
+                      },
+                      {
+                        status: 'loading',
+                        count: shipments.filter((s) => s.status === 'loading')
+                          .length,
+                        color: '#f59e0b',
+                      },
+                      {
+                        status: 'unloading',
+                        count: shipments.filter((s) => s.status === 'unloading')
+                          .length,
+                        color: '#8b5cf6',
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.status}
+                        style={{
+                          background: `${item.color}20`,
+                          border: `1px solid ${item.color}40`,
+                          borderRadius: '8px',
+                          padding: '16px',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: item.color,
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          {item.count}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                            textTransform: 'capitalize',
+                          }}
+                        >
+                          {formatStatus(item.status)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Carrier Performance */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      margin: '0 0 16px 0',
+                    }}
+                  >
+                    Carrier Performance
+                  </h3>
+                  <div
+                    style={{
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '12px',
                     }}
                   >
-                    {sortedShipments.map((shipment) => (
-                      <ShipmentCard
-                        key={shipment.id}
-                        shipment={shipment}
-                        isSelected={selectedShipment?.id === shipment.id}
-                        onSelect={() => setSelectedShipment(shipment)}
-                        getStatusColor={getStatusColor}
-                        formatStatus={formatStatus}
-                        getPriorityColor={getPriorityColor}
-                        formatCurrency={formatCurrency}
-                        isSelectedForBulk={selectedShipments.has(shipment.id)}
-                        onBulkSelect={handleBulkSelect}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                    {Array.from(new Set(shipments.map((s) => s.carrier))).map(
+                      (carrier) => {
+                        const carrierShipments = shipments.filter(
+                          (s) => s.carrier === carrier
+                        );
+                        const avgProgress =
+                          carrierShipments.reduce(
+                            (sum, s) => sum + s.progress,
+                            0
+                          ) / carrierShipments.length;
+                        const onTimeCount = carrierShipments.filter(
+                          (s) => s.status === 'delivered'
+                        ).length;
+                        const delayedCount = carrierShipments.filter(
+                          (s) => s.status === 'delayed'
+                        ).length;
+                        const onTimeRate =
+                          (onTimeCount / (onTimeCount + delayedCount)) * 100 ||
+                          0;
 
-        {/* Analytics Tab */}
-        {activeView === 'analytics' && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                color: 'white',
-                padding: '24px 32px',
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  margin: '0 0 8px 0',
-                }}
-              >
-                📈 Analytics Dashboard
-              </h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: 0 }}>
-                Performance insights and comprehensive shipping analytics
-              </p>
-            </div>
-
-            <div style={{ padding: '32px' }}>
-              {/* KPI Cards */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '24px',
-                  marginBottom: '32px',
-                }}
-              >
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>
-                    ⚡
-                  </div>
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      margin: '0 0 4px 0',
-                    }}
-                  >
-                    {Math.round(stats.avgProgress)}%
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    Avg Progress
-                  </p>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>
-                    🎯
-                  </div>
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      margin: '0 0 4px 0',
-                    }}
-                  >
-                    {stats.onTimeRate}%
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    On-Time Rate
-                  </p>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>
-                    🚚
-                  </div>
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      margin: '0 0 4px 0',
-                    }}
-                  >
-                    {stats.totalMiles.toLocaleString()}
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    Total Miles
-                  </p>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>
-                    ⚠️
-                  </div>
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      margin: '0 0 4px 0',
-                    }}
-                  >
-                    {stats.highPriority}
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '14px',
-                      margin: 0,
-                    }}
-                  >
-                    High Priority
-                  </p>
-                </div>
-              </div>
-
-              {/* Status Distribution */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  marginBottom: '32px',
-                }}
-              >
-                <h3
-                  style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                    margin: '0 0 16px 0',
-                  }}
-                >
-                  Status Distribution
-                </h3>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: '16px',
-                  }}
-                >
-                  {[
-                    {
-                      status: 'in-transit',
-                      count: stats.inTransit,
-                      color: '#3b82f6',
-                    },
-                    {
-                      status: 'delivered',
-                      count: stats.delivered,
-                      color: '#10b981',
-                    },
-                    {
-                      status: 'delayed',
-                      count: stats.delayed,
-                      color: '#ef4444',
-                    },
-                    {
-                      status: 'loading',
-                      count: shipments.filter((s) => s.status === 'loading')
-                        .length,
-                      color: '#f59e0b',
-                    },
-                    {
-                      status: 'unloading',
-                      count: shipments.filter((s) => s.status === 'unloading')
-                        .length,
-                      color: '#8b5cf6',
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.status}
-                      style={{
-                        background: `${item.color}20`,
-                        border: `1px solid ${item.color}40`,
-                        borderRadius: '8px',
-                        padding: '16px',
-                        textAlign: 'center',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: item.color,
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        {item.count}
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '12px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {formatStatus(item.status)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Carrier Performance */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                }}
-              >
-                <h3
-                  style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                    margin: '0 0 16px 0',
-                  }}
-                >
-                  Carrier Performance
-                </h3>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '12px',
-                  }}
-                >
-                  {Array.from(new Set(shipments.map((s) => s.carrier))).map(
-                    (carrier) => {
-                      const carrierShipments = shipments.filter(
-                        (s) => s.carrier === carrier
-                      );
-                      const avgProgress =
-                        carrierShipments.reduce(
-                          (sum, s) => sum + s.progress,
-                          0
-                        ) / carrierShipments.length;
-                      const onTimeCount = carrierShipments.filter(
-                        (s) => s.status === 'delivered'
-                      ).length;
-                      const delayedCount = carrierShipments.filter(
-                        (s) => s.status === 'delayed'
-                      ).length;
-                      const onTimeRate =
-                        (onTimeCount / (onTimeCount + delayedCount)) * 100 || 0;
-
-                      return (
-                        <div
-                          key={carrier}
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            borderRadius: '8px',
-                            padding: '16px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                          }}
-                        >
-                          <div>
-                            <h4
-                              style={{
-                                color: 'white',
-                                fontSize: '16px',
-                                fontWeight: '600',
-                                margin: '0 0 4px 0',
-                              }}
-                            >
-                              {carrier}
-                            </h4>
-                            <p
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                fontSize: '12px',
-                                margin: 0,
-                              }}
-                            >
-                              {carrierShipments.length} shipments
-                            </p>
-                          </div>
+                        return (
                           <div
+                            key={carrier}
                             style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '8px',
+                              padding: '16px',
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '24px',
+                              justifyContent: 'space-between',
                             }}
                           >
-                            <div style={{ textAlign: 'center' }}>
-                              <div
+                            <div>
+                              <h4
                                 style={{
-                                  color: '#4ade80',
-                                  fontSize: '18px',
-                                  fontWeight: 'bold',
+                                  color: 'white',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                  margin: '0 0 4px 0',
                                 }}
                               >
-                                {Math.round(avgProgress)}%
-                              </div>
-                              <div
+                                {carrier}
+                              </h4>
+                              <p
                                 style={{
                                   color: 'rgba(255, 255, 255, 0.7)',
                                   fontSize: '12px',
+                                  margin: 0,
                                 }}
                               >
-                                Avg Progress
-                              </div>
+                                {carrierShipments.length} shipments
+                              </p>
                             </div>
-                            <div style={{ textAlign: 'center' }}>
-                              <div
-                                style={{
-                                  color: '#3b82f6',
-                                  fontSize: '18px',
-                                  fontWeight: 'bold',
-                                }}
-                              >
-                                {Math.round(onTimeRate)}%
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '24px',
+                              }}
+                            >
+                              <div style={{ textAlign: 'center' }}>
+                                <div
+                                  style={{
+                                    color: '#4ade80',
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {Math.round(avgProgress)}%
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    fontSize: '12px',
+                                  }}
+                                >
+                                  Avg Progress
+                                </div>
                               </div>
-                              <div
-                                style={{
-                                  color: 'rgba(255, 255, 255, 0.7)',
-                                  fontSize: '12px',
-                                }}
-                              >
-                                On-Time Rate
+                              <div style={{ textAlign: 'center' }}>
+                                <div
+                                  style={{
+                                    color: '#3b82f6',
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {Math.round(onTimeRate)}%
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    fontSize: '12px',
+                                  }}
+                                >
+                                  On-Time Rate
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    }
-                  )}
+                        );
+                      }
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Maritime Intelligence Tab */}
-        {activeView === 'maritime' && (
-          <MaritimeIntelligenceView shipments={filteredShipments} />
-        )}
+          {/* Maritime Intelligence Tab */}
+          {activeView === 'maritime' && (
+            <MaritimeIntelligenceView shipments={filteredShipments} />
+          )}
 
-        {/* Canada Cross-Border Intelligence Tab */}
-        {activeView === 'canada' && (
-          <CanadaCrossBorderView shipments={filteredShipments} />
-        )}
+          {/* Canada Cross-Border Intelligence Tab */}
+          {activeView === 'canada' && (
+            <CanadaCrossBorderView shipments={filteredShipments} />
+          )}
 
-        {/* Mexico Cross-Border Intelligence Tab */}
-        {activeView === 'mexico' && (
-          <MexicoCrossBorderView shipments={filteredShipments} />
-        )}
+          {/* Mexico Cross-Border Intelligence Tab */}
+          {activeView === 'mexico' && (
+            <MexicoCrossBorderView shipments={filteredShipments} />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -2786,20 +2952,43 @@ function ShipmentCard({
           style={{
             fontSize: '0.75rem',
             color: '#334155',
-            marginBottom: '2px',
+            marginBottom: '4px',
           }}
         >
           Cargo: {shipment.commodity}
         </div>
+
+        {/* Weight & Miles - Schedule Integration Format */}
         <div
           style={{
-            fontSize: '0.75rem',
-            color: '#334155',
-            marginBottom: '2px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '4px',
           }}
         >
-          Weight: {shipment.weight.toLocaleString()} lbs
+          <div
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#10b981',
+            }}
+          >
+            {(shipment.weight / 1000).toFixed(1)}K lbs •{' '}
+            {shipment.miles || 'N/A'} mi
+          </div>
+          <div
+            style={{
+              fontSize: '0.625rem',
+              color: '#6b7280',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}
+          >
+            Weight • Miles
+          </div>
         </div>
+
         <div
           style={{
             fontSize: '0.75rem',
@@ -2838,15 +3027,117 @@ function ShipmentCard({
         </div>
       )}
 
-      {/* Last Update */}
-      <div
-        style={{
-          fontSize: '0.625rem',
-          color: '#64748b',
-          textAlign: 'right',
-        }}
-      >
-        Updated: {shipment.lastUpdate}
+      {/* Integration Buttons & Status */}
+      <div style={{ marginTop: '12px' }}>
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/scheduling', '_blank');
+            }}
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: 'white',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              fontSize: '0.625rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              flex: 1,
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background =
+                'linear-gradient(135deg, #2563eb, #1d4ed8)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background =
+                'linear-gradient(135deg, #3b82f6, #2563eb)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            📅 Schedule
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/admin/driver-otr-flow', '_blank');
+            }}
+            style={{
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              fontSize: '0.625rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              flex: 1,
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background =
+                'linear-gradient(135deg, #059669, #047857)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background =
+                'linear-gradient(135deg, #10b981, #059669)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            📱 ELD Logs
+          </button>
+        </div>
+
+        {/* DOT Compliance Status */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#10b981',
+              }}
+            />
+            <span
+              style={{
+                fontSize: '0.625rem',
+                color: '#10b981',
+                fontWeight: '600',
+              }}
+            >
+              DOT Compliant • HOS Valid
+            </span>
+          </div>
+
+          {/* Last Update */}
+          <div
+            style={{
+              fontSize: '0.625rem',
+              color: '#64748b',
+            }}
+          >
+            Updated: {shipment.lastUpdate}
+          </div>
+        </div>
       </div>
     </div>
   );
