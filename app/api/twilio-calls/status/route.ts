@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { callDatabaseService } from '../../services/CallDatabaseService';
 
 interface TwilioStatusWebhook {
   CallSid: string;
@@ -63,23 +64,46 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 async function updateCallRecord(
   webhookData: TwilioStatusWebhook
 ): Promise<void> {
-  // In production, this would update database records
+  try {
+    // Determine tenant from phone number
+    const tenantId = await callDatabaseService.getTenantFromPhoneNumber(
+      webhookData.To
+    );
 
-  const callRecord = {
-    callSid: webhookData.CallSid,
-    status: webhookData.CallStatus,
-    duration: parseInt(webhookData.CallDuration || '0'),
-    cost: parseFloat(webhookData.Price || '0'),
-    currency: webhookData.PriceUnit || 'USD',
-    endTime: webhookData.EndTime,
-    startTime: webhookData.StartTime,
-    updatedAt: new Date().toISOString(),
-  };
+    // Check if call record exists, create if not
+    const existingRecords = await callDatabaseService.getCallRecords(
+      tenantId,
+      1,
+      0
+    );
+    const existingRecord = existingRecords.find(
+      (record) => record.call_sid === webhookData.CallSid
+    );
 
-  console.log(`💾 Call Record Updated:`, callRecord);
+    if (existingRecord) {
+      // Update existing record
+      await callDatabaseService.updateCallRecord(webhookData.CallSid, {
+        status: webhookData.CallStatus,
+        duration: parseInt(webhookData.CallDuration || '0'),
+        cost: parseFloat(webhookData.Price || '0'),
+        currency: webhookData.PriceUnit || 'USD',
+        end_time: webhookData.EndTime,
+      });
+    } else {
+      // Create new record
+      await callDatabaseService.saveCallRecord(webhookData, tenantId);
+    }
 
-  // TODO: Save to database
-  // await database.calls.update(webhookData.CallSid, callRecord);
+    console.log(`💾 Call Record Updated:`, {
+      callSid: webhookData.CallSid,
+      status: webhookData.CallStatus,
+      duration: webhookData.CallDuration,
+      cost: webhookData.Price,
+    });
+  } catch (error) {
+    console.error('Failed to update call record:', error);
+    throw error;
+  }
 }
 
 async function broadcastCallUpdate(
@@ -98,6 +122,26 @@ async function broadcastCallUpdate(
 
   console.log(`📡 Broadcasting call update:`, update);
 
-  // TODO: Implement WebSocket broadcast
-  // await websocketService.broadcast('call_updates', update);
+  // Broadcast to connected clients via Server-Sent Events
+  try {
+    const tenantId = await callDatabaseService.getTenantFromPhoneNumber(
+      webhookData.To
+    );
+
+    const response = await fetch('/api/events/call-updates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tenantId,
+        event: 'call_status_update',
+        data: { ...update, tenantId },
+      }),
+    });
+
+    if (response.ok) {
+      console.log(`✅ Call update broadcasted to tenant ${tenantId}`);
+    }
+  } catch (broadcastError) {
+    console.warn('Failed to broadcast call update:', broadcastError);
+  }
 }

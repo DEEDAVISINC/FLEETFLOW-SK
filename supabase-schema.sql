@@ -178,6 +178,51 @@ INSERT INTO vehicles (vehicle_id, make, model, year, vin, license_plate, status)
 ('TRK005', 'International', 'LT', '2023', '1HTMMAAL0XN123456', 'JKL012', 'Active'),
 ('TRK006', 'Mack', 'Anthem', '2022', '1M2AA18Y5WM123456', 'MNO345', 'Active');
 
+-- Call Records Table for Twilio Integration
+CREATE TABLE call_records (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    call_sid VARCHAR(255) UNIQUE NOT NULL,
+    from_number VARCHAR(20) NOT NULL,
+    to_number VARCHAR(20) NOT NULL,
+    direction VARCHAR(20) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    duration INTEGER DEFAULT 0,
+    cost DECIMAL(10,4) DEFAULT 0,
+    currency VARCHAR(3) DEFAULT 'USD',
+    start_time TIMESTAMP WITH TIME ZONE,
+    end_time TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Voicemail Transcriptions Table
+CREATE TABLE voicemail_transcriptions (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    call_sid VARCHAR(255) NOT NULL,
+    transcription_sid VARCHAR(255) UNIQUE NOT NULL,
+    recording_sid VARCHAR(255),
+    recording_url TEXT,
+    transcription_text TEXT,
+    transcription_status VARCHAR(50),
+    urgency_score INTEGER DEFAULT 0,
+    priority_level VARCHAR(20) DEFAULT 'normal',
+    ai_analysis JSONB,
+    processed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (call_sid) REFERENCES call_records(call_sid)
+);
+
+-- Indexes for performance
+CREATE INDEX idx_call_records_tenant ON call_records(tenant_id);
+CREATE INDEX idx_call_records_status ON call_records(status);
+CREATE INDEX idx_call_records_created ON call_records(created_at DESC);
+CREATE INDEX idx_voicemail_tenant ON voicemail_transcriptions(tenant_id);
+CREATE INDEX idx_voicemail_urgency ON voicemail_transcriptions(urgency_score DESC);
+CREATE INDEX idx_voicemail_priority ON voicemail_transcriptions(priority_level);
+CREATE INDEX idx_voicemail_processed ON voicemail_transcriptions(processed);
+
 -- Set up Row Level Security (RLS)
 ALTER TABLE loads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE drivers ENABLE ROW LEVEL SECURITY;
@@ -187,6 +232,8 @@ ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE file_records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE call_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE voicemail_transcriptions ENABLE ROW LEVEL SECURITY;
 
 -- Create policies (basic - you can customize these)
 CREATE POLICY "Allow all operations for authenticated users" ON loads FOR ALL USING (auth.role() = 'authenticated');
@@ -197,3 +244,311 @@ CREATE POLICY "Allow all operations for authenticated users" ON deliveries FOR A
 CREATE POLICY "Allow all operations for authenticated users" ON file_records FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow all operations for authenticated users" ON notifications FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow all operations for authenticated users" ON users FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON call_records FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON voicemail_transcriptions FOR ALL USING (auth.role() = 'authenticated');
+
+-- Form 2290 Filings Table for TaxBandits Integration
+CREATE TABLE form_2290_filings (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    submission_id VARCHAR(255) UNIQUE NOT NULL,
+    filing_type VARCHAR(20) NOT NULL CHECK (filing_type IN ('original', 'amended', 'suspended')),
+    tax_period_start DATE NOT NULL,
+    tax_period_end DATE NOT NULL,
+    total_tax_due DECIMAL(10,2) NOT NULL DEFAULT 0,
+    filing_status VARCHAR(50) NOT NULL DEFAULT 'submitted',
+    filed_date TIMESTAMP WITH TIME ZONE,
+    due_date DATE NOT NULL,
+    business_ein VARCHAR(20) NOT NULL,
+    business_name VARCHAR(255) NOT NULL,
+    vehicle_count INTEGER NOT NULL DEFAULT 0,
+    receipt_url TEXT,
+    stamped_2290_url TEXT,
+    amendment_reason TEXT,
+    original_submission_id VARCHAR(255),
+    errors JSONB,
+    warnings JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Form 2290 Vehicles Table
+CREATE TABLE form_2290_vehicles (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    filing_id UUID NOT NULL,
+    vin VARCHAR(17) NOT NULL,
+    make VARCHAR(50) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    year INTEGER NOT NULL,
+    gross_weight INTEGER NOT NULL,
+    taxable_gross_weight INTEGER,
+    first_used_date DATE NOT NULL,
+    category VARCHAR(20) NOT NULL CHECK (category IN ('logging', 'public_highway', 'agricultural')),
+    tax_amount DECIMAL(8,2) NOT NULL DEFAULT 0,
+    vehicle_description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (filing_id) REFERENCES form_2290_filings(id) ON DELETE CASCADE
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_form_2290_filings_tenant_id ON form_2290_filings(tenant_id);
+CREATE INDEX idx_form_2290_filings_submission_id ON form_2290_filings(submission_id);
+CREATE INDEX idx_form_2290_filings_status ON form_2290_filings(filing_status);
+CREATE INDEX idx_form_2290_filings_due_date ON form_2290_filings(due_date);
+CREATE INDEX idx_form_2290_filings_business_ein ON form_2290_filings(business_ein);
+CREATE INDEX idx_form_2290_vehicles_filing_id ON form_2290_vehicles(filing_id);
+CREATE INDEX idx_form_2290_vehicles_vin ON form_2290_vehicles(vin);
+
+-- Enable Row Level Security for Form 2290 tables
+ALTER TABLE form_2290_filings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE form_2290_vehicles ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for form_2290_filings
+CREATE POLICY "Allow all operations for authenticated users" ON form_2290_filings FOR ALL USING (auth.role() = 'authenticated');
+
+-- Create RLS policies for form_2290_vehicles
+CREATE POLICY "Allow all operations for authenticated users" ON form_2290_vehicles FOR ALL USING (auth.role() = 'authenticated');
+
+-- IFTA Fuel Purchases Table
+CREATE TABLE ifta_fuel_purchases (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    vehicle_id UUID,
+    purchase_date DATE NOT NULL,
+    state_code VARCHAR(2) NOT NULL,
+    gallons DECIMAL(8,3) NOT NULL,
+    price_per_gallon DECIMAL(6,3) NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    vendor_name VARCHAR(255),
+    receipt_number VARCHAR(100),
+    fuel_type VARCHAR(20) NOT NULL CHECK (fuel_type IN ('diesel', 'gasoline')),
+    receipt_image_url TEXT,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- IFTA Mileage Records Table
+CREATE TABLE ifta_mileage_records (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    vehicle_id UUID NOT NULL,
+    travel_date DATE NOT NULL,
+    state_code VARCHAR(2) NOT NULL,
+    miles DECIMAL(8,1) NOT NULL,
+    route_details TEXT,
+    trip_purpose VARCHAR(100),
+    odometer_start INTEGER,
+    odometer_end INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- IFTA Quarterly Returns Table
+CREATE TABLE ifta_returns (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    quarter VARCHAR(10) NOT NULL, -- "2024-Q1"
+    year INTEGER NOT NULL,
+    quarter_number INTEGER NOT NULL CHECK (quarter_number BETWEEN 1 AND 4),
+    filing_status VARCHAR(20) DEFAULT 'draft' CHECK (filing_status IN ('draft', 'filed', 'accepted', 'rejected')),
+    total_tax_due DECIMAL(10,2) DEFAULT 0,
+    total_refund_due DECIMAL(10,2) DEFAULT 0,
+    net_amount DECIMAL(10,2) DEFAULT 0,
+    filed_date TIMESTAMP WITH TIME ZONE,
+    due_date DATE NOT NULL,
+    return_data JSONB NOT NULL,
+    filing_confirmation TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(tenant_id, quarter)
+);
+
+-- IFTA Jurisdiction Returns Table (detailed breakdown per state)
+CREATE TABLE ifta_jurisdiction_returns (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    return_id UUID NOT NULL,
+    state_code VARCHAR(2) NOT NULL,
+    state_name VARCHAR(50) NOT NULL,
+    total_miles DECIMAL(10,1) DEFAULT 0,
+    taxable_miles DECIMAL(10,1) DEFAULT 0,
+    fuel_purchased DECIMAL(10,3) DEFAULT 0,
+    tax_rate DECIMAL(6,4) NOT NULL,
+    tax_owed DECIMAL(10,2) DEFAULT 0,
+    tax_paid DECIMAL(10,2) DEFAULT 0,
+    net_tax_due DECIMAL(10,2) DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (return_id) REFERENCES ifta_returns(id) ON DELETE CASCADE
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_ifta_fuel_purchases_tenant_id ON ifta_fuel_purchases(tenant_id);
+CREATE INDEX idx_ifta_fuel_purchases_date ON ifta_fuel_purchases(purchase_date);
+CREATE INDEX idx_ifta_fuel_purchases_state ON ifta_fuel_purchases(state_code);
+CREATE INDEX idx_ifta_fuel_purchases_vehicle ON ifta_fuel_purchases(vehicle_id);
+
+CREATE INDEX idx_ifta_mileage_records_tenant_id ON ifta_mileage_records(tenant_id);
+CREATE INDEX idx_ifta_mileage_records_date ON ifta_mileage_records(travel_date);
+CREATE INDEX idx_ifta_mileage_records_state ON ifta_mileage_records(state_code);
+CREATE INDEX idx_ifta_mileage_records_vehicle ON ifta_mileage_records(vehicle_id);
+
+CREATE INDEX idx_ifta_returns_tenant_id ON ifta_returns(tenant_id);
+CREATE INDEX idx_ifta_returns_quarter ON ifta_returns(quarter);
+CREATE INDEX idx_ifta_returns_status ON ifta_returns(filing_status);
+CREATE INDEX idx_ifta_returns_due_date ON ifta_returns(due_date);
+
+CREATE INDEX idx_ifta_jurisdiction_returns_return_id ON ifta_jurisdiction_returns(return_id);
+CREATE INDEX idx_ifta_jurisdiction_returns_state ON ifta_jurisdiction_returns(state_code);
+
+-- Enable Row Level Security for IFTA tables
+ALTER TABLE ifta_fuel_purchases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ifta_mileage_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ifta_returns ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ifta_jurisdiction_returns ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for IFTA tables
+CREATE POLICY "Allow all operations for authenticated users" ON ifta_fuel_purchases FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON ifta_mileage_records FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON ifta_returns FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON ifta_jurisdiction_returns FOR ALL USING (auth.role() = 'authenticated');
+
+-- ELD Provider Connections Table
+CREATE TABLE eld_providers (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    provider_name VARCHAR(100) NOT NULL,
+    provider_id VARCHAR(50) NOT NULL,
+    api_endpoint TEXT NOT NULL,
+    auth_type VARCHAR(20) NOT NULL CHECK (auth_type IN ('api_key', 'oauth', 'basic_auth')),
+    credentials JSONB NOT NULL, -- encrypted credentials
+    is_active BOOLEAN DEFAULT true,
+    last_sync TIMESTAMP WITH TIME ZONE,
+    sync_frequency_minutes INTEGER DEFAULT 15,
+    webhook_url TEXT,
+    webhook_secret VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- HOS (Hours of Service) Records Table
+CREATE TABLE hos_records (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    driver_id UUID NOT NULL,
+    vehicle_id UUID,
+    eld_provider_id UUID NOT NULL,
+    record_date DATE NOT NULL,
+    duty_status VARCHAR(30) NOT NULL CHECK (duty_status IN ('off_duty', 'sleeper_berth', 'driving', 'on_duty_not_driving')),
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE,
+    duration_minutes INTEGER,
+    start_location JSONB,
+    end_location JSONB,
+    odometer_start INTEGER,
+    odometer_end INTEGER,
+    engine_hours DECIMAL(8,2),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (eld_provider_id) REFERENCES eld_providers(id) ON DELETE CASCADE
+);
+
+-- HOS Violations Table
+CREATE TABLE hos_violations (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    driver_id UUID NOT NULL,
+    vehicle_id UUID,
+    violation_type VARCHAR(30) NOT NULL CHECK (violation_type IN ('driving_time', 'duty_time', 'rest_break', 'weekly_limit', 'cycle_limit')),
+    severity VARCHAR(20) NOT NULL CHECK (severity IN ('warning', 'violation', 'critical')),
+    description TEXT NOT NULL,
+    violation_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    time_remaining INTEGER, -- minutes until violation
+    resolved BOOLEAN DEFAULT false,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    resolved_by UUID,
+    resolution_notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Vehicle Diagnostics Table
+CREATE TABLE vehicle_diagnostics (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    vehicle_id UUID NOT NULL,
+    eld_provider_id UUID NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    location JSONB NOT NULL,
+    speed INTEGER DEFAULT 0, -- mph
+    engine_rpm INTEGER DEFAULT 0,
+    fuel_level DECIMAL(5,2) DEFAULT 0, -- percentage
+    engine_temp INTEGER DEFAULT 0, -- fahrenheit
+    odometer INTEGER DEFAULT 0, -- miles
+    diagnostic_codes JSONB, -- array of diagnostic trouble codes
+    battery_voltage DECIMAL(4,2),
+    coolant_temp INTEGER,
+    oil_pressure INTEGER,
+    raw_data JSONB, -- complete diagnostic data from ELD
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (eld_provider_id) REFERENCES eld_providers(id) ON DELETE CASCADE
+);
+
+-- ELD Sync Logs Table
+CREATE TABLE eld_sync_logs (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tenant_id UUID NOT NULL,
+    eld_provider_id UUID NOT NULL,
+    sync_type VARCHAR(20) NOT NULL CHECK (sync_type IN ('hos', 'diagnostics', 'violations', 'manual', 'webhook')),
+    sync_status VARCHAR(20) NOT NULL CHECK (sync_status IN ('started', 'completed', 'failed', 'partial')),
+    records_processed INTEGER DEFAULT 0,
+    violations_detected INTEGER DEFAULT 0,
+    errors JSONB,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE,
+    duration_seconds INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (eld_provider_id) REFERENCES eld_providers(id) ON DELETE CASCADE
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_eld_providers_tenant_id ON eld_providers(tenant_id);
+CREATE INDEX idx_eld_providers_provider_id ON eld_providers(provider_id);
+CREATE INDEX idx_eld_providers_active ON eld_providers(is_active);
+
+CREATE INDEX idx_hos_records_tenant_id ON hos_records(tenant_id);
+CREATE INDEX idx_hos_records_driver_id ON hos_records(driver_id);
+CREATE INDEX idx_hos_records_vehicle_id ON hos_records(vehicle_id);
+CREATE INDEX idx_hos_records_date ON hos_records(record_date);
+CREATE INDEX idx_hos_records_duty_status ON hos_records(duty_status);
+CREATE INDEX idx_hos_records_start_time ON hos_records(start_time);
+
+CREATE INDEX idx_hos_violations_tenant_id ON hos_violations(tenant_id);
+CREATE INDEX idx_hos_violations_driver_id ON hos_violations(driver_id);
+CREATE INDEX idx_hos_violations_resolved ON hos_violations(resolved);
+CREATE INDEX idx_hos_violations_severity ON hos_violations(severity);
+CREATE INDEX idx_hos_violations_violation_time ON hos_violations(violation_time);
+
+CREATE INDEX idx_vehicle_diagnostics_tenant_id ON vehicle_diagnostics(tenant_id);
+CREATE INDEX idx_vehicle_diagnostics_vehicle_id ON vehicle_diagnostics(vehicle_id);
+CREATE INDEX idx_vehicle_diagnostics_timestamp ON vehicle_diagnostics(timestamp);
+CREATE INDEX idx_vehicle_diagnostics_provider ON vehicle_diagnostics(eld_provider_id);
+
+CREATE INDEX idx_eld_sync_logs_tenant_id ON eld_sync_logs(tenant_id);
+CREATE INDEX idx_eld_sync_logs_provider ON eld_sync_logs(eld_provider_id);
+CREATE INDEX idx_eld_sync_logs_status ON eld_sync_logs(sync_status);
+CREATE INDEX idx_eld_sync_logs_start_time ON eld_sync_logs(start_time);
+
+-- Enable Row Level Security for ELD tables
+ALTER TABLE eld_providers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE hos_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE hos_violations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vehicle_diagnostics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE eld_sync_logs ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for ELD tables
+CREATE POLICY "Allow all operations for authenticated users" ON eld_providers FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON hos_records FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON hos_violations FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON vehicle_diagnostics FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow all operations for authenticated users" ON eld_sync_logs FOR ALL USING (auth.role() = 'authenticated');

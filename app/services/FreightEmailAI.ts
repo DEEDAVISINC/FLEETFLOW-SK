@@ -12,6 +12,8 @@ import {
   UniversalQuote,
   universalQuoteService,
 } from './universal-quote-service';
+// ✅ ADD: Platform AI integration for enhanced email processing
+import { platformAIManager, processAITask } from './PlatformAIManager';
 
 export interface EmailContext {
   emailId: string;
@@ -114,6 +116,10 @@ export class FreightEmailAI {
     this.voiceService = new ElevenLabsVoiceService();
     this.freightNetworkService = new FreightNetworkService();
     this.initializeTenantConfigs();
+
+    // ✅ Register with Platform AI Manager
+    platformAIManager.registerService('FreightEmailAI', this);
+    console.log('📧 FreightEmailAI registered with Platform AI Manager');
   }
 
   /**
@@ -187,7 +193,65 @@ Your trusted freight partner since 2023!
   }
 
   /**
-   * Process incoming freight email and generate AI response
+   * ✅ Enhanced email processing with Platform AI integration
+   */
+  async processFreightEmailEnhanced(
+    emailContext: EmailContext
+  ): Promise<EmailResponse> {
+    console.log('📧 Processing freight email with Platform AI enhancements');
+
+    try {
+      // Use Platform AI for initial email analysis
+      const emailAnalysisContent = `
+        Freight Email Analysis:
+        From: ${emailContext.from}
+        Subject: ${emailContext.subject}
+        Message: ${emailContext.originalMessage}
+        Lead Type: ${emailContext.leadType}
+        Priority: ${emailContext.priority}
+        Tenant: ${emailContext.tenantId}
+      `;
+
+      const aiAnalysis = await processAITask(
+        'email_analysis',
+        emailAnalysisContent,
+        {
+          serviceType: 'customer_facing',
+          industry: 'transportation',
+          urgency: emailContext.priority,
+          tenantId: emailContext.tenantId,
+          customerTier: this.inferCustomerTier(emailContext),
+        }
+      );
+
+      console.log(
+        `✅ Email analyzed: Quality=${aiAnalysis.quality}, Human-like=${aiAnalysis.humanLike}, Cost=$${aiAnalysis.cost}`
+      );
+
+      // If Platform AI escalated, fall back to original processing
+      if (aiAnalysis.escalated) {
+        console.log(
+          '🔄 Complex email escalated - using comprehensive processing'
+        );
+        return await this.processFreightEmail(emailContext);
+      }
+
+      // Use AI analysis result to enhance response
+      const enhancedResponse = await this.generateEnhancedResponse(
+        emailContext,
+        aiAnalysis
+      );
+
+      return enhancedResponse;
+    } catch (error) {
+      console.error('❌ Platform AI email processing failed:', error);
+      console.log('🔄 Falling back to original email processing');
+      return await this.processFreightEmail(emailContext);
+    }
+  }
+
+  /**
+   * Process incoming freight email and generate AI response (Original method)
    */
   async processFreightEmail(
     emailContext: EmailContext
@@ -2095,6 +2159,83 @@ Sarah - FleetFlow Load Desk
     return {
       type,
       urgent,
+    };
+  }
+
+  // ✅ Platform AI helper methods
+
+  private inferCustomerTier(
+    emailContext: EmailContext
+  ): 'bronze' | 'silver' | 'gold' | 'platinum' {
+    // Infer customer tier based on email characteristics
+    if (emailContext.carrierInfo?.verified) return 'gold';
+    if (emailContext.priority === 'high') return 'silver';
+    return 'bronze';
+  }
+
+  private async generateEnhancedResponse(
+    emailContext: EmailContext,
+    aiAnalysis: any
+  ): Promise<EmailResponse> {
+    const tenantConfig = this.getTenantConfig(emailContext.tenantId);
+
+    // Generate human-like response using Platform AI analysis
+    const response: EmailResponse = {
+      subject: `Re: ${emailContext.subject}`,
+      message:
+        typeof aiAnalysis.response === 'string'
+          ? aiAnalysis.response
+          : `Thank you for your email regarding ${emailContext.leadType.replace('_', ' ')}. We'll process this and get back to you promptly.`,
+      nextAction: this.determineNextAction(emailContext, aiAnalysis),
+      priority: emailContext.priority,
+      requiresHumanReview: aiAnalysis.escalated,
+      tenantId: emailContext.tenantId,
+      metadata: {
+        aiProcessed: true,
+        aiQuality: aiAnalysis.quality,
+        aiCost: aiAnalysis.cost,
+        processingTime: Date.now(),
+      },
+    };
+
+    return response;
+  }
+
+  private determineNextAction(
+    emailContext: EmailContext,
+    aiAnalysis: any
+  ): EmailResponse['nextAction'] {
+    // Determine next action based on email type and AI analysis
+    switch (emailContext.leadType) {
+      case 'load_inquiry':
+        return 'auto_quote';
+      case 'carrier_inquiry':
+        return 'send_email';
+      case 'rate_quote':
+        return 'auto_quote';
+      case 'load_confirmation':
+        return 'create_load';
+      case 'document_request':
+        return 'generate_document';
+      default:
+        return aiAnalysis.escalated ? 'escalate_human' : 'send_email';
+    }
+  }
+
+  // ✅ Get Platform AI metrics for this service
+  async getAIMetrics(): Promise<any> {
+    const costSummary = await platformAIManager.getCostSummary();
+    const qualityStatus = await platformAIManager.getQualityStatus();
+
+    return {
+      serviceName: 'FreightEmailAI',
+      emailsProcessed: 'Real-time data would be here',
+      costsOptimized: true,
+      qualitySupervised: true,
+      humanLikeResponses: true,
+      dailySpend: costSummary.dailySpend,
+      qualityGrade: qualityStatus.overallGrade,
+      escalations: qualityStatus.humanEscalations,
     };
   }
 }

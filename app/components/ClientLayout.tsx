@@ -1,13 +1,15 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
 import FleetFlowFooter from './FleetFlowFooter';
 import FlowterButton from './FlowterButton';
 import Navigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
+// ✅ ADD: Platform AI initialization
+import { initializeFleetFlowAI } from '../config/ai-config';
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -16,6 +18,18 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [flowterOpen, setFlowterOpen] = useState(false);
   const pathname = usePathname();
+
+  // ✅ Initialize Platform AI on app startup
+  useEffect(() => {
+    console.log('🚀 FleetFlow app starting - initializing Platform AI...');
+    try {
+      initializeFleetFlowAI();
+      console.log('✅ Platform AI initialized successfully');
+    } catch (error) {
+      console.error('❌ Platform AI initialization failed:', error);
+      console.warn('⚠️ FleetFlow will continue with original AI behavior');
+    }
+  }, []); // Run once on app startup
 
   const handleFlowterOpen = () => {
     setFlowterOpen(true);

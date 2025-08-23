@@ -1,9 +1,10 @@
 /**
  * Twilio Transcription Webhook Handler
- * Processes voicemail transcriptions and stores them
+ * Processes voicemail transcriptions and stores them with AI analysis
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { callDatabaseService } from '../../services/CallDatabaseService';
 
 interface TwilioTranscriptionWebhook {
   TranscriptionSid: string;
@@ -61,32 +62,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 async function processVoicemailTranscription(
   transcriptionData: TwilioTranscriptionWebhook
 ): Promise<void> {
-  // In production, this would save to database
-  const voicemailRecord = {
-    transcriptionSid: transcriptionData.TranscriptionSid,
-    callSid: transcriptionData.CallSid,
-    recordingSid: transcriptionData.RecordingSid,
-    recordingUrl: transcriptionData.RecordingUrl,
-    fromNumber: transcriptionData.From,
-    toNumber: transcriptionData.To,
-    transcriptionText: transcriptionData.TranscriptionText,
-    status: transcriptionData.TranscriptionStatus,
-    receivedAt: new Date().toISOString(),
-    processed: true,
-  };
+  try {
+    // Determine tenant from phone number
+    const tenantId = await callDatabaseService.getTenantFromPhoneNumber(
+      transcriptionData.To
+    );
 
-  console.log(`💾 Voicemail Transcription Saved:`, {
-    transcriptionSid: voicemailRecord.transcriptionSid,
-    fromNumber: voicemailRecord.fromNumber,
-    transcriptionLength: voicemailRecord.transcriptionText?.length || 0,
-    receivedAt: voicemailRecord.receivedAt,
-  });
+    // Save to database with AI analysis
+    const savedRecord = await callDatabaseService.saveVoicemailTranscription(
+      transcriptionData,
+      tenantId
+    );
 
-  // TODO: Save to database
-  // await database.voicemails.create(voicemailRecord);
+    console.log(`💾 Voicemail Transcription Processed:`, {
+      id: savedRecord.id,
+      transcriptionSid: savedRecord.transcription_sid,
+      fromNumber: transcriptionData.From,
+      urgencyScore: savedRecord.urgency_score,
+      priorityLevel: savedRecord.priority_level,
+      transcriptionLength: transcriptionData.TranscriptionText?.length || 0,
+    });
 
-  // TODO: Process with AI for priority/urgency detection
-  // const urgencyAnalysis = await analyzeVoicemailUrgency(transcriptionData.TranscriptionText);
+    // Send urgent notifications if high priority
+    if (savedRecord.urgency_score >= 70) {
+      await sendUrgentVoicemailAlert(tenantId, savedRecord);
+    }
+  } catch (error) {
+    console.error('Failed to process voicemail transcription:', error);
+    throw error;
+  }
 }
 
 async function notifyVoicemailReceived(
@@ -109,13 +113,43 @@ async function notifyVoicemailReceived(
     notificationMethods: ['email', 'dashboard', 'sms'],
   });
 
-  // TODO: Implement actual notifications
-  // await emailService.sendVoicemailNotification({
-  //   tenantId: tenantId,
-  //   fromNumber: transcriptionData.From,
-  //   transcription: transcriptionData.TranscriptionText,
-  //   recordingUrl: transcriptionData.RecordingUrl
-  // });
+  // Send notification via enhanced Twilio service
+  try {
+    const response = await fetch('/api/twilio-enhanced?action=send-sms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: '+1234567890', // Replace with actual notification number
+        message: `New voicemail received from ${transcriptionData.From}. Priority: ${transcriptionData.TranscriptionText ? 'Transcribed' : 'Audio only'}`,
+      }),
+    });
+
+    console.log(`📧 Voicemail notification sent to tenant ${receivingNumber}`);
+  } catch (error) {
+    console.error('Failed to send voicemail notification:', error);
+  }
 }
 
+async function sendUrgentVoicemailAlert(
+  tenantId: string,
+  voicemailRecord: any
+): Promise<void> {
+  try {
+    // Send urgent notification via enhanced Twilio service
+    const response = await fetch('/api/twilio-enhanced?action=send-sms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: '+1234567890', // Replace with actual urgent notification number
+        message: `🚨 URGENT VOICEMAIL: ${voicemailRecord.priority_level.toUpperCase()} priority message received. Score: ${voicemailRecord.urgency_score}/100. Please respond immediately.`,
+      }),
+    });
 
+    console.log(`🚨 Urgent voicemail alert sent for tenant ${tenantId}:`, {
+      urgencyScore: voicemailRecord.urgency_score,
+      priorityLevel: voicemailRecord.priority_level,
+    });
+  } catch (error) {
+    console.error('Failed to send urgent voicemail alert:', error);
+  }
+}

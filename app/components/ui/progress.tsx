@@ -8,17 +8,17 @@ interface ProgressProps {
   max?: number;
 }
 
-export const Progress: React.FC<ProgressProps> = ({ 
-  value = 0, 
-  className = '', 
-  max = 100 
+export const Progress: React.FC<ProgressProps> = ({
+  value = 0,
+  className = '',
+  max = 100,
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-  
+
   return (
-    <div className={`w-full bg-gray-200 rounded-full h-2 ${className}`}>
-      <div 
-        className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+    <div className={`h-2 w-full rounded-full bg-gray-200 ${className}`}>
+      <div
+        className='h-2 rounded-full bg-blue-600 transition-all duration-300 ease-in-out'
         style={{ width: `${percentage}%` }}
       />
     </div>

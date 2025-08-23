@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import InvitationQuickManager from '../components/InvitationQuickManager';
+// ✅ ADD: Platform AI monitoring dashboard
+import { PlatformAIMonitor } from '../components/PlatformAIMonitor';
 
 export default function DashboardPage() {
   const quickLinks = [
@@ -195,6 +197,11 @@ export default function DashboardPage() {
           compact={true}
           style={{ marginBottom: '24px' }}
         />
+
+        {/* ✅ Platform AI Monitoring */}
+        <div style={{ marginBottom: '24px' }}>
+          <PlatformAIMonitor />
+        </div>
 
         {/* Quick Links */}
         <div

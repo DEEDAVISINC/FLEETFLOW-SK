@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import { getLoadStats, getMainDashboardLoads } from '../services/loadService';
 import { calculateFinancialMetrics } from '../services/settlementService';
 // ADD SQUARE & BILL.COM FINANCIAL INTEGRATION (Single-user configuration)
-import AISupportDashboard from '../components/AISupportDashboard';
+// import AISupportDashboard from '../components/AISupportDashboard';
+// ✅ ADD: Platform AI monitoring integration
+import { PlatformAIMonitor } from '../components/PlatformAIMonitor';
 
 // Enhanced interfaces for comprehensive AI management
 interface PerformanceMetrics {
@@ -184,11 +186,11 @@ export default function AICompanyDashboard() {
       name: 'Marketing & Growth',
       color: '#ec4899',
       icon: '💖',
-      totalStaff: 7,
-      activeStaff: 7,
-      dailyRevenue: 211500,
-      tasksCompleted: 1513,
-      efficiency: 95.8,
+      totalStaff: 8,
+      activeStaff: 8,
+      dailyRevenue: 278900,
+      tasksCompleted: 1687,
+      efficiency: 96.2,
     },
     {
       id: 'hr',
@@ -317,12 +319,12 @@ export default function AICompanyDashboard() {
     // Sales & Revenue Team
     {
       id: 'sales-001',
-      name: 'AI Freight Broker Prime',
-      role: 'Senior Freight Broker',
+      name: 'DEPOINTE AI Freight Broker',
+      role: 'Senior Freight Broker | MC 1647572 | DOT 4250594',
       department: 'sales',
       status: 'busy',
       currentTask:
-        'Negotiating $45K contract with Amazon Logistics for multi-state delivery',
+        'FreightFlow RFx: Negotiating $45K Amazon RFP contract + bidding on 8 government freight opportunities',
       tasksCompleted: 67,
       revenue: 15600,
       efficiency: 97.8,
@@ -443,8 +445,8 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'sales-010',
-      name: 'AI Email Response Specialist',
-      role: 'Automated Email Communications',
+      name: 'DEPOINTE Email Response AI',
+      role: 'Automated Email Communications | dispatch@freight1stdirect.com',
       department: 'sales',
       status: 'active',
       currentTask:
@@ -503,12 +505,12 @@ export default function AICompanyDashboard() {
     // Logistics Operations Team
     {
       id: 'logistics-001',
-      name: 'AI Dispatcher Central',
-      role: 'Master Dispatch Coordinator',
+      name: 'FREIGHT 1ST DIRECT AI Dispatcher',
+      role: 'Master Dispatch Coordinator | FleetFlow Platform',
       department: 'logistics',
       status: 'busy',
       currentTask:
-        'Coordinating 23 active loads across 8 states with real-time optimization',
+        'Dispatch coordination via FleetFlow: Go With Flow load assignment, Schedule Management, Live Tracking, route optimization for 23 active loads',
       tasksCompleted: 156,
       revenue: 18500,
       efficiency: 98.1,
@@ -517,12 +519,12 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'logistics-002',
-      name: 'AI Route Optimizer',
-      role: 'Intelligent Route Planning',
+      name: 'FREIGHT 1ST DIRECT Route AI',
+      role: 'Intelligent Route Planning | FleetFlow Platform',
       department: 'logistics',
       status: 'active',
       currentTask:
-        'Optimizing 34 routes using quantum-inspired algorithms for 25% efficiency gain',
+        'Optimizing 34 routes via FleetFlow System Orchestrator: AI routing + Schedule Management + HOS compliance + real-time tracking',
       tasksCompleted: 78,
       revenue: 12400,
       efficiency: 97.5,
@@ -665,7 +667,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'busy',
       currentTask:
-        'Creating 15 LinkedIn articles on "AI in Transportation" - 847K impressions this month',
+        'Creating shipper acquisition content - 15 articles on "Why Choose DEPOINTE for Freight" - 847K impressions targeting logistics managers',
       tasksCompleted: 234,
       revenue: 28900,
       efficiency: 97.3,
@@ -679,7 +681,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'Managing 5 nurture sequences for 2,847 freight prospects - 23.5% open rate achieved',
+        'Managing shipper acquisition campaigns - 5 nurture sequences for 2,847 freight prospects (1,423 shippers, 1,424 carriers) - 23.5% open rate',
       tasksCompleted: 567,
       revenue: 45600,
       efficiency: 96.8,
@@ -693,7 +695,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'LinkedIn automation: 156 carrier connections, 89 shipper prospects engaged today',
+        'Freight brokerage social media: 156 carrier recruitment connections, 89 shipper acquisition prospects engaged for load opportunities',
       tasksCompleted: 342,
       revenue: 19800,
       efficiency: 94.7,
@@ -707,7 +709,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'busy',
       currentTask:
-        'Producing "FleetFlow Demo Series" - 23 videos completed, 67K total views',
+        'Producing freight brokerage video content - "Shipper Success Stories" and "Carrier Opportunity Showcase" - 23 videos, 67K views',
       tasksCompleted: 89,
       revenue: 22300,
       efficiency: 95.2,
@@ -721,7 +723,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'Analyzing Q1 campaigns - identified 34.5% ROI improvement opportunity in freight sector',
+        'Analyzing freight brokerage performance - Q1 shipper acquisition up 34.5%, carrier recruitment campaigns optimized for load board fill rates',
       tasksCompleted: 156,
       revenue: 31200,
       efficiency: 98.1,
@@ -735,7 +737,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'Optimizing "Go With the Flow" brand messaging across 47 touchpoints - 92% consistency achieved',
+        'Optimizing freight brokerage brand messaging - "Go With the Flow" across 47 shipper/carrier touchpoints - 92% consistency achieved',
       tasksCompleted: 78,
       revenue: 18700,
       efficiency: 96.4,
@@ -749,18 +751,32 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'Processing 8 new LinkedIn leads today - 3 high-quality prospects (Score: 76 avg) automatically synced to CRM',
+        'Processing 8 freight industry LinkedIn leads today - 3 high-quality prospects (2 shippers, 1 carrier - Score: 76 avg) synced to CRM',
       tasksCompleted: 47,
       revenue: 45000,
       efficiency: 94.2,
       lastActivity: '3 sec ago',
       avatar: '🔗',
     },
+    {
+      id: 'marketing-008',
+      name: 'AI Freight Market Intelligence',
+      role: 'Freight Brokerage Market Analyst & Strategic Intelligence',
+      department: 'marketing',
+      status: 'busy',
+      currentTask:
+        'Analyzing freight market trends - identified 247 new shipper prospects and 156 carrier recruitment opportunities',
+      tasksCompleted: 174,
+      revenue: 67400,
+      efficiency: 98.4,
+      lastActivity: '5 sec ago',
+      avatar: '📈',
+    },
 
     // 🎯 AI CUSTOMER SUPPORT - SUPERIOR TO SALESAI.COM
     {
       id: 'support-001',
-      name: 'FleetFlow Support AI Alpha',
+      name: 'DEPOINTE Support AI Alpha',
       role: '24/7 Customer Support Specialist',
       department: 'customer_service',
       status: 'busy',
@@ -774,7 +790,7 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'support-002',
-      name: 'FleetFlow Technical AI Beta',
+      name: 'DEPOINTE Technical AI Beta',
       role: 'Technical Support & Issue Resolution',
       department: 'customer_service',
       status: 'active',
@@ -788,7 +804,7 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'support-003',
-      name: 'FleetFlow Crisis AI Gamma',
+      name: 'DEPOINTE Crisis AI Gamma',
       role: 'Emergency Response & Crisis Management',
       department: 'customer_service',
       status: 'active',
@@ -802,7 +818,7 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'support-004',
-      name: 'FleetFlow Chatbot Director',
+      name: 'DEPOINTE Chatbot Director',
       role: 'Intelligent Chatbot Operations',
       department: 'customer_service',
       status: 'busy',
@@ -930,7 +946,8 @@ export default function AICompanyDashboard() {
     {
       id: 'alert-001',
       type: 'success',
-      message: 'AI Freight Broker secured $45K contract with Amazon Logistics',
+      message:
+        'DEPOINTE AI Freight Broker secured $45K contract with Amazon Logistics - FREIGHT 1ST DIRECT handling dispatch',
       timestamp: '2 min ago',
       department: 'sales',
     },
@@ -954,7 +971,7 @@ export default function AICompanyDashboard() {
       id: 'alert-support-002',
       type: 'info',
       message:
-        'FleetFlow Chatbot Director handling 12 active chat sessions - 4.7/5.0 customer satisfaction achieved',
+        'DEPOINTE Chatbot Director handling 12 active chat sessions - 4.7/5.0 customer satisfaction achieved',
       timestamp: '1 min ago',
       department: 'customer_service',
     },
@@ -962,7 +979,7 @@ export default function AICompanyDashboard() {
       id: 'alert-support-003',
       type: 'warning',
       message:
-        'FleetFlow Crisis AI Gamma dispatched emergency response for I-95 breakdown - Replacement driver en route (45min response time)',
+        'DEPOINTE Crisis AI Gamma dispatched emergency response for I-95 breakdown - FREIGHT 1ST DIRECT replacement driver en route (45min)',
       timestamp: '2 min ago',
       department: 'customer_service',
     },
@@ -986,7 +1003,7 @@ export default function AICompanyDashboard() {
       id: 'alert-marketing-001',
       type: 'success',
       message:
-        'AI Content Creator achieved 847K impressions with "AI in Transportation" LinkedIn series',
+        'AI Content Creator achieved 847K impressions with "DEPOINTE Freight Opportunities" LinkedIn series - 89 shipper prospects engaged',
       timestamp: '2 min ago',
       department: 'marketing',
     },
@@ -994,7 +1011,7 @@ export default function AICompanyDashboard() {
       id: 'alert-marketing-002',
       type: 'success',
       message:
-        'AI Email Marketing improved freight prospect nurture sequences - 23.5% open rate achieved',
+        'AI Email Marketing improved shipper/carrier acquisition sequences - 23.5% open rate, 156 carriers recruited this week',
       timestamp: '5 min ago',
       department: 'marketing',
     },
@@ -1002,7 +1019,7 @@ export default function AICompanyDashboard() {
       id: 'alert-marketing-003',
       type: 'info',
       message:
-        'AI Video Producer completed FleetFlow Demo Series - 67K total views generated',
+        'AI Video Producer completed Shipper Success Stories series - 67K views from logistics managers and carrier recruiters',
       timestamp: '6 min ago',
       department: 'marketing',
     },
@@ -1010,8 +1027,32 @@ export default function AICompanyDashboard() {
       id: 'alert-marketing-004',
       type: 'success',
       message:
-        'AI LinkedIn Lead Specialist processed 8 new prospects today - 3 high-quality leads (Score: 76+) synced to CRM (Case: CAS-8776681-X2Q7B4)',
+        'AI LinkedIn Lead Specialist processed 8 freight prospects today - 3 high-quality leads (2 shippers, 1 carrier - Score: 76+) synced to CRM',
       timestamp: '3 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-005',
+      type: 'success',
+      message:
+        'AI Freight Market Intelligence identified 247 new shipper prospects and 156 carrier recruitment opportunities',
+      timestamp: '1 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-006',
+      type: 'info',
+      message:
+        'Freight market intelligence: 23% increase in manufacturing shipper demand for transportation services this quarter',
+      timestamp: '8 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-007',
+      type: 'warning',
+      message:
+        'Carrier recruitment: Low carrier capacity detected in Southeast region - need targeted recruitment campaigns',
+      timestamp: '15 min ago',
       department: 'marketing',
     },
     {
@@ -1174,73 +1215,120 @@ export default function AICompanyDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // ADD REAL DATA INTEGRATION - Load real FleetFlow data (keep same UI)
+  // REAL DATA INTEGRATION - Load live FleetFlow operational data (same UI)
   useEffect(() => {
     const loadRealData = async () => {
       try {
-        // Get real load data with proper error handling
-        let loads: any[] = [];
-        let loadStats: any = { inTransit: 0, assigned: 0 };
-        let financialMetrics: any = null;
+        console.log('🔄 Loading real AI Company Dashboard data...');
 
-        try {
-          loads = await getMainDashboardLoads();
-        } catch (error) {
-          console.warn('Load data error:', error);
-          loads = [];
+        // Fetch comprehensive real data from the new integration service
+        const response = await fetch('/api/ai-dashboard?action=comprehensive', {
+          headers: {
+            'x-tenant-id': 'depointe-freight1st',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
         }
 
-        try {
-          loadStats = await getLoadStats();
-        } catch (error) {
-          console.warn('Load stats error:', error);
-          loadStats = { inTransit: 0, assigned: 0 };
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message || 'Failed to fetch dashboard data');
         }
 
-        try {
-          financialMetrics = await calculateFinancialMetrics(
-            'admin',
-            'monthly'
-          );
-        } catch (error) {
-          console.warn('Financial metrics error:', error);
-          financialMetrics = null;
-        }
+        const { data } = result;
 
-        // Update FleetFlow integration with REAL DATA (same UI) - with guaranteed fallbacks
-        setFleetFlowIntegration((prev) => ({
-          ...prev,
-          loadBoardConnections: loads.length || prev.loadBoardConnections || 47,
-          activeDispatches:
-            loadStats.inTransit + loadStats.assigned ||
-            prev.activeDispatches ||
-            23,
-          revenueGenerated:
-            financialMetrics?.revenue?.total || prev.revenueGenerated || 156780,
-          customerInteractions: prev.customerInteractions || 89,
-          apiCalls: prev.apiCalls || 12847,
-        }));
+        // Update FleetFlow integration with REAL DATA (same UI structure)
+        setFleetFlowIntegration({
+          loadBoardConnections: data.operationalData.loadBoardConnections,
+          activeDispatches: data.operationalData.activeDispatches,
+          revenueGenerated: data.realTimeMetrics.totalRevenue,
+          customerInteractions: data.realTimeMetrics.customerInteractions,
+          apiCalls: data.realTimeMetrics.apiCalls,
+        });
 
-        // Load Square & Bill.com Financial Data
-        await loadFinancialData();
+        // Update financial summary with real Bill.com/Square data
+        setFinancialSummary({
+          totalReceivables: data.financialData.totalReceivables,
+          totalPayables: data.financialData.totalPayables,
+          pendingInvoices: data.financialData.pendingInvoices,
+          paidInvoices: data.financialData.paidInvoices,
+          overdueAmount: data.financialData.overdueAmount,
+          cashFlow: data.financialData.cashFlow,
+        });
 
-        console.log(
-          '✅ AI Company Dashboard loaded with REAL FleetFlow data + Square/Bill.com financials (same UI)'
+        // Update payment providers with real data
+        setPaymentProviders((prev) =>
+          prev.map((provider) => ({
+            ...provider,
+            monthlyVolume:
+              provider.name === 'Square'
+                ? data.financialData.monthlyRevenue * 0.3
+                : data.financialData.monthlyRevenue * 0.7,
+            fees:
+              provider.name === 'Square'
+                ? data.financialData.processingFees * 0.3
+                : data.financialData.processingFees * 0.7,
+          }))
         );
+
+        console.log(`✅ Real data loaded successfully (${data.dataSource})`);
+        console.log('📊 Dashboard metrics:', {
+          revenue: data.realTimeMetrics.totalRevenue,
+          loads: data.realTimeMetrics.activeLoads,
+          efficiency: data.realTimeMetrics.systemEfficiency,
+          source: data.dataSource,
+        });
       } catch (error) {
         console.warn(
-          '⚠️ Data loading error, ensuring KPIs have fallback values:',
+          '⚠️ Real data loading error, using fallback values:',
           error
         );
 
-        // Ensure KPIs have fallback data even if everything fails
-        setFleetFlowIntegration({
-          loadBoardConnections: 47,
-          activeDispatches: 23,
-          revenueGenerated: 156780,
-          customerInteractions: 89,
-          apiCalls: 12847,
-        });
+        // Fallback to previous behavior with individual service calls
+        try {
+          const loads = await getMainDashboardLoads();
+          const loadStats = await getLoadStats();
+          const financialMetrics = await calculateFinancialMetrics(
+            'admin',
+            'monthly'
+          );
+
+          setFleetFlowIntegration((prev) => ({
+            ...prev,
+            loadBoardConnections:
+              loads.length || prev.loadBoardConnections || 47,
+            activeDispatches:
+              loadStats.inTransit + loadStats.assigned ||
+              prev.activeDispatches ||
+              23,
+            revenueGenerated:
+              financialMetrics?.revenue?.total ||
+              prev.revenueGenerated ||
+              156780,
+            customerInteractions: prev.customerInteractions || 89,
+            apiCalls: prev.apiCalls || 12847,
+          }));
+
+          await loadFinancialData();
+          console.log('✅ Fallback data loaded from individual services');
+        } catch (fallbackError) {
+          console.warn(
+            '⚠️ Fallback data loading also failed, using static values:',
+            fallbackError
+          );
+
+          // Final fallback to static values
+          setFleetFlowIntegration({
+            loadBoardConnections: 47,
+            activeDispatches: 23,
+            revenueGenerated: 156780,
+            customerInteractions: 89,
+            apiCalls: 12847,
+          });
+        }
       }
     };
 
@@ -1431,7 +1519,7 @@ export default function AICompanyDashboard() {
                     textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
                   }}
                 >
-                  FleetFlow™ AI Empire
+                  DEE DAVIS INC dba DEPOINTE
                 </h1>
                 <p
                   style={{
@@ -1442,7 +1530,8 @@ export default function AICompanyDashboard() {
                     fontWeight: '500',
                   }}
                 >
-                  🌟 Advanced AI-Powered Virtual Company Command Center
+                  🚛 Freight Brokerage & Transportation | FREIGHT 1ST DIRECT
+                  Dispatch Division | MC 1647572 | DOT 4250594
                 </p>
               </div>
             </div>
@@ -1533,6 +1622,11 @@ export default function AICompanyDashboard() {
                 📈 Reports
               </button>
             </div>
+          </div>
+
+          {/* ✅ PLATFORM AI MONITORING INTEGRATION */}
+          <div style={{ marginBottom: '20px' }}>
+            <PlatformAIMonitor />
           </div>
 
           {/* COMPACT METRICS DASHBOARD */}
@@ -2708,13 +2802,13 @@ export default function AICompanyDashboard() {
               },
               {
                 icon: '📈',
-                text: 'AI Freight Broker Prime securing $2,850 rate for Load #FL-2025-001',
+                text: 'DEPOINTE AI Freight Broker: FreightFlow RFx bidding on 8 opportunities + securing $2,850 rate',
                 time: '45 sec ago',
                 color: '#db2777',
               },
               {
                 icon: '📡',
-                text: 'AI Dispatcher Central coordinating 23 loads across 8 states',
+                text: 'FREIGHT 1ST DIRECT AI Dispatcher: Go With Flow coordination + Schedule Management + Live Tracking for 23 loads',
                 time: '1 min ago',
                 color: '#f59e0b',
               },
@@ -3783,7 +3877,7 @@ export default function AICompanyDashboard() {
                 </h3>
                 {[
                   {
-                    task: '🎯 SECURED: $45K Amazon Logistics contract → Auto-assigned to Carrier #MC-789456 → BOL generated → Live tracking activated → Customer portal updated',
+                    task: '🎯 DEPOINTE SECURED: $45K Amazon contract → FREIGHT 1ST DIRECT dispatch ($4,500 fee) → Carrier #MC-789456 → FleetFlow BOL/tracking → $5,500 net profit',
                     time: '15 min ago',
                     status: 'completed',
                     revenue: 45000,
@@ -3791,7 +3885,7 @@ export default function AICompanyDashboard() {
                       'Contract → Carrier → Documents → Tracking → Notification',
                   },
                   {
-                    task: '📋 CONTRACT WORKFLOW: Walmart $32K load → Carrier verified → Insurance confirmed → Route optimized → Dispatch assigned → ETA sent',
+                    task: '📋 FLEETFLOW RFx: Walmart $32K RFQ → AI analyzed proposal → FreightFlow RFx submission → Contract won → FREIGHT 1ST DIRECT dispatch coordination',
                     time: '1 hour ago',
                     status: 'completed',
                     revenue: 32000,
@@ -5201,43 +5295,65 @@ export default function AICompanyDashboard() {
                 >
                   {selectedStaffMember.department === 'sales'
                     ? [
-                        'Follow up with Amazon Logistics on pending $85K contract',
-                        'Research and contact 15 new shippers in automotive sector',
-                        'Prepare proposal for Walmart distribution network expansion',
-                        'Optimize AI call assistance for pharmaceutical industry objections',
-                        'Analyze call conversion patterns for follow-up automation rules',
-                        'Train AI models on successful freight negotiation strategies',
-                        'Schedule automated follow-ups for 47 warm prospects from last week',
-                        'Review call analytics for top-performing objection responses',
+                        'FreightFlow RFx: Follow up on Amazon $85K RFP - pending final approval',
+                        'FreightFlow RFx: Submit bids for 8 government freight opportunities ($250K total potential)',
+                        'FreightFlow RFx: Prepare Walmart distribution RFQ response - multi-state network expansion',
+                        'FreightFlow RFx: Analyze pharmaceutical RFP requirements for cold-chain bidding',
+                        'Research and contact 15 new shippers identified through RFx market intelligence',
+                        'Train AI models on successful RFx bidding strategies and win patterns',
+                        'Schedule automated RFx opportunity alerts for 47 qualified prospects',
+                        'Review RFx bid analytics for top-performing response strategies',
                       ]
                     : selectedStaffMember.department === 'logistics'
                       ? [
-                          'Optimize route for Chicago to Miami delivery corridor',
-                          'Negotiate better rates with top 5 carriers for Q1',
-                          'Coordinate intermodal shipment for Tesla Gigafactory',
+                          'Go With Flow load assignment: Coordinate 23 active loads with optimal carrier matching',
+                          'Schedule Management: Monitor driver HOS compliance and availability for all carriers',
+                          'Live Tracking: Manage real-time GPS monitoring and customer notifications',
+                          'Route optimization: Coordinate fuel-efficient routing for carrier profitability',
+                          'System Orchestrator: Automate dispatch workflows and carrier communications',
+                          'Invoice Generation: Process weekly 10% dispatch fees for 34 active carriers',
                         ]
                       : selectedStaffMember.department === 'marketing'
-                        ? selectedStaffMember.id === 'marketing-007'
+                        ? selectedStaffMember.id === 'marketing-008'
                           ? [
-                              'Review 8 new LinkedIn leads from today - qualify prospects above Score 70',
-                              'Sync high-quality leads to FleetFlow CRM automatically',
-                              'Optimize LinkedIn campaign targeting (VPs of Operations, Fleet Directors)',
-                              'Analyze lead quality patterns - improve targeting for logistics industry',
-                              'Follow up with prospects interested in AI fleet management solutions',
-                              'A/B test LinkedIn ad creatives for better conversion rates',
-                              'Generate LinkedIn lead quality reports for sales team handoff',
-                              'Monitor LinkedIn Lead Sync API connection status (Case: CAS-8776681-X2Q7B4)',
+                              'Support freight brokerage: Create shipper acquisition marketing campaigns',
+                              'Generate carrier recruitment content for social media and email campaigns',
+                              'Develop load board optimization strategies and posting best practices',
+                              'Analyze freight market trends for shipper/carrier targeting opportunities',
+                              'Create freight brokerage success stories and case studies',
+                              'Monitor freight industry market intelligence and carrier/shipper activity trends',
+                              'Prepare freight transaction ROI models for shipper/carrier presentations',
+                              'Research shipper pain points and FleetFlow freight solutions alignment',
+                              'Develop freight brokerage marketing campaigns targeting logistics managers',
+                              'Create freight industry executive briefing materials for shipper acquisition',
+                              'Monitor freight market conditions and load board optimization opportunities',
+                              'Strategic awareness: Track transportation industry trends (5% of daily focus)',
                             ]
-                          : [
-                              'Launch LinkedIn campaign targeting Fortune 500 logistics managers',
-                              'Create video testimonials from top-performing carriers',
-                              'Develop content calendar for freight industry thought leadership',
-                              'A/B test email subject lines for shipper prospect sequences',
-                              'Design infographics showcasing FleetFlow ROI case studies',
-                              'Optimize Google Ads campaigns for "freight management software"',
-                              'Schedule social media posts highlighting AI automation benefits',
-                              'Analyze competitor marketing strategies and positioning',
-                            ]
+                          : selectedStaffMember.id === 'marketing-007'
+                            ? [
+                                'LinkedIn shipper prospecting - target manufacturing, retail, distribution companies',
+                                'LinkedIn carrier recruitment - connect with owner-operators and fleet managers',
+                                'Optimize LinkedIn targeting (Logistics VPs, Transportation Directors, Fleet Managers)',
+                                'Generate qualified shipper leads for freight brokerage sales team',
+                                'Follow up with carriers interested in freight opportunities and load matching',
+                                'A/B test LinkedIn ads for carrier recruitment and shipper acquisition',
+                                'Create LinkedIn lead qualification workflows for freight prospects',
+                                'Monitor carrier recruitment metrics and shipper acquisition pipeline',
+                                'Track freight industry LinkedIn engagement and load board performance',
+                                'Build freight brokerage network for shippers, carriers, and load opportunities',
+                              ]
+                            : [
+                                'Target shippers needing freight services - Fortune 500 logistics managers',
+                                'Create carrier success stories and freight opportunity testimonials',
+                                'Develop freight brokerage content calendar for shipper/carrier education',
+                                'A/B test email campaigns for shipper acquisition and carrier recruitment',
+                                'Design freight brokerage ROI infographics for shipper decision makers',
+                                'Optimize Google Ads for "freight broker services" and "load matching"',
+                                'Schedule social media posts highlighting successful freight transactions',
+                                'Analyze freight brokerage competitor strategies and market positioning',
+                                'Monitor freight industry trends and load board optimization opportunities',
+                                'Track carrier recruitment effectiveness and shipper acquisition pipeline',
+                              ]
                         : selectedStaffMember.department === 'legal'
                           ? [
                               'Review carrier agreement templates for compliance updates',

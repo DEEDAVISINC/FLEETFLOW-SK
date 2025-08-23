@@ -8,7 +8,7 @@ async function testSamGovAPI() {
   let apiKey = null;
   try {
     const envContent = fs.readFileSync('.env.local', 'utf8');
-    const match = envContent.match(/SAM_GOV_API_KEY=(.+)/);
+    const match = envContent.match(/SAMGOV_API_KEY=(.+)/);
     apiKey = match ? match[1].trim() : null;
   } catch (error) {
     console.log('❌ Could not read .env.local file');
@@ -22,7 +22,7 @@ async function testSamGovAPI() {
     console.log('1. Visit: https://sam.gov/api/registration');
     console.log('2. Fill out the form (2 minutes)');
     console.log('3. Get API key via email');
-    console.log('4. Update .env.local: SAM_GOV_API_KEY=your_actual_key');
+    console.log('4. Update .env.local: SAMGOV_API_KEY=your_actual_key');
     console.log('');
     console.log('💰 Once configured, you\'ll have access to $600B+ in government contracts!');
     return;

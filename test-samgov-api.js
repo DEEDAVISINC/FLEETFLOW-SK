@@ -4,12 +4,12 @@
 require('dotenv').config({ path: '.env.local' });
 
 async function testSamGovAPI() {
-  const apiKey = process.env.SAM_GOV_API_KEY;
+  const apiKey = process.env.SAMGOV_API_KEY;
   
   if (!apiKey || apiKey === 'your_sam_gov_api_key_here') {
     console.log('❌ SAM.gov API key not configured');
     console.log('🔧 Get your FREE key at: https://sam.gov/api/registration');
-    console.log('📝 Then update .env.local with: SAM_GOV_API_KEY=your_actual_key');
+    console.log('📝 Then update .env.local with: SAMGOV_API_KEY=your_actual_key');
     return;
   }
 

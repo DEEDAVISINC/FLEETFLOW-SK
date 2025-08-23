@@ -216,7 +216,7 @@ export class SAMGovOpportunityMonitor {
    * Fetch opportunities from SAM.gov API
    */
   private async fetchOpportunities(): Promise<OpportunityAlert[]> {
-    const apiKey = process.env.SAM_GOV_API_KEY;
+    const apiKey = process.env.SAMGOV_API_KEY;
     if (!apiKey) {
       console.warn('⚠️ SAM.gov API key not configured, using mock data');
       return this.getMockOpportunities();

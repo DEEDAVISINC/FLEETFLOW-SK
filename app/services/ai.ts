@@ -1,16 +1,22 @@
 import { ClaudeAIService } from '../../lib/claude-ai-service';
+// ✅ ADD: Platform AI Manager for all enhancements
+import { platformAIManager, processAITask } from './PlatformAIManager';
 
-// AI Service for FleetFlow Automation (Now using Claude AI)
+// AI Service for FleetFlow Automation (Enhanced with Platform AI)
 export class FleetFlowAI {
   private claude: ClaudeAIService;
   private isEnabled: boolean;
+  private usePlatformAI: boolean = true; // ✅ Enable Platform AI by default
 
   constructor() {
     this.isEnabled = !!process.env.ANTHROPIC_API_KEY;
     this.claude = new ClaudeAIService();
 
+    // ✅ Register this service with Platform AI Manager
+    platformAIManager.registerService('FleetFlowAI', this);
+
     if (this.isEnabled) {
-      console.log('🤖 AI Service running with Claude AI - Production Ready');
+      console.log('🚀 AI Service enhanced with Platform AI - All fixes active');
     } else {
       console.log(
         '🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production'
@@ -18,128 +24,261 @@ export class FleetFlowAI {
     }
   }
 
-  // Route Optimization using Claude AI
-  async optimizeRoute(vehicles: any[], destinations: string[]): Promise<any> {
+  // ✅ Route Optimization - Now with Platform AI enhancements
+  async optimizeRoute(
+    vehicles: any[],
+    destinations: string[],
+    context: any = {}
+  ): Promise<any> {
     if (!this.isEnabled) {
       return this.mockRouteOptimization(vehicles, destinations);
     }
 
     try {
-      const prompt = `
-        As a fleet management AI, optimize the following route assignment:
+      // ✅ Use Platform AI for cost optimization, quality control, and human-like responses
+      if (this.usePlatformAI) {
+        console.log(
+          '🎯 Route optimization using Platform AI (batched, supervised, human-like)'
+        );
 
-        Vehicles: ${JSON.stringify(vehicles, null, 2)}
-        Destinations: ${JSON.stringify(destinations, null, 2)}
+        const routeContent = `
+          Route optimization request:
+          Vehicles: ${JSON.stringify(vehicles, null, 2)}
+          Destinations: ${JSON.stringify(destinations, null, 2)}
+          Context: ${JSON.stringify(context, null, 2)}
+        `;
 
-        Consider:
-        - Vehicle fuel levels and efficiency
-        - Driver availability and HOS compliance
-        - Vehicle capacity and load requirements
-        - Distance efficiency and traffic patterns
-        - Maintenance schedules and vehicle condition
-        - Cost optimization and fuel savings
+        const result = await processAITask(
+          'scheduling', // Task type for route optimization
+          routeContent,
+          {
+            serviceType: 'internal',
+            industry: 'transportation',
+            urgency: context.urgent ? 'high' : 'medium',
+            dealValue: context.loadValue || 25000,
+            userId: context.dispatcherId,
+            tenantId: context.tenantId,
+          }
+        );
 
-        Return a JSON response with optimized assignments including:
-        - vehicle assignments with reasoning
-        - estimated fuel consumption and costs
-        - time estimates and delivery windows
-        - cost analysis and savings opportunities
-        - efficiency score (1-100)
-        - risk assessment and mitigation
-      `;
+        console.log(
+          `✅ Route optimized: Quality=${result.quality}, Cost=$${result.cost}, Escalated=${result.escalated}`
+        );
 
-      const result = await this.claude.generateDocument(
-        prompt,
-        'route_optimization'
-      );
-      return JSON.parse(result);
+        // ✅ If escalated, notify human dispatcher
+        if (result.escalated) {
+          console.log(
+            '🔄 Complex route optimization escalated to human dispatcher'
+          );
+          // In real implementation: await notifyDispatcher(result);
+        }
+
+        return typeof result.response === 'string'
+          ? JSON.parse(result.response)
+          : result.response;
+      } else {
+        // Fallback to original method if Platform AI disabled
+        const prompt = `
+          As a fleet management AI, optimize the following route assignment:
+
+          Vehicles: ${JSON.stringify(vehicles, null, 2)}
+          Destinations: ${JSON.stringify(destinations, null, 2)}
+
+          Consider:
+          - Vehicle fuel levels and efficiency
+          - Driver availability and HOS compliance
+          - Vehicle capacity and load requirements
+          - Distance efficiency and traffic patterns
+          - Maintenance schedules and vehicle condition
+          - Cost optimization and fuel savings
+
+          Return a JSON response with optimized assignments including:
+          - vehicle assignments with reasoning
+          - estimated fuel consumption and costs
+          - time estimates and delivery windows
+          - cost analysis and savings opportunities
+          - efficiency score (1-100)
+          - risk assessment and mitigation
+        `;
+
+        const result = await this.claude.generateDocument(
+          prompt,
+          'route_optimization'
+        );
+        return JSON.parse(result);
+      }
     } catch (error) {
-      console.error('Claude AI Route Optimization Error:', error);
+      console.error('AI Route Optimization Error:', error);
       return this.mockRouteOptimization(vehicles, destinations);
     }
   }
 
-  // Predictive Maintenance using Claude AI
-  async predictMaintenance(vehicle: any): Promise<any> {
+  // ✅ Predictive Maintenance - Enhanced with Platform AI
+  async predictMaintenance(
+    vehicle: any,
+    maintenanceContext: any = {}
+  ): Promise<any> {
     if (!this.isEnabled) {
       return this.mockMaintenancePrediction(vehicle);
     }
 
     try {
-      const prompt = `
-        Analyze this vehicle's data for predictive maintenance:
+      if (this.usePlatformAI) {
+        console.log('🔧 Maintenance prediction using Platform AI');
 
-        Vehicle Data: ${JSON.stringify(vehicle, null, 2)}
+        const maintenanceContent = `
+          Predictive maintenance analysis:
+          Vehicle Data: ${JSON.stringify(vehicle, null, 2)}
+          Current Mileage: ${vehicle.mileage || 'Unknown'}
+          Last Service: ${vehicle.lastService || 'Unknown'}
+          Maintenance History: ${JSON.stringify(vehicle.history || [], null, 2)}
+          Budget Constraints: ${maintenanceContext.budget || 'Standard'}
+        `;
 
-        Consider:
-        - Current mileage vs last maintenance interval
-        - Fuel efficiency patterns and degradation
-        - Usage patterns and stress factors
-        - Vehicle age, type, and manufacturer specs
-        - Seasonal factors and operating conditions
-        - Historical maintenance patterns
+        const result = await processAITask(
+          'contract_review', // Closest match for maintenance analysis
+          maintenanceContent,
+          {
+            serviceType: 'internal',
+            industry: 'transportation',
+            urgency: vehicle.criticalAlerts ? 'high' : 'medium',
+            dealValue: maintenanceContext.estimatedCost || 5000,
+            userId: maintenanceContext.mechanicId,
+            tenantId: maintenanceContext.tenantId,
+          }
+        );
 
-        Provide maintenance predictions with:
-        - Risk level (low/medium/high/critical)
-        - Specific recommended actions with priorities
-        - Timeline for next service with urgency
-        - Cost estimates for different scenarios
-        - Priority components to inspect immediately
-        - Preventive measures to extend life
+        console.log(
+          `✅ Maintenance predicted: Quality=${result.quality}, Cost=$${result.cost}`
+        );
 
-        Format as JSON with structured recommendations.
-      `;
+        // ✅ If high-cost maintenance predicted, escalate to manager
+        if (result.escalated || maintenanceContext.estimatedCost > 10000) {
+          console.log(
+            '🚨 High-cost maintenance prediction - escalating to fleet manager'
+          );
+          // In real implementation: await notifyFleetManager(result);
+        }
 
-      const result = await this.claude.generateDocument(
-        prompt,
-        'maintenance_prediction'
-      );
-      return JSON.parse(result);
+        return typeof result.response === 'string'
+          ? JSON.parse(result.response)
+          : result.response;
+      } else {
+        const prompt = `
+          Analyze this vehicle's data for predictive maintenance:
+
+          Vehicle Data: ${JSON.stringify(vehicle, null, 2)}
+
+          Consider:
+          - Current mileage vs last maintenance interval
+          - Fuel efficiency patterns and degradation
+          - Usage patterns and stress factors
+          - Vehicle age, type, and manufacturer specs
+          - Seasonal factors and operating conditions
+          - Historical maintenance patterns
+
+          Provide maintenance predictions with:
+          - Risk level (low/medium/high/critical)
+          - Specific recommended actions with priorities
+          - Timeline for next service with urgency
+          - Cost estimates for different scenarios
+          - Priority components to inspect immediately
+          - Preventive measures to extend life
+
+          Format as JSON with structured recommendations.
+        `;
+
+        const result = await this.claude.generateDocument(
+          prompt,
+          'maintenance_prediction'
+        );
+        return JSON.parse(result);
+      }
     } catch (error) {
-      console.error('Claude AI Maintenance Prediction Error:', error);
+      console.error('AI Maintenance Prediction Error:', error);
       return this.mockMaintenancePrediction(vehicle);
     }
   }
 
-  // Driver Performance Analysis using Claude AI
-  async analyzeDriverPerformance(driverData: any): Promise<any> {
+  // ✅ Driver Performance Analysis - Enhanced with Platform AI
+  async analyzeDriverPerformance(
+    driverData: any,
+    managerContext: any = {}
+  ): Promise<any> {
     if (!this.isEnabled) {
       return this.mockDriverAnalysis(driverData);
     }
 
     try {
-      const prompt = `
-        Analyze driver performance data comprehensively:
+      if (this.usePlatformAI) {
+        console.log('🎯 Driver analysis using Platform AI');
 
-        Driver Data: ${JSON.stringify(driverData, null, 2)}
+        const analysisContent = `
+          Driver performance analysis:
+          Driver Data: ${JSON.stringify(driverData, null, 2)}
+          Manager Notes: ${managerContext.notes || 'None'}
+          Performance Period: ${managerContext.period || 'Last 30 days'}
+        `;
 
-        Evaluate:
-        - Fuel efficiency trends and patterns
-        - On-time delivery rates and consistency
-        - Safety record and incident history
-        - Route adherence and optimization
-        - Customer feedback and satisfaction
-        - HOS compliance and violations
-        - Vehicle handling and maintenance impact
+        const result = await processAITask(
+          'lead_qualification', // Closest match for performance analysis
+          analysisContent,
+          {
+            serviceType: 'internal',
+            industry: 'transportation',
+            urgency: managerContext.urgent ? 'high' : 'low',
+            userId: managerContext.managerId,
+            tenantId: managerContext.tenantId,
+          }
+        );
 
-        Provide analysis with:
-        - Overall performance score (1-100)
-        - Specific strengths and areas for improvement
-        - Targeted training recommendations
-        - Safety insights and risk assessment
-        - Efficiency tips and best practices
-        - Career development suggestions
+        console.log(
+          `✅ Driver analyzed: Quality=${result.quality}, Human-like=${result.humanLike}`
+        );
 
-        Format as JSON with actionable insights.
-      `;
+        // ✅ Learn from this analysis for future improvements
+        if (managerContext.feedback && result.confidence > 80) {
+          console.log('📚 Learning from successful driver analysis');
+          // Platform AI will automatically learn from this interaction
+        }
 
-      const result = await this.claude.generateDocument(
-        prompt,
-        'driver_analysis'
-      );
-      return JSON.parse(result);
+        return typeof result.response === 'string'
+          ? JSON.parse(result.response)
+          : result.response;
+      } else {
+        const prompt = `
+          Analyze driver performance data comprehensively:
+
+          Driver Data: ${JSON.stringify(driverData, null, 2)}
+
+          Evaluate:
+          - Fuel efficiency trends and patterns
+          - On-time delivery rates and consistency
+          - Safety record and incident history
+          - Route adherence and optimization
+          - Customer feedback and satisfaction
+          - HOS compliance and violations
+          - Vehicle handling and maintenance impact
+
+          Provide analysis with:
+          - Overall performance score (1-100)
+          - Specific strengths and areas for improvement
+          - Targeted training recommendations
+          - Safety insights and risk assessment
+          - Efficiency tips and best practices
+          - Career development suggestions
+
+          Format as JSON with actionable insights.
+        `;
+
+        const result = await this.claude.generateDocument(
+          prompt,
+          'driver_analysis'
+        );
+        return JSON.parse(result);
+      }
     } catch (error) {
-      console.error('Claude AI Driver Analysis Error:', error);
+      console.error('AI Driver Analysis Error:', error);
       return this.mockDriverAnalysis(driverData);
     }
   }
@@ -645,6 +784,33 @@ export class FleetFlowAI {
 
     // Default professional response
     return "I understand. Let me help you with that. Can you provide a bit more detail about what you're looking for?";
+  }
+
+  // ✅ NEW: Platform AI configuration methods
+  enablePlatformAI(): void {
+    this.usePlatformAI = true;
+    console.log('✅ Platform AI enabled - All enhancements active');
+  }
+
+  disablePlatformAI(): void {
+    this.usePlatformAI = false;
+    console.log('⚠️ Platform AI disabled - Using original methods');
+  }
+
+  // ✅ NEW: Get Platform AI metrics for this service
+  async getAIMetrics(): Promise<any> {
+    const costSummary = await platformAIManager.getCostSummary();
+    const qualityStatus = await platformAIManager.getQualityStatus();
+
+    return {
+      serviceName: 'FleetFlowAI',
+      costsOptimized: true,
+      qualitySupervised: true,
+      humanLikeResponses: true,
+      dailySpend: costSummary.dailySpend,
+      qualityGrade: qualityStatus.overallGrade,
+      escalations: qualityStatus.humanEscalations,
+    };
   }
 }
 

@@ -1334,7 +1334,7 @@ INDUSTRY CERTIFICATIONS:
   ): Promise<RFxRequest[]> {
     try {
       // SAM.gov API integration for government contracts
-      if (!process.env.SAM_GOV_API_KEY) {
+      if (!process.env.SAMGOV_API_KEY) {
         return this.getMockGovernmentContracts(searchParams);
       }
 
@@ -1423,7 +1423,7 @@ INDUSTRY CERTIFICATIONS:
       // Build enhanced query parameters with automotive/construction focus
       const queryParams = new URLSearchParams({
         // Required parameters
-        api_key: process.env.SAM_GOV_API_KEY,
+        api_key: process.env.SAMGOV_API_KEY,
         limit: '100', // ✅ Increased for more opportunities
         offset: '0',
 
