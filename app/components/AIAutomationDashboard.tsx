@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { EDIStatusMonitor } from '../../components/EDIStatusMonitor';
+// import { EDIStatusMonitor } from '../../components/EDIStatusMonitor';
 
 interface AIInsight {
   type:
@@ -1234,7 +1234,7 @@ export default function AIAutomationDashboard() {
 
             {/* EDI Integration Status Monitor */}
             <div className='mt-8'>
-              <EDIStatusMonitor className='border-white/20 bg-white/10 backdrop-blur-sm' />
+              {/* <EDIStatusMonitor className='border-white/20 bg-white/10 backdrop-blur-sm' /> */}
             </div>
           </div>
         )}
