@@ -41,6 +41,8 @@ interface OnboardingRecord {
     portalEnabled: boolean;
     portalUsers: number;
   };
+  integrationResult?: IntegrationRecord;
+  carrierInfo?: any;
 }
 
 export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({

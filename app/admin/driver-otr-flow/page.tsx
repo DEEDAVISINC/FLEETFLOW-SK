@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
+import DriverAvailabilityManager from '../../components/DriverAvailabilityManager';
 import UnifiedNotificationBell from '../../components/UnifiedNotificationBell';
 import { driverPreferencesService } from '../../services/DriverPreferencesService';
 import {
@@ -11,6 +12,7 @@ import {
 import { iftaService } from '../../services/IFTAService';
 import { taxBanditsForm2290Service } from '../../services/TaxBanditsForm2290Service';
 import { onboardingIntegration } from '../../services/onboarding-integration';
+import { openELDService } from '../../services/openeld-integration';
 
 // Access Control
 function checkPermission(permission: string): boolean {
@@ -203,6 +205,17 @@ const workflowManager = {
       dueDate: new Date(),
       status: 'pending',
     },
+    // 🚚 DELIVERY COMPLETION TASK (Critical - triggers factoring BOL automation)
+    {
+      id: 'wf-delivery-001',
+      title: '🚚 Complete Delivery - Load L2025-002',
+      description:
+        'Mark delivery as completed. BOL will be automatically sent to factoring company if configured.',
+      type: 'delivery_completion',
+      priority: 'CRITICAL',
+      dueDate: new Date(),
+      status: 'pending',
+    },
     // 🧾 MANAGEMENT-APPROVED DISPATCH INVOICES (Critical Actions)
     {
       id: 'wf-002',
@@ -268,6 +281,8 @@ export default function AdminDriverOTRFlow() {
     | 'notifications'
     | 'profile'
     | 'go-with-the-flow'
+    | 'availability'
+    | 'openeld'
   >('dashboard');
   const [currentDriverId, setCurrentDriverId] = useState<string | null>(null);
   const [selectedDriverIndex, setSelectedDriverIndex] = useState(0);
@@ -331,6 +346,11 @@ export default function AdminDriverOTRFlow() {
     isEnabled: boolean;
     currentFactor: {
       name: string;
+      email: string;
+      contactName?: string;
+      title?: string;
+      phone?: string;
+      directPhone?: string;
       rate: number;
       advanceRate: number;
       creditLimit: number;
@@ -358,75 +378,33 @@ export default function AdminDriverOTRFlow() {
       check: { enabled: boolean; address: string };
     };
     recentTransactions: {
-      transactionId: string;
+      transactionId?: string;
+      id?: string;
       type:
         | 'factor_advance'
         | 'settlement'
         | 'expense_deduction'
-        | 'dispatch_fee';
+        | 'dispatch_fee'
+        | 'bol_submission';
       amount: number;
-      description: string;
+      description?: string;
       date: string;
-      status: 'completed' | 'pending' | 'failed';
+      status: 'completed' | 'pending' | 'failed' | 'submitted';
     }[];
   }>({
-    isEnabled: true,
-    currentFactor: {
-      name: 'TBS Factoring Service',
-      rate: 2.5,
-      advanceRate: 95,
-      creditLimit: 50000,
-      availableCredit: 42350,
-      daysToPayment: 1,
-      status: 'active',
-    },
-    pendingInvoices: [
-      {
-        invoiceId: 'INV-2025-003',
-        amount: 2850,
-        customerName: 'Walmart Distribution',
-        loadId: 'L2025-001',
-        invoiceDate: '2025-01-20',
-        status: 'pending_factor',
-      },
-      {
-        invoiceId: 'INV-2025-004',
-        amount: 3200,
-        customerName: 'Home Depot Logistics',
-        loadId: 'L2025-002',
-        invoiceDate: '2025-01-21',
-        status: 'factored',
-        factorAdvance: 3040,
-        advanceDate: '2025-01-21',
-      },
-    ],
+    isEnabled: false,
+    currentFactor: null,
+    pendingInvoices: [],
     paymentMethods: {
       directDeposit: {
-        enabled: true,
-        bankName: 'Wells Fargo',
-        accountNumber: '****1234',
+        enabled: false,
+        bankName: '',
+        accountNumber: '',
       },
       payCard: { enabled: false, cardProvider: '', cardNumber: '' },
       check: { enabled: false, address: '' },
     },
-    recentTransactions: [
-      {
-        transactionId: 'TXN-2025-0125',
-        type: 'factor_advance',
-        amount: 3040,
-        description: 'Factor advance for INV-2025-004 (Home Depot load)',
-        date: '2025-01-21',
-        status: 'completed',
-      },
-      {
-        transactionId: 'TXN-2025-0124',
-        type: 'settlement',
-        amount: 12130,
-        description: 'Weekly settlement - 5 loads completed',
-        date: '2025-01-15',
-        status: 'completed',
-      },
-    ],
+    recentTransactions: [],
   });
 
   // 🗺️ GPS-PROXIMITY LOAD SYSTEM STATE MANAGEMENT
@@ -510,7 +488,7 @@ export default function AdminDriverOTRFlow() {
       loadId: load.id,
       data: {
         ...load,
-        carrierName: demoDriver?.driverName || 'TBD',
+        carrierName: demoDriver?.personalInfo?.name || 'TBD',
         pickupDate: new Date().toLocaleDateString(),
         deliveryDate: new Date(
           Date.now() + 2 * 24 * 60 * 60 * 1000
@@ -579,6 +557,435 @@ export default function AdminDriverOTRFlow() {
       },
       ...prev.slice(0, 4), // Keep only 5 notifications
     ]);
+  };
+
+  // 🏢 CARRIER FACTORING COMPANY LOOKUP
+  const getCarrierFactoringCompany = async (carrierId: string) => {
+    try {
+      // Get the carrier's factoring company from their profile
+      const carrierProfile =
+        await onboardingIntegration.getCarrierProfile(carrierId);
+
+      if (
+        carrierProfile?.factoring?.isActive &&
+        carrierProfile.factoring.company
+      ) {
+        // Get factoring company details with carrier's specific account executive
+        const factoringCompanyDetails = getFactoringCompanyDetails(
+          carrierProfile.factoring.company,
+          carrierId
+        );
+
+        return {
+          name: carrierProfile.factoring.company,
+          email: factoringCompanyDetails.email,
+          contactName: factoringCompanyDetails.contactName,
+          title: factoringCompanyDetails.title,
+          phone: factoringCompanyDetails.phone,
+          directPhone: factoringCompanyDetails.directPhone,
+          rate: factoringCompanyDetails.rate,
+          advanceRate: factoringCompanyDetails.advanceRate,
+          creditLimit: factoringCompanyDetails.creditLimit,
+          availableCredit: factoringCompanyDetails.availableCredit,
+          daysToPayment: factoringCompanyDetails.daysToPayment,
+          status: 'active' as const,
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error getting carrier factoring company:', error);
+      return null;
+    }
+  };
+
+  // 🏦 FACTORING COMPANY ACCOUNT EXECUTIVE DATABASE
+  const getCarrierAccountExecutive = (
+    companyName: string,
+    carrierId: string
+  ) => {
+    // In production, this would fetch the carrier's specific account executive from database
+    const accountExecutives = {
+      'TBS Factoring Service': {
+        'tenant-002': {
+          email: 'sarah.johnson@tbsfactoring.com',
+          contactName: 'Sarah Johnson',
+          title: 'Senior Account Executive',
+          phone: '(800) 207-7661 ext 1234',
+          directPhone: '(469) 555-0123',
+        },
+        default: {
+          email: 'mike.rodriguez@tbsfactoring.com',
+          contactName: 'Mike Rodriguez',
+          title: 'Account Executive',
+          phone: '(800) 207-7661 ext 2345',
+          directPhone: '(469) 555-0156',
+        },
+      },
+      'RTS Financial': {
+        'tenant-001': {
+          email: 'lisa.thompson@rtsfinancial.com',
+          contactName: 'Lisa Thompson',
+          title: 'Senior Account Executive',
+          phone: '(800) 739-2862 ext 3456',
+          directPhone: '(972) 555-0198',
+        },
+        default: {
+          email: 'david.chen@rtsfinancial.com',
+          contactName: 'David Chen',
+          title: 'Account Executive',
+          phone: '(800) 739-2862 ext 4567',
+          directPhone: '(972) 555-0234',
+        },
+      },
+      'eCapital Commercial Finance': {
+        default: {
+          email: 'jennifer.williams@ecapital.com',
+          contactName: 'Jennifer Williams',
+          title: 'Senior Account Executive',
+          phone: '(855) 326-3408 ext 5678',
+          directPhone: '(305) 555-0267',
+        },
+      },
+      'Apex Capital Corp': {
+        default: {
+          email: 'robert.davis@apexcapitalcorp.com',
+          contactName: 'Robert Davis',
+          title: 'Account Executive',
+          phone: '(817) 589-2000 ext 6789',
+          directPhone: '(817) 555-0345',
+        },
+      },
+      'Porter Freight Funding': {
+        default: {
+          email: 'amanda.garcia@porterfreight.com',
+          contactName: 'Amanda Garcia',
+          title: 'Account Executive',
+          phone: '(205) 397-0934 ext 7890',
+          directPhone: '(205) 555-0412',
+        },
+      },
+    };
+
+    const companyExecutives =
+      accountExecutives[companyName as keyof typeof accountExecutives];
+    const carrierExecutive =
+      companyExecutives?.[carrierId as keyof typeof companyExecutives] ||
+      companyExecutives?.['default' as keyof typeof companyExecutives];
+
+    return (
+      carrierExecutive || {
+        email: 'accountexec@factoring.com',
+        contactName: 'Account Executive',
+        title: 'Account Executive',
+        phone: '(800) 000-0000',
+        directPhone: '(800) 000-0000',
+      }
+    );
+  };
+
+  // 🏦 FACTORING COMPANY DETAILS DATABASE (Mock - replace with actual database lookup)
+  const getFactoringCompanyDetails = (
+    companyName: string,
+    carrierId: string
+  ) => {
+    const baseCompanyDetails = {
+      'TBS Factoring Service': {
+        rate: 2.5,
+        advanceRate: 95,
+        creditLimit: 100000,
+        availableCredit: 85000,
+        daysToPayment: 1,
+      },
+      'RTS Financial': {
+        rate: 3.0,
+        advanceRate: 90,
+        creditLimit: 75000,
+        availableCredit: 68000,
+        daysToPayment: 1,
+      },
+      'eCapital Commercial Finance': {
+        rate: 2.75,
+        advanceRate: 92,
+        creditLimit: 120000,
+        availableCredit: 95000,
+        daysToPayment: 1,
+      },
+      'Apex Capital Corp': {
+        rate: 2.9,
+        advanceRate: 93,
+        creditLimit: 80000,
+        availableCredit: 72000,
+        daysToPayment: 1,
+      },
+      'Porter Freight Funding': {
+        rate: 3.2,
+        advanceRate: 88,
+        creditLimit: 60000,
+        availableCredit: 54000,
+        daysToPayment: 2,
+      },
+    };
+
+    const accountExecutive = getCarrierAccountExecutive(companyName, carrierId);
+    const baseDetails = baseCompanyDetails[
+      companyName as keyof typeof baseCompanyDetails
+    ] || {
+      rate: 3.0,
+      advanceRate: 90,
+      creditLimit: 50000,
+      availableCredit: 40000,
+      daysToPayment: 1,
+    };
+
+    return {
+      email: accountExecutive.email,
+      contactName: accountExecutive.contactName,
+      title: accountExecutive.title,
+      phone: accountExecutive.phone,
+      directPhone: accountExecutive.directPhone,
+      ...baseDetails,
+    };
+  };
+
+  // 🚀 INITIALIZE CARRIER'S FACTORING COMPANY ON LOAD
+  useEffect(() => {
+    const initializeFactoringCompany = async () => {
+      try {
+        const carrierFactoring = await getCarrierFactoringCompany(
+          currentUser.tenantId
+        );
+
+        if (carrierFactoring) {
+          setFactoringStatus({
+            isEnabled: true,
+            currentFactor: carrierFactoring,
+            pendingInvoices: [
+              {
+                invoiceId: 'INV-2025-001',
+                amount: 2100,
+                customerName: 'ABC Manufacturing',
+                loadId: 'L2025-002',
+                invoiceDate: new Date().toISOString(),
+                status: 'pending_factor',
+              },
+            ],
+            paymentMethods: {
+              directDeposit: {
+                enabled: true,
+                bankName: 'First National Bank',
+                accountNumber: '****1234',
+              },
+              payCard: {
+                enabled: false,
+                cardProvider: 'Comdata',
+                cardNumber: '****5678',
+              },
+              check: { enabled: false, address: '' },
+            },
+            recentTransactions: [
+              {
+                transactionId: 'TXN-20241218-001',
+                type: 'factor_advance',
+                amount: 1995,
+                description: 'Load L2025-001 Factor Advance (95%)',
+                date: new Date(Date.now() - 86400000).toISOString(),
+                status: 'completed',
+              },
+            ],
+          });
+
+          console.log(`✅ Factoring initialized: ${carrierFactoring.name}`);
+        } else {
+          console.log('❌ No factoring company configured for carrier');
+          setFactoringStatus((prev) => ({
+            ...prev,
+            isEnabled: false,
+            currentFactor: null,
+          }));
+        }
+      } catch (error) {
+        console.error('Error initializing factoring:', error);
+      }
+    };
+
+    initializeFactoringCompany();
+  }, [currentUser.tenantId]);
+
+  // 💰 FACTORING BOL AUTOMATION - Send BOL to factoring company on delivery completion
+  const sendBOLToFactoringCompany = async (loadId: string, bolData: any) => {
+    try {
+      if (!factoringStatus.isEnabled || !factoringStatus.currentFactor) {
+        console.log(
+          'No factoring company configured - skipping BOL automation'
+        );
+        return;
+      }
+
+      console.log(
+        `📧 Sending BOL for Load ${loadId} to ${factoringStatus.currentFactor.name}`
+      );
+
+      // Generate BOL document data
+      const bolDocument = {
+        id: `bol-${loadId}-${Date.now()}`,
+        loadId: loadId,
+        carrierInfo: {
+          name: currentUser.tenantName,
+          mcNumber: currentUser.companyInfo?.mcNumber || 'MC-000000',
+          dotNumber: currentUser.companyInfo?.dotNumber || 'DOT-000000',
+          contact: currentUser.name,
+          phone: currentUser.phone,
+          email: currentUser.email,
+        },
+        factoringInfo: {
+          companyName: factoringStatus.currentFactor.name,
+          contactEmail: factoringStatus.currentFactor.email,
+          rate: factoringStatus.currentFactor.rate,
+          advanceRate: factoringStatus.currentFactor.advanceRate,
+        },
+        loadDetails: bolData,
+        deliveryCompleted: new Date().toISOString(),
+        driverSignature: currentUser.name,
+        receiverInfo: bolData.receiverInfo || {},
+      };
+
+      // Send BOL to factoring company via API
+      const response = await fetch('/api/automation/factoring-bol', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'send_bol_to_factor',
+          data: {
+            loadId,
+            bolDocument,
+            factoringCompany: factoringStatus.currentFactor,
+            carrierInfo: {
+              tenantId: currentUser.tenantId,
+              name: currentUser.tenantName,
+              mcNumber: currentUser.companyInfo?.mcNumber,
+            },
+          },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Add success notification with account executive details
+        const accountExecutiveName =
+          factoringStatus.currentFactor?.contactName || 'Account Executive';
+        const companyName =
+          factoringStatus.currentFactor?.name || 'factoring company';
+
+        setNotifications((prev) => [
+          {
+            id: Date.now().toString(),
+            message: `✅ BOL automatically sent to ${accountExecutiveName} at ${companyName} for Load ${loadId}`,
+            timestamp: 'Just now',
+            read: false,
+          },
+          ...prev.slice(0, 4),
+        ]);
+
+        // Update factoring status to show BOL submission
+        setFactoringStatus((prev) => ({
+          ...prev,
+          recentTransactions: [
+            {
+              id: `bol-${Date.now()}`,
+              type: 'bol_submission' as const,
+              amount: bolData.loadAmount || 0,
+              description: `BOL submitted for Load ${loadId}`,
+              date: new Date().toISOString(),
+              status: 'submitted' as const,
+            },
+            ...prev.recentTransactions.slice(0, 4),
+          ],
+        }));
+
+        console.log('✅ BOL sent to factoring company successfully');
+      } else {
+        throw new Error(result.error || 'Failed to send BOL');
+      }
+    } catch (error) {
+      console.error('❌ Factoring BOL automation error:', error);
+
+      // Add error notification
+      setNotifications((prev) => [
+        {
+          id: Date.now().toString(),
+          message: `❌ Failed to send BOL to factoring company: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: 'Just now',
+          read: false,
+        },
+        ...prev.slice(0, 4),
+      ]);
+    }
+  };
+
+  // Enhanced delivery completion handler that triggers factoring BOL automation
+  const handleDeliveryCompletion = async (
+    loadId: string,
+    deliveryData: any
+  ) => {
+    try {
+      console.log(`🚚 Delivery completed for Load ${loadId}`);
+
+      // Create BOL data for factoring
+      const bolData = {
+        loadId,
+        loadAmount: deliveryData.loadAmount || 2500, // Replace with actual load amount
+        origin: deliveryData.origin || 'Pickup Location',
+        destination: deliveryData.destination || 'Delivery Location',
+        commodity: deliveryData.commodity || 'General Freight',
+        weight: deliveryData.weight || '40,000 lbs',
+        equipment: deliveryData.equipment || 'Dry Van',
+        pickupDate: deliveryData.pickupDate || new Date().toISOString(),
+        deliveryDate: new Date().toISOString(),
+        receiverInfo: {
+          name: deliveryData.receiverName || 'Receiver',
+          signature: deliveryData.receiverSignature || 'Digital Signature',
+          timestamp: new Date().toISOString(),
+        },
+        driverInfo: {
+          name: currentUser.name,
+          id: currentUser.id,
+          phone: currentUser.phone,
+          signature: currentUser.name,
+        },
+      };
+
+      // Update load status to delivered
+      setNotifications((prev) => [
+        {
+          id: Date.now().toString(),
+          message: `✅ Load ${loadId} marked as delivered`,
+          timestamp: 'Just now',
+          read: false,
+        },
+        ...prev.slice(0, 4),
+      ]);
+
+      // If factoring is enabled, automatically send BOL
+      if (factoringStatus.isEnabled && factoringStatus.currentFactor) {
+        await sendBOLToFactoringCompany(loadId, bolData);
+      } else {
+        console.log('Factoring not enabled - BOL automation skipped');
+      }
+    } catch (error) {
+      console.error('Delivery completion error:', error);
+
+      setNotifications((prev) => [
+        {
+          id: Date.now().toString(),
+          message: `❌ Delivery completion error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: 'Just now',
+          read: false,
+        },
+        ...prev.slice(0, 4),
+      ]);
+    }
   };
 
   const getDepartmentColor = (roleType: string): string => {
@@ -2430,6 +2837,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                 },
                 { key: 'notifications', label: '🔔 Messages', icon: '🔔' },
                 { key: 'profile', label: '👤 Profile', icon: '👤' },
+                { key: 'availability', label: '📅 Availability', icon: '📅' },
+                { key: 'openeld', label: '📱 OpenELD', icon: '📱' },
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -2442,6 +2851,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         | 'notifications'
                         | 'profile'
                         | 'go-with-the-flow'
+                        | 'availability'
+                        | 'openeld'
                     )
                   }
                   style={{
@@ -6168,21 +6579,72 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 {task.description}
                               </p>
                             </div>
-                            <span
+                            <div
                               style={{
-                                background:
-                                  task.priority === 'CRITICAL'
-                                    ? '#dc2626'
-                                    : '#3b82f6',
-                                color: 'white',
-                                padding: '8px 16px',
-                                borderRadius: '10px',
-                                fontSize: '14px',
-                                fontWeight: '700',
+                                display: 'flex',
+                                gap: '10px',
+                                alignItems: 'center',
                               }}
                             >
-                              {task.priority}
-                            </span>
+                              <span
+                                style={{
+                                  background:
+                                    task.priority === 'CRITICAL'
+                                      ? '#dc2626'
+                                      : '#3b82f6',
+                                  color: 'white',
+                                  padding: '8px 16px',
+                                  borderRadius: '10px',
+                                  fontSize: '14px',
+                                  fontWeight: '700',
+                                }}
+                              >
+                                {task.priority}
+                              </span>
+
+                              {/* Add completion buttons for specific task types */}
+                              {task.type === 'delivery_completion' && (
+                                <button
+                                  onClick={() =>
+                                    handleDeliveryCompletion('L2025-002', {
+                                      loadAmount: 2100,
+                                      origin: 'Fort Worth, TX',
+                                      destination: 'San Antonio, TX',
+                                      commodity: 'General Freight',
+                                      weight: '40,000 lbs',
+                                      equipment: 'Dry Van',
+                                      receiverName: 'John Smith',
+                                      receiverSignature: 'J.Smith_Digital',
+                                    })
+                                  }
+                                  style={{
+                                    background: '#22c55e',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                      '#16a34a';
+                                    e.currentTarget.style.transform =
+                                      'translateY(-2px)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.background =
+                                      '#22c55e';
+                                    e.currentTarget.style.transform =
+                                      'translateY(0)';
+                                  }}
+                                >
+                                  ✅ Complete Delivery
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -7402,6 +7864,21 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
               </div>
             )}
 
+            {/* Availability Tab */}
+            {selectedTab === 'availability' && (
+              <div>
+                <DriverAvailabilityManager
+                  driverId={demoDriver?.driverId || 'driver-001'}
+                  driverName={demoDriver?.personalInfo?.name || 'Demo Driver'}
+                  onAvailabilityUpdate={(availability) => {
+                    console.log('Driver availability updated:', availability);
+                    // Here you would typically save to your backend
+                    // You can also trigger schedule optimization here
+                  }}
+                />
+              </div>
+            )}
+
             {/* Go With the Flow Tab */}
             {selectedTab === 'go-with-the-flow' && (
               <div>
@@ -8038,7 +8515,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         try {
                           const driverId = demoDriver?.driverId || 'driver-001';
                           const driverName =
-                            demoDriver?.driverName || 'Demo Driver';
+                            demoDriver?.personalInfo?.name || 'Demo Driver';
 
                           // Get driver preferences
                           const preferences =
@@ -8051,14 +8528,28 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           const urgentRequest = {
                             driverId,
                             driverName,
-                            currentLocation: driverLocation || {
-                              city: 'Dallas',
-                              state: 'TX',
-                              lat: 32.7767,
-                              lng: -96.797,
-                            },
+                            currentLocation: driverLocation
+                              ? {
+                                  city:
+                                    driverLocation.address?.split(',')[0] ||
+                                    'Dallas',
+                                  state:
+                                    driverLocation.address
+                                      ?.split(',')[1]
+                                      ?.trim() || 'TX',
+                                  lat: driverLocation.latitude,
+                                  lng: driverLocation.longitude,
+                                }
+                              : {
+                                  city: 'Dallas',
+                                  state: 'TX',
+                                  lat: 32.7767,
+                                  lng: -96.797,
+                                },
                             requestType: 'urgent' as const,
                             preferences,
+                            requestTime: new Date().toISOString(),
+                            status: 'pending' as const,
                           };
 
                           const success =
@@ -8119,7 +8610,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                       onClick={() => {
                         const driverId = demoDriver?.driverId || 'driver-001';
                         const driverName =
-                          demoDriver?.driverName || 'Demo Driver';
+                          demoDriver?.personalInfo?.name || 'Demo Driver';
 
                         // Get current preferences
                         const preferences =
@@ -8207,7 +8698,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                       onClick={() => {
                         const driverId = demoDriver?.driverId || 'driver-001';
                         const driverName =
-                          demoDriver?.driverName || 'Demo Driver';
+                          demoDriver?.personalInfo?.name || 'Demo Driver';
 
                         // Generate detailed performance report
                         const detailedReport =
@@ -8309,7 +8800,9 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 );
                               }
                             } catch (error) {
-                              alert(`❌ Error: ${error.message}`);
+                              alert(
+                                `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+                              );
                             }
                           }
                         }}
@@ -8340,6 +8833,714 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         🔒 Emergency Override
                       </button>
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* OpenELD Tab */}
+            {selectedTab === 'openeld' && (
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: '20px',
+                  }}
+                >
+                  📱 OpenELD - Electronic Logging Device
+                </h3>
+
+                {/* ELD Status Panel */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                      margin: 0,
+                    }}
+                  >
+                    🚛 ELD Device Status
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Device Status
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '20px',
+                          fontWeight: 'bold',
+                          color: '#22c55e',
+                        }}
+                      >
+                        CONNECTED
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Driver Status
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                        ON DUTY
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Hours Available
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                        6.5 hrs
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Current Location
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                        Dallas, TX
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Weight Compliance Section */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ⚖️ Weight Compliance Logs
+                  </h3>
+
+                  {/* 30-Day Summary */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                      }}
+                    >
+                      📊 30-Day Compliance Summary
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(120px, 1fr))',
+                        gap: '12px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Total Loads
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'white',
+                          }}
+                        >
+                          12
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Compliant
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#4ade80',
+                          }}
+                        >
+                          11
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Rate
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'white',
+                          }}
+                        >
+                          91.7%
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Violations
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#fbbf24',
+                          }}
+                        >
+                          1
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Risk Level
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#4ade80',
+                          }}
+                        >
+                          LOW
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Export Controls */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #1f2937, #374151)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 8px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📋 Export Logs for DOT Inspection
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        margin: '0 0 12px 0',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Generate CSV export for law enforcement or DOT inspectors
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        style={{
+                          background: '#22c55e',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={async () => {
+                          const driverId = demoDriver?.driverId || 'driver-001';
+                          try {
+                            const endDate = new Date().toISOString();
+                            const startDate = new Date(
+                              Date.now() - 30 * 24 * 60 * 60 * 1000
+                            ).toISOString();
+
+                            const exportData =
+                              await openELDService.exportWeightComplianceLogs(
+                                driverId,
+                                startDate,
+                                endDate
+                              );
+
+                            // Create downloadable file
+                            const blob = new Blob([exportData.exportData], {
+                              type: 'text/csv',
+                            });
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = `weight-compliance-${driverId}-30days.csv`;
+                            link.click();
+                            URL.revokeObjectURL(url);
+
+                            alert(
+                              `✅ Weight compliance logs exported successfully!\n\nSummary:\n• Total Loads: ${exportData.summary.totalLoads}\n• Compliant: ${exportData.summary.compliantLoads}\n• Violations: ${exportData.summary.violationsCount}\n• Permits Required: ${exportData.summary.permitsRequired}`
+                            );
+                          } catch (error) {
+                            alert('❌ Export failed. Please try again.');
+                          }
+                        }}
+                      >
+                        📥 Export 30 Days
+                      </button>
+                      <button
+                        style={{
+                          background: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={async () => {
+                          const driverId = demoDriver?.driverId || 'driver-001';
+                          try {
+                            const summary =
+                              await openELDService.getWeightComplianceSummary(
+                                driverId,
+                                7
+                              );
+                            alert(
+                              `📊 7-Day Weight Compliance Report\n\n` +
+                                `Period: ${summary.period}\n` +
+                                `Total Loads: ${summary.totalLoads}\n` +
+                                `Compliant: ${summary.compliantLoads}\n` +
+                                `Compliance Rate: ${summary.complianceRate.toFixed(1)}%\n` +
+                                `Violations: ${summary.violationsCount}\n` +
+                                `Critical Violations: ${summary.criticalViolations}\n` +
+                                `Permits Required: ${summary.permitsRequired}\n` +
+                                `Inspections: ${summary.inspections}\n` +
+                                `Risk Level: ${summary.riskLevel.toUpperCase()}\n` +
+                                `Last Inspection: ${summary.lastInspection ? new Date(summary.lastInspection).toLocaleDateString() : 'None'}`
+                            );
+                          } catch (error) {
+                            alert(
+                              '❌ Failed to generate summary. Please try again.'
+                            );
+                          }
+                        }}
+                      >
+                        📊 7-Day Summary
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Recent Logs */}
+                  <div>
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📝 Recent Weight Compliance Logs
+                    </h4>
+
+                    {/* Sample logs for display */}
+                    {[
+                      {
+                        id: 'WCL-001',
+                        date: '2024-01-20T14:30:00Z',
+                        loadId: 'MJ-25001-TXFL',
+                        cargoWeight: 42000,
+                        totalWeight: 78000,
+                        states: ['TX', 'LA', 'FL'],
+                        safetyRating: 'SAFE',
+                        violations: 0,
+                        permits: 0,
+                      },
+                      {
+                        id: 'WCL-002',
+                        date: '2024-01-18T09:15:00Z',
+                        loadId: 'MJ-25002-TXCA',
+                        cargoWeight: 46000,
+                        totalWeight: 82000,
+                        states: ['TX', 'NM', 'CA'],
+                        safetyRating: 'CAUTION',
+                        violations: 1,
+                        permits: 1,
+                      },
+                    ].map((log) => (
+                      <div
+                        key={log.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          marginBottom: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              color: 'white',
+                            }}
+                          >
+                            {log.loadId}
+                          </span>
+                          <span
+                            style={{
+                              background:
+                                log.safetyRating === 'SAFE'
+                                  ? '#10b981'
+                                  : '#f59e0b',
+                              color: 'white',
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {log.safetyRating}
+                          </span>
+                          <span
+                            style={{
+                              color: 'rgba(255,255,255,0.7)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {new Date(log.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              'repeat(auto-fit, minmax(100px, 1fr))',
+                            gap: '8px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Weight:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.totalWeight.toLocaleString()} lbs
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              States:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.states.join(', ')}
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Violations:
+                            </span>
+                            <div
+                              style={{
+                                color:
+                                  log.violations > 0 ? '#fbbf24' : '#4ade80',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              {log.violations}
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Permits:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.permits}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* HOS Management Section */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ⏰ Hours of Service (HOS)
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Driving Time
+                      </div>
+                      <div
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        4.5 / 11 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        6.5 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        On Duty Time
+                      </div>
+                      <div
+                        style={{
+                          color: '#3b82f6',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        8.5 / 14 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        5.5 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        70-Hour Limit
+                      </div>
+                      <div
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        52 / 70 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        18 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Break Required
+                      </div>
+                      <div
+                        style={{
+                          color: '#22c55e',
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        No
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Last break: 2 hrs ago
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DOT Information */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#60a5fa',
+                      margin: '0 0 12px 0',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ℹ️ DOT Inspection Information
+                  </h4>
+                  <div
+                    style={{
+                      color: 'rgba(255,255,255,0.8)',
+                      fontSize: '14px',
+                      lineHeight: '1.4',
+                    }}
+                  >
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Weight compliance logs are automatically generated for
+                      every load assignment
+                    </p>
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Export logs show axle-based weight calculations and DOT
+                      compliance status
+                    </p>
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Bridge formula calculations and state-specific limits
+                      are included
+                    </p>
+                    <p style={{ margin: '0' }}>
+                      • All logs can be exported as CSV files for DOT inspectors
+                    </p>
                   </div>
                 </div>
               </div>

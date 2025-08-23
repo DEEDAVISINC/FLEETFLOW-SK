@@ -1771,7 +1771,7 @@ export default function ResourcesPage() {
     >
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href='/' style={{ textDecoration: 'none' }}>
+        <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
           <button
             style={{
               background: 'rgba(255, 255, 255, 0.18)', // Slightly darker

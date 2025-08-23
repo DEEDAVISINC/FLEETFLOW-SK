@@ -571,10 +571,7 @@ export class OnboardingIntegrationService {
     // );
   }
 
-  // Retrieve data for portals
-  getCarrierProfile(carrierId: string): CarrierPortalProfile | null {
-    return this.carrierProfiles.get(carrierId) || null;
-  }
+  // Retrieve data for portals (replaced with async version below)
 
   getDriverProfile(driverId: string): DriverPortalProfile | null {
     return this.driverProfiles.get(driverId) || null;
@@ -592,6 +589,121 @@ export class OnboardingIntegrationService {
 
   getAllDrivers(): DriverPortalProfile[] {
     return Array.from(this.driverProfiles.values());
+  }
+
+  /**
+   * Get carrier profile by ID (for factoring company lookup)
+   */
+  async getCarrierProfile(
+    carrierId: string
+  ): Promise<CarrierPortalProfile | null> {
+    try {
+      // Mock implementation - in production, fetch from database
+      const mockCarrierProfiles: { [key: string]: CarrierPortalProfile } = {
+        'tenant-001': {
+          carrierId: 'tenant-001',
+          companyInfo: {
+            legalName: 'ABC Trucking LLC',
+            dbaName: 'ABC Express',
+            mcNumber: 'MC-123456',
+            dotNumber: 'DOT-123456',
+            physicalAddress: '123 Freight St, Dallas, TX 75201',
+            phone: '(555) 123-4567',
+            email: 'dispatch@abctrucking.com',
+            safetyRating: 'Satisfactory',
+            equipmentTypes: ['Dry Van', 'Refrigerated'],
+          },
+          onboardingDate: '2024-12-01',
+          status: 'active',
+          factoring: {
+            company: 'RTS Financial',
+            contactInfo: 'documents@rtsfinancial.com',
+            isActive: true,
+          },
+          documents: [],
+          agreements: [],
+          portalAccess: {
+            enabled: true,
+            users: [],
+          },
+          performance: {
+            totalLoads: 45,
+            onTimeDelivery: 96,
+            avgRating: 4.7,
+            lastLoadDate: '2024-12-20',
+          },
+        },
+        'tenant-002': {
+          carrierId: 'tenant-002',
+          companyInfo: {
+            legalName: 'Swift Transportation',
+            mcNumber: 'MC-987654',
+            dotNumber: 'DOT-987654',
+            physicalAddress: '456 Logistics Ave, Phoenix, AZ 85001',
+            phone: '(555) 987-6543',
+            email: 'ops@swift.com',
+            safetyRating: 'Satisfactory',
+            equipmentTypes: ['Dry Van', 'Flatbed'],
+          },
+          onboardingDate: '2024-11-15',
+          status: 'active',
+          factoring: {
+            company: 'TBS Factoring Service',
+            contactInfo: 'bol@tbsfactoring.com',
+            isActive: true,
+          },
+          documents: [],
+          agreements: [],
+          portalAccess: {
+            enabled: true,
+            users: [],
+          },
+          performance: {
+            totalLoads: 45,
+            onTimeDelivery: 96,
+            avgRating: 4.7,
+            lastLoadDate: '2024-12-20',
+          },
+        },
+        default: {
+          carrierId: 'default',
+          companyInfo: {
+            legalName: 'FleetFlow Demo Carrier',
+            mcNumber: 'MC-000000',
+            dotNumber: 'DOT-000000',
+            physicalAddress: '789 Demo St, Austin, TX 78701',
+            phone: '(555) 000-0000',
+            email: 'demo@fleetflow.com',
+            safetyRating: 'Satisfactory',
+            equipmentTypes: ['Dry Van'],
+          },
+          onboardingDate: '2024-12-20',
+          status: 'active',
+          factoring: {
+            company: 'eCapital Commercial Finance',
+            contactInfo: 'bol@ecapital.com',
+            isActive: true,
+          },
+          documents: [],
+          agreements: [],
+          portalAccess: {
+            enabled: true,
+            users: [],
+          },
+          performance: {
+            totalLoads: 23,
+            onTimeDelivery: 98,
+            avgRating: 4.9,
+            lastLoadDate: '2024-12-21',
+          },
+        },
+      };
+
+      return mockCarrierProfiles[carrierId] || null;
+    } catch (error) {
+      console.error('Error fetching carrier profile:', error);
+      return null;
+    }
   }
 
   getOnboardingRecord(carrierId: string): OnboardingRecord | null {

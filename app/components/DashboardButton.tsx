@@ -68,7 +68,7 @@ export default function DashboardButton({
 
   return (
     <Link
-      href='/'
+      href='/fleetflowdash'
       style={{
         ...getPositionStyles(),
         background: 'linear-gradient(135deg, #374151, #1f2937)',

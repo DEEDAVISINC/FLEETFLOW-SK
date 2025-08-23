@@ -159,3 +159,26 @@ BROKER_WEBHOOK_URL=https://yourdomain.com/api/webhooks/broker
 # Development URLs
 FRONTEND_URL=http://localhost:3000
 ADMIN_URL=http://localhost:3001
+
+# ========================================
+# PLAID BANKING API CONFIGURATION
+# ========================================
+# Official Plaid Integration - Production Ready
+# Documentation: https://github.com/plaid/plaid-postman
+# Backup Reference: ./plaid-integration-backup/
+
+# Plaid API Credentials (Sandbox Environment)
+PLAID_CLIENT_ID=68a801029ea54d0022a62020
+PLAID_SECRET=your_plaid_secret_key_here
+PLAID_PUBLIC_KEY=63cb4b6dc919fef0f861246e765f1d
+PLAID_ENVIRONMENT=sandbox
+PLAID_WEBHOOK_URL=https://yourdomain.com/api/webhooks/plaid
+
+# Plaid Integration Status
+PLAID_INTEGRATION_ENABLED=true
+PLAID_COMPLIANCE_MODE=production_ready
+
+# Plaid Product Configuration
+PLAID_PRODUCTS=transactions,auth,identity,assets
+PLAID_COUNTRY_CODES=US
+PLAID_WEBHOOK_VERIFICATION_ENABLED=true

@@ -12,9 +12,12 @@ import BrokerMarketIntelligence from '../../components/BrokerMarketIntelligence'
 import BrokerShipperAcquisition from '../../components/BrokerShipperAcquisition';
 import BrokerTaskPrioritizationPanel from '../../components/BrokerTaskPrioritizationPanel';
 import CreateLoadForm from '../../components/CreateLoadForm';
+import DocumentsPortalButton from '../../components/DocumentsPortalButton';
 import InvitationQuickManager from '../../components/InvitationQuickManager';
+import PhoneMonitoringDashboard from '../../components/PhoneMonitoringDashboard';
 // import CustomizableDashboard from '../../components/CustomizableDashboard'; // Temporarily disabled due to Grid3x3 import issue
 import EnhancedLoadBoard from '../../components/EnhancedLoadBoard';
+import ProfessionalTemplateManager from '../../components/ProfessionalTemplateManager';
 
 import SpotRateOptimizationWidget from '../../components/SpotRateOptimizationWidget';
 import WarehouseShipmentFlow from '../../components/WarehouseShipmentFlow';
@@ -858,7 +861,10 @@ export default function BrokerDashboard() {
                   </span>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div
+                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+              >
+                <DocumentsPortalButton variant='small' />
                 <button
                   onClick={() => router.push('/notifications')}
                   style={{
@@ -1254,6 +1260,12 @@ export default function BrokerDashboard() {
                 label: 'Shipper Acquisition',
                 icon: '🏢',
                 color: '#059669',
+              },
+              {
+                id: 'phone-monitoring',
+                label: 'Phone Monitoring',
+                icon: '📞',
+                color: '#0f766e',
               },
             ].map((tab) => (
               <button
@@ -5089,6 +5101,734 @@ export default function BrokerDashboard() {
                 <BrokerCarrierNetworkManager
                   brokerId={brokerSession?.id || 'demo-broker'}
                 />
+
+                {/* Carrier Weight Compliance Monitoring */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '15px',
+                    padding: '24px',
+                    marginTop: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h2
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    📱 Carrier OpenELD Compliance Monitoring
+                  </h2>
+
+                  {/* Carrier Network Compliance Overview */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        87
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                      >
+                        ELD Compliant Carriers
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        12
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                      >
+                        HOS Violations This Week
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(59, 130, 246, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        94.3%
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                      >
+                        OpenELD Compliance Rate
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(168, 85, 247, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(168, 85, 247, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        142
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                      >
+                        Connected ELD Devices
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ffffff',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        5
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                      >
+                        Critical Violations
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Carrier Compliance Table */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          color: 'white',
+                          margin: 0,
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        📋 Carrier OpenELD Compliance Status
+                      </h3>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button
+                          style={{
+                            background: '#22c55e',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                          onClick={async () => {
+                            try {
+                              const carrierComplianceData = `Carrier Name,MC Number,DOT Number,ELD Compliance,HOS Violations,Weight Violations,Device Status,Risk Level,Last Load,Performance Score,Active Drivers,ELD Devices
+Premium Logistics LLC,MC-123456,DOT-789012,COMPLIANT,0,0,CONNECTED,LOW,2024-01-20,95.2%,8,8
+Swift Transportation,MC-234567,DOT-890123,CAUTION,2,1,CONNECTED,MEDIUM,2024-01-19,87.5%,15,14
+ABC Trucking Co,MC-345678,DOT-901234,COMPLIANT,0,0,CONNECTED,LOW,2024-01-18,92.8%,5,5
+Heavy Haul Express,MC-456789,DOT-012345,VIOLATION,5,3,PARTIAL,HIGH,2024-01-17,71.2%,12,9
+Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16,89.1%,6,6`;
+
+                              const blob = new Blob([carrierComplianceData], {
+                                type: 'text/csv',
+                              });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `carrier-openeld-compliance-${new Date().toISOString().split('T')[0]}.csv`;
+                              link.click();
+                              URL.revokeObjectURL(url);
+
+                              alert(
+                                '✅ Carrier OpenELD compliance report exported successfully!'
+                              );
+                            } catch (error) {
+                              alert('❌ Export failed. Please try again.');
+                            }
+                          }}
+                        >
+                          📥 Export Network Report
+                        </button>
+                        <button
+                          style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            alert(
+                              '🔄 Carrier OpenELD data refreshed!\n\nLatest compliance information pulled from all carrier OpenELD systems:\n• HOS violations and status\n• Weight compliance records\n• ELD device connectivity\n• Driver performance metrics'
+                            );
+                          }}
+                        >
+                          🔄 Refresh Data
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Carrier Compliance List */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {[
+                        {
+                          name: 'Premium Logistics LLC',
+                          mcNumber: 'MC-123456',
+                          dotNumber: 'DOT-789012',
+                          compliance: 'COMPLIANT',
+                          hosViolations: 0,
+                          weightViolations: 0,
+                          eldStatus: 'CONNECTED',
+                          riskLevel: 'LOW',
+                          lastLoad: 'BRK-001-TXFL',
+                          performanceScore: '95.2%',
+                          activeDrivers: 8,
+                          eldDevices: 8,
+                          complianceRate: 98.5,
+                        },
+                        {
+                          name: 'Swift Transportation',
+                          mcNumber: 'MC-234567',
+                          dotNumber: 'DOT-890123',
+                          compliance: 'CAUTION',
+                          hosViolations: 2,
+                          weightViolations: 1,
+                          eldStatus: 'CONNECTED',
+                          riskLevel: 'MEDIUM',
+                          lastLoad: 'BRK-002-CANY',
+                          performanceScore: '87.5%',
+                          activeDrivers: 15,
+                          eldDevices: 14,
+                          complianceRate: 89.2,
+                        },
+                        {
+                          name: 'ABC Trucking Co',
+                          mcNumber: 'MC-345678',
+                          dotNumber: 'DOT-901234',
+                          compliance: 'COMPLIANT',
+                          hosViolations: 0,
+                          weightViolations: 0,
+                          eldStatus: 'CONNECTED',
+                          riskLevel: 'LOW',
+                          lastLoad: 'BRK-003-ILOH',
+                          performanceScore: '92.8%',
+                          activeDrivers: 5,
+                          eldDevices: 5,
+                          complianceRate: 96.1,
+                        },
+                        {
+                          name: 'Heavy Haul Express',
+                          mcNumber: 'MC-456789',
+                          dotNumber: 'DOT-012345',
+                          compliance: 'VIOLATION',
+                          hosViolations: 5,
+                          weightViolations: 3,
+                          eldStatus: 'PARTIAL',
+                          riskLevel: 'HIGH',
+                          lastLoad: 'BRK-004-TXGA',
+                          performanceScore: '71.2%',
+                          activeDrivers: 12,
+                          eldDevices: 9,
+                          complianceRate: 67.8,
+                        },
+                      ].map((carrier) => (
+                        <div
+                          key={carrier.mcNumber}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '8px',
+                            padding: '16px',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: 'bold',
+                                  color: 'white',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                {carrier.name}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                }}
+                              >
+                                {carrier.mcNumber} • {carrier.dotNumber} •{' '}
+                                {carrier.activeDrivers} Drivers •{' '}
+                                {carrier.eldDevices}/{carrier.activeDrivers} ELD
+                                Connected
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  background:
+                                    carrier.compliance === 'COMPLIANT'
+                                      ? '#10b981'
+                                      : carrier.compliance === 'CAUTION'
+                                        ? '#f59e0b'
+                                        : '#ef4444',
+                                  color: 'white',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.compliance}
+                              </span>
+                              <span
+                                style={{
+                                  background:
+                                    carrier.riskLevel === 'LOW'
+                                      ? 'rgba(34, 197, 94, 0.2)'
+                                      : carrier.riskLevel === 'MEDIUM'
+                                        ? 'rgba(245, 158, 11, 0.2)'
+                                        : 'rgba(239, 68, 68, 0.2)',
+                                  color:
+                                    carrier.riskLevel === 'LOW'
+                                      ? '#22c55e'
+                                      : carrier.riskLevel === 'MEDIUM'
+                                        ? '#f59e0b'
+                                        : '#ef4444',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.riskLevel} RISK
+                              </span>
+                              <span
+                                style={{
+                                  background:
+                                    carrier.eldStatus === 'CONNECTED'
+                                      ? 'rgba(34, 197, 94, 0.2)'
+                                      : carrier.eldStatus === 'PARTIAL'
+                                        ? 'rgba(245, 158, 11, 0.2)'
+                                        : 'rgba(239, 68, 68, 0.2)',
+                                  color:
+                                    carrier.eldStatus === 'CONNECTED'
+                                      ? '#22c55e'
+                                      : carrier.eldStatus === 'PARTIAL'
+                                        ? '#f59e0b'
+                                        : '#ef4444',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontSize: '12px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                📱 {carrier.eldStatus}
+                              </span>
+                              <button
+                                style={{
+                                  background: '#3b82f6',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    alert(
+                                      `📊 ${carrier.name} - OpenELD Compliance Analysis\n\n` +
+                                        `MC Number: ${carrier.mcNumber}\n` +
+                                        `DOT Number: ${carrier.dotNumber}\n` +
+                                        `Active Drivers: ${carrier.activeDrivers}\n` +
+                                        `ELD Devices: ${carrier.eldDevices}/${carrier.activeDrivers} Connected\n` +
+                                        `ELD Status: ${carrier.eldStatus}\n\n` +
+                                        `COMPLIANCE OVERVIEW:\n` +
+                                        `Overall Status: ${carrier.compliance}\n` +
+                                        `Compliance Rate: ${carrier.complianceRate}%\n` +
+                                        `Risk Level: ${carrier.riskLevel}\n\n` +
+                                        `VIOLATIONS:\n` +
+                                        `HOS Violations: ${carrier.hosViolations}\n` +
+                                        `Weight Violations: ${carrier.weightViolations}\n` +
+                                        `Performance Score: ${carrier.performanceScore}\n` +
+                                        `Last Load: ${carrier.lastLoad}\n\n` +
+                                        `RECOMMENDATION:\n${carrier.riskLevel === 'HIGH' ? 'High-risk carrier with multiple violations. Review carefully before assigning loads. Consider additional monitoring.' : carrier.riskLevel === 'MEDIUM' ? 'Moderate risk with some violations. Suitable for standard loads with monitoring.' : 'Low-risk carrier with excellent compliance. Approved for all load types including high-value shipments.'}`
+                                    );
+                                  } catch (error) {
+                                    alert(
+                                      '❌ Failed to load carrier analysis.'
+                                    );
+                                  }
+                                }}
+                              >
+                                📊 Analyze
+                              </button>
+                              <button
+                                style={{
+                                  background: '#10b981',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                  // Integration point for load assignment
+                                  alert(
+                                    `🚛 Load Assignment - OpenELD Compliance Check\n\n` +
+                                      `Carrier: ${carrier.name}\n` +
+                                      `ELD Status: ${carrier.eldStatus}\n` +
+                                      `Compliance: ${carrier.compliance}\n` +
+                                      `Risk Level: ${carrier.riskLevel}\n\n` +
+                                      `COMPLIANCE DETAILS:\n` +
+                                      `HOS Violations: ${carrier.hosViolations}\n` +
+                                      `Weight Violations: ${carrier.weightViolations}\n` +
+                                      `Compliance Rate: ${carrier.complianceRate}%\n` +
+                                      `ELD Devices: ${carrier.eldDevices}/${carrier.activeDrivers} Connected\n\n` +
+                                      `${carrier.riskLevel === 'HIGH' ? '🚨 WARNING: High-risk carrier with multiple OpenELD violations. Recommend additional oversight and monitoring for this load.' : carrier.riskLevel === 'MEDIUM' ? '⚠️ CAUTION: Moderate risk with some violations. Standard monitoring recommended.' : '✅ APPROVED: Low-risk carrier with excellent OpenELD compliance. Safe for all load types.'}\n\n` +
+                                      `Proceed with load assignment?`
+                                  );
+                                }}
+                              >
+                                🚛 Assign Load
+                              </button>
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(140px, 1fr))',
+                              gap: '16px',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <div>
+                              <span
+                                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                              >
+                                Compliance Rate:
+                              </span>
+                              <div
+                                style={{
+                                  color:
+                                    carrier.complianceRate >= 95
+                                      ? '#4ade80'
+                                      : carrier.complianceRate >= 85
+                                        ? '#fbbf24'
+                                        : '#ef4444',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.complianceRate}%
+                              </div>
+                            </div>
+                            <div>
+                              <span
+                                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                              >
+                                HOS Violations:
+                              </span>
+                              <div
+                                style={{
+                                  color:
+                                    carrier.hosViolations > 0
+                                      ? '#fbbf24'
+                                      : '#4ade80',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.hosViolations}
+                              </div>
+                            </div>
+                            <div>
+                              <span
+                                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                              >
+                                Weight Violations:
+                              </span>
+                              <div
+                                style={{
+                                  color:
+                                    carrier.weightViolations > 0
+                                      ? '#fbbf24'
+                                      : '#4ade80',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.weightViolations}
+                              </div>
+                            </div>
+                            <div>
+                              <span
+                                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                              >
+                                ELD Devices:
+                              </span>
+                              <div
+                                style={{
+                                  color:
+                                    carrier.eldDevices === carrier.activeDrivers
+                                      ? '#4ade80'
+                                      : '#fbbf24',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                {carrier.eldDevices}/{carrier.activeDrivers}
+                              </div>
+                            </div>
+                            <div>
+                              <span
+                                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                              >
+                                Performance:
+                              </span>
+                              <div
+                                style={{ color: 'white', fontWeight: 'bold' }}
+                              >
+                                {carrier.performanceScore}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Broker Actions */}
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: '#60a5fa',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      ℹ️ Carrier OpenELD Compliance Management
+                    </h4>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '14px',
+                        lineHeight: '1.4',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <p style={{ margin: '0 0 8px 0' }}>
+                        • Monitor complete OpenELD compliance across your
+                        carrier network (HOS, weight, device status)
+                      </p>
+                      <p style={{ margin: '0 0 8px 0' }}>
+                        • Make informed load assignments based on comprehensive
+                        ELD compliance records
+                      </p>
+                      <p style={{ margin: '0 0 8px 0' }}>
+                        • Track HOS violations, weight compliance, and ELD
+                        device connectivity in real-time
+                      </p>
+                      <p style={{ margin: '0' }}>
+                        • Export detailed OpenELD compliance reports for
+                        shippers and DOT audits
+                      </p>
+                    </div>
+
+                    <div
+                      style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}
+                    >
+                      <button
+                        style={{
+                          background: '#f59e0b',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          alert(
+                            '📧 OpenELD Compliance Alert Sent!\n\nAll carriers with violations have been notified:\n• HOS violation warnings sent\n• Weight compliance reminders issued\n• ELD device connectivity issues flagged\n• Safety recommendations and corrective actions provided\n• Broker compliance team has been notified with full OpenELD reports'
+                          );
+                        }}
+                      >
+                        🚨 Alert Non-Compliant Carriers
+                      </button>
+
+                      <button
+                        style={{
+                          background: '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          alert(
+                            '⭐ Preferred Carrier Program Updated - OpenELD Edition!\n\nCarriers with excellent OpenELD compliance have been marked as "Preferred":\n• Zero HOS violations\n• 100% weight compliance\n• All ELD devices connected\n• 95%+ compliance rating\n\nLoad assignments will prioritize these carriers.\nPreferred carrier bonuses activated.\nOpenELD compliance incentives implemented.'
+                          );
+                        }}
+                      >
+                        ⭐ Update Preferred Carriers
+                      </button>
+
+                      <button
+                        style={{
+                          background: '#8b5cf6',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          alert(
+                            '📋 Shipper OpenELD Compliance Report Generated!\n\nComprehensive carrier compliance report created including:\n• Complete OpenELD compliance status\n• HOS violation history and trends\n• Weight compliance records\n• ELD device connectivity status\n• Performance metrics and risk assessments\n\nReady to share with shippers to demonstrate:\n• Due diligence in carrier vetting\n• Comprehensive safety verification\n• DOT compliance monitoring\n• Real-time risk management'
+                          );
+                        }}
+                      >
+                        📋 Generate Shipper Report
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -5105,6 +5845,12 @@ export default function BrokerDashboard() {
                 <BrokerShipperAcquisition
                   brokerId={brokerSession?.id || 'demo-broker'}
                 />
+              </div>
+            )}
+
+            {selectedTab === 'phone-monitoring' && (
+              <div>
+                <PhoneMonitoringDashboard />
               </div>
             )}
 
@@ -9155,117 +9901,11 @@ export default function BrokerDashboard() {
                 )}
 
                 {settingsTab === 'templates' && (
-                  <div>
-                    <h3
-                      style={{
-                        fontSize: '20px',
-                        fontWeight: '600',
-                        color: '#1f2937',
-                        marginBottom: '16px',
-                      }}
-                    >
-                      Document Templates
-                    </h3>
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: '20px',
-                      }}
-                    >
-                      <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            fontWeight: '500',
-                            color: '#374151',
-                          }}
-                        >
-                          BOL Template
-                        </label>
-                        <textarea
-                          placeholder='Enter your custom BOL template...'
-                          rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            border: '1px solid #d1d5db',
-                            resize: 'vertical',
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            fontWeight: '500',
-                            color: '#374151',
-                          }}
-                        >
-                          Contract Template
-                        </label>
-                        <textarea
-                          placeholder='Enter your custom contract template...'
-                          rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            border: '1px solid #d1d5db',
-                            resize: 'vertical',
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            fontWeight: '500',
-                            color: '#374151',
-                          }}
-                        >
-                          Invoice Template
-                        </label>
-                        <textarea
-                          placeholder='Enter your custom invoice template...'
-                          rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            border: '1px solid #d1d5db',
-                            resize: 'vertical',
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            fontWeight: '500',
-                            color: '#374151',
-                          }}
-                        >
-                          Email Signature
-                        </label>
-                        <textarea
-                          placeholder='Enter your custom email signature...'
-                          rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            border: '1px solid #d1d5db',
-                            resize: 'vertical',
-                          }}
-                        />
-                      </div>
-                    </div>
+                  <div style={{ margin: '-24px' }}>
+                    <ProfessionalTemplateManager
+                      tenantId={brokerSession?.brokerCode || 'fleetflow-demo'}
+                      isCompact={false}
+                    />
                   </div>
                 )}
               </div>

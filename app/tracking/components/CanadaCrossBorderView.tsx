@@ -187,7 +187,7 @@ export default function CanadaCrossBorderView({
       case 'medium':
         return '#f59e0b';
       case 'high':
-        return '#ef4444';
+        return '#7f1d1d';
       case 'critical':
         return '#dc2626';
       default:
@@ -197,11 +197,11 @@ export default function CanadaCrossBorderView({
 
   const getTabColors = (tabId: string) => {
     const colors = {
-      overview: { bg: '#dc2626', border: '#b91c1c' },
+      overview: { bg: '#991b1b', border: '#7f1d1d' },
       crossings: { bg: '#10b981', border: '#059669' },
       compliance: { bg: '#f59e0b', border: '#d97706' },
       manifest: { bg: '#8b5cf6', border: '#7c3aed' },
-      alerts: { bg: '#ef4444', border: '#dc2626' },
+      alerts: { bg: '#7f1d1d', border: '#450a0a' },
     };
     return colors[tabId as keyof typeof colors] || colors.overview;
   };
@@ -216,7 +216,7 @@ export default function CanadaCrossBorderView({
           justifyContent: 'center',
           alignItems: 'center',
           height: '400px',
-          background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+          background: 'linear-gradient(135deg, #991b1b, #7f1d1d)',
           borderRadius: '16px',
           color: 'white',
         }}
@@ -237,7 +237,7 @@ export default function CanadaCrossBorderView({
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+        background: 'linear-gradient(135deg, #991b1b, #7f1d1d)',
         borderRadius: '16px',
         padding: '32px',
         color: 'white',
@@ -403,7 +403,7 @@ export default function CanadaCrossBorderView({
                   style={{
                     fontSize: '24px',
                     fontWeight: 'bold',
-                    color: '#fca5a5',
+                    color: '#dc2626',
                   }}
                 >
                   {crossBorderData.totalCrossBorderShipments.toLocaleString()}
@@ -445,7 +445,7 @@ export default function CanadaCrossBorderView({
                   style={{
                     fontSize: '24px',
                     fontWeight: 'bold',
-                    color: '#f87171',
+                    color: '#dc2626',
                   }}
                 >
                   {crossBorderData.delayedShipments}
@@ -515,7 +515,7 @@ export default function CanadaCrossBorderView({
                   style={{
                     fontSize: '24px',
                     fontWeight: 'bold',
-                    color: '#f87171',
+                    color: '#dc2626',
                   }}
                 >
                   {crossBorderData.complianceStats.documentationErrors}
@@ -606,7 +606,7 @@ export default function CanadaCrossBorderView({
                     style={{
                       fontSize: '20px',
                       fontWeight: 'bold',
-                      color: '#fca5a5',
+                      color: '#dc2626',
                     }}
                   >
                     {crossing.waitTime}h

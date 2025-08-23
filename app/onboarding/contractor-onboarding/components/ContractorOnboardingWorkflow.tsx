@@ -699,41 +699,776 @@ const DocumentGenerationStep = ({
   workflowData,
   onComplete,
   onCancel,
-}: any) => (
-  <div>
-    <h3>Document Generation Step</h3>
-    <p>This would generate contracts.</p>
-    <button onClick={() => onComplete({ documents: 'generated' })}>
-      Complete
-    </button>
-  </div>
-);
+}: any) => {
+  const [loading, setLoading] = useState(false);
+  const [generatedDocs, setGeneratedDocs] = useState<any>(null);
+
+  const handleGenerateDocuments = async () => {
+    setLoading(true);
+    try {
+      // Import document service
+      const { documentService } = await import(
+        '../../../services/document-service'
+      );
+
+      // Generate ICA using employee data (not carrier data!)
+      const employeeData = {
+        department:
+          contractorData.role === 'dispatcher'
+            ? 'Dispatch Operations'
+            : contractorData.role === 'broker_agent'
+              ? 'Brokerage Operations'
+              : 'Operations',
+        employeeId: `FF-${Date.now()}`,
+        startDate: new Date().toLocaleDateString(),
+        position: contractorData.role.replace('_', ' ').toUpperCase(),
+        email: contractorData.email,
+        phone: contractorData.phone,
+      };
+
+      const signerData = {
+        signerName: `${contractorData.firstName} ${contractorData.lastName}`,
+        signerTitle:
+          contractorData.role === 'dispatcher'
+            ? 'Freight Dispatcher'
+            : contractorData.role === 'broker_agent'
+              ? 'Freight Broker Agent'
+              : 'Transportation Specialist',
+        signerEmail: contractorData.email,
+      };
+
+      const icaDocument =
+        documentService.generateIndependentContractorAgreement(
+          employeeData,
+          signerData
+        );
+
+      setGeneratedDocs({
+        ica: icaDocument,
+        employeeData,
+        signerData,
+      });
+
+      onComplete({
+        documents: 'generated',
+        icaDocument,
+        employeeData,
+        signerData,
+      });
+    } catch (error) {
+      console.error('Error generating documents:', error);
+      alert('Error generating documents. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <h3
+          style={{ color: '#d946ef', marginBottom: '16px', fontSize: '24px' }}
+        >
+          📄 Document Generation
+        </h3>
+        <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '20px' }}>
+          Generate your comprehensive{' '}
+          <strong>Independent Contractor Agreement</strong> with NDA,
+          non-compete, and confidentiality provisions specifically for FleetFlow
+          employees.
+        </p>
+
+        <div
+          style={{
+            background: 'rgba(217, 70, 239, 0.1)',
+            border: '1px solid rgba(217, 70, 239, 0.3)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <h4 style={{ color: '#d946ef', margin: '0 0 12px 0' }}>
+            📋 Employee Information
+          </h4>
+          <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            <p>
+              <strong>Name:</strong> {contractorData.firstName}{' '}
+              {contractorData.lastName}
+            </p>
+            <p>
+              <strong>Role:</strong>{' '}
+              {contractorData.role.replace('_', ' ').toUpperCase()}
+            </p>
+            <p>
+              <strong>Email:</strong> {contractorData.email}
+            </p>
+            <p>
+              <strong>Department:</strong>{' '}
+              {contractorData.role === 'dispatcher'
+                ? 'Dispatch Operations'
+                : 'Brokerage Operations'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {generatedDocs && (
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '24px',
+          }}
+        >
+          <h4 style={{ color: '#10b981', margin: '0 0 12px 0' }}>
+            ✅ Documents Generated Successfully!
+          </h4>
+          <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Your Independent Contractor Agreement has been generated and is
+            ready for review and signature.
+          </p>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'transparent',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleGenerateDocuments}
+          disabled={loading}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: 'none',
+            background: loading
+              ? 'rgba(217, 70, 239, 0.5)'
+              : 'linear-gradient(135deg, #d946ef, #c026d3)',
+            color: 'white',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {loading ? (
+            <>🔄 Generating Documents...</>
+          ) : (
+            <>📄 Generate ICA Documents</>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const ContractSigningStep = ({
   contractorData,
   workflowData,
   onComplete,
   onCancel,
-}: any) => (
-  <div>
-    <h3>Contract Signing Step</h3>
-    <p>This would handle contract signing.</p>
-    <button onClick={() => onComplete({ contract: 'signed' })}>Complete</button>
-  </div>
-);
+}: any) => {
+  const [signature, setSignature] = useState('');
+  const [agreed, setAgreed] = useState(false);
+  const [showFullContract, setShowFullContract] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const icaDocument = workflowData?.icaDocument;
+
+  if (!icaDocument) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <div style={{ color: '#ef4444', marginBottom: '20px' }}>
+          ⚠️ No contract document found. Please go back to generate the
+          documents first.
+        </div>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'transparent',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+          }}
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const handleSignContract = async () => {
+    if (!signature.trim() || !agreed) {
+      alert('Please provide your signature and agree to the terms.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Create signed contract record
+      const signedContract = {
+        ...icaDocument,
+        signature: signature.trim(),
+        signedDate: new Date().toISOString(),
+        signedBy: `${contractorData.firstName} ${contractorData.lastName}`,
+        ipAddress: 'localhost', // In production, get real IP
+        userAgent: navigator.userAgent,
+        agreed: true,
+      };
+
+      onComplete({
+        contract: 'signed',
+        signedContract,
+        signatureData: {
+          signature: signature.trim(),
+          signedDate: new Date().toISOString(),
+          agreed: true,
+        },
+      });
+    } catch (error) {
+      console.error('Error signing contract:', error);
+      alert('Error signing contract. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <h3
+          style={{ color: '#d946ef', marginBottom: '16px', fontSize: '24px' }}
+        >
+          ✍️ Independent Contractor Agreement Signing
+        </h3>
+        <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '20px' }}>
+          Please review your Independent Contractor Agreement with NDA and
+          confidentiality provisions, then provide your digital signature to
+          complete the process.
+        </p>
+
+        {/* Contract Preview */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '20px',
+            marginBottom: '20px',
+            maxHeight: showFullContract ? 'none' : '400px',
+            overflow: showFullContract ? 'visible' : 'hidden',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px',
+            }}
+          >
+            <h4 style={{ color: '#10b981', margin: 0 }}>📋 Contract Preview</h4>
+            <button
+              onClick={() => setShowFullContract(!showFullContract)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                cursor: 'pointer',
+                fontSize: '12px',
+              }}
+            >
+              {showFullContract ? 'Show Less' : 'Show Full Contract'}
+            </button>
+          </div>
+
+          <div
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: '14px',
+              lineHeight: '1.6',
+              whiteSpace: 'pre-wrap',
+              fontFamily: 'monospace',
+              position: 'relative',
+            }}
+          >
+            {icaDocument.content}
+            {!showFullContract && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '60px',
+                  background:
+                    'linear-gradient(transparent, rgba(17, 24, 39, 0.9))',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Agreement Checkbox */}
+        <div
+          style={{
+            background: 'rgba(217, 70, 239, 0.1)',
+            border: '1px solid rgba(217, 70, 239, 0.3)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              cursor: 'pointer',
+              color: 'rgba(255, 255, 255, 0.9)',
+            }}
+          >
+            <input
+              type='checkbox'
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              style={{ marginTop: '2px' }}
+            />
+            <div>
+              <strong style={{ color: '#d946ef' }}>
+                I agree to the terms and conditions
+              </strong>
+              <p
+                style={{
+                  margin: '4px 0 0 0',
+                  fontSize: '12px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                By checking this box, I acknowledge that I have read,
+                understood, and agree to be bound by all terms of this
+                Independent Contractor Agreement, including the NDA,
+                non-compete, and confidentiality provisions.
+              </p>
+            </div>
+          </label>
+        </div>
+
+        {/* Digital Signature */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <label
+            style={{
+              display: 'block',
+              color: 'rgba(255, 255, 255, 0.9)',
+              marginBottom: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+            }}
+          >
+            Digital Signature *
+          </label>
+          <input
+            type='text'
+            placeholder={`Type your full name: ${contractorData.firstName} ${contractorData.lastName}`}
+            value={signature}
+            onChange={(e) => setSignature(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: 'white',
+              fontSize: '16px',
+              fontFamily: 'cursive',
+            }}
+          />
+          <p
+            style={{
+              fontSize: '12px',
+              color: 'rgba(255, 255, 255, 0.6)',
+              margin: '8px 0 0 0',
+            }}
+          >
+            Your typed name will serve as your legal digital signature
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'transparent',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleSignContract}
+          disabled={loading || !signature.trim() || !agreed}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: 'none',
+            background:
+              loading || !signature.trim() || !agreed
+                ? 'rgba(217, 70, 239, 0.3)'
+                : 'linear-gradient(135deg, #d946ef, #c026d3)',
+            color:
+              loading || !signature.trim() || !agreed
+                ? 'rgba(255, 255, 255, 0.5)'
+                : 'white',
+            cursor:
+              loading || !signature.trim() || !agreed
+                ? 'not-allowed'
+                : 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {loading ? <>🔄 Signing Contract...</> : <>✍️ Sign ICA Contract</>}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const NDASigningStep = ({
   contractorData,
   workflowData,
   onComplete,
   onCancel,
-}: any) => (
-  <div>
-    <h3>NDA Signing Step</h3>
-    <p>This would handle NDA signing.</p>
-    <button onClick={() => onComplete({ nda: 'signed' })}>Complete</button>
-  </div>
-);
+}: any) => {
+  const [acknowledged, setAcknowledged] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const signedContract = workflowData?.signedContract;
+
+  if (!signedContract) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <div style={{ color: '#ef4444', marginBottom: '20px' }}>
+          ⚠️ No signed contract found. Please complete the contract signing step
+          first.
+        </div>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'transparent',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+          }}
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const handleAcknowledgeNDA = async () => {
+    if (!acknowledged) {
+      alert('Please acknowledge the NDA provisions.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      onComplete({
+        nda: 'acknowledged',
+        ndaAcknowledgment: {
+          acknowledged: true,
+          acknowledgedDate: new Date().toISOString(),
+          acknowledgedBy: `${contractorData.firstName} ${contractorData.lastName}`,
+          ipAddress: 'localhost', // In production, get real IP
+        },
+      });
+    } catch (error) {
+      console.error('Error acknowledging NDA:', error);
+      alert('Error processing acknowledgment. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <h3
+          style={{ color: '#d946ef', marginBottom: '16px', fontSize: '24px' }}
+        >
+          🔒 NDA & Confidentiality Acknowledgment
+        </h3>
+        <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '20px' }}>
+          Your Independent Contractor Agreement includes comprehensive NDA and
+          confidentiality provisions. Please acknowledge your understanding of
+          these critical requirements.
+        </p>
+
+        {/* Contract Signed Confirmation */}
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <h4 style={{ color: '#10b981', margin: '0 0 8px 0' }}>
+            ✅ ICA Contract Signed
+          </h4>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              margin: 0,
+              fontSize: '14px',
+            }}
+          >
+            Signed by: <strong>{signedContract.signedBy}</strong>
+            <br />
+            Date:{' '}
+            <strong>
+              {new Date(signedContract.signedDate).toLocaleDateString()}
+            </strong>
+          </p>
+        </div>
+
+        {/* NDA Key Provisions */}
+        <div
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: '8px',
+            padding: '20px',
+            marginBottom: '20px',
+          }}
+        >
+          <h4 style={{ color: '#ef4444', margin: '0 0 16px 0' }}>
+            🚨 Critical NDA & Confidentiality Requirements
+          </h4>
+
+          <div
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: '14px',
+              lineHeight: '1.6',
+            }}
+          >
+            <div style={{ marginBottom: '12px' }}>
+              <strong style={{ color: '#ef4444' }}>
+                📋 Confidential Information Includes:
+              </strong>
+              <ul
+                style={{
+                  margin: '4px 0 0 20px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                <li>
+                  Customer lists, pricing, and proprietary business strategies
+                </li>
+                <li>
+                  Load information, carrier relationships, and rate structures
+                </li>
+                <li>Proprietary software, systems, and trade secrets</li>
+                <li>Financial information and business development plans</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <strong style={{ color: '#ef4444' }}>
+                🚫 Non-Compete Restrictions:
+              </strong>
+              <ul
+                style={{
+                  margin: '4px 0 0 20px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                <li>12-month restriction on competing freight services</li>
+                <li>Cannot solicit FleetFlow customers or carriers</li>
+                <li>Cannot recruit FleetFlow employees or contractors</li>
+              </ul>
+            </div>
+
+            <div>
+              <strong style={{ color: '#ef4444' }}>
+                ⚖️ Legal Consequences:
+              </strong>
+              <ul
+                style={{
+                  margin: '4px 0 0 20px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                <li>Immediate termination for violations</li>
+                <li>Legal action and monetary damages</li>
+                <li>Obligations survive contract termination</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Acknowledgment */}
+        <div
+          style={{
+            background: 'rgba(217, 70, 239, 0.1)',
+            border: '1px solid rgba(217, 70, 239, 0.3)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              cursor: 'pointer',
+              color: 'rgba(255, 255, 255, 0.9)',
+            }}
+          >
+            <input
+              type='checkbox'
+              checked={acknowledged}
+              onChange={(e) => setAcknowledged(e.target.checked)}
+              style={{ marginTop: '2px' }}
+            />
+            <div>
+              <strong style={{ color: '#d946ef' }}>
+                I acknowledge and understand the NDA provisions
+              </strong>
+              <p
+                style={{
+                  margin: '4px 0 0 0',
+                  fontSize: '12px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                By checking this box, I confirm that I have read, understood,
+                and will strictly comply with all confidentiality,
+                non-disclosure, and non-compete provisions outlined in my signed
+                Independent Contractor Agreement. I understand the legal
+                consequences of any violations.
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            background: 'transparent',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleAcknowledgeNDA}
+          disabled={loading || !acknowledged}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: 'none',
+            background:
+              loading || !acknowledged
+                ? 'rgba(217, 70, 239, 0.3)'
+                : 'linear-gradient(135deg, #d946ef, #c026d3)',
+            color:
+              loading || !acknowledged ? 'rgba(255, 255, 255, 0.5)' : 'white',
+            cursor: loading || !acknowledged ? 'not-allowed' : 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {loading ? <>🔄 Processing...</> : <>🔒 Acknowledge NDA</>}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const InsuranceVerificationStep = ({
   contractorData,

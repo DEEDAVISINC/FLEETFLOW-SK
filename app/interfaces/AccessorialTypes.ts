@@ -75,3 +75,9 @@ export interface AccessorialApprovalWorkflow {
   approverComments?: string;
   attachments?: string[]; // File paths for receipts/documentation
 }
+
+
+
+
+
+

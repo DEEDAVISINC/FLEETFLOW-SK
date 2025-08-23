@@ -16,6 +16,8 @@ import {
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
+import DriverUtilizationDashboard from '../components/DriverUtilizationDashboard';
+import LoadConsolidationOptimizer from '../components/LoadConsolidationOptimizer';
 import SchedulingTaskPrioritizationPanel from '../components/SchedulingTaskPrioritizationPanel';
 
 // FMCSA Hours of Service Rules
@@ -42,6 +44,8 @@ interface Schedule {
   driverId?: string;
   estimatedHours?: number;
   reason?: string;
+  loadWeight?: number; // Load weight in pounds
+  miles?: number; // Distance in miles
   fmcsaCompliant: boolean;
   hoursOfService: {
     drivingHours: number;
@@ -92,6 +96,8 @@ const schedulingService = {
         driverId: 'DRV001',
         estimatedHours: 10,
         reason: 'Walmart Distribution - Urgent delivery',
+        loadWeight: 42000, // 42,000 lbs - retail goods
+        miles: 372, // LA to Phoenix distance
         fmcsaCompliant: true,
         hoursOfService: {
           drivingHours: 8,
@@ -115,6 +121,8 @@ const schedulingService = {
         driverId: 'DRV002',
         estimatedHours: 14,
         reason: 'Home Depot Supply - Regular delivery',
+        loadWeight: 38500, // 38,500 lbs - building materials
+        miles: 925, // Dallas to Atlanta distance
         fmcsaCompliant: false,
         hoursOfService: {
           drivingHours: 12,
@@ -138,6 +146,8 @@ const schedulingService = {
         driverId: 'DRV003',
         estimatedHours: 12,
         reason: 'Amazon Logistics - Standard delivery',
+        loadWeight: 45200, // 45,200 lbs - e-commerce packages
+        miles: 920, // Chicago to Denver distance
         fmcsaCompliant: true,
         hoursOfService: {
           drivingHours: 10,
@@ -233,7 +243,9 @@ type ViewMode =
   | 'calendar'
   | 'timeline'
   | 'task-priority'
-  | 'ai-optimization';
+  | 'ai-optimization'
+  | 'load-consolidation'
+  | 'driver-utilization';
 
 export default function SchedulingDashboard() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -446,7 +458,7 @@ export default function SchedulingDashboard() {
         style={{ padding: '0 0 24px 0', maxWidth: '1600px', margin: '0 auto' }}
       >
         <Link
-          href='/'
+          href='/fleetflowdash'
           style={{ display: 'inline-block', textDecoration: 'none' }}
         >
           <button
@@ -848,6 +860,8 @@ export default function SchedulingDashboard() {
                   'timeline',
                   'task-priority',
                   'ai-optimization',
+                  'load-consolidation',
+                  'driver-utilization',
                 ].map((mode) => (
                   <button
                     key={mode}
@@ -2126,13 +2140,23 @@ export default function SchedulingDashboard() {
                               color: '#10b981',
                             }}
                           >
-                            $
-                            {schedule.estimatedHours
-                              ? (schedule.estimatedHours * 50).toFixed(0)
+                            {schedule.loadWeight
+                              ? (schedule.loadWeight / 1000).toFixed(1) +
+                                'K lbs'
                               : 'N/A'}
                           </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              fontWeight: '500',
+                              color: '#3b82f6',
+                              marginTop: '2px',
+                            }}
+                          >
+                            {schedule.miles ? schedule.miles + ' mi' : 'N/A'}
+                          </div>
                           <div style={{ fontSize: '10px', color: '#6b7280' }}>
-                            Cost
+                            Weight • Miles
                           </div>
                         </div>
 
@@ -2860,6 +2884,368 @@ export default function SchedulingDashboard() {
                     // Could auto-create schedules from optimized assignments
                   }}
                 />
+              </div>
+            )}
+
+            {viewMode === 'load-consolidation' && (
+              <div>
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                  }}
+                >
+                  🚛 Load Consolidation & Time Optimization
+                </h2>
+                <LoadConsolidationOptimizer
+                  driverId='driver-001'
+                  driverName='Demo Driver'
+                  currentLoad={{
+                    id: 'LOAD-001',
+                    origin: 'Baltimore, MD',
+                    destination: 'Detroit, MI',
+                    weight: 10000,
+                    dimensions: { length: 8, width: 4, height: 6 },
+                    palletCount: 4,
+                    commodity: 'General Freight',
+                    hazmat: false,
+                    stackable: true,
+                    fragile: false,
+                    revenue: 2850,
+                    pickupTimeWindow: {
+                      start: '2025-01-16T08:00:00Z',
+                      end: '2025-01-16T10:00:00Z',
+                    },
+                    deliveryTimeWindow: {
+                      start: '2025-01-17T14:00:00Z',
+                      end: '2025-01-17T16:00:00Z',
+                    },
+                    priority: 'medium',
+                    customerType: 'regular',
+                  }}
+                  availableLoads={[
+                    {
+                      id: 'LOAD-002',
+                      origin: 'Toledo, OH',
+                      destination: 'Lansing, MI',
+                      weight: 8000,
+                      dimensions: { length: 6, width: 4, height: 5 },
+                      palletCount: 3,
+                      commodity: 'Auto Parts',
+                      hazmat: false,
+                      stackable: true,
+                      fragile: false,
+                      revenue: 1200,
+                      pickupTimeWindow: {
+                        start: '2025-01-16T12:00:00Z',
+                        end: '2025-01-16T14:00:00Z',
+                      },
+                      deliveryTimeWindow: {
+                        start: '2025-01-17T10:00:00Z',
+                        end: '2025-01-17T12:00:00Z',
+                      },
+                      priority: 'medium',
+                      customerType: 'regular',
+                    },
+                    {
+                      id: 'LOAD-003',
+                      origin: 'Cleveland, OH',
+                      destination: 'Grand Rapids, MI',
+                      weight: 12000,
+                      dimensions: { length: 10, width: 4, height: 7 },
+                      palletCount: 5,
+                      commodity: 'Manufacturing Equipment',
+                      hazmat: false,
+                      stackable: false,
+                      fragile: true,
+                      revenue: 1800,
+                      pickupTimeWindow: {
+                        start: '2025-01-16T10:00:00Z',
+                        end: '2025-01-16T12:00:00Z',
+                      },
+                      deliveryTimeWindow: {
+                        start: '2025-01-17T16:00:00Z',
+                        end: '2025-01-17T18:00:00Z',
+                      },
+                      priority: 'high',
+                      customerType: 'premium',
+                    },
+                  ]}
+                  driverAvailability={{
+                    driverId: 'driver-001',
+                    driverName: 'Demo Driver',
+                    availableFrom: '2025-01-16T06:00:00Z',
+                    availableTo: '2025-01-30T18:00:00Z',
+                    preferredRegions: ['Midwest', 'Great Lakes'],
+                    maxWeeklyHours: 60,
+                    homeBase: 'Detroit, MI',
+                    currentLocation: 'Baltimore, MD',
+                    weeklyHoursUsed: 25,
+                    preferences: {
+                      preferLongHaul: true,
+                      preferLocalDelivery: false,
+                      avoidNightDriving: false,
+                      preferWeekends: true,
+                      maxDaysOut: 7,
+                    },
+                  }}
+                  onRouteOptimized={(route) => {
+                    console.log('Route optimized:', route);
+                    // Here you would integrate with the scheduling system
+                    // to create actual schedules from the optimized route
+                  }}
+                />
+              </div>
+            )}
+
+            {viewMode === 'driver-utilization' && (
+              <div>
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                  }}
+                >
+                  🎯 Driver Utilization & Continuous Optimization
+                </h2>
+                <DriverUtilizationDashboard />
+              </div>
+            )}
+
+            {/* Load Board Integration Status */}
+            {(viewMode === 'list' ||
+              viewMode === 'calendar' ||
+              viewMode === 'timeline') && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '15px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  padding: '20px',
+                  marginTop: '25px',
+                  marginBottom: '25px',
+                }}
+              >
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                  }}
+                >
+                  🔗 Load Board Integration Status
+                </h2>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '15px',
+                  }}
+                >
+                  ✅ Active integration with all FleetFlow load boards - loads
+                  assigned to drivers automatically create schedule entries
+                </p>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '15px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(0, 255, 0, 0.1)',
+                      padding: '15px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(0, 255, 0, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Dispatch Central
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      ✅ Integrated
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Driver assignments → schedules
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(0, 255, 0, 0.1)',
+                      padding: '15px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(0, 255, 0, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Enhanced Load Board
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      ✅ Connected
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Via dispatch workflow
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(0, 255, 0, 0.1)',
+                      padding: '15px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(0, 255, 0, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#10b981',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Unified Load Boards
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      ✅ Active
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      All external APIs integrated
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      padding: '15px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#3b82f6',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Schedule Features
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      🔧 Advanced
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Conflict detection, HOS validation
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginTop: '15px',
+                    padding: '10px',
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    📋 Integration Features Active:
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                      lineHeight: '1.4',
+                    }}
+                  >
+                    • Automatic pickup/delivery schedule creation • Driver
+                    availability validation • HOS compliance checking • Schedule
+                    conflict detection • Status synchronization • Multi-day load
+                    support • Priority-based scheduling
+                  </div>
+                </div>
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                  <Link
+                    href='/test-schedule-integration'
+                    style={{
+                      display: 'inline-block',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    🧪 Test Integration
+                  </Link>
+                </div>
               </div>
             )}
           </div>

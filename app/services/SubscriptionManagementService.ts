@@ -45,12 +45,16 @@ interface SubscriptionUsage {
   loadsProcessed: number;
   documentsGenerated: number;
   aiInteractions: number;
+  phoneMinutes: number;
+  smsMessages: number;
   lastUsed: Date;
   monthlyLimits: {
     apiCalls: number;
     loadsProcessed: number;
     documentsGenerated: number;
     aiInteractions: number;
+    phoneMinutes: number;
+    smsMessages: number;
   };
 }
 
@@ -117,6 +121,9 @@ export class SubscriptionManagementService {
         'Performance tracking',
         'Priority support',
         'Mobile app access',
+        '100 phone minutes included',
+        '50 SMS messages included',
+        'Basic call monitoring',
       ],
     },
     {
@@ -152,6 +159,10 @@ export class SubscriptionManagementService {
         'ai-flow.custom_workflows',
         'analytics.predictive',
         'rfx.ai_bidding',
+        '500 phone minutes included',
+        '200 SMS messages included',
+        'Professional call monitoring',
+        'CRM phone integration',
       ],
     },
     {
@@ -171,6 +182,11 @@ export class SubscriptionManagementService {
         'Dedicated account manager',
         'API access',
         'White-label options',
+        'Unlimited phone minutes',
+        'Unlimited SMS messages',
+        'Enterprise phone system',
+        'Multi-tenant phone management',
+        'Call center features',
       ],
     },
     // À LA CARTE OPTIONS
@@ -359,6 +375,85 @@ export class SubscriptionManagementService {
       price: 149,
       description: 'Developer API access and integrations',
       features: ['Full API access', 'Webhooks', 'Third-party integrations'],
+    },
+    // ========================================
+    // FLEETFLOW PHONE SYSTEM ADD-ONS
+    // ========================================
+    {
+      id: 'phone-basic',
+      name: 'FleetFlow Phone Basic',
+      price: 39,
+      description: 'Professional business phone system with call monitoring',
+      features: [
+        'Company phone number',
+        'Professional caller ID',
+        'Basic call monitoring',
+        'Voicemail & transcription',
+        'Up to 5 users',
+        'Mobile app integration',
+      ],
+    },
+    {
+      id: 'phone-professional',
+      name: 'FleetFlow Phone Professional', 
+      price: 89,
+      description: 'Advanced phone system with CRM integration and analytics',
+      features: [
+        'Everything in Basic',
+        'CRM call integration',
+        'Call recording & storage',
+        'Real-time call monitoring',
+        'Call handoff management',
+        'Performance analytics',
+        'Up to 25 users',
+        'SMS capabilities',
+        'Call routing & IVR',
+      ],
+    },
+    {
+      id: 'phone-enterprise',
+      name: 'FleetFlow Phone Enterprise',
+      price: 199,
+      description: 'Complete enterprise phone solution with advanced features',
+      features: [
+        'Everything in Professional', 
+        'Unlimited users',
+        'Multi-tenant management',
+        'Advanced call analytics',
+        'Call center features',
+        'Auto-dialer & campaigns',
+        'Conference calling',
+        'WhiteLabel options',
+        'API access',
+        'Priority support',
+      ],
+    },
+    {
+      id: 'phone-usage',
+      name: 'Phone Usage (Per Minute)',
+      price: 0.02,
+      description: 'Usage-based calling charges (per minute)',
+      features: [
+        'Outbound calls: $0.02/min',
+        'Inbound calls: $0.015/min', 
+        'SMS messages: $0.05/message',
+        'International calls: Variable rates',
+        'No minimum usage',
+        'Real-time usage tracking',
+      ],
+    },
+    {
+      id: 'phone-numbers',
+      name: 'Additional Phone Numbers',
+      price: 15,
+      description: 'Extra phone numbers for departments or locations',
+      features: [
+        'Additional local numbers',
+        'Toll-free numbers',
+        'Vanity numbers available',
+        'Number porting supported',
+        'Multi-location support',
+      ],
     },
   ];
 
@@ -615,6 +710,8 @@ export class SubscriptionManagementService {
       loadsProcessed: 0,
       documentsGenerated: 0,
       aiInteractions: 0,
+      phoneMinutes: 0,
+      smsMessages: 0,
       lastUsed: new Date(),
       monthlyLimits: this.getUsageLimits(tier.id),
     };
@@ -634,42 +731,56 @@ export class SubscriptionManagementService {
         loadsProcessed: 500,
         documentsGenerated: 200,
         aiInteractions: 100,
+        phoneMinutes: 0, // Phone add-on required
+        smsMessages: 0,
       },
       'rfx-professional': {
         apiCalls: 10000,
         loadsProcessed: 500,
         documentsGenerated: 200,
         aiInteractions: 100,
+        phoneMinutes: 0, // Phone add-on required
+        smsMessages: 0,
       },
       'broker-elite': {
         apiCalls: 25000,
         loadsProcessed: 1000,
         documentsGenerated: 500,
         aiInteractions: 300,
+        phoneMinutes: 100, // Basic phone included
+        smsMessages: 50,
       },
       'university-access': {
         apiCalls: 1000,
         loadsProcessed: 0,
         documentsGenerated: 50,
         aiInteractions: 50,
+        phoneMinutes: 0, // Phone add-on required
+        smsMessages: 0,
       },
       'ai-flow-pro': {
         apiCalls: 50000,
         loadsProcessed: 2000,
         documentsGenerated: 1000,
         aiInteractions: 1000,
+        phoneMinutes: 500, // Professional phone included
+        smsMessages: 200,
       },
       'enterprise-module': {
         apiCalls: -1, // Unlimited
         loadsProcessed: -1,
         documentsGenerated: -1,
         aiInteractions: -1,
+        phoneMinutes: -1, // Unlimited phone included
+        smsMessages: -1,
       },
       'alacarte-base': {
         apiCalls: 1000,
         loadsProcessed: 50,
         documentsGenerated: 20,
         aiInteractions: 50,
+        phoneMinutes: 0, // Phone add-on required
+        smsMessages: 0,
       },
     };
 
@@ -857,6 +968,151 @@ export class SubscriptionManagementService {
       customTier.id,
       paymentMethodId
     );
+  }
+
+  /**
+   * Track phone usage for user
+   */
+  static trackPhoneUsage(
+    userId: string, 
+    minutes: number, 
+    smsCount: number = 0
+  ): { success: boolean; overage?: number; cost?: number } {
+    const usage = this.usage.get(userId);
+    if (!usage) {
+      return { success: false };
+    }
+
+    const subscription = this.getUserSubscription(userId);
+    if (!subscription) {
+      return { success: false };
+    }
+
+    // Update usage
+    usage.phoneMinutes += minutes;
+    usage.smsMessages += smsCount;
+    usage.lastUsed = new Date();
+
+    // Calculate overage charges
+    let overageMinutes = 0;
+    let overageSMS = 0;
+    let overageCost = 0;
+
+    // Check for unlimited plans (-1 means unlimited)
+    if (usage.monthlyLimits.phoneMinutes !== -1) {
+      overageMinutes = Math.max(0, usage.phoneMinutes - usage.monthlyLimits.phoneMinutes);
+    }
+    if (usage.monthlyLimits.smsMessages !== -1) {
+      overageSMS = Math.max(0, usage.smsMessages - usage.monthlyLimits.smsMessages);
+    }
+
+    // Calculate overage costs
+    if (overageMinutes > 0) {
+      overageCost += overageMinutes * 0.02; // $0.02 per minute overage
+    }
+    if (overageSMS > 0) {
+      overageCost += overageSMS * 0.05; // $0.05 per SMS overage
+    }
+
+    this.usage.set(userId, usage);
+
+    console.log(`📞 Phone usage tracked for user ${userId}: ${minutes} minutes, ${smsCount} SMS`);
+    if (overageCost > 0) {
+      console.log(`💰 Overage charges: $${overageCost.toFixed(2)}`);
+    }
+
+    return {
+      success: true,
+      overage: overageMinutes + overageSMS,
+      cost: overageCost
+    };
+  }
+
+  /**
+   * Get user's phone usage statistics
+   */
+  static getPhoneUsage(userId: string): {
+    minutesUsed: number;
+    smsUsed: number;
+    minutesLimit: number;
+    smsLimit: number;
+    overageCharges: number;
+    remainingMinutes: number;
+    remainingSMS: number;
+  } | null {
+    const usage = this.usage.get(userId);
+    if (!usage) return null;
+
+    const remainingMinutes = usage.monthlyLimits.phoneMinutes === -1 
+      ? -1 // Unlimited
+      : Math.max(0, usage.monthlyLimits.phoneMinutes - usage.phoneMinutes);
+    
+    const remainingSMS = usage.monthlyLimits.smsMessages === -1 
+      ? -1 // Unlimited
+      : Math.max(0, usage.monthlyLimits.smsMessages - usage.smsMessages);
+
+    // Calculate overage charges
+    const overageMinutes = usage.monthlyLimits.phoneMinutes === -1 
+      ? 0 
+      : Math.max(0, usage.phoneMinutes - usage.monthlyLimits.phoneMinutes);
+    const overageSMS = usage.monthlyLimits.smsMessages === -1 
+      ? 0 
+      : Math.max(0, usage.smsMessages - usage.monthlyLimits.smsMessages);
+    
+    const overageCharges = (overageMinutes * 0.02) + (overageSMS * 0.05);
+
+    return {
+      minutesUsed: usage.phoneMinutes,
+      smsUsed: usage.smsMessages,
+      minutesLimit: usage.monthlyLimits.phoneMinutes,
+      smsLimit: usage.monthlyLimits.smsMessages,
+      overageCharges: Math.round(overageCharges * 100) / 100,
+      remainingMinutes,
+      remainingSMS
+    };
+  }
+
+  /**
+   * Reset monthly usage (called at start of billing cycle)
+   */
+  static resetMonthlyUsage(userId: string): void {
+    const usage = this.usage.get(userId);
+    if (usage) {
+      usage.phoneMinutes = 0;
+      usage.smsMessages = 0;
+      usage.apiCalls = 0;
+      usage.loadsProcessed = 0;
+      usage.documentsGenerated = 0;
+      usage.aiInteractions = 0;
+      this.usage.set(userId, usage);
+      console.log(`🔄 Monthly usage reset for user ${userId}`);
+    }
+  }
+
+  /**
+   * Check if user can make a phone call (within limits)
+   */
+  static canMakePhoneCall(userId: string): { allowed: boolean; reason?: string } {
+    const usage = this.usage.get(userId);
+    if (!usage) {
+      return { allowed: false, reason: 'No usage tracking found' };
+    }
+
+    // Unlimited plans
+    if (usage.monthlyLimits.phoneMinutes === -1) {
+      return { allowed: true };
+    }
+
+    // Check if under limit
+    if (usage.phoneMinutes < usage.monthlyLimits.phoneMinutes) {
+      return { allowed: true };
+    }
+
+    // Allow overage calls (will be charged)
+    return { 
+      allowed: true, 
+      reason: `Overage charges apply ($0.02/min). Used ${usage.phoneMinutes}/${usage.monthlyLimits.phoneMinutes} minutes.`
+    };
   }
 
   /**

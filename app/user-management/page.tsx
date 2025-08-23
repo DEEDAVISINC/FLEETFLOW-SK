@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import DocumentsPortalButton from '../components/DocumentsPortalButton';
+import UserSubscriptionManager from '../components/UserSubscriptionManager';
+import { ContractorOnboardingWorkflow } from '../onboarding/contractor-onboarding/components/ContractorOnboardingWorkflow';
+import FleetFlowExtensionService from '../services/FleetFlowExtensionService';
 import UserProfileWorkflowService, {
   TrainingAssignment,
   UserProfileWorkflowData,
@@ -1116,6 +1120,139 @@ const mockUsers = [
       'user-management': false,
       'financial-oversight': false,
       'system-configuration': false,
+    },
+  },
+
+  // Sales Department Users
+  {
+    id: 'AL-SL-20240201-1',
+    name: 'Amanda Lopez',
+    email: 'amanda.lopez@fleetflow.com',
+    phone: '(555) 234-5678',
+    department: 'Sales',
+    departmentCode: 'SL',
+    position: 'Senior Sales Representative',
+    hiredDate: '2024-02-01',
+    role: 'Sales Rep',
+    status: 'active',
+    lastActive: '2024-12-19T14:20:00Z',
+    systemAccess: {
+      level: 'Sales Portal',
+      accessCode: 'ACC-AL-SL',
+      securityLevel: 'Level 3 - Sales',
+      allowedSystems: [
+        'CRM System',
+        'Quote Generation',
+        'Customer Portal',
+        'Sales Analytics',
+      ],
+    },
+    emergencyContact: {
+      name: 'Carlos Lopez',
+      relation: 'Husband',
+      phone: '(555) 876-5432',
+      altPhone: '(555) 765-4321',
+    },
+    notes:
+      '• Top performing sales representative\n• Specializes in enterprise accounts\n• Customer relationship management expert\n• CRM system power user',
+    permissions: {
+      // Sales-specific permissions
+      'crm-customer-management': true,
+      'sales-quote-generation': true,
+      'sales-lead-tracking': true,
+      'sales-pipeline-management': true,
+      'sales-analytics-view': true,
+      'customer-communication': true,
+      'quote-approval-request': true,
+      'sales-reports-view': true,
+      'prospect-management': true,
+      'customer-portal-access': true,
+
+      // Limited system access
+      'dashboard-view': true,
+      'system-notifications-receive': true,
+      'system-profile-edit': true,
+      'system-password-change': true,
+
+      // Restricted access
+      'user-management': false,
+      'financial-oversight': false,
+      'dispatch-operations': false,
+      'fleet-management': false,
+      'system-administration': false,
+    },
+  },
+  {
+    id: 'RT-SL-20240315-2',
+    name: 'Robert Taylor',
+    email: 'robert.taylor@fleetflow.com',
+    phone: '(555) 345-6789',
+    department: 'Sales',
+    departmentCode: 'SL',
+    position: 'Sales Manager',
+    hiredDate: '2024-03-15',
+    role: 'Sales Manager',
+    status: 'active',
+    lastActive: '2024-12-19T16:45:00Z',
+    systemAccess: {
+      level: 'Sales Management',
+      accessCode: 'ACC-RT-SL',
+      securityLevel: 'Level 4 - Sales Management',
+      allowedSystems: [
+        'CRM Management',
+        'Sales Team Analytics',
+        'Quote Approval',
+        'Customer Management',
+        'Sales Reporting',
+      ],
+    },
+    emergencyContact: {
+      name: 'Jennifer Taylor',
+      relation: 'Wife',
+      phone: '(555) 987-6543',
+      altPhone: '(555) 654-3210',
+    },
+    notes:
+      '• Sales team manager with 8+ years experience\n• Responsible for sales team training and development\n• Key account relationship management\n• Quote approval authority up to $50K',
+    permissions: {
+      // Sales Management permissions
+      'sales-team-management': true,
+      'sales-performance-tracking': true,
+      'sales-quote-approval': true,
+      'sales-territory-management': true,
+      'sales-commission-tracking': true,
+      'customer-relationship-oversight': true,
+      'sales-training-management': true,
+      'sales-goal-setting': true,
+      'lead-assignment': true,
+      'sales-reporting': true,
+
+      // CRM and Customer Management
+      'crm-customer-management': true,
+      'crm-advanced-analytics': true,
+      'customer-data-export': true,
+      'customer-portal-management': true,
+      'quote-generation': true,
+      'contract-preparation': true,
+
+      // System Access
+      'dashboard-view': true,
+      'analytics-sales-view': true,
+      'reports-sales-generate': true,
+      'system-notifications-receive': true,
+      'system-profile-edit': true,
+      'system-password-change': true,
+
+      // Limited access
+      'user-account-view': true,
+      'user-permissions-view': true,
+      'financial-reports-limited': true,
+
+      // Restricted access
+      'system-administration': false,
+      'dispatch-operations': false,
+      'fleet-management': false,
+      'compliance-management': false,
     },
   },
 ];
@@ -2456,8 +2593,12 @@ export default function UserManagement() {
     [userId: string]: UserProfileWorkflowData;
   }>({});
   const [showTrainingAssignment, setShowTrainingAssignment] = useState(false);
+  const [showContractorOnboarding, setShowContractorOnboarding] =
+    useState(false);
+  const [onboardingUser, setOnboardingUser] = useState<any>(null);
 
   const workflowService = UserProfileWorkflowService.getInstance();
+  const extensionService = FleetFlowExtensionService.getInstance();
 
   const filteredUsers = mockUsers.filter(
     (user) =>
@@ -2585,6 +2726,58 @@ export default function UserManagement() {
   };
 
   // Handle auto-assign role-based FleetFlow University training
+  const handleStartContractorOnboarding = (user: any) => {
+    setOnboardingUser({
+      id: user.id,
+      firstName: user.name.split(' ')[0],
+      lastName: user.name.split(' ').slice(1).join(' '),
+      email: user.email,
+      phone: user.phone || '',
+      role:
+        user.departmentCode === 'DC'
+          ? 'dispatcher'
+          : user.departmentCode === 'BB'
+            ? 'broker_agent'
+            : 'both',
+    });
+    setShowContractorOnboarding(true);
+  };
+
+  const handleContractorOnboardingComplete = (finalData: any) => {
+    console.log('Contractor onboarding completed:', finalData);
+
+    // Store signed documents in user's profile
+    if (onboardingUser && finalData) {
+      try {
+        // Import the user document service
+        import('../services/UserDocumentService').then(
+          ({ userDocumentService }) => {
+            userDocumentService.storeICAOnboardingDocuments(
+              onboardingUser.id,
+              finalData.icaDocument,
+              finalData.signatureData,
+              finalData.ndaAcknowledgment
+            );
+          }
+        );
+      } catch (error) {
+        console.error('Error storing signed documents:', error);
+      }
+    }
+
+    alert(
+      `🎉 Employee onboarding completed for ${onboardingUser?.firstName} ${onboardingUser?.lastName}! ICA signed successfully. Documents saved to user profile.`
+    );
+    setShowContractorOnboarding(false);
+    setOnboardingUser(null);
+    // In production, this would update the user's onboarding status in the database
+  };
+
+  const handleContractorOnboardingCancel = () => {
+    setShowContractorOnboarding(false);
+    setOnboardingUser(null);
+  };
+
   const handleAutoAssignTraining = (userId: string, departmentCode: string) => {
     const roleTrainingMap: Record<string, string[]> = {
       DC: [
@@ -2939,55 +3132,64 @@ export default function UserManagement() {
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                flexDirection: 'column',
+                gap: '12px',
                 marginBottom: '20px',
               }}
             >
-              <button
-                onClick={() =>
-                  setCurrentUserIndex(
-                    (prev) =>
-                      (prev - 1 + filteredUsers.length) % filteredUsers.length
-                  )
-                }
+              <DocumentsPortalButton variant='small' />
+              <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
-                ← Previous
-              </button>
+                <button
+                  onClick={() =>
+                    setCurrentUserIndex(
+                      (prev) =>
+                        (prev - 1 + filteredUsers.length) % filteredUsers.length
+                    )
+                  }
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '8px',
+                    padding: '10px 16px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  ← Previous
+                </button>
 
-              <span style={{ color: 'white', fontSize: '14px' }}>
-                {currentUserIndex + 1} of {filteredUsers.length}
-              </span>
+                <span style={{ color: 'white', fontSize: '14px' }}>
+                  {currentUserIndex + 1} of {filteredUsers.length}
+                </span>
 
-              <button
-                onClick={() =>
-                  setCurrentUserIndex(
-                    (prev) => (prev + 1) % filteredUsers.length
-                  )
-                }
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                }}
-              >
-                Next →
-              </button>
+                <button
+                  onClick={() =>
+                    setCurrentUserIndex(
+                      (prev) => (prev + 1) % filteredUsers.length
+                    )
+                  }
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '8px',
+                    padding: '10px 16px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Next →
+                </button>
+              </div>
             </div>
 
             {/* Page Indicators */}
@@ -3119,6 +3321,80 @@ export default function UserManagement() {
                       }}
                     >
                       {currentUser?.phone || 'Not provided'}
+                    </div>
+                  </div>
+
+                  {/* FleetFlow Extension Field */}
+                  <div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📞 <strong>FLEETFLOW EXTENSION</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: (() => {
+                          const color = extensionService.getDepartmentColor(
+                            currentUser?.departmentCode || 'MGR'
+                          );
+                          // Convert hex to rgb for rgba
+                          const r = parseInt(color.slice(1, 3), 16);
+                          const g = parseInt(color.slice(3, 5), 16);
+                          const b = parseInt(color.slice(5, 7), 16);
+                          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+                        })(),
+                        color: extensionService.getDepartmentColor(
+                          currentUser?.departmentCode || 'MGR'
+                        ),
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: (() => {
+                          const color = extensionService.getDepartmentColor(
+                            currentUser?.departmentCode || 'MGR'
+                          );
+                          const r = parseInt(color.slice(1, 3), 16);
+                          const g = parseInt(color.slice(3, 5), 16);
+                          const b = parseInt(color.slice(5, 7), 16);
+                          return `1px solid rgba(${r}, ${g}, ${b}, 0.3)`;
+                        })(),
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        fontFamily: 'monospace',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span>
+                        {(() => {
+                          const extension = extensionService.getUserExtension(
+                            currentUser?.id || ''
+                          );
+                          return extension
+                            ? `Ext. ${extension.extension}`
+                            : 'Not assigned';
+                        })()}
+                      </span>
+                      {(() => {
+                        const extension = extensionService.getUserExtension(
+                          currentUser?.id || ''
+                        );
+                        return extension?.phoneSetupComplete ? (
+                          <span style={{ fontSize: '10px', color: '#22c55e' }}>
+                            ✅ Setup Complete
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '10px', color: '#f59e0b' }}>
+                            ⚠️ Setup Pending
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -4288,6 +4564,33 @@ export default function UserManagement() {
                       Training
                     </span>
                   </div>
+
+                  {/* ICA Onboarding Button for Incomplete Users */}
+                  {currentUser.departmentCode !== 'MGR' && (
+                    <button
+                      onClick={() =>
+                        handleStartContractorOnboarding(currentUser)
+                      }
+                      style={{
+                        marginTop: '12px',
+                        padding: '8px 16px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #d946ef, #c026d3)',
+                        color: 'white',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      📄 Complete ICA Onboarding
+                    </button>
+                  )}
                 </div>
               ) : (
                 // Carrier view - shows own progress
@@ -6308,11 +6611,43 @@ export default function UserManagement() {
                         >
                           📝 Custom Training Access (Coming Soon)
                         </button>
+                        {currentUser.departmentCode !== 'MGR' && (
+                          <button
+                            onClick={() =>
+                              handleStartContractorOnboarding(currentUser)
+                            }
+                            style={{
+                              background:
+                                'linear-gradient(135deg, #d946ef, #c026d3)',
+                              border: 'none',
+                              borderRadius: '6px',
+                              color: 'white',
+                              padding: '8px 12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            📄 Complete ICA Onboarding
+                          </button>
+                        )}
                       </>
                     )}
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* User Subscription Management */}
+            <div
+              style={{
+                marginBottom: '20px',
+              }}
+            >
+              <UserSubscriptionManager
+                userId={selectedUser.id}
+                isCompact={true}
+              />
             </div>
 
             {/* Action Buttons */}
@@ -6388,6 +6723,43 @@ export default function UserManagement() {
           </div>
         </div>
       </div>
+
+      {/* Contractor Onboarding Modal */}
+      {showContractorOnboarding && onboardingUser && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              width: '90%',
+              maxWidth: '1200px',
+              maxHeight: '90vh',
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
+            <ContractorOnboardingWorkflow
+              contractorData={onboardingUser}
+              onComplete={handleContractorOnboardingComplete}
+              onCancel={handleContractorOnboardingCancel}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

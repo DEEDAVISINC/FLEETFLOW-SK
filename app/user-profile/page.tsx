@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ExecutiveComplianceCenter from '../components/ExecutiveComplianceCenter';
 import OpenELDOnboardingSetup from '../components/OpenELDOnboardingSetup';
+import PhoneConnectionSetup from '../components/PhoneConnectionSetup';
+import UserSubscriptionManager from '../components/UserSubscriptionManager';
+import FleetFlowExtensionService from '../services/FleetFlowExtensionService';
 import {
   ICAOnboardingRecord,
   ICAOnboardingService,
@@ -311,6 +314,7 @@ export default function UserProfile() {
 
   const currentUser = demoUser;
   const workflowService = UserProfileWorkflowService.getInstance();
+  const extensionService = FleetFlowExtensionService.getInstance();
 
   // Initialize user permissions and ICA onboarding
   useEffect(() => {
@@ -520,7 +524,7 @@ export default function UserProfile() {
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
               >
-                <Link href='/' style={{ textDecoration: 'none' }}>
+                <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
                   <button
                     style={{
                       background: 'rgba(59, 130, 246, 0.2)',
@@ -2233,7 +2237,14 @@ export default function UserProfile() {
                       marginBottom: '8px',
                     }}
                   >
-                    Extension: 1001 • Status: Available
+                    {(() => {
+                      const extension = extensionService.getUserExtension(
+                        currentUser.id
+                      );
+                      return extension
+                        ? `Extension: ${extension.extension} • Status: ${extension.status === 'active' ? 'Available' : 'Inactive'}`
+                        : 'Extension: Not assigned • Status: Pending';
+                    })()}
                   </div>
                   <div
                     style={{
@@ -2283,6 +2294,261 @@ export default function UserProfile() {
                       4.2m Talk Time
                     </div>
                   </div>
+                </div>
+
+                {/* Phone Setup Department - Available when Phone Dialer is Active */}
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    marginTop: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#f59e0b',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    >
+                      🔧 PHONE SETUP & CONFIGURATION
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.3)',
+                        color: '#22c55e',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      AVAILABLE
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    Configure your phone system settings, connection setup, and
+                    dialer preferences
+                  </div>
+
+                  {/* Phone Setup Actions */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(140px, 1fr))',
+                      gap: '8px',
+                    }}
+                  >
+                    <Link
+                      href='/call-flow'
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.2)',
+                        color: '#fbbf24',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                        textDecoration: 'none',
+                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(245, 158, 11, 0.3)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(245, 158, 11, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      🔧 Open Phone Setup
+                    </Link>
+
+                    <button
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        color: '#60a5fa',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        border: '1px solid rgba(59, 130, 246, 0.4)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(59, 130, 246, 0.3)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(59, 130, 246, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                      onClick={() => {
+                        setShowOpenELDSetup(!showOpenELDSetup);
+                      }}
+                    >
+                      ⚙️ Configuration
+                    </button>
+
+                    <button
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#22c55e',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(16, 185, 129, 0.3)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(16, 185, 129, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                      onClick={() => {
+                        alert(
+                          'Testing phone connection for ' + currentUser.name
+                        );
+                      }}
+                    >
+                      🧪 Test Connection
+                    </button>
+                  </div>
+
+                  {/* Connection Status */}
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      padding: '8px 12px',
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      borderRadius: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: '#22c55e',
+                        boxShadow: '0 0 6px #22c55e',
+                      }}
+                    />
+                    <span
+                      style={{
+                        color: '#22c55e',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {(() => {
+                        const extension = extensionService.getUserExtension(
+                          currentUser.id
+                        );
+                        return extension
+                          ? `Phone System Connected • FreeSWITCH Online • Extension ${extension.extension} Active`
+                          : 'Phone System Disconnected • Extension Not Assigned';
+                      })()}
+                    </span>
+                  </div>
+
+                  {/* Embedded Phone Setup - Shows when Configuration is clicked */}
+                  {showOpenELDSetup && (
+                    <div
+                      style={{
+                        marginTop: '16px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '12px',
+                        }}
+                      >
+                        <h5
+                          style={{
+                            color: '#f59e0b',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            margin: 0,
+                          }}
+                        >
+                          🔧 Phone System Configuration
+                        </h5>
+                        <button
+                          style={{
+                            background: 'rgba(239, 68, 68, 0.2)',
+                            color: '#ef4444',
+                            border: '1px solid rgba(239, 68, 68, 0.4)',
+                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            fontSize: '10px',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setShowOpenELDSetup(false)}
+                        >
+                          ✕ Close
+                        </button>
+                      </div>
+
+                      {/* Embedded Phone Setup Component */}
+                      <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+                        <PhoneConnectionSetup
+                          user={currentUser}
+                          onSetupComplete={(setupData) => {
+                            console.log(
+                              'Phone setup completed for user:',
+                              setupData
+                            );
+                            alert(
+                              `Phone setup completed successfully for ${currentUser.name}!`
+                            );
+                            setShowOpenELDSetup(false);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -2358,6 +2624,19 @@ export default function UserProfile() {
                 {currentUser.notes || 'No additional notes on file.'}
               </div>
             </div>
+          </div>
+
+          {/* Subscription Management */}
+          <div
+            style={{
+              padding: '32px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <UserSubscriptionManager
+              userId={currentUser.id}
+              isCompact={false}
+            />
           </div>
 
           {/* Action Buttons - exactly from user-management */}

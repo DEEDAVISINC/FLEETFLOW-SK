@@ -26,9 +26,11 @@ import {
   Truck,
   UserPlus,
   Users,
+  Warehouse,
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import AISalesAssistantDashboard from '../components/AISalesAssistantDashboard';
 import AISalesIntelligenceHub from '../components/AISalesIntelligenceHub';
 import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
 import CRMDashboard from '../components/CRMDashboard';
@@ -39,8 +41,11 @@ import { SubscriptionManagementService } from '../services/SubscriptionManagemen
 import webSocketNotificationService from '../services/WebSocketNotificationService';
 // Updated import: 2024-12-21 23:15:00
 import AILoadBookingHub from '../components/AILoadBookingHub';
+import Advanced3PLDashboard from '../components/Advanced3PLDashboard';
 import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
+import SmartLoadNetworkDashboard from '../components/SmartLoadNetworkDashboard';
 import TruckingPlanetIntelligence from '../components/TruckingPlanetIntelligence';
+import WARPSmartBiddingDashboard from '../components/WARPSmartBiddingDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -556,7 +561,7 @@ export default function AIFlowPage() {
           onValueChange={setActiveTab}
           className='space-y-6'
         >
-          <TabsList className='grid w-full grid-cols-16 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+          <TabsList className='grid w-full grid-cols-19 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -601,6 +606,13 @@ export default function AIFlowPage() {
             <TabsTrigger value='ai-review' className='flex items-center gap-2'>
               <CheckCircle className='h-4 w-4' />
               AI Review
+            </TabsTrigger>
+            <TabsTrigger
+              value='ai-sales-assistant'
+              className='flex items-center gap-2'
+            >
+              <MessageSquare className='h-4 w-4' />
+              Sales AI
             </TabsTrigger>
             <TabsTrigger
               value='services-sales'
@@ -652,6 +664,27 @@ export default function AIFlowPage() {
               className='flex items-center gap-2'
             >
               🚛 AI Load Booking
+            </TabsTrigger>
+            <TabsTrigger
+              value='smart-load-network'
+              className='flex items-center gap-2'
+            >
+              <Truck className='h-4 w-4' />
+              🚛 Smart Loads
+            </TabsTrigger>
+            <TabsTrigger
+              value='warp-smart-bidding'
+              className='flex items-center gap-2'
+            >
+              <Target className='h-4 w-4' />
+              🎯 Smart Bidding
+            </TabsTrigger>
+            <TabsTrigger
+              value='advanced-3pl'
+              className='flex items-center gap-2'
+            >
+              <Warehouse className='h-4 w-4' />
+              🏭 Advanced 3PL
             </TabsTrigger>
             <TabsTrigger
               value='subscription-manager'
@@ -1306,6 +1339,11 @@ export default function AIFlowPage() {
                 AI Review Dashboard temporarily disabled for debugging
               </p>
             </div>
+          </TabsContent>
+
+          {/* AI Sales Assistant Tab - Native SalesAI Features */}
+          <TabsContent value='ai-sales-assistant' className='space-y-6'>
+            <AISalesAssistantDashboard />
           </TabsContent>
 
           {/* Services Sales Tab - REVENUE ENGINE */}
@@ -2194,6 +2232,21 @@ export default function AIFlowPage() {
           {/* AI Load Booking Tab */}
           <TabsContent value='ai-load-booking' className='space-y-6'>
             <AILoadBookingHub />
+          </TabsContent>
+
+          {/* Smart Load Network Tab */}
+          <TabsContent value='smart-load-network' className='space-y-6'>
+            <SmartLoadNetworkDashboard />
+          </TabsContent>
+
+          {/* WARP Smart Bidding Tab */}
+          <TabsContent value='warp-smart-bidding' className='space-y-6'>
+            <WARPSmartBiddingDashboard />
+          </TabsContent>
+
+          {/* Advanced 3PL Tab */}
+          <TabsContent value='advanced-3pl' className='space-y-6'>
+            <Advanced3PLDashboard />
           </TabsContent>
 
           {/* Subscription Manager Tab */}

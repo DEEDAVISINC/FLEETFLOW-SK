@@ -13,19 +13,34 @@ export interface Schedule {
   endTime: string;
   status: 'Scheduled' | 'In Progress' | 'Completed' | 'Cancelled' | 'Delayed';
   priority: 'Low' | 'Medium' | 'High' | 'Urgent';
-  scheduleType: 'Delivery' | 'Pickup' | 'Maintenance' | 'Training' | 'Inspection' | 'Break' | 'Other';
-  
+  scheduleType:
+    | 'Delivery'
+    | 'Pickup'
+    | 'Maintenance'
+    | 'Training'
+    | 'Inspection'
+    | 'Break'
+    | 'Other';
+
   // Driver Assignment
   assignedDriverId?: string;
   driverName?: string;
-  driverAvailabilityStatus?: 'Available' | 'Conflict' | 'HOS_Violation' | 'License_Issue';
+  driverAvailabilityStatus?:
+    | 'Available'
+    | 'Conflict'
+    | 'HOS_Violation'
+    | 'License_Issue';
   estimatedHours?: number;
-  
+
   // Vehicle Assignment
   assignedVehicleId?: string;
   vehicleName?: string;
-  vehicleAvailabilityStatus?: 'Available' | 'In_Use' | 'Maintenance_Required' | 'Out_Of_Service';
-  
+  vehicleAvailabilityStatus?:
+    | 'Available'
+    | 'In_Use'
+    | 'Maintenance_Required'
+    | 'Out_Of_Service';
+
   // Route Information
   origin?: string;
   destination?: string;
@@ -33,23 +48,25 @@ export interface Schedule {
   estimatedDistance?: number;
   estimatedDuration?: number;
   routeOptimized?: boolean;
-  
+
   // Compliance & Safety
   hosCompliance?: boolean;
   licenseVerified?: boolean;
   vehicleInspectionCurrent?: boolean;
   maintenanceRequired?: boolean;
-  
+
   // Notifications & Updates
   createdBy: string;
   createdAt: string;
   updatedAt: string;
   lastStatusUpdate?: string;
   notifications?: ScheduleNotification[];
-  
+
   // Integration Fields
   loadId?: string;
   customerId?: string;
+  loadWeight?: number; // Load weight in pounds
+  miles?: number; // Distance in miles
   shipmentDetails?: ShipmentInfo;
 }
 
@@ -161,7 +178,12 @@ export interface DailySchedule {
 }
 
 export interface ScheduleConflict {
-  type: 'time_overlap' | 'double_booking' | 'hos_violation' | 'maintenance_required' | 'license_expired';
+  type:
+    | 'time_overlap'
+    | 'double_booking'
+    | 'hos_violation'
+    | 'maintenance_required'
+    | 'license_expired';
   severity: 'warning' | 'error';
   message: string;
   affectedSchedules: string[];

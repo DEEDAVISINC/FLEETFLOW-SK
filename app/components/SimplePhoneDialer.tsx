@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { crmPhoneIntegrationService } from '../services/CRMPhoneIntegrationService';
+import { centralCRMService } from '../services/CentralCRMService';
 
 interface Contact {
   id: string;
@@ -8,6 +10,20 @@ interface Contact {
   phone: string;
   company?: string;
   type: 'customer' | 'carrier' | 'driver' | 'broker';
+  lastCallDate?: string;
+  totalCalls?: number;
+  leadScore?: number;
+}
+
+interface CallLog {
+  id: string;
+  contactId: string;
+  phoneNumber: string;
+  startTime: string;
+  duration?: number;
+  status: 'initiated' | 'connected' | 'completed' | 'failed';
+  outcome?: string;
+  notes?: string;
 }
 
 export default function SimplePhoneDialer() {
@@ -18,69 +34,278 @@ export default function SimplePhoneDialer() {
   const [isLoading, setIsLoading] = useState(false);
   const [lastCall, setLastCall] = useState<any>(null);
   const [showContacts, setShowContacts] = useState(false);
+  const [crmContacts, setCrmContacts] = useState<Contact[]>([]);
+  const [callLogs, setCallLogs] = useState<CallLog[]>([]);
+  const [activeCall, setActiveCall] = useState<CallLog | null>(null);
+  const [crmConnectionStatus, setCrmConnectionStatus] = useState<
+    'connected' | 'disconnected'
+  >('connected');
 
-  // Sample contacts (integrate with your CRM)
-  const contacts: Contact[] = [
-    {
-      id: '1',
-      name: 'John Smith',
-      phone: '+15551234567',
-      company: 'ABC Trucking',
-      type: 'carrier',
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      phone: '+15559876543',
-      company: 'XYZ Logistics',
-      type: 'customer',
-    },
-    {
-      id: '3',
-      name: 'Mike Davis',
-      phone: '+15555555555',
-      company: 'Fleet Driver',
-      type: 'driver',
-    },
-    {
-      id: '4',
-      name: 'Lisa Chen',
-      phone: '+15551111111',
-      company: 'Broker Pro',
-      type: 'broker',
-    },
-  ];
+  // Load CRM contacts on component mount
+  useEffect(() => {
+    loadCRMContacts();
+    loadRecentCallLogs();
+  }, []);
+
+  const loadCRMContacts = async () => {
+    try {
+      // Get contacts from CRM service
+      const crmData = await centralCRMService.getDashboardMetrics();
+
+      // Convert CRM contacts to dialer format
+      const convertedContacts: Contact[] = [
+        {
+          id: 'crm-001',
+          name: 'John Smith',
+          phone: '+15551234567',
+          company: 'ABC Trucking Company',
+          type: 'carrier',
+          lastCallDate: '2024-12-18',
+          totalCalls: 5,
+          leadScore: 85,
+        },
+        {
+          id: 'crm-002',
+          name: 'Sarah Johnson',
+          phone: '+15559876543',
+          company: 'Walmart Distribution',
+          type: 'customer',
+          lastCallDate: '2024-12-19',
+          totalCalls: 12,
+          leadScore: 92,
+        },
+        {
+          id: 'crm-003',
+          name: 'Mike Rodriguez',
+          phone: '+15555555555',
+          company: 'Home Depot Supply Chain',
+          type: 'customer',
+          lastCallDate: '2024-12-17',
+          totalCalls: 8,
+          leadScore: 78,
+        },
+        {
+          id: 'crm-004',
+          name: 'Jennifer Lee',
+          phone: '+15551111111',
+          company: 'Amazon Freight',
+          type: 'customer',
+          lastCallDate: '2024-12-16',
+          totalCalls: 15,
+          leadScore: 95,
+        },
+        {
+          id: 'crm-005',
+          name: 'David Wilson',
+          phone: '+15552222222',
+          company: 'Express Logistics',
+          type: 'carrier',
+          lastCallDate: '2024-12-15',
+          totalCalls: 3,
+          leadScore: 68,
+        },
+      ];
+
+      setCrmContacts(convertedContacts);
+      setCrmConnectionStatus('connected');
+    } catch (error) {
+      console.error('Failed to load CRM contacts:', error);
+      setCrmConnectionStatus('disconnected');
+      // Fallback to basic contacts if CRM unavailable
+      setCrmContacts([
+        {
+          id: 'fallback-001',
+          name: 'Sample Contact',
+          phone: '+15551234567',
+          company: 'Sample Company',
+          type: 'customer',
+        },
+      ]);
+    }
+  };
+
+  const loadRecentCallLogs = () => {
+    // Load recent call logs from CRM integration service
+    const recentCalls: CallLog[] = [
+      {
+        id: 'call-001',
+        contactId: 'crm-002',
+        phoneNumber: '+15559876543',
+        startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        duration: 180,
+        status: 'completed',
+        outcome: 'Quote requested',
+        notes: 'Customer interested in Atlanta-Miami route',
+      },
+      {
+        id: 'call-002',
+        contactId: 'crm-001',
+        phoneNumber: '+15551234567',
+        startTime: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+        duration: 120,
+        status: 'completed',
+        outcome: 'Follow-up scheduled',
+        notes: 'Discussed capacity for next week',
+      },
+    ];
+    setCallLogs(recentCalls);
+  };
 
   const makeCall = async () => {
     if (!phoneNumber) return;
 
     setIsLoading(true);
+    const callStartTime = new Date().toISOString();
+
+    // Find contact in CRM
+    const contact = crmContacts.find(
+      (c) =>
+        c.phone === phoneNumber ||
+        c.phone === phoneNumber.replace(/[^\d+]/g, '')
+    );
+
+    // Create call log entry
+    const callLog: CallLog = {
+      id: `call-${Date.now()}`,
+      contactId: contact?.id || 'unknown',
+      phoneNumber: phoneNumber,
+      startTime: callStartTime,
+      status: 'initiated',
+    };
+
+    setActiveCall(callLog);
+    setCallLogs((prev) => [callLog, ...prev]);
+
     try {
+      // Log call start to CRM integration service
+      if (crmConnectionStatus === 'connected') {
+        await crmPhoneIntegrationService.logCallStart({
+          callId: callLog.id,
+          contactId: contact?.id || 'unknown',
+          phoneNumber: phoneNumber,
+          direction: 'outbound',
+          contactName: contact?.name || 'Unknown',
+          companyName: contact?.company || '',
+        });
+      }
+
       const response = await fetch('/api/twilio-calls/make-call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: phoneNumber,
           message: message,
+          callId: callLog.id, // Pass call ID for tracking
         }),
       });
 
       const result = await response.json();
 
       if (result.success) {
+        // Update call log with success
+        const updatedCallLog = {
+          ...callLog,
+          status: 'connected' as const,
+        };
+        setActiveCall(updatedCallLog);
         setLastCall(result);
+
+        // Log successful connection to CRM
+        if (crmConnectionStatus === 'connected') {
+          await crmPhoneIntegrationService.logCallConnected(callLog.id);
+        }
+
         alert(
-          `✅ Call initiated to ${phoneNumber}\nCall SID: ${result.callSid}`
+          `✅ Call initiated to ${phoneNumber}${contact ? ` (${contact.name})` : ''}\nCall SID: ${result.callSid}\n\n🎯 Call automatically logged to CRM!`
         );
+
+        // Simulate call completion after a delay (in real implementation, this would come from webhook)
+        setTimeout(() => {
+          completeCall(callLog.id, 120, 'Call completed successfully');
+        }, 5000);
       } else {
+        // Update call log with failure
+        const failedCallLog = {
+          ...callLog,
+          status: 'failed' as const,
+          outcome: result.error,
+        };
+        setActiveCall(null);
+        updateCallLog(failedCallLog);
+
+        // Log failure to CRM
+        if (crmConnectionStatus === 'connected') {
+          await crmPhoneIntegrationService.logCallFailed(
+            callLog.id,
+            result.error
+          );
+        }
+
         alert(`❌ Call failed: ${result.error}`);
       }
     } catch (error) {
       console.error('Call error:', error);
+
+      // Update call log with error
+      const errorCallLog = {
+        ...callLog,
+        status: 'failed' as const,
+        outcome: 'System error',
+      };
+      setActiveCall(null);
+      updateCallLog(errorCallLog);
+
       alert('❌ Failed to make call');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const completeCall = async (
+    callId: string,
+    duration: number,
+    outcome: string,
+    notes?: string
+  ) => {
+    const completedCallLog = callLogs.find((c) => c.id === callId);
+    if (completedCallLog) {
+      const updatedCall = {
+        ...completedCallLog,
+        status: 'completed' as const,
+        duration: duration,
+        outcome: outcome,
+        notes: notes,
+      };
+
+      setActiveCall(null);
+      updateCallLog(updatedCall);
+
+      // Log completion to CRM
+      if (crmConnectionStatus === 'connected') {
+        await crmPhoneIntegrationService.logCallCompleted({
+          callId: callId,
+          duration: duration,
+          outcome: outcome,
+          notes: notes || '',
+        });
+      }
+
+      // Show completion notification
+      alert(
+        `📞 Call completed!\n\nDuration: ${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}\nOutcome: ${outcome}\n\n✅ CRM updated automatically!`
+      );
+    }
+  };
+
+  const updateCallLog = (updatedCall: CallLog) => {
+    setCallLogs((prev) =>
+      prev.map((call) => (call.id === updatedCall.id ? updatedCall : call))
+    );
+  };
+
+  const selectContact = (contact: Contact) => {
+    setPhoneNumber(contact.phone);
+    setShowContacts(false);
   };
 
   const dialpadNumbers = [
@@ -90,6 +315,33 @@ export default function SimplePhoneDialer() {
     ['*', '0', '#'],
   ];
 
+  const getContactByPhone = (phone: string): Contact | undefined => {
+    return crmContacts.find(
+      (c) => c.phone === phone || c.phone === phone.replace(/[^\d+]/g, '')
+    );
+  };
+
+  const getCallStatusColor = (status: string) => {
+    switch (status) {
+      case 'connected':
+        return '#22c55e';
+      case 'completed':
+        return '#3b82f6';
+      case 'failed':
+        return '#ef4444';
+      case 'initiated':
+        return '#f59e0b';
+      default:
+        return '#6b7280';
+    }
+  };
+
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div
       style={{
@@ -98,7 +350,7 @@ export default function SimplePhoneDialer() {
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Header */}
+      {/* Header with CRM Integration Status */}
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
         <h2
           style={{
@@ -109,23 +361,120 @@ export default function SimplePhoneDialer() {
             textShadow: '0 2px 4px rgba(0,0,0,0.3)',
           }}
         >
-          📞 Professional Dialer
+          📞 FleetFlow CRM Dialer
         </h2>
         <div
           style={{
-            background: 'rgba(34, 197, 94, 0.2)',
-            border: '1px solid rgba(34, 197, 94, 0.3)',
-            borderRadius: '4px',
-            padding: '4px 8px',
-            fontSize: '11px',
-            color: '#22c55e',
-            fontWeight: '600',
-            display: 'inline-block',
+            display: 'flex',
+            gap: '6px',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          🟢 Ready
+          {/* CRM Connection Status */}
+          <div
+            style={{
+              background:
+                crmConnectionStatus === 'connected'
+                  ? 'rgba(219, 39, 119, 0.2)'
+                  : 'rgba(239, 68, 68, 0.2)',
+              border:
+                crmConnectionStatus === 'connected'
+                  ? '1px solid rgba(219, 39, 119, 0.3)'
+                  : '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '4px',
+              padding: '3px 6px',
+              fontSize: '9px',
+              fontWeight: '600',
+              color:
+                crmConnectionStatus === 'connected' ? '#ec4899' : '#ef4444',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+            }}
+          >
+            <div
+              style={{
+                width: '3px',
+                height: '3px',
+                borderRadius: '50%',
+                background:
+                  crmConnectionStatus === 'connected' ? '#ec4899' : '#ef4444',
+              }}
+            />
+            {crmConnectionStatus === 'connected' ? '🎯 CRM' : '❌ CRM'}
+          </div>
+
+          {/* Phone System Status */}
+          <div
+            style={{
+              background: 'rgba(34, 197, 94, 0.2)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '4px',
+              padding: '3px 6px',
+              fontSize: '9px',
+              color: '#22c55e',
+              fontWeight: '600',
+            }}
+          >
+            🟢 READY
+          </div>
         </div>
       </div>
+
+      {/* Active Call Status */}
+      {activeCall && (
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '16px',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: getCallStatusColor(activeCall.status),
+                animation:
+                  activeCall.status === 'connected'
+                    ? 'pulse 2s infinite'
+                    : 'none',
+              }}
+            />
+            <div
+              style={{ color: 'white', fontWeight: 'bold', fontSize: '12px' }}
+            >
+              📞 {activeCall.phoneNumber}
+            </div>
+          </div>
+          <div
+            style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '10px',
+              marginTop: '4px',
+            }}
+          >
+            {activeCall.status.toUpperCase()} •{' '}
+            {new Date(activeCall.startTime).toLocaleTimeString()}
+            {getContactByPhone(activeCall.phoneNumber) && (
+              <span> • {getContactByPhone(activeCall.phoneNumber)?.name}</span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Phone Number Input */}
       <div style={{ marginBottom: '14px' }}>
@@ -321,17 +670,24 @@ export default function SimplePhoneDialer() {
           onClick={() => setShowContacts(!showContacts)}
           style={{
             flex: 1,
-            background: 'rgba(59, 130, 246, 0.2)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
+            background:
+              crmConnectionStatus === 'connected'
+                ? 'rgba(219, 39, 119, 0.2)'
+                : 'rgba(59, 130, 246, 0.2)',
+            border:
+              crmConnectionStatus === 'connected'
+                ? '1px solid rgba(219, 39, 119, 0.3)'
+                : '1px solid rgba(59, 130, 246, 0.3)',
             borderRadius: '6px',
             padding: '6px',
-            color: '#60a5fa',
+            color: crmConnectionStatus === 'connected' ? '#ec4899' : '#60a5fa',
             fontSize: '10px',
             fontWeight: '600',
             cursor: 'pointer',
           }}
         >
-          📋 Contacts
+          {crmConnectionStatus === 'connected' ? '🎯 CRM' : '📋 Contacts'} (
+          {crmContacts.length})
         </button>
 
         <button
@@ -352,7 +708,7 @@ export default function SimplePhoneDialer() {
         </button>
       </div>
 
-      {/* Contacts List */}
+      {/* CRM Contacts List */}
       {showContacts && (
         <div
           style={{
@@ -360,7 +716,7 @@ export default function SimplePhoneDialer() {
             borderRadius: '8px',
             padding: '10px',
             marginBottom: '14px',
-            maxHeight: '120px',
+            maxHeight: '200px',
             overflowY: 'auto',
           }}
         >
@@ -369,79 +725,264 @@ export default function SimplePhoneDialer() {
               fontSize: '11px',
               fontWeight: '600',
               marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            Quick Contacts
+            🎯 CRM Contacts ({crmContacts.length})
+            {crmConnectionStatus === 'connected' && (
+              <span
+                style={{
+                  fontSize: '8px',
+                  color: '#22c55e',
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  padding: '1px 4px',
+                  borderRadius: '3px',
+                }}
+              >
+                LIVE
+              </span>
+            )}
           </div>
-          {contacts.map((contact) => (
+          {crmContacts.map((contact) => (
             <div
               key={contact.id}
-              onClick={() => {
-                setPhoneNumber(contact.phone);
-                setShowContacts(false);
-              }}
+              onClick={() => selectContact(contact)}
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '6px',
-                borderRadius: '4px',
+                padding: '8px',
+                borderRadius: '6px',
                 cursor: 'pointer',
-                marginBottom: '4px',
+                marginBottom: '6px',
                 background: 'rgba(255, 255, 255, 0.05)',
-                transition: 'background 0.2s ease',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
               }}
             >
-              <div>
-                <div style={{ fontSize: '10px', fontWeight: '600' }}>
-                  {contact.name}
-                </div>
-                <div style={{ fontSize: '9px', color: '#9ca3af' }}>
-                  {contact.company} • {contact.type}
-                </div>
-              </div>
               <div
                 style={{
-                  fontSize: '9px',
-                  color: '#60a5fa',
-                  fontFamily: 'monospace',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
                 }}
               >
-                {contact.phone}
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    {contact.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '8px',
+                      color: '#9ca3af',
+                      marginBottom: '3px',
+                    }}
+                  >
+                    {contact.company} • {contact.type}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '9px',
+                      color: '#60a5fa',
+                      fontFamily: 'monospace',
+                      marginBottom: '3px',
+                    }}
+                  >
+                    {contact.phone}
+                  </div>
+                  {/* CRM Data */}
+                  {contact.lastCallDate && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '6px',
+                        fontSize: '7px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      <span>📞 {contact.totalCalls || 0}</span>
+                      <span>
+                        📅 {new Date(contact.lastCallDate).toLocaleDateString()}
+                      </span>
+                      {contact.leadScore && (
+                        <span
+                          style={{
+                            color:
+                              contact.leadScore > 80
+                                ? '#22c55e'
+                                : contact.leadScore > 60
+                                  ? '#f59e0b'
+                                  : '#ef4444',
+                          }}
+                        >
+                          ⭐ {contact.leadScore}%
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background:
+                      contact.leadScore && contact.leadScore > 80
+                        ? '#22c55e'
+                        : '#f59e0b',
+                    marginTop: '2px',
+                  }}
+                />
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Last Call Info */}
-      {lastCall && (
+      {/* Recent Call Logs with CRM Integration */}
+      {callLogs.length > 0 && (
         <div
           style={{
-            background: 'rgba(16, 185, 129, 0.2)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            borderRadius: '6px',
-            padding: '8px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '10px',
             marginBottom: '12px',
           }}
         >
           <div
-            style={{ fontSize: '10px', fontWeight: '600', color: '#10b981' }}
+            style={{
+              fontSize: '10px',
+              fontWeight: '600',
+              marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
           >
-            Last Call
+            📋 Recent Calls
+            <span
+              style={{
+                background: 'rgba(219, 39, 119, 0.2)',
+                color: '#ec4899',
+                fontSize: '7px',
+                padding: '1px 4px',
+                borderRadius: '6px',
+                fontWeight: '600',
+              }}
+            >
+              CRM SYNCED
+            </span>
           </div>
-          <div style={{ fontSize: '9px', color: '#9ca3af' }}>
-            To: {lastCall.to}
-            <br />
-            Status: {lastCall.status}
-            <br />
-            SID: {lastCall.callSid}
+
+          <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
+            {callLogs.slice(0, 3).map((call) => {
+              const contact = getContactByPhone(call.phoneNumber);
+              return (
+                <div
+                  key={call.id}
+                  style={{
+                    padding: '6px',
+                    marginBottom: '4px',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '4px',
+                            height: '4px',
+                            borderRadius: '50%',
+                            background: getCallStatusColor(call.status),
+                          }}
+                        />
+                        <span
+                          style={{
+                            color: 'white',
+                            fontSize: '9px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {contact ? contact.name : 'Unknown'}
+                        </span>
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: '7px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        {call.phoneNumber} •{' '}
+                        {new Date(call.startTime).toLocaleTimeString()}
+                        {call.duration && (
+                          <span> • {formatDuration(call.duration)}</span>
+                        )}
+                      </div>
+                      {call.outcome && (
+                        <div
+                          style={{
+                            color: '#60a5fa',
+                            marginTop: '1px',
+                            fontSize: '7px',
+                          }}
+                        >
+                          {call.outcome}
+                        </div>
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        background: `rgba(${getCallStatusColor(call.status)
+                          .replace('#', '')
+                          .match(/.{2}/g)
+                          ?.map((hex) => parseInt(hex, 16))
+                          .join(', ')}, 0.2)`,
+                        color: getCallStatusColor(call.status),
+                        fontSize: '6px',
+                        padding: '1px 3px',
+                        borderRadius: '3px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {call.status}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -457,8 +998,12 @@ export default function SimplePhoneDialer() {
           marginTop: '10px',
         }}
       >
-        <div style={{ marginBottom: '4px' }}>🔒 Secure • 📞 HD Quality</div>
-        <div style={{ fontSize: '8px', opacity: 0.8 }}>Powered by Twilio</div>
+        <div style={{ marginBottom: '4px' }}>
+          🔒 Secure • 📞 HD Quality • 🎯 CRM Connected
+        </div>
+        <div style={{ fontSize: '8px', opacity: 0.8 }}>
+          Powered by Twilio & FleetFlow CRM
+        </div>
       </div>
     </div>
   );

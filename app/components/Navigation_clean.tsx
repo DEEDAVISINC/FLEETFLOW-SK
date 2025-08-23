@@ -29,7 +29,7 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
   const userId = user.role;
 
   const navItems = [
-    { id: 'dashboard', label: '🏠 Dashboard', href: '/' },
+    { id: 'dashboard', label: '🏠 Dashboard', href: '/fleetflowdash' },
     { id: 'dispatch', label: 'Dispatch Central', href: '/dispatch' },
     { id: 'broker', label: 'Broker Box', href: '/broker' },
     { id: 'quoting', label: 'Freight Quoting', href: '/quoting' },

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getLoadStats, getMainDashboardLoads } from '../services/loadService';
 import { calculateFinancialMetrics } from '../services/settlementService';
 // ADD SQUARE & BILL.COM FINANCIAL INTEGRATION (Single-user configuration)
+import AISupportDashboard from '../components/AISupportDashboard';
 
 // Enhanced interfaces for comprehensive AI management
 interface PerformanceMetrics {
@@ -117,11 +118,11 @@ export default function AICompanyDashboard() {
       name: 'Sales & Revenue',
       color: '#ec4899',
       icon: '💰',
-      totalStaff: 16,
-      activeStaff: 16,
-      dailyRevenue: 213900,
-      tasksCompleted: 687,
-      efficiency: 97.8,
+      totalStaff: 19,
+      activeStaff: 19,
+      dailyRevenue: 319500,
+      tasksCompleted: 1077,
+      efficiency: 98.2,
     },
     {
       id: 'logistics',
@@ -183,11 +184,11 @@ export default function AICompanyDashboard() {
       name: 'Marketing & Growth',
       color: '#ec4899',
       icon: '💖',
-      totalStaff: 6,
-      activeStaff: 6,
-      dailyRevenue: 18500,
-      tasksCompleted: 92,
-      efficiency: 95.7,
+      totalStaff: 7,
+      activeStaff: 7,
+      dailyRevenue: 211500,
+      tasksCompleted: 1513,
+      efficiency: 95.8,
     },
     {
       id: 'hr',
@@ -260,11 +261,11 @@ export default function AICompanyDashboard() {
       name: 'Customer Service',
       color: '#22c55e',
       icon: '📞',
-      totalStaff: 6,
-      activeStaff: 6,
-      dailyRevenue: 4800,
-      tasksCompleted: 145,
-      efficiency: 95.8,
+      totalStaff: 12, // Was 6, now 12 (added 6 AI support staff)
+      activeStaff: 12,
+      dailyRevenue: 278900, // Added ~$274K from new AI support staff
+      tasksCompleted: 914, // Added ~769 tasks from new AI support staff
+      efficiency: 88.9, // Weighted average efficiency with new AI staff
     },
   ];
 
@@ -455,6 +456,50 @@ export default function AICompanyDashboard() {
       avatar: '📧',
     },
 
+    // NEW: SalesAI Integration - Live Call AI & Follow-up Automation
+    {
+      id: 'sales-ai-001',
+      name: 'AI Live Call Assistant',
+      role: 'Real-Time Call Support Specialist',
+      department: 'sales',
+      status: 'busy',
+      currentTask:
+        'Providing real-time AI suggestions during 3 active freight sales calls - 94.2% recommendation acceptance rate',
+      tasksCompleted: 89,
+      revenue: 45200,
+      efficiency: 94.8,
+      lastActivity: '12 sec ago',
+      avatar: '🤖',
+    },
+    {
+      id: 'sales-ai-002',
+      name: 'AI Follow-Up Coordinator',
+      role: 'Automated Follow-Up Manager',
+      department: 'sales',
+      status: 'active',
+      currentTask:
+        'Managing 156 scheduled follow-ups across 6 intelligent rule types - 78% response rate achieved',
+      tasksCompleted: 234,
+      revenue: 28900,
+      efficiency: 92.3,
+      lastActivity: '8 sec ago',
+      avatar: '🔄',
+    },
+    {
+      id: 'sales-ai-003',
+      name: 'AI Call Analytics Specialist',
+      role: 'Conversation Intelligence Analyst',
+      department: 'sales',
+      status: 'active',
+      currentTask:
+        'Analyzing 23 completed calls today - 78% positive sentiment, 34.5% conversion rate detected',
+      tasksCompleted: 67,
+      revenue: 31500,
+      efficiency: 96.7,
+      lastActivity: '4 sec ago',
+      avatar: '📊',
+    },
+
     // Logistics Operations Team
     {
       id: 'logistics-001',
@@ -612,6 +657,192 @@ export default function AICompanyDashboard() {
       avatar: '📢',
     },
 
+    // Marketing & Growth AI Team
+    {
+      id: 'marketing-001',
+      name: 'AI Content Creator Pro',
+      role: 'Freight Industry Content Specialist',
+      department: 'marketing',
+      status: 'busy',
+      currentTask:
+        'Creating 15 LinkedIn articles on "AI in Transportation" - 847K impressions this month',
+      tasksCompleted: 234,
+      revenue: 28900,
+      efficiency: 97.3,
+      lastActivity: '8 sec ago',
+      avatar: '🎨',
+    },
+    {
+      id: 'marketing-002',
+      name: 'AI Email Marketing Specialist',
+      role: 'Automated Campaign Manager',
+      department: 'marketing',
+      status: 'active',
+      currentTask:
+        'Managing 5 nurture sequences for 2,847 freight prospects - 23.5% open rate achieved',
+      tasksCompleted: 567,
+      revenue: 45600,
+      efficiency: 96.8,
+      lastActivity: '12 sec ago',
+      avatar: '📧',
+    },
+    {
+      id: 'marketing-003',
+      name: 'AI Social Media Manager',
+      role: 'Multi-Platform Engagement Expert',
+      department: 'marketing',
+      status: 'active',
+      currentTask:
+        'LinkedIn automation: 156 carrier connections, 89 shipper prospects engaged today',
+      tasksCompleted: 342,
+      revenue: 19800,
+      efficiency: 94.7,
+      lastActivity: '6 sec ago',
+      avatar: '📱',
+    },
+    {
+      id: 'marketing-004',
+      name: 'AI Video Marketing Producer',
+      role: 'Visual Content Automation',
+      department: 'marketing',
+      status: 'busy',
+      currentTask:
+        'Producing "FleetFlow Demo Series" - 23 videos completed, 67K total views',
+      tasksCompleted: 89,
+      revenue: 22300,
+      efficiency: 95.2,
+      lastActivity: '4 sec ago',
+      avatar: '🎥',
+    },
+    {
+      id: 'marketing-005',
+      name: 'AI Marketing Analytics',
+      role: 'Campaign Performance Analyst',
+      department: 'marketing',
+      status: 'active',
+      currentTask:
+        'Analyzing Q1 campaigns - identified 34.5% ROI improvement opportunity in freight sector',
+      tasksCompleted: 156,
+      revenue: 31200,
+      efficiency: 98.1,
+      lastActivity: '2 sec ago',
+      avatar: '📊',
+    },
+    {
+      id: 'marketing-006',
+      name: 'AI Brand Manager',
+      role: 'Brand Voice & Messaging Specialist',
+      department: 'marketing',
+      status: 'active',
+      currentTask:
+        'Optimizing "Go With the Flow" brand messaging across 47 touchpoints - 92% consistency achieved',
+      tasksCompleted: 78,
+      revenue: 18700,
+      efficiency: 96.4,
+      lastActivity: '10 sec ago',
+      avatar: '🎪',
+    },
+    {
+      id: 'marketing-007',
+      name: 'AI LinkedIn Lead Specialist',
+      role: 'B2B Lead Generation & CRM Integration',
+      department: 'marketing',
+      status: 'active',
+      currentTask:
+        'Processing 8 new LinkedIn leads today - 3 high-quality prospects (Score: 76 avg) automatically synced to CRM',
+      tasksCompleted: 47,
+      revenue: 45000,
+      efficiency: 94.2,
+      lastActivity: '3 sec ago',
+      avatar: '🔗',
+    },
+
+    // 🎯 AI CUSTOMER SUPPORT - SUPERIOR TO SALESAI.COM
+    {
+      id: 'support-001',
+      name: 'FleetFlow Support AI Alpha',
+      role: '24/7 Customer Support Specialist',
+      department: 'customer_service',
+      status: 'busy',
+      currentTask:
+        'Resolved 23 tickets today (18min avg) - Currently helping ABC Logistics with shipment tracking issue',
+      tasksCompleted: 156,
+      revenue: 89500,
+      efficiency: 89.1,
+      lastActivity: '2 sec ago',
+      avatar: '🎯',
+    },
+    {
+      id: 'support-002',
+      name: 'FleetFlow Technical AI Beta',
+      role: 'Technical Support & Issue Resolution',
+      department: 'customer_service',
+      status: 'active',
+      currentTask:
+        'Diagnosing GPS tracking issues for 3 customers - 81.3% technical resolution rate achieved',
+      tasksCompleted: 134,
+      revenue: 67800,
+      efficiency: 81.3,
+      lastActivity: '1 sec ago',
+      avatar: '🔧',
+    },
+    {
+      id: 'support-003',
+      name: 'FleetFlow Crisis AI Gamma',
+      role: 'Emergency Response & Crisis Management',
+      department: 'customer_service',
+      status: 'active',
+      currentTask:
+        'Emergency protocols activated for I-95 breakdown - Replacement driver dispatched in 45min',
+      tasksCompleted: 89,
+      revenue: 45900,
+      efficiency: 92.7,
+      lastActivity: '1 sec ago',
+      avatar: '🚨',
+    },
+    {
+      id: 'support-004',
+      name: 'FleetFlow Chatbot Director',
+      role: 'Intelligent Chatbot Operations',
+      department: 'customer_service',
+      status: 'busy',
+      currentTask:
+        'Managing 12 active chat sessions - 84.2% first-contact resolution rate, 4.7/5.0 satisfaction',
+      tasksCompleted: 267,
+      revenue: 34700,
+      efficiency: 84.2,
+      lastActivity: '3 sec ago',
+      avatar: '💬',
+    },
+    {
+      id: 'support-005',
+      name: 'AI Billing Support Specialist',
+      role: 'Invoice & Payment Issue Resolution',
+      department: 'customer_service',
+      status: 'active',
+      currentTask:
+        'Processed 15 billing inquiries today - Resolved $230 invoice discrepancy for Metro Manufacturing',
+      tasksCompleted: 78,
+      revenue: 23400,
+      efficiency: 95.8,
+      lastActivity: '4 sec ago',
+      avatar: '💳',
+    },
+    {
+      id: 'support-006',
+      name: 'AI Knowledge Base Manager',
+      role: 'Support Content & Training Optimization',
+      department: 'customer_service',
+      status: 'idle',
+      currentTask:
+        'Updated 23 knowledge base articles today - 89% customer self-service success rate',
+      tasksCompleted: 45,
+      revenue: 12800,
+      efficiency: 89.0,
+      lastActivity: '8 sec ago',
+      avatar: '📚',
+    },
+
     // Additional staff members for all departments...
     // (Keeping this concise for the rewrite, but including key representatives)
   ];
@@ -702,6 +933,86 @@ export default function AICompanyDashboard() {
       message: 'AI Freight Broker secured $45K contract with Amazon Logistics',
       timestamp: '2 min ago',
       department: 'sales',
+    },
+    {
+      id: 'alert-salesai-001',
+      type: 'success',
+      message:
+        'AI Live Call Assistant achieved 94.2% recommendation acceptance rate during active calls',
+      timestamp: '1 min ago',
+      department: 'sales',
+    },
+    {
+      id: 'alert-support-001',
+      type: 'success',
+      message:
+        '🎯 AI Customer Support achieved 84.2% resolution rate today - Superior to SalesAI.com! Resolved 23 tickets in 18min average',
+      timestamp: '30 sec ago',
+      department: 'customer_service',
+    },
+    {
+      id: 'alert-support-002',
+      type: 'info',
+      message:
+        'FleetFlow Chatbot Director handling 12 active chat sessions - 4.7/5.0 customer satisfaction achieved',
+      timestamp: '1 min ago',
+      department: 'customer_service',
+    },
+    {
+      id: 'alert-support-003',
+      type: 'warning',
+      message:
+        'FleetFlow Crisis AI Gamma dispatched emergency response for I-95 breakdown - Replacement driver en route (45min response time)',
+      timestamp: '2 min ago',
+      department: 'customer_service',
+    },
+    {
+      id: 'alert-salesai-002',
+      type: 'info',
+      message:
+        'AI Follow-Up Coordinator scheduled 23 automated follow-ups with 78% expected response rate',
+      timestamp: '3 min ago',
+      department: 'sales',
+    },
+    {
+      id: 'alert-salesai-003',
+      type: 'success',
+      message:
+        'AI Call Analytics detected 34.5% conversion rate increase after implementing freight objection handlers',
+      timestamp: '4 min ago',
+      department: 'sales',
+    },
+    {
+      id: 'alert-marketing-001',
+      type: 'success',
+      message:
+        'AI Content Creator achieved 847K impressions with "AI in Transportation" LinkedIn series',
+      timestamp: '2 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-002',
+      type: 'success',
+      message:
+        'AI Email Marketing improved freight prospect nurture sequences - 23.5% open rate achieved',
+      timestamp: '5 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-003',
+      type: 'info',
+      message:
+        'AI Video Producer completed FleetFlow Demo Series - 67K total views generated',
+      timestamp: '6 min ago',
+      department: 'marketing',
+    },
+    {
+      id: 'alert-marketing-004',
+      type: 'success',
+      message:
+        'AI LinkedIn Lead Specialist processed 8 new prospects today - 3 high-quality leads (Score: 76+) synced to CRM (Case: CAS-8776681-X2Q7B4)',
+      timestamp: '3 min ago',
+      department: 'marketing',
     },
     {
       id: 'alert-002',
@@ -4893,6 +5204,11 @@ export default function AICompanyDashboard() {
                         'Follow up with Amazon Logistics on pending $85K contract',
                         'Research and contact 15 new shippers in automotive sector',
                         'Prepare proposal for Walmart distribution network expansion',
+                        'Optimize AI call assistance for pharmaceutical industry objections',
+                        'Analyze call conversion patterns for follow-up automation rules',
+                        'Train AI models on successful freight negotiation strategies',
+                        'Schedule automated follow-ups for 47 warm prospects from last week',
+                        'Review call analytics for top-performing objection responses',
                       ]
                     : selectedStaffMember.department === 'logistics'
                       ? [
@@ -4900,52 +5216,91 @@ export default function AICompanyDashboard() {
                           'Negotiate better rates with top 5 carriers for Q1',
                           'Coordinate intermodal shipment for Tesla Gigafactory',
                         ]
-                      : selectedStaffMember.department === 'legal'
-                        ? [
-                            'Review carrier agreement templates for compliance updates',
-                            'Draft contract amendments for Fortune 500 partnerships',
-                            'Analyze new DOT regulations impact on operations',
-                          ]
-                        : [
-                            'Complete quarterly performance analysis',
-                            'Process pending customer onboarding requests',
-                            'Update system configurations for peak season',
-                          ].map((example, index) => (
-                            <button
-                              key={index}
-                              onClick={() => {
-                                setNewTaskTitle(example);
-                                setNewTaskDescription(
-                                  `Complete this task: ${example}`
-                                );
-                              }}
-                              style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '8px',
-                                padding: '12px',
-                                color: 'rgba(255, 255, 255, 0.8)',
-                                fontSize: '14px',
-                                textAlign: 'left',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background =
-                                  'rgba(236, 72, 153, 0.1)';
-                                e.currentTarget.style.borderColor =
-                                  'rgba(236, 72, 153, 0.3)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background =
-                                  'rgba(255, 255, 255, 0.05)';
-                                e.currentTarget.style.borderColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                            >
-                              {example}
-                            </button>
-                          ))}
+                      : selectedStaffMember.department === 'marketing'
+                        ? selectedStaffMember.id === 'marketing-007'
+                          ? [
+                              'Review 8 new LinkedIn leads from today - qualify prospects above Score 70',
+                              'Sync high-quality leads to FleetFlow CRM automatically',
+                              'Optimize LinkedIn campaign targeting (VPs of Operations, Fleet Directors)',
+                              'Analyze lead quality patterns - improve targeting for logistics industry',
+                              'Follow up with prospects interested in AI fleet management solutions',
+                              'A/B test LinkedIn ad creatives for better conversion rates',
+                              'Generate LinkedIn lead quality reports for sales team handoff',
+                              'Monitor LinkedIn Lead Sync API connection status (Case: CAS-8776681-X2Q7B4)',
+                            ]
+                          : [
+                              'Launch LinkedIn campaign targeting Fortune 500 logistics managers',
+                              'Create video testimonials from top-performing carriers',
+                              'Develop content calendar for freight industry thought leadership',
+                              'A/B test email subject lines for shipper prospect sequences',
+                              'Design infographics showcasing FleetFlow ROI case studies',
+                              'Optimize Google Ads campaigns for "freight management software"',
+                              'Schedule social media posts highlighting AI automation benefits',
+                              'Analyze competitor marketing strategies and positioning',
+                            ]
+                        : selectedStaffMember.department === 'legal'
+                          ? [
+                              'Review carrier agreement templates for compliance updates',
+                              'Draft contract amendments for Fortune 500 partnerships',
+                              'Analyze new DOT regulations impact on operations',
+                            ]
+                          : selectedStaffMember.department ===
+                              'customer_service'
+                            ? [
+                                '🎯 Superior to SalesAI.com - Process 15 new support tickets with AI automation',
+                                'Resolve billing dispute for Metro Manufacturing ($230 discrepancy)',
+                                'Update knowledge base articles - improve self-service success rate to 90%+',
+                                'Manage 12 active chatbot interactions with 4.7/5.0 satisfaction target',
+                                'Coordinate emergency response for I-95 breakdown incident',
+                                'Analyze customer satisfaction patterns to optimize AI responses',
+                                'Train new AI support models on successful ticket resolution patterns',
+                                'Monitor 24/7 support coverage - ensure sub-2 minute response times',
+                                'Generate customer support analytics for management review',
+                                'Escalate complex technical issues to appropriate specialists',
+                                'Follow up on resolved tickets for satisfaction feedback',
+                                'Optimize ticket routing algorithms for faster resolution',
+                              ]
+                            : [
+                                'Complete quarterly performance analysis',
+                                'Process pending customer onboarding requests',
+                                'Update system configurations for peak season',
+                              ].map((example, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => {
+                                    setNewTaskTitle(example);
+                                    setNewTaskDescription(
+                                      `Complete this task: ${example}`
+                                    );
+                                  }}
+                                  style={{
+                                    background: 'rgba(255, 255, 255, 0.05)',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '8px',
+                                    padding: '12px',
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    fontSize: '14px',
+                                    textAlign: 'left',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                      'rgba(236, 72, 153, 0.1)';
+                                    e.currentTarget.style.borderColor =
+                                      'rgba(236, 72, 153, 0.3)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.background =
+                                      'rgba(255, 255, 255, 0.05)';
+                                    e.currentTarget.style.borderColor =
+                                      'rgba(255, 255, 255, 0.1)';
+                                  }}
+                                >
+                                  {example}
+                                </button>
+                              ))}
                 </div>
               </div>
 
@@ -5430,6 +5785,167 @@ export default function AICompanyDashboard() {
             </div>
           </div>
         )}
+
+        {/* AI SUPPORT DASHBOARD - SUPERIOR TO SALESAI.COM */}
+        {selectedStaffMember &&
+          selectedStaffMember.department === 'customer_service' && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.9)',
+                backdropFilter: 'blur(15px)',
+                zIndex: 1002,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '24px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(30px)',
+                  borderRadius: '24px',
+                  border: '2px solid rgba(34, 197, 94, 0.3)',
+                  width: '95vw',
+                  height: '95vh',
+                  overflowY: 'auto',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+                  position: 'relative',
+                }}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedStaff(null)}
+                  style={{
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    border: '2px solid rgba(239, 68, 68, 0.4)',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '20px',
+                    color: '#ef4444',
+                    zIndex: 10,
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.background =
+                      'rgba(239, 68, 68, 0.3)')
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.background =
+                      'rgba(239, 68, 68, 0.2)')
+                  }
+                >
+                  ×
+                </button>
+
+                {/* Staff Header Info */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: 'white',
+                    padding: '30px 40px',
+                    borderRadius: '20px 20px 0 0',
+                    marginBottom: '0',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '48px',
+                      }}
+                    >
+                      {selectedStaffMember.avatar}
+                    </div>
+                    <div>
+                      <h2
+                        style={{
+                          fontSize: '28px',
+                          fontWeight: 'bold',
+                          margin: '0 0 8px 0',
+                        }}
+                      >
+                        {selectedStaffMember.name}
+                      </h2>
+                      <p
+                        style={{
+                          fontSize: '16px',
+                          margin: '0 0 5px 0',
+                          opacity: 0.9,
+                        }}
+                      >
+                        {selectedStaffMember.role}
+                      </p>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '15px',
+                          fontSize: '14px',
+                          opacity: 0.8,
+                        }}
+                      >
+                        <span>🎯 Superior to SalesAI.com</span>
+                        <span>📞 24/7 AI Support</span>
+                        <span>⚡ Real-time Resolution</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '30px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <div>
+                      <span style={{ opacity: 0.8 }}>Tasks Completed:</span>{' '}
+                      <strong>{selectedStaffMember.tasksCompleted}</strong>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.8 }}>Revenue Generated:</span>{' '}
+                      <strong>
+                        ${selectedStaffMember.revenue.toLocaleString()}
+                      </strong>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.8 }}>Efficiency:</span>{' '}
+                      <strong>{selectedStaffMember.efficiency}%</strong>
+                    </div>
+                    <div>
+                      <span style={{ opacity: 0.8 }}>Status:</span>{' '}
+                      <strong style={{ textTransform: 'capitalize' }}>
+                        {selectedStaffMember.status}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Support Dashboard */}
+                <div style={{ background: '#f9fafb' }}>
+                  <AISupportDashboard />
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* STAFF REPORTS MODAL */}
         {showStaffReports && selectedStaffMember && (

@@ -17,7 +17,7 @@ export default function OpenELDDashboard({
   className = '',
 }: OpenELDDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'devices' | 'drivers' | 'compliance' | 'logs'
+    'overview' | 'devices' | 'drivers' | 'compliance' | 'logs' | 'weight'
   >('overview');
   const [devices, setDevices] = useState<OpenELDDevice[]>([]);
   const [drivers, setDrivers] = useState<OpenELDDriver[]>([]);
@@ -30,6 +30,9 @@ export default function OpenELDDashboard({
     useState<OpenELDComplianceReport | null>(null);
   const [dutyLogs, setDutyLogs] = useState<OpenELDDutyStatus[]>([]);
   const [logEntries, setLogEntries] = useState<OpenELDLogEntry[]>([]);
+  const [weightComplianceLogs, setWeightComplianceLogs] = useState<any[]>([]);
+  const [weightComplianceSummary, setWeightComplianceSummary] =
+    useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -257,6 +260,12 @@ export default function OpenELDDashboard({
       label: 'Activity Logs',
       icon: '📝',
       bg: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+    },
+    {
+      id: 'weight',
+      label: 'Weight Compliance',
+      icon: '⚖️',
+      bg: 'linear-gradient(135deg, #dc2626, #b91c1c)',
     },
   ];
 
@@ -841,6 +850,459 @@ export default function OpenELDDashboard({
                 fontSize: '16px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
+              }}
+            >
+              ← Back to Overview
+            </button>
+          </div>
+        )}
+
+        {activeTab === 'weight' && (
+          <div>
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              ⚖️ Weight Compliance Logs
+            </h2>
+
+            {/* Weight Compliance Summary */}
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '24px',
+                color: 'white',
+              }}
+            >
+              <h3
+                style={{
+                  margin: '0 0 16px 0',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                }}
+              >
+                📊 30-Day Compliance Summary
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Total Loads
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>12</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Compliant
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#4ade80',
+                    }}
+                  >
+                    11
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Compliance Rate
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    91.7%
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Violations
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#fbbf24',
+                    }}
+                  >
+                    3
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                    Risk Level
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: '#4ade80',
+                    }}
+                  >
+                    LOW
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Export Controls */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '16px',
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  📋 Export Logs for DOT Inspection
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.8)',
+                    margin: 0,
+                    fontSize: '14px',
+                  }}
+                >
+                  Generate CSV export for law enforcement or DOT inspectors
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    // Mock export function
+                    alert('Weight compliance logs exported to CSV');
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                  }}
+                >
+                  📄 Export Last 30 Days
+                </button>
+                <button
+                  onClick={() => {
+                    // Mock export function
+                    alert('Custom date range export requested');
+                  }}
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                  }}
+                >
+                  📅 Custom Range
+                </button>
+              </div>
+            </div>
+
+            {/* Weight Compliance Logs */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '24px',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  margin: '0 0 16px 0',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+              >
+                📝 Recent Weight Compliance Logs
+              </h3>
+
+              {/* Sample Weight Compliance Logs */}
+              {[
+                {
+                  id: 'WCL-001',
+                  date: '2024-01-20T14:30:00Z',
+                  loadId: 'MJ-25001-ATLMIA',
+                  cargoWeight: 34000,
+                  totalWeight: 63000,
+                  safetyRating: 'SAFE',
+                  states: ['GA', 'FL'],
+                  violations: 0,
+                  permits: 0,
+                },
+                {
+                  id: 'WCL-002',
+                  date: '2024-01-18T09:15:00Z',
+                  loadId: 'MJ-25002-TXCA',
+                  cargoWeight: 42000,
+                  totalWeight: 71000,
+                  safetyRating: 'CAUTION',
+                  states: ['TX', 'CA'],
+                  violations: 1,
+                  permits: 0,
+                },
+                {
+                  id: 'WCL-003',
+                  date: '2024-01-15T16:45:00Z',
+                  loadId: 'MJ-25003-ILOH',
+                  cargoWeight: 38000,
+                  totalWeight: 67000,
+                  safetyRating: 'SAFE',
+                  states: ['IL', 'OH'],
+                  violations: 0,
+                  permits: 0,
+                },
+              ].map((log, index) => (
+                <div
+                  key={index}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    marginBottom: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          color: 'white',
+                        }}
+                      >
+                        {log.loadId}
+                      </span>
+                      <span
+                        style={{
+                          background:
+                            log.safetyRating === 'SAFE'
+                              ? '#10b981'
+                              : log.safetyRating === 'CAUTION'
+                                ? '#f59e0b'
+                                : '#dc2626',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {log.safetyRating}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {new Date(log.date).toLocaleDateString()}{' '}
+                      {new Date(log.date).toLocaleTimeString()}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(120px, 1fr))',
+                      gap: '12px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <div>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        Cargo Weight:
+                      </span>
+                      <div style={{ color: 'white', fontWeight: 'bold' }}>
+                        {log.cargoWeight.toLocaleString()} lbs
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        Total Weight:
+                      </span>
+                      <div style={{ color: 'white', fontWeight: 'bold' }}>
+                        {log.totalWeight.toLocaleString()} lbs
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        States:
+                      </span>
+                      <div style={{ color: 'white', fontWeight: 'bold' }}>
+                        {log.states.join(', ')}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        Violations:
+                      </span>
+                      <div
+                        style={{
+                          color: log.violations > 0 ? '#fbbf24' : '#4ade80',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {log.violations}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        Permits:
+                      </span>
+                      <div style={{ color: 'white', fontWeight: 'bold' }}>
+                        {log.permits}
+                      </div>
+                    </div>
+                  </div>
+
+                  {log.violations > 0 && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        padding: '8px 12px',
+                        background: 'rgba(251, 191, 36, 0.2)',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        color: '#fbbf24',
+                      }}
+                    >
+                      ⚠️ Bridge formula violation detected - recommend weight
+                      redistribution
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* No logs message */}
+              {false && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                    ⚖️
+                  </div>
+                  <p style={{ fontSize: '16px', margin: '0' }}>
+                    No weight compliance logs found. Logs will appear here after
+                    load assignments.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* DOT Inspection Help */}
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <h3
+                style={{
+                  color: '#60a5fa',
+                  margin: '0 0 12px 0',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+              >
+                ℹ️ DOT Inspection Information
+              </h3>
+              <div
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '14px',
+                  lineHeight: '1.5',
+                }}
+              >
+                <p style={{ margin: '0 0 12px 0' }}>
+                  • Weight compliance logs are automatically generated for every
+                  load assignment
+                </p>
+                <p style={{ margin: '0 0 12px 0' }}>
+                  • Export logs show axle-based weight calculations and DOT
+                  compliance status
+                </p>
+                <p style={{ margin: '0 0 12px 0' }}>
+                  • Bridge formula calculations and state-specific limits are
+                  included in exports
+                </p>
+                <p style={{ margin: '0' }}>
+                  • Logs can be exported as CSV files for DOT inspectors or law
+                  enforcement
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setActiveTab('overview')}
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '24px',
               }}
             >
               ← Back to Overview

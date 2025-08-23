@@ -90,6 +90,91 @@ export interface OpenELDDutyStatus {
   certificationDateTime?: string;
 }
 
+export interface OpenELDWeightComplianceLog {
+  id: string;
+  driverId: string;
+  deviceId: string;
+  loadId: string;
+  timestamp: string;
+  cargoWeight: number;
+  totalWeight: number;
+  truckConfiguration: {
+    id: string;
+    name: string;
+    totalAxles: number;
+    maxGrossWeight: number;
+  };
+  routeStates: string[];
+  complianceResult: {
+    isCompliant: boolean;
+    safetyRating: 'SAFE' | 'CAUTION' | 'OVERWEIGHT';
+    violations: Array<{
+      type: 'GROSS_WEIGHT' | 'AXLE_WEIGHT' | 'BRIDGE_FORMULA' | 'STATE_LIMIT';
+      description: string;
+      currentWeight: number;
+      maxAllowed: number;
+      excessWeight: number;
+      severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      fineRange?: string;
+    }>;
+    requiredPermits: string[];
+    recommendations: string[];
+  };
+  location: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  };
+  odometer: number;
+  weighStationInfo?: {
+    stationName: string;
+    stationId: string;
+    inspectionNumber?: string;
+    inspectorBadge?: string;
+  };
+  exportedAt?: string;
+  dataSource: 'automatic' | 'weigh_station' | 'manual';
+  annotation?: string;
+}
+
+export interface OpenELDWeightInspection {
+  id: string;
+  driverId: string;
+  deviceId: string;
+  inspectionDate: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    stationName: string;
+    stateCode: string;
+  };
+  inspector: {
+    name: string;
+    badge: string;
+    agency: string;
+  };
+  inspectionType: 'DOT' | 'WEIGH_STATION' | 'ROADSIDE' | 'TERMINAL';
+  weightResults: {
+    steerAxle: number;
+    driveAxles: number;
+    trailerAxles: number;
+    grossWeight: number;
+    scaleAccuracy: string;
+  };
+  violations: Array<{
+    code: string;
+    description: string;
+    severity: 'WARNING' | 'VIOLATION' | 'OUT_OF_SERVICE';
+    fine?: number;
+  }>;
+  permits: string[];
+  inspectionOutcome: 'PASSED' | 'VIOLATIONS' | 'OUT_OF_SERVICE';
+  followUpRequired: boolean;
+  documentPath?: string;
+  notes?: string;
+}
+
 export interface OpenELDViolation {
   id: string;
   driverId: string;
@@ -98,6 +183,7 @@ export interface OpenELDViolation {
     | 'hours_exceeded'
     | 'missing_log'
     | 'form_manner'
+    | 'weight_violation'
     | 'break_required'
     | 'cycle_violation';
   severity: 'warning' | 'violation' | 'critical';
@@ -264,7 +350,8 @@ class OpenELDIntegrationService {
         id: 'insight-002',
         type: 'efficiency',
         priority: 'low',
-        message: 'Route optimization available - save 15 minutes on current trip',
+        message:
+          'Route optimization available - save 15 minutes on current trip',
         recommendation: 'Enable AI route optimization in dispatch system',
         confidence: 85,
         timestamp: new Date().toISOString(),
@@ -301,10 +388,12 @@ class OpenELDIntegrationService {
     let baseScore = compliance.compliance.compliant ? 95 : 75;
 
     // Adjust based on AI insights
-    const criticalInsights = insights.filter(i => i.priority === 'critical').length;
-    const highInsights = insights.filter(i => i.priority === 'high').length;
+    const criticalInsights = insights.filter(
+      (i) => i.priority === 'critical'
+    ).length;
+    const highInsights = insights.filter((i) => i.priority === 'high').length;
 
-    baseScore -= (criticalInsights * 10) + (highInsights * 5);
+    baseScore -= criticalInsights * 10 + highInsights * 5;
 
     return Math.max(0, Math.min(100, baseScore));
   }
@@ -596,8 +685,7 @@ class OpenELDIntegrationService {
 
     // Generate risk level based on AI analysis
     const riskLevel: 'low' | 'medium' | 'high' =
-      aiScore >= 90 ? 'low' :
-      aiScore >= 75 ? 'medium' : 'high';
+      aiScore >= 90 ? 'low' : aiScore >= 75 ? 'medium' : 'high';
 
     return {
       driverId,
@@ -616,20 +704,22 @@ class OpenELDIntegrationService {
         aiScore,
         riskLevel,
       },
-      flowterInsights: this.fleetFlowIntegration.flowterAiEnabled ? {
-        predictedViolations: insights
-          .filter(i => i.type === 'compliance')
-          .map(i => i.message),
-        efficiencyScore: Math.round(85 + Math.random() * 15), // Simulated efficiency score
-        maintenanceAlerts: insights
-          .filter(i => i.type === 'maintenance')
-          .map(i => i.message),
-        routeOptimizationSuggestions: [
-          'Alternative route available saving 12 minutes',
-          'Fuel stop optimization can save $15 in current trip',
-          'Rest area scheduling optimized for HOS compliance'
-        ]
-      } : undefined,
+      flowterInsights: this.fleetFlowIntegration.flowterAiEnabled
+        ? {
+            predictedViolations: insights
+              .filter((i) => i.type === 'compliance')
+              .map((i) => i.message),
+            efficiencyScore: Math.round(85 + Math.random() * 15), // Simulated efficiency score
+            maintenanceAlerts: insights
+              .filter((i) => i.type === 'maintenance')
+              .map((i) => i.message),
+            routeOptimizationSuggestions: [
+              'Alternative route available saving 12 minutes',
+              'Fuel stop optimization can save $15 in current trip',
+              'Rest area scheduling optimized for HOS compliance',
+            ],
+          }
+        : undefined,
     };
   }
 
@@ -752,6 +842,296 @@ class OpenELDIntegrationService {
     else if (issues.length > 2) status = 'warning';
 
     return { status, issues };
+  }
+
+  // Weight Compliance Management
+  private weightComplianceLogs: Map<string, OpenELDWeightComplianceLog[]> =
+    new Map();
+  private weightInspections: Map<string, OpenELDWeightInspection[]> = new Map();
+
+  /**
+   * Create a weight compliance log entry automatically when a load is assigned
+   */
+  async createWeightComplianceLog(
+    driverId: string,
+    deviceId: string,
+    loadAssignmentData: any,
+    weightCompliance: any
+  ): Promise<OpenELDWeightComplianceLog> {
+    const logEntry: OpenELDWeightComplianceLog = {
+      id: `WCL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      driverId,
+      deviceId,
+      loadId: loadAssignmentData.loadId,
+      timestamp: new Date().toISOString(),
+      cargoWeight: loadAssignmentData.cargoWeight || 0,
+      totalWeight: (loadAssignmentData.cargoWeight || 0) + 29000, // cargo + tractor + trailer
+      truckConfiguration: {
+        id:
+          loadAssignmentData.truckConfiguration?.id ||
+          'tractor-semitrailer-5axle',
+        name:
+          loadAssignmentData.truckConfiguration?.name ||
+          '5-Axle Tractor-Semitrailer',
+        totalAxles: loadAssignmentData.truckConfiguration?.totalAxles || 5,
+        maxGrossWeight:
+          loadAssignmentData.truckConfiguration?.maxGrossWeight || 80000,
+      },
+      routeStates: loadAssignmentData.routeStates || ['FEDERAL'],
+      complianceResult: {
+        isCompliant: weightCompliance?.weightCompliance?.isCompliant || true,
+        safetyRating:
+          weightCompliance?.weightCompliance?.safetyRating || 'SAFE',
+        violations: weightCompliance?.weightCompliance?.violations || [],
+        requiredPermits:
+          weightCompliance?.weightCompliance?.requiredPermits || [],
+        recommendations:
+          weightCompliance?.weightCompliance?.recommendations || [],
+      },
+      location: {
+        latitude: 32.7767, // Default to Dallas, TX
+        longitude: -96.797,
+        accuracy: 10,
+      },
+      odometer: 0,
+      dataSource: 'automatic',
+    };
+
+    // Store the log entry
+    const driverLogs = this.weightComplianceLogs.get(driverId) || [];
+    driverLogs.push(logEntry);
+    this.weightComplianceLogs.set(driverId, driverLogs);
+
+    console.log(
+      `📋 Weight compliance log created for driver ${driverId}, load ${loadAssignmentData.loadId}`
+    );
+
+    return logEntry;
+  }
+
+  /**
+   * Get weight compliance logs for a specific driver
+   */
+  async getWeightComplianceLogs(
+    driverId: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<OpenELDWeightComplianceLog[]> {
+    const logs = this.weightComplianceLogs.get(driverId) || [];
+
+    if (!startDate && !endDate) {
+      return logs.slice().reverse(); // Return newest first
+    }
+
+    return logs
+      .filter((log) => {
+        const logDate = new Date(log.timestamp);
+        const start = startDate ? new Date(startDate) : new Date(0);
+        const end = endDate ? new Date(endDate) : new Date();
+        return logDate >= start && logDate <= end;
+      })
+      .reverse();
+  }
+
+  /**
+   * Export weight compliance logs for DOT inspection
+   */
+  async exportWeightComplianceLogs(
+    driverId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<{
+    logs: OpenELDWeightComplianceLog[];
+    exportData: string;
+    summary: {
+      totalLoads: number;
+      compliantLoads: number;
+      violationsCount: number;
+      permitsRequired: number;
+    };
+  }> {
+    const logs = await this.getWeightComplianceLogs(
+      driverId,
+      startDate,
+      endDate
+    );
+
+    const summary = {
+      totalLoads: logs.length,
+      compliantLoads: logs.filter((log) => log.complianceResult.isCompliant)
+        .length,
+      violationsCount: logs.reduce(
+        (sum, log) => sum + log.complianceResult.violations.length,
+        0
+      ),
+      permitsRequired: logs.reduce(
+        (sum, log) => sum + log.complianceResult.requiredPermits.length,
+        0
+      ),
+    };
+
+    // Generate export data (CSV format for DOT inspectors)
+    const csvHeader =
+      'Date,Load ID,Cargo Weight,Total Weight,Truck Config,States,Safety Rating,Violations,Permits,Compliant\n';
+    const csvData = logs
+      .map(
+        (log) =>
+          `${log.timestamp},${log.loadId},${log.cargoWeight},${log.totalWeight},${log.truckConfiguration.name},"${log.routeStates.join(', ')}",${log.complianceResult.safetyRating},${log.complianceResult.violations.length},${log.complianceResult.requiredPermits.length},${log.complianceResult.isCompliant ? 'YES' : 'NO'}`
+      )
+      .join('\n');
+
+    const exportData = csvHeader + csvData;
+
+    // Mark logs as exported
+    logs.forEach((log) => {
+      log.exportedAt = new Date().toISOString();
+    });
+
+    console.log(
+      `📊 Exported ${logs.length} weight compliance logs for driver ${driverId}`
+    );
+
+    return {
+      logs,
+      exportData,
+      summary,
+    };
+  }
+
+  /**
+   * Record a weight station inspection
+   */
+  async recordWeightInspection(
+    inspectionData: Omit<OpenELDWeightInspection, 'id'>
+  ): Promise<OpenELDWeightInspection> {
+    const inspection: OpenELDWeightInspection = {
+      id: `WI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...inspectionData,
+    };
+
+    const driverInspections =
+      this.weightInspections.get(inspection.driverId) || [];
+    driverInspections.push(inspection);
+    this.weightInspections.set(inspection.driverId, driverInspections);
+
+    // If there were violations, create a violation log entry
+    if (inspection.violations.length > 0) {
+      const violation: OpenELDViolation = {
+        id: `V-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        driverId: inspection.driverId,
+        deviceId: inspection.deviceId,
+        violationType: 'weight_violation',
+        severity: 'critical',
+        description: `Weight inspection violations at ${inspection.location.stationName}: ${inspection.violations.map((v) => v.description).join(', ')}`,
+        timestamp: inspection.inspectionDate,
+        status: 'active',
+        requiredAction:
+          'Contact safety department for weight compliance review',
+      };
+
+      const driverViolations = this.violations.get(inspection.driverId) || [];
+      driverViolations.push(violation);
+      this.violations.set(inspection.driverId, driverViolations);
+    }
+
+    console.log(
+      `🚔 Weight inspection recorded for driver ${inspection.driverId} at ${inspection.location.stationName}`
+    );
+
+    return inspection;
+  }
+
+  /**
+   * Get weight inspections for a driver
+   */
+  async getWeightInspections(
+    driverId: string
+  ): Promise<OpenELDWeightInspection[]> {
+    return this.weightInspections.get(driverId) || [];
+  }
+
+  /**
+   * Get weight compliance summary for a driver
+   */
+  async getWeightComplianceSummary(
+    driverId: string,
+    days: number = 30
+  ): Promise<{
+    period: string;
+    totalLoads: number;
+    compliantLoads: number;
+    complianceRate: number;
+    violationsCount: number;
+    criticalViolations: number;
+    permitsRequired: number;
+    inspections: number;
+    lastInspection?: string;
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  }> {
+    const endDate = new Date();
+    const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+
+    const logs = await this.getWeightComplianceLogs(
+      driverId,
+      startDate.toISOString(),
+      endDate.toISOString()
+    );
+
+    const inspections = await this.getWeightInspections(driverId);
+    const recentInspections = inspections.filter(
+      (i) => new Date(i.inspectionDate) >= startDate
+    );
+
+    const totalLoads = logs.length;
+    const compliantLoads = logs.filter(
+      (log) => log.complianceResult.isCompliant
+    ).length;
+    const violationsCount = logs.reduce(
+      (sum, log) => sum + log.complianceResult.violations.length,
+      0
+    );
+    const criticalViolations = logs.reduce(
+      (sum, log) =>
+        sum +
+        log.complianceResult.violations.filter((v) => v.severity === 'CRITICAL')
+          .length,
+      0
+    );
+    const permitsRequired = logs.reduce(
+      (sum, log) => sum + log.complianceResult.requiredPermits.length,
+      0
+    );
+
+    const complianceRate =
+      totalLoads > 0 ? (compliantLoads / totalLoads) * 100 : 100;
+
+    // Determine risk level
+    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'LOW';
+    if (criticalViolations > 0 || complianceRate < 80) {
+      riskLevel = 'HIGH';
+    } else if (violationsCount > 5 || complianceRate < 95) {
+      riskLevel = 'MEDIUM';
+    }
+
+    return {
+      period: `${days} days`,
+      totalLoads,
+      compliantLoads,
+      complianceRate: Math.round(complianceRate * 10) / 10,
+      violationsCount,
+      criticalViolations,
+      permitsRequired,
+      inspections: recentInspections.length,
+      lastInspection:
+        inspections.length > 0
+          ? inspections.sort(
+              (a, b) =>
+                new Date(b.inspectionDate).getTime() -
+                new Date(a.inspectionDate).getTime()
+            )[0].inspectionDate
+          : undefined,
+      riskLevel,
+    };
   }
 }
 

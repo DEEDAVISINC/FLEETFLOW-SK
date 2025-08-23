@@ -1274,7 +1274,7 @@ export const getCurrentUser = (): {
   permissions: PageSectionPermissions;
 } => {
   // Change this ID to test different users and permission levels:
-  const currentUserId = 'broker-001'; // Try: 'admin-001', 'disp-001', 'driver-001', 'disp-003'
+  const currentUserId = 'admin-001'; // Try: 'admin-001', 'disp-001', 'driver-001', 'disp-003' (Management user for testing My Portal)
 
   const user = MOCK_USERS.find((u) => u.id === currentUserId) || MOCK_USERS[0];
   const permissions = getSectionPermissions(user);

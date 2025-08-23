@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import BillOfLading from '../components/BillOfLading';
+import ProfessionalDocumentTemplates from '../components/ProfessionalDocumentTemplates';
 import RateConfirmation from '../components/RateConfirmation';
 import { useLoad } from '../contexts/LoadContext';
 
@@ -49,40 +50,8 @@ export default function DocumentsPage() {
     }
   }, [loadHistory, setSelectedLoad]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [batchLoads, setBatchLoads] = useState<string[]>([]);
   const [documentVersions, setDocumentVersions] = useState<any[]>([]);
-
-  // Document Templates
-  const documentTemplates = {
-    'hazmat-rate-confirmation': {
-      name: 'Hazmat Rate Confirmation',
-      description:
-        'Template for hazardous materials shipments with additional safety requirements',
-      fields: ['hazmat_class', 'emergency_contact', 'placarding_requirements'],
-    },
-    'oversized-load': {
-      name: 'Oversized Load Documentation',
-      description:
-        'Template for oversized/overweight loads requiring special permits',
-      fields: ['permit_numbers', 'escort_requirements', 'route_restrictions'],
-    },
-    'refrigerated-transport': {
-      name: 'Refrigerated Transport',
-      description: 'Template for temperature-controlled shipments',
-      fields: [
-        'temperature_range',
-        'monitoring_requirements',
-        'backup_systems',
-      ],
-    },
-    'international-shipment': {
-      name: 'International Shipment',
-      description:
-        'Template for cross-border shipments with customs requirements',
-      fields: ['customs_forms', 'export_documentation', 'duty_information'],
-    },
-  };
 
   // Validation Functions
   const validateDocument = (
@@ -1765,138 +1734,10 @@ export default function DocumentsPage() {
           </div>
         )}
 
-        {/* Templates Tab */}
+        {/* Templates Tab - Professional Templates with User Documents */}
         {activeView === 'templates' && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '32px',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <h2
-              style={{
-                fontSize: '28px',
-                fontWeight: '600',
-                color: 'white',
-                margin: '0 0 24px 0',
-              }}
-            >
-              🎨 Document Templates
-            </h2>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                marginBottom: '32px',
-              }}
-            >
-              Choose from pre-built templates optimized for specific freight
-              types and requirements.
-            </p>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '20px',
-              }}
-            >
-              {Object.entries(documentTemplates).map(([key, template]) => (
-                <div
-                  key={key}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '24px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.06)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 25px rgba(0, 0, 0, 0.2)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.03)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      margin: '0 0 12px 0',
-                    }}
-                  >
-                    {template.name}
-                  </h3>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '14px',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    {template.description}
-                  </p>
-                  <div style={{ marginBottom: '16px' }}>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      Special Fields:
-                    </div>
-                    <div
-                      style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
-                    >
-                      {template.fields.map((field) => (
-                        <span
-                          key={field}
-                          style={{
-                            background: 'rgba(59, 130, 246, 0.2)',
-                            color: '#60a5fa',
-                            padding: '4px 8px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                          }}
-                        >
-                          {field}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedTemplate(key)}
-                    style={{
-                      width: '100%',
-                      background: 'linear-gradient(135deg, #4ade80, #22c55e)',
-                      color: 'white',
-                      padding: '12px 24px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    Use Template
-                  </button>
-                </div>
-              ))}
-            </div>
+          <div>
+            <ProfessionalDocumentTemplates />
           </div>
         )}
 

@@ -3,18 +3,18 @@
  * Business logic for schedule management with driver/vehicle integration
  */
 
-import { 
-  Schedule, 
-  ScheduleFilter, 
-  ScheduleStatistics, 
-  DriverAvailability, 
-  VehicleAvailability,
-  ScheduleValidation,
-  ScheduleConflict,
-  WeeklyScheduleView,
+import {
+  DailySchedule,
+  DriverAvailability,
   DriverWeeklySchedule,
+  Schedule,
+  ScheduleConflict,
+  ScheduleFilter,
+  ScheduleStatistics,
+  ScheduleValidation,
+  VehicleAvailability,
   VehicleWeeklySchedule,
-  DailySchedule
+  WeeklyScheduleView,
 } from './types';
 
 export class SchedulingService {
@@ -27,11 +27,18 @@ export class SchedulingService {
   }
 
   // Schedule CRUD Operations
-  async createSchedule(scheduleData: Partial<Schedule>): Promise<{ success: boolean; schedule?: Schedule; conflicts?: ScheduleConflict[] }> {
+  async createSchedule(
+    scheduleData: Partial<Schedule>
+  ): Promise<{
+    success: boolean;
+    schedule?: Schedule;
+    conflicts?: ScheduleConflict[];
+  }> {
     const newSchedule: Schedule = {
       id: `SCH-${Date.now()}`,
       title: scheduleData.title || 'Untitled Schedule',
-      startDate: scheduleData.startDate || new Date().toISOString().split('T')[0],
+      startDate:
+        scheduleData.startDate || new Date().toISOString().split('T')[0],
       endDate: scheduleData.endDate || new Date().toISOString().split('T')[0],
       startTime: scheduleData.startTime || '09:00',
       endTime: scheduleData.endTime || '17:00',
@@ -41,28 +48,39 @@ export class SchedulingService {
       createdBy: 'Current User',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      ...scheduleData
+      ...scheduleData,
     };
 
     // Validate schedule
     const validation = await this.validateSchedule(newSchedule);
-    
-    if (validation.conflicts.some(c => c.severity === 'error')) {
-      return { 
-        success: false, 
-        conflicts: validation.conflicts.filter(c => c.severity === 'error')
+
+    if (validation.conflicts.some((c) => c.severity === 'error')) {
+      return {
+        success: false,
+        conflicts: validation.conflicts.filter((c) => c.severity === 'error'),
       };
     }
 
     // Update availability and HOS tracking
     await this.updateResourceAvailability(newSchedule);
-    
+
     this.schedules.push(newSchedule);
-    return { success: true, schedule: newSchedule, conflicts: validation.conflicts };
+    return {
+      success: true,
+      schedule: newSchedule,
+      conflicts: validation.conflicts,
+    };
   }
 
-  async updateSchedule(id: string, updates: Partial<Schedule>): Promise<{ success: boolean; schedule?: Schedule; conflicts?: ScheduleConflict[] }> {
-    const index = this.schedules.findIndex(s => s.id === id);
+  async updateSchedule(
+    id: string,
+    updates: Partial<Schedule>
+  ): Promise<{
+    success: boolean;
+    schedule?: Schedule;
+    conflicts?: ScheduleConflict[];
+  }> {
+    const index = this.schedules.findIndex((s) => s.id === id);
     if (index === -1) {
       return { success: false };
     }
@@ -70,34 +88,38 @@ export class SchedulingService {
     const updatedSchedule = {
       ...this.schedules[index],
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const validation = await this.validateSchedule(updatedSchedule);
-    
-    if (validation.conflicts.some(c => c.severity === 'error')) {
-      return { 
-        success: false, 
-        conflicts: validation.conflicts.filter(c => c.severity === 'error')
+
+    if (validation.conflicts.some((c) => c.severity === 'error')) {
+      return {
+        success: false,
+        conflicts: validation.conflicts.filter((c) => c.severity === 'error'),
       };
     }
 
     this.schedules[index] = updatedSchedule;
     await this.updateResourceAvailability(updatedSchedule);
-    
-    return { success: true, schedule: updatedSchedule, conflicts: validation.conflicts };
+
+    return {
+      success: true,
+      schedule: updatedSchedule,
+      conflicts: validation.conflicts,
+    };
   }
 
   async deleteSchedule(id: string): Promise<boolean> {
-    const index = this.schedules.findIndex(s => s.id === id);
+    const index = this.schedules.findIndex((s) => s.id === id);
     if (index === -1) return false;
 
     const schedule = this.schedules[index];
     this.schedules.splice(index, 1);
-    
+
     // Free up resources
     await this.freeResourceAvailability(schedule);
-    
+
     return true;
   }
 
@@ -107,89 +129,109 @@ export class SchedulingService {
 
     if (filter) {
       if (filter.startDate) {
-        filtered = filtered.filter(s => s.startDate >= filter.startDate!);
+        filtered = filtered.filter((s) => s.startDate >= filter.startDate!);
       }
       if (filter.endDate) {
-        filtered = filtered.filter(s => s.endDate <= filter.endDate!);
+        filtered = filtered.filter((s) => s.endDate <= filter.endDate!);
       }
       if (filter.status?.length) {
-        filtered = filtered.filter(s => filter.status!.includes(s.status));
+        filtered = filtered.filter((s) => filter.status!.includes(s.status));
       }
       if (filter.priority?.length) {
-        filtered = filtered.filter(s => filter.priority!.includes(s.priority));
+        filtered = filtered.filter((s) =>
+          filter.priority!.includes(s.priority)
+        );
       }
       if (filter.scheduleType?.length) {
-        filtered = filtered.filter(s => filter.scheduleType!.includes(s.scheduleType));
+        filtered = filtered.filter((s) =>
+          filter.scheduleType!.includes(s.scheduleType)
+        );
       }
       if (filter.assignedDriverId) {
-        filtered = filtered.filter(s => s.assignedDriverId === filter.assignedDriverId);
+        filtered = filtered.filter(
+          (s) => s.assignedDriverId === filter.assignedDriverId
+        );
       }
       if (filter.assignedVehicleId) {
-        filtered = filtered.filter(s => s.assignedVehicleId === filter.assignedVehicleId);
+        filtered = filtered.filter(
+          (s) => s.assignedVehicleId === filter.assignedVehicleId
+        );
       }
       if (filter.searchTerm) {
         const term = filter.searchTerm.toLowerCase();
-        filtered = filtered.filter(s => 
-          s.title.toLowerCase().includes(term) ||
-          s.description?.toLowerCase().includes(term) ||
-          s.driverName?.toLowerCase().includes(term) ||
-          s.vehicleName?.toLowerCase().includes(term)
+        filtered = filtered.filter(
+          (s) =>
+            s.title.toLowerCase().includes(term) ||
+            s.description?.toLowerCase().includes(term) ||
+            s.driverName?.toLowerCase().includes(term) ||
+            s.vehicleName?.toLowerCase().includes(term)
         );
       }
     }
 
-    return filtered.sort((a, b) => new Date(a.startDate + ' ' + a.startTime).getTime() - new Date(b.startDate + ' ' + b.startTime).getTime());
+    return filtered.sort(
+      (a, b) =>
+        new Date(a.startDate + ' ' + a.startTime).getTime() -
+        new Date(b.startDate + ' ' + b.startTime).getTime()
+    );
   }
 
   getScheduleById(id: string): Schedule | undefined {
-    return this.schedules.find(s => s.id === id);
+    return this.schedules.find((s) => s.id === id);
   }
 
   // Resource Management
   getDriverAvailability(driverId?: string): DriverAvailability[] {
     if (driverId) {
-      return this.drivers.filter(d => d.driverId === driverId);
+      return this.drivers.filter((d) => d.driverId === driverId);
     }
     return [...this.drivers];
   }
 
   getVehicleAvailability(vehicleId?: string): VehicleAvailability[] {
     if (vehicleId) {
-      return this.vehicles.filter(v => v.vehicleId === vehicleId);
+      return this.vehicles.filter((v) => v.vehicleId === vehicleId);
     }
     return [...this.vehicles];
   }
 
-  getAvailableDriversForSchedule(schedule: Partial<Schedule>): DriverAvailability[] {
-    return this.drivers.filter(driver => {
+  getAvailableDriversForSchedule(
+    schedule: Partial<Schedule>
+  ): DriverAvailability[] {
+    return this.drivers.filter((driver) => {
       // Check basic availability
-      if (driver.status === 'Inactive' || driver.status === 'Off Duty') return false;
-      
+      if (driver.status === 'Inactive' || driver.status === 'Off Duty')
+        return false;
+
       // Check HOS compliance
-      const estimatedHours = schedule.estimatedHours || this.calculateEstimatedHours(schedule);
+      const estimatedHours =
+        schedule.estimatedHours || this.calculateEstimatedHours(schedule);
       if (driver.hoursRemaining < estimatedHours) return false;
-      
+
       // Check license status
       if (driver.licenseStatus !== 'Valid') return false;
-      
+
       // Check for time conflicts
       if (this.hasDriverTimeConflict(driver.driverId, schedule)) return false;
-      
+
       return true;
     });
   }
 
-  getAvailableVehiclesForSchedule(schedule: Partial<Schedule>): VehicleAvailability[] {
-    return this.vehicles.filter(vehicle => {
+  getAvailableVehiclesForSchedule(
+    schedule: Partial<Schedule>
+  ): VehicleAvailability[] {
+    return this.vehicles.filter((vehicle) => {
       // Check basic availability
       if (vehicle.status !== 'Available') return false;
-      
+
       // Check maintenance status
       if (vehicle.inspectionStatus === 'Overdue') return false;
-      
+
       // Check for time conflicts
-      if (this.hasVehicleTimeConflict(vehicle.vehicleId, schedule)) return false;
-      
+      if (this.hasVehicleTimeConflict(vehicle.vehicleId, schedule))
+        return false;
+
       return true;
     });
   }
@@ -201,32 +243,41 @@ export class SchedulingService {
     const recommendations: string[] = [];
 
     // Time validation
-    const startDateTime = new Date(`${schedule.startDate} ${schedule.startTime}`);
+    const startDateTime = new Date(
+      `${schedule.startDate} ${schedule.startTime}`
+    );
     const endDateTime = new Date(`${schedule.endDate} ${schedule.endTime}`);
-    
+
     if (endDateTime <= startDateTime) {
       conflicts.push({
         type: 'time_overlap',
         severity: 'error',
         message: 'End time must be after start time',
         affectedSchedules: [schedule.id],
-        suggestions: ['Adjust the end time to be later than the start time']
+        suggestions: ['Adjust the end time to be later than the start time'],
       });
     }
 
     // Driver validation
     if (schedule.assignedDriverId) {
-      const driver = this.drivers.find(d => d.driverId === schedule.assignedDriverId);
+      const driver = this.drivers.find(
+        (d) => d.driverId === schedule.assignedDriverId
+      );
       if (driver) {
         // HOS validation
-        const estimatedHours = schedule.estimatedHours || this.calculateEstimatedHours(schedule);
+        const estimatedHours =
+          schedule.estimatedHours || this.calculateEstimatedHours(schedule);
         if (driver.hoursRemaining < estimatedHours) {
           conflicts.push({
             type: 'hos_violation',
             severity: 'error',
             message: `Driver ${driver.name} has insufficient hours remaining (${driver.hoursRemaining}h available, ${estimatedHours}h needed)`,
             affectedSchedules: [schedule.id],
-            suggestions: ['Assign a different driver', 'Reduce schedule duration', 'Split into multiple shifts']
+            suggestions: [
+              'Assign a different driver',
+              'Reduce schedule duration',
+              'Split into multiple shifts',
+            ],
           });
         }
 
@@ -237,7 +288,10 @@ export class SchedulingService {
             severity: 'error',
             message: `Driver ${driver.name} has invalid license status: ${driver.licenseStatus}`,
             affectedSchedules: [schedule.id],
-            suggestions: ['Assign a driver with valid license', 'Update driver license status']
+            suggestions: [
+              'Assign a driver with valid license',
+              'Update driver license status',
+            ],
           });
         }
 
@@ -248,7 +302,10 @@ export class SchedulingService {
             severity: 'error',
             message: `Driver ${driver.name} has conflicting schedules`,
             affectedSchedules: [schedule.id],
-            suggestions: ['Choose a different time slot', 'Assign a different driver']
+            suggestions: [
+              'Choose a different time slot',
+              'Assign a different driver',
+            ],
           });
         }
       }
@@ -256,7 +313,9 @@ export class SchedulingService {
 
     // Vehicle validation
     if (schedule.assignedVehicleId) {
-      const vehicle = this.vehicles.find(v => v.vehicleId === schedule.assignedVehicleId);
+      const vehicle = this.vehicles.find(
+        (v) => v.vehicleId === schedule.assignedVehicleId
+      );
       if (vehicle) {
         // Maintenance validation
         if (vehicle.inspectionStatus === 'Overdue') {
@@ -265,7 +324,10 @@ export class SchedulingService {
             severity: 'error',
             message: `Vehicle ${vehicle.name} has overdue inspection`,
             affectedSchedules: [schedule.id],
-            suggestions: ['Complete vehicle inspection', 'Assign a different vehicle']
+            suggestions: [
+              'Complete vehicle inspection',
+              'Assign a different vehicle',
+            ],
           });
         }
 
@@ -276,17 +338,20 @@ export class SchedulingService {
             severity: 'error',
             message: `Vehicle ${vehicle.name} has conflicting schedules`,
             affectedSchedules: [schedule.id],
-            suggestions: ['Choose a different time slot', 'Assign a different vehicle']
+            suggestions: [
+              'Choose a different time slot',
+              'Assign a different vehicle',
+            ],
           });
         }
       }
     }
 
     return {
-      isValid: conflicts.filter(c => c.severity === 'error').length === 0,
+      isValid: conflicts.filter((c) => c.severity === 'error').length === 0,
       conflicts,
       warnings,
-      recommendations
+      recommendations,
     };
   }
 
@@ -296,47 +361,77 @@ export class SchedulingService {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
 
-    const weekSchedules = this.schedules.filter(schedule => {
+    const weekSchedules = this.schedules.filter((schedule) => {
       const scheduleDate = new Date(schedule.startDate);
       return scheduleDate >= weekStart && scheduleDate <= weekEnd;
     });
 
-    const driverSchedules: DriverWeeklySchedule[] = this.drivers.map(driver => ({
-      driverId: driver.driverId,
-      driverName: driver.name,
-      schedules: this.generateDailySchedules(driver.driverId, weekStart, weekSchedules, 'driver'),
-      totalHours: this.calculateWeeklyHours(driver.driverId, weekSchedules),
-      hosCompliance: driver.hoursRemaining > 0,
-      utilization: this.calculateDriverUtilization(driver.driverId, weekSchedules)
-    }));
+    const driverSchedules: DriverWeeklySchedule[] = this.drivers.map(
+      (driver) => ({
+        driverId: driver.driverId,
+        driverName: driver.name,
+        schedules: this.generateDailySchedules(
+          driver.driverId,
+          weekStart,
+          weekSchedules,
+          'driver'
+        ),
+        totalHours: this.calculateWeeklyHours(driver.driverId, weekSchedules),
+        hosCompliance: driver.hoursRemaining > 0,
+        utilization: this.calculateDriverUtilization(
+          driver.driverId,
+          weekSchedules
+        ),
+      })
+    );
 
-    const vehicleSchedules: VehicleWeeklySchedule[] = this.vehicles.map(vehicle => ({
-      vehicleId: vehicle.vehicleId,
-      vehicleName: vehicle.name,
-      schedules: this.generateDailySchedules(vehicle.vehicleId, weekStart, weekSchedules, 'vehicle'),
-      totalMiles: this.calculateWeeklyMiles(vehicle.vehicleId, weekSchedules),
-      utilization: this.calculateVehicleUtilization(vehicle.vehicleId, weekSchedules),
-      maintenanceAlerts: this.getVehicleMaintenanceAlerts(vehicle)
-    }));
+    const vehicleSchedules: VehicleWeeklySchedule[] = this.vehicles.map(
+      (vehicle) => ({
+        vehicleId: vehicle.vehicleId,
+        vehicleName: vehicle.name,
+        schedules: this.generateDailySchedules(
+          vehicle.vehicleId,
+          weekStart,
+          weekSchedules,
+          'vehicle'
+        ),
+        totalMiles: this.calculateWeeklyMiles(vehicle.vehicleId, weekSchedules),
+        utilization: this.calculateVehicleUtilization(
+          vehicle.vehicleId,
+          weekSchedules
+        ),
+        maintenanceAlerts: this.getVehicleMaintenanceAlerts(vehicle),
+      })
+    );
 
-    const unassignedSchedules = weekSchedules.filter(s => !s.assignedDriverId || !s.assignedVehicleId);
+    const unassignedSchedules = weekSchedules.filter(
+      (s) => !s.assignedDriverId || !s.assignedVehicleId
+    );
 
     return {
       weekStartDate,
       drivers: driverSchedules,
       vehicles: vehicleSchedules,
-      unassignedSchedules
+      unassignedSchedules,
     };
   }
 
   // Statistics
   getScheduleStatistics(): ScheduleStatistics {
     const total = this.schedules.length;
-    const scheduled = this.schedules.filter(s => s.status === 'Scheduled').length;
-    const inProgress = this.schedules.filter(s => s.status === 'In Progress').length;
-    const completed = this.schedules.filter(s => s.status === 'Completed').length;
-    const cancelled = this.schedules.filter(s => s.status === 'Cancelled').length;
-    const delayed = this.schedules.filter(s => s.status === 'Delayed').length;
+    const scheduled = this.schedules.filter(
+      (s) => s.status === 'Scheduled'
+    ).length;
+    const inProgress = this.schedules.filter(
+      (s) => s.status === 'In Progress'
+    ).length;
+    const completed = this.schedules.filter(
+      (s) => s.status === 'Completed'
+    ).length;
+    const cancelled = this.schedules.filter(
+      (s) => s.status === 'Cancelled'
+    ).length;
+    const delayed = this.schedules.filter((s) => s.status === 'Delayed').length;
 
     const utilizationRate = this.calculateOverallUtilization();
     const complianceRate = this.calculateComplianceRate();
@@ -351,17 +446,17 @@ export class SchedulingService {
       delayedCount: delayed,
       utilizationRate,
       complianceRate,
-      onTimePerformance
+      onTimePerformance,
     };
   }
 
   // Private helper methods
   private calculateEstimatedHours(schedule: Partial<Schedule>): number {
     if (!schedule.startTime || !schedule.endTime) return 8;
-    
+
     const startTime = this.parseTime(schedule.startTime);
     const endTime = this.parseTime(schedule.endTime);
-    
+
     return (endTime - startTime) / (1000 * 60 * 60);
   }
 
@@ -370,37 +465,61 @@ export class SchedulingService {
     return new Date().setHours(hours, minutes, 0, 0);
   }
 
-  private hasDriverTimeConflict(driverId: string, schedule: Partial<Schedule>): boolean {
-    const conflictingSchedules = this.schedules.filter(s => 
-      s.assignedDriverId === driverId &&
-      s.id !== schedule.id &&
-      s.status !== 'Cancelled' &&
-      this.isTimeOverlap(s, schedule)
+  private hasDriverTimeConflict(
+    driverId: string,
+    schedule: Partial<Schedule>
+  ): boolean {
+    const conflictingSchedules = this.schedules.filter(
+      (s) =>
+        s.assignedDriverId === driverId &&
+        s.id !== schedule.id &&
+        s.status !== 'Cancelled' &&
+        this.isTimeOverlap(s, schedule)
     );
-    
+
     return conflictingSchedules.length > 0;
   }
 
-  private hasVehicleTimeConflict(vehicleId: string, schedule: Partial<Schedule>): boolean {
-    const conflictingSchedules = this.schedules.filter(s => 
-      s.assignedVehicleId === vehicleId &&
-      s.id !== schedule.id &&
-      s.status !== 'Cancelled' &&
-      this.isTimeOverlap(s, schedule)
+  private hasVehicleTimeConflict(
+    vehicleId: string,
+    schedule: Partial<Schedule>
+  ): boolean {
+    const conflictingSchedules = this.schedules.filter(
+      (s) =>
+        s.assignedVehicleId === vehicleId &&
+        s.id !== schedule.id &&
+        s.status !== 'Cancelled' &&
+        this.isTimeOverlap(s, schedule)
     );
-    
+
     return conflictingSchedules.length > 0;
   }
 
-  private isTimeOverlap(schedule1: Partial<Schedule>, schedule2: Partial<Schedule>): boolean {
-    if (!schedule1.startDate || !schedule1.endDate || !schedule2.startDate || !schedule2.endDate) {
+  private isTimeOverlap(
+    schedule1: Partial<Schedule>,
+    schedule2: Partial<Schedule>
+  ): boolean {
+    if (
+      !schedule1.startDate ||
+      !schedule1.endDate ||
+      !schedule2.startDate ||
+      !schedule2.endDate
+    ) {
       return false;
     }
 
-    const start1 = new Date(`${schedule1.startDate} ${schedule1.startTime || '00:00'}`);
-    const end1 = new Date(`${schedule1.endDate} ${schedule1.endTime || '23:59'}`);
-    const start2 = new Date(`${schedule2.startDate} ${schedule2.startTime || '00:00'}`);
-    const end2 = new Date(`${schedule2.endDate} ${schedule2.endTime || '23:59'}`);
+    const start1 = new Date(
+      `${schedule1.startDate} ${schedule1.startTime || '00:00'}`
+    );
+    const end1 = new Date(
+      `${schedule1.endDate} ${schedule1.endTime || '23:59'}`
+    );
+    const start2 = new Date(
+      `${schedule2.startDate} ${schedule2.startTime || '00:00'}`
+    );
+    const end2 = new Date(
+      `${schedule2.endDate} ${schedule2.endTime || '23:59'}`
+    );
 
     return start1 < end2 && end1 > start2;
   }
@@ -408,17 +527,25 @@ export class SchedulingService {
   private async updateResourceAvailability(schedule: Schedule): Promise<void> {
     // Update driver hours
     if (schedule.assignedDriverId) {
-      const driver = this.drivers.find(d => d.driverId === schedule.assignedDriverId);
+      const driver = this.drivers.find(
+        (d) => d.driverId === schedule.assignedDriverId
+      );
       if (driver) {
-        const estimatedHours = schedule.estimatedHours || this.calculateEstimatedHours(schedule);
+        const estimatedHours =
+          schedule.estimatedHours || this.calculateEstimatedHours(schedule);
         driver.currentHours += estimatedHours;
-        driver.hoursRemaining = Math.max(0, driver.maxHours - driver.currentHours);
+        driver.hoursRemaining = Math.max(
+          0,
+          driver.maxHours - driver.currentHours
+        );
       }
     }
 
     // Update vehicle status
     if (schedule.assignedVehicleId) {
-      const vehicle = this.vehicles.find(v => v.vehicleId === schedule.assignedVehicleId);
+      const vehicle = this.vehicles.find(
+        (v) => v.vehicleId === schedule.assignedVehicleId
+      );
       if (vehicle && schedule.status === 'In Progress') {
         vehicle.status = 'In Use';
       }
@@ -428,32 +555,45 @@ export class SchedulingService {
   private async freeResourceAvailability(schedule: Schedule): Promise<void> {
     // Free driver hours
     if (schedule.assignedDriverId) {
-      const driver = this.drivers.find(d => d.driverId === schedule.assignedDriverId);
+      const driver = this.drivers.find(
+        (d) => d.driverId === schedule.assignedDriverId
+      );
       if (driver) {
-        const estimatedHours = schedule.estimatedHours || this.calculateEstimatedHours(schedule);
+        const estimatedHours =
+          schedule.estimatedHours || this.calculateEstimatedHours(schedule);
         driver.currentHours = Math.max(0, driver.currentHours - estimatedHours);
-        driver.hoursRemaining = Math.min(driver.maxHours, driver.maxHours - driver.currentHours);
+        driver.hoursRemaining = Math.min(
+          driver.maxHours,
+          driver.maxHours - driver.currentHours
+        );
       }
     }
 
     // Free vehicle
     if (schedule.assignedVehicleId) {
-      const vehicle = this.vehicles.find(v => v.vehicleId === schedule.assignedVehicleId);
+      const vehicle = this.vehicles.find(
+        (v) => v.vehicleId === schedule.assignedVehicleId
+      );
       if (vehicle && vehicle.status === 'In Use') {
         vehicle.status = 'Available';
       }
     }
   }
 
-  private generateDailySchedules(resourceId: string, weekStart: Date, weekSchedules: Schedule[], type: 'driver' | 'vehicle'): DailySchedule[] {
+  private generateDailySchedules(
+    resourceId: string,
+    weekStart: Date,
+    weekSchedules: Schedule[],
+    type: 'driver' | 'vehicle'
+  ): DailySchedule[] {
     const dailySchedules: DailySchedule[] = [];
-    
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(weekStart);
       date.setDate(date.getDate() + i);
       const dateStr = date.toISOString().split('T')[0];
-      
-      const daySchedules = weekSchedules.filter(s => {
+
+      const daySchedules = weekSchedules.filter((s) => {
         if (type === 'driver') {
           return s.assignedDriverId === resourceId && s.startDate === dateStr;
         } else {
@@ -461,17 +601,20 @@ export class SchedulingService {
         }
       });
 
-      const totalHours = daySchedules.reduce((sum, s) => sum + (s.estimatedHours || 8), 0);
-      
+      const totalHours = daySchedules.reduce(
+        (sum, s) => sum + (s.estimatedHours || 8),
+        0
+      );
+
       dailySchedules.push({
         date: dateStr,
         schedules: daySchedules,
         totalHours,
         hasConflicts: this.checkDayConflicts(daySchedules),
-        conflicts: this.getDayConflicts(daySchedules)
+        conflicts: this.getDayConflicts(daySchedules),
       });
     }
-    
+
     return dailySchedules;
   }
 
@@ -491,44 +634,58 @@ export class SchedulingService {
     for (let i = 0; i < schedules.length; i++) {
       for (let j = i + 1; j < schedules.length; j++) {
         if (this.isTimeOverlap(schedules[i], schedules[j])) {
-          conflicts.push(`${schedules[i].title} overlaps with ${schedules[j].title}`);
+          conflicts.push(
+            `${schedules[i].title} overlaps with ${schedules[j].title}`
+          );
         }
       }
     }
     return conflicts;
   }
 
-  private calculateWeeklyHours(driverId: string, schedules: Schedule[]): number {
+  private calculateWeeklyHours(
+    driverId: string,
+    schedules: Schedule[]
+  ): number {
     return schedules
-      .filter(s => s.assignedDriverId === driverId)
+      .filter((s) => s.assignedDriverId === driverId)
       .reduce((sum, s) => sum + (s.estimatedHours || 8), 0);
   }
 
-  private calculateWeeklyMiles(vehicleId: string, schedules: Schedule[]): number {
+  private calculateWeeklyMiles(
+    vehicleId: string,
+    schedules: Schedule[]
+  ): number {
     return schedules
-      .filter(s => s.assignedVehicleId === vehicleId)
+      .filter((s) => s.assignedVehicleId === vehicleId)
       .reduce((sum, s) => sum + (s.estimatedDistance || 0), 0);
   }
 
-  private calculateDriverUtilization(driverId: string, schedules: Schedule[]): number {
-    const driver = this.drivers.find(d => d.driverId === driverId);
+  private calculateDriverUtilization(
+    driverId: string,
+    schedules: Schedule[]
+  ): number {
+    const driver = this.drivers.find((d) => d.driverId === driverId);
     if (!driver) return 0;
-    
+
     const weeklyHours = this.calculateWeeklyHours(driverId, schedules);
     return Math.min(100, (weeklyHours / driver.maxHours) * 100);
   }
 
-  private calculateVehicleUtilization(vehicleId: string, schedules: Schedule[]): number {
+  private calculateVehicleUtilization(
+    vehicleId: string,
+    schedules: Schedule[]
+  ): number {
     const weeklyHours = schedules
-      .filter(s => s.assignedVehicleId === vehicleId)
+      .filter((s) => s.assignedVehicleId === vehicleId)
       .reduce((sum, s) => sum + (s.estimatedHours || 8), 0);
-    
+
     return Math.min(100, (weeklyHours / (7 * 24)) * 100);
   }
 
   private getVehicleMaintenanceAlerts(vehicle: VehicleAvailability): string[] {
     const alerts: string[] = [];
-    
+
     if (vehicle.inspectionStatus === 'Due Soon') {
       alerts.push('Inspection due soon');
     }
@@ -538,34 +695,121 @@ export class SchedulingService {
     if (vehicle.hasIssues) {
       alerts.push(vehicle.issueDescription || 'Has reported issues');
     }
-    
+
     return alerts;
   }
 
   private calculateOverallUtilization(): number {
     const totalCapacity = this.drivers.length * 40; // 40 hours per week per driver
     const totalScheduled = this.schedules
-      .filter(s => s.status !== 'Cancelled')
+      .filter((s) => s.status !== 'Cancelled')
       .reduce((sum, s) => sum + (s.estimatedHours || 8), 0);
-    
-    return totalCapacity > 0 ? Math.min(100, (totalScheduled / totalCapacity) * 100) : 0;
+
+    return totalCapacity > 0
+      ? Math.min(100, (totalScheduled / totalCapacity) * 100)
+      : 0;
   }
 
   private calculateComplianceRate(): number {
-    const compliantSchedules = this.schedules.filter(s => 
-      s.hosCompliance !== false && 
-      s.licenseVerified !== false && 
-      s.vehicleInspectionCurrent !== false
+    const compliantSchedules = this.schedules.filter(
+      (s) =>
+        s.hosCompliance !== false &&
+        s.licenseVerified !== false &&
+        s.vehicleInspectionCurrent !== false
     );
-    
-    return this.schedules.length > 0 ? (compliantSchedules.length / this.schedules.length) * 100 : 100;
+
+    return this.schedules.length > 0
+      ? (compliantSchedules.length / this.schedules.length) * 100
+      : 100;
   }
 
   private calculateOnTimePerformance(): number {
-    const completedSchedules = this.schedules.filter(s => s.status === 'Completed');
-    const onTimeSchedules = completedSchedules.filter(s => s.status === 'Completed');
-    
-    return completedSchedules.length > 0 ? (onTimeSchedules.length / completedSchedules.length) * 100 : 100;
+    const completedSchedules = this.schedules.filter(
+      (s) => s.status === 'Completed'
+    );
+    const onTimeSchedules = completedSchedules.filter(
+      (s) => s.status === 'Completed'
+    );
+
+    return completedSchedules.length > 0
+      ? (onTimeSchedules.length / completedSchedules.length) * 100
+      : 100;
+  }
+
+  // Add missing methods for load integration
+  async getSchedulesByLoadId(loadId: string): Promise<Schedule[]> {
+    return this.schedules.filter((schedule) => schedule.loadId === loadId);
+  }
+
+  async validateDriverAvailability(
+    driverId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<{
+    conflicts: ScheduleConflict[];
+  }> {
+    const conflicts: ScheduleConflict[] = [];
+
+    // Check for existing schedule conflicts
+    const existingSchedules = this.schedules.filter(
+      (schedule) =>
+        schedule.assignedDriverId === driverId &&
+        schedule.status !== 'Cancelled' &&
+        schedule.status !== 'Completed'
+    );
+
+    for (const schedule of existingSchedules) {
+      if (
+        this.isDateOverlap(
+          { startDate, endDate },
+          { startDate: schedule.startDate, endDate: schedule.endDate }
+        )
+      ) {
+        conflicts.push({
+          type: 'driver_conflict',
+          severity: 'error',
+          message: `Driver ${driverId} already has scheduled work during this time period`,
+          conflictingSchedule: schedule,
+        });
+      }
+    }
+
+    // Check driver HOS limits
+    const driver = this.drivers.find((d) => d.driverId === driverId);
+    if (driver) {
+      if (driver.hoursRemaining < 4) {
+        // Minimum hours needed for a load
+        conflicts.push({
+          type: 'hos_violation',
+          severity: 'warning',
+          message: `Driver ${driver.name} has insufficient hours remaining (${driver.hoursRemaining}h available)`,
+          conflictingSchedule: null,
+        });
+      }
+
+      if (driver.licenseStatus !== 'Valid') {
+        conflicts.push({
+          type: 'license_issue',
+          severity: 'error',
+          message: `Driver ${driver.name} has license status: ${driver.licenseStatus}`,
+          conflictingSchedule: null,
+        });
+      }
+    }
+
+    return { conflicts };
+  }
+
+  private isDateOverlap(
+    schedule1: { startDate: string; endDate: string },
+    schedule2: { startDate: string; endDate: string }
+  ): boolean {
+    const start1 = new Date(schedule1.startDate);
+    const end1 = new Date(schedule1.endDate);
+    const start2 = new Date(schedule2.startDate);
+    const end2 = new Date(schedule2.endDate);
+
+    return start1 <= end2 && end1 >= start2;
   }
 
   private initializeMockData(): void {
@@ -583,7 +827,7 @@ export class SchedulingService {
         currentLocation: 'Dallas, TX',
         assignedVehicle: 'TRK-001',
         eldStatus: 'Connected',
-        hasConflict: false
+        hasConflict: false,
       },
       {
         driverId: 'DRV-002',
@@ -596,7 +840,7 @@ export class SchedulingService {
         licenseExpiry: '2026-03-15',
         currentLocation: 'Los Angeles, CA',
         eldStatus: 'Connected',
-        hasConflict: false
+        hasConflict: false,
       },
       {
         driverId: 'DRV-003',
@@ -610,8 +854,8 @@ export class SchedulingService {
         currentLocation: 'Phoenix, AZ',
         assignedVehicle: 'TRK-002',
         eldStatus: 'Connected',
-        hasConflict: false
-      }
+        hasConflict: false,
+      },
     ];
 
     // Initialize mock vehicles
@@ -628,7 +872,7 @@ export class SchedulingService {
         assignedDriver: 'DRV-001',
         currentLocation: 'Dallas, TX',
         fuelLevel: 85,
-        hasIssues: false
+        hasIssues: false,
       },
       {
         vehicleId: 'TRK-002',
@@ -642,7 +886,7 @@ export class SchedulingService {
         assignedDriver: 'DRV-003',
         currentLocation: 'Phoenix, AZ',
         fuelLevel: 60,
-        hasIssues: false
+        hasIssues: false,
       },
       {
         vehicleId: 'VAN-001',
@@ -655,8 +899,8 @@ export class SchedulingService {
         inspectionStatus: 'Current',
         currentLocation: 'Houston, TX',
         fuelLevel: 75,
-        hasIssues: false
-      }
+        hasIssues: false,
+      },
     ];
 
     // Initialize mock schedules
@@ -686,7 +930,7 @@ export class SchedulingService {
         vehicleInspectionCurrent: true,
         createdBy: 'Dispatcher',
         createdAt: '2025-01-02T10:00:00Z',
-        updatedAt: '2025-01-02T10:00:00Z'
+        updatedAt: '2025-01-02T10:00:00Z',
       },
       {
         id: 'SCH-002',
@@ -705,8 +949,8 @@ export class SchedulingService {
         maintenanceRequired: true,
         createdBy: 'Maintenance Manager',
         createdAt: '2025-01-01T14:00:00Z',
-        updatedAt: '2025-01-01T14:00:00Z'
-      }
+        updatedAt: '2025-01-01T14:00:00Z',
+      },
     ];
   }
 }

@@ -68,6 +68,11 @@ const getRecommendedTier = (
 };
 
 export default function SubscriptionDashboard() {
+  // Redirect to user profile where subscription management is now located
+  if (typeof window !== 'undefined') {
+    window.location.href = '/user-profile';
+    return null;
+  }
   const [subscription, setSubscription] = useState<UserSubscription | null>(
     null
   );

@@ -572,7 +572,7 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '20px',
                 }}
               >
-                💼 FleetFlow Professional
+                FleetFlow Business Intelligence
               </h2>
               <p
                 style={{
@@ -711,6 +711,12 @@ export default function FleetFlowLandingPage() {
                   <li>✓ Route optimization</li>
                   <li>✓ CRM integration</li>
                   <li>✓ Basic AI automation</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 50 phone minutes included
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 25 SMS messages included
+                  </li>
                 </ul>
               </div>
 
@@ -772,7 +778,7 @@ export default function FleetFlowLandingPage() {
                     Starting at
                   </span>
                   <br />
-                  $249
+                  $289
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>
@@ -791,6 +797,15 @@ export default function FleetFlowLandingPage() {
                   <li>✓ Load & customer management</li>
                   <li>✓ Revenue analytics dashboard</li>
                   <li>✓ AI-powered optimization</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 500 phone minutes included
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 200 SMS messages included
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Advanced call monitoring
+                  </li>
                 </ul>
               </div>
 
@@ -834,7 +849,7 @@ export default function FleetFlowLandingPage() {
                     Starting at
                   </span>
                   <br />
-                  $2,499
+                  $2,698
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>
@@ -853,6 +868,15 @@ export default function FleetFlowLandingPage() {
                   <li>✓ Advanced AI automation</li>
                   <li>✓ Priority support & training</li>
                   <li>✓ Custom integrations</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited phone minutes
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited SMS messages
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Enterprise call center features
+                  </li>
                 </ul>
               </div>
             </div>

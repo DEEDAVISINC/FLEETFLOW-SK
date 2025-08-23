@@ -1,6 +1,62 @@
 # 📖 FleetFlow User Guide - 2025 ENTERPRISE PLATFORM EDITION
 
+_Last Updated: January 15, 2025 | Version: 2025.1.15_
+
 ## 🚀 What's New in FleetFlow (2025 - ENTERPRISE PLATFORM STATUS)
+
+### **🆕 LATEST UPDATES - JANUARY 2025**
+
+#### **🤖 AI Company Dashboard - Executive Intelligence Center**
+
+- **Real-Time Business Intelligence**: Live data integration with FleetFlow services
+- **Automated Invoice Tracking**: Dispatcher fee tracking with auto-generation when loads complete
+- **Financial Command Center**: Enhanced Square & Bill.com integration with simplified configuration
+- **Executive KPI Dashboard**: Horizontal layout with comprehensive business metrics
+- **Smart Contract Management**: Email approval workflows for all contract automation
+
+#### **🏢 Enhanced Vendor Portal - Enterprise Analytics**
+
+- **Advanced Notification System**: Smart notification center with real-time badge counts and
+  priority color coding
+- **Interactive Dashboard Analytics**: Advanced filtering, revenue charts, drill-down analytics with
+  CSV/PDF export
+- **Live Data Integration**: 30-second auto-refresh with real FleetFlow service connections
+- **Comprehensive Business Intelligence**: Performance summaries, KPI tracking, mobile responsive
+  design
+
+#### **🚛 Advanced Dispatch Central - Invoice Automation**
+
+- **Automated Dispatcher Fee Tracking**: Auto-generates invoices when loads complete with 10% fee
+  calculation
+- **Embedded Document Verification**: Clickable Rate Confirmation & BOL numbers with instant view
+  overlay
+- **Invoice Lifecycle Management**: Complete tracking from creation to payment with timeline view
+- **Smart Fee Calculation**: Custom rates, exception handling, one-click verification process
+- **Completed Loads & Invoice Tracking**: Replaced old invoicing section with comprehensive tracker
+
+#### **💬 Intraoffice Messaging System - Team Communication**
+
+- **StickyNote-Enhanced Platform**: Complete team communication with category support
+- **Communication Category**: Now includes 💬 Communication option in dropdown
+- **Team Assignment**: Send messages to specific departments or individuals
+- **Priority Management**: Urgent, High, Medium, Low priority levels with visual indicators
+- **Department Templates**: Pre-written messages for fleet, dispatch, maintenance, safety, finance
+  teams
+
+#### **📁 Enhanced Document Filing System - External Broker Integration**
+
+- **External Broker Document Mapping**: Track external broker's own document ID numbers
+- **Comprehensive Filing Structure**: Hierarchical organization by year, month, load type, broker
+- **Cross-Reference System**: Map FleetFlow IDs to external broker IDs for auditing
+- **Document Audit Trails**: Complete tracking of actions, users, timestamps, IP addresses
+- **Compliance Integration**: DOT, FMCSA, IRS retention periods and compliance flags
+
+#### **💰 Financial Command Center Improvements**
+
+- **Simplified Square Integration**: Single-user service replacing multi-tenant complexity
+- **Enhanced Bill.com Integration**: Streamlined configuration and error handling
+- **Horizontal KPI Layout**: Grid-based layout for better visual organization
+- **Real-Time Financial Metrics**: Live data from settlement and billing services
 
 ## 🏢 Enterprise Software Platform Ready for Strategic Acquisition
 
@@ -562,20 +618,28 @@ into logistics solutions across ALL industry verticals.
 1. [Getting Started](#getting-started)
 2. [Dashboard Overview](#dashboard-overview)
 3. [Industry Data Consortium](#industry-data-consortium) ⭐ **NEW!**
-4. [Billing & Subscriptions](#billing--subscriptions) ⭐ **NEW!**
-5. [Enhanced Carrier Portal](#enhanced-carrier-portal) ⭐ **NEW!**
-6. [Driver Management & Compliance](#driver-management--compliance)
-7. [DOT Compliance Center](#dot-compliance-center)
-8. [FMCSA Forms Management](#fmcsa-forms-management)
-9. [Shipper Management](#shipper-management)
-10. [Dispatch Operations](#dispatch-operations)
-11. [Live Load Tracking](#live-load-tracking)
-12. [Broker Functions](#broker-functions)
-13. [Document Generation](#document-generation)
-14. [Analytics & Reporting](#analytics--reporting)
-15. [AI Automation](#ai-automation)
-16. [Settings & Administration](#settings--administration)
-17. [Workflow Examples](#workflow-examples)
+4. [AI Company Dashboard - Executive Intelligence Center](#ai-company-dashboard---executive-intelligence-center)
+   ⭐ **NEW 2025!**
+5. [Enhanced Vendor Portal - Enterprise Analytics](#enhanced-vendor-portal---enterprise-analytics)
+   ⭐ **NEW 2025!**
+6. [Intraoffice Messaging System - Team Communication](#intraoffice-messaging-system---team-communication)
+   ⭐ **NEW 2025!**
+7. [Enhanced Document Filing System - External Broker Integration](#enhanced-document-filing-system---external-broker-integration)
+   ⭐ **NEW 2025!**
+8. [Billing & Subscriptions](#billing--subscriptions) ⭐ **NEW!**
+9. [Enhanced Carrier Portal](#enhanced-carrier-portal) ⭐ **NEW!**
+10. [Driver Management & Compliance](#driver-management--compliance)
+11. [DOT Compliance Center](#dot-compliance-center)
+12. [FMCSA Forms Management](#fmcsa-forms-management)
+13. [Shipper Management](#shipper-management)
+14. [Dispatch Operations](#dispatch-operations)
+15. [Live Load Tracking](#live-load-tracking)
+16. [Broker Functions](#broker-functions)
+17. [Document Generation](#document-generation)
+18. [Analytics & Reporting](#analytics--reporting)
+19. [AI Automation](#ai-automation)
+20. [Settings & Administration](#settings--administration)
+21. [Workflow Examples](#workflow-examples)
 
 ---
 
@@ -1914,6 +1978,452 @@ real-time.
 - **Automatic Updates**: Load status updates based on tracking data
 - **Customer Notifications**: Automated delivery updates based on location
 - **Performance Analytics**: Tracking data improves future route planning
+
+---
+
+## 🤖 AI Company Dashboard - Executive Intelligence Center ⭐ **NEW 2025**
+
+### **What is the AI Company Dashboard?**
+
+The AI Company Dashboard is FleetFlow's **executive intelligence center** providing real-time
+business oversight, automated invoice tracking, and comprehensive financial management. This
+enterprise-grade dashboard integrates live data from all FleetFlow services to provide executives
+with complete operational visibility and automated business processes.
+
+### **Accessing the AI Company Dashboard**
+
+1. **From Navigation**: Click "🤖 AI Flow" → "AI Company Dashboard"
+2. **Direct URL**: `/ai-company-dashboard`
+3. **Permission Required**: Executive, Manager, or Admin role
+4. **Status**: ✅ **LIVE with Real-Time Data Integration**
+
+### **Core Features**
+
+#### **📊 Executive KPI Dashboard**
+
+- **Horizontal Grid Layout**: Optimized visual organization with comprehensive metrics
+- **Real-Time Updates**: Live data from settlement, billing, and load services
+- **Financial Command Center**: Square & Bill.com integration with simplified configuration
+- **Performance Metrics**: Revenue tracking, load completion rates, operational efficiency
+
+#### **🧾 Automated Dispatcher Fee Tracking System**
+
+**Revolutionary Invoice Automation**:
+
+- **Auto-Invoice Generation**: Triggered when load status changes to "Delivered"
+- **Smart Fee Calculation**: Default 10% dispatcher fee with custom rate support
+- **Embedded Document Links**: Clickable Rate Confirmation & BOL numbers
+- **One-Click Verification**: Instant document view overlay with auto-verification
+
+**Key Benefits**:
+
+- **75% Faster Invoice Processing**: Automated generation eliminates manual work
+- **100% Accuracy**: Auto-links documents and validates against load data
+- **Complete Audit Trail**: Every invoice tracked from creation to payment
+- **Exception Handling**: High-value loads and custom rates trigger management review
+
+#### **💰 Financial Command Center**
+
+**Enhanced Integration**:
+
+- **Simplified Square Service**: Single-user configuration replacing multi-tenant complexity
+- **Streamlined Bill.com**: Improved error handling and configuration management
+- **Real-Time Financial Metrics**: Live data from `settlementService` and `BillingAutomationService`
+- **Comprehensive Reporting**: Revenue, expenses, profitability tracking
+
+#### **📋 Smart Contract Management**
+
+**Email Approval Workflows**:
+
+- **Required Approvals**: All contracts require email approval to `ddavis@freight1stdirect.com` and
+  `invoice@freight1stdirect.com`
+- **Automated Notifications**: System sends approval requests before contract finalization
+- **Status Tracking**: Complete visibility into approval workflow status
+- **Compliance Assurance**: No contract processing without explicit approval
+
+### **Using the AI Company Dashboard**
+
+#### **Daily Executive Workflow**
+
+1. **Morning Review**: Check overnight load completions and auto-generated invoices
+2. **Financial Overview**: Review real-time revenue, expenses, and profitability metrics
+3. **Invoice Management**: Verify auto-generated invoices and approve for sending
+4. **Performance Analysis**: Analyze KPIs and operational efficiency metrics
+5. **Contract Oversight**: Review pending contracts requiring approval
+
+#### **Invoice Lifecycle Management**
+
+**Automated Process**:
+
+1. **Load Completion**: System detects "Delivered" status
+2. **Auto-Generation**: Invoice created with 10% dispatcher fee
+3. **Document Linking**: Rate Confirmation & BOL numbers embedded as clickable links
+4. **Verification**: One-click document review with overlay display
+5. **Approval**: Executive approval for invoice sending
+6. **Tracking**: Complete lifecycle from creation to payment
+
+**Manual Override Options**:
+
+- **Custom Fee Rates**: Adjust dispatcher fee percentage or flat amount
+- **Exception Handling**: Flag high-value loads for manual review
+- **Document Verification**: Manual document upload if auto-linking fails
+- **Approval Bypass**: Emergency processing with audit trail
+
+---
+
+## 🏢 Enhanced Vendor Portal - Enterprise Analytics ⭐ **NEW 2025**
+
+### **What is the Enhanced Vendor Portal?**
+
+The Enhanced Vendor Portal provides vendors and shippers with **enterprise-grade analytics**,
+real-time notifications, and comprehensive business intelligence. This professional portal
+integrates live FleetFlow data to deliver actionable insights and seamless vendor relationship
+management.
+
+### **Accessing the Vendor Portal**
+
+1. **Vendor Login**: Dedicated vendor authentication system
+2. **Direct URL**: `/vendor-portal` (requires vendor credentials)
+3. **Integration**: Seamless connection to FleetFlow services
+4. **Status**: ✅ **LIVE with Real-Time Data Integration**
+
+### **Core Features**
+
+#### **🔔 Advanced Notification System**
+
+**Smart Notification Center**:
+
+- **Interactive Bell Icon**: Real-time badge count with priority color coding
+- **Comprehensive Dropdown**: Live notification list with category filtering
+- **Priority Management**: Urgent (red), high (orange), medium (yellow), low (green)
+- **Real-Time Updates**: 30-second refresh cycle with pulse animations
+
+**Intelligent Notification Types**:
+
+- **Delivery ETA Updates**: Real-time delivery time estimates
+- **Payment Processing**: Square payment notifications and status updates
+- **Warehouse Alerts**: Inventory levels, shipping notifications
+- **Emergency Weather Alerts**: Route impact and safety notifications
+- **Load Opportunities**: New load availability matching vendor criteria
+
+#### **📊 Interactive Dashboard Analytics**
+
+**Advanced Filtering Controls**:
+
+- **Date Ranges**: 7-day, 30-day, 90-day, 12-month analysis
+- **Equipment Type Filtering**: Filter by truck type, trailer configuration
+- **Status Filtering**: Active, completed, pending loads
+- **Performance Metrics**: Revenue, volume, efficiency tracking
+
+**Business Intelligence Features**:
+
+- **Interactive Charts**: Clickable data points with hover tooltips
+- **Drill-Down Analytics**: Detailed metrics when clicking chart elements
+- **Real-Time KPIs**: Calculated from live FleetFlow data
+- **Export Capabilities**: CSV and PDF export for all analytics data
+
+#### **🔄 Live Data Integration**
+
+**Real-Time Services**:
+
+- **LoadService Integration**: `getShipperLoads()`, `getShipperDashboardSummary()`
+- **Square Service**: Real billing data and invoice management
+- **Settlement Service**: `calculateFinancialMetrics()` for financial insights
+- **30-Second Auto-Refresh**: Continuous data updates with status indicators
+
+**Performance Optimizations**:
+
+- **Parallel Service Calls**: `Promise.all()` for efficient data fetching
+- **Graceful Fallbacks**: Calculated metrics when services unavailable
+- **Error Handling**: Robust error management with user-friendly messages
+- **Live Status Indicators**: Pulse animations showing real-time data status
+
+### **Using the Vendor Portal**
+
+#### **Daily Vendor Workflow**
+
+1. **Login & Notifications**: Check notification center for urgent updates
+2. **Dashboard Review**: Analyze performance metrics and recent activity
+3. **Load Management**: Review active loads and delivery schedules
+4. **Analytics Deep-Dive**: Use filtering to analyze performance trends
+5. **Export Reports**: Generate CSV/PDF reports for internal analysis
+
+#### **Analytics & Reporting**
+
+**Performance Analysis**:
+
+- **Revenue Tracking**: Real-time revenue and payment status
+- **Load Volume**: Shipment counts and capacity utilization
+- **Efficiency Metrics**: On-time delivery rates and performance scores
+- **Trend Analysis**: Historical performance with predictive insights
+
+---
+
+## 💬 Intraoffice Messaging System - Team Communication ⭐ **NEW 2025**
+
+### **What is the Intraoffice Messaging System?**
+
+The Intraoffice Messaging System provides **comprehensive team communication** through the enhanced
+StickyNote platform. This enterprise-grade communication system enables targeted messaging, priority
+management, and department-specific templates for seamless internal coordination.
+
+### **Accessing Intraoffice Messaging**
+
+1. **Notification Hub**: Click the notification bell icon in any FleetFlow interface
+2. **StickyNote Component**: Available in Dispatch Central, Driver Portal, and other modules
+3. **Communication Category**: Select "💬 Communication" from the category dropdown
+4. **Status**: ✅ **FULLY IMPLEMENTED and OPERATIONAL**
+
+### **Core Features**
+
+#### **💬 Communication Categories**
+
+**Available Message Types**:
+
+- **📝 Note**: General information and updates
+- **✅ Task**: Action items with due dates and assignments
+- **🔔 Notification**: System alerts and important announcements
+- **💬 Communication**: Team messaging and coordination (NEW)
+- **⚠️ Alert**: Urgent notifications requiring immediate attention
+
+#### **👥 Team Assignment System**
+
+**Available Team Members**:
+
+- **Department Emails**: dispatch@fleetflow.com, operations@fleetflow.com, admin@fleetflow.com
+- **Specialized Teams**: safety@fleetflow.com, maintenance@fleetflow.com, finance@fleetflow.com
+- **Individual Users**: john.smith@fleetflow.com, sarah.wilson@fleetflow.com, etc.
+- **Multi-Assignment**: Send to multiple team members simultaneously
+
+#### **🎯 Priority Management**
+
+**Priority Levels**:
+
+- **🔴 Urgent**: Critical issues requiring immediate attention
+- **🟠 High**: Important matters needing prompt response
+- **🟡 Medium**: Standard communications (default)
+- **🟢 Low**: Informational messages and updates
+
+**Visual Indicators**:
+
+- **Color-Coded Badges**: Priority levels with distinct colors
+- **Pulse Animations**: Urgent messages with attention-grabbing effects
+- **Unread Counters**: Real-time badge counts for new messages
+- **Status Tracking**: Read/unread status with timestamp tracking
+
+#### **📋 Department Templates**
+
+**Pre-Written Message Templates**:
+
+**Fleet Department**:
+
+- Vehicle maintenance required
+- Fuel level critical
+- Driver assignment needed
+- Route optimization alert
+- Compliance check due
+- Insurance renewal reminder
+
+**Dispatch Department**:
+
+- Load assignment pending
+- Driver availability update
+- Route delay notification
+- Customer communication required
+- Emergency dispatch needed
+
+**Maintenance Department**:
+
+- Scheduled maintenance due
+- Emergency repair needed
+- Parts order required
+- Inspection overdue
+
+**Safety Department**:
+
+- Safety violation reported
+- Training certification due
+- Accident report filed
+- Compliance audit scheduled
+
+**Finance Department**:
+
+- Invoice payment due
+- Expense report submitted
+- Budget variance alert
+- Contract renewal notice
+
+### **Using Intraoffice Messaging**
+
+#### **Sending Messages**
+
+1. **Access Messaging**: Click notification bell or StickyNote component
+2. **Select Category**: Choose "💬 Communication" from dropdown
+3. **Set Priority**: Select appropriate priority level (Urgent, High, Medium, Low)
+4. **Assign Recipients**: Choose team members or departments
+5. **Compose Message**: Write message or select from department templates
+6. **Send**: Click "Add Communication" to send message
+
+#### **Managing Messages**
+
+**Filtering Options**:
+
+- **All Messages**: View complete message history
+- **Unread**: Show only unread communications
+- **Urgent**: Filter urgent priority messages
+- **Tasks**: Show task-type messages only
+- **Today**: Messages from current day
+
+**Message Actions**:
+
+- **Mark as Read**: Clear unread status
+- **Delete**: Remove message from system
+- **Reply**: Respond to team communications
+- **Forward**: Share message with additional team members
+
+#### **Real-Time Features**
+
+**Auto-Refresh System**:
+
+- **30-Second Intervals**: Automatic message updates
+- **Live Notifications**: Real-time message delivery
+- **Status Synchronization**: Instant read/unread status updates
+- **Cross-Platform Sync**: Messages sync across all FleetFlow interfaces
+
+---
+
+## 📁 Enhanced Document Filing System - External Broker Integration ⭐ **NEW 2025**
+
+### **What is the Enhanced Document Filing System?**
+
+The Enhanced Document Filing System provides **comprehensive document management** with external
+broker integration, audit trails, and compliance tracking. This enterprise-grade system manages both
+FleetFlow-generated documents and external broker documents with complete cross-referencing and
+audit capabilities.
+
+### **Core Features**
+
+#### **🗂️ Comprehensive Document Management**
+
+**Document Types Supported**:
+
+- **Rate Confirmations**: FleetFlow and external broker rate confirmations
+- **Bills of Lading (BOLs)**: Master BOL, House BOL, and external BOLs
+- **Carrier Packets**: Insurance certificates, authority documents, safety records
+- **Delivery Receipts**: POD, signatures, delivery confirmations
+- **Invoices**: Dispatcher invoices, carrier settlements, accessorial charges
+- **Photos & Signatures**: Digital signatures, delivery photos, damage reports
+
+**Document Sources**:
+
+- **FleetFlow Generated**: System-created documents with auto-population
+- **Dispatcher Uploaded**: Manual uploads from dispatch operations
+- **External Broker**: Documents from partner brokers with ID mapping
+
+#### **🔗 External Broker Document Mapping**
+
+**Cross-Reference System**:
+
+- **Broker Document IDs**: Track external broker's own rate confirmation, BOL, PRO numbers
+- **Load Numbers**: Map external broker load numbers to FleetFlow load IDs
+- **Invoice Numbers**: Cross-reference external broker invoice numbers
+- **Reference Numbers**: General reference number mapping for audit trails
+
+**ID Mapping Examples**:
+
+```
+FleetFlow Rate Confirmation: TR12345678
+External Broker Rate Conf: ABC-RC-2025-001234
+Cross-Reference: TR12345678 ↔ ABC-RC-2025-001234
+
+FleetFlow BOL: BOL20250115ABCD
+External Broker BOL: XYZ-BOL-789456
+Cross-Reference: BOL20250115ABCD ↔ XYZ-BOL-789456
+```
+
+#### **📋 Audit Trail System**
+
+**Complete Document Tracking**:
+
+- **Action Logging**: Upload, view, edit, delete, share actions
+- **User Attribution**: Full user identification with department codes
+- **Timestamp Tracking**: Precise action timestamps with timezone
+- **IP Address Logging**: Security tracking for all document access
+- **Version Control**: Document version history with change tracking
+
+**Audit Entry Example**:
+
+```
+Action: Document Upload
+User: FM-MGR-20230115-1 (Fleet Manager)
+Timestamp: 2025-01-15 14:30:25 PST
+IP Address: 192.168.1.100
+Document: Rate Confirmation TR12345678
+External Reference: ABC-RC-2025-001234
+Status: Successfully Filed
+```
+
+#### **🏗️ Hierarchical Filing Structure**
+
+**Organized File System**:
+
+```
+/FleetFlow_Documents/
+├── 2025/
+│   ├── January/
+│   │   ├── FTL_Loads/
+│   │   │   ├── FM_Broker/  (Broker Initials)
+│   │   │   │   ├── Dry_Van/  (Load Category)
+│   │   │   │   │   ├── Load_MJ-25001/  (Load Folder)
+│   │   │   │   │   │   ├── Rate_Confirmations/
+│   │   │   │   │   │   ├── BOLs/
+│   │   │   │   │   │   ├── Invoices/
+│   │   │   │   │   │   └── Photos/
+```
+
+#### **⚖️ Compliance Integration**
+
+**Regulatory Compliance**:
+
+- **DOT Retention**: 3-year minimum retention for DOT compliance
+- **FMCSA Requirements**: Safety and authority document tracking
+- **IRS Compliance**: 7-year retention for financial documents
+- **Audit Readiness**: Instant document retrieval for regulatory audits
+
+**Compliance Flags**:
+
+- **Retention Periods**: Automatic retention period calculation
+- **Expiration Alerts**: Document expiration notifications
+- **Compliance Status**: Real-time compliance status indicators
+- **Audit Preparation**: One-click audit package generation
+
+### **Using the Document Filing System**
+
+#### **Filing External Broker Documents**
+
+1. **Access Upload Interface**: From Dispatch Central or Load Management
+2. **Select Document Type**: Choose Rate Confirmation, BOL, Carrier Packet, etc.
+3. **Upload Document**: Drag-drop or browse file selection
+4. **Enter External IDs**: Input broker's document numbers for cross-reference
+5. **Assign Load**: Link document to specific FleetFlow load
+6. **Confirm Filing**: System creates audit trail and files document
+
+#### **Document Retrieval & Search**
+
+**Search Capabilities**:
+
+- **Load ID Search**: Find all documents for specific load
+- **External ID Search**: Search by broker's document numbers
+- **Date Range Search**: Find documents within specific timeframes
+- **Document Type Filter**: Filter by Rate Confirmations, BOLs, etc.
+- **Broker Filter**: Search documents from specific external brokers
+
+**Quick Access Features**:
+
+- **Recent Documents**: Quick access to recently filed documents
+- **Favorites**: Bookmark frequently accessed documents
+- **Batch Operations**: Download multiple documents as ZIP
+- **Share Links**: Generate secure sharing links for external access
 
 ---
 

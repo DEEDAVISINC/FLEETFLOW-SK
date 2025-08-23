@@ -82,6 +82,8 @@ interface OnboardingRecord {
   status: string;
   steps: any;
   summary: any;
+  integrationResult?: any;
+  carrierInfo?: any;
 }
 
 export default function NewCarrierOnboardingPage() {
@@ -102,6 +104,91 @@ export default function NewCarrierOnboardingPage() {
   const handleOnboardingComplete = (data: any) => {
     setCompletedOnboarding(data);
     setShowWorkflow(false);
+
+    // Store signed documents for carrier
+    if (data && data.integrationResult) {
+      try {
+        // Import the user document service
+        import('../../../services/UserDocumentService').then(
+          ({ userDocumentService }) => {
+            // Extract carrier data and signed agreements from the onboarding data
+            const carrierData = {
+              carrierName:
+                data.carrierInfo?.legalName || data.carrierInfo?.companyName,
+              mcNumber: data.carrierInfo?.mcNumber,
+              dotNumber: data.carrierInfo?.dotNumber,
+            };
+
+            // Mock signed agreements data (in production, this would come from actual signed documents)
+            const signedAgreements = [
+              {
+                type: 'broker_carrier',
+                title: 'Comprehensive Broker/Dispatch/Carrier Agreement',
+                signedDate: new Date().toISOString(),
+                signedBy: carrierData.carrierName || 'Carrier',
+                signature: carrierData.carrierName || 'Digital Signature',
+                ipAddress: 'localhost',
+                userAgent: navigator.userAgent,
+                content: `COMPREHENSIVE BROKER/DISPATCH/CARRIER AGREEMENT
+
+This agreement establishes the relationship between FleetFlow Transportation LLC and ${carrierData.carrierName}.
+
+Agreement Details:
+• MC Number: ${carrierData.mcNumber}
+• DOT Number: ${carrierData.dotNumber}
+• Insurance Requirements: $1M auto liability, $100K cargo
+• Payment Terms: Net 30 days
+• Factoring arrangements and NOA procedures
+• Performance standards and compliance requirements
+• 2025 FMCSA compliance requirements
+
+This document was signed during the carrier onboarding process.`,
+              },
+              {
+                type: 'dispatcher_carrier',
+                title: 'Dispatcher-Carrier Service Agreement',
+                signedDate: new Date().toISOString(),
+                signedBy: carrierData.carrierName || 'Carrier',
+                signature: carrierData.carrierName || 'Digital Signature',
+                ipAddress: 'localhost',
+                userAgent: navigator.userAgent,
+                content: `DISPATCHER-CARRIER SERVICE AGREEMENT
+
+Service agreement between FleetFlow and ${carrierData.carrierName}.
+
+Key Terms:
+• 10% dispatch fee structure
+• Load board access and booking procedures
+• Performance metrics (95% on-time pickup/delivery)
+• Territory and equipment preferences
+• Technology requirements and training support
+• Weekly billing cycle with dispatch fees due Wednesday
+
+This agreement was executed during carrier onboarding.`,
+              },
+            ];
+
+            // Store the documents using the carrier's user ID from integration result
+            const carrierId =
+              data.integrationResult?.carrierProfile?.userId ||
+              data.integrationResult?.driverProfiles?.[0]?.userId ||
+              `carrier-${Date.now()}`;
+
+            userDocumentService.storeCarrierOnboardingDocuments(
+              carrierId,
+              signedAgreements,
+              carrierData
+            );
+
+            console.log(
+              `✅ Stored carrier onboarding documents for ${carrierId}`
+            );
+          }
+        );
+      } catch (error) {
+        console.error('Error storing carrier documents:', error);
+      }
+    }
 
     // Log integration results if available
     if (data.integrationResult) {

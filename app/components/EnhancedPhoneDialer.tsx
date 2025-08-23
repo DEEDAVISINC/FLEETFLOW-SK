@@ -1,10 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getCurrentUser } from '../config/access';
 import { aiCallAnalysisService } from '../services/AICallAnalysisService';
 import { enhancedCRMService } from '../services/EnhancedCRMService';
 import { freeSWITCHService } from '../services/FreeSWITCHService';
 import { intelligentCallRoutingService } from '../services/IntelligentCallRoutingService';
+import { phoneMonitoringService } from '../services/PhoneMonitoringService';
+import { tenantPhoneService } from '../services/TenantPhoneService';
+import { SubscriptionManagementService } from '../services/SubscriptionManagementService';
 
 interface ActiveCall {
   id: string;
@@ -46,6 +50,15 @@ export default function EnhancedPhoneDialer() {
   const [realtimeCoaching, setRealtimeCoaching] = useState<string[]>([]);
   const [callAnalysis, setCallAnalysis] = useState<any>(null);
 
+  // Tenant phone configuration
+  const [tenantPhoneConfig, setTenantPhoneConfig] = useState(
+    tenantPhoneService.getCurrentTenantPhoneConfig()
+  );
+  const [phoneUsageStats, setPhoneUsageStats] = useState(
+    tenantPhoneService.getPhoneUsageStats()
+  );
+  const [subscriptionUsage, setSubscriptionUsage] = useState<any>(null);
+
   const [dialerStats, setDialerStats] = useState({
     callsMadeToday: 23,
     connectedCalls: 18,
@@ -59,6 +72,21 @@ export default function EnhancedPhoneDialer() {
     enhancedCRMService.getSmartRecommendations('agent-001')
   );
 
+  const determinePurposeFromContact = (
+    contact: any
+  ): 'sales' | 'dispatch' | 'customer_service' | 'follow_up' | 'emergency' => {
+    if (!contact) return 'sales';
+
+    if (contact.type === 'carrier') return 'dispatch';
+    if (contact.type === 'driver') return 'dispatch';
+    if (contact.type === 'customer') return 'sales';
+    if (contact.type === 'broker') return 'sales';
+    if (contact.relationship?.status === 'hot_lead') return 'sales';
+    if (contact.relationship?.lastInteraction) return 'follow_up';
+
+    return 'sales';
+  };
+
   useEffect(() => {
     // Initialize FreeSWITCH connection with error handling
     const initializeFreeSWITCH = async () => {
@@ -70,6 +98,11 @@ export default function EnhancedPhoneDialer() {
     };
 
     initializeFreeSWITCH();
+
+    // Load subscription usage data
+    const { user } = getCurrentUser();
+    const usage = SubscriptionManagementService.getPhoneUsage(user.id);
+    setSubscriptionUsage(usage);
 
     // Set up event listeners
     freeSWITCHService.on('callStarted', handleCallStarted);
@@ -146,16 +179,81 @@ export default function EnhancedPhoneDialer() {
   const makeCall = async () => {
     if (!phoneNumber) return;
 
-    try {
-      const platform =
-        selectedPlatform === 'auto' ? 'freeswitch' : selectedPlatform;
+    if (!tenantPhoneConfig) {
+      alert(
+        '❌ No phone configuration found for your company. Please contact support.'
+      );
+      return;
+    }
 
-      if (platform === 'freeswitch') {
+    if (!tenantPhoneConfig.voiceEnabled) {
+      alert(
+        '❌ Voice calls not enabled for your account. Please contact support.'
+      );
+      return;
+    }
+
+          try {
+        // Check subscription limits before making call
+        const { user } = getCurrentUser();
+        const callCheck = SubscriptionManagementService.canMakePhoneCall(user.id);
+        
+        if (!callCheck.allowed) {
+          alert(`❌ Cannot make call: ${callCheck.reason}`);
+          return;
+        }
+        
+        if (callCheck.reason) {
+          const proceed = confirm(`⚠️ ${callCheck.reason}\n\nProceed with call?`);
+          if (!proceed) return;
+        }
+
+        const preferredPlatform = tenantPhoneService.getPreferredProvider();
+        const platform =
+          selectedPlatform === 'auto' ? preferredPlatform : selectedPlatform;
+
+        console.log(
+          `📞 Making call using ${platform} for ${tenantPhoneConfig.tenantName}`
+        );
+        console.log(
+          `From: ${tenantPhoneConfig.primaryPhone} (${tenantPhoneConfig.callerIdName})`
+        );
+        console.log(`To: ${phoneNumber}`);
+
+        if (platform === 'freeswitch') {
         try {
-          await freeSWITCHService.makeCall('+15551234567', phoneNumber, {
-            recordCall: true,
-            callerIdName: 'FleetFlow',
+          const extension = tenantPhoneService.getFreeSwitchExtension();
+          await freeSWITCHService.makeCall(
+            tenantPhoneConfig.primaryPhone,
+            phoneNumber,
+            {
+              recordCall: true,
+              callerIdName: tenantPhoneConfig.callerIdName,
+              extension: extension || '1000',
+            }
+          );
+
+          // Start call monitoring for FreeSWITCH call
+          const { user } = getCurrentUser();
+          const monitoringCallId = phoneMonitoringService.startCallMonitoring({
+            employeeId: user.id,
+            employeeName: user.name,
+            employeeDepartment: user.departmentCode || 'UNKNOWN',
+            customerPhone: phoneNumber,
+            customerName:
+              selectedContact?.personalInfo?.firstName +
+                ' ' +
+                selectedContact?.personalInfo?.lastName || undefined,
+            contactId: selectedContact?.id,
+            callDirection: 'outbound',
+            platform: 'freeswitch',
+            callPurpose:
+              determinePurposeFromContact(selectedContact) || 'dispatch',
           });
+
+          console.log(
+            `📊 FreeSWITCH call monitoring started: ${monitoringCallId}`
+          );
         } catch (freeswitchError) {
           console.warn(
             'FreeSWITCH call failed, falling back to Twilio:',
@@ -167,6 +265,9 @@ export default function EnhancedPhoneDialer() {
       } else {
         await makeTwilioCall();
       }
+
+      // Update phone usage stats after successful call
+      setPhoneUsageStats(tenantPhoneService.getPhoneUsageStats());
     } catch (error) {
       console.error('Failed to make call:', error);
       alert('Failed to make call. Please try again.');
@@ -180,8 +281,10 @@ export default function EnhancedPhoneDialer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: phoneNumber,
-          message:
-            'Hello from FleetFlow! A representative will be with you shortly.',
+          message: `Hello from ${tenantPhoneConfig?.callerIdName || 'FleetFlow'}! A representative will be with you shortly.`,
+          tenantId: tenantPhoneConfig?.tenantId,
+          recordCall: true,
+          maxDuration: 300,
         }),
       });
 
@@ -202,6 +305,31 @@ export default function EnhancedPhoneDialer() {
           transcript: [],
           sentiment: 'neutral',
         });
+
+        console.log(`✅ Call initiated successfully:`);
+        console.log(`Call SID: ${result.callSid}`);
+        console.log(`From: ${result.callerNumber} (${result.tenantName})`);
+        console.log(`To: ${phoneNumber}`);
+
+        // Start call monitoring
+        const { user } = getCurrentUser();
+        const monitoringCallId = phoneMonitoringService.startCallMonitoring({
+          employeeId: user.id,
+          employeeName: user.name,
+          employeeDepartment: user.departmentCode || 'UNKNOWN',
+          customerPhone: phoneNumber,
+          customerName:
+            selectedContact?.personalInfo?.firstName +
+              ' ' +
+              selectedContact?.personalInfo?.lastName || undefined,
+          contactId: selectedContact?.id,
+          callDirection: 'outbound',
+          platform: 'twilio',
+          callSid: result.callSid,
+          callPurpose: determinePurposeFromContact(selectedContact) || 'sales',
+        });
+
+        console.log(`📊 Call monitoring started: ${monitoringCallId}`);
       } else {
         throw new Error(result.error || 'Twilio call failed');
       }
@@ -215,12 +343,27 @@ export default function EnhancedPhoneDialer() {
     if (!activeCall) return;
 
     try {
+      const callDurationMinutes = Math.ceil(activeCall.duration / 60);
+      
       if (activeCall.platform === 'freeswitch') {
         await freeSWITCHService.hangupCall(activeCall.id);
       } else {
         // Twilio hangup logic
         console.log('Hanging up Twilio call:', activeCall.id);
       }
+
+      // Track phone usage after call ends
+      const { user } = getCurrentUser();
+      const usageResult = SubscriptionManagementService.trackPhoneUsage(
+        user.id, 
+        callDurationMinutes, 
+        0 // SMS count
+      );
+
+      if (usageResult.success && usageResult.cost && usageResult.cost > 0) {
+        console.log(`💰 Call completed. Overage charges: $${usageResult.cost.toFixed(2)}`);
+      }
+
     } catch (error) {
       console.error('Failed to hangup call:', error);
     }
@@ -490,6 +633,158 @@ export default function EnhancedPhoneDialer() {
         </div>
       </div>
 
+      {/* Tenant Phone Configuration Display */}
+      {tenantPhoneConfig && (
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.15)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '14px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#60a5fa',
+              }}
+            >
+              🏢 {tenantPhoneConfig.callerIdName}
+            </span>
+            <span
+              style={{
+                background: tenantPhoneConfig.voiceEnabled
+                  ? 'rgba(34, 197, 94, 0.2)'
+                  : 'rgba(239, 68, 68, 0.2)',
+                color: tenantPhoneConfig.voiceEnabled ? '#22c55e' : '#ef4444',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '10px',
+                fontWeight: '600',
+              }}
+            >
+              {tenantPhoneConfig.voiceEnabled ? '✅ Enabled' : '❌ Disabled'}
+            </span>
+          </div>
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.8)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '4px',
+              }}
+            >
+              <span>Outbound:</span>
+              <span style={{ fontFamily: 'monospace', fontWeight: '500' }}>
+                {tenantPhoneConfig.primaryPhone}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Provider:</span>
+              <span style={{ textTransform: 'capitalize', fontWeight: '500' }}>
+                {tenantPhoneConfig.provider}
+              </span>
+            </div>
+            {phoneUsageStats && (
+              <div
+                style={{
+                  marginTop: '8px',
+                  paddingTop: '8px',
+                  borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '10px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                }}
+              >
+                <span>Today: {phoneUsageStats.callsToday}</span>
+                <span>Total: {phoneUsageStats.totalCalls}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Subscription Usage Display */}
+      {subscriptionUsage && (
+        <div
+          style={{
+            background: 'rgba(34, 197, 94, 0.15)',
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '14px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#34d399',
+              }}
+            >
+              📊 Monthly Usage
+            </span>
+            {subscriptionUsage.overageCharges > 0 && (
+              <span
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  color: '#ef4444',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '10px',
+                  fontWeight: '600',
+                }}
+              >
+                ${subscriptionUsage.overageCharges} Overage
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.8)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '4px',
+              }}
+            >
+              <span>Phone:</span>
+              <span style={{ fontFamily: 'monospace', fontWeight: '500' }}>
+                {subscriptionUsage.minutesLimit === -1 
+                  ? `${subscriptionUsage.minutesUsed} (Unlimited)`
+                  : `${subscriptionUsage.minutesUsed}/${subscriptionUsage.minutesLimit} min`}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>SMS:</span>
+              <span style={{ fontFamily: 'monospace', fontWeight: '500' }}>
+                {subscriptionUsage.smsLimit === -1 
+                  ? `${subscriptionUsage.smsUsed} (Unlimited)`
+                  : `${subscriptionUsage.smsUsed}/${subscriptionUsage.smsLimit}`}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Phone Number Input */}
       <div style={{ marginBottom: '14px' }}>
         <label
@@ -501,7 +796,7 @@ export default function EnhancedPhoneDialer() {
             marginBottom: '6px',
           }}
         >
-          📞 Phone Number
+          📞 Phone Number to Call
         </label>
         <input
           type='tel'

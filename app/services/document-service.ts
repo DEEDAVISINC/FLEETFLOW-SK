@@ -846,6 +846,224 @@ FleetFlow Technologies, Inc. - AI Flow Platform Division
   }
 
   /**
+   * Generate comprehensive Independent Contractor Agreement with NDA
+   * 🚨 FOR FLEETFLOW EMPLOYEES/CONTRACTORS ONLY (dispatchers, brokers, office staff)
+   * 🚨 NOT FOR CARRIERS - Carriers use broker/carrier agreements
+   * Uses existing HTML template structure from app/templates/contractor_agreement.html
+   */
+  public generateIndependentContractorAgreement(
+    employeeData: any,
+    signerData: any
+  ): AgreementDocument {
+    const agreementId = `ICA-${Date.now()}`;
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleString();
+
+    const content = `
+INDEPENDENT CONTRACTOR AGREEMENT WITH NON-DISCLOSURE
+
+═══════════════════════════════════════════════════════════════════════════════════
+🚛 FLEETFLOW TRANSPORTATION LLC
+INDEPENDENT CONTRACTOR AGREEMENT
+═══════════════════════════════════════════════════════════════════════════════════
+
+AGREEMENT DATE: ${currentDate}
+AGREEMENT TIME: ${currentTime}
+AGREEMENT ID: ${agreementId}
+
+PARTIES TO THIS AGREEMENT:
+════════════════════════════════════════════════════════════════════════════════
+
+COMPANY: FleetFlow Transportation LLC
+Business Address: [FleetFlow Business Address]
+MC Number: MC-123456
+Contact: contracts@fleetflow.com
+
+CONTRACTOR: ${signerData.signerName}
+Title: ${signerData.signerTitle || 'Independent Contractor'}
+Department: ${employeeData.department || '[Department]'}
+Employee ID: ${employeeData.employeeId || '[Employee ID]'}
+Start Date: ${employeeData.startDate || currentDate}
+
+1. INDEPENDENT CONTRACTOR RELATIONSHIP
+════════════════════════════════════════════════════════════════════════════════
+
+This Agreement establishes ${signerData.signerName} as an INDEPENDENT CONTRACTOR for FleetFlow Transportation LLC. The Contractor will provide transportation dispatch and freight broker agent services.
+
+🚨 CRITICAL: This is an independent contractor relationship, NOT an employment agreement.
+The Contractor is responsible for:
+✓ All taxes and tax reporting obligations
+✓ Business insurance and liability coverage
+✓ Business licensing and regulatory compliance
+✓ All business expenses and operational costs
+
+2. SERVICES TO BE PROVIDED
+════════════════════════════════════════════════════════════════════════════════
+
+The Contractor agrees to provide the following services:
+✓ Freight dispatch services for motor carriers
+✓ Load sourcing and carrier matching services
+✓ Rate negotiation and load confirmation
+✓ Customer relationship management and support
+✓ Transportation documentation and compliance support
+✓ FMCSA regulatory compliance assistance
+✓ Route optimization and planning support
+
+3. COMPENSATION STRUCTURE
+════════════════════════════════════════════════════════════════════════════════
+
+💰 COMMISSION STRUCTURE:
+- Base Commission: 25% of gross profit from dispatched loads
+- Performance Bonuses: Available for exceptional service metrics
+- Volume Incentives: Additional compensation for high-volume performance
+
+💳 PAYMENT TERMS:
+- Payment Schedule: Net 15 days after load completion and payment receipt
+- Payment Method: Electronic transfer to designated account
+- Commission Statements: Detailed monthly statements provided
+
+4. PERFORMANCE STANDARDS AND EXPECTATIONS
+════════════════════════════════════════════════════════════════════════════════
+
+The Contractor must maintain the following performance standards:
+
+📞 COMMUNICATION REQUIREMENTS:
+✓ Professional communication with all carriers and customers
+✓ Response time: Within 2 hours during business hours (8 AM - 8 PM EST)
+✓ 24/7 availability for emergency situations
+✓ Weekly status reports on active loads and carrier relationships
+
+📊 PERFORMANCE METRICS:
+✓ On-time pickup rate: Minimum 95%
+✓ On-time delivery rate: Minimum 95%
+✓ Customer satisfaction rating: Minimum 4.5/5.0
+✓ Documentation accuracy: 99% error-free rate
+
+5. CONFIDENTIALITY AND NON-DISCLOSURE AGREEMENT
+════════════════════════════════════════════════════════════════════════════════
+
+🔒 CRITICAL LEGAL REQUIREMENT: This section is LEGALLY BINDING and essential for protecting business operations.
+
+CONFIDENTIAL INFORMATION INCLUDES:
+✓ Customer information, contacts, and shipping patterns
+✓ Carrier networks, performance data, and contractual terms
+✓ Pricing strategies, profit margins, and rate negotiations
+✓ Software systems, algorithms, and proprietary technology
+✓ Business strategies, market analysis, and competitive intelligence
+✓ Financial information, revenue data, and cost structures
+✓ Employee information and organizational structure
+✓ Trade secrets, methods, processes, and operational procedures
+
+CONTRACTOR CONFIDENTIALITY OBLIGATIONS:
+✓ Maintain STRICT confidentiality of ALL business information
+✓ NOT disclose proprietary information, trade secrets, or strategies
+✓ Return ALL company materials and delete confidential information upon termination
+✓ NOT use confidential information for personal gain or competitive advantage
+✓ Report security breaches or unauthorized access IMMEDIATELY
+✓ Implement appropriate security measures to protect confidential data
+✓ Execute separate NDAs for any personnel with access to confidential information
+
+AUTHORIZED DISCLOSURE EXCEPTIONS:
+- Information already in the public domain
+- Information required to be disclosed by law (with prior notice to FleetFlow)
+- Information disclosed to professional advisors bound by confidentiality
+
+6. NON-COMPETE AND NON-SOLICITATION
+════════════════════════════════════════════════════════════════════════════════
+
+During the term of this agreement and for TWELVE (12) MONTHS after termination:
+
+🚫 NON-COMPETE RESTRICTIONS:
+✓ NOT directly compete with FleetFlow Transportation in same geographic markets
+✓ NOT provide similar services to FleetFlow competitors
+✓ NOT establish competing freight brokerage or dispatch services
+
+🚫 NON-SOLICITATION RESTRICTIONS:
+✓ NOT solicit FleetFlow customers or carriers for competing services
+✓ NOT recruit or solicit FleetFlow employees or contractors
+✓ NOT interfere with FleetFlow business relationships
+✓ NOT use customer lists or carrier networks for competing purposes
+
+7. INTELLECTUAL PROPERTY AND TRADE SECRETS
+════════════════════════════════════════════════════════════════════════════════
+
+All intellectual property, trade secrets, and proprietary methods developed or used during this agreement remain the exclusive property of FleetFlow Transportation LLC.
+
+8. COMPLIANCE AND REGULATORY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+The Contractor agrees to:
+✓ Comply with all FMCSA regulations and requirements
+✓ Maintain current knowledge of transportation industry regulations
+✓ Ensure all dispatched loads comply with federal and state regulations
+✓ Assist carriers with DOT compliance and safety requirements
+
+9. TERMINATION PROVISIONS
+════════════════════════════════════════════════════════════════════════════════
+
+TERMINATION METHODS:
+✓ Either party may terminate with THIRTY (30) days written notice
+✓ Immediate termination for cause (breach of contract, misconduct, etc.)
+✓ Automatic termination for regulatory violations or legal issues
+
+POST-TERMINATION OBLIGATIONS:
+✓ ALL confidentiality and non-disclosure obligations SURVIVE termination
+✓ Non-compete restrictions remain in effect for 12 months
+✓ Return of all company property and materials required within 5 business days
+✓ Final commission payments due within 30 days of termination
+
+10. LEGAL PROVISIONS AND DISPUTE RESOLUTION
+════════════════════════════════════════════════════════════════════════════════
+
+GOVERNING LAW: This agreement is governed by the laws of [State to be specified]
+JURISDICTION: All disputes subject to binding arbitration
+SEVERABILITY: Invalid provisions do not void the entire agreement
+ENTIRE AGREEMENT: This document represents the complete agreement between parties
+
+DIGITAL SIGNATURE AND LEGAL ACKNOWLEDGMENT
+════════════════════════════════════════════════════════════════════════════════
+
+CONTRACTOR DIGITAL SIGNATURE RECORD:
+Contractor Name: ${signerData.signerName}
+Title/Position: ${signerData.signerTitle || 'Independent Contractor'}
+Digital Signature Date: ${currentDate}
+Digital Signature Time: ${currentTime}
+IP Address: ${signerData.ipAddress}
+Agreement Accepted: YES - I agree to ALL terms and conditions
+
+FLEETFLOW TRANSPORTATION LLC:
+Authorized Representative: Operations Manager
+Company Authorization Date: ${currentDate}
+Agreement ID: ${agreementId}
+
+🔒 LEGAL ACKNOWLEDGMENT CONFIRMATION:
+✓ I have read and understand all terms of this Independent Contractor Agreement
+✓ I agree to maintain strict confidentiality of all FleetFlow business information
+✓ I understand and accept all non-compete and non-solicitation restrictions
+✓ I acknowledge this creates a legally binding independent contractor relationship
+✓ I understand all post-termination obligations remain in effect
+
+This document constitutes a legally binding Independent Contractor Agreement with comprehensive Non-Disclosure provisions.
+
+Document Generation: FleetFlow Digital Agreement System
+Legal Compliance: 2025 Independent Contractor Regulations
+Security Level: CONFIDENTIAL - Authorized Personnel Only
+    `;
+
+    return {
+      id: agreementId,
+      type: 'independent_contractor',
+      title: 'Independent Contractor Agreement with NDA',
+      content: content.trim(),
+      signerName: signerData.signerName,
+      signerTitle: signerData.signerTitle,
+      signedAt: currentTime,
+      ipAddress: signerData.ipAddress,
+      legallyBinding: true,
+    };
+  }
+
+  /**
    * Store agreement in document management system
    */
   public async storeAgreement(document: AgreementDocument): Promise<string> {

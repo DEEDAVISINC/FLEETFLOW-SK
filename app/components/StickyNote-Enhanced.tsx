@@ -742,6 +742,12 @@ export default function StickyNote({
                     🔔 Notification
                   </option>
                   <option
+                    value='communication'
+                    style={{ background: '#1e293b', color: '#ffffff' }}
+                  >
+                    💬 Communication
+                  </option>
+                  <option
                     value='alert'
                     style={{ background: '#1e293b', color: '#ffffff' }}
                   >

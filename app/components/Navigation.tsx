@@ -264,6 +264,20 @@ export default function ProfessionalNavigation() {
                   >
                     🚛 Dispatch Central
                   </Link>
+                  <Link
+                    href='/dispatcher-portal'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    👤 Dispatcher Portal
+                  </Link>
                   {/* Broker Operations Sub-Dropdown */}
                   <div style={{ position: 'relative' }}>
                     <div
@@ -921,6 +935,20 @@ export default function ProfessionalNavigation() {
                     👤 User Profile
                   </Link>
                   <Link
+                    href='/call-flow'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#8B5CF6',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    📞 Call Flow Manager
+                  </Link>
+                  <Link
                     href='/dialer'
                     onClick={handleDropdownClose}
                     style={{
@@ -1063,7 +1091,7 @@ export default function ProfessionalNavigation() {
                     💰 Accounting & Finance
                   </Link>
                   <Link
-                    href='/subscription-management/subscription-dashboard'
+                    href='/user-profile'
                     onClick={handleDropdownClose}
                     style={{
                       display: 'block',
@@ -1074,7 +1102,7 @@ export default function ProfessionalNavigation() {
                       fontWeight: '500',
                     }}
                   >
-                    📊 Subscription Management
+                    📊 My Subscription
                   </Link>
                   <Link
                     href='/billing-invoices'
@@ -1316,6 +1344,33 @@ export default function ProfessionalNavigation() {
                     My Profile & Access{' '}
                     {activeSubDropdown === 'userprofileview' ? '🔽' : '▼'}
                   </div>
+
+                  <Link
+                    href='/user-profile'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      color: '#374151',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    onMouseEnter={(e) =>
+                      ((e.target as HTMLElement).style.backgroundColor =
+                        'rgba(20, 184, 166, 0.05)')
+                    }
+                    onMouseLeave={(e) =>
+                      ((e.target as HTMLElement).style.backgroundColor =
+                        'transparent')
+                    }
+                  >
+                    <span style={{ fontSize: '16px' }}>👤</span>
+                    My Profile
+                  </Link>
 
                   <Link
                     href='/settings'

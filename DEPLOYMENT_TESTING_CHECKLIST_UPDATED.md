@@ -165,6 +165,42 @@
 - [ ] Customer notification system validation
 - [ ] Driver communication integration testing
 
+### **16A. Load-Schedule Integration System**
+
+- [ ] **Load-Schedule Integration Service Testing**
+  - [ ] Load assignment to schedule creation workflow validation
+  - [ ] Pickup and delivery schedule automatic generation testing
+  - [ ] Multi-day load transit schedule creation validation
+  - [ ] Driver availability conflict detection testing
+  - [ ] HOS (Hours of Service) compliance validation integration
+  - [ ] License status verification during scheduling testing
+
+- [ ] **Load Board Integration Testing**
+  - [ ] Dispatch Central driver assignment → schedule creation testing
+  - [ ] Enhanced Load Board workflow integration validation
+  - [ ] Unified Load Boards schedule creation testing
+  - [ ] Load creation components schedule integration validation
+  - [ ] All load board types integration workflow testing
+
+- [ ] **Schedule Management Integration**
+  - [ ] Load status changes → schedule status synchronization testing
+  - [ ] Load cancellation → schedule removal automation testing
+  - [ ] Real-time schedule conflict detection validation
+  - [ ] Priority-based scheduling workflow testing
+  - [ ] Schedule metadata integration (load details, equipment, weight) validation
+
+- [ ] **Integration Test Suite**
+  - [ ] Comprehensive integration test suite execution (`/test-schedule-integration`)
+  - [ ] Basic integration test validation (load → schedule creation)
+  - [ ] Conflict detection test validation (driver scheduling conflicts)
+  - [ ] Driver availability check testing (HOS and license validation)
+  - [ ] Multi-day load test validation (complex scheduling scenarios)
+  - [ ] Status synchronization test validation (load status → schedule status)
+  - [ ] Load cancellation test validation (schedule cleanup automation)
+  - [ ] Test data cleanup and validation procedures
+  - [ ] Integration status monitoring and real-time validation
+  - [ ] Production readiness validation for schedule integration workflows
+
 ### **17. Document Generation**
 
 - [ ] Document generation workflow completion testing
