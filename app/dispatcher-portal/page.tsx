@@ -189,7 +189,7 @@ const driversOnTheRoad = [
   },
 ];
 
-// Load Board Portal Section Component
+// The Flow Hub Section Component
 const LoadBoardPortalSection = () => {
   interface LoadBoardAccount {
     loadBoard: string;
@@ -252,7 +252,7 @@ const LoadBoardPortalSection = () => {
             margin: 0,
           }}
         >
-          📋 Load Board Portal
+                           🌊 The Flow Hub
         </h2>
         <div
           style={{
@@ -291,7 +291,7 @@ const LoadBoardPortalSection = () => {
               marginBottom: '10px',
             }}
           ></div>
-          <div>Loading load board access...</div>
+          <div>Loading The Flow Hub...</div>
         </div>
       ) : (
         <>
@@ -418,7 +418,7 @@ const LoadBoardPortalSection = () => {
                 target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
               }}
             >
-              🚀 Open Load Board Portal
+                                   🌊 Open The Flow Hub
             </Link>
 
             <div
@@ -428,7 +428,7 @@ const LoadBoardPortalSection = () => {
                 color: 'rgba(255, 255, 255, 0.6)',
               }}
             >
-              Access all your drivers' load board accounts from one portal
+                             Access all your drivers' load board accounts through The Flow Hub
             </div>
           </div>
 
@@ -2289,7 +2289,7 @@ export default function DispatcherPortal() {
               </div>
             </div>
 
-            {/* Load Board Portal Access */}
+            {/* The Flow Hub Access */}
             <LoadBoardPortalSection />
 
             {/* AI Load Optimization Tab */}
