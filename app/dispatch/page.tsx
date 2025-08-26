@@ -6,8 +6,6 @@ import AILoadOptimizationPanel from '../components/AILoadOptimizationPanel';
 import CompletedLoadsInvoiceTracker from '../components/CompletedLoadsInvoiceTracker';
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import DocumentsPortalButton from '../components/DocumentsPortalButton';
-import InvoiceCreationModal from '../components/InvoiceCreationModal';
-import InvoiceLifecycleViewer from '../components/InvoiceLifecycleViewer';
 
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
 import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
@@ -15,13 +13,13 @@ import { getCurrentUser } from '../config/access';
 import { schedulingService } from '../scheduling/service';
 import { brokerAgentIntegrationService } from '../services/BrokerAgentIntegrationService';
 import GoWithFlowAutomationService from '../services/GoWithFlowAutomationService';
+import { goWithTheFlowService } from '../services/GoWithTheFlowService';
 import { getAllInvoices, getInvoiceStats } from '../services/invoiceService';
 import {
   Load,
   getLoadsForTenant,
   getTenantLoadStats,
 } from '../services/loadService';
-import { openELDService } from '../services/openeld-integration';
 import {
   LoadBoardMetrics,
   UnifiedLoad,
@@ -836,6 +834,32 @@ export default function DispatchCentral() {
     activeDrivers: 24,
   });
 
+  // Real-time Go with the Flow data
+  const [goWithFlowData, setGoWithFlowData] = useState({
+    loads: [] as any[],
+    drivers: [] as any[],
+    activityFeed: [] as string[],
+    wonMarketplaceLoads: [] as any[],
+    marketplaceRevenue: 0,
+    loadStats: {
+      totalLoads: 0,
+      activeLoads: 0,
+      completedLoads: 0,
+      marketplaceLoads: 0,
+      standardLoads: 0,
+      pendingLoads: 0,
+    },
+    marketplaceMetrics: {
+      totalExternalLoadsEvaluated: 0,
+      externalBidsSubmitted: 0,
+      bidAcceptanceRate: 0,
+      averageProfitMargin: 0,
+      crossDockingOpportunities: 0,
+      rightSizedAssetUtilization: 0,
+    },
+    driverResponseRate: 0,
+  });
+
   // Driver Schedule Modal
   const [showDriverScheduleModal, setShowDriverScheduleModal] = useState(false);
   const [modalDriverData, setModalDriverData] = useState<any>(null);
@@ -970,7 +994,30 @@ export default function DispatchCentral() {
         setSystemStatus(automationService.getSystemStatus());
       }, 2000);
 
-      return () => clearInterval(activityInterval);
+      // Initialize real-time Go with the Flow data
+      const updateGoWithFlowData = () => {
+        setGoWithFlowData({
+          loads: goWithTheFlowService.getAllLoads(),
+          drivers: goWithTheFlowService.getAllDrivers(),
+          activityFeed: goWithTheFlowService.getActivityFeed(),
+          wonMarketplaceLoads: goWithTheFlowService.getWonMarketplaceLoads(),
+          marketplaceRevenue: goWithTheFlowService.getMarketplaceRevenue(),
+          loadStats: goWithTheFlowService.getLoadStats(),
+          marketplaceMetrics: goWithTheFlowService.getMarketplaceMetrics(),
+          driverResponseRate: goWithTheFlowService.getDriverResponseRate(),
+        });
+      };
+
+      // Initial load
+      updateGoWithFlowData();
+
+      // Real-time updates every 3 seconds
+      const goWithFlowInterval = setInterval(updateGoWithFlowData, 3000);
+
+      return () => {
+        clearInterval(activityInterval);
+        clearInterval(goWithFlowInterval);
+      };
     }
 
     if (currentUser) {
@@ -3349,6 +3396,404 @@ export default function DispatchCentral() {
                   ))}
                 </div>
               </div>
+
+              {/* Marketplace Loads - Dispatch Support */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  padding: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        margin: 0,
+                        marginBottom: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      🎯 Marketplace Loads - Dispatch Support
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        margin: 0,
+                      }}
+                    >
+                      Monitor and support marketplace bidding operations from Go
+                      with the Flow
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.3)',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      color: '#10b981',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {goWithFlowData.wonMarketplaceLoads.length} Active
+                    Marketplace Loads
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  {/* Left Column - Active Marketplace Loads */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      📋 Won Marketplace Bids
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                      }}
+                    >
+                      {goWithFlowData.wonMarketplaceLoads.map((load, index) => {
+                        const assignedDriver = goWithFlowData.drivers.find(
+                          (d) => d.id === load.assignedDriverId
+                        );
+                        const driverName = assignedDriver
+                          ? assignedDriver.name
+                          : 'Unassigned';
+                        const routeText = `${load.origin.address.split(',')[0]} → ${load.destination.address.split(',')[0]}`;
+                        const statusText =
+                          load.status === 'accepted'
+                            ? 'Pickup Scheduled'
+                            : load.status === 'in-transit'
+                              ? 'In Transit'
+                              : load.status === 'offered'
+                                ? 'Driver Accepting'
+                                : 'Active';
+                        const dispatchNote = `5% marketplace fee - Rate: $${load.rate}`;
+
+                        return (
+                          <div
+                            key={load.id}
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.08)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: '#10b981',
+                                  fontWeight: '600',
+                                  fontSize: '14px',
+                                }}
+                              >
+                                {load.id}
+                              </span>
+                              <span
+                                style={{
+                                  background:
+                                    statusText === 'In Transit'
+                                      ? '#3b82f6'
+                                      : '#f59e0b',
+                                  color: 'white',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  fontSize: '10px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {statusText}
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '13px',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              <strong>{driverName}</strong> • {routeText}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '11px',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Won Bid: ${load.rate}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '11px',
+                                fontStyle: 'italic',
+                              }}
+                            >
+                              📝 {dispatchNote}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Right Column - Dispatch Actions */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      🎛️ Dispatch Actions
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <button
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.8)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                      >
+                        📞 Contact All Marketplace Drivers
+                      </button>
+                      <button
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.8)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                      >
+                        🗺️ View All Marketplace Load Tracking
+                      </button>
+                      <button
+                        style={{
+                          background: 'rgba(245, 158, 11, 0.8)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                      >
+                        🚨 Send Support Alert to Drivers
+                      </button>
+                      <button
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.8)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                        onClick={() =>
+                          window.open('/go-with-the-flow', '_blank')
+                        }
+                      >
+                        🎯 View Go with the Flow System
+                      </button>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '8px',
+                          fontSize: '11px',
+                        }}
+                      >
+                        <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Total Marketplace Revenue:
+                        </div>
+                        <div style={{ color: '#10b981', fontWeight: '600' }}>
+                          ${goWithFlowData.marketplaceRevenue.toLocaleString()}
+                        </div>
+                        <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Active Bidding Loads:
+                        </div>
+                        <div style={{ color: '#3b82f6', fontWeight: '600' }}>
+                          {
+                            goWithFlowData.marketplaceMetrics
+                              .externalBidsSubmitted
+                          }{' '}
+                          loads
+                        </div>
+                        <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Driver Response Rate:
+                        </div>
+                        <div style={{ color: '#10b981', fontWeight: '600' }}>
+                          {goWithFlowData.driverResponseRate}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Marketplace Activity Feed */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    📡 Live Marketplace Activity
+                  </h4>
+                  <div
+                    style={{
+                      maxHeight: '120px',
+                      overflowY: 'auto',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
+                    {goWithFlowData.activityFeed
+                      .slice(0, 10)
+                      .map((activity, index) => {
+                        const timestamp = new Date(
+                          Date.now() - index * 60000 * 3
+                        ).toLocaleTimeString('en-US', {
+                          hour12: false,
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        });
+
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              background: 'rgba(255, 255, 255, 0.03)',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                minWidth: '40px',
+                                marginRight: '8px',
+                              }}
+                            >
+                              {timestamp}
+                            </span>
+                            <span
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                flex: 1,
+                              }}
+                            >
+                              {activity}
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -3437,451 +3882,18 @@ export default function DispatchCentral() {
                     margin: 0,
                   }}
                 >
-                  🗺️ Live Load Tracking
+                  🗺️ Live Fleet Tracking
                 </h2>
-                <Link href='/tracking' style={{ textDecoration: 'none' }}>
-                  <button
-                    style={{
-                      background:
-                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 6px 20px rgba(59, 130, 246, 0.3)',
-                    }}
-                  >
-                    🚀 Open Full Tracking Dashboard
-                  </button>
-                </Link>
               </div>
-
-              {/* Enhanced Summary Row - Matching Main Tracking Page */}
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(8, 1fr)',
-                  gap: '16px',
-                  marginBottom: '24px',
-                }}
-              >
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.total}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Total Loads
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.available}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Available
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.assigned}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Assigned
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.inTransit}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    In Transit
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.delivered}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Delivered
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.broadcasted}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Broadcasted
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.driverSelected}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Driver Selected
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '28px',
-                      fontWeight: 'bold',
-                      color: '#1e293b',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {stats.orderSent}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#64748b',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Order Sent
-                  </div>
-                </div>
-              </div>
-
-              {/* Shipment Cards - Matching Main Tracking Page Style */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(0, 0, 0, 0.4)',
                   borderRadius: '20px',
-                  border: '1px solid rgba(148, 163, 184, 0.2)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                  overflow: 'hidden',
+                  padding: '30px',
                   minHeight: '400px',
                 }}
               >
                 <UnifiedLiveTrackingWorkflow />
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 'notifications' && (
-            <div>
-              <h2
-                style={{
-                  color: 'white',
-                  fontSize: '22px',
-                  fontWeight: 'bold',
-                  marginBottom: '15px',
-                }}
-              >
-                🔔 Dispatch Notifications
-              </h2>
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  padding: '20px',
-                  maxHeight: '600px',
-                  overflowY: 'auto',
-                }}
-              >
-                {notifications.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      padding: '40px 20px',
-                    }}
-                  >
-                    <div style={{ fontSize: '48px', marginBottom: '15px' }}>
-                      🔔
-                    </div>
-                    <div style={{ fontSize: '16px', marginBottom: '10px' }}>
-                      No notifications
-                    </div>
-                    <div style={{ fontSize: '14px', opacity: 0.7 }}>
-                      All caught up! New notifications will appear here
-                    </div>
-                  </div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      style={{
-                        padding: '18px 22px',
-                        borderBottom: '2px solid rgba(255, 255, 255, 0.15)',
-                        background: notification.read
-                          ? 'rgba(255, 255, 255, 0.05)'
-                          : 'rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
-                        marginBottom: '12px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={() => handleMarkAsRead(notification.id)}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.15)';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = notification.read
-                          ? 'rgba(255, 255, 255, 0.05)'
-                          : 'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: '15px',
-                            fontWeight: notification.read ? '500' : '700',
-                            color: notification.read
-                              ? 'rgba(255, 255, 255, 0.7)'
-                              : '#ffffff',
-                            flex: 1,
-                            marginRight: '15px',
-                          }}
-                        >
-                          {notification.message}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {notification.timestamp}
-                        </div>
-                      </div>
-                      {!notification.read && (
-                        <div
-                          style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: '#3b82f6',
-                            position: 'absolute',
-                            right: '15px',
-                            top: '20px',
-                          }}
-                        />
-                      )}
-                    </div>
-                  ))
-                )}
               </div>
             </div>
           )}
@@ -3898,100 +3910,21 @@ export default function DispatchCentral() {
               >
                 🔄 Go With The Flow - Workflow Center
               </h2>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '20px',
-                }}
-              >
-                <p
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    fontSize: '16px',
-                    margin: 0,
-                  }}
-                >
-                  Currently viewing:{' '}
-                  {currentDriver?.driverName || 'No driver selected'} (
-                  {currentDriverIndex + 1} of {driversOnTheRoad.length})
-                </p>
-                <button
-                  onClick={() => openDriverScheduleModal(currentDriver)}
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #1e40af)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                  }}
-                >
-                  📅 View Schedule
-                </button>
-              </div>
+            </div>
+          )}
 
-              {/* Driver Workflow Card */}
-              <div
+          {selectedTab === 'compliance' && (
+            <div>
+              <h2
                 style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  padding: '20px',
-                  marginBottom: '20px',
+                  color: 'white',
+                  fontSize: '22px',
+                  fontWeight: 'bold',
+                  marginBottom: '15px',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '15px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: '#ffffff',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      margin: 0,
-                    }}
-                  >
-                    🚛 {currentDriver?.driverName} -{' '}
-                    {currentDriver?.truckingCompany}
-                  </h3>
-                  <button
-                    onClick={goToNextDriver}
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      color: '#3b82f6',
-                      border: '1px solid #3b82f6',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Next Driver ({currentDriverIndex + 1}/
-                    {driversOnTheRoad.length})
-                  </button>
-                </div>
-                <div
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '14px',
-                    marginBottom: '10px',
-                  }}
-                >
-                  MC: {currentDriver?.mcNumber} | Status:{' '}
-                  {currentDriver?.status}
-                </div>
-              </div>
+                📱 Driver OpenELD Compliance Monitoring
+              </h2>
             </div>
           )}
 
@@ -4007,1573 +3940,9 @@ export default function DispatchCentral() {
               >
                 🧾 Invoice Management
               </h2>
-
-              {/* Invoice Statistics */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
-                  marginBottom: '24px',
-                }}
-              >
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#ffffff',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {invoiceStats.counts.total}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    Total Invoices
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#ffffff',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {invoiceStats.counts.pending}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    Pending
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(34, 197, 94, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#ffffff',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {invoiceStats.counts.paid}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    Paid
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(239, 68, 68, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#ffffff',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {invoiceStats.counts.overdue}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '13px',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    Overdue
-                  </div>
-                </div>
-              </div>
-
-              {/* Invoice List */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  padding: '20px',
-                  maxHeight: '500px',
-                  overflowY: 'auto',
-                }}
-              >
-                {invoices.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      padding: '40px 20px',
-                    }}
-                  >
-                    <div style={{ fontSize: '48px', marginBottom: '15px' }}>
-                      🧾
-                    </div>
-                    <div style={{ fontSize: '16px', marginBottom: '10px' }}>
-                      No invoices yet
-                    </div>
-                    <div style={{ fontSize: '14px', opacity: 0.7 }}>
-                      Invoices will appear here when loads are completed
-                    </div>
-                  </div>
-                ) : (
-                  invoices.map((invoice, index) => (
-                    <div
-                      key={invoice.id}
-                      style={{
-                        padding: '18px 22px',
-                        borderBottom:
-                          index < invoices.length - 1
-                            ? '2px solid rgba(255, 255, 255, 0.15)'
-                            : 'none',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '12px',
-                        marginBottom: '12px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.05)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <div
-                            style={{
-                              fontSize: '16px',
-                              fontWeight: '600',
-                              color: '#ffffff',
-                              marginBottom: '4px',
-                            }}
-                          >
-                            Invoice #{invoice.invoiceNumber}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '14px',
-                              color: 'rgba(255, 255, 255, 0.7)',
-                            }}
-                          >
-                            Load: {invoice.loadId} | Amount: ${invoice.amount}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          {invoice.status}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
             </div>
           )}
         </div>
-        {/* Invoice Creation Modal */}
-        {showInvoiceModal && selectedLoadForInvoice && (
-          <InvoiceCreationModal
-            load={selectedLoadForInvoice}
-            onClose={() => {
-              setShowInvoiceModal(false);
-              setSelectedLoadForInvoice(null);
-            }}
-            onInvoiceCreated={handleInvoiceCreated}
-          />
-        )}
-        {/* Invoice Lifecycle Viewer Modal */}
-        {showInvoiceLifecycleViewer && selectedInvoiceForViewing && (
-          <InvoiceLifecycleViewer
-            invoice={{
-              invoiceNumber: selectedInvoiceForViewing || '',
-              loadId: 'FL-001',
-              loadBoardNumber: '100234',
-              route: 'Atlanta, GA → Miami, FL',
-              completedDate: new Date().toISOString(),
-              carrierName: 'ABC Trucking',
-              carrierMC: 'MC-123456',
-              grossRevenue: 2500,
-              dispatcherFeePercentage: 10,
-              dispatcherFeeAmount: 250,
-              netCarrierPayment: 2250,
-              status: 'sent',
-              createdAt: new Date().toISOString(),
-              dueDate: new Date(
-                Date.now() + 7 * 24 * 60 * 60 * 1000
-              ).toISOString(),
-              rateConfirmationNumber: 'RC-FL-001-123456',
-              bolNumber: 'BOL-FL-001-789012',
-              timeline: [
-                {
-                  id: '1',
-                  type: 'created',
-                  title: 'Invoice Auto-Generated',
-                  description:
-                    'System automatically created invoice upon load completion',
-                  timestamp: new Date().toISOString(),
-                  userName: 'System',
-                },
-                {
-                  id: '2',
-                  type: 'verified',
-                  title: 'Documents Verified',
-                  description:
-                    'Rate confirmation and BOL verified successfully',
-                  timestamp: new Date().toISOString(),
-                  userName: 'Dispatcher',
-                },
-                {
-                  id: '3',
-                  type: 'sent',
-                  title: 'Invoice Sent',
-                  description: 'Invoice sent to carrier via email',
-                  timestamp: new Date().toISOString(),
-                  userName: 'System',
-                },
-              ],
-            }}
-            onClose={() => {
-              setShowInvoiceLifecycleViewer(false);
-              setSelectedInvoiceForViewing(null);
-            }}
-            onViewDocument={(documentType, documentNumber) => {
-              window.open(
-                `/documents?type=${documentType}&number=${documentNumber}`,
-                '_blank'
-              );
-            }}
-            onResendInvoice={() => {
-              if (selectedInvoiceForViewing) {
-                handleResendInvoice(selectedInvoiceForViewing);
-              }
-              setShowInvoiceLifecycleViewer(false);
-            }}
-            onMarkPaid={(paymentInfo) => {
-              if (selectedInvoiceForViewing) {
-                handleMarkPaid(selectedInvoiceForViewing, paymentInfo);
-              }
-              setShowInvoiceLifecycleViewer(false);
-            }}
-            onSendReminder={handleSendReminder}
-          />
-        )}
-        {/* Square Accessorial Fee Modal */}
-        {showAccessorialModal && selectedAccessorialLoad && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.8)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                background: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                maxWidth: '600px',
-                width: '90%',
-                maxHeight: '80vh',
-                overflowY: 'auto',
-              }}
-            >
-              <h3
-                style={{
-                  margin: '0 0 20px 0',
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: '#1f2937',
-                }}
-              >
-                Square Accessorial Fees - Load {selectedAccessorialLoad.id}
-              </h3>
-
-              {/* Accessorial Fee Form Content */}
-              <div style={{ marginBottom: '20px' }}>
-                <p style={{ color: '#6b7280', marginBottom: '16px' }}>
-                  Configure accessorial fees for this load to generate Square
-                  invoice.
-                </p>
-
-                {/* Detention Fees */}
-                <div style={{ marginBottom: '16px' }}>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      fontWeight: '600',
-                      color: '#374151',
-                    }}
-                  >
-                    Detention Fees
-                  </label>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '12px',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <input
-                      type='number'
-                      placeholder='Hours'
-                      value={accessorialFees.detention.hours}
-                      onChange={(e) => {
-                        const hours = Number(e.target.value);
-                        setAccessorialFees((prev) => ({
-                          ...prev,
-                          detention: {
-                            ...prev.detention,
-                            hours,
-                            total: hours * prev.detention.rate,
-                          },
-                        }));
-                      }}
-                      style={{
-                        padding: '8px 12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        width: '80px',
-                      }}
-                    />
-                    <span style={{ color: '#6b7280' }}>×</span>
-                    <input
-                      type='number'
-                      placeholder='Rate per hour'
-                      value={accessorialFees.detention.rate}
-                      onChange={(e) => {
-                        const rate = Number(e.target.value);
-                        setAccessorialFees((prev) => ({
-                          ...prev,
-                          detention: {
-                            ...prev.detention,
-                            rate,
-                            total: prev.detention.hours * rate,
-                          },
-                        }));
-                      }}
-                      style={{
-                        padding: '8px 12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        width: '100px',
-                      }}
-                    />
-                    <span style={{ color: '#6b7280' }}>=</span>
-                    <span style={{ fontWeight: '600', color: '#059669' }}>
-                      ${accessorialFees.detention.total}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Lumper Fees */}
-                <div style={{ marginBottom: '16px' }}>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      fontWeight: '600',
-                      color: '#374151',
-                    }}
-                  >
-                    Lumper Fees
-                  </label>
-                  <input
-                    type='number'
-                    placeholder='Amount'
-                    value={accessorialFees.lumper.amount}
-                    onChange={(e) => {
-                      const amount = Number(e.target.value);
-                      setAccessorialFees((prev) => ({
-                        ...prev,
-                        lumper: { ...prev.lumper, amount },
-                      }));
-                    }}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      width: '120px',
-                    }}
-                  />
-                </div>
-
-                {/* Other Fees */}
-                <div style={{ marginBottom: '16px' }}>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      fontWeight: '600',
-                      color: '#374151',
-                    }}
-                  >
-                    Other Fees
-                  </label>
-                  {accessorialFees.other.map((fee, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: 'flex',
-                        gap: '8px',
-                        marginBottom: '8px',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <input
-                        type='text'
-                        placeholder='Type'
-                        value={fee.type}
-                        onChange={(e) => {
-                          const newOther = [...accessorialFees.other];
-                          newOther[index].type = e.target.value;
-                          setAccessorialFees((prev) => ({
-                            ...prev,
-                            other: newOther,
-                          }));
-                        }}
-                        style={{
-                          padding: '6px 10px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          width: '100px',
-                        }}
-                      />
-                      <input
-                        type='text'
-                        placeholder='Description'
-                        value={fee.description}
-                        onChange={(e) => {
-                          const newOther = [...accessorialFees.other];
-                          newOther[index].description = e.target.value;
-                          setAccessorialFees((prev) => ({
-                            ...prev,
-                            other: newOther,
-                          }));
-                        }}
-                        style={{
-                          padding: '6px 10px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          flex: 1,
-                        }}
-                      />
-                      <input
-                        type='number'
-                        placeholder='Amount'
-                        value={fee.amount}
-                        onChange={(e) => {
-                          const newOther = [...accessorialFees.other];
-                          newOther[index].amount = Number(e.target.value);
-                          setAccessorialFees((prev) => ({
-                            ...prev,
-                            other: newOther,
-                          }));
-                        }}
-                        style={{
-                          padding: '6px 10px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          width: '80px',
-                        }}
-                      />
-                      <button
-                        onClick={() => {
-                          const newOther = accessorialFees.other.filter(
-                            (_, i) => i !== index
-                          );
-                          setAccessorialFees((prev) => ({
-                            ...prev,
-                            other: newOther,
-                          }));
-                        }}
-                        style={{
-                          background: '#ef4444',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 8px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setAccessorialFees((prev) => ({
-                        ...prev,
-                        other: [
-                          ...prev.other,
-                          { type: '', description: '', amount: 0 },
-                        ],
-                      }));
-                    }}
-                    style={{
-                      background: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                    }}
-                  >
-                    + Add Fee
-                  </button>
-                </div>
-
-                {/* Total */}
-                <div
-                  style={{
-                    padding: '12px',
-                    background: '#f3f4f6',
-                    borderRadius: '6px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <div style={{ fontWeight: '600', color: '#374151' }}>
-                    Total Accessorial Fees: $
-                    {accessorialFees.detention.total +
-                      accessorialFees.lumper.amount +
-                      accessorialFees.other.reduce(
-                        (sum, fee) => sum + fee.amount,
-                        0
-                      )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Actions */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '12px',
-                  justifyContent: 'flex-end',
-                }}
-              >
-                <button
-                  onClick={() => {
-                    setShowAccessorialModal(false);
-                    setSelectedAccessorialLoad(null);
-                    setAccessorialFees({
-                      detention: {
-                        hours: 0,
-                        rate: 50,
-                        location: 'pickup',
-                        total: 0,
-                      },
-                      lumper: {
-                        amount: 0,
-                        location: 'pickup',
-                        receiptNumber: '',
-                      },
-                      other: [],
-                    });
-                  }}
-                  style={{
-                    background: '#6b7280',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateAccessorialInvoice}
-                  style={{
-                    background: '#059669',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                  }}
-                >
-                  Create Square Invoice
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Driver Schedule Modal */}
-        {showDriverScheduleModal && modalDriverData && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.8)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                background: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                maxWidth: '800px',
-                width: '90%',
-                maxHeight: '80vh',
-                overflowY: 'auto',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '20px',
-                }}
-              >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: '#1f2937',
-                  }}
-                >
-                  📅 Driver Schedule - {modalDriverData?.driverName}
-                </h3>
-                <button
-                  onClick={() => setShowDriverScheduleModal(false)}
-                  style={{
-                    background: '#6b7280',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
-                  marginBottom: '20px',
-                }}
-              >
-                <div
-                  style={{
-                    padding: '12px',
-                    background: '#f3f4f6',
-                    borderRadius: '8px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: '600',
-                      color: '#374151',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Driver Info
-                  </div>
-                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                    MC: {modalDriverData?.mcNumber}
-                    <br />
-                    Company: {modalDriverData?.truckingCompany}
-                  </div>
-                </div>
-              </div>
-
-              {/* Schedule List */}
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 12px 0', color: '#374151' }}>
-                  Weekly Schedule
-                </h4>
-                {driverScheduleData.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: '40px',
-                      color: '#6b7280',
-                    }}
-                  >
-                    No schedule data available
-                  </div>
-                ) : (
-                  driverScheduleData.map((schedule, index) => (
-                    <div
-                      key={schedule.id}
-                      style={{
-                        ...getScheduleStatusStyle(schedule.status),
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        marginBottom: '8px',
-                        cursor: 'pointer',
-                      }}
-                      onDoubleClick={() =>
-                        handleScheduleDoubleClick(schedule.id)
-                      }
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <div
-                            style={{ fontWeight: '600', marginBottom: '4px' }}
-                          >
-                            {formatDate(schedule.date)} - {schedule.loadType}
-                          </div>
-                          <div style={{ fontSize: '14px', opacity: 0.9 }}>
-                            {schedule.route} | Est. Hours:{' '}
-                            {schedule.estimatedHours}
-                          </div>
-                        </div>
-                        <div>
-                          {editingScheduleId === schedule.id ? (
-                            <select
-                              value={schedule.status}
-                              onChange={(e) => {
-                                updateScheduleStatus(
-                                  schedule.id,
-                                  e.target.value
-                                );
-                                setEditingScheduleId(null);
-                              }}
-                              onBlur={() => setEditingScheduleId(null)}
-                              style={{
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                border: '1px solid #d1d5db',
-                                background: 'white',
-                                color: '#374151',
-                              }}
-                            >
-                              <option value='pending'>Pending</option>
-                              <option value='active'>Active</option>
-                              <option value='completed'>Completed</option>
-                            </select>
-                          ) : (
-                            <span
-                              style={{
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                              }}
-                              onClick={() => setEditingScheduleId(schedule.id)}
-                            >
-                              {schedule.status}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Modal Footer */}
-              <div
-                style={{
-                  padding: '16px 24px',
-                  background: '#f8fafc',
-                  borderTop: '1px solid #e2e8f0',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                  📊 Total Weekly Hours:{' '}
-                  {calculateTotalWeeklyHours(driverScheduleData)} / 60 • 🛡️
-                  FMCSA Compliant • 📅 {driverScheduleData.length} Schedule
-                  {driverScheduleData.length !== 1 ? 's' : ''} • ✏️ Click status
-                  to edit
-                </div>
-                <button
-                  onClick={() => setShowDriverScheduleModal(false)}
-                  style={{
-                    background: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Driver Compliance Tab */}
-        {selectedTab === 'compliance' && (
-          <div>
-            <h2
-              style={{
-                color: 'white',
-                fontSize: '22px',
-                fontWeight: 'bold',
-                marginBottom: '15px',
-              }}
-            >
-              📱 Driver OpenELD Compliance Monitoring
-            </h2>
-
-            {/* Fleet Compliance Overview */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '16px',
-                marginBottom: '24px',
-              }}
-            >
-              <div
-                style={{
-                  background: 'rgba(34, 197, 94, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#ffffff',
-                    marginBottom: '4px',
-                  }}
-                >
-                  23
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                  }}
-                >
-                  ELD Compliant Drivers
-                </div>
-              </div>
-              <div
-                style={{
-                  background: 'rgba(245, 158, 11, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#ffffff',
-                    marginBottom: '4px',
-                  }}
-                >
-                  3
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                  }}
-                >
-                  HOS Violations This Week
-                </div>
-              </div>
-              <div
-                style={{
-                  background: 'rgba(59, 130, 246, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#ffffff',
-                    marginBottom: '4px',
-                  }}
-                >
-                  94.2%
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                  }}
-                >
-                  OpenELD Compliance Rate
-                </div>
-              </div>
-              <div
-                style={{
-                  background: 'rgba(168, 85, 247, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(168, 85, 247, 0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#ffffff',
-                    marginBottom: '4px',
-                  }}
-                >
-                  26
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                  }}
-                >
-                  Connected ELD Devices
-                </div>
-              </div>
-              <div
-                style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#ffffff',
-                    marginBottom: '4px',
-                  }}
-                >
-                  2
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                  }}
-                >
-                  Critical Violations
-                </div>
-              </div>
-            </div>
-
-            {/* Driver OpenELD Compliance Table */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                padding: '20px',
-                marginBottom: '20px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '16px',
-                }}
-              >
-                <h3
-                  style={{
-                    color: 'white',
-                    margin: 0,
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  📋 Driver OpenELD Compliance Status
-                </h3>
-                <button
-                  style={{
-                    background: '#22c55e',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                  onClick={async () => {
-                    try {
-                      // Mock export of fleet compliance data
-                      const fleetComplianceData = `Driver Name,Driver ID,ELD Device ID,Last Load,ELD Compliance,HOS Violations,Weight Violations,Device Status,Risk Level,Last Updated
-John Rodriguez,DR-001,ELD-001,MJ-25001-TXFL,COMPLIANT,0,0,CONNECTED,LOW,2024-01-20
-Maria Santos,DR-002,ELD-002,MJ-25002-TXCA,CAUTION,1,1,CONNECTED,MEDIUM,2024-01-19
-David Thompson,DR-003,ELD-003,MJ-25003-ILOH,COMPLIANT,0,0,CONNECTED,LOW,2024-01-18
-Robert Johnson,DR-004,ELD-004,MJ-25004-FLNY,VIOLATION,2,1,PARTIAL,HIGH,2024-01-17
-Sarah Williams,DR-005,ELD-005,MJ-25005-TXCA,COMPLIANT,0,0,CONNECTED,LOW,2024-01-16`;
-
-                      const blob = new Blob([fleetComplianceData], {
-                        type: 'text/csv',
-                      });
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement('a');
-                      link.href = url;
-                      link.download = `fleet-openeld-compliance-${new Date().toISOString().split('T')[0]}.csv`;
-                      link.click();
-                      URL.revokeObjectURL(url);
-
-                      alert(
-                        '✅ Fleet OpenELD compliance report exported successfully!'
-                      );
-                    } catch (error) {
-                      alert('❌ Export failed. Please try again.');
-                    }
-                  }}
-                >
-                  📥 Export Fleet Report
-                </button>
-              </div>
-
-              {/* Driver Compliance List */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                }}
-              >
-                {[
-                  {
-                    name: 'John Rodriguez',
-                    driverId: 'DR-001',
-                    eldDeviceId: 'ELD-001',
-                    lastLoad: 'MJ-25001-TXFL',
-                    compliance: 'COMPLIANT',
-                    hosViolations: 0,
-                    weightViolations: 0,
-                    eldStatus: 'CONNECTED',
-                    riskLevel: 'LOW',
-                    totalWeight: '78,000 lbs',
-                    complianceRate: 98.5,
-                    lastUpdated: '2 hours ago',
-                  },
-                  {
-                    name: 'Maria Santos',
-                    driverId: 'DR-002',
-                    eldDeviceId: 'ELD-002',
-                    lastLoad: 'MJ-25002-TXCA',
-                    compliance: 'CAUTION',
-                    hosViolations: 1,
-                    weightViolations: 1,
-                    eldStatus: 'CONNECTED',
-                    riskLevel: 'MEDIUM',
-                    totalWeight: '82,000 lbs',
-                    complianceRate: 87.2,
-                    lastUpdated: '4 hours ago',
-                  },
-                  {
-                    name: 'David Thompson',
-                    driverId: 'DR-003',
-                    eldDeviceId: 'ELD-003',
-                    lastLoad: 'MJ-25003-ILOH',
-                    compliance: 'COMPLIANT',
-                    hosViolations: 0,
-                    weightViolations: 0,
-                    eldStatus: 'CONNECTED',
-                    riskLevel: 'LOW',
-                    totalWeight: '76,500 lbs',
-                    complianceRate: 95.8,
-                    lastUpdated: '6 hours ago',
-                  },
-                  {
-                    name: 'Robert Johnson',
-                    driverId: 'DR-004',
-                    eldDeviceId: 'ELD-004',
-                    lastLoad: 'MJ-25004-FLNY',
-                    compliance: 'VIOLATION',
-                    hosViolations: 2,
-                    weightViolations: 1,
-                    eldStatus: 'PARTIAL',
-                    riskLevel: 'HIGH',
-                    totalWeight: '85,000 lbs',
-                    complianceRate: 71.4,
-                    lastUpdated: '8 hours ago',
-                  },
-                ].map((driver) => (
-                  <div
-                    key={driver.driverId}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          {driver.name} ({driver.driverId}) • 📱{' '}
-                          {driver.eldDeviceId}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.7)',
-                          }}
-                        >
-                          Last Load: {driver.lastLoad} • Weight:{' '}
-                          {driver.totalWeight}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            background:
-                              driver.compliance === 'COMPLIANT'
-                                ? '#10b981'
-                                : driver.compliance === 'CAUTION'
-                                  ? '#f59e0b'
-                                  : '#ef4444',
-                            color: 'white',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {driver.compliance}
-                        </span>
-                        <span
-                          style={{
-                            background:
-                              driver.eldStatus === 'CONNECTED'
-                                ? 'rgba(34, 197, 94, 0.2)'
-                                : driver.eldStatus === 'PARTIAL'
-                                  ? 'rgba(245, 158, 11, 0.2)'
-                                  : 'rgba(239, 68, 68, 0.2)',
-                            color:
-                              driver.eldStatus === 'CONNECTED'
-                                ? '#22c55e'
-                                : driver.eldStatus === 'PARTIAL'
-                                  ? '#f59e0b'
-                                  : '#ef4444',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          📱 {driver.eldStatus}
-                        </span>
-                        <span
-                          style={{
-                            background:
-                              driver.riskLevel === 'LOW'
-                                ? 'rgba(34, 197, 94, 0.2)'
-                                : driver.riskLevel === 'MEDIUM'
-                                  ? 'rgba(245, 158, 11, 0.2)'
-                                  : 'rgba(239, 68, 68, 0.2)',
-                            color:
-                              driver.riskLevel === 'LOW'
-                                ? '#22c55e'
-                                : driver.riskLevel === 'MEDIUM'
-                                  ? '#f59e0b'
-                                  : '#ef4444',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {driver.riskLevel} RISK
-                        </span>
-                        <button
-                          style={{
-                            background: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                          }}
-                          onClick={async () => {
-                            try {
-                              const driverLogs =
-                                await openELDService.getWeightComplianceLogs(
-                                  driver.driverId
-                                );
-                              const summary =
-                                await openELDService.getWeightComplianceSummary(
-                                  driver.driverId,
-                                  30
-                                );
-
-                              alert(
-                                `📊 ${driver.name} - 30-Day OpenELD Compliance Summary\n\n` +
-                                  `ELD DEVICE INFORMATION:\n` +
-                                  `Device ID: ${driver.eldDeviceId}\n` +
-                                  `Device Status: ${driver.eldStatus}\n` +
-                                  `Overall Compliance Rate: ${driver.complianceRate}%\n\n` +
-                                  `COMPLIANCE BREAKDOWN:\n` +
-                                  `Total Loads: ${summary.totalLoads}\n` +
-                                  `Compliant Loads: ${summary.compliantLoads}\n` +
-                                  `HOS Violations: ${driver.hosViolations}\n` +
-                                  `Weight Violations: ${driver.weightViolations}\n` +
-                                  `Critical Violations: ${summary.criticalViolations}\n` +
-                                  `Permits Required: ${summary.permitsRequired}\n\n` +
-                                  `RISK ASSESSMENT:\n` +
-                                  `Risk Level: ${summary.riskLevel.toUpperCase()}\n` +
-                                  `Current Status: ${driver.compliance}\n` +
-                                  `Last Load: ${driver.lastLoad}\n` +
-                                  `Last Update: ${driver.lastUpdated}\n\n` +
-                                  `OpenELD compliance data ready for DOT inspections.`
-                              );
-                            } catch (error) {
-                              alert(
-                                '❌ Failed to load driver compliance data.'
-                              );
-                            }
-                          }}
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns:
-                          'repeat(auto-fit, minmax(120px, 1fr))',
-                        gap: '16px',
-                        fontSize: '12px',
-                      }}
-                    >
-                      <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Compliance Rate:
-                        </span>
-                        <div
-                          style={{
-                            color:
-                              driver.complianceRate >= 95
-                                ? '#4ade80'
-                                : driver.complianceRate >= 85
-                                  ? '#fbbf24'
-                                  : '#ef4444',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {driver.complianceRate}%
-                        </div>
-                      </div>
-                      <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                          HOS Violations:
-                        </span>
-                        <div
-                          style={{
-                            color:
-                              driver.hosViolations > 0 ? '#fbbf24' : '#4ade80',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {driver.hosViolations}
-                        </div>
-                      </div>
-                      <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Weight Violations:
-                        </span>
-                        <div
-                          style={{
-                            color:
-                              driver.weightViolations > 0
-                                ? '#fbbf24'
-                                : '#4ade80',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {driver.weightViolations}
-                        </div>
-                      </div>
-                      <div>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Last Updated:
-                        </span>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>
-                          {driver.lastUpdated}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Weight Compliance Actions */}
-            <div
-              style={{
-                background: 'rgba(59, 130, 246, 0.1)',
-                borderRadius: '8px',
-                padding: '16px',
-                border: '1px solid rgba(59, 130, 246, 0.2)',
-              }}
-            >
-              <h4
-                style={{
-                  color: '#60a5fa',
-                  margin: '0 0 12px 0',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                }}
-              >
-                ℹ️ Fleet OpenELD Compliance Management
-              </h4>
-              <div
-                style={{
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: '14px',
-                  lineHeight: '1.4',
-                  marginBottom: '16px',
-                }}
-              >
-                <p style={{ margin: '0 0 8px 0' }}>
-                  • Monitor comprehensive OpenELD compliance across your entire
-                  fleet (HOS, weight, device status)
-                </p>
-                <p style={{ margin: '0 0 8px 0' }}>
-                  • Track HOS violations, weight violations, and ELD device
-                  connectivity for each driver
-                </p>
-                <p style={{ margin: '0 0 8px 0' }}>
-                  • Export detailed OpenELD compliance reports for DOT audits
-                  and fleet analysis
-                </p>
-                <p style={{ margin: '0' }}>
-                  • Access complete OpenELD compliance logs with real-time
-                  device status and violation history
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  style={{
-                    background: '#f59e0b',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    alert(
-                      '📧 OpenELD Compliance Alert Sent!\n\nAll drivers with violations have been notified via SMS and email:\n• HOS violation warnings issued\n• Weight compliance reminders sent\n• ELD device connectivity issues flagged\n• Safety recommendations provided\nSafety Department has been copied on all OpenELD compliance communications.'
-                    );
-                  }}
-                >
-                  🚨 Alert Drivers with Violations
-                </button>
-
-                <button
-                  style={{
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                  onClick={async () => {
-                    try {
-                      // Generate comprehensive DOT audit report
-                      const auditData = `FLEETFLOW DOT OPENELD COMPLIANCE AUDIT REPORT
-Generated: ${new Date().toLocaleString()}
-Report Period: Last 30 Days
-
-FLEET SUMMARY:
-Total Active Drivers: 26
-ELD Compliant Drivers: 23 (88.5%)
-Drivers with Violations: 3 (11.5%)
-Connected ELD Devices: 26/26 (100%)
-Critical Violations: 2
-OpenELD Compliance Rate: 94.2%
-
-HOS VIOLATION BREAKDOWN:
-14-Hour Violations: 1
-11-Hour Violations: 2
-70-Hour/8-Day Violations: 0
-34-Hour Restart Violations: 0
-
-WEIGHT VIOLATION BREAKDOWN:
-Bridge Formula Violations: 2
-Axle Weight Violations: 1
-Gross Weight Violations: 0
-State-Specific Violations: 1
-
-ELD DEVICE STATUS:
-Connected Devices: 26 (100%)
-Partial Connection: 0 (0%)
-Disconnected Devices: 0 (0%)
-Malfunctioning Devices: 0 (0%)
-
-DRIVER COMPLIANCE DETAILS:
-Driver Name,ID,Loads,Violations,Risk Level,Last Violation Date
-John Rodriguez,DR-001,12,0,LOW,None
-Maria Santos,DR-002,14,1,MEDIUM,2024-01-19
-David Thompson,DR-003,11,0,LOW,None
-Robert Johnson,DR-004,9,2,HIGH,2024-01-17
-
-CORRECTIVE ACTIONS TAKEN:
-- Driver retraining scheduled for violation cases
-- Weight distribution protocol updated
-- Additional pre-trip inspections implemented
-
-This report generated from OpenELD weight compliance logs.
-All data verified against DOT requirements and state regulations.`;
-
-                      const blob = new Blob([auditData], {
-                        type: 'text/plain',
-                      });
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement('a');
-                      link.href = url;
-                      link.download = `DOT-OpenELD-Compliance-Audit-${new Date().toISOString().split('T')[0]}.txt`;
-                      link.click();
-                      URL.revokeObjectURL(url);
-
-                      alert(
-                        '✅ DOT OpenELD Audit Report Generated!\n\nComprehensive OpenELD compliance audit report exported.\nIncludes HOS violations, weight compliance, and ELD device status.\nReady for DOT inspection or internal compliance review.'
-                      );
-                    } catch (error) {
-                      alert('❌ Failed to generate audit report.');
-                    }
-                  }}
-                >
-                  📋 Generate DOT Audit Report
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

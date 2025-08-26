@@ -23,11 +23,6 @@ import {
   getTenantLoadStats,
 } from '../services/loadService';
 import { openELDService } from '../services/openeld-integration';
-import {
-  LoadBoardMetrics,
-  UnifiedLoad,
-  unifiedLoadBoardService,
-} from '../services/unified-loadboard-service';
 
 interface DispatcherProfile {
   id: string;
@@ -194,565 +189,282 @@ const driversOnTheRoad = [
   },
 ];
 
-// Unified Load Board Section Component
-const UnifiedLoadBoardSection = () => {
-  const [unifiedLoads, setUnifiedLoads] = useState<UnifiedLoad[]>([]);
-  const [loadBoardMetrics, setLoadBoardMetrics] =
-    useState<LoadBoardMetrics | null>(null);
-  const [loadingUnified, setLoadingUnified] = useState(false);
-  const [showAllLoads, setShowAllLoads] = useState(false);
-  const [filters, setFilters] = useState({
-    origin: '',
-    destination: '',
-    equipment: '',
-    source: 'all',
-  });
+// Load Board Portal Section Component
+const LoadBoardPortalSection = () => {
+  interface LoadBoardAccount {
+    loadBoard: string;
+    count: number;
+    drivers: string[];
+  }
 
-  // Load unified load board data
+  const [driverAccounts, setDriverAccounts] = useState<LoadBoardAccount[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    loadUnifiedData();
+    // Mock driver load board access data
+    const mockData = [
+      {
+        loadBoard: 'DAT',
+        count: 2,
+        drivers: ['John Smith', 'Maria Rodriguez'],
+      },
+      { loadBoard: 'TruckStop', count: 1, drivers: ['John Smith'] },
+      { loadBoard: '123LoadBoard', count: 1, drivers: ['David Wilson'] },
+      { loadBoard: 'Sylectus', count: 0, drivers: [] },
+    ];
+
+    setTimeout(() => {
+      setDriverAccounts(mockData);
+      setIsLoading(false);
+    }, 500);
   }, []);
 
-  const loadUnifiedData = async () => {
-    setLoadingUnified(true);
-    try {
-      // Get loads from all sources (Phase 1: API Integrations + Phase 3: Partnerships)
-      const loads = await unifiedLoadBoardService.getAllLoads(true);
-      setUnifiedLoads(loads.slice(0, 12)); // Show top 12 loads initially
-
-      // Get metrics for partnership negotiations
-      const metrics = await unifiedLoadBoardService.getLoadBoardMetrics();
-      setLoadBoardMetrics(metrics);
-    } catch (error) {
-      console.error('Failed to load unified load board data:', error);
-    } finally {
-      setLoadingUnified(false);
-    }
-  };
-
-  const handleSearchUnified = async () => {
-    setLoadingUnified(true);
-    try {
-      const filteredLoads = await unifiedLoadBoardService.searchLoads({
-        origin: filters.origin || undefined,
-        destination: filters.destination || undefined,
-        equipment: filters.equipment || undefined,
-      });
-      setUnifiedLoads(filteredLoads.slice(0, 12));
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setLoadingUnified(false);
-    }
-  };
-
-  const handleContactBroker = async (load: UnifiedLoad) => {
-    // Track usage for partnership negotiations (Phase 2)
-    await unifiedLoadBoardService.trackLoadBoardUsage({
-      loadViewed: load.id,
-      source: load.source,
-      action: 'contacted',
-      userId: getCurrentUser()?.user?.id || 'dispatcher',
-    });
-
-    // Contact options: phone first, then email
-    if (load.brokerInfo.phone) {
-      window.open(`tel:${load.brokerInfo.phone}`, '_blank');
-    } else if (load.brokerInfo.email) {
-      window.open(
-        `mailto:${load.brokerInfo.email}?subject=Load Inquiry - ${load.origin.city} to ${load.destination.city}&body=Hi, I'm interested in your load from ${load.origin.city}, ${load.origin.state} to ${load.destination.city}, ${load.destination.state} for $${load.rate.toLocaleString()}.`,
-        '_blank'
-      );
-    }
-  };
+  const totalAccounts = driverAccounts.reduce(
+    (sum, board) => sum + board.count,
+    0
+  );
+  const activeBoards = driverAccounts.filter((board) => board.count > 0).length;
 
   return (
     <div
       style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '15px',
-        border: '2px solid rgba(255, 255, 255, 0.2)',
-        padding: '20px',
+        background: 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(12px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '24px',
         marginTop: '25px',
-        marginBottom: '25px',
       }}
     >
-      {/* Compact Header */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '15px',
+          marginBottom: '20px',
         }}
       >
         <h2
           style={{
             color: 'white',
-            fontSize: '18px',
+            fontSize: '22px',
             fontWeight: 'bold',
             margin: 0,
           }}
         >
-          🎯 Unified Load Board ({unifiedLoads.length} loads)
+          📋 Load Board Portal
         </h2>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <DocumentsPortalButton variant='compact' />
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <span
-              style={{
-                background: '#10b981',
-                color: 'white',
-                padding: '2px 6px',
-                borderRadius: '8px',
-                fontSize: '9px',
-              }}
-            >
-              API INTEGRATIONS
-            </span>
-            <span
-              style={{
-                background: '#f59e0b',
-                color: 'white',
-                padding: '2px 6px',
-                borderRadius: '8px',
-                fontSize: '9px',
-              }}
-            >
-              TRACKING
-            </span>
-          </div>
-          <span
-            style={{
-              background: '#6b7280',
-              color: 'white',
-              padding: '2px 6px',
-              borderRadius: '8px',
-              fontSize: '9px',
-            }}
-          >
-            PARTNERSHIPS
-          </span>
-        </div>
-      </div>
-
-      {/* Compact Search Filters */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '15px',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
-        <input
-          type='text'
-          placeholder='Origin'
-          value={filters.origin}
-          onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
-          style={{
-            padding: '6px 10px',
-            borderRadius: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.9)',
-            fontSize: '12px',
-            width: '120px',
-          }}
-        />
-        <input
-          type='text'
-          placeholder='Destination'
-          value={filters.destination}
-          onChange={(e) =>
-            setFilters({ ...filters, destination: e.target.value })
-          }
-          style={{
-            padding: '6px 10px',
-            borderRadius: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.9)',
-            fontSize: '12px',
-            width: '120px',
-          }}
-        />
-        <select
-          value={filters.equipment}
-          onChange={(e) =>
-            setFilters({ ...filters, equipment: e.target.value })
-          }
-          style={{
-            padding: '6px 10px',
-            borderRadius: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.9)',
-            fontSize: '12px',
-            width: '100px',
-          }}
-        >
-          <option value=''>All Equip</option>
-          <option value='van'>Van</option>
-          <option value='reefer'>Reefer</option>
-          <option value='flatbed'>Flatbed</option>
-        </select>
-        <select
-          value={filters.source}
-          onChange={(e) => setFilters({ ...filters, source: e.target.value })}
-          style={{
-            padding: '6px 10px',
-            borderRadius: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.9)',
-            fontSize: '12px',
-            width: '100px',
-          }}
-        >
-          <option value='all'>All Sources</option>
-          <option value='DAT_FREE'>DAT</option>
-          <option value='TQL_PARTNER'>TQL</option>
-          <option value='LANDSTAR_PARTNER'>Landstar</option>
-        </select>
-        <button
-          onClick={handleSearchUnified}
-          disabled={loadingUnified}
-          style={{
-            background: loadingUnified ? 'rgba(255, 255, 255, 0.3)' : '#3b82f6',
-            color: 'white',
-            border: 'none',
-            padding: '6px 12px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            cursor: loadingUnified ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {loadingUnified ? '🔄' : '🔍 Search'}
-        </button>
-        {loadBoardMetrics && (
-          <span
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '11px',
-              marginLeft: '10px',
-            }}
-          >
-            {loadBoardMetrics.totalLoads.toLocaleString()} total • $
-            {(loadBoardMetrics.averageRate / 1000).toFixed(1)}K avg
-          </span>
-        )}
-      </div>
-
-      {/* Load Board Table - Matching General Loadboard Style */}
-      <div
-        style={{
-          background: 'rgba(0, 0, 0, 0.6)',
-          borderRadius: '10px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Table Header */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns:
-              '90px 80px 1.5fr 1fr 120px 100px 100px 100px 120px',
-            gap: '10px',
-            padding: '12px 15px',
-            background: 'rgba(0, 0, 0, 0.6)',
-            fontWeight: '700',
-            color: '#9ca3af',
-            fontSize: '11px',
-            textTransform: 'uppercase',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            display: 'flex',
+            gap: '20px',
+            fontSize: '14px',
+            color: 'rgba(255, 255, 255, 0.8)',
           }}
         >
-          <div>🎯 Source</div>
-          <div>Load ID</div>
-          <div>Route</div>
-          <div>Broker</div>
-          <div>Rate</div>
-          <div>Equipment</div>
-          <div>Distance</div>
-          <div>Pickup</div>
-          <div>🛡️ Risk</div>
+          <span>
+            <strong>{totalAccounts}</strong> Accounts
+          </span>
+          <span>
+            <strong>{activeBoards}</strong> Active Boards
+          </span>
         </div>
+      </div>
 
-        {/* Table Body */}
-        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          {unifiedLoads.map((load, index) => (
-            <div
-              key={load.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns:
-                  '90px 80px 1.5fr 1fr 120px 100px 100px 100px 120px',
-                gap: '10px',
-                padding: '10px 15px',
-                background:
-                  index % 2 === 0 ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.4)',
-                color: '#e5e7eb',
-                fontSize: '12px',
-                transition: 'all 0.3s ease',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 12px rgba(0, 0, 0, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background =
-                  index % 2 === 0 ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.4)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-              onClick={() => handleContactBroker(load)}
-            >
-              {/* Source Badge */}
+      {isLoading ? (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '40px',
+            color: 'rgba(255, 255, 255, 0.7)',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-block',
+              width: '20px',
+              height: '20px',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              borderTop: '2px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              marginBottom: '10px',
+            }}
+          ></div>
+          <div>Loading load board access...</div>
+        </div>
+      ) : (
+        <>
+          {/* Load Board Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '16px',
+              marginBottom: '20px',
+            }}
+          >
+            {driverAccounts.map((board, index) => (
               <div
+                key={board.loadBoard}
                 style={{
-                  fontWeight: '700',
-                  color:
-                    load.sourceStatus === 'partnership' ? '#10b981' : '#6b7280',
-                  fontSize: '9px',
-                  fontFamily: 'monospace',
-                  textAlign: 'center',
                   background:
-                    load.sourceStatus === 'partnership'
-                      ? 'rgba(16, 185, 129, 0.1)'
+                    board.count > 0
+                      ? 'rgba(34, 197, 94, 0.1)'
                       : 'rgba(107, 114, 128, 0.1)',
-                  borderRadius: '4px',
-                  padding: '2px 4px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  border: `1px solid ${
+                    board.count > 0
+                      ? 'rgba(34, 197, 94, 0.3)'
+                      : 'rgba(107, 114, 128, 0.3)'
+                  }`,
+                  borderRadius: '12px',
+                  padding: '16px',
+                  transition: 'all 0.3s ease',
                 }}
               >
-                {load.source === 'DAT_FREE'
-                  ? 'DAT'
-                  : load.source === 'TQL_PARTNER'
-                    ? 'TQL'
-                    : load.source === 'LANDSTAR_PARTNER'
-                      ? 'LDS'
-                      : load.source === 'TRUCKSTOP_PUBLIC'
-                        ? 'TS'
-                        : load.source === '123LOADBOARD'
-                          ? '123'
-                          : load.source.substring(0, 3)}
-              </div>
-
-              {/* Load ID */}
-              <div
-                style={{
-                  fontWeight: '600',
-                  color: '#3b82f6',
-                  fontSize: '10px',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {load.id.substring(load.id.length - 6)}
-              </div>
-
-              {/* Route */}
-              <div style={{ fontWeight: '600' }}>
-                <div style={{ color: '#10b981', marginBottom: '2px' }}>
-                  {load.origin.city}, {load.origin.state} →{' '}
-                  {load.destination.city}, {load.destination.state}
-                </div>
-                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-                  {load.commodity} • {load.weight.toLocaleString()} lbs
-                  {load.hazmat && (
-                    <span style={{ color: '#ef4444' }}> • HAZMAT</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Broker */}
-              <div>
-                <div style={{ fontWeight: '600', marginBottom: '2px' }}>
-                  {load.brokerInfo.name.length > 20
-                    ? load.brokerInfo.name.substring(0, 20) + '...'
-                    : load.brokerInfo.name}
-                </div>
-                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-                  {load.brokerInfo.phone && (
-                    <div>📞 {load.brokerInfo.phone}</div>
-                  )}
-                  {load.brokerInfo.email && (
-                    <div>✉️ {load.brokerInfo.email}</div>
-                  )}
-                  {load.brokerInfo.rating && (
-                    <div>⭐ {load.brokerInfo.rating}/5</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Rate */}
-              <div>
                 <div
                   style={{
-                    fontWeight: '700',
-                    color: '#10b981',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      margin: 0,
+                    }}
+                  >
+                    {board.loadBoard}
+                  </h3>
+                  <div
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: board.count > 0 ? '#22c55e' : '#6b7280',
+                    }}
+                  ></div>
+                </div>
+
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     fontSize: '14px',
+                    marginBottom: '8px',
                   }}
                 >
-                  ${load.rate.toLocaleString()}
+                  {board.count > 0
+                    ? `${board.count} account${board.count !== 1 ? 's' : ''} available`
+                    : 'No accounts available'}
                 </div>
-                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-                  ${(load.rate / load.miles).toFixed(2)}/mile
-                </div>
-              </div>
 
-              {/* Equipment */}
-              <div style={{ textAlign: 'center' }}>
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    color: '#3b82f6',
-                    padding: '4px 6px',
-                    borderRadius: '4px',
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {load.equipment === 'van'
-                    ? 'VAN'
-                    : load.equipment === 'reefer'
-                      ? 'REF'
-                      : load.equipment === 'flatbed'
-                        ? 'FLT'
-                        : load.equipment === 'stepdeck'
-                          ? 'SD'
-                          : load.equipment.toUpperCase()}
-                </div>
-              </div>
-
-              {/* Distance */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: '600' }}>{load.miles} mi</div>
-                {load.deadheadMiles && load.deadheadMiles > 0 && (
-                  <div style={{ fontSize: '10px', color: '#f59e0b' }}>
-                    +{load.deadheadMiles} DH
+                {board.count > 0 && (
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    Via: {board.drivers.slice(0, 2).join(', ')}
+                    {board.drivers.length > 2 &&
+                      ` +${board.drivers.length - 2} more`}
                   </div>
                 )}
               </div>
+            ))}
+          </div>
 
-              {/* Pickup Date */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontWeight: '600' }}>
-                  {new Date(load.pickupDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </div>
-                <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-                  {new Date(load.pickupDate).toLocaleDateString('en-US', {
-                    weekday: 'short',
-                  })}
-                </div>
-              </div>
-
-              {/* Risk Level & Actions */}
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-              >
-                {load.riskLevel && (
-                  <span
-                    style={{
-                      background:
-                        load.riskLevel === 'low'
-                          ? 'rgba(16, 185, 129, 0.2)'
-                          : load.riskLevel === 'medium'
-                            ? 'rgba(245, 158, 11, 0.2)'
-                            : 'rgba(239, 68, 68, 0.2)',
-                      color:
-                        load.riskLevel === 'low'
-                          ? '#10b981'
-                          : load.riskLevel === 'medium'
-                            ? '#f59e0b'
-                            : '#ef4444',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '9px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    {load.riskLevel.toUpperCase()}
-                  </span>
-                )}
-                {load.recommendationScore && (
-                  <span
-                    style={{
-                      fontSize: '10px',
-                      color: '#9ca3af',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {load.recommendationScore}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Loading State */}
-        {loadingUnified && (
+          {/* Portal Access Button */}
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '20px',
-              color: '#6b7280',
+              textAlign: 'center',
+              padding: '20px 0',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <Link
+              href='/dispatch/load-boards'
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: '600',
+                fontSize: '16px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+              }}
+              onMouseOver={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                const target = e.target as HTMLAnchorElement;
+                target.style.background =
+                  'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                target.style.transform = 'translateY(-2px)';
+                target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseOut={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                const target = e.target as HTMLAnchorElement;
+                target.style.background =
+                  'linear-gradient(135deg, #3b82f6, #2563eb)';
+                target.style.transform = 'translateY(0px)';
+                target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+              }}
+            >
+              🚀 Open Load Board Portal
+            </Link>
+
+            <div
+              style={{
+                marginTop: '12px',
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.6)',
+              }}
+            >
+              Access all your drivers' load board accounts from one portal
+            </div>
+          </div>
+
+          {/* Coming Soon Features */}
+          <div
+            style={{
+              background: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '8px',
+              padding: '16px',
+              marginTop: '16px',
             }}
           >
             <div
               style={{
-                width: '16px',
-                height: '16px',
-                border: '2px solid #e5e7eb',
-                borderTop: '2px solid #3b82f6',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '14px',
+                fontWeight: '600',
+                marginBottom: '8px',
               }}
-            />
-            <span style={{ marginLeft: '8px', fontSize: '12px' }}>
-              Loading loads...
-            </span>
+            >
+              🚀 Coming Soon:
+            </div>
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '13px',
+                lineHeight: '1.4',
+              }}
+            >
+              • Auto-aggregated load listings • Cross-platform rate comparison •
+              AI load matching • Automated opportunity alerts
+            </div>
           </div>
-        )}
-
-        {/* Empty State */}
-        {!loadingUnified && unifiedLoads.length === 0 && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '30px',
-              color: '#6b7280',
-              fontSize: '14px',
-            }}
-          >
-            No loads found. Try adjusting your search filters.
-          </div>
-        )}
-      </div>
-
-      {/* Compact Footer */}
-      <div
-        style={{
-          marginTop: '10px',
-          textAlign: 'center',
-          color: 'rgba(255, 255, 255, 0.6)',
-          fontSize: '10px',
-        }}
-      >
-        Multi-platform aggregation: TQL • Landstar • DAT • Truckstop •
-        123LoadBoard • FleetGuard AI Risk Analysis
-      </div>
+        </>
+      )}
     </div>
   );
 };
@@ -2577,8 +2289,8 @@ export default function DispatcherPortal() {
               </div>
             </div>
 
-            {/* Unified Load Board Aggregator */}
-            <UnifiedLoadBoardSection />
+            {/* Load Board Portal Access */}
+            <LoadBoardPortalSection />
 
             {/* AI Load Optimization Tab */}
             {selectedTab === 'ai-optimization' && (
