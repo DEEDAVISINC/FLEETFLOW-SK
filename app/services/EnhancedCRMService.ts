@@ -172,6 +172,7 @@ class EnhancedCRMService {
     offset?: number;
   }): CRMContact[] {
     try {
+      if (typeof window === 'undefined') return [];
       const stored = localStorage.getItem(this.CONTACTS_KEY);
       let contacts: CRMContact[] = stored
         ? JSON.parse(stored)
@@ -461,9 +462,9 @@ class EnhancedCRMService {
     upsellOpportunities: CRMContact[];
   } {
     const contacts = this.getContacts();
-    const interactions = JSON.parse(
+    const interactions = typeof window !== 'undefined' ? JSON.parse(
       localStorage.getItem(this.INTERACTIONS_KEY) || '[]'
-    );
+    ) : [];
 
     // Follow-up calls (contacts with pending follow-ups)
     const followUpCalls = contacts

@@ -171,6 +171,7 @@ class IntelligentCallRoutingService {
   // Get all agents
   getAgents(): Agent[] {
     try {
+      if (typeof window === 'undefined') return this.getDefaultAgents();
       const stored = localStorage.getItem(this.AGENTS_KEY);
       return stored ? JSON.parse(stored) : this.getDefaultAgents();
     } catch (error) {

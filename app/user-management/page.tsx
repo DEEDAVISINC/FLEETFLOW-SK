@@ -6645,7 +6645,7 @@ export default function UserManagement() {
               }}
             >
               <UserSubscriptionManager
-                userId={selectedUser.id}
+                userId={'DEFAULT-USER-001'}
                 isCompact={true}
               />
             </div>

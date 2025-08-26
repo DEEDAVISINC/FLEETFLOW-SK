@@ -482,6 +482,7 @@ class AICallAnalysisService {
   // Store analysis result
   private storeAnalysisResult(result: CallAnalysisResult): void {
     try {
+      if (typeof window === 'undefined') return;
       const stored = localStorage.getItem(this.STORAGE_KEY);
       const analyses = stored ? JSON.parse(stored) : [];
       analyses.unshift(result);
@@ -500,6 +501,7 @@ class AICallAnalysisService {
   // Get stored analysis results
   getAnalysisHistory(limit: number = 20): CallAnalysisResult[] {
     try {
+      if (typeof window === 'undefined') return [];
       const stored = localStorage.getItem(this.STORAGE_KEY);
       const analyses = stored ? JSON.parse(stored) : [];
       return analyses.slice(0, limit);
@@ -512,6 +514,7 @@ class AICallAnalysisService {
   // Get call scripts
   getCallScripts(): CallScript[] {
     try {
+      if (typeof window === 'undefined') return [];
       const stored = localStorage.getItem(this.SCRIPTS_KEY);
       if (stored) {
         return JSON.parse(stored);
@@ -629,6 +632,7 @@ class AICallAnalysisService {
   // Save call scripts
   saveCallScripts(scripts: CallScript[]): boolean {
     try {
+      if (typeof window === 'undefined') return false;
       localStorage.setItem(this.SCRIPTS_KEY, JSON.stringify(scripts));
       return true;
     } catch (error) {
