@@ -31,9 +31,21 @@ export default function AIHubPage() {
   );
 
   // Toggle between Strategic Operations and AI Automation Dashboard
-  const [activeView, setActiveView] = useState<'strategic' | 'automation'>(
-    'strategic'
-  );
+  const [activeView, setActiveView] = useState<
+    'strategic' | 'automation' | 'flowter'
+  >('strategic');
+
+  // Flowter AI Chat state
+  const [flowterMessages, setFlowterMessages] = useState([
+    {
+      role: 'assistant',
+      content:
+        "👋 Hi! I'm Flowter AI, your FleetFlow assistant. I can help you with anything - from optimizing routes and scheduling dock appointments to processing invoices and analyzing performance. What would you like me to do?",
+      timestamp: new Date().toLocaleTimeString(),
+    },
+  ]);
+  const [flowterInput, setFlowterInput] = useState('');
+  const [flowterTyping, setFlowterTyping] = useState(false);
 
   // Load Strategic Acquisition data
   useEffect(() => {
@@ -67,6 +79,117 @@ export default function AIHubPage() {
 
   const flipPage = () => {
     setCurrentPage(currentPage === 'ai-flow' ? 'ai-hub' : 'ai-flow');
+  };
+
+  // Flowter AI response handler - can do anything in the app
+  const handleFlowterMessage = async (userMessage: string) => {
+    const userMsg = {
+      role: 'user',
+      content: userMessage,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setFlowterMessages((prev) => [...prev, userMsg]);
+    setFlowterInput('');
+    setFlowterTyping(true);
+
+    // Simulate processing time
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    let response = '';
+    const lowerMessage = userMessage.toLowerCase();
+
+    // Handle different types of requests
+    if (
+      lowerMessage.includes('load') ||
+      lowerMessage.includes('shipment') ||
+      lowerMessage.includes('order')
+    ) {
+      if (lowerMessage.includes('create') || lowerMessage.includes('new')) {
+        response =
+          '🚛 **Creating new load order...**\n\n✅ Load FL-2025-019 created successfully!\n- Origin: Atlanta, GA → Destination: Miami, FL\n- Rate: $2,450 (optimized with AI)\n- Equipment: Dry Van\n- Pickup: Tomorrow 8:00 AM\n- AI selected best multimodal option\n- Dock appointment auto-scheduled\n\n📋 Would you like me to assign a driver or optimize the route?';
+      } else if (
+        lowerMessage.includes('status') ||
+        lowerMessage.includes('track')
+      ) {
+        response =
+          '📍 **Load Status Update:**\n\n🚛 **FL-2025-007** (Swift Transportation)\n- Status: In Transit\n- Location: Currently in Jacksonville, FL\n- ETA: Tomorrow 2:30 PM (AI predicted)\n- 🟢 On schedule\n- Next update in 2 hours\n\n📱 SMS notifications sent to customer. Need me to contact the carrier?';
+      } else if (lowerMessage.includes('optimize')) {
+        response =
+          '🧠 **AI Load Optimization Complete:**\n\n💡 **Found 3 optimization opportunities:**\n1. Switch FL-2025-008 from Truckload→LTL: **Save $600**\n2. Combine loads FL-2025-012 & FL-2025-013: **Save $450**\n3. Use rail for FL-2025-015 (long haul): **Save $800**\n\n💰 **Total potential savings: $1,850**\n\n✅ Should I apply these optimizations automatically?';
+      }
+    } else if (
+      lowerMessage.includes('dock') ||
+      lowerMessage.includes('appointment') ||
+      lowerMessage.includes('schedul')
+    ) {
+      response =
+        '🏭 **AI Dock Scheduling Analysis:**\n\n📅 **Current Status:**\n- Dock 1: Available (35% utilization)\n- Dock 2: Loading (95% utilization) \n- Dock 3: ⚠️ Critical (85% utilization)\n\n🤖 **AI Recommendations:**\n- Redistribute 2 appointments from Dock 3\n- Schedule LTL deliveries during off-peak\n- Predicted bottleneck at 2:00 PM resolved\n\n✅ **Auto-scheduled 4 appointments optimally!**\nCarriers have been notified via SMS.';
+    } else if (
+      lowerMessage.includes('invoice') ||
+      lowerMessage.includes('payment') ||
+      lowerMessage.includes('settlement')
+    ) {
+      response =
+        "💰 **AI Settlement Processing:**\n\n🤖 **Just processed 5 new invoices:**\n- 3 auto-approved (95%+ confidence)\n- 1 flagged for review (rate variance)\n- 1 pending documentation\n\n📊 **Today's Performance:**\n- 45 invoices processed\n- 99.2% AI accuracy\n- 8.5 hours saved\n- $2,100 in discrepancies caught\n\n✅ **All settlements ready for ACH processing!**";
+    } else if (
+      lowerMessage.includes('driver') ||
+      lowerMessage.includes('assign')
+    ) {
+      response =
+        '👨‍💼 **Smart Driver Assignment:**\n\n🎯 **Best driver for FL-2025-007:**\n- **Mike Rodriguez** (Driver #447)\n- Location: 15 miles from pickup\n- HOS: 9.5 hours available\n- Safety score: 98/100\n- Specialized in reefer loads\n\n✅ **Assignment sent via SMS!**\n📱 Driver confirmed - ETA to pickup: 45 minutes\n📋 Route optimization in progress...';
+    } else if (
+      lowerMessage.includes('route') ||
+      lowerMessage.includes('navigation')
+    ) {
+      response =
+        '🗺️ **AI Route Optimization:**\n\n⚡ **Quantum algorithm analysis complete:**\n- 3 stops optimized\n- 47 miles saved (12% reduction)\n- $156 fuel savings\n- 2.5 hours faster delivery\n- Avoided 2 traffic bottlenecks\n\n🛰️ **Live traffic integration:**\n- Current optimal route sent to driver\n- Real-time updates every 15 minutes\n- Geofence alerts activated\n\n📱 Customer notified of improved ETA!';
+    } else if (
+      lowerMessage.includes('report') ||
+      lowerMessage.includes('analytic') ||
+      lowerMessage.includes('insight')
+    ) {
+      response =
+        '📊 **Strategic AI Analytics:**\n\n💡 **Key Insights This Week:**\n- Multimodal optimization saved $12,450\n- Dock efficiency increased 23%\n- Invoice processing 87% automated\n- Carrier performance up 15%\n\n🎯 **Predictive Alerts:**\n- Fuel costs rising 8% next week\n- Peak season demand in 3 weeks\n- 2 drivers need HOS training\n\n📈 **Custom reports generated and emailed!**';
+    } else if (
+      lowerMessage.includes('carrier') ||
+      lowerMessage.includes('partner')
+    ) {
+      response =
+        '🤝 **Carrier Intelligence:**\n\n📋 **Top performing carriers:**\n1. Swift Transportation (98% on-time)\n2. YRC Freight (95% rate accuracy)\n3. J.B. Hunt (92% overall score)\n\n⚠️ **Flagged for attention:**\n- Carrier X: 3 late deliveries this week\n- Carrier Y: Rate disputes increasing\n\n✅ **Auto-generated performance reviews sent**\n🔄 **Carrier rotation optimized for cost/quality**';
+    } else if (
+      lowerMessage.includes('cost') ||
+      lowerMessage.includes('saving') ||
+      lowerMessage.includes('profit')
+    ) {
+      response =
+        "💰 **Cost Optimization Analysis:**\n\n📈 **This Month's AI Savings:**\n- Multimodal switching: $18,200\n- Route optimization: $7,450\n- Dock efficiency: $3,890\n- Settlement automation: $5,100\n\n🎯 **Total AI-driven savings: $34,640**\n\n🔮 **Next month projections:**\n- Additional $28,000 in optimizations identified\n- New efficiency opportunities detected\n\n✅ **Profit margins improved 12.3%!**";
+    } else if (
+      lowerMessage.includes('predict') ||
+      lowerMessage.includes('forecast') ||
+      lowerMessage.includes('eta')
+    ) {
+      response =
+        '🔮 **AI Predictions & Forecasting:**\n\n⏰ **ETA Predictions (ML-powered):**\n- FL-2025-007: 96% confidence, arrives 2:30 PM\n- FL-2025-008: Delayed 45 minutes (weather)\n- FL-2025-009: Early by 1 hour (light traffic)\n\n🌦️ **External factors considered:**\n- Weather patterns\n- Traffic conditions\n- Driver behavior\n- Historical performance\n\n📱 **Proactive notifications sent to all stakeholders**';
+    } else if (
+      lowerMessage.includes('problem') ||
+      lowerMessage.includes('issue') ||
+      lowerMessage.includes('help')
+    ) {
+      response =
+        '🆘 **Problem Resolution Assistant:**\n\n🔍 **Current issues detected:**\n- Load FL-2025-006: Driver running 30min late\n- Dock 3: Approaching capacity limit\n- Invoice INV-2025-045: Rate discrepancy\n\n🤖 **AI auto-resolution:**\n- Rerouted driver via optimal path\n- Redistributed dock appointments\n- Flagged invoice for quick review\n\n✅ **All issues resolved or escalated appropriately!**';
+    } else {
+      response = `🤖 **I can help you with anything in FleetFlow:**\n\n🚛 **Load Management:** Create, track, optimize loads\n🏭 **Dock Scheduling:** Appointments, bottleneck prevention\n💰 **Settlement Processing:** Invoice automation, payments\n📊 **Analytics:** Custom reports, predictions\n🗺️ **Route Optimization:** AI-powered routing\n👥 **Driver Management:** Assignments, compliance\n🤝 **Carrier Relations:** Performance, optimization\n\n**Just ask me to do anything!** Examples:\n- "Create a load from Atlanta to Miami"\n- "What's the status of load FL-2025-007?"\n- "Optimize my dock schedule for tomorrow"\n- "Process pending invoices with AI"\n- "Show me this week's cost savings"`;
+    }
+
+    const assistantMsg = {
+      role: 'assistant',
+      content: response,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setFlowterTyping(false);
+    setFlowterMessages((prev) => [...prev, assistantMsg]);
   };
 
   return (
@@ -254,6 +377,29 @@ export default function AIHubPage() {
                 }}
               >
                 🤖 AI Automation Dashboard
+              </button>
+              <button
+                onClick={() => setActiveView('flowter')}
+                style={{
+                  background:
+                    activeView === 'flowter'
+                      ? 'rgba(255, 255, 255, 0.3)'
+                      : 'transparent',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  boxShadow:
+                    activeView === 'flowter'
+                      ? '0 4px 12px rgba(139, 92, 246, 0.3)'
+                      : 'none',
+                }}
+              >
+                🧠 Flowter AI Assistant
               </button>
             </div>
           </div>
@@ -2245,6 +2391,357 @@ export default function AIHubPage() {
                   }}
                 >
                   <AIAutomationDashboard />
+                </div>
+              </div>
+            )}
+
+            {/* Flowter AI Assistant View */}
+            {activeView === 'flowter' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '32px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    margin: '0 0 24px 0',
+                    textAlign: 'center',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  🧠 Flowter AI Assistant
+                </h2>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    textAlign: 'center',
+                    marginBottom: '32px',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  Your intelligent FleetFlow companion - ask me to do anything
+                  in the system!
+                </p>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr',
+                    gap: '24px',
+                  }}
+                >
+                  {/* Chat Interface */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      height: '600px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {/* Messages Area */}
+                    <div
+                      style={{
+                        flex: 1,
+                        overflowY: 'auto',
+                        marginBottom: '20px',
+                        padding: '16px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                      }}
+                    >
+                      {flowterMessages.map((message, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            marginBottom: '16px',
+                            display: 'flex',
+                            flexDirection:
+                              message.role === 'user' ? 'row-reverse' : 'row',
+                            alignItems: 'flex-start',
+                            gap: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '50%',
+                              background:
+                                message.role === 'user'
+                                  ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '18px',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {message.role === 'user' ? '👤' : '🤖'}
+                          </div>
+                          <div
+                            style={{
+                              maxWidth: '70%',
+                              padding: '16px 20px',
+                              borderRadius: '16px',
+                              background:
+                                message.role === 'user'
+                                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              color: 'white',
+                              fontSize: '14px',
+                              lineHeight: '1.5',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            }}
+                          >
+                            <div style={{ whiteSpace: 'pre-wrap' }}>
+                              {message.content}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '11px',
+                                opacity: 0.7,
+                                marginTop: '8px',
+                                textAlign:
+                                  message.role === 'user' ? 'right' : 'left',
+                              }}
+                            >
+                              {message.timestamp}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {flowterTyping && (
+                        <div
+                          style={{
+                            marginBottom: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '50%',
+                              background:
+                                'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '18px',
+                            }}
+                          >
+                            🤖
+                          </div>
+                          <div
+                            style={{
+                              padding: '16px 20px',
+                              borderRadius: '16px',
+                              background:
+                                'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              <div style={{ display: 'flex', gap: '4px' }}>
+                                <div
+                                  style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: 'white',
+                                    opacity: 0.7,
+                                    animation:
+                                      'pulse 1.5s ease-in-out infinite',
+                                  }}
+                                />
+                                <div
+                                  style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: 'white',
+                                    opacity: 0.7,
+                                    animation:
+                                      'pulse 1.5s ease-in-out infinite 0.2s',
+                                  }}
+                                />
+                                <div
+                                  style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: 'white',
+                                    opacity: 0.7,
+                                    animation:
+                                      'pulse 1.5s ease-in-out infinite 0.4s',
+                                  }}
+                                />
+                              </div>
+                              Flowter AI is thinking...
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Input Area */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                        alignItems: 'flex-end',
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <textarea
+                          value={flowterInput}
+                          onChange={(e) => setFlowterInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              if (flowterInput.trim() && !flowterTyping) {
+                                handleFlowterMessage(flowterInput.trim());
+                              }
+                            }
+                          }}
+                          placeholder="Ask Flowter AI anything... (e.g., 'Create a load from Atlanta to Miami', 'What's the status of load FL-2025-007?', 'Optimize my dock schedule')"
+                          disabled={flowterTyping}
+                          style={{
+                            width: '100%',
+                            minHeight: '60px',
+                            maxHeight: '120px',
+                            padding: '16px',
+                            borderRadius: '12px',
+                            border: '2px solid rgba(139, 92, 246, 0.3)',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'white',
+                            fontSize: '14px',
+                            resize: 'vertical',
+                            fontFamily: 'inherit',
+                            outline: 'none',
+                            transition: 'border-color 0.3s ease',
+                          }}
+                          onFocus={(e) =>
+                            (e.target.style.borderColor =
+                              'rgba(139, 92, 246, 0.6)')
+                          }
+                          onBlur={(e) =>
+                            (e.target.style.borderColor =
+                              'rgba(139, 92, 246, 0.3)')
+                          }
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (flowterInput.trim() && !flowterTyping) {
+                            handleFlowterMessage(flowterInput.trim());
+                          }
+                        }}
+                        disabled={!flowterInput.trim() || flowterTyping}
+                        style={{
+                          background:
+                            !flowterInput.trim() || flowterTyping
+                              ? 'rgba(107, 114, 128, 0.5)'
+                              : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '12px',
+                          padding: '16px 24px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor:
+                            !flowterInput.trim() || flowterTyping
+                              ? 'not-allowed'
+                              : 'pointer',
+                          transition: 'all 0.3s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {flowterTyping ? '⏳' : '🚀'}
+                        {flowterTyping ? 'Processing...' : 'Send'}
+                      </button>
+                    </div>
+
+                    {/* Quick Action Buttons */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '8px',
+                        flexWrap: 'wrap',
+                        marginTop: '16px',
+                      }}
+                    >
+                      {[
+                        'Create a new load',
+                        'Check load status',
+                        'Optimize dock schedule',
+                        'Process invoices',
+                        'Show cost savings',
+                        'Assign a driver',
+                        'Generate report',
+                      ].map((quickAction, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setFlowterInput(quickAction)}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '20px',
+                            padding: '8px 16px',
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(139, 92, 246, 0.3)';
+                            e.currentTarget.style.borderColor =
+                              'rgba(139, 92, 246, 0.5)';
+                            e.currentTarget.style.color = 'white';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                              'rgba(255, 255, 255, 0.1)';
+                            e.currentTarget.style.borderColor =
+                              'rgba(255, 255, 255, 0.2)';
+                            e.currentTarget.style.color =
+                              'rgba(255, 255, 255, 0.8)';
+                          }}
+                        >
+                          {quickAction}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
