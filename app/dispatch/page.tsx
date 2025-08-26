@@ -2115,6 +2115,7 @@ export default function DispatchCentral() {
                 label: '🤖 AI Optimization',
                 icon: '🤖',
               },
+              { id: 'ai-dock-scheduling', label: '🏭 AI Dock Scheduling', icon: '🏭' },
               { id: 'go-with-flow', label: '⚡ Go With the Flow', icon: '⚡' },
               { id: 'task-priority', label: '🎯 Task Priority', icon: '🎯' },
               { id: 'loads', label: '📋 Load Management', icon: '📋' },
@@ -2615,6 +2616,399 @@ export default function DispatchCentral() {
                   // Could auto-fill load assignment forms here
                 }}
               />
+            </div>
+          )}
+
+          {selectedTab === 'ai-dock-scheduling' && (
+            <div style={{ marginTop: '25px' }}>
+              {/* AI Dock Scheduling Dashboard */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '22px',
+                    fontWeight: '600',
+                    margin: 0,
+                  }}
+                >
+                  🏭 AI-Powered Dock Scheduling
+                </h2>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                    onClick={() => {
+                      alert('🤖 AI is analyzing dock availability and optimizing appointment times...\n\n✅ 3 bottlenecks predicted and resolved!\n📅 12 appointments optimized for maximum efficiency!');
+                    }}
+                  >
+                    🤖 Optimize All Appointments
+                  </button>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                    onClick={() => {
+                      alert('📊 Bottleneck Analysis:\n\n🚨 High Risk:\n- Dock 3: 85% utilization (11:00 AM - 2:00 PM)\n- Dock 7: 78% utilization (2:00 PM - 4:00 PM)\n\n⚠️ Medium Risk:\n- Dock 1: 65% utilization (9:00 AM - 11:00 AM)\n\n📈 Recommendations:\n- Redistribute 3 appointments from Dock 3\n- Schedule LTL deliveries during off-peak hours');
+                    }}
+                  >
+                    📊 Predict Bottlenecks
+                  </button>
+                </div>
+              </div>
+
+              {/* AI Insights Panel */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 1fr',
+                  gap: '20px',
+                  marginBottom: '25px',
+                }}
+              >
+                {/* Real-Time Dock Status */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '15px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    🏭 Real-Time Dock Status
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                    {[
+                      { dock: 'Dock 1', status: 'Available', utilization: 35, nextAppointment: '10:30 AM', type: 'LTL' },
+                      { dock: 'Dock 2', status: 'Loading', utilization: 95, nextAppointment: 'Now', type: 'FTL' },
+                      { dock: 'Dock 3', status: 'Critical', utilization: 85, nextAppointment: '11:00 AM', type: 'FTL' },
+                      { dock: 'Dock 4', status: 'Available', utilization: 20, nextAppointment: '2:00 PM', type: 'LTL' },
+                      { dock: 'Dock 5', status: 'Loading', utilization: 60, nextAppointment: '12:15 PM', type: 'Bulk' },
+                      { dock: 'Dock 6', status: 'Available', utilization: 45, nextAppointment: '3:30 PM', type: 'FTL' }
+                    ].map((dock, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          padding: '12px',
+                          background: dock.status === 'Critical' ? 'rgba(239, 68, 68, 0.2)' :
+                                     dock.status === 'Loading' ? 'rgba(245, 158, 11, 0.2)' :
+                                     'rgba(16, 185, 129, 0.2)',
+                          border: `1px solid ${dock.status === 'Critical' ? 'rgba(239, 68, 68, 0.4)' :
+                                                dock.status === 'Loading' ? 'rgba(245, 158, 11, 0.4)' :
+                                                'rgba(16, 185, 129, 0.4)'}`,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          alert(`${dock.dock} Details:\n\n` +
+                                `Status: ${dock.status}\n` +
+                                `Utilization: ${dock.utilization}%\n` +
+                                `Next: ${dock.nextAppointment}\n` +
+                                `Type: ${dock.type}\n\n` +
+                                `${dock.status === 'Critical' ? '🚨 AI Recommendation: Redistribute 2 appointments to Dock 1 and Dock 4' : 
+                                  dock.status === 'Loading' ? '⏳ Estimated completion in 45 minutes' : 
+                                  '✅ Optimal for next appointment'}`);
+                        }}
+                      >
+                        <div style={{ color: 'white', fontWeight: 'bold', fontSize: '14px' }}>
+                          {dock.dock}
+                        </div>
+                        <div style={{ 
+                          color: dock.status === 'Critical' ? '#ef4444' :
+                                 dock.status === 'Loading' ? '#f59e0b' : '#10b981',
+                          fontSize: '12px',
+                          fontWeight: '600'
+                        }}>
+                          {dock.status}
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px', marginTop: '4px' }}>
+                          {dock.utilization}% utilized
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '10px' }}>
+                          Next: {dock.nextAppointment}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Optimization Stats */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '15px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    📊 AI Performance
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    {[
+                      { label: 'Appointments Optimized', value: '23', change: '+12%', color: '#10b981' },
+                      { label: 'Bottlenecks Prevented', value: '8', change: '+4', color: '#8b5cf6' },
+                      { label: 'Average Wait Time', value: '12min', change: '-8min', color: '#06b6d4' },
+                      { label: 'Dock Utilization', value: '87%', change: '+15%', color: '#f59e0b' }
+                    ].map((stat, index) => (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                            {stat.label}
+                          </div>
+                          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
+                            Today
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ color: stat.color, fontSize: '18px', fontWeight: 'bold' }}>
+                            {stat.value}
+                          </div>
+                          <div style={{ color: '#10b981', fontSize: '11px', fontWeight: '600' }}>
+                            {stat.change}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Smart Appointment Queue */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '15px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '20px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                  }}
+                >
+                  📅 AI-Optimized Appointment Queue
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    { 
+                      time: '10:30 AM', 
+                      carrier: 'Swift Transportation', 
+                      load: 'FL-2025-007', 
+                      dock: '1', 
+                      type: 'FTL',
+                      priority: 'High',
+                      aiStatus: 'Optimized',
+                      optimization: 'Moved from Dock 3 to reduce bottleneck'
+                    },
+                    { 
+                      time: '11:15 AM', 
+                      carrier: 'YRC Freight', 
+                      load: 'FL-2025-012', 
+                      dock: '4', 
+                      type: 'LTL',
+                      priority: 'Medium',
+                      aiStatus: 'New',
+                      optimization: 'AI scheduled during low-utilization window'
+                    },
+                    { 
+                      time: '12:00 PM', 
+                      carrier: 'FedEx Freight', 
+                      load: 'FL-2025-015', 
+                      dock: '2', 
+                      type: 'Express',
+                      priority: 'Urgent',
+                      aiStatus: 'Priority',
+                      optimization: 'Fast-tracked for time-sensitive delivery'
+                    },
+                    { 
+                      time: '1:30 PM', 
+                      carrier: 'J.B. Hunt', 
+                      load: 'FL-2025-018', 
+                      dock: '6', 
+                      type: 'FTL',
+                      priority: 'Medium',
+                      aiStatus: 'Optimized',
+                      optimization: 'Adjusted time to maximize dock efficiency'
+                    }
+                  ].map((appointment, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '100px 1fr 80px 60px 100px 120px',
+                        alignItems: 'center',
+                        padding: '12px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        alert(`Appointment Details:\n\n` +
+                              `Time: ${appointment.time}\n` +
+                              `Carrier: ${appointment.carrier}\n` +
+                              `Load: ${appointment.load}\n` +
+                              `Dock: ${appointment.dock}\n` +
+                              `Type: ${appointment.type}\n` +
+                              `Priority: ${appointment.priority}\n\n` +
+                              `🤖 AI Optimization: ${appointment.optimization}`);
+                      }}
+                    >
+                      <div style={{ color: '#60a5fa', fontSize: '14px', fontWeight: 'bold' }}>
+                        {appointment.time}
+                      </div>
+                      <div>
+                        <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                          {appointment.carrier}
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
+                          Load: {appointment.load}
+                        </div>
+                      </div>
+                      <div style={{ 
+                        background: appointment.type === 'Express' ? 'rgba(239, 68, 68, 0.3)' :
+                                   appointment.type === 'FTL' ? 'rgba(59, 130, 246, 0.3)' :
+                                   'rgba(16, 185, 129, 0.3)',
+                        color: appointment.type === 'Express' ? '#ef4444' :
+                               appointment.type === 'FTL' ? '#60a5fa' : '#10b981',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        textAlign: 'center'
+                      }}>
+                        {appointment.type}
+                      </div>
+                      <div style={{ 
+                        color: '#f59e0b',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                      }}>
+                        D{appointment.dock}
+                      </div>
+                      <div style={{ 
+                        background: appointment.priority === 'Urgent' ? 'rgba(239, 68, 68, 0.2)' :
+                                   appointment.priority === 'High' ? 'rgba(245, 158, 11, 0.2)' :
+                                   'rgba(107, 114, 128, 0.2)',
+                        color: appointment.priority === 'Urgent' ? '#ef4444' :
+                               appointment.priority === 'High' ? '#f59e0b' : '#9ca3af',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        textAlign: 'center'
+                      }}>
+                        {appointment.priority}
+                      </div>
+                      <div style={{ 
+                        background: appointment.aiStatus === 'Optimized' ? 'rgba(139, 92, 246, 0.2)' :
+                                   appointment.aiStatus === 'Priority' ? 'rgba(239, 68, 68, 0.2)' :
+                                   'rgba(16, 185, 129, 0.2)',
+                        color: appointment.aiStatus === 'Optimized' ? '#8b5cf6' :
+                               appointment.aiStatus === 'Priority' ? '#ef4444' : '#10b981',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        textAlign: 'center'
+                      }}>
+                        🤖 {appointment.aiStatus}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Queue Management Actions */}
+                <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+                  <button
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      alert('🤖 AI Auto-Scheduling Activated!\n\n✅ 5 appointments automatically rescheduled\n📊 Dock utilization optimized to 92%\n⏱️ Average wait time reduced by 18 minutes');
+                    }}
+                  >
+                    🤖 Auto-Schedule Next 10
+                  </button>
+                  <button
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      alert('📱 Notifications Sent!\n\n✅ SMS sent to 12 carriers with updated appointment times\n📧 Email confirmations dispatched\n🔔 Dock teams notified of schedule changes');
+                    }}
+                  >
+                    📱 Notify All Carriers
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

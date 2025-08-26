@@ -697,7 +697,7 @@ class Advanced3PLService extends EventEmitter {
   }
 
   private calculateBigBulkyPricing(shipmentDetails: any) {
-    let baseRate = 150; // Base big & bulky rate
+    const baseRate = 150; // Base big & bulky rate
     let serviceAddOns = 0;
 
     const services = shipmentDetails.specialServices;

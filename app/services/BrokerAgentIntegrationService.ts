@@ -66,6 +66,7 @@ export interface AgentLoad {
   margin: number;
   marginPercent: number;
   equipment: string;
+  transportMode: 'truckload' | 'ltl' | 'parcel' | 'vtl' | 'bulk' | 'rail' | 'intermodal' | 'ocean' | 'air';
   weight: string;
   pickupDate: string;
   deliveryDate: string;
@@ -73,6 +74,17 @@ export interface AgentLoad {
   shipperName: string;
   createdAt: string;
   managementNotes?: string;
+  multimodalOptions?: MultimodalOption[];
+}
+
+export interface MultimodalOption {
+  mode: string;
+  carrier: string;
+  rate: number;
+  transitTime: number;
+  confidence: number;
+  costSavings?: number;
+  environmentalScore?: number;
 }
 
 export interface BrokerageConsolidatedMetrics {
@@ -510,7 +522,7 @@ class BrokerAgentIntegrationService {
   getAllAgentLoads(): AgentLoad[] {
     const agents = this.getAllBrokerageAgents();
 
-    // Mock agent loads - in production, fetch from database
+    // Mock agent loads with multimodal transport options
     const mockLoads: AgentLoad[] = [
       {
         id: 'FL-2025-007',
@@ -524,12 +536,19 @@ class BrokerAgentIntegrationService {
         margin: 551.25,
         marginPercent: 22.5,
         equipment: 'Dry Van',
+        transportMode: 'truckload',
         weight: '24,000 lbs',
         pickupDate: '2025-01-20',
         deliveryDate: '2025-01-21',
         status: 'Available',
         shipperName: 'Atlanta Distribution Co.',
         createdAt: '2025-01-19T14:30:00Z',
+        multimodalOptions: [
+          { mode: 'Truckload', carrier: 'Current Selection', rate: 2450, transitTime: 24, confidence: 95 },
+          { mode: 'LTL', carrier: 'YRC Freight', rate: 1850, transitTime: 48, confidence: 88, costSavings: 600 },
+          { mode: 'Rail', carrier: 'CSX Transportation', rate: 1650, transitTime: 72, confidence: 82, costSavings: 800, environmentalScore: 95 },
+          { mode: 'Intermodal', carrier: 'Intermodal Network', rate: 2100, transitTime: 60, confidence: 90, costSavings: 350 }
+        ]
       },
       {
         id: 'FL-2025-008',
@@ -543,12 +562,17 @@ class BrokerAgentIntegrationService {
         margin: 415.875,
         marginPercent: 22.5,
         equipment: 'Reefer',
+        transportMode: 'truckload',
         weight: '18,500 lbs',
         pickupDate: '2025-01-21',
         deliveryDate: '2025-01-22',
         status: 'Assigned',
         shipperName: 'Fresh Foods Corp',
         createdAt: '2025-01-19T16:15:00Z',
+        multimodalOptions: [
+          { mode: 'Truckload', carrier: 'Current Selection', rate: 1850, transitTime: 18, confidence: 98 },
+          { mode: 'LTL', carrier: 'FedEx Freight', rate: 1250, transitTime: 36, confidence: 85, costSavings: 600 }
+        ]
       },
       {
         id: 'FL-2025-009',
@@ -562,6 +586,7 @@ class BrokerAgentIntegrationService {
         margin: 472.5,
         marginPercent: 22.5,
         equipment: 'Flatbed',
+        transportMode: 'truckload',
         weight: '32,000 lbs',
         pickupDate: '2025-01-22',
         deliveryDate: '2025-01-23',
@@ -569,6 +594,11 @@ class BrokerAgentIntegrationService {
         shipperName: 'Construction Materials Inc.',
         createdAt: '2025-01-19T11:45:00Z',
         managementNotes: 'Heavy machinery load - verify carrier equipment',
+        multimodalOptions: [
+          { mode: 'Truckload', carrier: 'Current Selection', rate: 2100, transitTime: 20, confidence: 92 },
+          { mode: 'Rail', carrier: 'Norfolk Southern', rate: 1750, transitTime: 48, confidence: 88, costSavings: 350, environmentalScore: 90 },
+          { mode: 'Intermodal', carrier: 'Hub Group', rate: 1950, transitTime: 36, confidence: 85, costSavings: 150 }
+        ]
       },
     ];
 
@@ -582,6 +612,61 @@ class BrokerAgentIntegrationService {
     return this.getAllAgentLoads().filter((load) =>
       ['Available', 'Assigned', 'Ready for Pickup'].includes(load.status)
     );
+  }
+
+  /**
+   * Get multimodal transport recommendations for a specific load
+   */
+  getMultimodalRecommendations(loadId: string): MultimodalOption[] {
+    const load = this.getAllAgentLoads().find(l => l.id === loadId);
+    return load?.multimodalOptions || [];
+  }
+
+  /**
+   * Update load transport mode and recalculate rates
+   */
+  updateLoadTransportMode(loadId: string, newMode: string, newRate: number): boolean {
+    // In production, this would update the database
+    // For now, this is a mock implementation
+    console.log(`Updated load ${loadId} to ${newMode} mode with rate $${newRate}`);
+    return true;
+  }
+
+  /**
+   * Get cost savings opportunities across all agent loads
+   */
+  getCostSavingsOpportunities(): Array<{
+    loadId: string;
+    loadNumber: string;
+    currentRate: number;
+    bestAlternative: MultimodalOption;
+    potentialSavings: number;
+  }> {
+    return this.getAllAgentLoads()
+      .filter(load => load.multimodalOptions && load.multimodalOptions.length > 1)
+      .map(load => {
+        const bestAlternative = load.multimodalOptions!
+          .filter(option => option.mode !== 'Truckload' && option.rate < load.rate)
+          .sort((a, b) => a.rate - b.rate)[0];
+
+        if (bestAlternative) {
+          return {
+            loadId: load.id,
+            loadNumber: load.loadNumber,
+            currentRate: load.rate,
+            bestAlternative,
+            potentialSavings: load.rate - bestAlternative.rate
+          };
+        }
+        return null;
+      })
+      .filter(item => item !== null) as Array<{
+        loadId: string;
+        loadNumber: string;
+        currentRate: number;
+        bestAlternative: MultimodalOption;
+        potentialSavings: number;
+      }>;
   }
 }
 

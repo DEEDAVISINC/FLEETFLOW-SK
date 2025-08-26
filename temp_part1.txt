@@ -1,0 +1,800 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import WarehouseQuoteBuilder from '../components/WarehouseQuoteBuilder';
+import { EnhancedCarrierService } from '../services/enhanced-carrier-service';
+import { FraudGuardService } from '../services/fraud-guard-service';
+import { shipperAccountService } from '../services/shipper-account-service';
+
+export default function GoWithTheFlow() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isLoading, setIsLoading] = useState(false);
+  const [shipperRequests, setShipperRequests] = useState([]);
+  const [systemMetrics, setSystemMetrics] = useState(null);
+  const [availableDrivers, setAvailableDrivers] = useState([]);
+  const [liveLoads, setLiveLoads] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [quoteStatus, setQuoteStatus] = useState<
+    'idle' | 'generating' | 'completed' | 'error'
+  >('idle');
+  const [generatedQuotes, setGeneratedQuotes] = useState<any[]>([]);
+  const [quoteProgress, setQuoteProgress] = useState(0);
+  const [accountCreationResult, setAccountCreationResult] = useState<any>(null);
+  const [showAccountSuccess, setShowAccountSuccess] = useState(false);
+  const [showWarehouseBuilder, setShowWarehouseBuilder] = useState(false);
+  const [selectedServiceType, setSelectedServiceType] = useState('');
+  const [carrierFraudAnalysis, setCarrierFraudAnalysis] = useState<any[]>([]);
+  const [fraudAnalysisLoading, setFraudAnalysisLoading] = useState(false);
+  const [serviceType, setServiceType] = useState<
+    'direct' | 'marketplace' | null
+  >(null);
+
+  const fraudGuardService = new FraudGuardService();
+  const carrierService = new EnhancedCarrierService();
+
+  // Fetch system data on component mount
+  useEffect(() => {
+    fetchSystemData();
+  }, []);
+
+  const fetchSystemData = async () => {
+    try {
+      // Fetch system metrics
+      const metricsResponse = await fetch(
+        '/api/go-with-the-flow?action=system-metrics'
+      );
+      const metricsData = await metricsResponse.json();
+      if (metricsData.success) {
+        setSystemMetrics(metricsData.metrics);
+      }
+
+      // Fetch available drivers
+      const driversResponse = await fetch(
+        '/api/go-with-the-flow?action=available-drivers'
+      );
+      const driversData = await driversResponse.json();
+      if (driversData.success) {
+        setAvailableDrivers(driversData.drivers);
+      }
+
+      // Fetch live loads
+      const loadsResponse = await fetch(
+        '/api/go-with-the-flow?action=live-loads'
+      );
+      const loadsData = await loadsResponse.json();
+      if (loadsData.success) {
+        setLiveLoads(loadsData.loads);
+      }
+    } catch (error) {
+      console.error('Error fetching system data:', error);
+    }
+  };
+
+  // Enhanced FleetGuard AI Carrier Analysis with BrokerSnapshot Integration
+  const analyzeCarrierSafety = async (
+    carrierName: string,
+    carrierData?: any
+  ) => {
+    try {
+      let comprehensiveCarrierData = null;
+      let brokerSnapshotData = null;
+      let mcNumber = '';
+
+      // If carrier data provided, extract MC number, otherwise generate one for demo
+      if (carrierData && carrierData.mcNumber) {
+        mcNumber = carrierData.mcNumber;
+      } else {
+        // Generate realistic MC number for demo
+        mcNumber = `MC${Math.floor(Math.random() * 900000 + 100000)}`;
+      }
+
+      // Step 1: Get comprehensive carrier data (FMCSA + BrokerSnapshot)
+      try {
+        console.log(
+          `🔍 FleetGuard AI: Analyzing carrier ${carrierName} (${mcNumber})...`
+        );
+
+        // Get comprehensive carrier data including BrokerSnapshot
+        comprehensiveCarrierData =
+          await carrierService.verifyCarrierComprehensive(mcNumber);
+
+        // If comprehensive data not available, try BrokerSnapshot separately
+        if (!comprehensiveCarrierData) {
+          brokerSnapshotData =
+            await carrierService.getCarrierBrokerSnapshot(mcNumber);
+        }
+
+        console.log(
+          `📊 BrokerSnapshot data retrieved for ${carrierName}:`,
+          brokerSnapshotData || comprehensiveCarrierData
+        );
+      } catch (error) {
+        console.log(
+          `⚠️ Real data unavailable for ${carrierName}, using enhanced mock data`
+        );
+      }
+
+      // Step 2: Create enhanced analysis data combining FMCSA + BrokerSnapshot
+      const analysisData = comprehensiveCarrierData || {
+        mcNumber: mcNumber,
+        dotNumber: `DOT${Math.floor(Math.random() * 900000 + 100000)}`,
+        companyName: carrierName,
+        physicalAddress: '123 Carrier Street, Transport City, TX 75001',
+        mailingAddress: '123 Carrier Street, Transport City, TX 75001',
+        phone: '(555) 123-4567',
+        safetyRating:
+          Math.random() > 0.8
+            ? 'SATISFACTORY'
+            : Math.random() > 0.6
+              ? 'CONDITIONAL'
+              : 'NOT_RATED',
+        operatingStatus: 'ACTIVE',
+        // Enhanced with BrokerSnapshot-style financial data
+        creditScore:
+          brokerSnapshotData?.creditScore ||
+          (Math.floor(Math.random() * 200) + 600).toString(),
+        paymentHistory:
+          brokerSnapshotData?.paymentHistory ||
+          (Math.random() > 0.7
+            ? 'Excellent'
+            : Math.random() > 0.4
+              ? 'Good'
+              : 'Fair'),
+        averagePaymentDays:
+          brokerSnapshotData?.averagePaymentDays ||
+          Math.floor(Math.random() * 45) + 15,
+        trackingEnabled:
+          brokerSnapshotData?.trackingEnabled || Math.random() > 0.5,
+        source: (comprehensiveCarrierData as any)?.source || 'ENHANCED_DEMO',
+      };
+
+      // Step 3: Run FleetGuard AI fraud analysis with enhanced data
+      const analysis = await fraudGuardService.assessFraudRisk(analysisData);
+
+      // Step 4: Calculate enhanced risk factors including BrokerSnapshot data
+      const enhancedFlags = [...(analysis.primaryRiskFactors || [])];
+      const enhancedRecommendations = [...(analysis.recommendations || [])];
+
+      // Add BrokerSnapshot-specific risk factors
+      if (
+        analysisData.creditScore &&
+        parseInt(analysisData.creditScore) < 650
+      ) {
+        enhancedFlags.push('Low credit score detected');
+        enhancedRecommendations.push('Require payment guarantees or factoring');
+      }
+
+      if (
+        analysisData.averagePaymentDays &&
+        analysisData.averagePaymentDays > 45
+      ) {
+        enhancedFlags.push('Slow payment history');
+        enhancedRecommendations.push('Monitor payment terms closely');
+      }
+
+      if (
+        analysisData.paymentHistory === 'Fair' ||
+        analysisData.paymentHistory === 'Poor'
+      ) {
+        enhancedFlags.push('Poor payment history reported');
+        enhancedRecommendations.push('Consider payment protection');
+      }
+
+      if (!analysisData.trackingEnabled) {
+        enhancedFlags.push('No real-time tracking capability');
+        enhancedRecommendations.push('Require manual check-ins');
+      }
+
+      // Step 5: Adjust risk level based on financial data
+      let adjustedRiskLevel = analysis.riskLevel;
+      let adjustedConfidence = analysis.confidence;
+
+      // Increase risk if multiple financial red flags
+      const financialRiskCount = enhancedFlags.filter(
+        (flag) =>
+          flag.includes('credit') ||
+          flag.includes('payment') ||
+          flag.includes('tracking')
+      ).length;
+
+      if (financialRiskCount >= 2 && adjustedRiskLevel === 'low') {
+        adjustedRiskLevel = 'medium';
+      } else if (financialRiskCount >= 3 && adjustedRiskLevel === 'medium') {
+        adjustedRiskLevel = 'high';
+      }
+
+      // Increase confidence when we have real BrokerSnapshot data
+      if (comprehensiveCarrierData || brokerSnapshotData) {
+        adjustedConfidence = Math.min(0.95, adjustedConfidence + 0.15);
+      }
+
+      return {
+        carrierName,
+        analysis,
+        riskLevel: adjustedRiskLevel,
+        confidence: adjustedConfidence,
+        flags: enhancedFlags,
+        recommendations: enhancedRecommendations,
+        dataSource: analysisData.source,
+        financialData: {
+          creditScore: analysisData.creditScore,
+          paymentHistory: analysisData.paymentHistory,
+          averagePaymentDays: analysisData.averagePaymentDays,
+          trackingEnabled: analysisData.trackingEnabled,
+        },
+      };
+    } catch (error) {
+      console.error(`FleetGuard AI analysis failed for ${carrierName}:`, error);
+      return {
+        carrierName,
+        analysis: null,
+        riskLevel: 'medium',
+        confidence: 0,
+        flags: ['Analysis temporarily unavailable'],
+        recommendations: ['Manual carrier verification recommended'],
+        dataSource: 'ERROR',
+        financialData: null,
+      };
+    }
+  };
+
+  // AI Flow Quote Generation System with FleetGuard Integration
+  const generateAIQuotes = async (loadRequest: any) => {
+    try {
+      // Simulate AI analysis and quote generation
+      const aiAnalysis = await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve({
+            marketConditions: 'Strong demand, limited capacity',
+            fuelCosts: '$3.85/gallon average',
+            trafficPatterns: 'Moderate congestion expected',
+            seasonalFactors: 'Peak season pricing active',
+            competitorAnalysis: 'Market rates 15-20% above average',
+          });
+        }, 2000)
+      );
+
+      // Generate intelligent quotes based on AI analysis
+      const isWarehousingService = [
+        'Warehouse Storage',
+        'Cross Docking',
+        'Pick & Pack',
+        'Inventory Management',
+        'Distribution Center',
+        'Fulfillment Services',
+        '3PL Full Service',
+      ].includes(loadRequest.equipmentType);
+
+      const quotes = isWarehousingService
+        ? [
+            {
+              id: `quote-${Date.now()}-1`,
+              carrier: 'FleetFlow Warehousing Solutions',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'premium',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'premium'),
+              confidence: 96,
+              features: [
+                'Climate-controlled facilities',
+                'Real-time inventory tracking',
+                'Advanced WMS integration',
+                '99.8% accuracy guarantee',
+                '24/7 facility security',
+              ],
+              reasoning:
+                'Premium warehousing with advanced technology and proven reliability',
+            },
+            {
+              id: `quote-${Date.now()}-2`,
+              carrier: 'Regional 3PL Partners',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'standard',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'standard'),
+              confidence: 89,
+              features: [
+                'Standard warehouse facilities',
+                'Inventory management system',
+                'Pick & pack services',
+                'Business hours support',
+              ],
+              reasoning:
+                'Reliable 3PL services with competitive pricing and good performance',
+            },
+            {
+              id: `quote-${Date.now()}-3`,
+              carrier: 'Economy Warehouse Network',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'economy',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'economy'),
+              confidence: 78,
+              features: [
+                'Basic storage facilities',
+                'Manual inventory tracking',
+                'Standard handling procedures',
+                'Email support',
+              ],
+              reasoning:
+                'Cost-effective warehousing solution for budget-conscious operations',
+            },
+          ]
+        : [
+            {
+              id: `quote-${Date.now()}-1`,
+              carrier: 'Premium Express Logistics',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'premium',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'premium'),
+              confidence: 95,
+              features: [
+                'Real-time tracking',
+                'Insurance included',
+                '24/7 support',
+              ],
+              reasoning:
+                'Premium carrier with excellent safety record and on-time performance',
+            },
+            {
+              id: `quote-${Date.now()}-2`,
+              carrier: 'Reliable Transport Solutions',
+              rate: calculateIntelligentRate(
+                loadRequest,
+                'standard',
+                aiAnalysis
+              ),
+              eta: calculateETA(loadRequest, 'standard'),
+              confidence: 88,
+              features: [
+                'Standard tracking',
+                'Basic insurance',
+                'Business hours support',
+              ],
+              reasoning:
+                'Cost-effective option with good reliability and competitive pricing',
+            },
+            {
+              id: `quote-${Date.now()}-3`,
+              carrier: 'Economy Freight Services',
+              rate: calculateIntelligentRate(loadRequest, 'budget', aiAnalysis),
+              eta: calculateETA(loadRequest, 'budget'),
+              confidence: 75,
+              features: [
+                'Basic tracking',
+                'Standard insurance',
+                'Email support',
+              ],
+              reasoning: 'Budget-friendly option for non-urgent shipments',
+            },
+          ];
+
+      // Run FleetGuard AI analysis on all carriers
+      setFraudAnalysisLoading(true);
+      const carrierAnalyses = await Promise.all(
+        quotes.map((quote) => analyzeCarrierSafety(quote.carrier))
+      );
+      setCarrierFraudAnalysis(carrierAnalyses);
+      setFraudAnalysisLoading(false);
+
+      // Add fraud analysis to quotes
+      const quotesWithFraudAnalysis = quotes.map((quote, index) => ({
+        ...quote,
+        fraudAnalysis: carrierAnalyses[index],
+      }));
+
+      console.log(
+        '🛡️ FleetGuard AI Analysis Complete for Go with the Flow:',
+        carrierAnalyses
+      );
+
+      return quotesWithFraudAnalysis;
+    } catch (error) {
+      console.error('Error generating AI quotes:', error);
+      setFraudAnalysisLoading(false);
+      return [];
+    }
+  };
+
+  // Intelligent rate calculation based on AI analysis
+  const calculateIntelligentRate = (
+    loadRequest: any,
+    serviceLevel: string,
+    aiAnalysis: any
+  ) => {
+    const baseRate = loadRequest.weight * 0.15; // Base rate per pound
+    const distance = calculateDistance(
+      loadRequest.origin,
+      loadRequest.destination
+    );
+    const distanceMultiplier = distance * 0.85; // Rate per mile
+
+    let serviceMultiplier = 1.0;
+    switch (serviceLevel) {
+      case 'premium':
+        serviceMultiplier = 1.4;
+        break;
+      case 'standard':
+        serviceMultiplier = 1.0;
+        break;
+      case 'economy':
+        serviceMultiplier = 0.8;
+        break;
+    }
+
+    const urgencyMultiplier =
+      loadRequest.urgency === 'high'
+        ? 1.3
+        : loadRequest.urgency === 'medium'
+          ? 1.1
+          : 1.0;
+    const marketMultiplier = 1.15; // Based on AI analysis of strong demand
+
+    return Math.round(
+      (baseRate + distanceMultiplier) *
+        serviceMultiplier *
+        urgencyMultiplier *
+        marketMultiplier
+    );
+  };
+
+  // Calculate ETA based on service level and route
+  const calculateETA = (loadRequest: any, serviceLevel: string) => {
+    const baseDays = 3; // Base transit time
+    let serviceDays = baseDays;
+
+    switch (serviceLevel) {
+      case 'premium':
+        serviceDays = baseDays - 1;
+        break;
+      case 'standard':
+        serviceDays = baseDays;
+        break;
+      case 'economy':
+        serviceDays = baseDays + 1;
+        break;
+    }
+
+    const pickupDate = new Date(loadRequest.pickupDate);
+    const deliveryDate = new Date(pickupDate);
+    deliveryDate.setDate(deliveryDate.getDate() + serviceDays);
+
+    return deliveryDate.toLocaleDateString();
+  };
+
+  // Calculate distance between two locations (simplified)
+  const calculateDistance = (origin: string, destination: string) => {
+    // Simplified distance calculation - in production, use real geocoding
+    const distances: { [key: string]: number } = {
+      'New York': 0,
+      'Los Angeles': 2800,
+      Chicago: 800,
+      Houston: 1400,
+      Phoenix: 2400,
+      Philadelphia: 100,
+      'San Antonio': 1800,
+      'San Diego': 2800,
+      Dallas: 1400,
+      'San Jose': 2900,
+    };
+
+    const originDistance = distances[origin] || 500;
+    const destDistance = distances[destination] || 500;
+    return Math.abs(originDistance - destDistance);
+  };
+
+  const handleRequestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setQuoteStatus('generating');
+    setQuoteProgress(0);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+
+      // Extract contact information
+      const contactInfo = {
+        contactName: formData.get('contactName') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        companyName: formData.get('companyName') as string,
+      };
+
+      const equipmentType = formData.get('equipmentType') as string;
+      const isWarehousingService = [
+        'Warehouse Storage',
+        'Cross Docking',
+        'Pick & Pack',
+        'Inventory Management',
+        'Distribution Center',
+        'Fulfillment Services',
+        '3PL Full Service',
+      ].includes(equipmentType);
+
+      // If warehousing service is selected, show the warehouse quote builder
+      if (isWarehousingService) {
+        setSelectedServiceType(equipmentType);
+        setShowWarehouseBuilder(true);
+        setIsLoading(false);
+        return;
+      }
+
+      const loadRequest = {
+        action: 'request-truck',
+        loadRequest: {
+          origin: formData.get('origin') as string,
+          destination: formData.get('destination') as string,
+          equipmentType: equipmentType,
+          weight: parseInt(formData.get('weight') as string),
+          urgency: formData.get('urgency') as 'low' | 'medium' | 'high',
+          pickupDate: formData.get('pickupDate') as string,
+          deliveryDate: formData.get('deliveryDate') as string,
+          shipperId: `shipper-${Date.now()}`,
+        },
+      };
+
+      // Step 1: Submit request to backend
+      const response = await fetch('/api/go-with-the-flow/shipper', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loadRequest),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setQuoteProgress(25);
+
+        // Step 2: AI Flow generates intelligent quotes
+        const aiQuotes = await generateAIQuotes(loadRequest.loadRequest);
+        setQuoteProgress(75);
+
+        // Step 3: Send notification to notification hub
+        await sendNotificationToHub({
+          type: 'shipper_request',
+          title: 'New Shipper Request',
+          message: `New freight request from ${loadRequest.loadRequest.origin} to ${loadRequest.loadRequest.destination}`,
+          priority: 'high',
+          metadata: {
+            loadId: result.load.id,
+            origin: loadRequest.loadRequest.origin,
+            destination: loadRequest.loadRequest.destination,
+            equipmentType: loadRequest.loadRequest.equipmentType,
+            weight: loadRequest.loadRequest.weight,
+            urgency: loadRequest.loadRequest.urgency,
+          },
+        });
+
+        setQuoteProgress(100);
+        setQuoteStatus('completed');
+        setGeneratedQuotes(aiQuotes);
+
+        // Step 4: Create shipper account automatically
+        const accountResult =
+          await shipperAccountService.createAccountFromQuoteRequest(
+            loadRequest.loadRequest,
+            contactInfo
+          );
+
+        if (accountResult.success) {
+          setAccountCreationResult(accountResult);
+          setShowAccountSuccess(true);
+
+          // Update the account with generated quotes
+          const latestShipment =
+            accountResult.account!.shipmentHistory[
+              accountResult.account!.shipmentHistory.length - 1
+            ];
+          await shipperAccountService.updateAccountWithQuotes(
+            accountResult.account!.id,
+            latestShipment.id,
+            aiQuotes.map((quote) => ({
+              id: quote.id,
+              carrierId: quote.carrier.toLowerCase().replace(/\s+/g, '-'),
+              carrierName: quote.carrier,
+              rate: quote.rate,
+              eta: quote.eta,
+              confidence: quote.confidence,
+              features: quote.features,
+              validUntil: new Date(
+                Date.now() + 24 * 60 * 60 * 1000
+              ).toISOString(), // 24 hours
+            }))
+          );
+
+          setNotificationMessage(
+            `🎉 ${accountResult.message} Load ID: ${result.load.id}. Your Go with the Flow ID: ${accountResult.account!.goWithFlowId}. Portal access sent to ${contactInfo.email}!`
+          );
+        } else {
+          setNotificationMessage(
+            `Request submitted successfully! Load ID: ${result.load.id}. Our team will contact you within 2 hours.`
+          );
+        }
+
+        // Refresh system data
+        fetchSystemData();
+      } else {
+        setNotificationMessage('Error submitting request. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      setNotificationMessage('Error submitting request. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendNotificationToHub = async (notificationData: any) => {
+    try {
+      await fetch('/api/notifications/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loadData: {
+            id: notificationData.metadata?.loadId || 'new-request',
+            origin: notificationData.metadata?.origin || 'Unknown',
+            destination: notificationData.metadata?.destination || 'Unknown',
+            rate: 'TBD',
+            pickupDate: new Date().toISOString(),
+            equipment: notificationData.metadata?.equipmentType || 'Unknown',
+            weight: notificationData.metadata?.weight?.toString() || 'Unknown',
+          },
+          recipients: [
+            {
+              id: 'admin-1',
+              name: 'Admin Team',
+              phone: '+1234567890',
+              type: 'admin' as const,
+            },
+          ],
+          notificationType: 'both',
+          messageTemplate: 'new-load',
+          urgency: notificationData.priority === 'high' ? 'high' : 'normal',
+        }),
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
+
+  const handleTrackingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const trackingNumber = formData.get('trackingNumber') as string;
+
+      const response = await fetch(
+        '/api/go-with-the-flow?action=track-load&trackingNumber=' +
+          trackingNumber
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        setNotificationMessage(
+          `Load found! Status: ${result.load.status}. ETA: ${result.load.eta}`
+        );
+
+        // Send tracking notification
+        await sendNotificationToHub({
+          type: 'tracking_request',
+          title: 'Load Tracking Request',
+          message: `Tracking request for load: ${trackingNumber}`,
+          priority: 'medium',
+          metadata: {
+            loadId: result.load.id,
+            trackingNumber: trackingNumber,
+          },
+        });
+      } else {
+        setNotificationMessage(
+          'Load not found. Please check your tracking number.'
+        );
+      }
+    } catch (error) {
+      console.error('Error tracking load:', error);
+      setNotificationMessage('Error tracking load. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const contactData = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        company: formData.get('company') as string,
+        message: formData.get('message') as string,
+        phone: formData.get('phone') as string,
+      };
+
+      const response = await fetch('/api/go-with-the-flow/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setNotificationMessage(
+          "Message sent successfully! We'll respond within 24 hours."
+        );
+
+        // Send contact notification
+        await sendNotificationToHub({
+          type: 'contact_request',
+          title: 'New Contact Request',
+          message: `Contact request from ${contactData.name} at ${contactData.company}`,
+          priority: 'medium',
+          metadata: {
+            contactName: contactData.name,
+            contactCompany: contactData.company,
+            contactEmail: contactData.email,
+          },
+        });
+      } else {
+        setNotificationMessage('Error sending message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending contact message:', error);
+      setNotificationMessage('Error sending message. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const testimonials = [
+    {
+      id: 1,
+      name: 'Sarah Johnson',
+      company: 'Global Logistics Corp',
+      role: 'Operations Director',
+      content:
+        'FleetFlow transformed our freight operations. The real-time tracking and AI-powered optimization saved us 30% on costs.',
+      rating: 5,
+      avatar: '👩‍💼',
+    },
+    {
+      id: 2,
+      name: 'Mike Rodriguez',
+      company: 'Express Shipping Solutions',
+      role: 'Fleet Manager',
+      content:
+        'Outstanding service and technology. Our drivers love the mobile app and our customers appreciate the transparency.',
+      rating: 5,
+      avatar: '👨‍💼',
+    },
+    {
+      id: 3,
+      name: 'Lisa Chen',
+      company: 'Premium Cargo Services',
+      role: 'CEO',
+      content:
+        "The best freight platform we've used. Professional, reliable, and the customer support is exceptional.",
+      rating: 5,
+      avatar: '👩‍💻',
+    },
+  ];

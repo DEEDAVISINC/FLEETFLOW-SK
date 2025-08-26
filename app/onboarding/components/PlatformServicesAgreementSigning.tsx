@@ -511,7 +511,7 @@ Your organization can now access premium platform services with 50/50 revenue sh
                 ← Back
               </button>
             )}
-            <div style={{ flex: 1 }}></div>
+            <div style={{ flex: 1 }} />
             <button
               onClick={() => setCurrentSection('terms')}
               style={{
@@ -858,35 +858,3 @@ Your organization can now access premium platform services with 50/50 revenue sh
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

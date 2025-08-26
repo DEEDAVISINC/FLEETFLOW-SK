@@ -311,10 +311,19 @@ export default function UserProfile() {
   const [workflowData, setWorkflowData] =
     useState<UserProfileWorkflowData | null>(null);
   const [showOpenELDSetup, setShowOpenELDSetup] = useState(false);
+  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
 
   const currentUser = demoUser;
   const workflowService = UserProfileWorkflowService.getInstance();
   const extensionService = FleetFlowExtensionService.getInstance();
+
+  // Check phone dialer status on component mount
+  useEffect(() => {
+    const dialerStatus = localStorage.getItem(
+      `fleetflow-phone-dialer-${currentUser.id}`
+    );
+    setPhoneDialerEnabled(dialerStatus !== 'disabled');
+  }, [currentUser.id]);
 
   // Initialize user permissions and ICA onboarding
   useEffect(() => {
@@ -2194,10 +2203,14 @@ export default function UserProfile() {
                 {/* Phone Dialer Status with Toggle */}
                 <div
                   style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
+                    background: phoneDialerEnabled
+                      ? 'rgba(16, 185, 129, 0.1)'
+                      : 'rgba(239, 68, 68, 0.1)',
                     borderRadius: '8px',
                     padding: '12px',
-                    border: '1px solid #10b981',
+                    border: phoneDialerEnabled
+                      ? '1px solid #10b981'
+                      : '1px solid #ef4444',
                     marginTop: '12px',
                   }}
                 >
@@ -2209,12 +2222,18 @@ export default function UserProfile() {
                       marginBottom: '8px',
                     }}
                   >
-                    <div style={{ color: '#10b981', fontWeight: 'bold' }}>
-                      📞 PHONE DIALER - ACTIVE
+                    <div
+                      style={{
+                        color: phoneDialerEnabled ? '#10b981' : '#ef4444',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📞 PHONE DIALER -{' '}
+                      {phoneDialerEnabled ? 'ACTIVE' : 'DISABLED'}
                     </div>
                     <button
                       style={{
-                        background: '#ef4444',
+                        background: phoneDialerEnabled ? '#ef4444' : '#22c55e',
                         color: 'white',
                         padding: '4px 12px',
                         borderRadius: '4px',
@@ -2224,10 +2243,33 @@ export default function UserProfile() {
                         cursor: 'pointer',
                       }}
                       onClick={() => {
-                        alert('Phone Dialer disabled for ' + currentUser.name);
+                        if (phoneDialerEnabled) {
+                          localStorage.setItem(
+                            `fleetflow-phone-dialer-${currentUser.id}`,
+                            'disabled'
+                          );
+                          setPhoneDialerEnabled(false);
+                          alert(
+                            '📞 Phone Dialer disconnected for ' +
+                              currentUser.name +
+                              '. The phone widget will disappear.'
+                          );
+                        } else {
+                          localStorage.removeItem(
+                            `fleetflow-phone-dialer-${currentUser.id}`
+                          );
+                          setPhoneDialerEnabled(true);
+                          alert(
+                            '📞 Phone Dialer connected for ' +
+                              currentUser.name +
+                              '. The phone widget will appear shortly.'
+                          );
+                        }
+                        // Small delay to let state update, then refresh to show/hide widget
+                        setTimeout(() => window.location.reload(), 800);
                       }}
                     >
-                      DISCONNECT
+                      {phoneDialerEnabled ? 'DISCONNECT' : 'CONNECT'}
                     </button>
                   </div>
                   <div

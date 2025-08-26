@@ -1,0 +1,4531 @@
+
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        padding: '60px 16px 16px 16px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Animated Background Elements */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+          radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)
+        `,
+          animation: 'pulse 4s ease-in-out infinite alternate',
+        }}
+      />
+
+      <div
+        style={{
+          maxWidth: '1600px',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 10,
+        }}
+      >
+        {/* Notification Display */}
+        {notificationMessage && (
+          <div
+            style={{
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '24px',
+              color: '#10b981',
+              fontSize: '14px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            <span>✅</span>
+            {notificationMessage}
+            <button
+              onClick={() => setNotificationMessage('')}
+              style={{
+                marginLeft: 'auto',
+                background: 'none',
+                border: 'none',
+                color: '#10b981',
+                cursor: 'pointer',
+                fontSize: '18px',
+                padding: '0',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        {/* Enterprise Command Header */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background:
+                'linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6, #ef4444, #f59e0b)',
+            }}
+          />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div
+                style={{
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                }}
+              >
+                <span style={{ fontSize: '32px' }}>🚛</span>
+              </div>
+              <div>
+                <h1
+                  style={{
+                    fontSize: '32px',
+                    fontWeight: '800',
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                    background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  🚛 FLEETFLOW™ "GO WITH THE FLOW"
+                </h1>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '16px',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      margin: '0 0 12px 0',
+                      fontWeight: '500',
+                    }}
+                  >
+                    Professional Freight Services & Logistics Intelligence
+                    Platform
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        color: '#10b981',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        border: '1px solid #10b981',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      🟢 SERVICES ACTIVE
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Platform Status: OPERATIONAL • 24/7 Support Available
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '16px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {[
+              { key: 'overview', label: '📊 Overview', icon: '📊' },
+              {
+                key: 'marketplace-bidding',
+                label: '🎯 Marketplace Bidding',
+                icon: '🎯',
+              },
+              { key: 'request', label: '🚀 Request Service', icon: '🚀' },
+              { key: 'tracking', label: '📍 Track Shipment', icon: '📍' },
+              { key: 'services', label: '🛠️ Our Services', icon: '🛠️' },
+              { key: 'contact', label: '📞 Contact Us', icon: '📞' },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  background:
+                    activeTab === tab.key
+                      ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  color: 'white',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== tab.key) {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== tab.key) {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.1)';
+                  }
+                }}
+              >
+                <span>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            minHeight: '600px',
+          }}
+        >
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div>
+              {/* Hero Section */}
+              <div
+                style={{
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  padding: '40px',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: '800',
+                    color: 'white',
+                    marginBottom: '16px',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  🚀 Transform Your Freight Operations
+                </h2>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '32px',
+                    maxWidth: '800px',
+                    margin: '0 auto 32px auto',
+                    lineHeight: '1.6',
+                  }}
+                >
+                  Join thousands of companies using FleetFlow's AI-powered
+                  logistics platform to streamline operations, reduce costs, and
+                  deliver exceptional customer experiences.
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    onClick={() => setActiveTab('request')}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '16px 32px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 24px rgba(16, 185, 129, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow =
+                        '0 4px 16px rgba(16, 185, 129, 0.4)';
+                    }}
+                  >
+                    🚀 Get Started Today
+                  </button>
+                  <Link href='/go-with-the-flow/how-it-works'>
+                    <button
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        color: 'white',
+                        padding: '16px 32px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.1)';
+                      }}
+                    >
+                      📚 How It Works
+                    </button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '48px',
+                }}
+              >
+                {[
+                  {
+                    label: 'Active Users',
+                    value: '15,000+',
+                    icon: '👥',
+                    color: '#3b82f6',
+                  },
+                  {
+                    label: 'States Served',
+                    value: '48',
+                    icon: '🗺️',
+                    color: '#10b981',
+                  },
+                  {
+                    label: 'Success Rate',
+                    value: '98.5%',
+                    icon: '📈',
+                    color: '#f59e0b',
+                  },
+                  {
+                    label: 'Support Response',
+                    value: '<2 hours',
+                    icon: '⏰',
+                    color: '#8b5cf6',
+                  },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: `rgba(${
+                        stat.color === '#3b82f6'
+                          ? '59, 130, 246'
+                          : stat.color === '#10b981'
+                            ? '16, 185, 129'
+                            : stat.color === '#f59e0b'
+                              ? '245, 158, 11'
+                              : '139, 92, 246'
+                      }, 0.1)`,
+                      border: `1px solid rgba(${
+                        stat.color === '#3b82f6'
+                          ? '59, 130, 246'
+                          : stat.color === '#10b981'
+                            ? '16, 185, 129'
+                            : stat.color === '#f59e0b'
+                              ? '245, 158, 11'
+                              : '139, 92, 246'
+                      }, 0.3)`,
+                      borderRadius: '16px',
+                      padding: '24px',
+                      textAlign: 'center',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 24px rgba(0, 0, 0, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      {stat.icon}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: '800',
+                        color: stat.color,
+                        marginBottom: '8px',
+                      }}
+                    >
+                      {stat.value}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Testimonials */}
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: 'white',
+                    textAlign: 'center',
+                    marginBottom: '32px',
+                  }}
+                >
+                  💬 What Our Customers Say
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '24px',
+                  }}
+                >
+                  {testimonials.map((testimonial) => (
+                    <div
+                      key={testimonial.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <div style={{ fontSize: '32px', marginRight: '16px' }}>
+                          {testimonial.avatar}
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {testimonial.name}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {testimonial.company}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {testimonial.role}
+                          </div>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          marginBottom: '16px',
+                          lineHeight: '1.5',
+                        }}
+                      >
+                        {testimonial.content}
+                      </p>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <span
+                            key={i}
+                            style={{ color: '#fbbf24', fontSize: '16px' }}
+                          >
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Marketplace Bidding Tab */}
+          {activeTab === 'marketplace-bidding' && (
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                🎯 Marketplace Bidding Service for Shippers
+              </h2>
+
+              {/* Service Information for Shippers */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  marginBottom: '32px',
+                  border: '2px solid rgba(16, 185, 129, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📋 Post Your Loads for Competitive Bidding
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '18px',
+                    lineHeight: '1.6',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                  }}
+                >
+                  Post your freight loads to our marketplace where qualified
+                  carriers and drivers compete with bids, ensuring you get the
+                  best rates and service for your shipments.
+                </p>
+              </div>
+
+              {/* How It Works */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      textAlign: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    📝
+                  </div>
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    1. Post Your Load
+                  </h4>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Submit load details including pickup/delivery locations,
+                    equipment needed, timing requirements, and any special
+                    handling instructions.
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      textAlign: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    🎯
+                  </div>
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    2. Carriers Compete
+                  </h4>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Qualified carriers and drivers view your load in the Driver
+                    Portal and submit competitive bids with their rates and
+                    service offerings.
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      textAlign: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    ✅
+                  </div>
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '12px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    3. Select Best Bid
+                  </h4>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Review bids, carrier profiles, and safety ratings to select
+                    the best carrier for your load. Accept the winning bid and
+                    proceed with booking.
+                  </p>
+                </div>
+              </div>
+
+              {/* Benefits */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  marginBottom: '32px',
+                  border: '2px solid rgba(59, 130, 246, 0.3)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    marginBottom: '24px',
+                    textAlign: 'center',
+                  }}
+                >
+                  🚀 Benefits of Marketplace Bidding
+                </h3>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '20px',
+                  }}
+                >
+                  {[
+                    {
+                      icon: '💰',
+                      title: 'Competitive Rates',
+                      desc: 'Get the best possible rates through competitive bidding',
+                    },
+                    {
+                      icon: '⚡',
+                      title: 'Quick Response',
+                      desc: 'Receive bids within minutes of posting your load',
+                    },
+                    {
+                      icon: '🛡️',
+                      title: 'Vetted Carriers',
+                      desc: 'All carriers are pre-qualified with proper insurance and safety ratings',
+                    },
+                    {
+                      icon: '📊',
+                      title: 'Transparent Process',
+                      desc: 'See all bids, carrier ratings, and make informed decisions',
+                    },
+                  ].map((benefit, index) => (
+                    <div key={index} style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '32px', marginBottom: '12px' }}>
+                        {benefit.icon}
+                      </div>
+                      <h4
+                        style={{
+                          color: 'white',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {benefit.title}
+                      </h4>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                          lineHeight: '1.4',
+                        }}
+                      >
+                        {benefit.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Access Information */}
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '2px solid rgba(245, 158, 11, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  🚛 For Carriers & Drivers
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    marginBottom: '24px',
+                  }}
+                >
+                  Want to bid on loads? Join our network of qualified carriers
+                  through our carrier invite system to access the bidding
+                  platform in the Driver Portal.
+                </p>
+                <button
+                  onClick={() => setActiveTab('contact')}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  📋 Apply as Carrier
+                </button>
+              </div>
+
+              {/* Contact Information */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  textAlign: 'center',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📞 Ready to Get Started?
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    marginBottom: '24px',
+                  }}
+                >
+                  Contact our team to learn more about posting your loads on our marketplace bidding platform.
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    onClick={() => setActiveTab('request')}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🚀 Post a Load
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('contact')}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    💬 Contact Us
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Request Service Tab */}
+          {activeTab === 'request' && (
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    🎯 Available Load Opportunities
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        background: '#3b82f6',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      LIVE
+                    </span>
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {/* Available loads for bidding */}
+                    {[
+                      {
+                        id: 'MKT-001',
+                        route: 'Dallas, TX → Houston, TX',
+                        equipment: 'Sprinter Van',
+                        rate: '$420',
+                        urgency: 'HIGH',
+                        aiRecommendation: '87%',
+                        status: 'AVAILABLE',
+                        timeRemaining: '3h 45min',
+                      },
+                      {
+                        id: 'MKT-002',
+                        route: 'Austin, TX → San Antonio, TX',
+                        equipment: 'Box Truck (24ft)',
+                        rate: '$485',
+                        urgency: 'MEDIUM',
+                        aiRecommendation: '92%',
+                        status: 'AVAILABLE',
+                        timeRemaining: '1h 22min',
+                      },
+                      {
+                        id: 'MKT-003',
+                        route: 'Fort Worth, TX → Oklahoma City, OK',
+                        equipment: 'Cargo Van',
+                        rate: '$320',
+                        urgency: 'HIGH',
+                        aiRecommendation: '78%',
+                        status: 'EXPIRING SOON',
+                        timeRemaining: '32min',
+                      },
+                    ].map((load, index) => (
+                      <div
+                        key={load.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                            {load.id}
+                          </span>
+                          <span
+                            style={{
+                              background:
+                                load.status === 'AVAILABLE'
+                                  ? '#10b981'
+                                  : load.status === 'EXPIRING SOON'
+                                    ? '#ef4444'
+                                    : '#f59e0b',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {load.status}
+                          </span>
+                        </div>
+                        <div style={{ color: 'white', marginBottom: '4px' }}>
+                          {load.route}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '14px',
+                          }}
+                        >
+                          <span style={{ color: '#94a3b8' }}>
+                            {load.equipment}
+                          </span>
+                          <span style={{ color: '#10b981', fontWeight: '600' }}>
+                            {load.rate}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            marginTop: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              color:
+                                load.urgency === 'HIGH' ? '#ef4444' : '#f59e0b',
+                            }}
+                          >
+                            🚨 {load.urgency} PRIORITY
+                          </span>
+                          <span style={{ color: '#3b82f6' }}>
+                            ⏰ {load.timeRemaining} left
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            color: '#10b981',
+                            fontSize: '12px',
+                            marginTop: '4px',
+                          }}
+                        >
+                          ⏳ Expires: {load.timeRemaining}
+                        </div>
+                        <div
+                          style={{
+                            marginTop: '12px',
+                            display: 'flex',
+                            gap: '8px',
+                          }}
+                        >
+                          <button
+                            style={{
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '6px 12px',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              flex: '1',
+                            }}
+                            onClick={() =>
+                              alert(`Placing your bid on ${load.id}`)
+                            }
+                          >
+                            🎯 Place Bid
+                          </button>
+                          <button
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              borderRadius: '8px',
+                              padding: '6px 12px',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              flex: '1',
+                            }}
+                            onClick={() =>
+                              alert(`Viewing full details for ${load.id}`)
+                            }
+                          >
+                            📋 Details
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Active Bids & Results */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    📊 My Bids & Results
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {/* My submitted bids */}
+                    {[
+                      {
+                        id: 'MKT-001',
+                        myBid: '$415',
+                        result: 'WON',
+                        profitMargin: '16.8%',
+                        timestamp: '2 min ago',
+                        color: '#10b981',
+                        route: 'Dallas → Houston',
+                      },
+                      {
+                        id: 'MKT-002',
+                        myBid: '$480',
+                        result: 'PENDING',
+                        profitMargin: '14.2%',
+                        timestamp: '5 min ago',
+                        color: '#f59e0b',
+                        route: 'Austin → San Antonio',
+                      },
+                      {
+                        id: 'MKT-785',
+                        myBid: '$380',
+                        result: 'OUTBID',
+                        profitMargin: '12.5%',
+                        timestamp: '12 min ago',
+                        color: '#ef4444',
+                        route: 'Houston → Dallas',
+                      },
+                    ].map((bid, index) => (
+                      <div
+                        key={bid.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          border: `1px solid ${bid.color}33`,
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                            {bid.id}
+                          </span>
+                          <span
+                            style={{
+                              background: bid.color,
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {bid.result}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '14px',
+                          }}
+                        >
+                          <span style={{ color: 'white' }}>
+                            My Bid: <strong>{bid.myBid}</strong>
+                          </span>
+                          <span style={{ color: '#10b981' }}>
+                            Margin: {bid.profitMargin}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            color: '#94a3b8',
+                            fontSize: '12px',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          {bid.route}
+                        </div>
+                        <div
+                          style={{
+                            color: '#94a3b8',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {bid.timestamp}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bidding Strategy Controls */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  marginBottom: '32px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  💬 Need Help Getting Started?
+                </h3>
+
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '16px',
+                    textAlign: 'center',
+                    marginBottom: '24px',
+                  }}
+                >
+                  Our team can help you set up your first load posting and guide you through the bidding process.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Request Service Tab */}
+          {activeTab === 'request' && (
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '24px',
+                }}
+              >
+                🚀 Request Transportation Service
+              </h2>
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '16px',
+                      textAlign: 'center',
+                      marginBottom: '32px',
+                    }}
+                  >
+                    Ready to get started with our transportation services? Use the contact form below or call us directly.
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '20px',
+                      justifyContent: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <button
+                      onClick={() => setActiveTab('contact')}
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '16px 32px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📞 Contact Us
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('marketplace-bidding')}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        padding: '16px 32px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🎯 Learn About Marketplace Bidding
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tracking Tab */}
+          {activeTab === 'tracking' && (
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '24px',
+                }}
+              >
+                📍 Track Your Shipment
+              </h2>
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <form>
+                  <div style={{ marginBottom: '20px' }}>
+                    <label
+                      style={{
+                        color: '#94a3b8',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      AI Recommendation Level
+                    </label>
+                    <select
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option>Conservative (Show safe bids)</option>
+                      <option selected>
+                        Balanced (Show good opportunities)
+                      </option>
+                      <option>Aggressive (Show all opportunities)</option>
+                    </select>
+                  </div>
+
+                  {/* Profit Margin Target */}
+                  <div>
+                    <label
+                      style={{
+                        color: '#94a3b8',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Target Profit Margin
+                    </label>
+                    <select
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option>10% (High Volume)</option>
+                      <option selected>15% (Balanced)</option>
+                      <option>20% (Premium)</option>
+                    </select>
+                  </div>
+
+                  {/* Equipment Focus */}
+                  <div>
+                    <label
+                      style={{
+                        color: '#94a3b8',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Equipment Focus
+                    </label>
+                    <select
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option>All Equipment Types</option>
+                      <option selected>Right-Sized Assets Only</option>
+                      <option>Traditional Trucking Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '16px 32px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    marginTop: '16px',
+                    width: '100%',
+                  }}
+                  onClick={() =>
+                    alert(
+                      'Thank you for your interest! Our team will contact you about marketplace bidding services.'
+                    )
+                  }
+                >
+                  📞 Contact Our Team
+                </button>
+              </div>
+
+              {/* Performance Metrics */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                  gap: '16px',
+                  marginBottom: '32px',
+                }}
+              >
+                {[
+                  {
+                    label: 'My Win Rate',
+                    value: '68%',
+                    color: '#10b981',
+                    icon: '🏆',
+                  },
+                  {
+                    label: 'My Avg Margin',
+                    value: '15.8%',
+                    color: '#3b82f6',
+                    icon: '💰',
+                  },
+                  {
+                    label: 'Cross-Dock Ops',
+                    value: '12',
+                    color: '#f59e0b',
+                    icon: '🔄',
+                  },
+                  {
+                    label: 'Right-Sized Assets',
+                    value: '8 Active',
+                    color: '#8b5cf6',
+                    icon: '🚛',
+                  },
+                ].map((metric, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                      {metric.icon}
+                    </div>
+                    <div
+                      style={{
+                        color: metric.color,
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {metric.value}
+                    </div>
+                    <div style={{ color: '#94a3b8', fontSize: '14px' }}>
+                      {metric.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Live Activity Feed */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  📡 My Bidding Activity Feed
+                  <span
+                    style={{
+                      fontSize: '8px',
+                      background: '#ef4444',
+                      borderRadius: '50%',
+                      width: '12px',
+                      height: '12px',
+                      animation: 'pulse 2s infinite',
+                    }}
+                  ></span>
+                </h3>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    maxHeight: '300px',
+                    overflowY: 'auto',
+                  }}
+                >
+                  {/* My activity feed */}
+                  {[
+                    {
+                      time: '14:23',
+                      message:
+                        '🆕 New opportunity available: MKT-892 (Cargo Van)',
+                      type: 'new',
+                    },
+                    {
+                      time: '14:22',
+                      message:
+                        '✅ Your bid on MKT-001 WON! Load added to your schedule.',
+                      type: 'win',
+                    },
+                    {
+                      time: '14:21',
+                      message: '📤 You placed a bid on MKT-002 for $480',
+                      type: 'bid',
+                    },
+                    {
+                      time: '14:20',
+                      message:
+                        '🤖 AI found 4 new load opportunities matching your preferences',
+                      type: 'eval',
+                    },
+                    {
+                      time: '14:19',
+                      message: '🔍 Scanning for new load opportunities...',
+                      type: 'scrape',
+                    },
+                    {
+                      time: '14:18',
+                      message:
+                        '📋 New load posted: MKT-003 available for bidding',
+                      type: 'recommend',
+                    },
+                    {
+                      time: '14:17',
+                      message: '❌ Your bid on MKT-785 was outbid by $25',
+                      type: 'reject',
+                    },
+                  ].map((activity, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '8px 12px',
+                        background:
+                          activity.type === 'win'
+                            ? 'rgba(16, 185, 129, 0.1)'
+                            : activity.type === 'reject'
+                              ? 'rgba(239, 68, 68, 0.1)'
+                              : 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        border: `1px solid ${
+                          activity.type === 'win'
+                            ? '#10b981'
+                            : activity.type === 'reject'
+                              ? '#ef4444'
+                              : 'rgba(255, 255, 255, 0.1)'
+                        }33`,
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: '#94a3b8',
+                          fontSize: '12px',
+                          minWidth: '40px',
+                        }}
+                      >
+                        {activity.time}
+                      </span>
+                      <span style={{ color: 'white', fontSize: '14px' }}>
+                        {activity.message}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Request Service Tab */}
+          {activeTab === 'request' && (
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                🚀 Request Freight Service
+              </h2>
+
+              {/* Service Type Choice */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '24px',
+                  marginBottom: '24px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                    textAlign: 'center',
+                  }}
+                >
+                  📋 Choose Your Service Type
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                  }}
+                >
+                  {/* Direct Booking Option */}
+                  <button
+                    type='button'
+                    onClick={() => setServiceType('direct')}
+                    style={{
+                      background:
+                        serviceType === 'direct'
+                          ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                      border: `2px solid ${serviceType === 'direct' ? '#dc2626' : 'rgba(255, 255, 255, 0.3)'}`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🚨
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Direct Booking
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Emergency/urgent loads - immediate carrier assignment
+                    </div>
+                  </button>
+
+                  {/* Marketplace Option */}
+                  <button
+                    type='button'
+                    onClick={() => setServiceType('marketplace')}
+                    style={{
+                      background:
+                        serviceType === 'marketplace'
+                          ? 'linear-gradient(135deg, #10b981, #059669)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                      border: `2px solid ${serviceType === 'marketplace' ? '#10b981' : 'rgba(255, 255, 255, 0.3)'}`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🎯
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Post to Marketplace
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Regular loads - competitive bidding from drivers
+                    </div>
+                  </button>
+                </div>
+
+                {serviceType && (
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      padding: '12px',
+                      background:
+                        serviceType === 'direct'
+                          ? 'rgba(220, 38, 38, 0.1)'
+                          : 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      borderLeft: `4px solid ${serviceType === 'direct' ? '#dc2626' : '#10b981'}`,
+                    }}
+                  >
+                    <p style={{ color: 'white', fontSize: '14px', margin: 0 }}>
+                      {serviceType === 'direct'
+                        ? '⚡ Fast-track service: Get immediate carrier assignment with premium rates for time-sensitive shipments.'
+                        : '💰 Cost-effective service: Let drivers compete for your load to get the best rates for flexible shipments.'}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {serviceType && (
+                <form
+                  onSubmit={handleRequestSubmit}
+                  style={{ display: 'grid', gap: '24px' }}
+                >
+                  {serviceType === 'marketplace' && (
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#10b981',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        🎯 Marketplace Posting Options
+                      </h4>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '16px',
+                          marginBottom: '12px',
+                        }}
+                      >
+                        <div>
+                          <label
+                            style={{
+                              display: 'block',
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Bidding Deadline
+                          </label>
+                          <select
+                            style={{
+                              width: '100%',
+                              padding: '8px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          >
+                            <option value='2'>2 hours</option>
+                            <option value='6' selected>
+                              6 hours
+                            </option>
+                            <option value='12'>12 hours</option>
+                            <option value='24'>24 hours</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label
+                            style={{
+                              display: 'block',
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Starting Bid Range
+                          </label>
+                          <input
+                            type='text'
+                            placeholder='e.g., $800 - $1200'
+                            style={{
+                              width: '100%',
+                              padding: '8px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <input type='checkbox' id='autoAward' />
+                        <label
+                          htmlFor='autoAward'
+                          style={{ color: 'white', fontSize: '14px' }}
+                        >
+                          Auto-award to lowest bid
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Pickup Location
+                      </label>
+                      <input
+                        type='text'
+                        name='origin'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='City, State'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Delivery Location
+                      </label>
+                      <input
+                        type='text'
+                        name='destination'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='City, State'
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Equipment Type
+                      </label>
+                      <select
+                        name='equipmentType'
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <optgroup label='Transportation Services'>
+                          <option value='Dry Van'>Dry Van</option>
+                          <option value='Reefer'>Reefer</option>
+                          <option value='Flatbed'>Flatbed</option>
+                          <option value='Power Only'>Power Only</option>
+                          <option value='Step Deck'>Step Deck</option>
+                        </optgroup>
+                        <optgroup label='Warehousing & 3PL Services'>
+                          <option value='Warehouse Storage'>
+                            🏭 Warehouse Storage
+                          </option>
+                          <option value='Cross Docking'>
+                            📦 Cross Docking
+                          </option>
+                          <option value='Pick & Pack'>
+                            📋 Pick & Pack Services
+                          </option>
+                          <option value='Inventory Management'>
+                            📊 Inventory Management
+                          </option>
+                          <option value='Distribution Center'>
+                            🚚 Distribution Center
+                          </option>
+                          <option value='Fulfillment Services'>
+                            📮 Fulfillment Services
+                          </option>
+                          <option value='3PL Full Service'>
+                            🏢 3PL Full Service
+                          </option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Weight (lbs)
+                      </label>
+                      <input
+                        type='number'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='0'
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Urgency Level
+                      </label>
+                      <select
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <option value='low'>Low - Flexible timing</option>
+                        <option value='medium'>
+                          Medium - Standard delivery
+                        </option>
+                        <option value='high'>High - Urgent delivery</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Pickup Date
+                      </label>
+                      <input
+                        type='date'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Special Requirements
+                    </label>
+                    <textarea
+                      rows={3}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                        resize: 'vertical',
+                      }}
+                      placeholder='Any special handling, temperature requirements, or additional notes...'
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Contact Information
+                    </label>
+                    <input
+                      type='email'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                      placeholder='your.email@company.com'
+                    />
+                  </div>
+
+                  <button
+                    type='submit'
+                    disabled={isLoading}
+                    style={{
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '16px 32px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      opacity: isLoading ? 0.6 : 1,
+                    }}
+                  >
+                    {isLoading
+                      ? 'Submitting...'
+                      : serviceType === 'marketplace'
+                        ? '🎯 Post Load to Marketplace'
+                        : '🚀 Submit Request & Get Quotes'}
+                  </button>
+                </form>
+              )}
+
+              {/* Marketplace Posting Success */}
+              {serviceType === 'marketplace' && quoteStatus === 'completed' && (
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    marginTop: '24px',
+                    border: '2px solid #10b981',
+                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.2)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '64px', marginBottom: '16px' }}>
+                    🎯
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: '28px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    Load Posted to Marketplace!
+                  </h3>
+                  <p
+                    style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      marginBottom: '20px',
+                      opacity: 0.9,
+                    }}
+                  >
+                    Your load is now live on the marketplace. Drivers can view
+                    and bid on it in the
+                    <strong> Marketplace Bidding</strong> section.
+                  </p>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginTop: '24px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                      }}
+                    >
+                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                        ⏱️
+                      </div>
+                      <div style={{ color: '#10b981', fontWeight: '600' }}>
+                        Bidding Open
+                      </div>
+                      <div style={{ color: 'white', fontSize: '14px' }}>
+                        6 hours remaining
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                      }}
+                    >
+                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                        👀
+                      </div>
+                      <div style={{ color: '#10b981', fontWeight: '600' }}>
+                        Views
+                      </div>
+                      <div style={{ color: 'white', fontSize: '14px' }}>
+                        12 drivers interested
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                      }}
+                    >
+                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                        💰
+                      </div>
+                      <div style={{ color: '#10b981', fontWeight: '600' }}>
+                        Current Best Bid
+                      </div>
+                      <div style={{ color: 'white', fontSize: '14px' }}>
+                        $892 (3 bids received)
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '24px' }}>
+                    <button
+                      onClick={() => setActiveTab('marketplace-bidding')}
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginRight: '12px',
+                      }}
+                    >
+                      🎯 View Marketplace Activity
+                    </button>
+                    <button
+                      onClick={() => {
+                        setServiceType(null);
+                        setQuoteStatus('idle');
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        borderRadius: '12px',
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📝 Post Another Load
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* AI Flow Quote Generation Progress */}
+              {serviceType === 'direct' && quoteStatus === 'generating' && (
+                <div
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.8)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginTop: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      🤖
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: '700',
+                        color: 'white',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      AI Flow Generating Quotes
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      Analyzing market conditions, fuel costs, and carrier
+                      availability...
+                    </p>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${quoteProgress}%`,
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #10b981, #059669)',
+                        borderRadius: '4px',
+                        transition: 'width 0.5s ease',
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {quoteProgress}% Complete
+                  </div>
+                </div>
+              )}
+
+              {/* Generated Quotes Display */}
+              {serviceType === 'direct' &&
+                quoteStatus === 'completed' &&
+                generatedQuotes.length > 0 && (
+                  <div
+                    style={{
+                      background: 'rgba(15, 23, 42, 0.8)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      marginTop: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                        ✨
+                      </div>
+                      <h3
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: 'white',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        AI-Generated Quotes Ready!
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Intelligent pricing based on market analysis and carrier
+                        optimization
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'grid', gap: '20px' }}>
+                      {generatedQuotes.map((quote, index) => (
+                        <div
+                          key={quote.id}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {/* Confidence Badge */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '16px',
+                              right: '16px',
+                              background: `rgba(${
+                                quote.confidence >= 90
+                                  ? '16, 185, 129'
+                                  : quote.confidence >= 80
+                                    ? '245, 158, 11'
+                                    : '239, 68, 68'
+                              }, 0.2)`,
+                              border: `1px solid rgba(${
+                                quote.confidence >= 90
+                                  ? '16, 185, 129'
+                                  : quote.confidence >= 80
+                                    ? '245, 158, 11'
+                                    : '239, 68, 68'
+                              }, 0.4)`,
+                              borderRadius: '20px',
+                              padding: '4px 12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: `${
+                                quote.confidence >= 90
+                                  ? '#10b981'
+                                  : quote.confidence >= 80
+                                    ? '#f59e0b'
+                                    : '#ef4444'
+                              }`,
+                            }}
+                          >
+                            {quote.confidence}% Confidence
+                          </div>
+
+                          <div style={{ marginBottom: '16px' }}>
+                            <h4
+                              style={{
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                color: 'white',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              {quote.carrier}
+                            </h4>
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '14px',
+                                lineHeight: '1.5',
+                              }}
+                            >
+                              {quote.reasoning}
+                            </p>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(120px, 1fr))',
+                              gap: '16px',
+                              marginBottom: '16px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                Rate
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '24px',
+                                  fontWeight: '800',
+                                  color: '#10b981',
+                                }}
+                              >
+                                ${quote.rate.toLocaleString()}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                ETA
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '18px',
+                                  fontWeight: '700',
+                                  color: 'white',
+                                }}
+                              >
+                                {quote.eta}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              Features Included
+                            </div>
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '8px',
+                              }}
+                            >
+                              {quote.features.map(
+                                (feature: string, featureIndex: number) => (
+                                  <span
+                                    key={featureIndex}
+                                    style={{
+                                      background: 'rgba(59, 130, 246, 0.2)',
+                                      border:
+                                        '1px solid rgba(59, 130, 246, 0.3)',
+                                      borderRadius: '16px',
+                                      padding: '4px 12px',
+                                      fontSize: '12px',
+                                      color: '#3b82f6',
+                                      fontWeight: '500',
+                                    }}
+                                  >
+                                    {feature}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Contact Information Section */}
+                          <div
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '12px',
+                              padding: '20px',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <h3
+                              style={{
+                                color: 'white',
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                marginBottom: '16px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              👤 Contact Information
+                            </h3>
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns:
+                                  'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '16px',
+                              }}
+                            >
+                              <div>
+                                <label
+                                  style={{
+                                    display: 'block',
+                                    color: 'white',
+                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  Contact Name *
+                                </label>
+                                <input
+                                  type='text'
+                                  name='contactName'
+                                  required
+                                  style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                  }}
+                                  placeholder='Your full name'
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  style={{
+                                    display: 'block',
+                                    color: 'white',
+                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  Email Address *
+                                </label>
+                                <input
+                                  type='email'
+                                  name='email'
+                                  required
+                                  style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                  }}
+                                  placeholder='your@email.com'
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  style={{
+                                    display: 'block',
+                                    color: 'white',
+                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  Phone Number
+                                </label>
+                                <input
+                                  type='tel'
+                                  name='phone'
+                                  style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                  }}
+                                  placeholder='(555) 123-4567'
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  style={{
+                                    display: 'block',
+                                    color: 'white',
+                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  Company Name
+                                </label>
+                                <input
+                                  type='text'
+                                  name='companyName'
+                                  style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                  }}
+                                  placeholder='Your company (optional)'
+                                />
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                marginTop: '16px',
+                                padding: '12px',
+                                background: 'rgba(59, 130, 246, 0.1)',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(59, 130, 246, 0.2)',
+                              }}
+                            >
+                              <p
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.9)',
+                                  fontSize: '13px',
+                                  margin: '0',
+                                  lineHeight: '1.4',
+                                }}
+                              >
+                                💡 <strong>Account Creation:</strong> A
+                                FleetFlow shipper account will be automatically
+                                created for you, giving you access to track
+                                shipments, request future quotes, and manage
+                                your logistics needs anytime! You'll receive a
+                                unique <strong>Go with the Flow ID</strong> for
+                                easy reference.
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* FleetGuard AI Fraud Analysis */}
+                          {quote.fraudAnalysis && (
+                            <div
+                              style={{
+                                marginTop: '20px',
+                                padding: '16px',
+                                background:
+                                  quote.fraudAnalysis.riskLevel === 'low'
+                                    ? 'rgba(16, 185, 129, 0.1)'
+                                    : quote.fraudAnalysis.riskLevel === 'medium'
+                                      ? 'rgba(245, 158, 11, 0.1)'
+                                      : 'rgba(239, 68, 68, 0.1)',
+                                border: `1px solid ${
+                                  quote.fraudAnalysis.riskLevel === 'low'
+                                    ? 'rgba(16, 185, 129, 0.3)'
+                                    : quote.fraudAnalysis.riskLevel === 'medium'
+                                      ? 'rgba(245, 158, 11, 0.3)'
+                                      : 'rgba(239, 68, 68, 0.3)'
+                                }`,
+                                borderRadius: '12px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  marginBottom: '12px',
+                                }}
+                              >
+                                <h4
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    margin: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                  }}
+                                >
+                                  🛡️ FleetGuard AI Security Analysis
+                                </h4>
+                                <span
+                                  style={{
+                                    fontSize: '20px',
+                                  }}
+                                >
+                                  {quote.fraudAnalysis.riskLevel === 'low'
+                                    ? '✅'
+                                    : quote.fraudAnalysis.riskLevel === 'medium'
+                                      ? '⚠️'
+                                      : '🚨'}
+                                </span>
+                              </div>
+
+                              <div
+                                style={{
+                                  display: 'grid',
+                                  gridTemplateColumns:
+                                    'repeat(auto-fit, minmax(150px, 1fr))',
+                                  gap: '12px',
+                                  marginBottom: '12px',
+                                }}
+                              >
+                                <div>
+                                  <div
+                                    style={{
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      marginBottom: '4px',
+                                    }}
+                                  >
+                                    Risk Level
+                                  </div>
+                                  <div
+                                    style={{
+                                      color:
+                                        quote.fraudAnalysis.riskLevel === 'low'
+                                          ? '#10b981'
+                                          : quote.fraudAnalysis.riskLevel ===
+                                              'medium'
+                                            ? '#f59e0b'
+                                            : '#ef4444',
+                                      fontSize: '14px',
+                                      fontWeight: '700',
+                                      textTransform: 'uppercase',
+                                    }}
+                                  >
+                                    {quote.fraudAnalysis.riskLevel}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div
+                                    style={{
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      marginBottom: '4px',
+                                    }}
+                                  >
+                                    Confidence
+                                  </div>
+                                  <div
+                                    style={{
+                                      color: 'white',
+                                      fontSize: '14px',
+                                      fontWeight: '700',
+                                    }}
+                                  >
+                                    {Math.round(
+                                      quote.fraudAnalysis.confidence * 100
+                                    )}
+                                    %
+                                  </div>
+                                </div>
+                              </div>
+
+                              {quote.fraudAnalysis.flags &&
+                                quote.fraudAnalysis.flags.length > 0 && (
+                                  <div style={{ marginBottom: '8px' }}>
+                                    <div
+                                      style={{
+                                        color: 'rgba(255, 255, 255, 0.8)',
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        marginBottom: '6px',
+                                      }}
+                                    >
+                                      Security Indicators:
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: '6px',
+                                      }}
+                                    >
+                                      {quote.fraudAnalysis.flags
+                                        .slice(0, 3)
+                                        .map(
+                                          (flag: string, flagIndex: number) => (
+                                            <span
+                                              key={flagIndex}
+                                              style={{
+                                                background:
+                                                  'rgba(255, 255, 255, 0.1)',
+                                                border:
+                                                  '1px solid rgba(255, 255, 255, 0.2)',
+                                                borderRadius: '12px',
+                                                padding: '2px 8px',
+                                                fontSize: '11px',
+                                                color:
+                                                  'rgba(255, 255, 255, 0.8)',
+                                                fontWeight: '500',
+                                              }}
+                                            >
+                                              {flag}
+                                            </span>
+                                          )
+                                        )}
+                                    </div>
+                                  </div>
+                                )}
+
+                              {/* BrokerSnapshot Financial Data */}
+                              {quote.fraudAnalysis.financialData && (
+                                <div
+                                  style={{
+                                    marginTop: '12px',
+                                    padding: '12px',
+                                    background: 'rgba(255, 255, 255, 0.05)',
+                                    borderRadius: '8px',
+                                    border:
+                                      '1px solid rgba(255, 255, 255, 0.1)',
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      color: 'rgba(255, 255, 255, 0.8)',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      marginBottom: '8px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '6px',
+                                    }}
+                                  >
+                                    📊 BrokerSnapshot Financial Intelligence
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: 'grid',
+                                      gridTemplateColumns:
+                                        'repeat(auto-fit, minmax(120px, 1fr))',
+                                      gap: '8px',
+                                      fontSize: '11px',
+                                    }}
+                                  >
+                                    {quote.fraudAnalysis.financialData
+                                      .creditScore && (
+                                      <div>
+                                        <div
+                                          style={{
+                                            color: 'rgba(255, 255, 255, 0.6)',
+                                          }}
+                                        >
+                                          Credit Score
+                                        </div>
+                                        <div
+                                          style={{
+                                            color:
+                                              parseInt(
+                                                quote.fraudAnalysis
+                                                  .financialData.creditScore
+                                              ) >= 700
+                                                ? '#10b981'
+                                                : parseInt(
+                                                      quote.fraudAnalysis
+                                                        .financialData
+                                                        .creditScore
+                                                    ) >= 650
+                                                  ? '#f59e0b'
+                                                  : '#ef4444',
+                                            fontWeight: '700',
+                                          }}
+                                        >
+                                          {
+                                            quote.fraudAnalysis.financialData
+                                              .creditScore
+                                          }
+                                        </div>
+                                      </div>
+                                    )}
+                                    {quote.fraudAnalysis.financialData
+                                      .paymentHistory && (
+                                      <div>
+                                        <div
+                                          style={{
+                                            color: 'rgba(255, 255, 255, 0.6)',
+                                          }}
+                                        >
+                                          Payment History
+                                        </div>
+                                        <div
+                                          style={{
+                                            color:
+                                              quote.fraudAnalysis.financialData
+                                                .paymentHistory === 'Excellent'
+                                                ? '#10b981'
+                                                : quote.fraudAnalysis
+                                                      .financialData
+                                                      .paymentHistory === 'Good'
+                                                  ? '#f59e0b'
+                                                  : '#ef4444',
+                                            fontWeight: '700',
+                                          }}
+                                        >
+                                          {
+                                            quote.fraudAnalysis.financialData
+                                              .paymentHistory
+                                          }
+                                        </div>
+                                      </div>
+                                    )}
+                                    {quote.fraudAnalysis.financialData
+                                      .averagePaymentDays && (
+                                      <div>
+                                        <div
+                                          style={{
+                                            color: 'rgba(255, 255, 255, 0.6)',
+                                          }}
+                                        >
+                                          Avg Payment
+                                        </div>
+                                        <div
+                                          style={{
+                                            color:
+                                              quote.fraudAnalysis.financialData
+                                                .averagePaymentDays <= 30
+                                                ? '#10b981'
+                                                : quote.fraudAnalysis
+                                                      .financialData
+                                                      .averagePaymentDays <= 45
+                                                  ? '#f59e0b'
+                                                  : '#ef4444',
+                                            fontWeight: '700',
+                                          }}
+                                        >
+                                          {
+                                            quote.fraudAnalysis.financialData
+                                              .averagePaymentDays
+                                          }{' '}
+                                          days
+                                        </div>
+                                      </div>
+                                    )}
+                                    <div>
+                                      <div
+                                        style={{
+                                          color: 'rgba(255, 255, 255, 0.6)',
+                                        }}
+                                      >
+                                        Tracking
+                                      </div>
+                                      <div
+                                        style={{
+                                          color: quote.fraudAnalysis
+                                            .financialData.trackingEnabled
+                                            ? '#10b981'
+                                            : '#ef4444',
+                                          fontWeight: '700',
+                                        }}
+                                      >
+                                        {quote.fraudAnalysis.financialData
+                                          .trackingEnabled
+                                          ? 'Enabled'
+                                          : 'Disabled'}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Data Source Badge */}
+                                  {quote.fraudAnalysis.dataSource && (
+                                    <div
+                                      style={{
+                                        marginTop: '8px',
+                                        textAlign: 'center',
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          background:
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'BROKERSNAPSHOT'
+                                            ) ||
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'COMPREHENSIVE'
+                                            )
+                                              ? 'rgba(16, 185, 129, 0.2)'
+                                              : 'rgba(59, 130, 246, 0.2)',
+                                          border: `1px solid ${
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'BROKERSNAPSHOT'
+                                            ) ||
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'COMPREHENSIVE'
+                                            )
+                                              ? 'rgba(16, 185, 129, 0.4)'
+                                              : 'rgba(59, 130, 246, 0.4)'
+                                          }`,
+                                          borderRadius: '12px',
+                                          padding: '2px 8px',
+                                          fontSize: '10px',
+                                          color:
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'BROKERSNAPSHOT'
+                                            ) ||
+                                            quote.fraudAnalysis.dataSource.includes(
+                                              'COMPREHENSIVE'
+                                            )
+                                              ? '#10b981'
+                                              : '#3b82f6',
+                                          fontWeight: '600',
+                                        }}
+                                      >
+                                        {quote.fraudAnalysis.dataSource ===
+                                        'FMCSA'
+                                          ? '📋 FMCSA Data'
+                                          : quote.fraudAnalysis.dataSource ===
+                                              'BROKERSNAPSHOT'
+                                            ? '📊 BrokerSnapshot'
+                                            : quote.fraudAnalysis.dataSource ===
+                                                'COMPREHENSIVE'
+                                              ? '🔗 FMCSA + BrokerSnapshot'
+                                              : quote.fraudAnalysis
+                                                    .dataSource ===
+                                                  'ENHANCED_DEMO'
+                                                ? '🎯 Enhanced Analysis'
+                                                : '📊 Real-time Data'}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          <button
+                            style={{
+                              width: '100%',
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              border: 'none',
+                              color: 'white',
+                              padding: '12px 24px',
+                              borderRadius: '8px',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              marginTop: '16px',
+                              transition: 'all 0.3s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform =
+                                'translateY(-2px)';
+                              e.currentTarget.style.boxShadow =
+                                '0 4px 12px rgba(59, 130, 246, 0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                          >
+                            🚀 Select This Quote
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* FleetGuard AI Analysis Loading */}
+                    {fraudAnalysisLoading && (
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          marginTop: '24px',
+                          padding: '20px',
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          border: '1px solid rgba(59, 130, 246, 0.2)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '12px',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '20px',
+                              height: '20px',
+                              border: '2px solid rgba(59, 130, 246, 0.3)',
+                              borderTop: '2px solid #3b82f6',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite',
+                            }}
+                          />
+                          <span
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '16px',
+                              fontWeight: '700',
+                            }}
+                          >
+                            🛡️ FleetGuard AI Analyzing Carriers...
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            color: 'rgba(59, 130, 246, 0.8)',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            margin: 0,
+                          }}
+                        >
+                          Running comprehensive fraud detection and safety
+                          analysis
+                        </p>
+                      </div>
+                    )}
+
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        marginTop: '24px',
+                        padding: '20px',
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: '#10b981',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          margin: 0,
+                        }}
+                      >
+                        💡 AI Flow analyzed market conditions, fuel costs,
+                        traffic patterns, and carrier performance to generate
+                        these optimized quotes. 🛡️ FleetGuard AI provides
+                        comprehensive fraud detection with FMCSA safety data +
+                        BrokerSnapshot financial intelligence.
+                      </p>
+                    </div>
+                  </div>
+                )}
+            </div>
+          )}
+
+          {/* Tracking Tab */}
+          {activeTab === 'tracking' && (
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                📍 Track Your Shipment
+              </h2>
+              <form
+                onSubmit={handleTrackingSubmit}
+                style={{ display: 'grid', gap: '24px' }}
+              >
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: 'white',
+                      marginBottom: '8px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Tracking Number or Load ID
+                  </label>
+                  <input
+                    type='text'
+                    name='trackingNumber'
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                    placeholder='Enter your tracking number'
+                  />
+                </div>
+                <button
+                  type='submit'
+                  disabled={isLoading}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: isLoading ? 0.7 : 1,
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {isLoading ? '🔍 Tracking...' : '📍 Track Shipment'}
+                </button>
+
+                <div
+                  style={{
+                    marginTop: '32px',
+                    padding: '24px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontWeight: '600',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Sample Tracking Results
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    {[
+                      {
+                        status: 'Load Delivered',
+                        location: 'Miami, FL',
+                        time: '2 hours ago',
+                        color: '#10b981',
+                      },
+                      {
+                        status: 'In Transit',
+                        location: 'Jacksonville, FL',
+                        time: '4 hours ago',
+                        color: '#3b82f6',
+                      },
+                      {
+                        status: 'Picked Up',
+                        location: 'Atlanta, GA',
+                        time: 'Yesterday',
+                        color: '#6b7280',
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                            background: item.color,
+                          }}
+                        />
+                        <div>
+                          <div style={{ color: 'white', fontWeight: '500' }}>
+                            {item.status}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {item.location} - {item.time}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Services Tab */}
+          {activeTab === 'services' && (
+            <div>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                🛠️ Comprehensive Freight Solutions
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  maxWidth: '800px',
+                  margin: '0 auto 48px auto',
+                  lineHeight: '1.6',
+                }}
+              >
+                From single shipments to complex logistics operations, we
+                provide end-to-end solutions that keep your business moving
+                forward.
+              </p>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                {[
+                  {
+                    icon: '🚛',
+                    title: 'Full Truckload (FTL)',
+                    description:
+                      'Dedicated trucks for your exclusive shipments with real-time tracking and guaranteed delivery times.',
+                    features: [
+                      'Dry van, reefer, flatbed, and specialized equipment',
+                      'Nationwide coverage with local expertise',
+                      'Competitive rates and flexible scheduling',
+                    ],
+                  },
+                  {
+                    icon: '📦',
+                    title: 'Less Than Truckload (LTL)',
+                    description:
+                      'Cost-effective solutions for smaller shipments with consolidated freight options.',
+                    features: [
+                      'Multiple pickup and delivery points',
+                      'Flexible weight and size requirements',
+                      'Expedited and standard service options',
+                    ],
+                  },
+                  {
+                    icon: '🌡️',
+                    title: 'Temperature Controlled',
+                    description:
+                      'Specialized reefer services for pharmaceuticals, food, and other temperature-sensitive cargo.',
+                    features: [
+                      'Real-time temperature monitoring',
+                      'FDA and pharmaceutical compliance',
+                      'Emergency backup systems',
+                    ],
+                  },
+                  {
+                    icon: '⚡',
+                    title: 'Expedited & Hot Shot',
+                    description:
+                      'Urgent delivery services for time-critical shipments with dedicated drivers and equipment.',
+                    features: [
+                      'Same-day and next-day delivery',
+                      'Dedicated drivers and equipment',
+                      'Priority handling and routing',
+                    ],
+                  },
+                  {
+                    icon: '🏭',
+                    title: 'Warehousing & Storage',
+                    description:
+                      'Complete warehouse solutions including storage, inventory management, and distribution services.',
+                    features: [
+                      'Climate-controlled warehouse facilities',
+                      'Real-time inventory tracking systems',
+                      'Pick, pack, and ship services',
+                      'Cross-docking and transload operations',
+                    ],
+                  },
+                  {
+                    icon: '🏢',
+                    title: '3PL Services',
+                    description:
+                      'Full-service third-party logistics including warehousing, transportation, and supply chain management.',
+                    features: [
+                      'End-to-end supply chain management',
+                      'Multi-channel fulfillment capabilities',
+                      'Advanced WMS and inventory optimization',
+                      'Scalable storage and distribution network',
+                    ],
+                  },
+                ].map((service, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      {service.icon}
+                    </div>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      {service.title}
+                    </h3>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        marginBottom: '16px',
+                        lineHeight: '1.5',
+                      }}
+                    >
+                      {service.description}
+                    </p>
+                    <ul style={{ display: 'grid', gap: '8px' }}>
+                      {service.features.map((feature, featureIndex) => (
+                        <li
+                          key={featureIndex}
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '14px',
+                          }}
+                        >
+                          • {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Contact Tab */}
+          {activeTab === 'contact' && (
+            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                }}
+              >
+                📞 Get in Touch
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  lineHeight: '1.6',
+                }}
+              >
+                Ready to revolutionize your freight operations? Our team is here
+                to help you get started with FleetFlow's powerful logistics
+                platform.
+              </p>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                  gap: '48px',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'grid', gap: '24px' }}>
+                    {[
+                      {
+                        icon: '📞',
+                        title: 'Phone Support',
+                        value: '1-800-FLEET-FLOW',
+                        subtitle: '24/7 Customer Service',
+                      },
+                      {
+                        icon: '📧',
+                        title: 'Email Support',
+                        value: 'support@fleetflow.com',
+                        subtitle: 'Response within 2 hours',
+                      },
+                      {
+                        icon: '💬',
+                        title: 'Live Chat',
+                        value: 'Available on our website',
+                        subtitle: 'Instant support during business hours',
+                      },
+                    ].map((contact, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
+                        <div style={{ fontSize: '24px' }}>{contact.icon}</div>
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {contact.title}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            {contact.value}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.5)',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {contact.subtitle}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    Send us a Message
+                  </h3>
+                  <form
+                    onSubmit={handleContactSubmit}
+                    style={{ display: 'grid', gap: '16px' }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Name
+                      </label>
+                      <input
+                        type='text'
+                        name='name'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your full name'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Company
+                      </label>
+                      <input
+                        type='text'
+                        name='company'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your company name'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Email
+                      </label>
+                      <input
+                        type='email'
+                        name='email'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='your.email@company.com'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Phone
+                      </label>
+                      <input
+                        type='tel'
+                        name='phone'
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='Your phone number (optional)'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Message
+                      </label>
+                      <textarea
+                        name='message'
+                        required
+                        rows={4}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                          resize: 'vertical',
+                        }}
+                        placeholder='Tell us about your shipping needs...'
+                      />
+                    </div>
+                    <button
+                      type='submit'
+                      disabled={isLoading}
+                      style={{
+                        width: '100%',
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        border: 'none',
+                        color: 'white',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        cursor: isLoading ? 'not-allowed' : 'pointer',
+                        opacity: isLoading ? 0.7 : 1,
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {isLoading ? '📤 Sending...' : '📤 Send Message'}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer CTA */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+            marginTop: '32px',
+            borderRadius: '16px',
+            padding: '32px',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '28px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '16px',
+            }}
+          >
+            🚀 Ready to Transform Your Freight Operations?
+          </h2>
+          <p
+            style={{
+              fontSize: '18px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              marginBottom: '32px',
+              maxWidth: '600px',
+              margin: '0 auto 32px auto',
+              lineHeight: '1.6',
+            }}
+          >
+            Join thousands of companies already using FleetFlow to streamline
+            their logistics, reduce costs, and improve customer satisfaction.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <button
+              onClick={() => setActiveTab('request')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                color: 'white',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              🚀 Start Shipping Today
+            </button>
+            <Link href='/go-with-the-flow/how-it-works'>
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                📚 How It Works
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Creation Success Modal */}
+      {showAccountSuccess && accountCreationResult && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowAccountSuccess(false)}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #1e293b, #334155)',
+              borderRadius: '20px',
+              padding: '32px',
+              maxWidth: '600px',
+              width: '90%',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div
+                style={{
+                  fontSize: '48px',
+                  marginBottom: '16px',
+                }}
+              >
+                🎉
+              </div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                Welcome to FleetFlow!
+              </h2>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '16px',
+                  margin: '0',
+                }}
+              >
+                Your shipper account has been created successfully
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '24px',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                👤 Account Details
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {/* Go with the Flow ID - Prominently Displayed */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '12px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Your Go with the Flow ID
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {accountCreationResult.account.goWithFlowId}
+                  </div>
+                </div>
+
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Company:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.companyName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Contact:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.contactName}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Email:
+                  </span>
+                  <span style={{ color: 'white', fontWeight: '500' }}>
+                    {accountCreationResult.account.email}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Internal ID:
+                  </span>
+                  <span
+                    style={{
+                      color: 'white',
+                      fontWeight: '500',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {accountCreationResult.account.id}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                🌐 Your FleetFlow Portal
+              </h4>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '14px',
+                  marginBottom: '16px',
+                  lineHeight: '1.5',
+                }}
+              >
+                Access your dedicated shipper portal to track shipments, request
+                quotes, and manage your logistics needs anytime!
+              </p>
+              <button
+                onClick={() =>
+                  window.open(accountCreationResult.portalUrl, '_blank')
+                }
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  width: '100%',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                🚀 Access Your Shipper Portal
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowAccountSuccess(false)}
+                style={{
+                  flex: 1,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                Continue Browsing
+              </button>
+              <button
+                onClick={() => {
+                  setShowAccountSuccess(false);
+                  setActiveTab('request');
+                  // Reset form
+                  setQuoteStatus('idle');
+                  setGeneratedQuotes([]);
+                  setQuoteProgress(0);
+                }}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 20px rgba(16, 185, 129, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                🚚 Request Another Quote
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warehouse Quote Builder Modal */}
+      {showWarehouseBuilder && (
+        <WarehouseQuoteBuilder
+          onQuoteGenerated={(quotes) => {
+            setGeneratedQuotes(quotes);
+            setQuoteStatus('completed');
+            setShowWarehouseBuilder(false);
+          }}
+          onClose={() => setShowWarehouseBuilder(false)}
+          initialData={{
+            equipmentType: selectedServiceType,
+            companyName: '',
+            contactName: '',
+            email: '',
+            phone: '',
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// Helper Functions for Quote Generation
+const calculateIntelligentRate = (
+  loadRequest: any,
+  tier: string,
+  aiAnalysis: any
+) => {
+  const baseRates: Record<string, Record<string, number>> = {
+    // Transportation Services
+    'Dry Van': { premium: 2.85, standard: 2.45, economy: 2.15 },
+    Reefer: { premium: 3.25, standard: 2.85, economy: 2.55 },
+    Flatbed: { premium: 3.15, standard: 2.75, economy: 2.45 },
+    'Power Only': { premium: 1.95, standard: 1.65, economy: 1.45 },
+    'Step Deck': { premium: 3.45, standard: 3.05, economy: 2.75 },
+
+    // Warehousing & 3PL Services (monthly rates per sq ft or per pallet)
+    'Warehouse Storage': { premium: 8.5, standard: 6.25, economy: 4.75 },
+    'Cross Docking': { premium: 45.0, standard: 35.0, economy: 25.0 },
+    'Pick & Pack': { premium: 3.25, standard: 2.75, economy: 2.25 },
+    'Inventory Management': { premium: 125.0, standard: 95.0, economy: 75.0 },
+    'Distribution Center': { premium: 15.5, standard: 12.25, economy: 9.75 },
+    'Fulfillment Services': { premium: 4.85, standard: 3.95, economy: 3.25 },
+    '3PL Full Service': { premium: 185.0, standard: 145.0, economy: 115.0 },
+  };
+
+  const equipmentType = loadRequest.equipmentType;
+  const weight = loadRequest.weight || 40000;
+  const distance = calculateDistance(
+    loadRequest.origin,
+    loadRequest.destination
+  );
+
+  // Check if this is a warehousing service
+  const isWarehousingService = [
+    'Warehouse Storage',
+    'Cross Docking',
+    'Pick & Pack',
+    'Inventory Management',
+    'Distribution Center',
+    'Fulfillment Services',
+    '3PL Full Service',
+  ].includes(equipmentType);
+
+  if (isWarehousingService) {
+    // Warehousing pricing logic
+    const baseRate = baseRates[equipmentType]?.[tier] || 100;
+    const volumeMultiplier = Math.max(1, weight / 10000); // Scale by volume
+    const serviceComplexity = getWarehousingComplexity(equipmentType);
+
+    return Math.round(baseRate * volumeMultiplier * serviceComplexity);
+  } else {
+    // Transportation pricing logic
+    const baseRate = baseRates[equipmentType]?.[tier] || 2.5;
+    const fuelSurcharge = 0.25;
+    const urgencyMultiplier =
+      loadRequest.urgency === 'high'
+        ? 1.3
+        : loadRequest.urgency === 'medium'
+          ? 1.1
+          : 1.0;
+
+    return Math.round(
+      (baseRate + fuelSurcharge) * distance * urgencyMultiplier
+    );
+  }
+  };
+
+  const getWarehousingComplexity = (serviceType: string): number => {
+    const complexityMap: Record<string, number> = {
+      'Warehouse Storage': 1.0,
+      'Cross Docking': 1.2,
+      'Pick & Pack': 1.5,
+      'Inventory Management': 2.0,
+      'Distribution Center': 1.8,
+      'Fulfillment Services': 2.2,
+      '3PL Full Service': 2.5,
+    };
+    return complexityMap[serviceType] || 1.0;
+  };
+
+  const calculateETA = (loadRequest: any, tier: string) => {
+    const equipmentType = loadRequest.equipmentType;
+
+    // Check if this is a warehousing service
+    const isWarehousingService = [
+      'Warehouse Storage',
+      'Cross Docking',
+      'Pick & Pack',
+      'Inventory Management',
+      'Distribution Center',
+      'Fulfillment Services',
+      '3PL Full Service',
+    ].includes(equipmentType);
+
+    if (isWarehousingService) {
+      // Warehousing setup times
+      const setupTimes: Record<string, { min: number; max: number }> = {
+        premium: { min: 1, max: 3 }, // 1-3 days
+        standard: { min: 3, max: 7 }, // 3-7 days
+        economy: { min: 7, max: 14 }, // 1-2 weeks
+      };
+
+      const timeRange = setupTimes[tier] || setupTimes.standard;
+      const days =
+        Math.floor(Math.random() * (timeRange.max - timeRange.min + 1)) +
+        timeRange.min;
+
+      return `${days} day${days !== 1 ? 's' : ''} setup time`;
+    } else {
+      // Transportation delivery times
+      const distance = calculateDistance(
+        loadRequest.origin,
+        loadRequest.destination
+      );
+      const baseHours =
+        distance / (tier === 'premium' ? 65 : tier === 'standard' ? 55 : 45);
+      const urgencyMultiplier =
+        loadRequest.urgency === 'high'
+          ? 0.8
+          : loadRequest.urgency === 'medium'
+            ? 1.0
+            : 1.2;
+
+      const totalHours = Math.round(baseHours * urgencyMultiplier);
+      const days = Math.ceil(totalHours / 24);
+
+      return `${days} day${days !== 1 ? 's' : ''}`;
+    }
+  };
+
+  const calculateDistance = (origin: string, destination: string): number => {
+    // Simplified distance calculation (in production, use Google Maps API)
+    const distances = {
+      short: 250,
+      medium: 650,
+      long: 1200,
+    };
+
+    // Simple heuristic based on common routes
+    const key =
+      Math.random() > 0.6 ? 'long' : Math.random() > 0.4 ? 'medium' : 'short';
+    return distances[key] + Math.floor(Math.random() * 200);
+  };
+
+  const sendNotificationToHub = async (notification: any) => {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notification),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      return { success: false };
+    }
+  };
+}

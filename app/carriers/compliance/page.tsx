@@ -151,7 +151,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                  />
                   DOT Compliance Guide
                 </a>
               </li>

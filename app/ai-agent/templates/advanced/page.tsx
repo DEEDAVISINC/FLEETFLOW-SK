@@ -25,7 +25,11 @@ export default function AdvancedTemplateEditor() {
     variables: [] as TemplateVariable[],
     tags: [] as string[],
     metadata: {
-      tone: 'professional' as const,
+      tone: 'professional' as
+        | 'professional'
+        | 'friendly'
+        | 'aggressive'
+        | 'technical',
       language: 'en',
       industry: 'transportation',
       useCase: 'general',
@@ -140,7 +144,9 @@ export default function AdvancedTemplateEditor() {
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to save template:', error);
-      alert(`Error saving template: ${error.message}`);
+      alert(
+        `Error saving template: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   };
 
@@ -171,7 +177,7 @@ export default function AdvancedTemplateEditor() {
         performance: {
           processingTime: 0,
           success: false,
-          errors: [error.message],
+          errors: [error instanceof Error ? error.message : 'Unknown error'],
         },
       });
     }

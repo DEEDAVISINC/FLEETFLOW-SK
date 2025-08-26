@@ -1,4 +1,4 @@
-'use client';
+// 'use client'; // Temporarily disabled for server deployment
 
 // Advanced Route Optimization Service for FleetFlow
 // Integrates with Google Maps APIs for real routing optimization

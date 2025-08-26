@@ -96,7 +96,7 @@ export default function PhoneConnectionSetup({
     const credentials = {
       username: `ff${setupData.extension}`,
       password: Math.random().toString(36).substring(2, 15),
-      server: 'sip.fleetflow.com',
+      server: 'sip.fleetflowapp.com',
       port: '5060',
     };
 
@@ -161,7 +161,7 @@ export default function PhoneConnectionSetup({
             'Open the app and select "Add SIP Account"',
             `Enter Username: ${setupData.sipCredentials?.username || 'ff[extension]'}`,
             `Enter Password: ${setupData.sipCredentials?.password || '[generated_password]'}`,
-            `Enter Server: ${setupData.sipCredentials?.server || 'sip.fleetflow.com'}`,
+            `Enter Server: ${setupData.sipCredentials?.server || 'sip.fleetflowapp.com'}`,
             `Set Port: ${setupData.sipCredentials?.port || '5060'}`,
             'Enable "Register" and save settings',
             'Your phone should now be connected to FleetFlow system',
@@ -174,7 +174,7 @@ export default function PhoneConnectionSetup({
             "Access your IP phone's web interface (usually by typing its IP address in browser)",
             'Navigate to "Accounts" or "SIP Settings"',
             `Set Account Name: FleetFlow Extension ${setupData.extension}`,
-            `Enter SIP Server: ${setupData.sipCredentials?.server || 'sip.fleetflow.com'}`,
+            `Enter SIP Server: ${setupData.sipCredentials?.server || 'sip.fleetflowapp.com'}`,
             `Enter Username: ${setupData.sipCredentials?.username || 'ff[extension]'}`,
             `Enter Password: ${setupData.sipCredentials?.password || '[generated_password]'}`,
             'Set Registration to "Enabled"',
@@ -192,7 +192,7 @@ export default function PhoneConnectionSetup({
             `Enter Display Name: ${setupData.firstName} ${setupData.lastName}`,
             `Enter Username: ${setupData.sipCredentials?.username || 'ff[extension]'}`,
             `Enter Password: ${setupData.sipCredentials?.password || '[generated_password]'}`,
-            `Enter Domain: ${setupData.sipCredentials?.server || 'sip.fleetflow.com'}`,
+            `Enter Domain: ${setupData.sipCredentials?.server || 'sip.fleetflowapp.com'}`,
             'Enable auto-registration and save',
             'Your computer is now ready to make/receive calls',
           ],

@@ -66,8 +66,8 @@ export default function AICostMonitor() {
   if (!stats) {
     return (
       <div className='animate-pulse rounded-lg border bg-white p-4 shadow-sm'>
-        <div className='mb-2 h-4 w-32 rounded bg-gray-200'></div>
-        <div className='h-6 w-24 rounded bg-gray-200'></div>
+        <div className='mb-2 h-4 w-32 rounded bg-gray-200' />
+        <div className='h-6 w-24 rounded bg-gray-200' />
       </div>
     );
   }
@@ -257,4 +257,3 @@ export default function AICostMonitor() {
     </div>
   );
 }
-

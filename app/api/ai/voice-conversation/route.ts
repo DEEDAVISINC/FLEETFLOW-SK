@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         aiConfidence: 0.8,
         transferRequired: false,
         ...context, // Allow override from request
-      };
+      } as FreightCallContext;
       activeCallContexts.set(callId, callContext);
     }
 

@@ -303,6 +303,27 @@ class BrokerAnalyticsService {
   }
 
   /**
+   * Get multimodal transport recommendations for a specific load
+   */
+  getMultimodalRecommendations(loadId: string) {
+    return brokerAgentIntegrationService.getMultimodalRecommendations(loadId);
+  }
+
+  /**
+   * Update load transport mode
+   */
+  updateLoadTransportMode(loadId: string, newMode: string, newRate: number) {
+    return brokerAgentIntegrationService.updateLoadTransportMode(loadId, newMode, newRate);
+  }
+
+  /**
+   * Get cost savings opportunities across all loads
+   */
+  getCostSavingsOpportunities() {
+    return brokerAgentIntegrationService.getCostSavingsOpportunities();
+  }
+
+  /**
    * Get real-time agent performance comparison
    */
   getAgentPerformanceRanking() {

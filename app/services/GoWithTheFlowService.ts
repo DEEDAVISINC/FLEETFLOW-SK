@@ -13,8 +13,9 @@
 // - Rating system for all parties
 
 import { EventEmitter } from 'events';
+import { SchedulingService } from '../scheduling/service';
 
-// Equipment Types - WARP-Style Multi-Modal Support
+// Equipment Types - Multi-Modal Support
 export const EQUIPMENT_TYPES = {
   // Traditional Trucking (Large)
   DRY_VAN: 'Dry Van',
@@ -90,6 +91,7 @@ interface Load {
   assignedDriverId?: string;
   offerExpiresAt?: Date;
   urgency: 'low' | 'medium' | 'high';
+  loadType?: 'standard' | 'marketplace'; // For dispatch fee calculation
 }
 
 interface LoadRequest {
@@ -116,14 +118,43 @@ class GoWithTheFlowService extends EventEmitter {
   private loads: Load[] = [];
   private matchingQueue: { load: Load; potentialDrivers: Driver[] }[] = [];
   private activityFeed: string[] = [];
+  private schedulingService: SchedulingService;
+
+  // MARKETPLACE INTEGRATION: Intelligent Bidding System
+  private externalLoads: Load[] = []; // Loads from external sources (DAT, Truckstop, etc.)
+  private activeBids: Map<string, any> = new Map();
+  private biddingStrategy = {
+    aggressiveness: 'moderate' as 'conservative' | 'moderate' | 'aggressive',
+    profitMarginTarget: 15, // 15% profit margin
+    maxBidAmount: 5000,
+    autoSubmitThreshold: 85, // 85% confidence to auto-submit
+    equipmentPreferences: [
+      'Cargo Van',
+      'Sprinter Van',
+      'Box Truck (24ft)',
+      'Hot Shot',
+    ],
+    geographicFocus: {
+      preferredStates: ['TX', 'OK', 'LA', 'AR', 'NM'],
+      maxDistance: 250,
+    },
+  };
 
   constructor() {
     super();
+    this.schedulingService = new SchedulingService();
     this.initializeMockData();
+    this.initializeMarketplaceLoads(); // Marketplace integration
+
     // Simulate real-time matching every 10 seconds
     setInterval(() => this.processMatchingQueue(), 10000);
     // Simulate driver location updates
     setInterval(() => this.simulateDriverMovement(), 5000);
+
+    // MARKETPLACE: Process external load opportunities every 30 seconds
+    setInterval(() => this.processExternalLoadOpportunities(), 30000);
+    // MARKETPLACE: Scrape new external loads every 2 minutes
+    setInterval(() => this.scrapeExternalLoads(), 120000);
   }
 
   private initializeMockData() {
@@ -167,7 +198,7 @@ class GoWithTheFlowService extends EventEmitter {
         },
         hoursRemaining: 10.0,
       },
-      // PHASE 1: Multi-Equipment Support - WARP-Style Vehicles
+      // PHASE 1: Multi-Equipment Support - Right-Sized Vehicles
       {
         id: 'driver-4',
         name: 'Diana Martinez',
@@ -294,7 +325,7 @@ class GoWithTheFlowService extends EventEmitter {
         urgency: 'medium',
       },
 
-      // PHASE 1: Multi-Equipment Loads (WARP-Style)
+      // PHASE 1: Multi-Equipment Loads (Right-Sized)
       {
         id: 'GWF-VAN-001',
         origin: {
@@ -406,6 +437,340 @@ class GoWithTheFlowService extends EventEmitter {
     );
   }
 
+  // MARKETPLACE INTEGRATION: Initialize External Load Sources
+  private initializeMarketplaceLoads() {
+    // Mock external loads from DAT, Truckstop, etc.
+    this.externalLoads = [
+      {
+        id: 'MKT-001',
+        origin: {
+          lat: 32.7767,
+          lng: -96.797,
+          address: 'Dallas, TX - Cross-Dock Facility',
+        },
+        destination: {
+          lat: 29.7604,
+          lng: -95.3698,
+          address: 'Houston, TX - Distribution Center',
+        },
+        pickupTime: new Date(Date.now() + 6 * 3600 * 1000),
+        deliveryTime: new Date(Date.now() + 12 * 3600 * 1000),
+        weight: 800,
+        dimensions: { length: 12, width: 6, height: 6 },
+        equipmentType: 'Sprinter Van',
+        rate: 420,
+        status: 'pending',
+        urgency: 'high',
+        loadType: 'marketplace', // 5% dispatch fee
+      },
+      {
+        id: 'MKT-002',
+        origin: {
+          lat: 30.2672,
+          lng: -97.7431,
+          address: 'Austin, TX - Manufacturing Plant',
+        },
+        destination: {
+          lat: 29.4241,
+          lng: -98.4936,
+          address: 'San Antonio, TX - Retail Hub',
+        },
+        pickupTime: new Date(Date.now() + 4 * 3600 * 1000),
+        deliveryTime: new Date(Date.now() + 8 * 3600 * 1000),
+        weight: 1200,
+        dimensions: { length: 16, width: 8, height: 7 },
+        equipmentType: 'Box Truck (24ft)',
+        rate: 485,
+        status: 'pending',
+        urgency: 'medium',
+        loadType: 'marketplace', // 5% dispatch fee
+      },
+      {
+        id: 'MKT-003',
+        origin: {
+          lat: 32.7555,
+          lng: -97.3308,
+          address: 'Fort Worth, TX - E-commerce Warehouse',
+        },
+        destination: {
+          lat: 35.4676,
+          lng: -97.5164,
+          address: 'Oklahoma City, OK - Last Mile Hub',
+        },
+        pickupTime: new Date(Date.now() + 2 * 3600 * 1000),
+        deliveryTime: new Date(Date.now() + 6 * 3600 * 1000),
+        weight: 650,
+        dimensions: { length: 8, width: 5, height: 5 },
+        equipmentType: 'Cargo Van',
+        rate: 320,
+        status: 'pending',
+        urgency: 'high',
+        loadType: 'marketplace', // 5% dispatch fee
+      },
+    ];
+
+    this.activityFeed.push(
+      `Marketplace external load integration initialized: ${this.externalLoads.length} external opportunities loaded.`
+    );
+  }
+
+  // MARKETPLACE: Process External Load Opportunities with Intelligent Bidding
+  private async processExternalLoadOpportunities() {
+    const availableDrivers = this.getAvailableDrivers();
+    const activeExternalLoads = this.externalLoads.filter(
+      (load) => load.status === 'pending'
+    );
+
+    console.log(
+      `🤖 Marketplace Integration: Evaluating ${activeExternalLoads.length} external load opportunities...`
+    );
+
+    for (const load of activeExternalLoads) {
+      const evaluation = await this.evaluateExternalLoad(
+        load,
+        availableDrivers
+      );
+
+      if (evaluation.shouldBid) {
+        this.activeBids.set(load.id, evaluation);
+        this.emit('externalBidRecommendation', evaluation);
+
+        // Auto-submit if confidence is high enough
+        if (evaluation.confidence >= this.biddingStrategy.autoSubmitThreshold) {
+          await this.submitExternalBid(evaluation);
+        }
+
+        this.activityFeed.push(
+          `Marketplace Opportunity: ${load.id} evaluated - ${evaluation.shouldBid ? 'BID RECOMMENDED' : 'PASSED'} (${evaluation.confidence}% confidence)`
+        );
+      }
+    }
+  }
+
+  // MARKETPLACE: Evaluate External Load for Bidding
+  private async evaluateExternalLoad(
+    load: Load,
+    availableDrivers: Driver[]
+  ): Promise<any> {
+    const matchedDrivers = availableDrivers.filter(
+      (driver) =>
+        driver.equipmentType === load.equipmentType &&
+        driver.status === 'online'
+    );
+
+    let shouldBid = false;
+    let confidence = 0;
+    let recommendedBid = 0;
+    const riskFactors: string[] = [];
+    let reasoning = '';
+
+    // 1. Equipment Availability Check
+    if (matchedDrivers.length === 0) {
+      return {
+        loadId: load.id,
+        shouldBid: false,
+        confidence: 0,
+        recommendedBid: 0,
+        matchedDrivers: [],
+        reasoning: 'No available drivers with required equipment',
+        riskFactors: ['No equipment match'],
+        profitMargin: 0,
+      };
+    }
+
+    confidence += 25; // Base confidence for having equipment
+
+    // 2. Geographic Analysis
+    const bestDriver = matchedDrivers[0];
+    const distanceToPickup = this.calculateDistance(
+      bestDriver.location,
+      load.origin
+    );
+
+    if (distanceToPickup <= this.biddingStrategy.geographicFocus.maxDistance) {
+      confidence += 20;
+      reasoning += `Excellent geographic match (${distanceToPickup.toFixed(0)} miles). `;
+    } else {
+      confidence -= 10;
+      riskFactors.push(`Long deadhead (${distanceToPickup.toFixed(0)} miles)`);
+    }
+
+    // 3. Rate Analysis & Profit Calculation
+    const estimatedCosts = this.calculateOperatingCosts(load, distanceToPickup);
+    const targetRate =
+      estimatedCosts * (1 + this.biddingStrategy.profitMarginTarget / 100);
+
+    if (load.rate >= targetRate) {
+      confidence += 25;
+      shouldBid = true;
+      recommendedBid = Math.min(targetRate * 1.05, load.rate);
+      reasoning += `Profitable opportunity (${(((load.rate - estimatedCosts) / estimatedCosts) * 100).toFixed(1)}% margin). `;
+    } else {
+      confidence -= 15;
+      riskFactors.push('Insufficient rate for profitable operation');
+    }
+
+    // 4. Urgency & Priority Scoring
+    if (load.urgency === 'high') {
+      confidence += 15;
+      reasoning += 'High priority load - premium opportunity. ';
+    }
+
+    // 5. Cross-Docking & Consolidation Opportunities
+    if (
+      load.origin.address.includes('Cross-Dock') ||
+      load.origin.address.includes('Distribution')
+    ) {
+      confidence += 10;
+      reasoning += 'Cross-docking consolidation opportunity. ';
+    }
+
+    // Final decision logic
+    shouldBid = confidence >= 60 && recommendedBid > 0;
+
+    const profitMargin =
+      recommendedBid > 0
+        ? ((recommendedBid - estimatedCosts) / estimatedCosts) * 100
+        : 0;
+
+    return {
+      loadId: load.id,
+      shouldBid,
+      confidence: Math.max(0, Math.min(100, confidence)),
+      recommendedBid,
+      matchedDrivers: matchedDrivers.map((driver) => ({
+        driverId: driver.id,
+        driverName: driver.name,
+        equipmentType: driver.equipmentType,
+        distance: this.calculateDistance(driver.location, load.origin),
+        availability: 'available',
+        hoursRemaining: driver.hoursRemaining,
+      })),
+      reasoning: reasoning.trim(),
+      riskFactors,
+      profitMargin,
+      competitiveAdvantage: shouldBid
+        ? 'Intelligent cross-docking with AI optimization'
+        : undefined,
+    };
+  }
+
+  // MARKETPLACE: Calculate Operating Costs
+  private calculateOperatingCosts(load: Load, deadheadMiles: number): number {
+    const totalMiles =
+      this.calculateDistance(load.origin, load.destination) + deadheadMiles;
+    const fuelCost = (totalMiles / 25) * 4.2; // 25 mpg, $4.20/gallon diesel
+    const driverPay = (totalMiles / 50) * 25; // $25/hour at 50mph average
+    const vehicleCosts = totalMiles * 0.35; // $0.35/mile for wear, insurance, etc.
+    const overhead = (fuelCost + driverPay + vehicleCosts) * 0.15; // 15% overhead
+
+    return fuelCost + driverPay + vehicleCosts + overhead;
+  }
+
+  // MARKETPLACE: Submit External Bid
+  private async submitExternalBid(evaluation: any): Promise<boolean> {
+    try {
+      console.log(
+        `📤 Marketplace Integration: Auto-submitting bid for ${evaluation.loadId} at $${evaluation.recommendedBid}`
+      );
+
+      this.emit('externalBidSubmitted', {
+        loadId: evaluation.loadId,
+        bidAmount: evaluation.recommendedBid,
+        confidence: evaluation.confidence,
+        submittedAt: new Date(),
+        status: 'submitted',
+        source: 'marketplace-network',
+        loadType: 'marketplace', // Use 5% dispatch fee
+      });
+
+      // Simulate bid acceptance/rejection after a delay
+      setTimeout(
+        () => {
+          const isAccepted = Math.random() > 0.25; // 75% acceptance rate for marketplace loads
+          this.emit('externalBidResult', {
+            loadId: evaluation.loadId,
+            result: isAccepted ? 'accepted' : 'rejected',
+            finalRate: isAccepted ? evaluation.recommendedBid : null,
+            source: 'marketplace-network',
+          });
+
+          if (isAccepted) {
+            // Move external load to our internal system
+            const externalLoad = this.externalLoads.find(
+              (load) => load.id === evaluation.loadId
+            );
+            if (externalLoad) {
+              externalLoad.status = 'accepted';
+              externalLoad.loadType = 'marketplace'; // Set for 5% dispatch fee
+              this.loads.push(externalLoad); // Add to our system
+              this.activityFeed.push(
+                `✅ Marketplace load ${evaluation.loadId} WON and integrated into Go With the Flow system!`
+              );
+            }
+          }
+        },
+        Math.random() * 60000 + 30000
+      ); // 30-90 seconds
+
+      return true;
+    } catch (error) {
+      console.error(
+        `❌ Failed to submit marketplace bid for ${evaluation.loadId}:`,
+        error
+      );
+      return false;
+    }
+  }
+
+  // MARKETPLACE: Scrape New External Loads (simulates web scraping)
+  private async scrapeExternalLoads() {
+    try {
+      console.log(
+        '🕷️ Marketplace Integration: Scraping new external load opportunities...'
+      );
+
+      // Simulate new load from external sources
+      const newLoad: Load = {
+        id: `MKT-${Date.now()}`,
+        origin: {
+          lat: 32.7767 + (Math.random() - 0.5) * 0.5,
+          lng: -96.797 + (Math.random() - 0.5) * 0.5,
+          address: 'Dynamic Cross-Dock Location, TX',
+        },
+        destination: {
+          lat: 29.7604 + (Math.random() - 0.5) * 0.5,
+          lng: -95.3698 + (Math.random() - 0.5) * 0.5,
+          address: 'Dynamic Distribution Hub, TX',
+        },
+        pickupTime: new Date(Date.now() + Math.random() * 24 * 3600 * 1000),
+        deliveryTime: new Date(
+          Date.now() + (Math.random() * 24 + 24) * 3600 * 1000
+        ),
+        weight: Math.floor(Math.random() * 3000) + 500,
+        dimensions: { length: 12, width: 6, height: 6 },
+        equipmentType:
+          this.biddingStrategy.equipmentPreferences[
+            Math.floor(
+              Math.random() * this.biddingStrategy.equipmentPreferences.length
+            )
+          ],
+        rate: Math.floor(Math.random() * 400) + 200,
+        status: 'pending',
+        urgency: ['medium', 'high'][Math.floor(Math.random() * 2)] as any,
+      };
+
+      this.externalLoads.push(newLoad);
+      this.emit('newExternalLoadScraped', newLoad);
+
+      this.activityFeed.push(
+        `🆕 New marketplace opportunity scraped: ${newLoad.id} (${newLoad.equipmentType})`
+      );
+    } catch (error) {
+      console.error('❌ Marketplace load scraping failed:', error);
+    }
+  }
+
   // Utility to calculate distance (Haversine formula - simplified for demo)
   private calculateDistance(
     loc1: { lat: number; lng: number },
@@ -449,7 +814,7 @@ class GoWithTheFlowService extends EventEmitter {
     return false;
   }
 
-  acceptLoad(driverId: string, loadId: string): boolean {
+  async acceptLoad(driverId: string, loadId: string): Promise<boolean> {
     const driver = this.drivers.find((d) => d.id === driverId);
     const load = this.loads.find((l) => l.id === loadId);
 
@@ -466,6 +831,58 @@ class GoWithTheFlowService extends EventEmitter {
       this.activityFeed.push(`${driver.name} accepted load ${load.id}.`);
       this.emit('loadAccepted', { driver, load });
       console.log(`${driver.name} accepted load ${load.id}`);
+
+      // 🗓️ SCHEDULE INTEGRATION: Create schedule entry for accepted load
+      try {
+        const scheduleResult = await this.schedulingService.createSchedule({
+          title: `Load ${load.id} - ${load.origin.address} → ${load.destination.address}`,
+          scheduleType: 'Delivery',
+          assignedDriverId: driverId,
+          driverName: driver.name,
+          assignedVehicleId: `vehicle-${driverId}`, // Assuming driver has associated vehicle
+          origin: load.origin.address,
+          destination: load.destination.address,
+          startDate: load.pickupTime.toISOString().split('T')[0],
+          endDate: load.deliveryTime.toISOString().split('T')[0],
+          startTime: load.pickupTime.toTimeString().slice(0, 5),
+          endTime: load.deliveryTime.toTimeString().slice(0, 5),
+          priority:
+            load.urgency === 'high'
+              ? 'High'
+              : load.urgency === 'medium'
+                ? 'Medium'
+                : 'Low',
+          status: 'Scheduled',
+          description: `Equipment: ${load.equipmentType} | Weight: ${load.weight} lbs | Rate: $${load.rate}\nAccepted via Go With the Flow - Real-time matching system\nPickup: ${load.origin.address}\nDelivery: ${load.destination.address}\nRate: $${load.rate}`,
+        });
+
+        if (scheduleResult.success) {
+          console.log(
+            `✅ Load ${load.id} added to driver ${driver.name}'s schedule`
+          );
+          this.activityFeed.push(
+            `📅 Load ${load.id} added to ${driver.name}'s schedule`
+          );
+          this.emit('scheduleCreated', {
+            driver,
+            load,
+            schedule: scheduleResult.schedule,
+          });
+        } else {
+          console.warn(
+            `⚠️ Failed to add load ${load.id} to schedule:`,
+            scheduleResult.conflicts
+          );
+          this.activityFeed.push(
+            `⚠️ Load ${load.id} accepted but schedule conflict detected`
+          );
+        }
+      } catch (error) {
+        console.error(`❌ Error creating schedule for load ${load.id}:`, error);
+        this.activityFeed.push(
+          `❌ Load ${load.id} accepted but failed to create schedule entry`
+        );
+      }
 
       // Remove load from matching queue
       this.matchingQueue = this.matchingQueue.filter(
@@ -840,6 +1257,240 @@ class GoWithTheFlowService extends EventEmitter {
     );
     this.activityFeed.push(`${raterId} rated ${ratedId} ${rating} stars.`);
     return true;
+  }
+
+  // === MARKETPLACE PUBLIC API METHODS ===
+
+  // Get all external load opportunities
+  getExternalLoadOpportunities(): Load[] {
+    return this.externalLoads.filter((load) => load.status === 'pending');
+  }
+
+  // Get active external bids
+  getActiveExternalBids(): any[] {
+    return Array.from(this.activeBids.values());
+  }
+
+  // Get marketplace bidding strategy
+  getBiddingStrategy() {
+    return { ...this.biddingStrategy };
+  }
+
+  // Update bidding strategy
+  updateBiddingStrategy(newStrategy: Partial<typeof this.biddingStrategy>) {
+    this.biddingStrategy = { ...this.biddingStrategy, ...newStrategy };
+    this.emit('biddingStrategyUpdated', this.biddingStrategy);
+    this.activityFeed.push('Marketplace bidding strategy updated.');
+  }
+
+  // Manual bid submission for external loads
+  async submitManualBid(loadId: string, bidAmount: number): Promise<boolean> {
+    const externalLoad = this.externalLoads.find((load) => load.id === loadId);
+    if (!externalLoad) {
+      console.error(`❌ External load ${loadId} not found`);
+      return false;
+    }
+
+    const availableDrivers = this.getAvailableDrivers();
+    const evaluation = await this.evaluateExternalLoad(
+      externalLoad,
+      availableDrivers
+    );
+    evaluation.recommendedBid = bidAmount;
+
+    return await this.submitExternalBid(evaluation);
+  }
+
+  // Get marketplace performance metrics
+  getMarketplaceMetrics(): {
+    totalExternalLoadsEvaluated: number;
+    externalBidsSubmitted: number;
+    bidAcceptanceRate: number;
+    averageProfitMargin: number;
+    crossDockingOpportunities: number;
+    rightSizedAssetUtilization: number;
+  } {
+    const crossDockLoads = this.externalLoads.filter(
+      (load) =>
+        load.origin.address.includes('Cross-Dock') ||
+        load.destination.address.includes('Cross-Dock')
+    ).length;
+
+    const rightSizedAssets = this.drivers.filter(
+      (driver) =>
+        ['Cargo Van', 'Sprinter Van', 'Box Truck (24ft)', 'Hot Shot'].includes(
+          driver.equipmentType
+        ) && driver.status === 'online'
+    ).length;
+
+    return {
+      totalExternalLoadsEvaluated: this.externalLoads.length,
+      externalBidsSubmitted: this.activeBids.size,
+      bidAcceptanceRate: 0.75, // 75% acceptance rate for marketplace loads
+      averageProfitMargin: 18.2, // Average 18.2% profit margin
+      crossDockingOpportunities: crossDockLoads,
+      rightSizedAssetUtilization: rightSizedAssets,
+    };
+  }
+
+  // Get consolidated activity feed with marketplace integration
+  getMarketplaceIntegratedActivity(): string[] {
+    return [...this.activityFeed]
+      .reverse()
+      .slice(0, 20) // Last 20 activities including marketplace events
+      .map((activity) => {
+        if (
+          activity.includes('Marketplace') ||
+          activity.includes('marketplace')
+        ) {
+          return `🎯 ${activity}`;
+        }
+        return activity;
+      });
+  }
+
+  // Force evaluation of all external loads (for testing/demo)
+  async forceExternalLoadEvaluation(): Promise<void> {
+    console.log('🔄 Force evaluating all marketplace external loads...');
+    await this.processExternalLoadOpportunities();
+  }
+
+  // Get equipment utilization breakdown (marketplace analytics)
+  getEquipmentUtilizationBreakdown(): {
+    traditional: { online: number; total: number; utilization: string };
+    rightSized: { online: number; total: number; utilization: string };
+    specialized: { online: number; total: number; utilization: string };
+    crossDocking: { activeOpportunities: number; totalProcessed: number };
+  } {
+    const traditional = this.drivers.filter((d) =>
+      ['Dry Van', 'Reefer', 'Flatbed'].includes(d.equipmentType)
+    );
+    const rightSized = this.drivers.filter((d) =>
+      [
+        'Cargo Van',
+        'Sprinter Van',
+        'Box Truck (16ft)',
+        'Box Truck (20ft)',
+        'Box Truck (24ft)',
+        'Box Truck (26ft)',
+        'Step Van',
+      ].includes(d.equipmentType)
+    );
+    const specialized = this.drivers.filter((d) =>
+      ['Hot Shot', 'Straight Truck'].includes(d.equipmentType)
+    );
+
+    const crossDockLoads = this.externalLoads.filter(
+      (load) =>
+        load.origin.address.includes('Cross-Dock') ||
+        load.destination.address.includes('Cross-Dock') ||
+        load.origin.address.includes('Distribution') ||
+        load.destination.address.includes('Distribution')
+    );
+
+    return {
+      traditional: {
+        online: traditional.filter((d) => d.status === 'online').length,
+        total: traditional.length,
+        utilization: `${Math.round((traditional.filter((d) => d.status !== 'offline').length / traditional.length) * 100)}%`,
+      },
+      rightSized: {
+        online: rightSized.filter((d) => d.status === 'online').length,
+        total: rightSized.length,
+        utilization: `${Math.round((rightSized.filter((d) => d.status !== 'offline').length / rightSized.length) * 100)}%`,
+      },
+      specialized: {
+        online: specialized.filter((d) => d.status === 'online').length,
+        total: specialized.length,
+        utilization: `${Math.round((specialized.filter((d) => d.status !== 'offline').length / specialized.length) * 100)}%`,
+      },
+      crossDocking: {
+        activeOpportunities: crossDockLoads.filter(
+          (load) => load.status === 'pending'
+        ).length,
+        totalProcessed: crossDockLoads.length,
+      },
+    };
+  }
+
+  // === CORE DATA ACCESS METHODS FOR DISPATCH CENTRAL ===
+
+  // Get all loads (including won marketplace loads)
+  getAllLoads(): Load[] {
+    return [...this.loads];
+  }
+
+  // Get all drivers
+  getAllDrivers(): Driver[] {
+    return [...this.drivers];
+  }
+
+  // Get activity feed
+  getActivityFeed(): string[] {
+    return [...this.activityFeed].reverse().slice(0, 30);
+  }
+
+  // Get won marketplace loads (for dispatch tracking)
+  getWonMarketplaceLoads(): Load[] {
+    return this.loads.filter(
+      (load) =>
+        load.loadType === 'marketplace' &&
+        (load.status === 'accepted' ||
+          load.status === 'in-transit' ||
+          load.status === 'offered')
+    );
+  }
+
+  // Get marketplace revenue
+  getMarketplaceRevenue(): number {
+    const wonMarketplaceLoads = this.getWonMarketplaceLoads();
+    return wonMarketplaceLoads.reduce((total, load) => total + load.rate, 0);
+  }
+
+  // Get active drivers (for dispatcher operations)
+  getActiveDrivers(): Driver[] {
+    return this.drivers.filter((driver) => driver.status !== 'offline');
+  }
+
+  // Get load statistics for dispatch dashboard
+  getLoadStats(): {
+    totalLoads: number;
+    activeLoads: number;
+    completedLoads: number;
+    marketplaceLoads: number;
+    standardLoads: number;
+    pendingLoads: number;
+  } {
+    const marketplaceLoads = this.loads.filter(
+      (load) => load.loadType === 'marketplace'
+    );
+    const standardLoads = this.loads.filter(
+      (load) => load.loadType !== 'marketplace'
+    );
+
+    return {
+      totalLoads: this.loads.length,
+      activeLoads: this.loads.filter((load) =>
+        ['accepted', 'in-transit', 'offered'].includes(load.status)
+      ).length,
+      completedLoads: this.loads.filter((load) => load.status === 'delivered')
+        .length,
+      marketplaceLoads: marketplaceLoads.length,
+      standardLoads: standardLoads.length,
+      pendingLoads: this.loads.filter((load) => load.status === 'pending')
+        .length,
+    };
+  }
+
+  // Get driver response rate for marketplace
+  getDriverResponseRate(): number {
+    const activeBids = this.getActiveExternalBids();
+    if (activeBids.length === 0) return 0;
+
+    const respondedBids = activeBids.filter(
+      (bid) => bid.status !== 'pending'
+    ).length;
+    return Math.round((respondedBids / activeBids.length) * 100);
   }
 }
 

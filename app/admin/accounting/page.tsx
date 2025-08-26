@@ -70,6 +70,7 @@ const TabNavigation = ({
       { key: 'overview', label: 'Dashboard', icon: '📊' },
       { key: 'invoices', label: 'A/R Management', icon: '📋' },
       { key: 'billing', label: 'Billing Operations', icon: '💳' },
+      { key: 'ai-settlement', label: 'AI Settlement', icon: '🤖' },
       { key: 'reports', label: 'Financial Reports', icon: '📈' },
     ].map((tab) => (
       <button
@@ -1175,6 +1176,474 @@ const BillingTab = () => {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+// AI Settlement Tab
+const AISettlementTab = () => {
+  const [selectedSettlementView, setSelectedSettlementView] = useState('dashboard');
+  const [processingInvoices, setProcessingInvoices] = useState<any[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // Mock data for AI settlement automation
+  const settlementData = {
+    todayProcessed: 45,
+    accuracy: 99.2,
+    savedTime: 8.5,
+    discrepanciesFound: 12,
+    autoResolvedDiscrepancies: 8,
+    pendingReview: 4,
+    averageProcessingTime: '12 seconds'
+  };
+
+  const recentInvoices = [
+    {
+      id: 'INV-2025-001',
+      carrier: 'Swift Transportation',
+      amount: 2450.00,
+      status: 'AI Processed',
+      confidence: 98,
+      discrepancies: [],
+      processingTime: '8s'
+    },
+    {
+      id: 'INV-2025-002', 
+      carrier: 'YRC Freight',
+      amount: 1850.00,
+      status: 'Discrepancy Detected',
+      confidence: 76,
+      discrepancies: ['Rate mismatch: $1850 vs $1780 expected'],
+      processingTime: '15s'
+    },
+    {
+      id: 'INV-2025-003',
+      carrier: 'FedEx Freight', 
+      amount: 3200.00,
+      status: 'Auto-Approved',
+      confidence: 95,
+      discrepancies: [],
+      processingTime: '6s'
+    },
+    {
+      id: 'INV-2025-004',
+      carrier: 'J.B. Hunt',
+      amount: 2100.00,
+      status: 'Pending Review',
+      confidence: 82,
+      discrepancies: ['Fuel surcharge variance', 'Detention time dispute'],
+      processingTime: '22s'
+    }
+  ];
+
+  const handleInvoiceUpload = () => {
+    setUploadProgress(0);
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          alert('🤖 AI Invoice Processing Complete!\n\n✅ 3 invoices processed successfully\n📋 2 auto-approved for payment\n⚠️ 1 flagged for review (rate discrepancy)\n⏱️ Average processing time: 9 seconds');
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1
+          style={{
+            fontSize: '28px',
+            fontWeight: 'bold',
+            color: 'white',
+            margin: 0,
+            marginBottom: '8px',
+          }}
+        >
+          🤖 AI-Driven Settlement Automation
+        </h1>
+        <p
+          style={{
+            color: 'rgba(255, 255, 255, 0.7)',
+            fontSize: '16px',
+            margin: 0,
+          }}
+        >
+          Intelligent invoice processing with OCR, discrepancy detection, and automated approvals
+        </p>
+      </div>
+
+      {/* AI Performance Dashboard */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(4, 1fr)', 
+        gap: '20px', 
+        marginBottom: '30px' 
+      }}>
+        {[
+          { label: 'Invoices Processed Today', value: settlementData.todayProcessed, unit: '', color: '#10b981', icon: '📋' },
+          { label: 'AI Accuracy Rate', value: settlementData.accuracy, unit: '%', color: '#06b6d4', icon: '🎯' },
+          { label: 'Processing Time Saved', value: settlementData.savedTime, unit: 'hrs', color: '#8b5cf6', icon: '⏱️' },
+          { label: 'Auto-Resolved Issues', value: settlementData.autoResolvedDiscrepancies, unit: `/${settlementData.discrepanciesFound}`, color: '#f59e0b', icon: '🔧' }
+        ].map((stat, index) => (
+          <div
+            key={index}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '20px',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '24px', marginBottom: '8px' }}>{stat.icon}</div>
+            <div style={{ 
+              color: stat.color, 
+              fontSize: '32px', 
+              fontWeight: 'bold',
+              marginBottom: '4px' 
+            }}>
+              {stat.value}{stat.unit}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.8)', 
+              fontSize: '14px',
+              fontWeight: '500' 
+            }}>
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Content Area */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+        
+        {/* Invoice Processing Interface */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '15px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '25px',
+          }}
+        >
+          <h3 style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }}>
+            📄 AI Invoice Processing Center
+          </h3>
+
+          {/* Upload Interface */}
+          <div style={{ marginBottom: '25px' }}>
+            <div style={{
+              border: '2px dashed rgba(139, 92, 246, 0.5)',
+              borderRadius: '12px',
+              padding: '30px',
+              textAlign: 'center',
+              background: 'rgba(139, 92, 246, 0.1)',
+              marginBottom: '15px'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '15px' }}>📁</div>
+              <p style={{ color: 'white', fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>
+                Drag & Drop Invoices or Click to Upload
+              </p>
+              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginBottom: '20px' }}>
+                Supports PDF, PNG, JPG, TIFF formats • AI processes in real-time
+              </p>
+              
+              {uploadProgress > 0 && (
+                <div style={{ marginBottom: '15px' }}>
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '20px',
+                    height: '6px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{ 
+                      background: '#10b981',
+                      height: '100%',
+                      width: `${uploadProgress}%`,
+                      borderRadius: '20px',
+                      transition: 'width 0.3s ease'
+                    }} />
+                  </div>
+                  <p style={{ color: '#10b981', fontSize: '12px', marginTop: '5px' }}>
+                    🤖 AI Processing: {uploadProgress}% complete
+                  </p>
+                </div>
+              )}
+              
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 30px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+                onClick={handleInvoiceUpload}
+              >
+                🤖 Upload & Process with AI
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button style={{
+                flex: 1,
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                border: 'none',
+                padding: '10px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }} onClick={() => alert('🔍 OCR Analysis:\n\n✅ Text extracted: 98% accuracy\n📊 Data fields identified: 15/15\n🎯 Confidence score: 95%\n⚡ Processing time: 3.2 seconds')}>
+                🔍 OCR Analysis
+              </button>
+              <button style={{
+                flex: 1,
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                color: 'white',
+                border: 'none',
+                padding: '10px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }} onClick={() => alert('🔍 Discrepancy Check:\n\n⚠️ Found 2 potential issues:\n- Rate variance: $50 (+2.1%)\n- Fuel surcharge missing\n\n🤖 AI Recommendation:\n- Auto-approve rate variance (within 5% threshold)\n- Flag fuel surcharge for manual review')}>
+                🔧 Check Discrepancies
+              </button>
+              <button style={{
+                flex: 1,
+                background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                color: 'white',
+                border: 'none',
+                padding: '10px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }} onClick={() => alert('🤖 Batch Processing Started!\n\n📋 Processing 8 pending invoices...\n⏱️ Estimated completion: 2 minutes\n📊 Expected accuracy: 97%+')}>
+                ⚡ Batch Process
+              </button>
+            </div>
+          </div>
+
+          {/* Recent Invoices */}
+          <h4 style={{ color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '15px' }}>
+            📋 Recently Processed Invoices
+          </h4>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {recentInvoices.map((invoice, index) => (
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  padding: '15px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  alert(`Invoice ${invoice.id} Details:\n\n` +
+                        `Carrier: ${invoice.carrier}\n` +
+                        `Amount: $${invoice.amount.toLocaleString()}\n` +
+                        `AI Confidence: ${invoice.confidence}%\n` +
+                        `Processing Time: ${invoice.processingTime}\n\n` +
+                        `Status: ${invoice.status}\n` +
+                        `${invoice.discrepancies.length > 0 ? 
+                          `Issues: ${invoice.discrepancies.join(', ')}` : 
+                          'No issues detected'}\n\n` +
+                        `🤖 AI Analysis: ${invoice.confidence >= 95 ? 
+                          'High confidence - auto-approved' : 
+                          invoice.confidence >= 85 ? 
+                          'Medium confidence - standard review' : 
+                          'Low confidence - manual review required'}`);
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                      {invoice.id} • {invoice.carrier}
+                    </div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                      ${invoice.amount.toLocaleString()} • {invoice.confidence}% confidence • {invoice.processingTime}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ 
+                      background: invoice.status === 'Auto-Approved' ? 'rgba(16, 185, 129, 0.2)' :
+                                 invoice.status === 'AI Processed' ? 'rgba(59, 130, 246, 0.2)' :
+                                 invoice.status === 'Discrepancy Detected' ? 'rgba(245, 158, 11, 0.2)' :
+                                 'rgba(239, 68, 68, 0.2)',
+                      color: invoice.status === 'Auto-Approved' ? '#10b981' :
+                             invoice.status === 'AI Processed' ? '#3b82f6' :
+                             invoice.status === 'Discrepancy Detected' ? '#f59e0b' :
+                             '#ef4444',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '600'
+                    }}>
+                      {invoice.status}
+                    </div>
+                  </div>
+                </div>
+                {invoice.discrepancies.length > 0 && (
+                  <div style={{ marginTop: '8px', fontSize: '11px', color: '#f59e0b' }}>
+                    ⚠️ {invoice.discrepancies.join(' • ')}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* AI Insights Panel */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '15px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '25px',
+          }}
+        >
+          <h3 style={{ color: 'white', fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }}>
+            🧠 AI Processing Insights
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Processing Stats */}
+            <div>
+              <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>
+                📊 Today's Performance
+              </h4>
+              {[
+                { metric: 'Average Processing Time', value: '12 seconds', improvement: '-45%' },
+                { metric: 'Accuracy Rate', value: '99.2%', improvement: '+2.1%' },
+                { metric: 'Auto-Resolution Rate', value: '85%', improvement: '+12%' },
+                { metric: 'Manual Review Needed', value: '8.5%', improvement: '-18%' }
+              ].map((stat, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
+                    {stat.metric}
+                  </span>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ color: 'white', fontSize: '12px', fontWeight: '600' }}>
+                      {stat.value}
+                    </span>
+                    <span style={{ 
+                      color: '#10b981', 
+                      fontSize: '10px', 
+                      marginLeft: '5px',
+                      fontWeight: '600'
+                    }}>
+                      {stat.improvement}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Common Issues */}
+            <div>
+              <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>
+                ⚠️ Common Discrepancies
+              </h4>
+              {[
+                { issue: 'Rate Variances', count: 5, trend: 'stable' },
+                { issue: 'Missing Fuel Surcharge', count: 3, trend: 'decreasing' },
+                { issue: 'Detention Time Disputes', count: 2, trend: 'increasing' },
+                { issue: 'Accessorial Charges', count: 2, trend: 'stable' }
+              ].map((issue, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
+                    {issue.issue}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: '#f59e0b', fontSize: '12px', fontWeight: '600' }}>
+                      {issue.count}
+                    </span>
+                    <span style={{ 
+                      color: issue.trend === 'decreasing' ? '#10b981' : 
+                             issue.trend === 'increasing' ? '#ef4444' : '#6b7280',
+                      fontSize: '10px'
+                    }}>
+                      {issue.trend === 'decreasing' ? '↓' : 
+                       issue.trend === 'increasing' ? '↑' : '→'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Actions */}
+            <div>
+              <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>
+                ⚡ Quick Actions
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { label: 'Review Flagged Items', count: 4, color: '#f59e0b' },
+                  { label: 'Approve AI Matches', count: 12, color: '#10b981' },
+                  { label: 'Export Reports', count: null, color: '#06b6d4' },
+                  { label: 'Train AI Model', count: null, color: '#8b5cf6' }
+                ].map((action, index) => (
+                  <button
+                    key={index}
+                    style={{
+                      background: `rgba(${action.color === '#f59e0b' ? '245, 158, 11' : 
+                                          action.color === '#10b981' ? '16, 185, 129' :
+                                          action.color === '#06b6d4' ? '6, 182, 212' :
+                                          '139, 92, 246'}, 0.2)`,
+                      color: action.color,
+                      border: 'none',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%'
+                    }}
+                    onClick={() => {
+                      const messages = {
+                        'Review Flagged Items': '📋 4 invoices flagged for review:\n\n• Rate discrepancies: 2\n• Missing documentation: 1\n• Fuel surcharge disputes: 1\n\nOpen review queue?',
+                        'Approve AI Matches': '✅ 12 invoices ready for approval:\n\nTotal amount: $28,450\nAverage confidence: 96.2%\nEstimated processing time: 2 minutes\n\nApprove all matches?',
+                        'Export Reports': '📊 Settlement Reports Available:\n\n• Daily processing summary\n• AI accuracy metrics\n• Discrepancy analysis\n• Cost savings report\n\nSelect report format?',
+                        'Train AI Model': '🤖 AI Model Training:\n\nCurrent accuracy: 99.2%\nTraining data: 15,847 invoices\nLast update: 2 days ago\n\nStart training with recent data?'
+                      };
+                      alert(messages[action.label as keyof typeof messages] || 'Feature coming soon!');
+                    }}
+                  >
+                    {action.label} {action.count && `(${action.count})`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -2509,6 +2978,7 @@ export default function ModernAccountingPage() {
           <InvoicesTab companyData={companyFinancialData} />
         )}
         {!dataLoading && activeTab === 'billing' && <BillingTab />}
+        {!dataLoading && activeTab === 'ai-settlement' && <AISettlementTab />}
         {!dataLoading && activeTab === 'reports' && <ReportsTab />}
       </div>
     </div>

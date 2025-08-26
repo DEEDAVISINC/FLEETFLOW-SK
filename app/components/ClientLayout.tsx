@@ -2,11 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
 import FleetFlowFooter from './FleetFlowFooter';
 import FlowterButton from './FlowterButton';
 import Navigation from './Navigation';
+import PhoneSystemWidget from './PhoneSystemWidget';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 // ✅ ADD: Platform AI initialization
 import { initializeFleetFlowAI } from '../config/ai-config';
@@ -44,10 +46,32 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     !pathname?.includes('/university') ||
     pathname?.includes('/training/instructor');
 
+  // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
+  const { user } = getCurrentUser();
+  const hasPhoneEligibleRole =
+    user &&
+    (user.role === 'admin' ||
+      user.role === 'manager' ||
+      user.role === 'dispatcher' ||
+      checkPermission('hasDispatchAccess'));
+
+  // Check if user has phone dialer enabled (from user profile settings)
+  const phoneDialerEnabled =
+    typeof window !== 'undefined'
+      ? localStorage.getItem(`fleetflow-phone-dialer-${user?.id}`) !==
+        'disabled'
+      : true; // Default to enabled on server-side
+  const shouldShowPhoneWidget = hasPhoneEligibleRole && phoneDialerEnabled;
+
   // Debug logging
   console.log('🔍 ClientLayout Debug:', {
     pathname,
     shouldShowFlowter,
+    shouldShowPhoneWidget,
+    hasPhoneEligibleRole,
+    phoneDialerEnabled,
+    userRole: user?.role,
+    userId: user?.id,
     isUniversity: pathname?.includes('/university'),
     isInstructor: pathname?.includes('/training/instructor'),
   });
@@ -75,6 +99,14 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
             <>
               {console.log('🎯 Rendering Flowter AI Button')}
               <FlowterButton onOpen={handleFlowterOpen} />
+            </>
+          )}
+
+          {/* Phone System Widget - appears for dispatch/admin/manager roles */}
+          {shouldShowPhoneWidget && (
+            <>
+              {console.log('📞 Rendering Phone System Widget')}
+              <PhoneSystemWidget position='bottom-left' />
             </>
           )}
 

@@ -2,11 +2,9 @@
 
 import {
   ArcElement,
-  Bar,
   BarElement,
   CategoryScale,
   Chart as ChartJS,
-  Doughnut,
   Legend,
   LineElement,
   LinearScale,
@@ -14,7 +12,9 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+
 import { useEffect, useState } from 'react';
+import { Bar, Doughnut } from 'react-chartjs-2';
 import {
   CostSavingsAnalysis,
   DriverEfficiencyMetrics,

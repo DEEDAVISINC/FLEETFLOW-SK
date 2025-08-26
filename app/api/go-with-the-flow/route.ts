@@ -78,6 +78,22 @@ export async function GET(request: NextRequest) {
           earnings,
         });
 
+      case 'marketplace-data':
+        const externalLoads =
+          goWithTheFlowService.getExternalLoadOpportunities();
+        const activeBids = goWithTheFlowService.getActiveExternalBids();
+        const marketplaceMetrics = goWithTheFlowService.getMarketplaceMetrics();
+        const recentActivity =
+          goWithTheFlowService.getMarketplaceIntegratedActivity();
+
+        return NextResponse.json({
+          success: true,
+          externalLoads,
+          activeBids,
+          metrics: marketplaceMetrics,
+          recentActivity,
+        });
+
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
@@ -136,11 +152,14 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
-        const acceptSuccess = goWithTheFlowService.acceptLoad(driverId, loadId);
+        const acceptSuccess = await goWithTheFlowService.acceptLoad(
+          driverId,
+          loadId
+        );
         return NextResponse.json({
           success: acceptSuccess,
           message: acceptSuccess
-            ? `Load ${loadId} accepted successfully`
+            ? `Load ${loadId} accepted successfully and added to schedule`
             : `Failed to accept load ${loadId}. It may have expired.`,
         });
 

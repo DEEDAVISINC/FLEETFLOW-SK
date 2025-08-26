@@ -279,7 +279,7 @@ export default function TestWeightCompliance() {
               >
                 {isRunning ? (
                   <div className='flex items-center justify-center space-x-2'>
-                    <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
+                    <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white' />
                     <span>Running Tests...</span>
                   </div>
                 ) : (
@@ -413,5 +413,3 @@ export default function TestWeightCompliance() {
     </div>
   );
 }
-
-

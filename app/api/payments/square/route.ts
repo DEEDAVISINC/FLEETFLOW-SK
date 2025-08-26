@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import SquareService from '../../../services/SquareService';
-
-const squareService = new SquareService();
+import { squareService } from '../../../services/SquareService';
 
 export async function POST(request: NextRequest) {
   try {

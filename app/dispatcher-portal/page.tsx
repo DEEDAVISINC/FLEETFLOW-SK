@@ -252,7 +252,7 @@ const LoadBoardPortalSection = () => {
             margin: 0,
           }}
         >
-                           🌊 The Flow Hub
+          🌊 The Flow Hub
         </h2>
         <div
           style={{
@@ -418,7 +418,7 @@ const LoadBoardPortalSection = () => {
                 target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
               }}
             >
-                                   🌊 Open The Flow Hub
+              🌊 Open The Flow Hub
             </Link>
 
             <div
@@ -428,7 +428,7 @@ const LoadBoardPortalSection = () => {
                 color: 'rgba(255, 255, 255, 0.6)',
               }}
             >
-                             Access all your drivers' load board accounts through The Flow Hub
+              Access all your drivers' load board accounts through The Flow Hub
             </div>
           </div>
 

@@ -14,7 +14,10 @@ export async function POST(request: NextRequest) {
       case 'process_inquiry':
         // Manually process a load inquiry email
         const inquiryResult =
-          await loadBoardEmailIntelligence.processLoadInquiryEmail(data.email);
+          await loadBoardEmailIntelligence.processLoadInquiryEmail(
+            data.email,
+            'default'
+          );
         return NextResponse.json({
           success: true,
           result: inquiryResult,
@@ -44,7 +47,10 @@ export async function POST(request: NextRequest) {
         };
 
         const testResult =
-          await loadBoardEmailIntelligence.processLoadInquiryEmail(testEmail);
+          await loadBoardEmailIntelligence.processLoadInquiryEmail(
+            testEmail,
+            'test'
+          );
         return NextResponse.json({
           success: true,
           result: testResult,
@@ -173,7 +179,3 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
-
-
-
-

@@ -2694,20 +2694,20 @@ export default function UserManagement() {
     const availableModules = workflowService.getAvailableModules();
     const assignments: TrainingAssignment[] = moduleIds
       .map((moduleId, index) => {
-        const module = availableModules.find((m) => m.id === moduleId);
-        if (!module) return null;
+        const trainingModule = availableModules.find((m) => m.id === moduleId);
+        if (!trainingModule) return null;
 
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 30 * (index + 1));
 
         return {
-          moduleId: module.id,
-          moduleName: module.name,
+          moduleId: trainingModule.id,
+          moduleName: trainingModule.name,
           assignedDate: new Date().toISOString().split('T')[0],
           dueDate: dueDate.toISOString().split('T')[0],
           priority: index === 0 ? 'Critical' : index === 1 ? 'High' : 'Medium',
           assignedBy: 'ADMIN_MANUAL_ASSIGN',
-          instructor: module.instructor,
+          instructor: trainingModule.instructor,
           status: 'assigned',
         } as TrainingAssignment;
       })

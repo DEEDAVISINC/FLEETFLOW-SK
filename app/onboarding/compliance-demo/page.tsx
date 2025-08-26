@@ -730,7 +730,7 @@ export default function OnboardingComplianceDemo() {
                         ? '#3b82f6'
                         : 'rgba(209, 213, 219, 0.4)',
                   }}
-                ></div>
+                />
               )}
               {stepNumber > 1 && (
                 <div
@@ -745,7 +745,7 @@ export default function OnboardingComplianceDemo() {
                         ? '#3b82f6'
                         : 'rgba(209, 213, 219, 0.4)',
                   }}
-                ></div>
+                />
               )}
             </div>
           ))}

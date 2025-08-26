@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { quizGenerator } from '../utils/quizGenerator';
 import {
-    getUserTrainingAccess,
-    hasModuleAccess,
+  getUserTrainingAccess,
+  hasModuleAccess,
 } from '../utils/trainingAccess';
 import { progressManager } from '../utils/trainingProgress';
 
@@ -68,8 +68,11 @@ export default function TrainingPage() {
 
     // Load progress for allowed modules only
     const allowedModules = trainingAccess.allowedModules;
-    allowedModules.forEach(moduleId => {
-      const progress = progressManager.getModuleProgress(user?.id || 'guest', moduleId);
+    allowedModules.forEach((moduleId) => {
+      const progress = progressManager.getModuleProgress(
+        user?.id || 'guest',
+        moduleId
+      );
       if (!progress) {
         progressManager.updateModuleProgress(user?.id || 'guest', moduleId, {
           completed: false,
@@ -263,6 +266,24 @@ export default function TrainingPage() {
     },
   ];
 
+  // Component initialization useEffect - moved here to fix React Hook violation
+  useEffect(() => {
+    const progress: { [key: string]: number } = {};
+
+    trainingAccess.allowedModules.forEach((moduleId) => {
+      progress[moduleId] = progressManager.getModuleCompletionPercentage(
+        moduleId,
+        user?.id
+      );
+    });
+
+    setModuleProgress(progress);
+    setCertificates(progressManager.getCertificates(user?.id));
+
+    // Load available quiz modules from dynamic generator
+    setAvailableModules(quizGenerator.getAvailableModules());
+  }, [user, trainingAccess]);
+
   // Check if user has access to training
   if (!trainingAccess.canAccessTraining) {
     return (
@@ -323,24 +344,6 @@ export default function TrainingPage() {
       </div>
     );
   }
-
-  // Component render logic starts here
-  if (!trainingAccess.hasAccess) {
-    const progress: { [key: string]: number } = {};
-
-    trainingAccess.allowedModules.forEach((moduleId) => {
-      progress[moduleId] = progressManager.getModuleCompletionPercentage(
-        moduleId,
-        user?.id
-      );
-    });
-
-    setModuleProgress(progress);
-    setCertificates(progressManager.getCertificates(user?.id));
-
-    // Load available quiz modules from dynamic generator
-    setAvailableModules(quizGenerator.getAvailableModules());
-  }, [user, trainingAccess]);
 
   const handleCertificationEarned = (certificate: any) => {
     progressManager.awardCertificate(certificate, user?.id);

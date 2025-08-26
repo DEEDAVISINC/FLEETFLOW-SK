@@ -1467,3 +1467,49 @@ export const getTrainingAccess = (userRole: UserRole): TrainingAccess => {
       };
   }
 };
+
+// Mock functions for dispatcher assignment functionality
+export const getBrokersWithoutDispatcher = (): User[] => {
+  return [
+    {
+      id: 'BRK-001',
+      name: 'Michael Brown',
+      role: 'broker',
+      email: 'michael.brown@fleetflow.com',
+      specialization: 'Food Grade Transportation',
+    },
+    {
+      id: 'BRK-002',
+      name: 'Sarah Wilson',
+      role: 'broker',
+      email: 'sarah.wilson@fleetflow.com',
+      specialization: 'Automotive Parts',
+    },
+  ];
+};
+
+export const getBrokersByDispatcher = (dispatcherId: string): User[] => {
+  // Mock data showing brokers assigned to specific dispatchers
+  const mockAssignments: { [key: string]: User[] } = {
+    'DSP-001': [
+      {
+        id: 'BRK-003',
+        name: 'John Martinez',
+        role: 'broker',
+        email: 'john.martinez@fleetflow.com',
+        specialization: 'Heavy Equipment',
+      },
+    ],
+  };
+
+  return mockAssignments[dispatcherId] || [];
+};
+
+export const assignDispatcherToBroker = (
+  brokerId: string,
+  dispatcherId: string
+): boolean => {
+  // Mock assignment logic - in real app this would update database
+  console.log(`Assigning dispatcher ${dispatcherId} to broker ${brokerId}`);
+  return true;
+};

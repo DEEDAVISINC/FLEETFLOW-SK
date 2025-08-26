@@ -15,11 +15,11 @@ export default function AIHubPage() {
   );
 
   // Strategic Acquisition Pipeline state
-  const [acquisitionData, setAcquisitionData] = useState(null);
+  const [acquisitionData, setAcquisitionData] = useState<any>(null);
   const [acquisitionLoading, setAcquisitionLoading] = useState(true);
 
   // Shipper Discovery state
-  const [shipperData, setShipperData] = useState(null);
+  const [shipperData, setShipperData] = useState<any>(null);
   const [shipperLoading, setShipperLoading] = useState(true);
 
   // CRM Lead Manager state
@@ -921,9 +921,7 @@ export default function AIHubPage() {
                             fontSize: '20px',
                             fontWeight: 'bold',
                             color: 'white',
-                            '::placeholder': {
-                              color: 'rgba(255, 255, 255, 0.7)',
-                            },
+
                             marginBottom: '4px',
                             textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                           }}
@@ -970,9 +968,7 @@ export default function AIHubPage() {
                           transition: 'all 0.3s ease',
                           background: 'rgba(255, 255, 255, 0.1)',
                           color: 'white',
-                          '::placeholder': {
-                            color: 'rgba(255, 255, 255, 0.7)',
-                          },
+
                           backdropFilter: 'blur(5px)',
                         }}
                       />
@@ -1041,13 +1037,16 @@ export default function AIHubPage() {
                             boxShadow: `0 0 10px ${tab.color}20`,
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = `${tab.color}20`;
-                            e.target.style.boxShadow = `0 0 15px ${tab.color}40`;
+                            (e.target as HTMLElement).style.background =
+                              `${tab.color}20`;
+                            (e.target as HTMLElement).style.boxShadow =
+                              `0 0 15px ${tab.color}40`;
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background =
+                            (e.target as HTMLElement).style.background =
                               'rgba(255, 255, 255, 0.1)';
-                            e.target.style.boxShadow = `0 0 10px ${tab.color}20`;
+                            (e.target as HTMLElement).style.boxShadow =
+                              `0 0 10px ${tab.color}20`;
                           }}
                         >
                           {tab.icon} {tab.label}
@@ -1079,9 +1078,7 @@ export default function AIHubPage() {
                       }}
                     >
                       📊 Real-Time Acquisition Dashboard
-                      <Badge
-                        style={{ background: '#22c55e', marginLeft: '8px' }}
-                      >
+                      <Badge className='ml-2 bg-green-500 text-white'>
                         LIVE
                       </Badge>
                     </h3>
@@ -1112,7 +1109,13 @@ export default function AIHubPage() {
                         >
                           Recent Outreach
                         </h4>
-                        <div style={{ space: '12px' }}>
+                        <div
+                          style={{
+                            gap: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
                           <div
                             style={{
                               background: 'rgba(16, 185, 129, 0.1)',
@@ -1207,7 +1210,13 @@ export default function AIHubPage() {
                         >
                           Active Demos
                         </h4>
-                        <div style={{ space: '12px' }}>
+                        <div
+                          style={{
+                            gap: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
                           <div
                             style={{
                               background: 'rgba(139, 92, 246, 0.1)',
@@ -1336,7 +1345,7 @@ export default function AIHubPage() {
                         label: 'Platinum Leads',
                         value:
                           shipperData?.data?.shipperLeads?.filter(
-                            (lead) => lead.priority === 'Platinum'
+                            (lead: any) => lead.priority === 'Platinum'
                           )?.length || 8,
                         color: '#f59e0b',
                         icon: '⭐',
@@ -1346,7 +1355,7 @@ export default function AIHubPage() {
                         label: 'Gold Leads',
                         value:
                           shipperData?.data?.shipperLeads?.filter(
-                            (lead) => lead.priority === 'Gold'
+                            (lead: any) => lead.priority === 'Gold'
                           )?.length || 16,
                         color: '#3b82f6',
                         icon: '🥇',
@@ -1426,9 +1435,7 @@ export default function AIHubPage() {
                             fontSize: '20px',
                             fontWeight: 'bold',
                             color: 'white',
-                            '::placeholder': {
-                              color: 'rgba(255, 255, 255, 0.7)',
-                            },
+
                             marginBottom: '4px',
                             textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                           }}
@@ -1475,9 +1482,7 @@ export default function AIHubPage() {
                           transition: 'all 0.3s ease',
                           background: 'rgba(255, 255, 255, 0.1)',
                           color: 'white',
-                          '::placeholder': {
-                            color: 'rgba(255, 255, 255, 0.7)',
-                          },
+
                           backdropFilter: 'blur(5px)',
                         }}
                       />
@@ -1542,13 +1547,16 @@ export default function AIHubPage() {
                             boxShadow: `0 0 10px ${tab.color}20`,
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = `${tab.color}20`;
-                            e.target.style.boxShadow = `0 0 15px ${tab.color}40`;
+                            (e.target as HTMLElement).style.background =
+                              `${tab.color}20`;
+                            (e.target as HTMLElement).style.boxShadow =
+                              `0 0 15px ${tab.color}40`;
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background =
+                            (e.target as HTMLElement).style.background =
                               'rgba(255, 255, 255, 0.1)';
-                            e.target.style.boxShadow = `0 0 10px ${tab.color}20`;
+                            (e.target as HTMLElement).style.boxShadow =
+                              `0 0 10px ${tab.color}20`;
                           }}
                           onClick={() => {
                             // Reset CRM view when switching to detailed views
@@ -1626,9 +1634,7 @@ export default function AIHubPage() {
                       }}
                     >
                       📊 Real-Time Discovery Dashboard
-                      <Badge
-                        style={{ background: '#22c55e', marginLeft: '8px' }}
-                      >
+                      <Badge className='ml-2 bg-green-500 text-white'>
                         LIVE
                       </Badge>
                     </h3>
@@ -1659,7 +1665,13 @@ export default function AIHubPage() {
                         >
                           Platinum Prospects
                         </h4>
-                        <div style={{ space: '12px' }}>
+                        <div
+                          style={{
+                            gap: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
                           <div
                             style={{
                               background: 'rgba(245, 158, 11, 0.1)',
@@ -1754,7 +1766,13 @@ export default function AIHubPage() {
                         >
                           Gold Prospects
                         </h4>
-                        <div style={{ space: '12px' }}>
+                        <div
+                          style={{
+                            gap: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
                           <div
                             style={{
                               background: 'rgba(59, 130, 246, 0.1)',
@@ -1976,9 +1994,7 @@ export default function AIHubPage() {
                                 fontSize: '20px',
                                 fontWeight: 'bold',
                                 color: 'white',
-                                '::placeholder': {
-                                  color: 'rgba(255, 255, 255, 0.7)',
-                                },
+
                                 marginBottom: '4px',
                                 textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                               }}
@@ -2027,9 +2043,7 @@ export default function AIHubPage() {
                               transition: 'all 0.3s ease',
                               background: 'rgba(255, 255, 255, 0.2)',
                               color: 'white',
-                              '::placeholder': {
-                                color: 'rgba(255, 255, 255, 0.7)',
-                              },
+
                               backdropFilter: 'blur(5px)',
                             }}
                           />
@@ -2102,13 +2116,16 @@ export default function AIHubPage() {
                                 boxShadow: `0 0 10px ${tab.color}20`,
                               }}
                               onMouseEnter={(e) => {
-                                e.target.style.background = `${tab.color}20`;
-                                e.target.style.boxShadow = `0 0 15px ${tab.color}40`;
+                                (e.target as HTMLElement).style.background =
+                                  `${tab.color}20`;
+                                (e.target as HTMLElement).style.boxShadow =
+                                  `0 0 15px ${tab.color}40`;
                               }}
                               onMouseLeave={(e) => {
-                                e.target.style.background =
+                                (e.target as HTMLElement).style.background =
                                   'rgba(255, 255, 255, 0.1)';
-                                e.target.style.boxShadow = `0 0 10px ${tab.color}20`;
+                                (e.target as HTMLElement).style.boxShadow =
+                                  `0 0 10px ${tab.color}20`;
                               }}
                               onClick={
                                 index === 0 ? () => setShowCRM(true) : undefined
@@ -2143,9 +2160,7 @@ export default function AIHubPage() {
                           }}
                         >
                           📊 Real-Time CRM Dashboard
-                          <Badge
-                            style={{ background: '#22c55e', marginLeft: '8px' }}
-                          >
+                          <Badge className='ml-2 bg-green-500 text-white'>
                             LIVE
                           </Badge>
                         </h3>
@@ -2176,7 +2191,13 @@ export default function AIHubPage() {
                             >
                               Hot Prospects
                             </h4>
-                            <div style={{ space: '12px' }}>
+                            <div
+                              style={{
+                                gap: '12px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                              }}
+                            >
                               <div
                                 style={{
                                   background: 'rgba(245, 158, 11, 0.1)',
@@ -2271,7 +2292,13 @@ export default function AIHubPage() {
                             >
                               Active Deals
                             </h4>
-                            <div style={{ space: '12px' }}>
+                            <div
+                              style={{
+                                gap: '12px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                              }}
+                            >
                               <div
                                 style={{
                                   background: 'rgba(59, 130, 246, 0.1)',
@@ -2647,11 +2674,11 @@ export default function AIHubPage() {
                             transition: 'border-color 0.3s ease',
                           }}
                           onFocus={(e) =>
-                            (e.target.style.borderColor =
+                            ((e.target as HTMLElement).style.borderColor =
                               'rgba(139, 92, 246, 0.6)')
                           }
                           onBlur={(e) =>
-                            (e.target.style.borderColor =
+                            ((e.target as HTMLElement).style.borderColor =
                               'rgba(139, 92, 246, 0.3)')
                           }
                         />

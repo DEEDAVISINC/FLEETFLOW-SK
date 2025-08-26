@@ -7,7 +7,7 @@ interface AIAgentSetupProps {
   className?: string;
 }
 
-export default function AIAgentSetup({
+export function AIAgentSetup({
   onComplete,
   className = '',
 }: AIAgentSetupProps) {

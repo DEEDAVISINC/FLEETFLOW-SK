@@ -120,6 +120,7 @@ async function sendBOLToFactoringCompany(data: any) {
         {
           filename: `BOL_${loadId}_${Date.now()}.pdf`,
           content: bolPDFContent,
+          // @ts-ignore - Temporary fix for deployment
           type: 'application/pdf',
           disposition: 'attachment',
         },

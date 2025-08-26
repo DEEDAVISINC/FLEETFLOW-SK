@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import WarehouseQuoteBuilder from '../components/WarehouseQuoteBuilder';
 import { EnhancedCarrierService } from '../services/enhanced-carrier-service';
@@ -26,6 +25,9 @@ export default function GoWithTheFlow() {
   const [selectedServiceType, setSelectedServiceType] = useState('');
   const [carrierFraudAnalysis, setCarrierFraudAnalysis] = useState<any[]>([]);
   const [fraudAnalysisLoading, setFraudAnalysisLoading] = useState(false);
+  const [serviceType, setServiceType] = useState<
+    'direct' | 'marketplace' | null
+  >(null);
 
   const fraudGuardService = new FraudGuardService();
   const carrierService = new EnhancedCarrierService();
@@ -403,93 +405,6 @@ export default function GoWithTheFlow() {
     }
   };
 
-  // Intelligent rate calculation based on AI analysis
-  const calculateIntelligentRate = (
-    loadRequest: any,
-    serviceLevel: string,
-    aiAnalysis: any
-  ) => {
-    const baseRate = loadRequest.weight * 0.15; // Base rate per pound
-    const distance = calculateDistance(
-      loadRequest.origin,
-      loadRequest.destination
-    );
-    const distanceMultiplier = distance * 0.85; // Rate per mile
-
-    let serviceMultiplier = 1.0;
-    switch (serviceLevel) {
-      case 'premium':
-        serviceMultiplier = 1.4;
-        break;
-      case 'standard':
-        serviceMultiplier = 1.0;
-        break;
-      case 'economy':
-        serviceMultiplier = 0.8;
-        break;
-    }
-
-    const urgencyMultiplier =
-      loadRequest.urgency === 'high'
-        ? 1.3
-        : loadRequest.urgency === 'medium'
-          ? 1.1
-          : 1.0;
-    const marketMultiplier = 1.15; // Based on AI analysis of strong demand
-
-    return Math.round(
-      (baseRate + distanceMultiplier) *
-        serviceMultiplier *
-        urgencyMultiplier *
-        marketMultiplier
-    );
-  };
-
-  // Calculate ETA based on service level and route
-  const calculateETA = (loadRequest: any, serviceLevel: string) => {
-    const baseDays = 3; // Base transit time
-    let serviceDays = baseDays;
-
-    switch (serviceLevel) {
-      case 'premium':
-        serviceDays = baseDays - 1;
-        break;
-      case 'standard':
-        serviceDays = baseDays;
-        break;
-      case 'economy':
-        serviceDays = baseDays + 1;
-        break;
-    }
-
-    const pickupDate = new Date(loadRequest.pickupDate);
-    const deliveryDate = new Date(pickupDate);
-    deliveryDate.setDate(deliveryDate.getDate() + serviceDays);
-
-    return deliveryDate.toLocaleDateString();
-  };
-
-  // Calculate distance between two locations (simplified)
-  const calculateDistance = (origin: string, destination: string) => {
-    // Simplified distance calculation - in production, use real geocoding
-    const distances: { [key: string]: number } = {
-      'New York': 0,
-      'Los Angeles': 2800,
-      Chicago: 800,
-      Houston: 1400,
-      Phoenix: 2400,
-      Philadelphia: 100,
-      'San Antonio': 1800,
-      'San Diego': 2800,
-      Dallas: 1400,
-      'San Jose': 2900,
-    };
-
-    const originDistance = distances[origin] || 500;
-    const destDistance = distances[destination] || 500;
-    return Math.abs(originDistance - destDistance);
-  };
-
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -558,22 +473,6 @@ export default function GoWithTheFlow() {
         const aiQuotes = await generateAIQuotes(loadRequest.loadRequest);
         setQuoteProgress(75);
 
-        // Step 3: Send notification to notification hub
-        await sendNotificationToHub({
-          type: 'shipper_request',
-          title: 'New Shipper Request',
-          message: `New freight request from ${loadRequest.loadRequest.origin} to ${loadRequest.loadRequest.destination}`,
-          priority: 'high',
-          metadata: {
-            loadId: result.load.id,
-            origin: loadRequest.loadRequest.origin,
-            destination: loadRequest.loadRequest.destination,
-            equipmentType: loadRequest.loadRequest.equipmentType,
-            weight: loadRequest.loadRequest.weight,
-            urgency: loadRequest.loadRequest.urgency,
-          },
-        });
-
         setQuoteProgress(100);
         setQuoteStatus('completed');
         setGeneratedQuotes(aiQuotes);
@@ -588,28 +487,6 @@ export default function GoWithTheFlow() {
         if (accountResult.success) {
           setAccountCreationResult(accountResult);
           setShowAccountSuccess(true);
-
-          // Update the account with generated quotes
-          const latestShipment =
-            accountResult.account!.shipmentHistory[
-              accountResult.account!.shipmentHistory.length - 1
-            ];
-          await shipperAccountService.updateAccountWithQuotes(
-            accountResult.account!.id,
-            latestShipment.id,
-            aiQuotes.map((quote) => ({
-              id: quote.id,
-              carrierId: quote.carrier.toLowerCase().replace(/\s+/g, '-'),
-              carrierName: quote.carrier,
-              rate: quote.rate,
-              eta: quote.eta,
-              confidence: quote.confidence,
-              features: quote.features,
-              validUntil: new Date(
-                Date.now() + 24 * 60 * 60 * 1000
-              ).toISOString(), // 24 hours
-            }))
-          );
 
           setNotificationMessage(
             `🎉 ${accountResult.message} Load ID: ${result.load.id}. Your Go with the Flow ID: ${accountResult.account!.goWithFlowId}. Portal access sent to ${contactInfo.email}!`
@@ -628,84 +505,6 @@ export default function GoWithTheFlow() {
     } catch (error) {
       console.error('Error submitting request:', error);
       setNotificationMessage('Error submitting request. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const sendNotificationToHub = async (notificationData: any) => {
-    try {
-      await fetch('/api/notifications/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          loadData: {
-            id: notificationData.metadata?.loadId || 'new-request',
-            origin: notificationData.metadata?.origin || 'Unknown',
-            destination: notificationData.metadata?.destination || 'Unknown',
-            rate: 'TBD',
-            pickupDate: new Date().toISOString(),
-            equipment: notificationData.metadata?.equipmentType || 'Unknown',
-            weight: notificationData.metadata?.weight?.toString() || 'Unknown',
-          },
-          recipients: [
-            {
-              id: 'admin-1',
-              name: 'Admin Team',
-              phone: '+1234567890',
-              type: 'admin' as const,
-            },
-          ],
-          notificationType: 'both',
-          messageTemplate: 'new-load',
-          urgency: notificationData.priority === 'high' ? 'high' : 'normal',
-        }),
-      });
-    } catch (error) {
-      console.error('Error sending notification:', error);
-    }
-  };
-
-  const handleTrackingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const formData = new FormData(e.target as HTMLFormElement);
-      const trackingNumber = formData.get('trackingNumber') as string;
-
-      const response = await fetch(
-        '/api/go-with-the-flow?action=track-load&trackingNumber=' +
-          trackingNumber
-      );
-      const result = await response.json();
-
-      if (result.success) {
-        setNotificationMessage(
-          `Load found! Status: ${result.load.status}. ETA: ${result.load.eta}`
-        );
-
-        // Send tracking notification
-        await sendNotificationToHub({
-          type: 'tracking_request',
-          title: 'Load Tracking Request',
-          message: `Tracking request for load: ${trackingNumber}`,
-          priority: 'medium',
-          metadata: {
-            loadId: result.load.id,
-            trackingNumber: trackingNumber,
-          },
-        });
-      } else {
-        setNotificationMessage(
-          'Load not found. Please check your tracking number.'
-        );
-      }
-    } catch (error) {
-      console.error('Error tracking load:', error);
-      setNotificationMessage('Error tracking load. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -739,19 +538,6 @@ export default function GoWithTheFlow() {
         setNotificationMessage(
           "Message sent successfully! We'll respond within 24 hours."
         );
-
-        // Send contact notification
-        await sendNotificationToHub({
-          type: 'contact_request',
-          title: 'New Contact Request',
-          message: `Contact request from ${contactData.name} at ${contactData.company}`,
-          priority: 'medium',
-          metadata: {
-            contactName: contactData.name,
-            contactCompany: contactData.company,
-            contactEmail: contactData.email,
-          },
-        });
       } else {
         setNotificationMessage('Error sending message. Please try again.');
       }
@@ -790,7 +576,7 @@ export default function GoWithTheFlow() {
       company: 'Premium Cargo Services',
       role: 'CEO',
       content:
-        "The best freight platform we've used. Professional, reliable, and the customer support is exceptional.",
+        'The best freight platform we have used. Professional, reliable, and the customer support is exceptional.',
       rating: 5,
       avatar: '👩‍💻',
     },
@@ -1004,6 +790,11 @@ export default function GoWithTheFlow() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {[
               { key: 'overview', label: '📊 Overview', icon: '📊' },
+              {
+                key: 'marketplace-bidding',
+                label: '🎯 Marketplace Bidding',
+                icon: '🎯',
+              },
               { key: 'request', label: '🚀 Request Service', icon: '🚀' },
               { key: 'tracking', label: '📍 Track Shipment', icon: '📍' },
               { key: 'services', label: '🛠️ Our Services', icon: '🛠️' },
@@ -1122,44 +913,9 @@ export default function GoWithTheFlow() {
                       transition: 'all 0.3s ease',
                       boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 8px 24px rgba(16, 185, 129, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow =
-                        '0 4px 16px rgba(16, 185, 129, 0.4)';
-                    }}
                   >
                     🚀 Get Started Today
                   </button>
-                  <Link href='/go-with-the-flow/how-it-works'>
-                    <button
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                        color: 'white',
-                        padding: '16px 32px',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        fontSize: '16px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.2)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.1)';
-                      }}
-                    >
-                      📚 How It Works
-                    </button>
-                  </Link>
                 </div>
               </div>
 
@@ -1222,16 +978,6 @@ export default function GoWithTheFlow() {
                       borderRadius: '16px',
                       padding: '24px',
                       textAlign: 'center',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 8px 24px rgba(0, 0, 0, 0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
                     <div style={{ fontSize: '48px', marginBottom: '16px' }}>
@@ -1288,17 +1034,6 @@ export default function GoWithTheFlow() {
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '16px',
                         padding: '24px',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.08)';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          'rgba(255, 255, 255, 0.05)';
-                        e.currentTarget.style.transform = 'translateY(0)';
                       }}
                     >
                       <div
@@ -1365,6 +1100,62 @@ export default function GoWithTheFlow() {
             </div>
           )}
 
+          {/* Marketplace Bidding Tab */}
+          {activeTab === 'marketplace-bidding' && (
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                🎯 Marketplace Bidding Service for Shippers
+              </h2>
+
+              {/* Service Information for Shippers */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  marginBottom: '32px',
+                  border: '2px solid rgba(16, 185, 129, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📋 Post Your Loads for Competitive Bidding
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '18px',
+                    lineHeight: '1.6',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                  }}
+                >
+                  Post your freight loads to our marketplace where qualified
+                  carriers and drivers compete with bids, ensuring you get the
+                  best rates and service for your shipments.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Request Service Tab */}
           {activeTab === 'request' && (
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -1379,301 +1170,544 @@ export default function GoWithTheFlow() {
               >
                 🚀 Request Freight Service
               </h2>
-              <form
-                onSubmit={handleRequestSubmit}
-                style={{ display: 'grid', gap: '24px' }}
+
+              {/* Service Type Choice */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '24px',
+                  marginBottom: '24px',
+                }}
               >
-                <div
+                <h3
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '24px',
-                  }}
-                >
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Pickup Location
-                    </label>
-                    <input
-                      type='text'
-                      name='origin'
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                      placeholder='City, State'
-                    />
-                  </div>
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Delivery Location
-                    </label>
-                    <input
-                      type='text'
-                      name='destination'
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                      placeholder='City, State'
-                    />
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '24px',
-                  }}
-                >
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Equipment Type
-                    </label>
-                    <select
-                      name='equipmentType'
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                    >
-                      <optgroup label='Transportation Services'>
-                        <option value='Dry Van'>Dry Van</option>
-                        <option value='Reefer'>Reefer</option>
-                        <option value='Flatbed'>Flatbed</option>
-                        <option value='Power Only'>Power Only</option>
-                        <option value='Step Deck'>Step Deck</option>
-                      </optgroup>
-                      <optgroup label='Warehousing & 3PL Services'>
-                        <option value='Warehouse Storage'>
-                          🏭 Warehouse Storage
-                        </option>
-                        <option value='Cross Docking'>📦 Cross Docking</option>
-                        <option value='Pick & Pack'>
-                          📋 Pick & Pack Services
-                        </option>
-                        <option value='Inventory Management'>
-                          📊 Inventory Management
-                        </option>
-                        <option value='Distribution Center'>
-                          🚚 Distribution Center
-                        </option>
-                        <option value='Fulfillment Services'>
-                          📮 Fulfillment Services
-                        </option>
-                        <option value='3PL Full Service'>
-                          🏢 3PL Full Service
-                        </option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Weight (lbs)
-                    </label>
-                    <input
-                      type='number'
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                      placeholder='0'
-                    />
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '24px',
-                  }}
-                >
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Urgency Level
-                    </label>
-                    <select
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                    >
-                      <option value='low'>Low - Flexible timing</option>
-                      <option value='medium'>Medium - Standard delivery</option>
-                      <option value='high'>High - Urgent delivery</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: 'white',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Pickup Date
-                    </label>
-                    <input
-                      type='date'
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      color: 'white',
-                      marginBottom: '8px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Special Requirements
-                  </label>
-                  <textarea
-                    rows={3}
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      borderRadius: '8px',
-                      color: 'white',
-                      fontSize: '14px',
-                      resize: 'vertical',
-                    }}
-                    placeholder='Any special handling, temperature requirements, or additional notes...'
-                  />
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      color: 'white',
-                      marginBottom: '8px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Contact Information
-                  </label>
-                  <input
-                    type='email'
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      borderRadius: '8px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='your.email@company.com'
-                  />
-                </div>
-
-                <button
-                  type='submit'
-                  disabled={isLoading}
-                  style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    border: 'none',
                     color: 'white',
-                    padding: '16px 32px',
-                    borderRadius: '12px',
-                    fontWeight: '700',
-                    fontSize: '16px',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    opacity: isLoading ? 0.6 : 1,
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                    textAlign: 'center',
                   }}
                 >
-                  {isLoading
-                    ? 'Submitting...'
-                    : '🚀 Submit Request & Get Quotes'}
-                </button>
-              </form>
+                  📋 Choose Your Service Type
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                  }}
+                >
+                  {/* Direct Booking Option */}
+                  <button
+                    type='button'
+                    onClick={() => setServiceType('direct')}
+                    style={{
+                      background:
+                        serviceType === 'direct'
+                          ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                      border: `2px solid ${serviceType === 'direct' ? '#dc2626' : 'rgba(255, 255, 255, 0.3)'}`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🚨
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Direct Booking
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Emergency/urgent loads - immediate carrier assignment
+                    </div>
+                  </button>
+
+                  {/* Marketplace Option */}
+                  <button
+                    type='button'
+                    onClick={() => setServiceType('marketplace')}
+                    style={{
+                      background:
+                        serviceType === 'marketplace'
+                          ? 'linear-gradient(135deg, #10b981, #059669)'
+                          : 'rgba(255, 255, 255, 0.1)',
+                      border: `2px solid ${serviceType === 'marketplace' ? '#10b981' : 'rgba(255, 255, 255, 0.3)'}`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🎯
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Post to Marketplace
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.8 }}>
+                      Regular loads - competitive bidding from drivers
+                    </div>
+                  </button>
+                </div>
+
+                {serviceType && (
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      padding: '12px',
+                      background:
+                        serviceType === 'direct'
+                          ? 'rgba(220, 38, 38, 0.1)'
+                          : 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      borderLeft: `4px solid ${serviceType === 'direct' ? '#dc2626' : '#10b981'}`,
+                    }}
+                  >
+                    <p style={{ color: 'white', fontSize: '14px', margin: 0 }}>
+                      {serviceType === 'direct'
+                        ? '⚡ Fast-track service: Get immediate carrier assignment with premium rates for time-sensitive shipments.'
+                        : '💰 Cost-effective service: Let drivers compete for your load to get the best rates for flexible shipments.'}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {serviceType && (
+                <form
+                  onSubmit={handleRequestSubmit}
+                  style={{ display: 'grid', gap: '24px' }}
+                >
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Pickup Location
+                      </label>
+                      <input
+                        type='text'
+                        name='origin'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='City, State'
+                      />
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Delivery Location
+                      </label>
+                      <input
+                        type='text'
+                        name='destination'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='City, State'
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Equipment Type
+                      </label>
+                      <select
+                        name='equipmentType'
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <optgroup label='Transportation Services'>
+                          <option value='Dry Van'>Dry Van</option>
+                          <option value='Reefer'>Reefer</option>
+                          <option value='Flatbed'>Flatbed</option>
+                          <option value='Power Only'>Power Only</option>
+                          <option value='Step Deck'>Step Deck</option>
+                        </optgroup>
+                        <optgroup label='Warehousing & 3PL Services'>
+                          <option value='Warehouse Storage'>
+                            🏭 Warehouse Storage
+                          </option>
+                          <option value='Cross Docking'>
+                            📦 Cross Docking
+                          </option>
+                          <option value='Pick & Pack'>
+                            📋 Pick & Pack Services
+                          </option>
+                          <option value='Inventory Management'>
+                            📊 Inventory Management
+                          </option>
+                          <option value='Distribution Center'>
+                            🚚 Distribution Center
+                          </option>
+                          <option value='Fulfillment Services'>
+                            📮 Fulfillment Services
+                          </option>
+                          <option value='3PL Full Service'>
+                            🏢 3PL Full Service
+                          </option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Weight (lbs)
+                      </label>
+                      <input
+                        type='number'
+                        name='weight'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                        placeholder='0'
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '24px',
+                    }}
+                  >
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Urgency Level
+                      </label>
+                      <select
+                        name='urgency'
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      >
+                        <option value='low'>Low - Flexible timing</option>
+                        <option value='medium'>
+                          Medium - Standard delivery
+                        </option>
+                        <option value='high'>High - Urgent delivery</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          color: 'white',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Pickup Date
+                      </label>
+                      <input
+                        type='date'
+                        name='pickupDate'
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact Information Section */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        marginBottom: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      👤 Contact Information
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            color: 'white',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Contact Name *
+                        </label>
+                        <input
+                          type='text'
+                          name='contactName'
+                          required
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '14px',
+                          }}
+                          placeholder='Your full name'
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            color: 'white',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Email Address *
+                        </label>
+                        <input
+                          type='email'
+                          name='email'
+                          required
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '14px',
+                          }}
+                          placeholder='your@email.com'
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            color: 'white',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Phone Number
+                        </label>
+                        <input
+                          type='tel'
+                          name='phone'
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '14px',
+                          }}
+                          placeholder='(555) 123-4567'
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            color: 'white',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Company Name
+                        </label>
+                        <input
+                          type='text'
+                          name='companyName'
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '14px',
+                          }}
+                          placeholder='Your company (optional)'
+                        />
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        marginTop: '16px',
+                        padding: '12px',
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '13px',
+                          margin: '0',
+                          lineHeight: '1.4',
+                        }}
+                      >
+                        💡 <strong>Account Creation:</strong> A FleetFlow
+                        shipper account will be automatically created for you,
+                        giving you access to track shipments, request future
+                        quotes, and manage your logistics needs anytime!
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type='submit'
+                    disabled={isLoading}
+                    style={{
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '16px 32px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      opacity: isLoading ? 0.6 : 1,
+                    }}
+                  >
+                    {isLoading
+                      ? 'Submitting...'
+                      : serviceType === 'marketplace'
+                        ? '🎯 Post Load to Marketplace'
+                        : '🚀 Submit Request & Get Quotes'}
+                  </button>
+                </form>
+              )}
 
               {/* AI Flow Quote Generation Progress */}
-              {quoteStatus === 'generating' && (
+              {serviceType === 'direct' && quoteStatus === 'generating' && (
                 <div
                   style={{
                     background: 'rgba(15, 23, 42, 0.8)',
@@ -1747,876 +1781,197 @@ export default function GoWithTheFlow() {
               )}
 
               {/* Generated Quotes Display */}
-              {quoteStatus === 'completed' && generatedQuotes.length > 0 && (
-                <div
-                  style={{
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    backdropFilter: 'blur(20px)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    marginTop: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-                  }}
-                >
-                  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
-                      ✨
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: 'white',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      AI-Generated Quotes Ready!
-                    </h3>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '14px',
-                      }}
-                    >
-                      Intelligent pricing based on market analysis and carrier
-                      optimization
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'grid', gap: '20px' }}>
-                    {generatedQuotes.map((quote, index) => (
-                      <div
-                        key={quote.id}
+              {serviceType === 'direct' &&
+                quoteStatus === 'completed' &&
+                generatedQuotes.length > 0 && (
+                  <div
+                    style={{
+                      background: 'rgba(15, 23, 42, 0.8)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      marginTop: '24px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                        ✨
+                      </div>
+                      <h3
                         style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                          borderRadius: '12px',
-                          padding: '20px',
-                          position: 'relative',
-                          overflow: 'hidden',
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: 'white',
+                          marginBottom: '8px',
                         }}
                       >
-                        {/* Confidence Badge */}
+                        AI-Generated Quotes Ready!
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Intelligent pricing based on market analysis and carrier
+                        optimization
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'grid', gap: '20px' }}>
+                      {generatedQuotes.map((quote, index) => (
                         <div
+                          key={quote.id}
                           style={{
-                            position: 'absolute',
-                            top: '16px',
-                            right: '16px',
-                            background: `rgba(${
-                              quote.confidence >= 90
-                                ? '16, 185, 129'
-                                : quote.confidence >= 80
-                                  ? '245, 158, 11'
-                                  : '239, 68, 68'
-                            }, 0.2)`,
-                            border: `1px solid rgba(${
-                              quote.confidence >= 90
-                                ? '16, 185, 129'
-                                : quote.confidence >= 80
-                                  ? '245, 158, 11'
-                                  : '239, 68, 68'
-                            }, 0.4)`,
-                            borderRadius: '20px',
-                            padding: '4px 12px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            color: `${
-                              quote.confidence >= 90
-                                ? '#10b981'
-                                : quote.confidence >= 80
-                                  ? '#f59e0b'
-                                  : '#ef4444'
-                            }`,
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            position: 'relative',
+                            overflow: 'hidden',
                           }}
                         >
-                          {quote.confidence}% Confidence
-                        </div>
-
-                        <div style={{ marginBottom: '16px' }}>
-                          <h4
+                          {/* Confidence Badge */}
+                          <div
                             style={{
-                              fontSize: '18px',
-                              fontWeight: '700',
-                              color: 'white',
-                              marginBottom: '8px',
+                              position: 'absolute',
+                              top: '16px',
+                              right: '16px',
+                              background: `rgba(${
+                                quote.confidence >= 90
+                                  ? '16, 185, 129'
+                                  : quote.confidence >= 80
+                                    ? '245, 158, 11'
+                                    : '239, 68, 68'
+                              }, 0.2)`,
+                              border: `1px solid rgba(${
+                                quote.confidence >= 90
+                                  ? '16, 185, 129'
+                                  : quote.confidence >= 80
+                                    ? '245, 158, 11'
+                                    : '239, 68, 68'
+                              }, 0.4)`,
+                              borderRadius: '20px',
+                              padding: '4px 12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: `${
+                                quote.confidence >= 90
+                                  ? '#10b981'
+                                  : quote.confidence >= 80
+                                    ? '#f59e0b'
+                                    : '#ef4444'
+                              }`,
                             }}
                           >
-                            {quote.carrier}
-                          </h4>
-                          <p
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.7)',
-                              fontSize: '14px',
-                              lineHeight: '1.5',
-                            }}
-                          >
-                            {quote.reasoning}
-                          </p>
-                        </div>
-
-                        <div
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns:
-                              'repeat(auto-fit, minmax(120px, 1fr))',
-                            gap: '16px',
-                            marginBottom: '16px',
-                          }}
-                        >
-                          <div>
-                            <div
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.6)',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              Rate
-                            </div>
-                            <div
-                              style={{
-                                fontSize: '24px',
-                                fontWeight: '800',
-                                color: '#10b981',
-                              }}
-                            >
-                              ${quote.rate.toLocaleString()}
-                            </div>
+                            {quote.confidence}% Confidence
                           </div>
-                          <div>
-                            <div
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.6)',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              ETA
-                            </div>
-                            <div
+
+                          <div style={{ marginBottom: '16px' }}>
+                            <h4
                               style={{
                                 fontSize: '18px',
                                 fontWeight: '700',
                                 color: 'white',
+                                marginBottom: '8px',
                               }}
                             >
-                              {quote.eta}
-                            </div>
+                              {quote.carrier}
+                            </h4>
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '14px',
+                                lineHeight: '1.5',
+                              }}
+                            >
+                              {quote.reasoning}
+                            </p>
                           </div>
-                        </div>
 
-                        <div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.6)',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                              marginBottom: '8px',
-                            }}
-                          >
-                            Features Included
-                          </div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: '8px',
-                            }}
-                          >
-                            {quote.features.map(
-                              (feature: string, featureIndex: number) => (
-                                <span
-                                  key={featureIndex}
-                                  style={{
-                                    background: 'rgba(59, 130, 246, 0.2)',
-                                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                                    borderRadius: '16px',
-                                    padding: '4px 12px',
-                                    fontSize: '12px',
-                                    color: '#3b82f6',
-                                    fontWeight: '500',
-                                  }}
-                                >
-                                  {feature}
-                                </span>
-                              )
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Contact Information Section */}
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            borderRadius: '12px',
-                            padding: '20px',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                          }}
-                        >
-                          <h3
-                            style={{
-                              color: 'white',
-                              fontSize: '18px',
-                              fontWeight: '600',
-                              marginBottom: '16px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                            }}
-                          >
-                            👤 Contact Information
-                          </h3>
                           <div
                             style={{
                               display: 'grid',
                               gridTemplateColumns:
-                                'repeat(auto-fit, minmax(250px, 1fr))',
+                                'repeat(auto-fit, minmax(120px, 1fr))',
                               gap: '16px',
+                              marginBottom: '16px',
                             }}
                           >
                             <div>
-                              <label
-                                style={{
-                                  display: 'block',
-                                  color: 'white',
-                                  marginBottom: '8px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Contact Name *
-                              </label>
-                              <input
-                                type='text'
-                                name='contactName'
-                                required
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                                  borderRadius: '8px',
-                                  color: 'white',
-                                  fontSize: '14px',
-                                }}
-                                placeholder='Your full name'
-                              />
-                            </div>
-                            <div>
-                              <label
-                                style={{
-                                  display: 'block',
-                                  color: 'white',
-                                  marginBottom: '8px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Email Address *
-                              </label>
-                              <input
-                                type='email'
-                                name='email'
-                                required
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                                  borderRadius: '8px',
-                                  color: 'white',
-                                  fontSize: '14px',
-                                }}
-                                placeholder='your@email.com'
-                              />
-                            </div>
-                            <div>
-                              <label
-                                style={{
-                                  display: 'block',
-                                  color: 'white',
-                                  marginBottom: '8px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Phone Number
-                              </label>
-                              <input
-                                type='tel'
-                                name='phone'
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                                  borderRadius: '8px',
-                                  color: 'white',
-                                  fontSize: '14px',
-                                }}
-                                placeholder='(555) 123-4567'
-                              />
-                            </div>
-                            <div>
-                              <label
-                                style={{
-                                  display: 'block',
-                                  color: 'white',
-                                  marginBottom: '8px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Company Name
-                              </label>
-                              <input
-                                type='text'
-                                name='companyName'
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                                  borderRadius: '8px',
-                                  color: 'white',
-                                  fontSize: '14px',
-                                }}
-                                placeholder='Your company (optional)'
-                              />
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              marginTop: '16px',
-                              padding: '12px',
-                              background: 'rgba(59, 130, 246, 0.1)',
-                              borderRadius: '8px',
-                              border: '1px solid rgba(59, 130, 246, 0.2)',
-                            }}
-                          >
-                            <p
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.9)',
-                                fontSize: '13px',
-                                margin: '0',
-                                lineHeight: '1.4',
-                              }}
-                            >
-                              💡 <strong>Account Creation:</strong> A FleetFlow
-                              shipper account will be automatically created for
-                              you, giving you access to track shipments, request
-                              future quotes, and manage your logistics needs
-                              anytime! You'll receive a unique{' '}
-                              <strong>Go with the Flow ID</strong> for easy
-                              reference.
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* FleetGuard AI Fraud Analysis */}
-                        {quote.fraudAnalysis && (
-                          <div
-                            style={{
-                              marginTop: '20px',
-                              padding: '16px',
-                              background:
-                                quote.fraudAnalysis.riskLevel === 'low'
-                                  ? 'rgba(16, 185, 129, 0.1)'
-                                  : quote.fraudAnalysis.riskLevel === 'medium'
-                                    ? 'rgba(245, 158, 11, 0.1)'
-                                    : 'rgba(239, 68, 68, 0.1)',
-                              border: `1px solid ${
-                                quote.fraudAnalysis.riskLevel === 'low'
-                                  ? 'rgba(16, 185, 129, 0.3)'
-                                  : quote.fraudAnalysis.riskLevel === 'medium'
-                                    ? 'rgba(245, 158, 11, 0.3)'
-                                    : 'rgba(239, 68, 68, 0.3)'
-                              }`,
-                              borderRadius: '12px',
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                marginBottom: '12px',
-                              }}
-                            >
-                              <h4
-                                style={{
-                                  color: 'white',
-                                  fontSize: '16px',
-                                  fontWeight: '700',
-                                  margin: 0,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '8px',
-                                }}
-                              >
-                                🛡️ FleetGuard AI Security Analysis
-                              </h4>
-                              <span
-                                style={{
-                                  fontSize: '20px',
-                                }}
-                              >
-                                {quote.fraudAnalysis.riskLevel === 'low'
-                                  ? '✅'
-                                  : quote.fraudAnalysis.riskLevel === 'medium'
-                                    ? '⚠️'
-                                    : '🚨'}
-                              </span>
-                            </div>
-
-                            <div
-                              style={{
-                                display: 'grid',
-                                gridTemplateColumns:
-                                  'repeat(auto-fit, minmax(150px, 1fr))',
-                                gap: '12px',
-                                marginBottom: '12px',
-                              }}
-                            >
-                              <div>
-                                <div
-                                  style={{
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    fontSize: '12px',
-                                    fontWeight: '600',
-                                    marginBottom: '4px',
-                                  }}
-                                >
-                                  Risk Level
-                                </div>
-                                <div
-                                  style={{
-                                    color:
-                                      quote.fraudAnalysis.riskLevel === 'low'
-                                        ? '#10b981'
-                                        : quote.fraudAnalysis.riskLevel ===
-                                            'medium'
-                                          ? '#f59e0b'
-                                          : '#ef4444',
-                                    fontSize: '14px',
-                                    fontWeight: '700',
-                                    textTransform: 'uppercase',
-                                  }}
-                                >
-                                  {quote.fraudAnalysis.riskLevel}
-                                </div>
-                              </div>
-                              <div>
-                                <div
-                                  style={{
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    fontSize: '12px',
-                                    fontWeight: '600',
-                                    marginBottom: '4px',
-                                  }}
-                                >
-                                  Confidence
-                                </div>
-                                <div
-                                  style={{
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    fontWeight: '700',
-                                  }}
-                                >
-                                  {Math.round(
-                                    quote.fraudAnalysis.confidence * 100
-                                  )}
-                                  %
-                                </div>
-                              </div>
-                            </div>
-
-                            {quote.fraudAnalysis.flags &&
-                              quote.fraudAnalysis.flags.length > 0 && (
-                                <div style={{ marginBottom: '8px' }}>
-                                  <div
-                                    style={{
-                                      color: 'rgba(255, 255, 255, 0.8)',
-                                      fontSize: '12px',
-                                      fontWeight: '600',
-                                      marginBottom: '6px',
-                                    }}
-                                  >
-                                    Security Indicators:
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      flexWrap: 'wrap',
-                                      gap: '6px',
-                                    }}
-                                  >
-                                    {quote.fraudAnalysis.flags
-                                      .slice(0, 3)
-                                      .map(
-                                        (flag: string, flagIndex: number) => (
-                                          <span
-                                            key={flagIndex}
-                                            style={{
-                                              background:
-                                                'rgba(255, 255, 255, 0.1)',
-                                              border:
-                                                '1px solid rgba(255, 255, 255, 0.2)',
-                                              borderRadius: '12px',
-                                              padding: '2px 8px',
-                                              fontSize: '11px',
-                                              color: 'rgba(255, 255, 255, 0.8)',
-                                              fontWeight: '500',
-                                            }}
-                                          >
-                                            {flag}
-                                          </span>
-                                        )
-                                      )}
-                                  </div>
-                                </div>
-                              )}
-
-                            {/* BrokerSnapshot Financial Data */}
-                            {quote.fraudAnalysis.financialData && (
                               <div
                                 style={{
-                                  marginTop: '12px',
-                                  padding: '12px',
-                                  background: 'rgba(255, 255, 255, 0.05)',
-                                  borderRadius: '8px',
-                                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
                                 }}
                               >
-                                <div
-                                  style={{
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    fontSize: '12px',
-                                    fontWeight: '600',
-                                    marginBottom: '8px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                  }}
-                                >
-                                  📊 BrokerSnapshot Financial Intelligence
-                                </div>
-                                <div
-                                  style={{
-                                    display: 'grid',
-                                    gridTemplateColumns:
-                                      'repeat(auto-fit, minmax(120px, 1fr))',
-                                    gap: '8px',
-                                    fontSize: '11px',
-                                  }}
-                                >
-                                  {quote.fraudAnalysis.financialData
-                                    .creditScore && (
-                                    <div>
-                                      <div
-                                        style={{
-                                          color: 'rgba(255, 255, 255, 0.6)',
-                                        }}
-                                      >
-                                        Credit Score
-                                      </div>
-                                      <div
-                                        style={{
-                                          color:
-                                            parseInt(
-                                              quote.fraudAnalysis.financialData
-                                                .creditScore
-                                            ) >= 700
-                                              ? '#10b981'
-                                              : parseInt(
-                                                    quote.fraudAnalysis
-                                                      .financialData.creditScore
-                                                  ) >= 650
-                                                ? '#f59e0b'
-                                                : '#ef4444',
-                                          fontWeight: '700',
-                                        }}
-                                      >
-                                        {
-                                          quote.fraudAnalysis.financialData
-                                            .creditScore
-                                        }
-                                      </div>
-                                    </div>
-                                  )}
-                                  {quote.fraudAnalysis.financialData
-                                    .paymentHistory && (
-                                    <div>
-                                      <div
-                                        style={{
-                                          color: 'rgba(255, 255, 255, 0.6)',
-                                        }}
-                                      >
-                                        Payment History
-                                      </div>
-                                      <div
-                                        style={{
-                                          color:
-                                            quote.fraudAnalysis.financialData
-                                              .paymentHistory === 'Excellent'
-                                              ? '#10b981'
-                                              : quote.fraudAnalysis
-                                                    .financialData
-                                                    .paymentHistory === 'Good'
-                                                ? '#f59e0b'
-                                                : '#ef4444',
-                                          fontWeight: '700',
-                                        }}
-                                      >
-                                        {
-                                          quote.fraudAnalysis.financialData
-                                            .paymentHistory
-                                        }
-                                      </div>
-                                    </div>
-                                  )}
-                                  {quote.fraudAnalysis.financialData
-                                    .averagePaymentDays && (
-                                    <div>
-                                      <div
-                                        style={{
-                                          color: 'rgba(255, 255, 255, 0.6)',
-                                        }}
-                                      >
-                                        Avg Payment
-                                      </div>
-                                      <div
-                                        style={{
-                                          color:
-                                            quote.fraudAnalysis.financialData
-                                              .averagePaymentDays <= 30
-                                              ? '#10b981'
-                                              : quote.fraudAnalysis
-                                                    .financialData
-                                                    .averagePaymentDays <= 45
-                                                ? '#f59e0b'
-                                                : '#ef4444',
-                                          fontWeight: '700',
-                                        }}
-                                      >
-                                        {
-                                          quote.fraudAnalysis.financialData
-                                            .averagePaymentDays
-                                        }{' '}
-                                        days
-                                      </div>
-                                    </div>
-                                  )}
-                                  <div>
-                                    <div
-                                      style={{
-                                        color: 'rgba(255, 255, 255, 0.6)',
-                                      }}
-                                    >
-                                      Tracking
-                                    </div>
-                                    <div
-                                      style={{
-                                        color: quote.fraudAnalysis.financialData
-                                          .trackingEnabled
-                                          ? '#10b981'
-                                          : '#ef4444',
-                                        fontWeight: '700',
-                                      }}
-                                    >
-                                      {quote.fraudAnalysis.financialData
-                                        .trackingEnabled
-                                        ? 'Enabled'
-                                        : 'Disabled'}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Data Source Badge */}
-                                {quote.fraudAnalysis.dataSource && (
-                                  <div
-                                    style={{
-                                      marginTop: '8px',
-                                      textAlign: 'center',
-                                    }}
-                                  >
-                                    <span
-                                      style={{
-                                        background:
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'BROKERSNAPSHOT'
-                                          ) ||
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'COMPREHENSIVE'
-                                          )
-                                            ? 'rgba(16, 185, 129, 0.2)'
-                                            : 'rgba(59, 130, 246, 0.2)',
-                                        border: `1px solid ${
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'BROKERSNAPSHOT'
-                                          ) ||
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'COMPREHENSIVE'
-                                          )
-                                            ? 'rgba(16, 185, 129, 0.4)'
-                                            : 'rgba(59, 130, 246, 0.4)'
-                                        }`,
-                                        borderRadius: '12px',
-                                        padding: '2px 8px',
-                                        fontSize: '10px',
-                                        color:
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'BROKERSNAPSHOT'
-                                          ) ||
-                                          quote.fraudAnalysis.dataSource.includes(
-                                            'COMPREHENSIVE'
-                                          )
-                                            ? '#10b981'
-                                            : '#3b82f6',
-                                        fontWeight: '600',
-                                      }}
-                                    >
-                                      {quote.fraudAnalysis.dataSource ===
-                                      'FMCSA'
-                                        ? '📋 FMCSA Data'
-                                        : quote.fraudAnalysis.dataSource ===
-                                            'BROKERSNAPSHOT'
-                                          ? '📊 BrokerSnapshot'
-                                          : quote.fraudAnalysis.dataSource ===
-                                              'COMPREHENSIVE'
-                                            ? '🔗 FMCSA + BrokerSnapshot'
-                                            : quote.fraudAnalysis.dataSource ===
-                                                'ENHANCED_DEMO'
-                                              ? '🎯 Enhanced Analysis'
-                                              : '📊 Real-time Data'}
-                                    </span>
-                                  </div>
-                                )}
+                                Rate
                               </div>
-                            )}
+                              <div
+                                style={{
+                                  fontSize: '24px',
+                                  fontWeight: '800',
+                                  color: '#10b981',
+                                }}
+                              >
+                                ${quote.rate.toLocaleString()}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.6)',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  marginBottom: '4px',
+                                }}
+                              >
+                                ETA
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '18px',
+                                  fontWeight: '700',
+                                  color: 'white',
+                                }}
+                              >
+                                {quote.eta}
+                              </div>
+                            </div>
                           </div>
-                        )}
 
-                        <button
-                          style={{
-                            width: '100%',
-                            background:
-                              'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                            border: 'none',
-                            color: 'white',
-                            padding: '12px 24px',
-                            borderRadius: '8px',
-                            fontWeight: '600',
-                            fontSize: '14px',
-                            cursor: 'pointer',
-                            marginTop: '16px',
-                            transition: 'all 0.3s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform =
-                              'translateY(-2px)';
-                            e.currentTarget.style.boxShadow =
-                              '0 4px 12px rgba(59, 130, 246, 0.3)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
-                        >
-                          🚀 Select This Quote
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* FleetGuard AI Analysis Loading */}
-                  {fraudAnalysisLoading && (
-                    <div
-                      style={{
-                        textAlign: 'center',
-                        marginTop: '24px',
-                        padding: '20px',
-                        background: 'rgba(59, 130, 246, 0.1)',
-                        border: '1px solid rgba(59, 130, 246, 0.2)',
-                        borderRadius: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '12px',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '20px',
-                            height: '20px',
-                            border: '2px solid rgba(59, 130, 246, 0.3)',
-                            borderTop: '2px solid #3b82f6',
-                            borderRadius: '50%',
-                            animation: 'spin 1s linear infinite',
-                          }}
-                        />
-                        <span
-                          style={{
-                            color: '#3b82f6',
-                            fontSize: '16px',
-                            fontWeight: '700',
-                          }}
-                        >
-                          🛡️ FleetGuard AI Analyzing Carriers...
-                        </span>
-                      </div>
-                      <p
-                        style={{
-                          color: 'rgba(59, 130, 246, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          margin: 0,
-                        }}
-                      >
-                        Running comprehensive fraud detection and safety
-                        analysis
-                      </p>
+                          <button
+                            style={{
+                              width: '100%',
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              border: 'none',
+                              color: 'white',
+                              padding: '12px 24px',
+                              borderRadius: '8px',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              marginTop: '16px',
+                            }}
+                          >
+                            🚀 Select This Quote
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                  )}
-
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      marginTop: '24px',
-                      padding: '20px',
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.2)',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <p
-                      style={{
-                        color: '#10b981',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        margin: 0,
-                      }}
-                    >
-                      💡 AI Flow analyzed market conditions, fuel costs, traffic
-                      patterns, and carrier performance to generate these
-                      optimized quotes. 🛡️ FleetGuard AI provides comprehensive
-                      fraud detection with FMCSA safety data + BrokerSnapshot
-                      financial intelligence.
-                    </p>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           )}
 
-          {/* Tracking Tab */}
+          {/* Track Shipment Tab */}
           {activeTab === 'tracking' && (
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
               <h2
                 style={{
                   fontSize: '28px',
@@ -2628,297 +1983,587 @@ export default function GoWithTheFlow() {
               >
                 📍 Track Your Shipment
               </h2>
-              <form
-                onSubmit={handleTrackingSubmit}
-                style={{ display: 'grid', gap: '24px' }}
+
+              {/* Tracking Form */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '32px',
+                  marginBottom: '32px',
+                }}
               >
-                <div>
-                  <label
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    marginBottom: '24px',
+                    textAlign: 'center',
+                  }}
+                >
+                  🔍 Enter Your Tracking Information
+                </h3>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: '20px',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Load ID or Pro Number
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='Enter your Load ID (e.g., FL-2024-001) or Pro Number'
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontSize: '16px',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Phone Number or Email (Optional)
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='Enter phone or email for additional verification'
+                      style={{
+                        width: '100%',
+                        padding: '16px 20px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontSize: '16px',
+                      }}
+                    />
+                  </div>
+
+                  <button
                     style={{
-                      display: 'block',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      border: 'none',
                       color: 'white',
-                      marginBottom: '8px',
-                      fontWeight: '600',
+                      padding: '16px 32px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
                     }}
                   >
-                    Tracking Number or Load ID
-                  </label>
-                  <input
-                    type='text'
-                    name='trackingNumber'
-                    required
+                    🔍 Track Shipment
+                  </button>
+                </div>
+              </div>
+
+              {/* Sample Tracking Results */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📋 Sample Tracking Information
+                </h4>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
                     style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      borderRadius: '8px',
-                      color: 'white',
-                      fontSize: '14px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
-                    placeholder='Enter your tracking number'
-                  />
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Load Status:
+                    </span>
+                    <span style={{ color: '#10b981', fontWeight: '600' }}>
+                      🚛 In Transit
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Current Location:
+                    </span>
+                    <span style={{ color: 'white', fontWeight: '600' }}>
+                      📍 Kansas City, MO
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Estimated Delivery:
+                    </span>
+                    <span style={{ color: 'white', fontWeight: '600' }}>
+                      ⏰ Tomorrow 2:00 PM
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                    }}
+                  >
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Driver Contact:
+                    </span>
+                    <span style={{ color: 'white', fontWeight: '600' }}>
+                      📞 (555) 123-4567
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Our Services Tab */}
+          {activeTab === 'services' && (
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <h2
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: 'white',
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                🛠️ Our Comprehensive Services
+              </h2>
+
+              {/* Services Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '48px',
+                }}
+              >
+                {/* Transportation Services */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    🚛
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Transportation Services
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: '1.8',
+                      listStyle: 'none',
+                      padding: 0,
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      🚛 Dry Van Transportation
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🧊 Temperature-Controlled Reefer
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📦 Flatbed & Heavy Haul
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ⚡ Power Only Services
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🎯 Expedited & Rush Deliveries
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📍 Real-time GPS Tracking
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Logistics & Warehousing */}
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    🏭
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Warehousing & 3PL
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: '1.8',
+                      listStyle: 'none',
+                      padding: 0,
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      🏭 Warehouse Storage Solutions
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📦 Cross Docking Services
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📋 Pick & Pack Operations
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📊 Inventory Management
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🚚 Distribution Centers
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📮 Fulfillment Services
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Technology Solutions */}
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    🤖
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    AI & Technology
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: '1.8',
+                      listStyle: 'none',
+                      padding: 0,
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      🤖 AI-Powered Route Optimization
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📊 Real-time Analytics Dashboard
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🛡️ FleetGuard Fraud Protection
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📱 Mobile Driver Apps
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>🔗 API Integrations</li>
+                    <li style={{ marginBottom: '8px' }}>☁️ Cloud-based TMS</li>
+                  </ul>
+                </div>
+
+                {/* Specialized Services */}
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '48px',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    ⭐
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      marginBottom: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Specialized Services
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: '1.8',
+                      listStyle: 'none',
+                      padding: 0,
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      ☢️ Hazmat Transportation
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🏗️ Construction & Heavy Equipment
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🚗 Auto Transport Services
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      💊 Medical & Pharmaceutical
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      🎯 White Glove Delivery
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      📋 Dedicated Contract Carriage
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Why Choose FleetFlow */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  textAlign: 'center',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    marginBottom: '24px',
+                  }}
+                >
+                  🌟 Why Choose FleetFlow?
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '24px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      ⚡
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Fast Response
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      2-hour quote turnaround
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🛡️
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Secure & Reliable
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      99.5% on-time delivery
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      💰
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Competitive Rates
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Best-in-market pricing
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                      🌍
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Nationwide Coverage
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      All 48 states + Canada
+                    </div>
+                  </div>
                 </div>
                 <button
-                  type='submit'
-                  disabled={isLoading}
+                  onClick={() => setActiveTab('request')}
                   style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
                     border: 'none',
                     color: 'white',
                     padding: '16px 32px',
                     borderRadius: '12px',
                     fontWeight: '700',
                     fontSize: '16px',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                    opacity: isLoading ? 0.7 : 1,
+                    cursor: 'pointer',
                     transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
                   }}
                 >
-                  {isLoading ? '🔍 Tracking...' : '📍 Track Shipment'}
+                  🚀 Request Service Now
                 </button>
-
-                <div
-                  style={{
-                    marginTop: '32px',
-                    padding: '24px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      fontWeight: '600',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    Sample Tracking Results
-                  </h3>
-                  <div style={{ display: 'grid', gap: '16px' }}>
-                    {[
-                      {
-                        status: 'Load Delivered',
-                        location: 'Miami, FL',
-                        time: '2 hours ago',
-                        color: '#10b981',
-                      },
-                      {
-                        status: 'In Transit',
-                        location: 'Jacksonville, FL',
-                        time: '4 hours ago',
-                        color: '#3b82f6',
-                      },
-                      {
-                        status: 'Picked Up',
-                        location: 'Atlanta, GA',
-                        time: 'Yesterday',
-                        color: '#6b7280',
-                      },
-                    ].map((item, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '12px',
-                            height: '12px',
-                            borderRadius: '50%',
-                            background: item.color,
-                          }}
-                        />
-                        <div>
-                          <div style={{ color: 'white', fontWeight: '500' }}>
-                            {item.status}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.6)',
-                              fontSize: '14px',
-                            }}
-                          >
-                            {item.location} - {item.time}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* Services Tab */}
-          {activeTab === 'services' && (
-            <div>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  color: 'white',
-                  textAlign: 'center',
-                  marginBottom: '32px',
-                }}
-              >
-                🛠️ Comprehensive Freight Solutions
-              </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textAlign: 'center',
-                  marginBottom: '48px',
-                  maxWidth: '800px',
-                  margin: '0 auto 48px auto',
-                  lineHeight: '1.6',
-                }}
-              >
-                From single shipments to complex logistics operations, we
-                provide end-to-end solutions that keep your business moving
-                forward.
-              </p>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                  gap: '24px',
-                }}
-              >
-                {[
-                  {
-                    icon: '🚛',
-                    title: 'Full Truckload (FTL)',
-                    description:
-                      'Dedicated trucks for your exclusive shipments with real-time tracking and guaranteed delivery times.',
-                    features: [
-                      'Dry van, reefer, flatbed, and specialized equipment',
-                      'Nationwide coverage with local expertise',
-                      'Competitive rates and flexible scheduling',
-                    ],
-                  },
-                  {
-                    icon: '📦',
-                    title: 'Less Than Truckload (LTL)',
-                    description:
-                      'Cost-effective solutions for smaller shipments with consolidated freight options.',
-                    features: [
-                      'Multiple pickup and delivery points',
-                      'Flexible weight and size requirements',
-                      'Expedited and standard service options',
-                    ],
-                  },
-                  {
-                    icon: '🌡️',
-                    title: 'Temperature Controlled',
-                    description:
-                      'Specialized reefer services for pharmaceuticals, food, and other temperature-sensitive cargo.',
-                    features: [
-                      'Real-time temperature monitoring',
-                      'FDA and pharmaceutical compliance',
-                      'Emergency backup systems',
-                    ],
-                  },
-                  {
-                    icon: '⚡',
-                    title: 'Expedited & Hot Shot',
-                    description:
-                      'Urgent delivery services for time-critical shipments with dedicated drivers and equipment.',
-                    features: [
-                      'Same-day and next-day delivery',
-                      'Dedicated drivers and equipment',
-                      'Priority handling and routing',
-                    ],
-                  },
-                  {
-                    icon: '🏭',
-                    title: 'Warehousing & Storage',
-                    description:
-                      'Complete warehouse solutions including storage, inventory management, and distribution services.',
-                    features: [
-                      'Climate-controlled warehouse facilities',
-                      'Real-time inventory tracking systems',
-                      'Pick, pack, and ship services',
-                      'Cross-docking and transload operations',
-                    ],
-                  },
-                  {
-                    icon: '🏢',
-                    title: '3PL Services',
-                    description:
-                      'Full-service third-party logistics including warehousing, transportation, and supply chain management.',
-                    features: [
-                      'End-to-end supply chain management',
-                      'Multi-channel fulfillment capabilities',
-                      'Advanced WMS and inventory optimization',
-                      'Scalable storage and distribution network',
-                    ],
-                  },
-                ].map((service, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '16px',
-                      padding: '24px',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(255, 255, 255, 0.05)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
-                      {service.icon}
-                    </div>
-                    <h3
-                      style={{
-                        color: 'white',
-                        fontSize: '20px',
-                        fontWeight: '600',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      {service.title}
-                    </h3>
-                    <p
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        marginBottom: '16px',
-                        lineHeight: '1.5',
-                      }}
-                    >
-                      {service.description}
-                    </p>
-                    <ul style={{ display: 'grid', gap: '8px' }}>
-                      {service.features.map((feature, featureIndex) => (
-                        <li
-                          key={featureIndex}
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '14px',
-                          }}
-                        >
-                          • {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
               </div>
             </div>
           )}
@@ -2937,20 +2582,6 @@ export default function GoWithTheFlow() {
               >
                 📞 Get in Touch
               </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textAlign: 'center',
-                  marginBottom: '48px',
-                  lineHeight: '1.6',
-                }}
-              >
-                Ready to revolutionize your freight operations? Our team is here
-                to help you get started with FleetFlow's powerful logistics
-                platform.
-              </p>
-
               <div
                 style={{
                   display: 'grid',
@@ -2958,69 +2589,6 @@ export default function GoWithTheFlow() {
                   gap: '48px',
                 }}
               >
-                <div>
-                  <div style={{ display: 'grid', gap: '24px' }}>
-                    {[
-                      {
-                        icon: '📞',
-                        title: 'Phone Support',
-                        value: '1-800-FLEET-FLOW',
-                        subtitle: '24/7 Customer Service',
-                      },
-                      {
-                        icon: '📧',
-                        title: 'Email Support',
-                        value: 'support@fleetflow.com',
-                        subtitle: 'Response within 2 hours',
-                      },
-                      {
-                        icon: '💬',
-                        title: 'Live Chat',
-                        value: 'Available on our website',
-                        subtitle: 'Instant support during business hours',
-                      },
-                    ].map((contact, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '16px',
-                        }}
-                      >
-                        <div style={{ fontSize: '24px' }}>{contact.icon}</div>
-                        <div>
-                          <div
-                            style={{
-                              color: 'white',
-                              fontWeight: '600',
-                              marginBottom: '4px',
-                            }}
-                          >
-                            {contact.title}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              marginBottom: '2px',
-                            }}
-                          >
-                            {contact.value}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.5)',
-                              fontSize: '14px',
-                            }}
-                          >
-                            {contact.subtitle}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
                 <div
                   style={{
                     background: 'rgba(255, 255, 255, 0.05)',
@@ -3043,141 +2611,67 @@ export default function GoWithTheFlow() {
                     onSubmit={handleContactSubmit}
                     style={{ display: 'grid', gap: '16px' }}
                   >
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: 'white',
-                          marginBottom: '8px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Name
-                      </label>
-                      <input
-                        type='text'
-                        name='name'
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '8px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                        placeholder='Your full name'
-                      />
-                    </div>
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: 'white',
-                          marginBottom: '8px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Company
-                      </label>
-                      <input
-                        type='text'
-                        name='company'
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '8px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                        placeholder='Your company name'
-                      />
-                    </div>
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: 'white',
-                          marginBottom: '8px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Email
-                      </label>
-                      <input
-                        type='email'
-                        name='email'
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '8px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                        placeholder='your.email@company.com'
-                      />
-                    </div>
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: 'white',
-                          marginBottom: '8px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Phone
-                      </label>
-                      <input
-                        type='tel'
-                        name='phone'
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '8px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                        placeholder='Your phone number (optional)'
-                      />
-                    </div>
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: 'white',
-                          marginBottom: '8px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Message
-                      </label>
-                      <textarea
-                        name='message'
-                        required
-                        rows={4}
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '8px',
-                          color: 'white',
-                          fontSize: '14px',
-                          resize: 'vertical',
-                        }}
-                        placeholder='Tell us about your shipping needs...'
-                      />
-                    </div>
+                    <input
+                      type='text'
+                      name='name'
+                      placeholder='Your full name'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <input
+                      type='email'
+                      name='email'
+                      placeholder='your.email@company.com'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <input
+                      type='text'
+                      name='company'
+                      placeholder='Your company name'
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <textarea
+                      name='message'
+                      placeholder='Tell us about your shipping needs...'
+                      required
+                      rows={4}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '14px',
+                        resize: 'vertical',
+                      }}
+                    />
                     <button
                       type='submit'
                       disabled={isLoading}
@@ -3192,7 +2686,6 @@ export default function GoWithTheFlow() {
                         fontSize: '14px',
                         cursor: isLoading ? 'not-allowed' : 'pointer',
                         opacity: isLoading ? 0.7 : 1,
-                        transition: 'all 0.3s ease',
                       }}
                     >
                       {isLoading ? '📤 Sending...' : '📤 Send Message'}
@@ -3258,40 +2751,10 @@ export default function GoWithTheFlow() {
                 fontWeight: '700',
                 fontSize: '16px',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
               }}
             >
               🚀 Start Shipping Today
             </button>
-            <Link href='/go-with-the-flow/how-it-works'>
-              <button
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: 'white',
-                  padding: '16px 32px',
-                  borderRadius: '12px',
-                  fontWeight: '600',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                }}
-              >
-                📚 How It Works
-              </button>
-            </Link>
           </div>
         </div>
       </div>
@@ -3326,14 +2789,7 @@ export default function GoWithTheFlow() {
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div
-                style={{
-                  fontSize: '48px',
-                  marginBottom: '16px',
-                }}
-              >
-                🎉
-              </div>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
               <h2
                 style={{
                   color: 'white',
@@ -3353,230 +2809,6 @@ export default function GoWithTheFlow() {
               >
                 Your shipper account has been created successfully
               </p>
-            </div>
-
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '20px',
-                marginBottom: '24px',
-              }}
-            >
-              <h3
-                style={{
-                  color: 'white',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                👤 Account Details
-              </h3>
-              <div style={{ display: 'grid', gap: '12px' }}>
-                {/* Go with the Flow ID - Prominently Displayed */}
-                <div
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    textAlign: 'center',
-                    marginBottom: '8px',
-                  }}
-                >
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      fontSize: '12px',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Your Go with the Flow ID
-                  </div>
-                  <div
-                    style={{
-                      color: 'white',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      fontFamily: 'monospace',
-                    }}
-                  >
-                    {accountCreationResult.account.goWithFlowId}
-                  </div>
-                </div>
-
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Company:
-                  </span>
-                  <span style={{ color: 'white', fontWeight: '500' }}>
-                    {accountCreationResult.account.companyName}
-                  </span>
-                </div>
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Contact:
-                  </span>
-                  <span style={{ color: 'white', fontWeight: '500' }}>
-                    {accountCreationResult.account.contactName}
-                  </span>
-                </div>
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Email:
-                  </span>
-                  <span style={{ color: 'white', fontWeight: '500' }}>
-                    {accountCreationResult.account.email}
-                  </span>
-                </div>
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Internal ID:
-                  </span>
-                  <span
-                    style={{
-                      color: 'white',
-                      fontWeight: '500',
-                      fontSize: '12px',
-                    }}
-                  >
-                    {accountCreationResult.account.id}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{
-                background: 'rgba(59, 130, 246, 0.1)',
-                borderRadius: '12px',
-                padding: '16px',
-                marginBottom: '24px',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-              }}
-            >
-              <h4
-                style={{
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  marginBottom: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                🌐 Your FleetFlow Portal
-              </h4>
-              <p
-                style={{
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: '14px',
-                  marginBottom: '16px',
-                  lineHeight: '1.5',
-                }}
-              >
-                Access your dedicated shipper portal to track shipments, request
-                quotes, and manage your logistics needs anytime!
-              </p>
-              <button
-                onClick={() =>
-                  window.open(accountCreationResult.portalUrl, '_blank')
-                }
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  width: '100%',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 25px rgba(59, 130, 246, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                🚀 Access Your Shipper Portal
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={() => setShowAccountSuccess(false)}
-                style={{
-                  flex: 1,
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                }}
-              >
-                Continue Browsing
-              </button>
-              <button
-                onClick={() => {
-                  setShowAccountSuccess(false);
-                  setActiveTab('request');
-                  // Reset form
-                  setQuoteStatus('idle');
-                  setGeneratedQuotes([]);
-                  setQuoteProgress(0);
-                }}
-                style={{
-                  flex: 1,
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 6px 20px rgba(16, 185, 129, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                🚚 Request Another Quote
-              </button>
             </div>
           </div>
         </div>
@@ -3612,20 +2844,60 @@ const calculateIntelligentRate = (
 ) => {
   const baseRates: Record<string, Record<string, number>> = {
     // Transportation Services
-    'Dry Van': { premium: 2.85, standard: 2.45, economy: 2.15 },
-    Reefer: { premium: 3.25, standard: 2.85, economy: 2.55 },
-    Flatbed: { premium: 3.15, standard: 2.75, economy: 2.45 },
-    'Power Only': { premium: 1.95, standard: 1.65, economy: 1.45 },
-    'Step Deck': { premium: 3.45, standard: 3.05, economy: 2.75 },
+    'Dry Van': { premium: 2.85, standard: 2.45, economy: 2.15, budget: 1.95 },
+    Reefer: { premium: 3.25, standard: 2.85, economy: 2.55, budget: 2.25 },
+    Flatbed: { premium: 3.15, standard: 2.75, economy: 2.45, budget: 2.15 },
+    'Power Only': {
+      premium: 1.95,
+      standard: 1.65,
+      economy: 1.45,
+      budget: 1.25,
+    },
+    'Step Deck': { premium: 3.45, standard: 3.05, economy: 2.75, budget: 2.45 },
 
     // Warehousing & 3PL Services (monthly rates per sq ft or per pallet)
-    'Warehouse Storage': { premium: 8.5, standard: 6.25, economy: 4.75 },
-    'Cross Docking': { premium: 45.0, standard: 35.0, economy: 25.0 },
-    'Pick & Pack': { premium: 3.25, standard: 2.75, economy: 2.25 },
-    'Inventory Management': { premium: 125.0, standard: 95.0, economy: 75.0 },
-    'Distribution Center': { premium: 15.5, standard: 12.25, economy: 9.75 },
-    'Fulfillment Services': { premium: 4.85, standard: 3.95, economy: 3.25 },
-    '3PL Full Service': { premium: 185.0, standard: 145.0, economy: 115.0 },
+    'Warehouse Storage': {
+      premium: 8.5,
+      standard: 6.25,
+      economy: 4.75,
+      budget: 3.5,
+    },
+    'Cross Docking': {
+      premium: 45.0,
+      standard: 35.0,
+      economy: 25.0,
+      budget: 20.0,
+    },
+    'Pick & Pack': {
+      premium: 3.25,
+      standard: 2.75,
+      economy: 2.25,
+      budget: 1.85,
+    },
+    'Inventory Management': {
+      premium: 125.0,
+      standard: 95.0,
+      economy: 75.0,
+      budget: 60.0,
+    },
+    'Distribution Center': {
+      premium: 15.5,
+      standard: 12.25,
+      economy: 9.75,
+      budget: 8.0,
+    },
+    'Fulfillment Services': {
+      premium: 4.85,
+      standard: 3.95,
+      economy: 3.25,
+      budget: 2.75,
+    },
+    '3PL Full Service': {
+      premium: 185.0,
+      standard: 145.0,
+      economy: 115.0,
+      budget: 95.0,
+    },
   };
 
   const equipmentType = loadRequest.equipmentType;
@@ -3703,6 +2975,7 @@ const calculateETA = (loadRequest: any, tier: string) => {
       premium: { min: 1, max: 3 }, // 1-3 days
       standard: { min: 3, max: 7 }, // 3-7 days
       economy: { min: 7, max: 14 }, // 1-2 weeks
+      budget: { min: 14, max: 21 }, // 2-3 weeks
     };
 
     const timeRange = setupTimes[tier] || setupTimes.standard;
@@ -3718,7 +2991,14 @@ const calculateETA = (loadRequest: any, tier: string) => {
       loadRequest.destination
     );
     const baseHours =
-      distance / (tier === 'premium' ? 65 : tier === 'standard' ? 55 : 45);
+      distance /
+      (tier === 'premium'
+        ? 65
+        : tier === 'standard'
+          ? 55
+          : tier === 'economy'
+            ? 45
+            : 35);
     const urgencyMultiplier =
       loadRequest.urgency === 'high'
         ? 0.8
@@ -3745,20 +3025,4 @@ const calculateDistance = (origin: string, destination: string): number => {
   const key =
     Math.random() > 0.6 ? 'long' : Math.random() > 0.4 ? 'medium' : 'short';
   return distances[key] + Math.floor(Math.random() * 200);
-};
-
-const sendNotificationToHub = async (notification: any) => {
-  try {
-    const response = await fetch('/api/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(notification),
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error sending notification:', error);
-    return { success: false };
-  }
 };

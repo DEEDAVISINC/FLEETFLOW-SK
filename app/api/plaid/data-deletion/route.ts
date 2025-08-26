@@ -2,9 +2,9 @@
 // GDPR/CCPA compliant data subject deletion
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ServiceErrorHandler } from '../../../../services/service-error-handler';
 import PlaidService from '../../../services/PlaidService';
 import { PrivacyComplianceService } from '../../../services/PrivacyComplianceService';
-import { ServiceErrorHandler } from '../../../services/service-error-handler';
 
 export async function POST(request: NextRequest) {
   return (

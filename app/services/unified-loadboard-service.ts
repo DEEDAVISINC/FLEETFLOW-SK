@@ -216,7 +216,15 @@ class UnifiedLoadBoardService {
   async getLoadBoardMetrics(): Promise<LoadBoardMetrics> {
     try {
       const response = await fetch(`${this.baseUrl}/metrics`);
-      return await response.json();
+      const result = await response.json();
+
+      // Handle API response format: { success: true, data: {...} }
+      if (result.success && result.data) {
+        return result.data;
+      }
+
+      // Fallback to direct data if not wrapped
+      return result;
     } catch (error) {
       console.error('Metrics fetch failed:', error);
       return this.getMockMetrics();

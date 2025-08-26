@@ -3,8 +3,11 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { workflowManager, useLoadWorkflow, WorkflowStepId } from '../../lib/workflowManager';
+import Link from 'next/link';
+
+import { useEffect, useState } from 'react';
+import { useLoadWorkflow } from '../../lib/useWorkflowHooks';
+import { WorkflowStepId, workflowManager } from '../../lib/workflowManager';
 
 interface Driver {
   id: string;
@@ -52,7 +55,7 @@ export default function WorkflowDriverPortal() {
     dispatcherEmail: 'sarah.johnson@fleetflow.com',
     currentLocation: 'Dallas, TX',
     eldStatus: 'Connected',
-    hoursRemaining: 8.5
+    hoursRemaining: 8.5,
   });
 
   const [assignedLoads, setAssignedLoads] = useState<Load[]>([
@@ -61,7 +64,7 @@ export default function WorkflowDriverPortal() {
       brokerName: 'Swift Logistics',
       origin: 'Dallas, TX',
       destination: 'Houston, TX',
-      rate: 1250.00,
+      rate: 1250.0,
       distance: '240 miles',
       weight: '32,000 lbs',
       equipment: 'Dry Van',
@@ -69,8 +72,8 @@ export default function WorkflowDriverPortal() {
       pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       deliveryDate: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
       assignedDriverId: 'DRV-2025-001',
-      workflowStep: 'load_assignment_confirmation'
-    }
+      workflowStep: 'load_assignment_confirmation',
+    },
   ]);
 
   const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
@@ -78,15 +81,26 @@ export default function WorkflowDriverPortal() {
 
   // Initialize workflows for assigned loads
   useEffect(() => {
-    assignedLoads.forEach(load => {
+    assignedLoads.forEach((load) => {
       if (!workflowManager.getWorkflow(load.id)) {
-        workflowManager.initializeLoadWorkflow(load.id, driver.id, driver.dispatcherId);
+        workflowManager.initializeLoadWorkflow(
+          load.id,
+          driver.id,
+          driver.dispatcherId
+        );
       }
     });
   }, [assignedLoads, driver.id, driver.dispatcherId]);
 
   const LoadWorkflowCard = ({ load }: { load: Load }) => {
-    const { workflow, currentStep, availableSteps, progress, completeStep, canCompleteStep } = useLoadWorkflow(load.id);
+    const {
+      workflow,
+      currentStep,
+      availableSteps,
+      progress,
+      completeStep,
+      canCompleteStep,
+    } = useLoadWorkflow(load.id);
 
     if (!workflow) return null;
 
@@ -97,19 +111,19 @@ export default function WorkflowDriverPortal() {
 
     const getStepIcon = (stepId: string) => {
       const icons = {
-        'load_assignment_confirmation': '✅',
-        'rate_confirmation_review': '📄',
-        'rate_confirmation_verification': '✔️',
-        'bol_receipt_confirmation': '📋',
-        'bol_verification': '✔️',
-        'pickup_authorization': '🟢',
-        'pickup_arrival': '📍',
-        'pickup_completion': '📦',
-        'transit_start': '🚛',
-        'transit_tracking': '📱',
-        'delivery_arrival': '🏁',
-        'delivery_completion': '📸',
-        'pod_submission': '📤'
+        load_assignment_confirmation: '✅',
+        rate_confirmation_review: '📄',
+        rate_confirmation_verification: '✔️',
+        bol_receipt_confirmation: '📋',
+        bol_verification: '✔️',
+        pickup_authorization: '🟢',
+        pickup_arrival: '📍',
+        pickup_completion: '📦',
+        transit_start: '🚛',
+        transit_tracking: '📱',
+        delivery_arrival: '🏁',
+        delivery_completion: '📸',
+        pod_submission: '📤',
       } as { [key: string]: string };
       return icons[stepId] || '⏳';
     };
@@ -121,18 +135,34 @@ export default function WorkflowDriverPortal() {
     };
 
     return (
-      <div style={{
-        background: 'white',
-        borderRadius: '16px',
-        padding: '24px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
-        marginBottom: '16px'
-      }}>
+      <div
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
+          marginBottom: '16px',
+        }}
+      >
         {/* Load Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'start',
+            marginBottom: '16px',
+          }}
+        >
           <div>
-            <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', margin: '0 0 8px 0' }}>
+            <h4
+              style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                color: '#111827',
+                margin: '0 0 8px 0',
+              }}
+            >
               Load {load.id}
             </h4>
             <div style={{ color: '#6b7280', fontSize: '14px' }}>
@@ -140,42 +170,65 @@ export default function WorkflowDriverPortal() {
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>
+            <div
+              style={{
+                fontSize: '12px',
+                color: '#6b7280',
+                marginBottom: '4px',
+              }}
+            >
               Progress: {progress}%
             </div>
-            <div style={{
-              background: '#e5e7eb',
-              height: '8px',
-              width: '120px',
-              borderRadius: '4px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                height: '100%',
-                width: `${progress}%`,
-                transition: 'width 0.3s ease'
-              }} />
+            <div
+              style={{
+                background: '#e5e7eb',
+                height: '8px',
+                width: '120px',
+                borderRadius: '4px',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  height: '100%',
+                  width: `${progress}%`,
+                  transition: 'width 0.3s ease',
+                }}
+              />
             </div>
           </div>
         </div>
 
         {/* Current Step */}
         {currentStep && (
-          <div style={{
-            background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
-            borderRadius: '12px',
-            padding: '16px',
-            marginBottom: '16px',
-            border: '1px solid rgba(59, 130, 246, 0.2)'
-          }}>
-            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e40af', marginBottom: '4px' }}>
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '16px',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: 'bold',
+                color: '#1e40af',
+                marginBottom: '4px',
+              }}
+            >
               Current Step:
             </div>
-            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#111827' }}>
+            <div
+              style={{ fontSize: '16px', fontWeight: 'bold', color: '#111827' }}
+            >
               {getStepIcon(currentStep.id)} {currentStep.name}
             </div>
-            <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+            <div
+              style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}
+            >
               {currentStep.description}
             </div>
           </div>
@@ -183,47 +236,76 @@ export default function WorkflowDriverPortal() {
 
         {/* Workflow Steps */}
         <div style={{ marginBottom: '16px' }}>
-          <h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
+          <h5
+            style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#111827',
+              marginBottom: '12px',
+            }}
+          >
             📋 Workflow Steps
           </h5>
           <div style={{ display: 'grid', gap: '8px' }}>
             {workflow.steps.map((step, index) => {
               const isAvailable = availableSteps.includes(step);
               const canComplete = canCompleteStep(step.id as WorkflowStepId);
-              
+
               return (
-                <div key={step.id} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  border: `1px solid ${step.completed ? '#10b981' : isAvailable ? '#f59e0b' : '#e5e7eb'}`,
-                  background: step.completed ? '#f0fdf4' : isAvailable ? '#fffbeb' : '#f9fafb'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  key={step.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: `1px solid ${step.completed ? '#10b981' : isAvailable ? '#f59e0b' : '#e5e7eb'}`,
+                    background: step.completed
+                      ? '#f0fdf4'
+                      : isAvailable
+                        ? '#fffbeb'
+                        : '#f9fafb',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     <span style={{ fontSize: '16px' }}>
-                      {step.completed ? '✅' : isAvailable ? '⏳' : getStepIcon(step.id)}
+                      {step.completed
+                        ? '✅'
+                        : isAvailable
+                          ? '⏳'
+                          : getStepIcon(step.id)}
                     </span>
                     <div>
-                      <div style={{ 
-                        fontSize: '12px', 
-                        fontWeight: '600',
-                        color: getStepColor(step)
-                      }}>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: getStepColor(step),
+                        }}
+                      >
                         {step.name}
                       </div>
                       {step.completed && step.completedAt && (
                         <div style={{ fontSize: '10px', color: '#6b7280' }}>
-                          Completed: {new Date(step.completedAt).toLocaleString()}
+                          Completed:{' '}
+                          {new Date(step.completedAt).toLocaleString()}
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   {isAvailable && canComplete.allowed && (
                     <button
-                      onClick={() => handleStepAction(step.id as WorkflowStepId)}
+                      onClick={() =>
+                        handleStepAction(step.id as WorkflowStepId)
+                      }
                       style={{
                         background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                         color: 'white',
@@ -232,20 +314,22 @@ export default function WorkflowDriverPortal() {
                         borderRadius: '6px',
                         fontSize: '11px',
                         fontWeight: '600',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                       }}
                     >
                       {getStepButtonText(step.id)}
                     </button>
                   )}
-                  
+
                   {!canComplete.allowed && !step.completed && (
-                    <div style={{ 
-                      fontSize: '10px', 
-                      color: '#ef4444',
-                      textAlign: 'right',
-                      maxWidth: '100px'
-                    }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: '#ef4444',
+                        textAlign: 'right',
+                        maxWidth: '100px',
+                      }}
+                    >
                       {canComplete.reason}
                     </div>
                   )}
@@ -256,21 +340,29 @@ export default function WorkflowDriverPortal() {
         </div>
 
         {/* Load Details */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '16px',
-          fontSize: '12px',
-          color: '#6b7280'
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px',
+            fontSize: '12px',
+            color: '#6b7280',
+          }}
+        >
           <div>
-            <strong>Rate:</strong> ${load.rate.toLocaleString()}<br/>
-            <strong>Equipment:</strong> {load.equipment}<br/>
+            <strong>Rate:</strong> ${load.rate.toLocaleString()}
+            <br />
+            <strong>Equipment:</strong> {load.equipment}
+            <br />
             <strong>Weight:</strong> {load.weight}
           </div>
           <div>
-            <strong>Pickup:</strong> {new Date(load.pickupDate).toLocaleDateString()}<br/>
-            <strong>Delivery:</strong> {new Date(load.deliveryDate).toLocaleDateString()}<br/>
+            <strong>Pickup:</strong>{' '}
+            {new Date(load.pickupDate).toLocaleDateString()}
+            <br />
+            <strong>Delivery:</strong>{' '}
+            {new Date(load.deliveryDate).toLocaleDateString()}
+            <br />
             <strong>Distance:</strong> {load.distance}
           </div>
         </div>
@@ -280,89 +372,131 @@ export default function WorkflowDriverPortal() {
 
   const getStepButtonText = (stepId: string) => {
     const texts = {
-      'load_assignment_confirmation': 'Confirm Assignment',
-      'rate_confirmation_review': 'Review Rate',
-      'rate_confirmation_verification': 'Verify Rate',
-      'bol_receipt_confirmation': 'Confirm BOL Receipt',
-      'bol_verification': 'Verify BOL',
-      'pickup_authorization': 'Proceed to Pickup',
-      'pickup_arrival': 'Confirm Arrival',
-      'pickup_completion': 'Complete Pickup',
-      'transit_start': 'Start Transit',
-      'transit_tracking': 'Enable Tracking',
-      'delivery_arrival': 'Confirm Arrival',
-      'delivery_completion': 'Complete Delivery',
-      'pod_submission': 'Submit POD'
+      load_assignment_confirmation: 'Confirm Assignment',
+      rate_confirmation_review: 'Review Rate',
+      rate_confirmation_verification: 'Verify Rate',
+      bol_receipt_confirmation: 'Confirm BOL Receipt',
+      bol_verification: 'Verify BOL',
+      pickup_authorization: 'Proceed to Pickup',
+      pickup_arrival: 'Confirm Arrival',
+      pickup_completion: 'Complete Pickup',
+      transit_start: 'Start Transit',
+      transit_tracking: 'Enable Tracking',
+      delivery_arrival: 'Confirm Arrival',
+      delivery_completion: 'Complete Delivery',
+      pod_submission: 'Submit POD',
     } as { [key: string]: string };
     return texts[stepId] || 'Complete Step';
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1e40af, #1d4ed8, #2563eb)', padding: '80px 20px 20px 20px' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #1e40af, #1d4ed8, #2563eb)',
+        padding: '80px 20px 20px 20px',
+      }}
+    >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ padding: '0 0 24px 0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <a style={{ display: 'inline-block', textDecoration: 'none' }} href="/">
-              <button style={{
-                background: 'rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Link
+              style={{ display: 'inline-block', textDecoration: 'none' }}
+              href='/'
+            >
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 ← Back to Dashboard
               </button>
-            </a>
+            </Link>
             <div style={{ color: 'white', textAlign: 'right' }}>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Welcome, {driver.name}</div>
-              <div style={{ fontSize: '14px', opacity: 0.8 }}>Driver ID: {driver.id}</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                Welcome, {driver.name}
+              </div>
+              <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                Driver ID: {driver.id}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Page Title */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          borderRadius: '20px',
-          padding: '32px',
-          marginBottom: '32px',
-          textAlign: 'center'
-        }}>
-          <h1 style={{
-            fontSize: '48px',
-            fontWeight: 'bold',
-            color: 'white',
-            margin: '0 0 12px 0',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-          }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(15px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '20px',
+            padding: '32px',
+            marginBottom: '32px',
+            textAlign: 'center',
+          }}
+        >
+          <h1
+            style={{
+              fontSize: '48px',
+              fontWeight: 'bold',
+              color: 'white',
+              margin: '0 0 12px 0',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+            }}
+          >
             🔄 WORKFLOW DRIVER MANAGEMENT PORTAL
           </h1>
-          <p style={{ fontSize: '20px', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>
+          <p
+            style={{
+              fontSize: '20px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              margin: 0,
+            }}
+          >
             Step-by-step workflow with validation and flow control
           </p>
         </div>
 
         {/* Main Content */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '24px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '20px' }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: '#111827',
+              marginBottom: '20px',
+            }}
+          >
             🚛 My Assigned Loads with Workflow
           </h3>
-          
+
           {assignedLoads.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+            <div
+              style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}
+            >
               📭 No loads currently assigned
             </div>
           ) : (
@@ -392,16 +526,16 @@ export default function WorkflowDriverPortal() {
 }
 
 // Workflow Step Modal Component
-function WorkflowStepModal({ 
-  load, 
-  stepId, 
-  onClose, 
-  driverId 
-}: { 
-  load: Load; 
-  stepId: string; 
-  onClose: () => void; 
-  driverId: string; 
+function WorkflowStepModal({
+  load,
+  stepId,
+  onClose,
+  driverId,
+}: {
+  load: Load;
+  stepId: string;
+  onClose: () => void;
+  driverId: string;
 }) {
   const { completeStep, validateStepData } = useLoadWorkflow(load.id);
   const [stepData, setStepData] = useState<any>({});
@@ -422,8 +556,12 @@ function WorkflowStepModal({
       }
 
       // Complete the step
-      const result = await completeStep(stepId as WorkflowStepId, stepData, driverId);
-      
+      const result = await completeStep(
+        stepId as WorkflowStepId,
+        stepData,
+        driverId
+      );
+
       if (result.success) {
         onClose();
       } else {
@@ -439,55 +577,121 @@ function WorkflowStepModal({
   const renderStepContent = () => {
     switch (stepId) {
       case 'load_assignment_confirmation':
-        return <LoadAssignmentConfirmation load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <LoadAssignmentConfirmation
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'rate_confirmation_review':
-        return <RateConfirmationReview load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <RateConfirmationReview
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'rate_confirmation_verification':
-        return <RateConfirmationVerification load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <RateConfirmationVerification
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'bol_receipt_confirmation':
-        return <BOLReceiptConfirmation load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <BOLReceiptConfirmation
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'bol_verification':
-        return <BOLVerification load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <BOLVerification
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'pickup_completion':
-        return <PickupCompletion load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <PickupCompletion
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'transit_tracking':
-        return <TransitTracking load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <TransitTracking
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       case 'delivery_completion':
-        return <DeliveryCompletion load={load} stepData={stepData} setStepData={setStepData} />;
+        return (
+          <DeliveryCompletion
+            load={load}
+            stepData={stepData}
+            setStepData={setStepData}
+          />
+        );
       default:
         return <div>Step content not implemented yet</div>;
     }
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000,
-      padding: '20px'
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: '20px',
-        padding: '32px',
-        maxWidth: '600px',
-        width: '100%',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '20px',
+      }}
+    >
+      <div
+        style={{
+          background: 'white',
+          borderRadius: '20px',
+          padding: '32px',
+          maxWidth: '600px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              color: '#111827',
+              margin: 0,
+            }}
+          >
             {getStepTitle(stepId)}
           </h3>
-          <button 
+          <button
             onClick={onClose}
             style={{
               background: '#ef4444',
@@ -497,7 +701,7 @@ function WorkflowStepModal({
               width: '32px',
               height: '32px',
               fontSize: '16px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             ✕
@@ -505,14 +709,16 @@ function WorkflowStepModal({
         </div>
 
         {error && (
-          <div style={{
-            background: '#fef2f2',
-            color: '#dc2626',
-            padding: '12px',
-            borderRadius: '8px',
-            marginBottom: '16px',
-            fontSize: '14px'
-          }}>
+          <div
+            style={{
+              background: '#fef2f2',
+              color: '#dc2626',
+              padding: '12px',
+              borderRadius: '8px',
+              marginBottom: '16px',
+              fontSize: '14px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -531,7 +737,7 @@ function WorkflowStepModal({
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              flex: 1
+              flex: 1,
             }}
           >
             Cancel
@@ -540,7 +746,9 @@ function WorkflowStepModal({
             onClick={handleComplete}
             disabled={loading}
             style={{
-              background: loading ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
+              background: loading
+                ? '#9ca3af'
+                : 'linear-gradient(135deg, #10b981, #059669)',
               color: 'white',
               border: 'none',
               padding: '12px 24px',
@@ -548,7 +756,7 @@ function WorkflowStepModal({
               fontSize: '14px',
               fontWeight: '600',
               cursor: loading ? 'not-allowed' : 'pointer',
-              flex: 2
+              flex: 2,
             }}
           >
             {loading ? 'Processing...' : 'Complete Step'}
@@ -597,31 +805,61 @@ function LoadAssignmentConfirmation({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Please confirm that you accept this load assignment:</p>
-      <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-        <strong>Load:</strong> {load.id}<br/>
-        <strong>Route:</strong> {load.origin} → {load.destination}<br/>
-        <strong>Rate:</strong> ${load.rate.toLocaleString()}<br/>
-        <strong>Pickup:</strong> {new Date(load.pickupDate).toLocaleDateString()}
+      <div
+        style={{
+          background: '#f9fafb',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+        }}
+      >
+        <strong>Load:</strong> {load.id}
+        <br />
+        <strong>Route:</strong> {load.origin} → {load.destination}
+        <br />
+        <strong>Rate:</strong> ${load.rate.toLocaleString()}
+        <br />
+        <strong>Pickup:</strong>{' '}
+        {new Date(load.pickupDate).toLocaleDateString()}
       </div>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <input 
-          type="checkbox" 
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '16px',
+        }}
+      >
+        <input
+          type='checkbox'
           checked={stepData.accepted || false}
-          onChange={(e) => setStepData({ ...stepData, accepted: e.target.checked })}
+          onChange={(e) =>
+            setStepData({ ...stepData, accepted: e.target.checked })
+          }
         />
         I accept this load assignment and understand the requirements
       </label>
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           Digital Signature:
         </label>
-        <canvas 
-          width="400" 
-          height="100" 
-          style={{ border: '1px solid #d1d5db', borderRadius: '8px', width: '100%' }}
+        <canvas
+          width='400'
+          height='100'
+          style={{
+            border: '1px solid #d1d5db',
+            borderRadius: '8px',
+            width: '100%',
+          }}
           onMouseDown={(e) => {
             // Signature capture logic
-            setStepData({ ...stepData, driverSignature: 'signature_data', confirmationTimestamp: new Date().toISOString() });
+            setStepData({
+              ...stepData,
+              driverSignature: 'signature_data',
+              confirmationTimestamp: new Date().toISOString(),
+            });
           }}
         />
       </div>
@@ -633,19 +871,43 @@ function RateConfirmationReview({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Please review the rate confirmation document:</p>
-      <div style={{ background: '#f0f9ff', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #3b82f6' }}>
+      <div
+        style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #3b82f6',
+        }}
+      >
         <h4>📄 Rate Confirmation</h4>
-        <p><strong>Load ID:</strong> {load.id}</p>
-        <p><strong>Rate:</strong> ${load.rate.toLocaleString()}</p>
-        <p><strong>Fuel Surcharge:</strong> Included</p>
-        <p><strong>Accessorials:</strong> None</p>
-        <p><strong>Payment Terms:</strong> Net 30</p>
+        <p>
+          <strong>Load ID:</strong> {load.id}
+        </p>
+        <p>
+          <strong>Rate:</strong> ${load.rate.toLocaleString()}
+        </p>
+        <p>
+          <strong>Fuel Surcharge:</strong> Included
+        </p>
+        <p>
+          <strong>Accessorials:</strong> None
+        </p>
+        <p>
+          <strong>Payment Terms:</strong> Net 30
+        </p>
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <input 
-          type="checkbox" 
+        <input
+          type='checkbox'
           checked={stepData.reviewed || false}
-          onChange={(e) => setStepData({ ...stepData, reviewed: e.target.checked, reviewTimestamp: new Date().toISOString() })}
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              reviewed: e.target.checked,
+              reviewTimestamp: new Date().toISOString(),
+            })
+          }
         />
         I have reviewed the rate confirmation document
       </label>
@@ -657,21 +919,44 @@ function RateConfirmationVerification({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Please verify and confirm the rate details are accurate:</p>
-      <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #10b981' }}>
+      <div
+        style={{
+          background: '#f0fdf4',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #10b981',
+        }}
+      >
         <h4>✔️ Rate Verification</h4>
-        <p><strong>Agreed Rate:</strong> ${load.rate.toLocaleString()}</p>
-        <p><strong>Route:</strong> {load.origin} → {load.destination}</p>
-        <p><strong>Equipment:</strong> {load.equipment}</p>
+        <p>
+          <strong>Agreed Rate:</strong> ${load.rate.toLocaleString()}
+        </p>
+        <p>
+          <strong>Route:</strong> {load.origin} → {load.destination}
+        </p>
+        <p>
+          <strong>Equipment:</strong> {load.equipment}
+        </p>
       </div>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <input 
-          type="checkbox" 
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '16px',
+        }}
+      >
+        <input
+          type='checkbox'
           checked={stepData.rateAccepted || false}
-          onChange={(e) => setStepData({ 
-            ...stepData, 
-            rateAccepted: e.target.checked, 
-            verificationTimestamp: new Date().toISOString() 
-          })}
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              rateAccepted: e.target.checked,
+              verificationTimestamp: new Date().toISOString(),
+            })
+          }
         />
         I verify that the rate and terms are accurate and acceptable
       </label>
@@ -683,21 +968,37 @@ function BOLReceiptConfirmation({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Confirm receipt of Bill of Lading from your dispatcher:</p>
-      <div style={{ background: '#fffbeb', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #f59e0b' }}>
+      <div
+        style={{
+          background: '#fffbeb',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #f59e0b',
+        }}
+      >
         <h4>📋 Bill of Lading Status</h4>
-        <p><strong>Load ID:</strong> {load.id}</p>
-        <p><strong>Dispatcher:</strong> Sarah Johnson</p>
-        <p><strong>Status:</strong> Pending Receipt Confirmation</p>
+        <p>
+          <strong>Load ID:</strong> {load.id}
+        </p>
+        <p>
+          <strong>Dispatcher:</strong> Sarah Johnson
+        </p>
+        <p>
+          <strong>Status:</strong> Pending Receipt Confirmation
+        </p>
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <input 
-          type="checkbox" 
+        <input
+          type='checkbox'
           checked={stepData.bolReceived || false}
-          onChange={(e) => setStepData({ 
-            ...stepData, 
-            bolReceived: e.target.checked, 
-            receiptTimestamp: new Date().toISOString() 
-          })}
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              bolReceived: e.target.checked,
+              receiptTimestamp: new Date().toISOString(),
+            })
+          }
         />
         I confirm receipt of the Bill of Lading document
       </label>
@@ -709,25 +1010,46 @@ function BOLVerification({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Verify the Bill of Lading details and confirm accuracy:</p>
-      <div style={{ background: '#f0f9ff', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #3b82f6' }}>
+      <div
+        style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #3b82f6',
+        }}
+      >
         <h4>📋 Bill of Lading Details</h4>
-        <p><strong>Shipper:</strong> ABC Manufacturing</p>
-        <p><strong>Consignee:</strong> XYZ Distribution</p>
-        <p><strong>Commodity:</strong> Electronics</p>
-        <p><strong>Weight:</strong> {load.weight}</p>
-        <p><strong>Pieces:</strong> 10 pallets</p>
+        <p>
+          <strong>Shipper:</strong> ABC Manufacturing
+        </p>
+        <p>
+          <strong>Consignee:</strong> XYZ Distribution
+        </p>
+        <p>
+          <strong>Commodity:</strong> Electronics
+        </p>
+        <p>
+          <strong>Weight:</strong> {load.weight}
+        </p>
+        <p>
+          <strong>Pieces:</strong> 10 pallets
+        </p>
       </div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <input 
-          type="checkbox" 
+        <input
+          type='checkbox'
           checked={stepData.bolVerified || false}
-          onChange={(e) => setStepData({ 
-            ...stepData, 
-            bolVerified: e.target.checked, 
-            verificationTimestamp: new Date().toISOString() 
-          })}
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              bolVerified: e.target.checked,
+              verificationTimestamp: new Date().toISOString(),
+            })
+          }
         />
-        I verify that all BOL details are accurate and I'm authorized to proceed to pickup
+        I verify that all BOL details are accurate and I'm authorized to proceed
+        to pickup
       </label>
     </div>
   );
@@ -738,25 +1060,31 @@ function PickupCompletion({ load, stepData, setStepData }: any) {
     <div>
       <p>Complete pickup process with photos and timestamp:</p>
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           📸 Pickup Photos (Required):
         </label>
-        <input 
-          type="file" 
-          multiple 
-          accept="image/*"
-          onChange={(e) => setStepData({ 
-            ...stepData, 
-            pickupPhotos: Array.from(e.target.files || []),
-            pickupTimestamp: new Date().toISOString()
-          })}
+        <input
+          type='file'
+          multiple
+          accept='image/*'
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              pickupPhotos: Array.from(e.target.files || []),
+              pickupTimestamp: new Date().toISOString(),
+            })
+          }
         />
       </div>
-      <button 
-        onClick={() => setStepData({ 
-          ...stepData, 
-          pickupTimestamp: new Date().toISOString() 
-        })}
+      <button
+        onClick={() =>
+          setStepData({
+            ...stepData,
+            pickupTimestamp: new Date().toISOString(),
+          })
+        }
         style={{
           background: 'linear-gradient(135deg, #10b981, #059669)',
           color: 'white',
@@ -765,14 +1093,15 @@ function PickupCompletion({ load, stepData, setStepData }: any) {
           borderRadius: '8px',
           fontSize: '12px',
           fontWeight: '600',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         📍 Timestamp Pickup Completion
       </button>
       {stepData.pickupTimestamp && (
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#059669' }}>
-          ✅ Pickup completed at: {new Date(stepData.pickupTimestamp).toLocaleString()}
+          ✅ Pickup completed at:{' '}
+          {new Date(stepData.pickupTimestamp).toLocaleString()}
         </div>
       )}
     </div>
@@ -783,63 +1112,79 @@ function DeliveryCompletion({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Complete delivery with photos, signature, and receiver information:</p>
-      
+
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           📸 Delivery Photos (Required):
         </label>
-        <input 
-          type="file" 
-          multiple 
-          accept="image/*"
-          onChange={(e) => setStepData({ 
-            ...stepData, 
-            deliveryPhotos: Array.from(e.target.files || [])
-          })}
+        <input
+          type='file'
+          multiple
+          accept='image/*'
+          onChange={(e) =>
+            setStepData({
+              ...stepData,
+              deliveryPhotos: Array.from(e.target.files || []),
+            })
+          }
         />
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           👤 Receiver Name (Required):
         </label>
-        <input 
-          type="text" 
+        <input
+          type='text'
           value={stepData.receiverName || ''}
-          onChange={(e) => setStepData({ ...stepData, receiverName: e.target.value })}
+          onChange={(e) =>
+            setStepData({ ...stepData, receiverName: e.target.value })
+          }
           placeholder="Enter receiver's full name"
           style={{
             width: '100%',
             padding: '8px',
             borderRadius: '6px',
-            border: '1px solid #d1d5db'
+            border: '1px solid #d1d5db',
           }}
         />
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           ✍️ Receiver Signature (Required):
         </label>
-        <canvas 
-          width="400" 
-          height="100" 
-          style={{ border: '1px solid #d1d5db', borderRadius: '8px', width: '100%' }}
+        <canvas
+          width='400'
+          height='100'
+          style={{
+            border: '1px solid #d1d5db',
+            borderRadius: '8px',
+            width: '100%',
+          }}
           onMouseDown={(e) => {
-            setStepData({ 
-              ...stepData, 
+            setStepData({
+              ...stepData,
               receiverSignature: 'signature_data',
-              deliveryTimestamp: new Date().toISOString()
+              deliveryTimestamp: new Date().toISOString(),
             });
           }}
         />
       </div>
 
-      <button 
-        onClick={() => setStepData({ 
-          ...stepData, 
-          deliveryTimestamp: new Date().toISOString() 
-        })}
+      <button
+        onClick={() =>
+          setStepData({
+            ...stepData,
+            deliveryTimestamp: new Date().toISOString(),
+          })
+        }
         style={{
           background: 'linear-gradient(135deg, #10b981, #059669)',
           color: 'white',
@@ -848,15 +1193,16 @@ function DeliveryCompletion({ load, stepData, setStepData }: any) {
           borderRadius: '8px',
           fontSize: '12px',
           fontWeight: '600',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         📍 Timestamp Delivery Completion
       </button>
-      
+
       {stepData.deliveryTimestamp && (
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#059669' }}>
-          ✅ Delivery completed at: {new Date(stepData.deliveryTimestamp).toLocaleString()}
+          ✅ Delivery completed at:{' '}
+          {new Date(stepData.deliveryTimestamp).toLocaleString()}
         </div>
       )}
     </div>
@@ -867,62 +1213,101 @@ function TransitTracking({ load, stepData, setStepData }: any) {
   return (
     <div>
       <p>Enable real-time tracking and location updates during transit:</p>
-      
-      <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #3b82f6' }}>
-        <h4>📱 Real-Time Tracking Setup</h4>
-        <p><strong>Load:</strong> {load.id}</p>
-        <p><strong>Route:</strong> {load.origin} → {load.destination}</p>
-        <p><strong>Status:</strong> Ready for tracking activation</p>
-      </div>
 
-      <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <input 
-            type="checkbox" 
-            checked={stepData.trackingEnabled || false}
-            onChange={(e) => setStepData({ 
-              ...stepData, 
-              trackingEnabled: e.target.checked,
-              trackingStartTime: e.target.checked ? new Date().toISOString() : undefined
-            })}
-          />
-          <strong>Enable Real-Time Location Tracking</strong>
-        </label>
-        <p style={{ fontSize: '12px', color: '#6b7280', marginLeft: '24px' }}>
-          Allow FleetFlow to track your location during transit for safety and delivery updates
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
+          padding: '16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #3b82f6',
+        }}
+      >
+        <h4>📱 Real-Time Tracking Setup</h4>
+        <p>
+          <strong>Load:</strong> {load.id}
+        </p>
+        <p>
+          <strong>Route:</strong> {load.origin} → {load.destination}
+        </p>
+        <p>
+          <strong>Status:</strong> Ready for tracking activation
         </p>
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '8px',
+          }}
+        >
+          <input
+            type='checkbox'
+            checked={stepData.trackingEnabled || false}
+            onChange={(e) =>
+              setStepData({
+                ...stepData,
+                trackingEnabled: e.target.checked,
+                trackingStartTime: e.target.checked
+                  ? new Date().toISOString()
+                  : undefined,
+              })
+            }
+          />
+          <strong>Enable Real-Time Location Tracking</strong>
+        </label>
+        <p style={{ fontSize: '12px', color: '#6b7280', marginLeft: '24px' }}>
+          Allow FleetFlow to track your location during transit for safety and
+          delivery updates
+        </p>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label
+          style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}
+        >
           📍 Location Update Interval:
         </label>
-        <select 
+        <select
           value={stepData.locationUpdateInterval || '300'}
-          onChange={(e) => setStepData({ ...stepData, locationUpdateInterval: e.target.value })}
+          onChange={(e) =>
+            setStepData({ ...stepData, locationUpdateInterval: e.target.value })
+          }
           style={{
             width: '100%',
             padding: '8px',
             borderRadius: '6px',
-            border: '1px solid #d1d5db'
+            border: '1px solid #d1d5db',
           }}
         >
-          <option value="60">Every 1 minute</option>
-          <option value="300">Every 5 minutes</option>
-          <option value="600">Every 10 minutes</option>
-          <option value="900">Every 15 minutes</option>
+          <option value='60'>Every 1 minute</option>
+          <option value='300'>Every 5 minutes</option>
+          <option value='600'>Every 10 minutes</option>
+          <option value='900'>Every 15 minutes</option>
         </select>
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <input 
-            type="checkbox" 
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '8px',
+          }}
+        >
+          <input
+            type='checkbox'
             checked={stepData.statusUpdateEnabled || false}
-            onChange={(e) => setStepData({ 
-              ...stepData, 
-              statusUpdateEnabled: e.target.checked
-            })}
+            onChange={(e) =>
+              setStepData({
+                ...stepData,
+                statusUpdateEnabled: e.target.checked,
+              })
+            }
           />
           <strong>Enable Status Updates</strong>
         </label>
@@ -931,9 +1316,26 @@ function TransitTracking({ load, stepData, setStepData }: any) {
         </p>
       </div>
 
-      <div style={{ background: '#fef3c7', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #f59e0b' }}>
-        <h5 style={{ margin: '0 0 8px 0', color: '#92400e' }}>🔒 Privacy & Security</h5>
-        <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '12px', color: '#92400e' }}>
+      <div
+        style={{
+          background: '#fef3c7',
+          padding: '12px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: '1px solid #f59e0b',
+        }}
+      >
+        <h5 style={{ margin: '0 0 8px 0', color: '#92400e' }}>
+          🔒 Privacy & Security
+        </h5>
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: '16px',
+            fontSize: '12px',
+            color: '#92400e',
+          }}
+        >
           <li>Location data is encrypted and secure</li>
           <li>Only authorized personnel can access tracking data</li>
           <li>Tracking automatically stops when load is delivered</li>
@@ -942,10 +1344,23 @@ function TransitTracking({ load, stepData, setStepData }: any) {
       </div>
 
       {stepData.trackingEnabled && (
-        <div style={{ background: '#dcfce7', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #10b981' }}>
-          <h5 style={{ margin: '0 0 8px 0', color: '#065f46' }}>✅ Tracking Active</h5>
+        <div
+          style={{
+            background: '#dcfce7',
+            padding: '12px',
+            borderRadius: '8px',
+            marginBottom: '16px',
+            border: '1px solid #10b981',
+          }}
+        >
+          <h5 style={{ margin: '0 0 8px 0', color: '#065f46' }}>
+            ✅ Tracking Active
+          </h5>
           <p style={{ margin: 0, fontSize: '12px', color: '#065f46' }}>
-            Real-time tracking enabled at: {stepData.trackingStartTime ? new Date(stepData.trackingStartTime).toLocaleString() : 'Now'}
+            Real-time tracking enabled at:{' '}
+            {stepData.trackingStartTime
+              ? new Date(stepData.trackingStartTime).toLocaleString()
+              : 'Now'}
           </p>
         </div>
       )}

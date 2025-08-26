@@ -510,7 +510,7 @@ export default function LoadBoardPortal() {
             }}
           ></div>
           <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px' }}>
-                             Loading The Flow Hub...
+            Loading The Flow Hub...
           </p>
         </div>
       </div>
@@ -577,7 +577,7 @@ export default function LoadBoardPortal() {
                   margin: 0,
                 }}
               >
-                                   🌊 The Flow Hub
+                🌊 The Flow Hub
               </h1>
             </div>
 
@@ -759,7 +759,7 @@ export default function LoadBoardPortal() {
                       marginBottom: '8px',
                     }}
                   >
-                                         Flow Hub Loading {activeLoadBoard.displayName}...
+                    Flow Hub Loading {activeLoadBoard.displayName}...
                   </p>
                   <p
                     style={{
@@ -1149,7 +1149,7 @@ export default function LoadBoardPortal() {
                 color: 'white',
               }}
             >
-                             🌊 The Flow Hub System
+              🌊 The Flow Hub System
             </h3>
 
             <div

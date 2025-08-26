@@ -559,7 +559,7 @@ let shipperLeads: ShipperLead[] = [
     shippingProfile: {
       primaryModes: ['Truckload', 'LTL'],
       geographicScope: ['National', 'International'],
-      seasonality: 'Low',
+      seasonality: 'Moderate',
       specialRequirements: [
         'Frozen/refrigerated transport required',
         'Food safety compliance (SQF, BRC)',

@@ -14,12 +14,12 @@ interface EmailCertificateRequest {
 }
 
 // Create reusable transporter object using SMTP transport
-const createTransporter = () => {
+const createTransport = () => {
   // For development, you can use services like Gmail, Outlook, or testing services like Ethereal
   // For production, use services like SendGrid, AWS SES, or Mailgun
 
   if (process.env.EMAIL_SERVICE === 'gmail') {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
@@ -29,7 +29,7 @@ const createTransporter = () => {
   }
 
   if (process.env.SENDGRID_API_KEY) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: 'smtp.sendgrid.net',
       port: 587,
       secure: false,
@@ -41,7 +41,7 @@ const createTransporter = () => {
   }
 
   // Default to Ethereal Email for testing (creates a test account)
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     secure: false,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create transporter
-    const transporter = createTransporter();
+    const transporter = createTransport();
 
     // Email content
     const mailOptions = {

@@ -2,8 +2,8 @@
 // Real-time compliance validation endpoint
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ServiceErrorHandler } from '../../../../services/service-error-handler';
 import PlaidService from '../../../services/PlaidService';
-import { ServiceErrorHandler } from '../../../services/service-error-handler';
 
 export async function GET(request: NextRequest) {
   return (

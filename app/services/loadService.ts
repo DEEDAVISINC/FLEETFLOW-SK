@@ -1,5 +1,6 @@
 // Load Management Service - Centralized load operations with unified flow
 import { getCurrentUser } from '../config/access';
+import { SchedulingService } from '../scheduling/service';
 import { DispatchCommunicationIntegration } from '../utils/DispatchCommunicationIntegration';
 import { logger } from '../utils/logger';
 import { EDIService } from './EDIService';
@@ -41,6 +42,8 @@ export interface Load {
   shipperName?: string; // Added for Load Board Number generation
   dispatcherId?: string;
   dispatcherName?: string;
+  driverId?: string;
+  driverName?: string;
   origin: string;
   destination: string;
   rate: number;
@@ -48,6 +51,10 @@ export interface Load {
   weight: string;
   equipment: string;
   loadType?: string; // Added for Load Board Number generation
+  commodity?: string;
+  isHazmat?: boolean;
+  isExpedited?: boolean;
+  isOversized?: boolean;
   status:
     | 'Draft'
     | 'Available'
@@ -369,6 +376,13 @@ export const generateLoadId = (loadData?: Partial<Load>): string => {
     pickupDate: loadData.pickupDate || new Date().toISOString(),
     equipment: loadData.equipment || 'Dry Van',
     loadType: 'FTL' as const,
+    brokerInitials: loadData.brokerName
+      ? loadData.brokerName
+          .split(' ')
+          .map((n) => n[0])
+          .join('')
+          .toUpperCase()
+      : 'FF',
     brokerId: loadData.brokerId,
     brokerName: loadData.brokerName,
     shipperId: loadData.shipperId,
@@ -476,6 +490,98 @@ export const assignLoadToDispatcher = (
 
   notifyDispatchCentral(load, 'assignment');
   return load;
+};
+
+// Assign load directly to driver with schedule integration
+export const assignLoadToDriver = async (
+  loadId: string,
+  driverId: string,
+  driverName: string
+): Promise<{
+  success: boolean;
+  load?: Load;
+  schedule?: any;
+  error?: string;
+}> => {
+  const load = LOADS_DB.find((l) => l.id === loadId);
+
+  if (!load) {
+    return {
+      success: false,
+      error: `Load ${loadId} not found`,
+    };
+  }
+
+  if (load.status !== 'Available') {
+    return {
+      success: false,
+      error: `Load ${loadId} is not available (current status: ${load.status})`,
+    };
+  }
+
+  // Update load status and assignment
+  load.driverId = driverId;
+  load.driverName = driverName;
+  load.status = 'Assigned';
+  load.assignedAt = new Date().toISOString();
+  load.updatedAt = new Date().toISOString();
+
+  // Ensure Load Board Number exists
+  if (!load.loadBoardNumber) {
+    load.loadBoardNumber = generateLoadBoardNumber(load);
+  }
+
+  // 🗓️ SCHEDULE INTEGRATION: Create schedule entry for the assigned load
+  const schedulingService = new SchedulingService();
+  try {
+    const scheduleResult = await schedulingService.createSchedule({
+      title: `Load ${load.id} - ${load.origin} → ${load.destination}`,
+      scheduleType: 'Delivery',
+      assignedDriverId: driverId,
+      driverName: driverName,
+      assignedVehicleId: `vehicle-${driverId}`, // Assuming driver has associated vehicle
+      origin: load.origin,
+      destination: load.destination,
+      startDate: load.pickupDate || new Date().toISOString().split('T')[0],
+      endDate: load.deliveryDate || new Date().toISOString().split('T')[0],
+      startTime: '08:00', // Default pickup time
+      endTime: '17:00', // Default delivery time
+      priority: 'Medium',
+      status: 'Scheduled',
+      description: `Equipment: ${load.equipment} | Weight: ${load.weight} | Rate: $${load.rate}\nAccepted via Marketplace Loadboard\nPickup: ${load.origin}\nDelivery: ${load.destination}\nRate: $${load.rate}\nDistance: ${load.distance}`,
+    });
+
+    if (scheduleResult.success) {
+      console.log(
+        `✅ Load ${load.id} added to driver ${driverName}'s schedule`
+      );
+
+      return {
+        success: true,
+        load,
+        schedule: scheduleResult.schedule,
+      };
+    } else {
+      console.warn(
+        `⚠️ Load ${load.id} assigned but schedule conflict:`,
+        scheduleResult.conflicts
+      );
+
+      return {
+        success: true, // Load assignment succeeded
+        load,
+        error: `Schedule conflict detected: ${scheduleResult.conflicts?.map((c) => c.message).join(', ')}`,
+      };
+    }
+  } catch (error) {
+    console.error(`❌ Error creating schedule for load ${load.id}:`, error);
+
+    return {
+      success: true, // Load assignment succeeded
+      load,
+      error: `Failed to create schedule entry: ${error}`,
+    };
+  }
 };
 
 // Create new load with enhanced tracking capabilities
@@ -768,14 +874,14 @@ export const getLoadsForUser = (): Load[] => {
 
   if (
     user.role === 'admin' ||
-    user.role === 'dispatcher' ||
-    user.role === 'management'
+    user.role === 'manager' ||
+    user.role === 'dispatcher'
   ) {
     // Dispatchers, managers, admins see all loads
     return LOADS_DB;
-  } else if (user.role === 'broker') {
-    // Brokers see only their loads
-    return LOADS_DB.filter((load) => load.brokerId === user.brokerId);
+  } else if (user.role === 'driver') {
+    // Drivers see only their assigned loads
+    return LOADS_DB.filter((load) => load.driverId === user.id);
   }
 
   // Default: return all loads for demo purposes

@@ -153,6 +153,7 @@ interface AIMetrics {
 }
 
 export default function AIFlowPage() {
+  const [activeTab, setActiveTab] = useState('overview');
   const [aiMetrics, setAiMetrics] = useState<AIMetrics>({
     totalDecisions: 15247,
     systemEfficiency: 94.7,
@@ -389,7 +390,11 @@ export default function AIFlowPage() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs defaultValue='overview' className='space-y-6'>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className='space-y-6'
+        >
           <TabsList className='grid w-full grid-cols-10 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />

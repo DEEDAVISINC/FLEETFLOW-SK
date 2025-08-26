@@ -14,7 +14,7 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import UserDataService from '../../services/user-data-service';
 
 interface SubscriptionTier {
@@ -68,11 +68,7 @@ const getRecommendedTier = (
 };
 
 export default function SubscriptionDashboard() {
-  // Redirect to user profile where subscription management is now located
-  if (typeof window !== 'undefined') {
-    window.location.href = '/user-profile';
-    return null;
-  }
+  // React hooks must be called before any early returns
   const [subscription, setSubscription] = useState<UserSubscription | null>(
     null
   );
@@ -101,17 +97,7 @@ export default function SubscriptionDashboard() {
         userEmail: 'demo@fleetflow.com',
       };
 
-  useEffect(() => {
-    // Ensure a user is logged in for demo purposes
-    if (!loggedInUser) {
-      console.log('🔐 Auto-logging in demo user for subscription dashboard');
-      userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
-    }
-
-    loadSubscriptionData();
-  }, []);
-
-  const loadSubscriptionData = async () => {
+  const loadSubscriptionData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -131,7 +117,23 @@ export default function SubscriptionDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser.userId]);
+
+  useEffect(() => {
+    // Ensure a user is logged in for demo purposes
+    if (!loggedInUser) {
+      console.log('🔐 Auto-logging in demo user for subscription dashboard');
+      userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
+    }
+
+    loadSubscriptionData();
+  }, [loadSubscriptionData, loggedInUser, userDataService]);
+
+  // Redirect to user profile where subscription management is now located
+  if (typeof window !== 'undefined') {
+    window.location.href = '/user-profile';
+    return null;
+  }
 
   const handleUpgrade = async (tierId: string) => {
     try {

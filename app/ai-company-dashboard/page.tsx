@@ -6057,7 +6057,16 @@ export default function AICompanyDashboard() {
 
                 {/* AI Support Dashboard */}
                 <div style={{ background: '#f9fafb' }}>
-                  <AISupportDashboard />
+                  {/* <AISupportDashboard /> */}
+                  <div
+                    style={{
+                      padding: '20px',
+                      textAlign: 'center',
+                      color: '#6b7280',
+                    }}
+                  >
+                    AI Support Dashboard - Coming Soon
+                  </div>
                 </div>
               </div>
             </div>

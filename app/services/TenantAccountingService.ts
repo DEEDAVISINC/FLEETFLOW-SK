@@ -738,6 +738,53 @@ export class CompanyAccountingService {
     ];
     return customers[index] || customers[0];
   }
+
+  // Mock methods for invoice management
+  getShipperInvoices(): any[] {
+    return [
+      {
+        id: 'INV-SH-001',
+        shipper: 'ABC Manufacturing',
+        amount: 2850.0,
+        status: 'paid',
+        dueDate: '2024-08-15',
+        invoiceDate: '2024-07-15',
+        description: 'Electronics shipment - Dallas to Houston',
+      },
+      {
+        id: 'INV-SH-002',
+        shipper: 'XYZ Distribution',
+        amount: 1920.0,
+        status: 'pending',
+        dueDate: '2024-09-01',
+        invoiceDate: '2024-08-01',
+        description: 'Auto parts delivery - Austin to San Antonio',
+      },
+    ];
+  }
+
+  getDispatcherInvoices(): any[] {
+    return [
+      {
+        id: 'INV-DS-001',
+        dispatcher: 'Central Dispatch LLC',
+        amount: 450.0,
+        status: 'paid',
+        dueDate: '2024-08-10',
+        invoiceDate: '2024-07-25',
+        description: 'Dispatch coordination services',
+      },
+      {
+        id: 'INV-DS-002',
+        dispatcher: 'FleetFlow Dispatch',
+        amount: 680.0,
+        status: 'overdue',
+        dueDate: '2024-08-20',
+        invoiceDate: '2024-07-20',
+        description: 'Load board management and driver coordination',
+      },
+    ];
+  }
 }
 
 // Export singleton instance

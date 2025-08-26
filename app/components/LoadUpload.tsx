@@ -16,11 +16,22 @@ interface LoadData {
   rate: string
   distance: string
   equipment: string
+  transportMode: 'truckload' | 'ltl' | 'parcel' | 'vtl' | 'bulk' | 'rail' | 'intermodal' | 'ocean' | 'air'
   specialRequirements: string
   contactInfo: string
   postedBy: string
   postedAt: string
   status: 'available' | 'assigned' | 'in-transit' | 'delivered'
+  multimodalQuotes?: MultimodalQuote[]
+}
+
+interface MultimodalQuote {
+  mode: string
+  carrier: string
+  rate: number
+  transitTime: number
+  confidence: number
+  advantages: string[]
 }
 
 interface LoadUploadProps {
@@ -56,26 +67,170 @@ export default function LoadUpload({ onLoadPosted }: LoadUploadProps) {
     rate: '',
     distance: '',
     equipment: 'dry-van',
+    transportMode: 'truckload' as 'truckload' | 'ltl' | 'parcel' | 'vtl' | 'bulk' | 'rail' | 'intermodal' | 'ocean' | 'air',
     specialRequirements: '',
     contactInfo: ''
   })
+  const [multimodalQuotes, setMultimodalQuotes] = useState<MultimodalQuote[]>([])
+  const [showModeComparison, setShowModeComparison] = useState(false)
+  const [isGettingQuotes, setIsGettingQuotes] = useState(false)
 
-  const equipmentTypes = [
-    { value: 'dry-van', label: '🚛 Dry Van' },
-    { value: 'reefer', label: '🧊 Refrigerated' },
-    { value: 'flatbed', label: '📦 Flatbed' },
-    { value: 'step-deck', label: '📐 Step Deck' },
-    { value: 'lowboy', label: '🚜 Lowboy' },
-    { value: 'tanker', label: '🛢️ Tanker' },
-    { value: 'auto-carrier', label: '🚗 Auto Carrier' },
-    { value: 'box-truck', label: '📦 Box Truck' }
+  const transportModes = [
+    { value: 'truckload', label: '🚛 Truckload (FTL)', description: 'Full truck dedicated to your shipment' },
+    { value: 'ltl', label: '📦 Less Than Truckload (LTL)', description: 'Share truck space with other shipments' },
+    { value: 'parcel', label: '📮 Parcel', description: 'Small packages via FedEx, UPS, USPS' },
+    { value: 'vtl', label: '📊 Volume Truckload (VTL)', description: 'Between LTL and FTL pricing' },
+    { value: 'bulk', label: '🛢️ Bulk Transport', description: 'Tank, hopper, pneumatic bulk cargo' },
+    { value: 'rail', label: '🚂 Rail Freight', description: 'Cost-effective for long distances' },
+    { value: 'intermodal', label: '🚛🚂 Intermodal', description: 'Rail + truck combination' },
+    { value: 'ocean', label: '🚢 Ocean Freight', description: 'International container shipping' },
+    { value: 'air', label: '✈️ Air Freight', description: 'Fast international/time-sensitive' }
   ]
+
+  const getEquipmentTypes = (transportMode: string) => {
+    const equipmentOptions = {
+      truckload: [
+        { value: 'dry-van', label: '🚛 Dry Van' },
+        { value: 'reefer', label: '🧊 Refrigerated' },
+        { value: 'flatbed', label: '📦 Flatbed' },
+        { value: 'step-deck', label: '📐 Step Deck' },
+        { value: 'lowboy', label: '🚜 Lowboy' },
+        { value: 'auto-carrier', label: '🚗 Auto Carrier' }
+      ],
+      ltl: [
+        { value: 'ltl-standard', label: '📦 Standard LTL' },
+        { value: 'ltl-guaranteed', label: '⚡ Guaranteed LTL' }
+      ],
+      parcel: [
+        { value: 'ground', label: '📦 Ground Service' },
+        { value: 'express', label: '⚡ Express Service' },
+        { value: 'overnight', label: '🌙 Overnight' }
+      ],
+      vtl: [
+        { value: 'vtl-standard', label: '📊 Standard VTL' }
+      ],
+      bulk: [
+        { value: 'tank', label: '🛢️ Liquid Tank' },
+        { value: 'hopper', label: '📦 Dry Bulk Hopper' },
+        { value: 'pneumatic', label: '💨 Pneumatic' }
+      ],
+      rail: [
+        { value: 'boxcar', label: '🚂 Boxcar' },
+        { value: 'flatcar', label: '🚂 Flatcar' },
+        { value: 'tank-car', label: '🚂 Tank Car' }
+      ],
+      intermodal: [
+        { value: '53ft-container', label: '📦 53ft Container' },
+        { value: '40ft-container', label: '📦 40ft Container' }
+      ],
+      ocean: [
+        { value: '20ft-container', label: '📦 20ft Container' },
+        { value: '40ft-container', label: '📦 40ft Container' },
+        { value: '40ft-hc', label: '📦 40ft High Cube' }
+      ],
+      air: [
+        { value: 'standard-air', label: '✈️ Standard Air Cargo' },
+        { value: 'express-air', label: '⚡ Express Air' }
+      ]
+    }
+    return equipmentOptions[transportMode as keyof typeof equipmentOptions] || equipmentOptions.truckload
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setLoadData(prev => ({
       ...prev,
       [field]: value
     }))
+    
+    // Reset equipment when transport mode changes
+    if (field === 'transportMode') {
+      const newEquipmentTypes = getEquipmentTypes(value)
+      setLoadData(prev => ({
+        ...prev,
+        [field]: value,
+        equipment: newEquipmentTypes[0]?.value || 'standard'
+      }))
+    }
+  }
+
+  const getMultimodalQuotes = async () => {
+    if (!loadData.pickupLocation || !loadData.deliveryLocation || !loadData.weight) {
+      alert('Please fill in pickup location, delivery location, and weight to get quotes')
+      return
+    }
+
+    setIsGettingQuotes(true)
+    setShowModeComparison(true)
+
+    // Simulate API call to multimodal service
+    try {
+      const mockQuotes: MultimodalQuote[] = [
+        {
+          mode: 'Truckload',
+          carrier: 'FleetFlow Network',
+          rate: 2500,
+          transitTime: 48,
+          confidence: 95,
+          advantages: ['Direct delivery', 'Exclusive use', 'Flexible scheduling']
+        },
+        {
+          mode: 'LTL',
+          carrier: 'YRC Freight',
+          rate: 850,
+          transitTime: 72,
+          confidence: 90,
+          advantages: ['Cost effective for partial loads', 'Freight class flexibility']
+        },
+        {
+          mode: 'Parcel',
+          carrier: 'FedEx',
+          rate: 125,
+          transitTime: 24,
+          confidence: 98,
+          advantages: ['Next day delivery', 'Tracking included', 'Residential delivery']
+        },
+        {
+          mode: 'Rail',
+          carrier: 'BNSF Railway',
+          rate: 1200,
+          transitTime: 120,
+          confidence: 82,
+          advantages: ['Environmentally friendly', 'Cost effective for long distances']
+        },
+        {
+          mode: 'Intermodal',
+          carrier: 'Intermodal Network',
+          rate: 1800,
+          transitTime: 96,
+          confidence: 85,
+          advantages: ['Cost effective for long distances', 'Reliable capacity']
+        }
+      ]
+
+      // Simulate delay
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      setMultimodalQuotes(mockQuotes)
+    } catch (error) {
+      console.error('Error getting quotes:', error)
+      alert('Error getting quotes. Please try again.')
+    } finally {
+      setIsGettingQuotes(false)
+    }
+  }
+
+  const selectTransportMode = (quote: MultimodalQuote) => {
+    const modeMapping: { [key: string]: string } = {
+      'Truckload': 'truckload',
+      'LTL': 'ltl', 
+      'Parcel': 'parcel',
+      'Rail': 'rail',
+      'Intermodal': 'intermodal'
+    }
+    
+    const transportMode = modeMapping[quote.mode] || 'truckload'
+    handleInputChange('transportMode', transportMode)
+    handleInputChange('rate', quote.rate.toString())
+    setShowModeComparison(false)
   }
 
   const handleCalculatorChange = (field: string, value: string) => {
@@ -229,6 +384,7 @@ Load ID: ${load.id}`
         rate: '',
         distance: '',
         equipment: 'dry-van',
+        transportMode: 'truckload' as 'truckload' | 'ltl' | 'parcel' | 'vtl' | 'bulk' | 'rail' | 'intermodal' | 'ocean' | 'air',
         specialRequirements: '',
         contactInfo: ''
       })
@@ -408,16 +564,61 @@ Load ID: ${load.id}`
               />
             </div>
 
+            {/* Transport Mode Selection */}
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Transport Mode <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+                {transportModes.map(mode => (
+                  <div 
+                    key={mode.value} 
+                    className={`border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
+                      loadData.transportMode === mode.value 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => handleInputChange('transportMode', mode.value)}
+                  >
+                    <div className="font-medium text-sm">{mode.label}</div>
+                    <div className="text-xs text-gray-500 mt-1">{mode.description}</div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Multimodal Quote Comparison Button */}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={getMultimodalQuotes}
+                  disabled={isGettingQuotes}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 text-sm font-medium transition-all"
+                >
+                  {isGettingQuotes ? '🔄 Getting Quotes...' : '📊 Compare All Modes'}
+                </button>
+                {multimodalQuotes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowModeComparison(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 text-sm font-medium transition-all"
+                  >
+                    📈 View Quotes ({multimodalQuotes.length})
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Equipment Type (based on selected transport mode) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Equipment Type <span className="text-red-500">*</span>
+                Equipment/Service Type <span className="text-red-500">*</span>
               </label>
               <select
                 value={loadData.equipment}
                 onChange={(e) => handleInputChange('equipment', e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
               >
-                {equipmentTypes.map(type => (
+                {getEquipmentTypes(loadData.transportMode).map(type => (
                   <option key={type.value} value={type.value}>
                     {type.label}
                   </option>
@@ -619,6 +820,93 @@ Load ID: ${load.id}`
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Multimodal Quote Comparison Modal */}
+      {showModeComparison && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800">
+                  🚛 Multimodal Transport Comparison
+                </h3>
+                <button
+                  onClick={() => setShowModeComparison(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {isGettingQuotes ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin text-4xl mb-4">🔄</div>
+                  <p className="text-gray-600">Getting quotes from all transport modes...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {multimodalQuotes.map((quote, index) => (
+                    <div 
+                      key={index}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer hover:border-blue-300"
+                      onClick={() => selectTransportMode(quote)}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-lg text-gray-800">{quote.mode}</h4>
+                          <p className="text-sm text-gray-600">{quote.carrier}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-green-600">${quote.rate.toLocaleString()}</div>
+                          <div className="text-xs text-gray-500">{quote.transitTime}h transit</div>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">Confidence:</span>
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full transition-all"
+                              style={{ width: `${quote.confidence}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-medium">{quote.confidence}%</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-medium text-gray-700 mb-1">Advantages:</p>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          {quote.advantages.slice(0, 2).map((advantage, i) => (
+                            <li key={i} className="flex items-start gap-1">
+                              <span className="text-green-500 mt-0.5">✓</span>
+                              {advantage}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <button className="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 text-sm font-medium transition-all">
+                        Select {quote.mode}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {multimodalQuotes.length > 0 && !isGettingQuotes && (
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-800 font-medium">💡 AI Recommendation:</p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Based on your shipment details, we recommend <strong>{multimodalQuotes[0]?.mode}</strong> for the best balance of cost, speed, and reliability.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

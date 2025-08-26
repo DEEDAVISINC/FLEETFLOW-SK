@@ -665,7 +665,7 @@ let serviceLeads: ServiceLead[] = [
         type: 'proposal',
         contact: 'Amanda Foster',
         subject: 'Comprehensive Freight Brokerage Solution',
-        outcome: 'under_review',
+        outcome: 'sent',
         notes:
           'Detailed proposal with 18% cost savings and service improvements',
       },

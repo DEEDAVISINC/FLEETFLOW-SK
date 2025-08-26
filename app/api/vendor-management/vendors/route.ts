@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Mock vendor storage (in production, this would be a database)
-let vendors: any[] = [
+const vendors: any[] = [
   {
     id: 1,
     name: 'Premium Logistics Solutions',
@@ -124,7 +124,3 @@ export async function DELETE(request: Request) {
     );
   }
 }
-
-
-
-

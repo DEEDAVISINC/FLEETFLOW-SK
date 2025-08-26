@@ -2757,6 +2757,265 @@ Seamless customer relationship management:
 
 #### **Performance Optimization**
 
+---
+
+## 📞 **Phone Dialer System - Complete Communication Hub**
+
+_Available for Admin, Manager, and Dispatcher roles_
+
+### **📋 Overview**
+
+The FleetFlow Phone Dialer System provides enterprise-grade phone communication with full CRM
+integration, call note-taking, and seamless connection to your physical phone devices. The system
+combines browser-based call management with real phone connectivity through multiple setup options.
+
+### **🎯 Key Features**
+
+- **🔗 CRM Integration**: All calls automatically sync with customer records
+- **📝 Real-time Note Taking**: Add notes during calls with quick templates
+- **📞 Multiple Phone Options**: Connect mobile, desk phone, computer, or use forwarding
+- **📊 Call History**: Complete call records with duration and notes
+- **🌐 Global Access**: Floating phone widget available on all pages
+- **💼 Direct CRM Links**: One-click access to customer records during calls
+
+---
+
+### **🔧 Getting Started: Phone Dialer Opt-In**
+
+#### **Step 1: Enable Phone Dialer**
+
+1. **Navigate** to your User Profile (`/user-profile`)
+2. **Scroll** to "📞 PHONE DIALER" section
+3. **Click** "CONNECT" button (if disabled)
+4. **Confirm** - Phone widget will appear in bottom-left corner
+
+#### **Step 2: Phone Connection Setup**
+
+1. **Click** "Configuration" button in Phone Dialer section
+2. **Choose** your phone setup method:
+   - **📱 Mobile App** (Softphone on smartphone)
+   - **☎️ Desk Phone** (Office IP phone)
+   - **💻 Computer** (Desktop softphone)
+   - **📞 Call Forwarding** (Use existing phone)
+
+---
+
+### **📱 Phone Connection Methods**
+
+#### **Method 1: Mobile App (Recommended)**
+
+**Best for:** Mobile workers, remote teams
+
+**Setup Steps:**
+
+1. **Download** SIP client app (Zoiper, Linphone, or 3CX)
+2. **Generate** SIP credentials in FleetFlow setup
+3. **Configure** app with:
+   - **Username**: `ff[your_extension]`
+   - **Password**: Auto-generated secure password
+   - **Server**: `sip.fleetflowapp.com`
+   - **Port**: `5060`
+4. **Test** connection in FleetFlow interface
+5. **Complete** setup - Your phone is now connected!
+
+#### **Method 2: Desk Phone (Office)**
+
+**Best for:** Office workers with IP phones
+
+**Setup Steps:**
+
+1. **Access** your IP phone's web interface (enter IP in browser)
+2. **Navigate** to "Accounts" or "SIP Settings"
+3. **Enter** FleetFlow credentials:
+   - **Account Name**: FleetFlow Extension [number]
+   - **SIP Server**: `sip.fleetflowapp.com`
+   - **Username/Password**: From FleetFlow setup
+4. **Enable** Registration and save settings
+5. **Restart** phone - Should show "Registered" status
+
+#### **Method 3: Computer Softphone**
+
+**Best for:** Desktop users, call center environments
+
+**Setup Steps:**
+
+1. **Download** desktop SIP client (X-Lite, MicroSIP, or FleetFlow Desktop)
+2. **Install** and launch application
+3. **Configure** with FleetFlow credentials
+4. **Use** computer speakers/headset for audio
+5. **Test** and complete setup
+
+#### **Method 4: Call Forwarding (Simplest)**
+
+**Best for:** Users who want to use existing phone
+
+**Setup Steps:**
+
+1. **Select** "Call Forwarding" option
+2. **Enter** your existing phone number
+3. **Save** settings - No additional setup needed!
+4. **FleetFlow calls** will forward to your phone
+5. **Use** FleetFlow widget for outbound calls
+
+---
+
+### **📞 Using the Phone System Widget**
+
+#### **Location & Access**
+
+- **Floating widget** in bottom-left corner (when enabled)
+- **Always accessible** across all FleetFlow pages
+- **Minimized view**: Blue phone icon (📞)
+- **Expanded view**: Full dialer interface
+
+#### **Widget Features**
+
+**📱 Phone Dialer:**
+
+- **Number formatting** as you type: (555) 123-4567
+- **Recent calls** with quick redial
+- **Call duration** timer during active calls
+- **Call controls**: Mute, hold, end call
+
+**📝 Call Notes (During Active Calls):**
+
+- **Note type selector**: General, Opportunity, Complaint, Follow-up
+- **Quick templates**:
+  - "Interested in load opportunities" (Opportunity)
+  - "Payment discussion - following up" (Follow-up)
+  - "Equipment availability inquiry" (General)
+  - "Rate negotiation needed" (Opportunity)
+  - "Complaint about delivery time" (Complaint)
+- **Real-time note saving** to CRM
+- **Notes display** during current call
+
+**💼 CRM Integration:**
+
+- **One-click CRM access** during calls
+- **Contact-specific CRM** links in recent calls
+- **Automatic contact matching** by phone number
+- **Notes sync** to customer records
+
+---
+
+### **🎯 Call Workflow Example**
+
+#### **Making an Outbound Call:**
+
+1. **Click** phone widget to expand
+2. **Enter** phone number (auto-formats)
+3. **Click** "📞 Dial" button
+4. **Call connects** through your configured phone
+5. **Notes panel** appears automatically
+6. **Add notes** using templates or custom text
+7. **Access CRM** with one click if needed
+8. **End call** - Notes save automatically to CRM
+
+#### **Receiving an Inbound Call:**
+
+1. **Your phone rings** (connected device)
+2. **Answer** using your physical phone
+3. **FleetFlow widget** shows call status
+4. **Contact info** displays if known customer
+5. **Add notes** during conversation
+6. **Access customer CRM** record instantly
+
+---
+
+### **📊 Call History & CRM Integration**
+
+#### **Recent Calls Display:**
+
+- **Contact name** (if in CRM) or phone number
+- **Call duration** and timestamp
+- **Note count** indicator (📝 2 notes)
+- **Direct CRM** button for known contacts
+- **Quick redial** for any number
+
+#### **CRM Synchronization:**
+
+- **Automatic contact** matching by phone number
+- **Call records** added to customer history
+- **Notes categorized** by type in CRM:
+  - 📄 General notes
+  - 🎯 Sales opportunities
+  - 🚨 Customer complaints
+  - 📞 Follow-up reminders
+- **Relationship scoring** updated based on call outcomes
+
+---
+
+### **⚙️ Phone System Management**
+
+#### **Opting Out:**
+
+1. **Go to** User Profile (`/user-profile`)
+2. **Find** "📞 PHONE DIALER - ACTIVE" section
+3. **Click** "DISCONNECT" button
+4. **Confirm** - Widget disappears from all pages
+5. **Re-enable** anytime by clicking "CONNECT"
+
+#### **Changing Phone Setup:**
+
+1. **Access** phone configuration in User Profile
+2. **Click** "Configuration" to open setup panel
+3. **Choose** different connection method
+4. **Generate** new credentials if needed
+5. **Test** new setup before completing
+
+#### **Troubleshooting:**
+
+- **Widget not showing**: Check if Phone Dialer is enabled in User Profile
+- **Can't connect**: Verify SIP credentials and network settings
+- **No audio**: Check phone device configuration and settings
+- **Notes not saving**: Ensure stable internet connection
+- **CRM not syncing**: Verify contact phone numbers match exactly
+
+---
+
+### **🔐 Security & Privacy**
+
+#### **SIP Credentials Security:**
+
+- **Auto-generated** secure passwords for each user
+- **Encrypted** SIP communication
+- **User-specific** extensions and credentials
+- **Regular rotation** recommended for production
+
+#### **Call Recording & Privacy:**
+
+- **Call logs** tracked for business purposes
+- **Notes stored** in secure CRM system
+- **GDPR compliant** data handling
+- **Customer consent** for recording when required
+
+---
+
+### **💡 Pro Tips**
+
+#### **Efficiency Tips:**
+
+- **Use quick templates** for common scenarios to save time
+- **Pin important contacts** for easy access
+- **Set up call forwarding** if you're frequently mobile
+- **Review call history** to identify follow-up opportunities
+
+#### **CRM Best Practices:**
+
+- **Always categorize notes** properly (Opportunity, Complaint, etc.)
+- **Use specific details** in notes for better customer service
+- **Access CRM** during calls to see customer history
+- **Update contact info** when customers provide new details
+
+#### **Team Coordination:**
+
+- **Share important notes** with team through CRM
+- **Use Follow-up** note type to create reminders
+- **Check colleague availability** before transferring calls
+- **Document complaint resolution** steps for future reference
+
+---
+
 - **Data-Driven Decisions**: Use analytics to guide strategy adjustments
 - **Continuous Learning**: Adapt strategies based on win/loss patterns
 - **Market Responsiveness**: Quickly adjust to changing market conditions

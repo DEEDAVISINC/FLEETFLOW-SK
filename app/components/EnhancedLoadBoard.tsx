@@ -6,6 +6,7 @@ import EDIService from '../services/EDIService';
 import {
   Load,
   assignLoadToDispatcher,
+  assignLoadToDriver,
   getGlobalLoadBoard,
   getLoadStats,
 } from '../services/loadService';
@@ -249,6 +250,46 @@ export default function EnhancedLoadBoard() {
       setFilteredLoads((prevFiltered) =>
         prevFiltered.map((load) => (load.id === loadId ? updatedLoad : load))
       );
+    }
+  };
+
+  // 🚛 Driver Load Acceptance with Schedule Integration
+  const handleDriverAcceptance = async (loadId: string) => {
+    const currentUser = getCurrentUser();
+
+    // For demo purposes, assume we have driver information
+    const driverId = currentUser?.user?.id || 'driver-001';
+    const driverName = currentUser?.user?.name || 'Demo Driver';
+
+    try {
+      const result = await assignLoadToDriver(loadId, driverId, driverName);
+
+      if (result.success) {
+        // Update the local state to reflect the change
+        setLoads((prevLoads) =>
+          prevLoads.map((load) => (load.id === loadId ? result.load! : load))
+        );
+        setFilteredLoads((prevFiltered) =>
+          prevFiltered.map((load) => (load.id === loadId ? result.load! : load))
+        );
+
+        // Show success message
+        const message = result.schedule
+          ? `✅ Load ${loadId} accepted and added to your schedule!`
+          : `✅ Load ${loadId} accepted! ${result.error ? `Note: ${result.error}` : ''}`;
+
+        alert(message);
+
+        console.log('✅ Load accepted and integrated with schedule:', {
+          load: result.load,
+          schedule: result.schedule,
+        });
+      } else {
+        alert(`❌ Failed to accept load: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('❌ Error accepting load:', error);
+      alert(`❌ Error accepting load: ${error}`);
     }
   };
 
@@ -631,10 +672,10 @@ export default function EnhancedLoadBoard() {
             color: '#60a5fa',
           }}
         >
-          💡 <strong>Dispatcher Assignment:</strong> Use the dropdown in the
-          Actions column to assign dispatchers to available loads. Once
-          assigned, loads move to "Assigned" status and are sent to Dispatch
-          Central.
+          💡 <strong>Load Actions:</strong> 🚛 <strong>Accept Load</strong>{' '}
+          button allows drivers to accept loads directly and add them to their
+          schedule. <strong>Dispatcher Assignment:</strong> dropdown assigns
+          loads to dispatchers. Once assigned, loads move to "Assigned" status.
         </div>
         {filteredLoads.length === 0 ? (
           <div
@@ -985,26 +1026,58 @@ export default function EnhancedLoadBoard() {
                       📋 BOL
                     </button>
                     {load.status === 'Available' && (
-                      <select
-                        style={{
-                          padding: '8px 12px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          color: 'white',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                        }}
-                        onChange={(e) =>
-                          handleDispatcherAssignment(load.id, e.target.value)
-                        }
-                      >
-                        <option value=''>Assign Dispatcher</option>
-                        {getAvailableDispatchers().map((dispatcher) => (
-                          <option key={dispatcher.id} value={dispatcher.id}>
-                            {dispatcher.name}
-                          </option>
-                        ))}
-                      </select>
+                      <>
+                        <button
+                          onClick={() => handleDriverAcceptance(load.id)}
+                          style={{
+                            padding: '8px 16px',
+                            background:
+                              'linear-gradient(135deg, #22c55e, #16a34a)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-2px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 4px 16px rgba(34, 197, 94, 0.4)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow =
+                              '0 2px 8px rgba(34, 197, 94, 0.3)';
+                          }}
+                          title='Accept this load and add to your schedule'
+                        >
+                          🚛 Accept Load
+                        </button>
+                        <select
+                          style={{
+                            padding: '8px 12px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'white',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                          }}
+                          onChange={(e) =>
+                            handleDispatcherAssignment(load.id, e.target.value)
+                          }
+                        >
+                          <option value=''>Assign Dispatcher</option>
+                          {getAvailableDispatchers().map((dispatcher) => (
+                            <option key={dispatcher.id} value={dispatcher.id}>
+                              {dispatcher.name}
+                            </option>
+                          ))}
+                        </select>
+                      </>
                     )}
                   </div>
                 </div>
@@ -1137,28 +1210,57 @@ export default function EnhancedLoadBoard() {
                     View
                   </button>
                   {load.status === 'Available' && (
-                    <select
-                      value={load.dispatcherId || ''}
-                      onChange={(e) =>
-                        handleDispatcherAssignment(load.id, e.target.value)
-                      }
-                      style={{
-                        padding: '2px 4px',
-                        fontSize: '8px',
-                        borderRadius: '3px',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        color: 'white',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <option value=''>Assign Dispatcher</option>
-                      {getAvailableDispatchers().map((dispatcher) => (
-                        <option key={dispatcher.id} value={dispatcher.id}>
-                          {dispatcher.name}
-                        </option>
-                      ))}
-                    </select>
+                    <>
+                      <button
+                        onClick={() => handleDriverAcceptance(load.id)}
+                        style={{
+                          padding: '3px 8px',
+                          background:
+                            'linear-gradient(135deg, #22c55e, #16a34a)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontSize: '8px',
+                          fontWeight: '700',
+                          marginBottom: '2px',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'linear-gradient(135deg, #16a34a, #15803d)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'linear-gradient(135deg, #22c55e, #16a34a)';
+                        }}
+                        title='Accept this load'
+                      >
+                        🚛 Accept
+                      </button>
+                      <select
+                        value={load.dispatcherId || ''}
+                        onChange={(e) =>
+                          handleDispatcherAssignment(load.id, e.target.value)
+                        }
+                        style={{
+                          padding: '2px 4px',
+                          fontSize: '8px',
+                          borderRadius: '3px',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <option value=''>Assign Dispatcher</option>
+                        {getAvailableDispatchers().map((dispatcher) => (
+                          <option key={dispatcher.id} value={dispatcher.id}>
+                            {dispatcher.name}
+                          </option>
+                        ))}
+                      </select>
+                    </>
                   )}
                   {load.dispatcherName && (
                     <div

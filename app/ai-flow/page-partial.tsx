@@ -2,37 +2,30 @@
 
 import {
   Activity,
+  ArrowRight,
   BarChart3,
   Brain,
+  Building2,
   Calendar,
+  Calendar as CalendarIcon,
   CheckCircle,
   DollarSign,
+  Eye,
   Gauge,
+  Globe,
   Headphones,
   Heart,
+  Mail,
+  MessageSquare,
   Navigation,
   Phone,
   Shield,
   Target,
-  TrendingUp,
   Truck,
   UserPlus,
-  Users,
   Zap,
-  Building2,
-  Mail,
-  Globe,
-  Clock,
-  Star,
-  ArrowRight,
-  Eye,
-  MessageSquare,
-  Calendar as CalendarIcon,
-  Briefcase,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import AITaskPrioritizationPanel from '../components/AITaskPrioritizationPanel';
-import CRMDashboard from '../components/CRMDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -62,7 +55,14 @@ interface StrategicBuyer {
   }[];
   strategicFit: number;
   acquisitionLikelihood: number;
-  status: 'prospecting' | 'contacted' | 'engaged' | 'demo_scheduled' | 'evaluating' | 'negotiating' | 'closed';
+  status:
+    | 'prospecting'
+    | 'contacted'
+    | 'engaged'
+    | 'demo_scheduled'
+    | 'evaluating'
+    | 'negotiating'
+    | 'closed';
   lastActivity: string;
   nextAction: string;
   notes: string;
@@ -84,7 +84,10 @@ interface OutreachCampaign {
 interface DemoEnvironment {
   id: string;
   companyName: string;
-  environmentType: 'Strategic Buyer Sandbox' | 'Executive Demo' | 'Technical Evaluation';
+  environmentType:
+    | 'Strategic Buyer Sandbox'
+    | 'Executive Demo'
+    | 'Technical Evaluation';
   accessUrl: string;
   createdDate: string;
   expiryDate: string;
@@ -136,6 +139,7 @@ interface AIMetrics {
 }
 
 export default function AIFlowPage() {
+  const [activeTab, setActiveTab] = useState('overview');
   const [aiMetrics, setAiMetrics] = useState<AIMetrics>({
     totalDecisions: 15247,
     systemEfficiency: 94.7,
@@ -225,23 +229,35 @@ export default function AIFlowPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'prospecting': return 'bg-gray-100 text-gray-800';
-      case 'contacted': return 'bg-blue-100 text-blue-800';
-      case 'engaged': return 'bg-yellow-100 text-yellow-800';
-      case 'demo_scheduled': return 'bg-purple-100 text-purple-800';
-      case 'evaluating': return 'bg-orange-100 text-orange-800';
-      case 'negotiating': return 'bg-green-100 text-green-800';
-      case 'closed': return 'bg-emerald-100 text-emerald-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'prospecting':
+        return 'bg-gray-100 text-gray-800';
+      case 'contacted':
+        return 'bg-blue-100 text-blue-800';
+      case 'engaged':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'demo_scheduled':
+        return 'bg-purple-100 text-purple-800';
+      case 'evaluating':
+        return 'bg-orange-100 text-orange-800';
+      case 'negotiating':
+        return 'bg-green-100 text-green-800';
+      case 'closed':
+        return 'bg-emerald-100 text-emerald-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getBuyerTypeColor = (type: string) => {
     switch (type) {
-      case 'Primary': return 'bg-red-100 text-red-800';
-      case 'Secondary': return 'bg-blue-100 text-blue-800';
-      case 'Opportunistic': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Primary':
+        return 'bg-red-100 text-red-800';
+      case 'Secondary':
+        return 'bg-blue-100 text-blue-800';
+      case 'Opportunistic':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -259,7 +275,8 @@ export default function AIFlowPage() {
                 FleetFlow™ AI Flow Platform
               </h1>
               <p className='text-xl text-gray-600'>
-                Complete AI-Powered Transportation & Strategic Acquisition Center
+                Complete AI-Powered Transportation & Strategic Acquisition
+                Center
               </p>
             </div>
           </div>
@@ -349,7 +366,11 @@ export default function AIFlowPage() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs defaultValue='overview' className='space-y-6'>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className='space-y-6'
+        >
           <TabsList className='grid w-full grid-cols-10 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
@@ -396,7 +417,10 @@ export default function AIFlowPage() {
               <CheckCircle className='h-4 w-4' />
               AI Review
             </TabsTrigger>
-            <TabsTrigger value='strategic-acquisition' className='flex items-center gap-2'>
+            <TabsTrigger
+              value='strategic-acquisition'
+              className='flex items-center gap-2'
+            >
               <Target className='h-4 w-4' />
               Acquisition Pipeline
             </TabsTrigger>
@@ -407,32 +431,43 @@ export default function AIFlowPage() {
             {acquisitionLoading ? (
               <div className='flex items-center justify-center p-8'>
                 <div className='text-center'>
-                  <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4' />
-                  <p className='text-gray-600'>Loading Strategic Acquisition Pipeline...</p>
+                  <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
+                  <p className='text-gray-600'>
+                    Loading Strategic Acquisition Pipeline...
+                  </p>
                 </div>
               </div>
             ) : (
               <>
                 {/* Developer-Only Header */}
-                <div className='bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg mb-6'>
+                <div className='mb-6 rounded-lg bg-gradient-to-r from-red-500 to-red-600 p-4 text-white'>
                   <div className='flex items-center gap-3'>
                     <Shield className='h-6 w-6' />
                     <div>
-                      <h3 className='text-lg font-bold'>🔒 Developer-Only System</h3>
-                      <p className='text-red-100 text-sm'>Strategic Acquisition Pipeline Automation - Private Internal Tool</p>
+                      <h3 className='text-lg font-bold'>
+                        🔒 Developer-Only System
+                      </h3>
+                      <p className='text-sm text-red-100'>
+                        Strategic Acquisition Pipeline Automation - Private
+                        Internal Tool
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Acquisition Metrics */}
                 {acquisitionData && (
-                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8'>
+                  <div className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
                     <Card className='bg-gradient-to-r from-blue-500 to-blue-600 text-white'>
                       <CardContent className='p-4'>
                         <div className='flex items-center justify-between'>
                           <div>
-                            <p className='text-sm font-medium text-blue-100'>Target Companies</p>
-                            <p className='text-2xl font-bold'>{acquisitionData.metrics.totalTargets}</p>
+                            <p className='text-sm font-medium text-blue-100'>
+                              Target Companies
+                            </p>
+                            <p className='text-2xl font-bold'>
+                              {acquisitionData.metrics.totalTargets}
+                            </p>
                           </div>
                           <Building2 className='h-8 w-8 text-blue-200' />
                         </div>
@@ -443,8 +478,12 @@ export default function AIFlowPage() {
                       <CardContent className='p-4'>
                         <div className='flex items-center justify-between'>
                           <div>
-                            <p className='text-sm font-medium text-green-100'>Active Outreach</p>
-                            <p className='text-2xl font-bold'>{acquisitionData.metrics.activeOutreach}</p>
+                            <p className='text-sm font-medium text-green-100'>
+                              Active Outreach
+                            </p>
+                            <p className='text-2xl font-bold'>
+                              {acquisitionData.metrics.activeOutreach}
+                            </p>
                           </div>
                           <Mail className='h-8 w-8 text-green-200' />
                         </div>
@@ -455,8 +494,12 @@ export default function AIFlowPage() {
                       <CardContent className='p-4'>
                         <div className='flex items-center justify-between'>
                           <div>
-                            <p className='text-sm font-medium text-purple-100'>Response Rate</p>
-                            <p className='text-2xl font-bold'>{acquisitionData.metrics.responseRate.toFixed(1)}%</p>
+                            <p className='text-sm font-medium text-purple-100'>
+                              Response Rate
+                            </p>
+                            <p className='text-2xl font-bold'>
+                              {acquisitionData.metrics.responseRate.toFixed(1)}%
+                            </p>
                           </div>
                           <MessageSquare className='h-8 w-8 text-purple-200' />
                         </div>
@@ -467,8 +510,12 @@ export default function AIFlowPage() {
                       <CardContent className='p-4'>
                         <div className='flex items-center justify-between'>
                           <div>
-                            <p className='text-sm font-medium text-orange-100'>Pipeline Value</p>
-                            <p className='text-2xl font-bold'>{acquisitionData.metrics.pipelineValue}</p>
+                            <p className='text-sm font-medium text-orange-100'>
+                              Pipeline Value
+                            </p>
+                            <p className='text-2xl font-bold'>
+                              {acquisitionData.metrics.pipelineValue}
+                            </p>
                           </div>
                           <DollarSign className='h-8 w-8 text-orange-200' />
                         </div>
@@ -490,48 +537,83 @@ export default function AIFlowPage() {
                     <CardContent>
                       <div className='space-y-4'>
                         {acquisitionData?.buyers.map((buyer) => (
-                          <div key={buyer.id} className='border rounded-lg p-4 hover:bg-gray-50 transition-colors'>
-                            <div className='flex items-start justify-between mb-3'>
+                          <div
+                            key={buyer.id}
+                            className='rounded-lg border p-4 transition-colors hover:bg-gray-50'
+                          >
+                            <div className='mb-3 flex items-start justify-between'>
                               <div>
-                                <h4 className='font-semibold text-lg'>{buyer.companyName}</h4>
-                                <div className='flex items-center gap-2 mt-1'>
-                                  <Badge className={getBuyerTypeColor(buyer.type)}>
+                                <h4 className='text-lg font-semibold'>
+                                  {buyer.companyName}
+                                </h4>
+                                <div className='mt-1 flex items-center gap-2'>
+                                  <Badge
+                                    className={getBuyerTypeColor(buyer.type)}
+                                  >
                                     {buyer.type}
                                   </Badge>
-                                  <Badge className={getStatusColor(buyer.status)}>
-                                    {buyer.status.replace('_', ' ').toUpperCase()}
+                                  <Badge
+                                    className={getStatusColor(buyer.status)}
+                                  >
+                                    {buyer.status
+                                      .replace('_', ' ')
+                                      .toUpperCase()}
                                   </Badge>
                                 </div>
                               </div>
                               <div className='text-right'>
-                                <div className='text-sm text-gray-600'>Strategic Fit</div>
-                                <div className='text-lg font-bold text-blue-600'>{buyer.strategicFit}%</div>
+                                <div className='text-sm text-gray-600'>
+                                  Strategic Fit
+                                </div>
+                                <div className='text-lg font-bold text-blue-600'>
+                                  {buyer.strategicFit}%
+                                </div>
                               </div>
                             </div>
-                            
-                            <div className='grid grid-cols-2 gap-4 mb-3'>
+
+                            <div className='mb-3 grid grid-cols-2 gap-4'>
                               <div>
-                                <div className='text-sm text-gray-600'>Acquisition Budget</div>
-                                <div className='font-medium'>{buyer.acquisitionBudget}</div>
+                                <div className='text-sm text-gray-600'>
+                                  Acquisition Budget
+                                </div>
+                                <div className='font-medium'>
+                                  {buyer.acquisitionBudget}
+                                </div>
                               </div>
                               <div>
-                                <div className='text-sm text-gray-600'>Likelihood</div>
-                                <div className='font-medium text-green-600'>{buyer.acquisitionLikelihood}%</div>
+                                <div className='text-sm text-gray-600'>
+                                  Likelihood
+                                </div>
+                                <div className='font-medium text-green-600'>
+                                  {buyer.acquisitionLikelihood}%
+                                </div>
                               </div>
                             </div>
 
                             <div className='mb-3'>
-                              <div className='text-sm text-gray-600 mb-1'>Key Decision Maker</div>
-                              <div className='font-medium'>{buyer.keyDecisionMakers[0]?.name} - {buyer.keyDecisionMakers[0]?.title}</div>
+                              <div className='mb-1 text-sm text-gray-600'>
+                                Key Decision Maker
+                              </div>
+                              <div className='font-medium'>
+                                {buyer.keyDecisionMakers[0]?.name} -{' '}
+                                {buyer.keyDecisionMakers[0]?.title}
+                              </div>
                             </div>
 
                             <div className='mb-3'>
-                              <div className='text-sm text-gray-600 mb-1'>Next Action</div>
+                              <div className='mb-1 text-sm text-gray-600'>
+                                Next Action
+                              </div>
                               <div className='text-sm'>{buyer.nextAction}</div>
                             </div>
 
                             <div className='flex items-center justify-between text-xs text-gray-500'>
-                              <span>Last Activity: {new Date(buyer.lastActivity).toLocaleDateString()}</span>
+                              <span>
+                                Last Activity:{' '}
+                                {new Date(
+                                  buyer.lastActivity
+                                ).toLocaleDateString()}
+                              </span>
                               <ArrowRight className='h-4 w-4' />
                             </div>
                           </div>
@@ -553,29 +635,48 @@ export default function AIFlowPage() {
                       <CardContent>
                         <div className='space-y-3'>
                           {acquisitionData?.campaigns.map((campaign) => (
-                            <div key={campaign.id} className='border rounded-lg p-3'>
-                              <div className='flex items-start justify-between mb-2'>
+                            <div
+                              key={campaign.id}
+                              className='rounded-lg border p-3'
+                            >
+                              <div className='mb-2 flex items-start justify-between'>
                                 <div>
-                                  <h5 className='font-medium'>{campaign.name}</h5>
-                                  <p className='text-sm text-gray-600'>{campaign.targetCompany}</p>
+                                  <h5 className='font-medium'>
+                                    {campaign.name}
+                                  </h5>
+                                  <p className='text-sm text-gray-600'>
+                                    {campaign.targetCompany}
+                                  </p>
                                 </div>
-                                <Badge className={campaign.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                <Badge
+                                  className={
+                                    campaign.status === 'active'
+                                      ? 'bg-green-100 text-green-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                  }
+                                >
                                   {campaign.status}
                                 </Badge>
                               </div>
-                              
+
                               <div className='grid grid-cols-3 gap-3 text-sm'>
                                 <div>
                                   <div className='text-gray-600'>Sent</div>
-                                  <div className='font-medium'>{campaign.sentCount}</div>
+                                  <div className='font-medium'>
+                                    {campaign.sentCount}
+                                  </div>
                                 </div>
                                 <div>
                                   <div className='text-gray-600'>Response</div>
-                                  <div className='font-medium text-blue-600'>{campaign.responseRate}%</div>
+                                  <div className='font-medium text-blue-600'>
+                                    {campaign.responseRate}%
+                                  </div>
                                 </div>
                                 <div>
                                   <div className='text-gray-600'>Meetings</div>
-                                  <div className='font-medium text-green-600'>{campaign.meetingsScheduled}</div>
+                                  <div className='font-medium text-green-600'>
+                                    {campaign.meetingsScheduled}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -595,30 +696,56 @@ export default function AIFlowPage() {
                       <CardContent>
                         <div className='space-y-3'>
                           {acquisitionData?.demos.map((demo) => (
-                            <div key={demo.id} className='border rounded-lg p-3'>
-                              <div className='flex items-start justify-between mb-2'>
+                            <div
+                              key={demo.id}
+                              className='rounded-lg border p-3'
+                            >
+                              <div className='mb-2 flex items-start justify-between'>
                                 <div>
-                                  <h5 className='font-medium'>{demo.companyName}</h5>
-                                  <p className='text-sm text-gray-600'>{demo.environmentType}</p>
+                                  <h5 className='font-medium'>
+                                    {demo.companyName}
+                                  </h5>
+                                  <p className='text-sm text-gray-600'>
+                                    {demo.environmentType}
+                                  </p>
                                 </div>
-                                <Badge className={demo.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                                <Badge
+                                  className={
+                                    demo.status === 'active'
+                                      ? 'bg-green-100 text-green-800'
+                                      : 'bg-red-100 text-red-800'
+                                  }
+                                >
                                   {demo.status}
                                 </Badge>
                               </div>
-                              
-                              <div className='grid grid-cols-2 gap-3 text-sm mb-2'>
+
+                              <div className='mb-2 grid grid-cols-2 gap-3 text-sm'>
                                 <div>
                                   <div className='text-gray-600'>Logins</div>
-                                  <div className='font-medium'>{demo.usageStats.logins}</div>
+                                  <div className='font-medium'>
+                                    {demo.usageStats.logins}
+                                  </div>
                                 </div>
                                 <div>
-                                  <div className='text-gray-600'>Time Spent</div>
-                                  <div className='font-medium'>{demo.usageStats.timeSpent}h</div>
+                                  <div className='text-gray-600'>
+                                    Time Spent
+                                  </div>
+                                  <div className='font-medium'>
+                                    {demo.usageStats.timeSpent}h
+                                  </div>
                                 </div>
                               </div>
 
                               <div className='flex items-center justify-between text-xs text-gray-500'>
-                                <span>Last Access: {demo.usageStats.lastAccess ? new Date(demo.usageStats.lastAccess).toLocaleDateString() : 'Never'}</span>
+                                <span>
+                                  Last Access:{' '}
+                                  {demo.usageStats.lastAccess
+                                    ? new Date(
+                                        demo.usageStats.lastAccess
+                                      ).toLocaleDateString()
+                                    : 'Never'}
+                                </span>
                                 <Eye className='h-4 w-4' />
                               </div>
                             </div>
@@ -639,28 +766,37 @@ export default function AIFlowPage() {
                   </CardHeader>
                   <CardContent>
                     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                      <button className='p-4 border rounded-lg hover:bg-blue-50 transition-colors text-left'>
-                        <div className='flex items-center gap-3 mb-2'>
+                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-blue-50'>
+                        <div className='mb-2 flex items-center gap-3'>
                           <MessageSquare className='h-5 w-5 text-blue-600' />
                           <span className='font-medium'>Generate Outreach</span>
                         </div>
-                        <p className='text-sm text-gray-600'>AI-generated personalized emails and LinkedIn messages for strategic buyers</p>
+                        <p className='text-sm text-gray-600'>
+                          AI-generated personalized emails and LinkedIn messages
+                          for strategic buyers
+                        </p>
                       </button>
 
-                      <button className='p-4 border rounded-lg hover:bg-green-50 transition-colors text-left'>
-                        <div className='flex items-center gap-3 mb-2'>
+                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-green-50'>
+                        <div className='mb-2 flex items-center gap-3'>
                           <BarChart3 className='h-5 w-5 text-green-600' />
                           <span className='font-medium'>Analyze Buyers</span>
                         </div>
-                        <p className='text-sm text-gray-600'>Deep AI analysis of strategic fit, timing, and approach recommendations</p>
+                        <p className='text-sm text-gray-600'>
+                          Deep AI analysis of strategic fit, timing, and
+                          approach recommendations
+                        </p>
                       </button>
 
-                      <button className='p-4 border rounded-lg hover:bg-purple-50 transition-colors text-left'>
-                        <div className='flex items-center gap-3 mb-2'>
+                      <button className='rounded-lg border p-4 text-left transition-colors hover:bg-purple-50'>
+                        <div className='mb-2 flex items-center gap-3'>
                           <CalendarIcon className='h-5 w-5 text-purple-600' />
                           <span className='font-medium'>Schedule Demos</span>
                         </div>
-                        <p className='text-sm text-gray-600'>Automated demo environment creation and meeting scheduling</p>
+                        <p className='text-sm text-gray-600'>
+                          Automated demo environment creation and meeting
+                          scheduling
+                        </p>
                       </button>
                     </div>
                   </CardContent>
@@ -671,7 +807,6 @@ export default function AIFlowPage() {
 
           {/* Keep existing tabs content here - Overview, Call Center, etc. */}
           {/* I'll add them back in the next part... */}
-          
         </Tabs>
       </div>
     </div>

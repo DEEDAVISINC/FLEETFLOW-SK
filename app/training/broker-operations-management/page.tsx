@@ -355,8 +355,10 @@ export default function BrokerOperationsManagementTraining() {
           </span>
           <span>
             {completedModules.reduce((total, moduleId) => {
-              const module = modules.find((m) => m.id === moduleId);
-              return total + (module ? parseInt(module.duration) : 0);
+              const trainingModule = modules.find((m) => m.id === moduleId);
+              return (
+                total + (trainingModule ? parseInt(trainingModule.duration) : 0)
+              );
             }, 0)}{' '}
             minutes completed
           </span>

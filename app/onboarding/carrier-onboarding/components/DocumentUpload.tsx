@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { DocumentVerificationService } from '../../../services/document-verification-service';
-import { W9Form } from './W9Form';
 
 interface DocumentInfo {
   id: string;
@@ -97,7 +96,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       status: 'pending',
       description: 'Voided check for ACH payment setup (or bank letter)'
     },
-    
+
     // Factoring (Conditional)
     {
       id: 'notice_assignment',
@@ -139,8 +138,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
   const [notificationLog, setNotificationLog] = useState<any[]>([]);
 
   const categories = ['All', 'Legal/Regulatory', 'Insurance', 'Financial', 'Safety/Technology', 'Safety'];
-      description: 'Completed and signed W-9 tax form'
-    },
+
+  const documents = [
     {
       id: 'voided_check',
       type: 'Voided Check',
@@ -179,12 +178,12 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
 
   const handleFileUpload = async (documentId: string, file: File) => {
     setUploadingId(documentId);
-    
+
     try {
       // Update status to processing
-      setDocuments(prevDocs => 
-        prevDocs.map(doc => 
-          doc.id === documentId 
+      setDocuments(prevDocs =>
+        prevDocs.map(doc =>
+          doc.id === documentId
             ? { ...doc, status: 'processing' as const, fileName: file.name, uploadDate: new Date().toISOString().split('T')[0] }
             : doc
         )
@@ -193,12 +192,12 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       // Send initial notification
       await DocumentVerificationService.sendNotification(
         'documentReceived',
-        { 
+        {
           carrierName: carrierData?.legalName || 'Carrier',
           email: carrierData?.email || 'carrier@example.com',
           phone: carrierData?.phone
         },
-        { 
+        {
           documentName: documents.find(d => d.id === documentId)?.type,
           uploadDate: new Date().toLocaleDateString()
         }
@@ -206,17 +205,17 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
 
       // Simulate document verification
       const verificationResult = await DocumentVerificationService.verifyDocument(
-        file, 
-        documentId, 
+        file,
+        documentId,
         carrierData
       );
 
       // Update document with verification results
       const updatedDocuments = documents.map(doc => {
         if (doc.id === documentId) {
-          const newStatus = verificationResult.verified 
-            ? 'approved' 
-            : verificationResult.requiresManualReview 
+          const newStatus = verificationResult.verified
+            ? 'approved'
+            : verificationResult.requiresManualReview
               ? 'needs_attention'
               : 'rejected';
 
@@ -236,11 +235,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
           if (verificationResult.verified) {
             DocumentVerificationService.sendNotification(
               'documentApproved',
-              { 
+              {
                 carrierName: carrierData?.legalName || 'Carrier',
                 email: carrierData?.email || 'carrier@example.com'
               },
-              { 
+              {
                 documentName: doc.type,
                 approvalDate: new Date().toLocaleDateString(),
                 expirationDate: verificationResult.extractedData?.expirationDate || 'N/A'
@@ -249,11 +248,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
           } else {
             DocumentVerificationService.sendNotification(
               'documentRejected',
-              { 
+              {
                 carrierName: carrierData?.legalName || 'Carrier',
                 email: carrierData?.email || 'carrier@example.com'
               },
-              { 
+              {
                 documentName: doc.type,
                 uploadDate: new Date().toLocaleDateString(),
                 issues: verificationResult.issues
@@ -266,7 +265,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
         }
         return doc;
       });
-      
+
       setDocuments(updatedDocuments);
 
       // Check if all required documents are now complete
@@ -277,11 +276,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       if (completionCheck.complete) {
         await DocumentVerificationService.sendNotification(
           'allDocumentsComplete',
-          { 
+          {
             carrierName: carrierData?.legalName || 'Carrier',
             email: carrierData?.email || 'carrier@example.com'
           },
-          { 
+          {
             approvedDocuments: completionCheck.approvedDocuments
           }
         );
@@ -289,11 +288,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
 
     } catch (error) {
       console.error('Upload failed:', error);
-      
+
       // Update status to rejected on error
-      setDocuments(prevDocs => 
-        prevDocs.map(doc => 
-          doc.id === documentId 
+      setDocuments(prevDocs =>
+        prevDocs.map(doc =>
+          doc.id === documentId
             ? { ...doc, status: 'rejected' as const, issues: ['Upload failed. Please try again.'] }
             : doc
         )
@@ -305,7 +304,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
 
   const handleW9FormComplete = async (formData: any) => {
     setShowW9Form(false);
-    
+
     // Create a mock W-9 document with the form data
     const w9Document = {
       id: 'w9_form',
@@ -327,7 +326,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
     };
 
     // Update documents
-    const updatedDocuments = documents.map(doc => 
+    const updatedDocuments = documents.map(doc =>
       doc.id === 'w9_form' ? w9Document : doc
     );
     setDocuments(updatedDocuments);
@@ -336,11 +335,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
     // Send approval notification
     await DocumentVerificationService.sendNotification(
       'documentApproved',
-      { 
+      {
         carrierName: carrierData?.legalName || 'Carrier',
         email: carrierData?.email || 'carrier@example.com'
       },
-      { 
+      {
         documentName: 'W-9 Tax Form',
         approvalDate: new Date().toLocaleDateString(),
         expirationDate: 'N/A'
@@ -378,8 +377,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
     }
   };
 
-  const filteredDocuments = selectedCategory === 'All' 
-    ? documents 
+  const filteredDocuments = selectedCategory === 'All'
+    ? documents
     : documents.filter(doc => doc.category === selectedCategory);
 
   const requiredDocsUploaded = documents.filter(doc => doc.required && doc.uploaded).length;
@@ -396,18 +395,18 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
     }}>
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h2 style={{ 
-          fontSize: '2rem', 
-          fontWeight: 'bold', 
-          color: 'white', 
-          marginBottom: '12px' 
+        <h2 style={{
+          fontSize: '2rem',
+          fontWeight: 'bold',
+          color: 'white',
+          marginBottom: '12px'
         }}>
           📄 Document Upload Center
         </h2>
         <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem', marginBottom: '20px' }}>
           Upload required documents to complete carrier onboarding
         </p>
-        
+
         {/* Progress Bar */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.1)',
@@ -446,8 +445,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
               key={category}
               onClick={() => setSelectedCategory(category)}
               style={{
-                background: selectedCategory === category 
-                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)' 
+                background: selectedCategory === category
+                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
                   : 'rgba(255, 255, 255, 0.1)',
                 color: 'white',
                 padding: '8px 16px',
@@ -484,10 +483,10 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
               <div>
-                <h4 style={{ 
-                  color: 'white', 
-                  fontSize: '1.1rem', 
-                  fontWeight: 'bold', 
+                <h4 style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
                   marginBottom: '4px',
                   display: 'flex',
                   alignItems: 'center',
@@ -495,20 +494,20 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
                 }}>
                   {getCategoryIcon(document.category)} {document.type}
                   {document.required && (
-                    <span style={{ 
-                      background: '#ef4444', 
-                      color: 'white', 
-                      padding: '2px 6px', 
-                      borderRadius: '4px', 
-                      fontSize: '0.7rem' 
+                    <span style={{
+                      background: '#ef4444',
+                      color: 'white',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '0.7rem'
                     }}>
                       REQUIRED
                     </span>
                   )}
                 </h4>
-                <p style={{ 
-                  color: 'rgba(255, 255, 255, 0.7)', 
-                  fontSize: '0.9rem', 
+                <p style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '0.9rem',
                   margin: 0,
                   lineHeight: '1.4'
                 }}>
@@ -564,8 +563,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
                   htmlFor={`file-${document.id}`}
                   style={{
                     display: 'block',
-                    background: uploadingId === document.id 
-                      ? '#6b7280' 
+                    background: uploadingId === document.id
+                      ? '#6b7280'
                       : 'linear-gradient(135deg, #3b82f6, #2563eb)',
                     color: 'white',
                     padding: '12px',
@@ -632,8 +631,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
           onClick={onNext}
           disabled={completionPercentage < 100}
           style={{
-            background: completionPercentage === 100 
-              ? 'linear-gradient(135deg, #10b981, #059669)' 
+            background: completionPercentage === 100
+              ? 'linear-gradient(135deg, #10b981, #059669)'
               : '#6b7280',
             color: 'white',
             padding: '12px 24px',

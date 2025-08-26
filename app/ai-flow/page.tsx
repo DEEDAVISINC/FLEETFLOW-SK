@@ -41,11 +41,11 @@ import { SubscriptionManagementService } from '../services/SubscriptionManagemen
 import webSocketNotificationService from '../services/WebSocketNotificationService';
 // Updated import: 2024-12-21 23:15:00
 import AILoadBookingHub from '../components/AILoadBookingHub';
-import Advanced3PLDashboard from '../components/Advanced3PLDashboard';
+// Advanced3PLDashboard removed
 import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
 import SmartLoadNetworkDashboard from '../components/SmartLoadNetworkDashboard';
 import TruckingPlanetIntelligence from '../components/TruckingPlanetIntelligence';
-import WARPSmartBiddingDashboard from '../components/WARPSmartBiddingDashboard';
+// WARPSmartBiddingDashboard removed
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -1343,7 +1343,13 @@ export default function AIFlowPage() {
 
           {/* AI Sales Assistant Tab - Native SalesAI Features */}
           <TabsContent value='ai-sales-assistant' className='space-y-6'>
-            <AISalesAssistantDashboard />
+            {/* <AISalesAssistantDashboard /> */}
+            <div className='rounded-lg border bg-white p-8 text-center'>
+              <h3 className='mb-4 text-xl font-semibold text-gray-800'>
+                AI Sales Assistant Dashboard
+              </h3>
+              <p className='text-gray-600'>Coming Soon</p>
+            </div>
           </TabsContent>
 
           {/* Services Sales Tab - REVENUE ENGINE */}
@@ -2241,12 +2247,24 @@ export default function AIFlowPage() {
 
           {/* WARP Smart Bidding Tab */}
           <TabsContent value='warp-smart-bidding' className='space-y-6'>
-            <WARPSmartBiddingDashboard />
+            {/* WARPSmartBiddingDashboard component removed */}
+            <div className='rounded-lg border bg-white p-6 shadow-lg dark:bg-gray-800'>
+              <h3 className='text-xl font-bold'>Smart Bidding Dashboard</h3>
+              <p>
+                This component has been temporarily removed for maintenance.
+              </p>
+            </div>
           </TabsContent>
 
           {/* Advanced 3PL Tab */}
           <TabsContent value='advanced-3pl' className='space-y-6'>
-            <Advanced3PLDashboard />
+            {/* Advanced3PLDashboard component removed */}
+            <div className='rounded-lg border bg-white p-6 shadow-lg dark:bg-gray-800'>
+              <h3 className='text-xl font-bold'>Advanced 3PL Dashboard</h3>
+              <p>
+                This component has been temporarily removed for maintenance.
+              </p>
+            </div>
           </TabsContent>
 
           {/* Subscription Manager Tab */}

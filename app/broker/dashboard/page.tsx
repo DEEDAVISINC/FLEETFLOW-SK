@@ -6165,6 +6165,54 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                               >
                                 {load.origin} → {load.destination}
                               </div>
+                              <div
+                                style={{
+                                  marginTop: '4px',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                {/* Transport Mode Badge */}
+                                <span
+                                  style={{
+                                    background: load.transportMode === 'truckload' ? 'rgba(59, 130, 246, 0.3)' : 
+                                                load.transportMode === 'ltl' ? 'rgba(16, 185, 129, 0.3)' :
+                                                load.transportMode === 'rail' ? 'rgba(168, 85, 247, 0.3)' :
+                                                'rgba(245, 158, 11, 0.3)',
+                                    color: load.transportMode === 'truckload' ? '#60a5fa' : 
+                                           load.transportMode === 'ltl' ? '#10b981' :
+                                           load.transportMode === 'rail' ? '#a855f7' :
+                                           '#f59e0b',
+                                    fontSize: '9px',
+                                    padding: '2px 6px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {load.transportMode === 'truckload' ? '🚛 FTL' : 
+                                   load.transportMode === 'ltl' ? '📦 LTL' :
+                                   load.transportMode === 'rail' ? '🚂 RAIL' :
+                                   load.transportMode === 'intermodal' ? '🚛🚂 IM' :
+                                   '🚛 TL'}
+                                </span>
+                                {/* Cost Savings Indicator */}
+                                {load.multimodalOptions && load.multimodalOptions.some(opt => opt.costSavings && opt.costSavings > 0) && (
+                                  <span
+                                    style={{
+                                      background: 'rgba(16, 185, 129, 0.2)',
+                                      color: '#10b981',
+                                      fontSize: '9px',
+                                      padding: '2px 4px',
+                                      borderRadius: '6px',
+                                      fontWeight: '600',
+                                    }}
+                                  >
+                                    💰
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <div
@@ -6221,6 +6269,134 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                         control.
                       </div>
                     </div>
+                  </div>
+
+                  {/* Multimodal Cost Savings Opportunities */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '15px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      padding: '20px',
+                      marginTop: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      🚛🚂✈️ Multimodal Cost Savings
+                    </h3>
+                    {(() => {
+                      const costSavings = brokerAnalyticsService.getCostSavingsOpportunities();
+                      const totalSavings = costSavings.reduce((sum, item) => sum + item.potentialSavings, 0);
+                      
+                      return (
+                        <div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '15px',
+                              padding: '10px',
+                              background: 'rgba(16, 185, 129, 0.2)',
+                              borderRadius: '8px',
+                              border: '1px solid rgba(16, 185, 129, 0.3)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: '#10b981',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              💰 Potential Monthly Savings: ${totalSavings.toLocaleString()}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '11px',
+                              }}
+                            >
+                              {costSavings.length} opportunities identified
+                            </div>
+                          </div>
+                          
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '8px',
+                            }}
+                          >
+                            {costSavings.slice(0, 3).map((saving, index) => (
+                              <div
+                                key={saving.loadId}
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  padding: '8px 12px',
+                                  background: 'rgba(255, 255, 255, 0.05)',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                  const shouldUpdate = confirm(
+                                    `Switch ${saving.loadNumber} from Truckload to ${saving.bestAlternative.mode}?\n\n` +
+                                    `Current Rate: $${saving.currentRate.toLocaleString()}\n` +
+                                    `New Rate: $${saving.bestAlternative.rate.toLocaleString()}\n` +
+                                    `Savings: $${saving.potentialSavings.toLocaleString()}\n` +
+                                    `Transit Time: ${saving.bestAlternative.transitTime}h\n` +
+                                    `Confidence: ${saving.bestAlternative.confidence}%`
+                                  );
+                                  
+                                  if (shouldUpdate) {
+                                    brokerAnalyticsService.updateLoadTransportMode(
+                                      saving.loadId, 
+                                      saving.bestAlternative.mode, 
+                                      saving.bestAlternative.rate
+                                    );
+                                    alert(`✅ Load ${saving.loadNumber} updated to ${saving.bestAlternative.mode} mode!`);
+                                  }
+                                }}
+                              >
+                                <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                  {saving.loadNumber}
+                                </div>
+                                <div style={{ color: '#60a5fa', fontSize: '11px' }}>
+                                  Switch to {saving.bestAlternative.mode}
+                                </div>
+                                <div style={{ color: '#10b981', fontWeight: 'bold' }}>
+                                  Save ${saving.potentialSavings.toLocaleString()}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {costSavings.length === 0 && (
+                            <div
+                              style={{
+                                textAlign: 'center',
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '12px',
+                                padding: '20px',
+                              }}
+                            >
+                              🎯 All loads are optimally priced across transport modes
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
