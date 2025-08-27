@@ -181,11 +181,728 @@ export interface User {
   dispatcherId?: string;
   assignedBrokers?: string[];
   companyName?: string;
+  // Subscription-based access control
+  subscriptionStatus?: 'active' | 'trial' | 'expired' | 'canceled';
+  subscriptionPlanIds?: string[];
+  subscriptionTier?: 'basic' | 'professional' | 'enterprise' | 'university';
+  trialEndsAt?: Date;
+  subscriptionExpiresAt?: Date;
 }
 
-// GRANULAR SECTION-LEVEL PERMISSIONS BY ROLE
+// SUBSCRIPTION-BASED PERMISSION OVERRIDES
+export const getSubscriptionPermissions = (
+  subscriptionTier: string,
+  planIds: string[]
+): Partial<PageSectionPermissions> => {
+  // Default no access
+  const noAccess: PageSectionPermissions = {
+    dashboard: {
+      canViewRevenue: false,
+      canViewLoadStatistics: false,
+      canViewPerformanceCharts: false,
+      canViewQuickActions: false,
+      canViewAlerts: false,
+      canViewRecentActivity: false,
+      canExportData: false,
+    },
+    dispatchCentral: {
+      canViewLoadBoard: false,
+      canCreateLoads: false,
+      canAssignDrivers: false,
+      canViewDriverLocations: false,
+      canAccessRoutePlanning: false,
+      canViewCommunicationHub: false,
+      canGenerateDocuments: false,
+      canViewRealTimeTracking: false,
+      canManageDispatchFees: false,
+      canViewLoadHistory: false,
+    },
+    brokerBox: {
+      canViewShipperManagement: false,
+      canCreateQuotes: false,
+      canPostLoads: false,
+      canViewMarketRates: false,
+      canAccessRfxCenter: false,
+      canViewPerformanceAnalytics: false,
+      canManageCustomerRelations: false,
+      canAccessLoadMatching: false,
+      canViewCommissionTracking: false,
+      canManageBrokerTools: false,
+    },
+    driverManagement: {
+      canViewDriverList: false,
+      canCreateDriverProfiles: false,
+      canEditDriverDetails: false,
+      canViewDriverPerformance: false,
+      canManageDriverScheduling: false,
+      canAccessDriverCommunication: false,
+      canViewDriverDocuments: false,
+      canManageDriverOnboarding: false,
+      canViewDriverFinancials: false,
+      canAccessDriverPortal: false,
+    },
+    fleetFlow: {
+      canViewRouteOptimization: false,
+      canCreateRoutes: false,
+      canViewVehicleManagement: false,
+      canAccessMaintenanceScheduling: false,
+      canViewFuelManagement: false,
+      canAccessFleetTracking: false,
+      canViewFleetAnalytics: false,
+      canManageVehicleDocuments: false,
+      canViewFleetPerformance: false,
+      canAccessFleetReporting: false,
+    },
+    analytics: {
+      canViewRevenueAnalytics: false,
+      canViewPerformanceMetrics: false,
+      canViewCustomerAnalytics: false,
+      canViewOperationalAnalytics: false,
+      canViewProfitabilityAnalysis: false,
+      canViewTrendAnalysis: false,
+      canCreateCustomReports: false,
+      canExportAnalyticsData: false,
+      canViewRealTimeMetrics: false,
+      canAccessPredictiveAnalytics: false,
+    },
+    financials: {
+      canViewInvoicing: false,
+      canViewAccountsReceivable: false,
+      canViewAccountsPayable: false,
+      canViewPayroll: false,
+      canViewCashFlow: false,
+      canViewProfitLoss: false,
+      canViewTaxDocuments: false,
+      canProcessPayments: false,
+      canViewFinancialReports: false,
+      canAccessAuditTrail: false,
+    },
+    settings: {
+      canViewUserManagement: false,
+      canCreateUsers: false,
+      canEditPermissions: false,
+      canViewSystemSettings: false,
+      canManageIntegrations: false,
+      canViewSecuritySettings: false,
+      canAccessBackupSettings: false,
+      canViewAuditLogs: false,
+      canManageCompanySettings: false,
+      canAccessDeveloperTools: false,
+    },
+    training: {
+      canViewTrainingModules: false,
+      canTakeQuizzes: false,
+      canViewCertificates: false,
+      canViewProgress: false,
+      canAccessInstructor: false,
+      canManageTrainingContent: false,
+      canViewAllUserProgress: false,
+      canAssignTraining: false,
+      canGenerateCertificates: false,
+      canAccessTrainingAnalytics: false,
+    },
+    compliance: {
+      canViewDOTCompliance: false,
+      canManageDriverQualifications: false,
+      canViewSafetyRecords: false,
+      canAccessInspectionReports: false,
+      canViewViolationTracking: false,
+      canManageComplianceDocuments: false,
+      canViewCSAScores: false,
+      canAccessAuditPrep: false,
+      canViewComplianceAnalytics: false,
+      canManageComplianceAlerts: false,
+    },
+    accounting: {
+      canViewRevenueDashboard: false,
+      canViewExpenseTracking: false,
+      canViewInvoiceManagement: false,
+      canViewPayrollProcessing: false,
+      canViewTaxManagement: false,
+      canViewFinancialReporting: false,
+      canViewCashFlowAnalysis: false,
+      canProcessPayments: false,
+      canViewAccountingAudit: false,
+      canAccessFinancialSettings: false,
+    },
+  };
+
+  // Enterprise tier gets full access
+  if (subscriptionTier === 'enterprise') {
+    return {
+      dashboard: {
+        canViewRevenue: true,
+        canViewLoadStatistics: true,
+        canViewPerformanceCharts: true,
+        canViewQuickActions: true,
+        canViewAlerts: true,
+        canViewRecentActivity: true,
+        canExportData: true,
+      },
+      dispatchCentral: {
+        canViewLoadBoard: true,
+        canCreateLoads: true,
+        canAssignDrivers: true,
+        canViewDriverLocations: true,
+        canAccessRoutePlanning: true,
+        canViewCommunicationHub: true,
+        canGenerateDocuments: true,
+        canViewRealTimeTracking: true,
+        canManageDispatchFees: true,
+        canViewLoadHistory: true,
+      },
+      brokerBox: {
+        canViewShipperManagement: true,
+        canCreateQuotes: true,
+        canPostLoads: true,
+        canViewMarketRates: true,
+        canAccessRfxCenter: true,
+        canViewPerformanceAnalytics: true,
+        canManageCustomerRelations: true,
+        canAccessLoadMatching: true,
+        canViewCommissionTracking: true,
+        canManageBrokerTools: true,
+      },
+      driverManagement: {
+        canViewDriverList: true,
+        canCreateDriverProfiles: true,
+        canEditDriverDetails: true,
+        canViewDriverPerformance: true,
+        canManageDriverScheduling: true,
+        canAccessDriverCommunication: true,
+        canViewDriverDocuments: true,
+        canManageDriverOnboarding: true,
+        canViewDriverFinancials: true,
+        canAccessDriverPortal: true,
+      },
+      fleetFlow: {
+        canViewRouteOptimization: true,
+        canCreateRoutes: true,
+        canViewVehicleManagement: true,
+        canAccessMaintenanceScheduling: true,
+        canViewFuelManagement: true,
+        canAccessFleetTracking: true,
+        canViewFleetAnalytics: true,
+        canManageVehicleDocuments: true,
+        canViewFleetPerformance: true,
+        canAccessFleetReporting: true,
+      },
+      analytics: {
+        canViewRevenueAnalytics: true,
+        canViewPerformanceMetrics: true,
+        canViewCustomerAnalytics: true,
+        canViewOperationalAnalytics: true,
+        canViewProfitabilityAnalysis: true,
+        canViewTrendAnalysis: true,
+        canCreateCustomReports: true,
+        canExportAnalyticsData: true,
+        canViewRealTimeMetrics: true,
+        canAccessPredictiveAnalytics: true,
+      },
+      financials: {
+        canViewInvoicing: true,
+        canViewAccountsReceivable: true,
+        canViewAccountsPayable: true,
+        canViewPayroll: true,
+        canViewCashFlow: true,
+        canViewProfitLoss: true,
+        canViewTaxDocuments: true,
+        canProcessPayments: true,
+        canViewFinancialReports: true,
+        canAccessAuditTrail: true,
+      },
+      settings: {
+        canViewUserManagement: true,
+        canCreateUsers: true,
+        canEditPermissions: true,
+        canViewSystemSettings: true,
+        canManageIntegrations: true,
+        canViewSecuritySettings: true,
+        canAccessBackupSettings: true,
+        canViewAuditLogs: true,
+        canManageCompanySettings: true,
+        canAccessDeveloperTools: true,
+      },
+      training: {
+        canViewTrainingModules: true,
+        canTakeQuizzes: true,
+        canViewCertificates: true,
+        canViewProgress: true,
+        canAccessInstructor: true,
+        canManageTrainingContent: true,
+        canViewAllUserProgress: true,
+        canAssignTraining: true,
+        canGenerateCertificates: true,
+        canAccessTrainingAnalytics: true,
+      },
+      compliance: {
+        canViewDOTCompliance: true,
+        canManageDriverQualifications: true,
+        canViewSafetyRecords: true,
+        canAccessInspectionReports: true,
+        canViewViolationTracking: true,
+        canManageComplianceDocuments: true,
+        canViewCSAScores: true,
+        canAccessAuditPrep: true,
+        canViewComplianceAnalytics: true,
+        canManageComplianceAlerts: true,
+      },
+      accounting: {
+        canViewRevenueDashboard: true,
+        canViewExpenseTracking: true,
+        canViewInvoiceManagement: true,
+        canViewPayrollProcessing: true,
+        canViewTaxManagement: true,
+        canViewFinancialReporting: true,
+        canViewCashFlowAnalysis: true,
+        canProcessPayments: true,
+        canViewAccountingAudit: true,
+        canAccessFinancialSettings: true,
+      },
+    };
+  }
+
+  // Build permissions based on specific plan IDs
+  let permissions: Partial<PageSectionPermissions> = {};
+
+  planIds.forEach((planId) => {
+    switch (planId) {
+      case 'fleetflow_university':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          training: {
+            canViewTrainingModules: true,
+            canTakeQuizzes: true,
+            canViewCertificates: true,
+            canViewProgress: true,
+            canAccessInstructor: true,
+          },
+          compliance: {
+            canViewDOTCompliance: true,
+            canViewSafetyRecords: true,
+            canAccessInspectionReports: true,
+            canViewViolationTracking: true,
+          },
+        };
+        break;
+
+      case 'dispatcher':
+      case 'professional_dispatcher':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          dispatchCentral: {
+            canViewLoadBoard: true,
+            canAssignDrivers: true,
+            canViewDriverLocations: true,
+            canAccessRoutePlanning: true,
+            canViewCommunicationHub: true,
+            canGenerateDocuments: true,
+            canViewRealTimeTracking: true,
+            canManageDispatchFees: true,
+            canViewLoadHistory: true,
+          },
+          driverManagement: {
+            canViewDriverList: true,
+            canCreateDriverProfiles: true,
+            canEditDriverDetails: true,
+            canViewDriverPerformance: true,
+            canManageDriverScheduling: true,
+            canAccessDriverCommunication: true,
+            canViewDriverDocuments: true,
+            canManageDriverOnboarding: true,
+            canAccessDriverPortal: true,
+          },
+          fleetFlow: {
+            canViewRouteOptimization: true,
+            canCreateRoutes: true,
+            canViewVehicleManagement: true,
+            canAccessMaintenanceScheduling: true,
+            canAccessFleetTracking: true,
+            canManageVehicleDocuments: true,
+            canViewFleetPerformance: true,
+          },
+          compliance: {
+            canViewDOTCompliance: true,
+            canManageDriverQualifications: true,
+            canViewSafetyRecords: true,
+            canAccessInspectionReports: true,
+            canViewViolationTracking: true,
+            canManageComplianceDocuments: true,
+            canViewCSAScores: true,
+            canManageComplianceAlerts: true,
+          },
+        };
+        break;
+
+      case 'brokerage':
+      case 'professional_brokerage':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          brokerBox: {
+            canViewShipperManagement: true,
+            canCreateQuotes: true,
+            canPostLoads: true,
+            canViewMarketRates: true,
+            canAccessRfxCenter: true,
+            canViewPerformanceAnalytics: true,
+            canManageCustomerRelations: true,
+            canAccessLoadMatching: true,
+            canViewCommissionTracking: true,
+            canManageBrokerTools: true,
+          },
+          analytics: {
+            canViewPerformanceMetrics: true,
+            canViewCustomerAnalytics: true,
+            canViewOperationalAnalytics: true,
+            canCreateCustomReports: true,
+            canViewRealTimeMetrics: true,
+          },
+          accounting: {
+            canViewRevenueDashboard: true,
+            canViewExpenseTracking: true,
+            canViewInvoiceManagement: true,
+          },
+        };
+        break;
+
+      case 'broker_elite':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          brokerBox: {
+            canViewShipperManagement: true,
+            canCreateQuotes: true,
+            canPostLoads: true,
+            canViewMarketRates: true,
+            canAccessRfxCenter: true,
+            canViewPerformanceAnalytics: true,
+            canManageCustomerRelations: true,
+            canAccessLoadMatching: true,
+            canViewCommissionTracking: true,
+            canManageBrokerTools: true,
+          },
+          analytics: {
+            canViewPerformanceMetrics: true,
+            canViewCustomerAnalytics: true,
+            canViewOperationalAnalytics: true,
+            canCreateCustomReports: true,
+            canViewRealTimeMetrics: true,
+          },
+          accounting: {
+            canViewRevenueDashboard: true,
+            canViewExpenseTracking: true,
+            canViewInvoiceManagement: true,
+          },
+        };
+        break;
+
+      case 'ai_flow_starter_addon':
+        permissions = {
+          ...permissions,
+          // AI add-ons provide AI access but require base subscription for other features
+          // Basic AI features only
+        };
+        break;
+
+      case 'ai_flow_professional_addon':
+        permissions = {
+          ...permissions,
+          // AI add-ons provide AI access but require base subscription for other features
+          analytics: {
+            canViewPerformanceMetrics: true,
+            canViewOperationalAnalytics: true,
+            canViewTrendAnalysis: true,
+            canCreateCustomReports: true,
+            canViewRealTimeMetrics: true,
+            canAccessPredictiveAnalytics: true,
+          },
+          settings: {
+            canViewSystemSettings: true,
+            canManageIntegrations: true,
+          },
+        };
+        break;
+
+      case 'ai_flow_enterprise_addon':
+      case 'ai_flow_usage_addon':
+      case 'enterprise': // Enterprise Professional includes full AI Flow
+      case 'enterprise_custom': // Custom Enterprise includes full AI Flow
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewRevenue:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false, // Only TMS enterprise plans get revenue access
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+            canExportData: true,
+          },
+          analytics: {
+            canViewRevenueAnalytics:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false,
+            canViewPerformanceMetrics: true,
+            canViewOperationalAnalytics: true,
+            canViewCustomerAnalytics:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false,
+            canViewTrendAnalysis: true,
+            canCreateCustomReports: true,
+            canViewRealTimeMetrics: true,
+            canAccessPredictiveAnalytics: true,
+            canExportAnalyticsData: true,
+          },
+          // Enterprise plans get full platform access
+          ...(planId === 'enterprise' || planId === 'enterprise_custom'
+            ? {
+                dispatchCentral: {
+                  canViewLoadBoard: true,
+                  canCreateLoads: true,
+                  canAssignDrivers: true,
+                  canViewDriverLocations: true,
+                  canAccessRoutePlanning: true,
+                  canViewCommunicationHub: true,
+                  canGenerateDocuments: true,
+                  canViewRealTimeTracking: true,
+                  canManageDispatchFees: true,
+                  canViewLoadHistory: true,
+                },
+                brokerBox: {
+                  canViewShipperManagement: true,
+                  canCreateQuotes: true,
+                  canPostLoads: true,
+                  canViewMarketRates: true,
+                  canAccessRfxCenter: true,
+                  canViewPerformanceAnalytics: true,
+                  canManageCustomerRelations: true,
+                  canAccessLoadMatching: true,
+                  canViewCommissionTracking: true,
+                  canManageBrokerTools: true,
+                },
+                financials: {
+                  canViewInvoicing: true,
+                  canViewAccountsReceivable: true,
+                  canViewAccountsPayable: true,
+                  canViewPayroll: true,
+                  canViewCashFlow: true,
+                  canViewProfitLoss: true,
+                  canViewTaxDocuments: true,
+                  canProcessPayments: true,
+                  canViewFinancialReports: true,
+                  canAccessAuditTrail: true,
+                },
+              }
+            : {}),
+          settings: {
+            canViewSystemSettings: true,
+            canManageIntegrations: true,
+            canAccessDeveloperTools: true,
+            canViewUserManagement:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false,
+            canCreateUsers:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false,
+            canEditPermissions:
+              planId === 'enterprise' || planId === 'enterprise_custom'
+                ? true
+                : false,
+          },
+        };
+        break;
+
+      // Add more plan-specific permissions as needed
+    }
+  });
+
+  return permissions;
+};
+
+// GRANULAR SECTION-LEVEL PERMISSIONS BY ROLE AND SUBSCRIPTION
 export const getSectionPermissions = (user: User): PageSectionPermissions => {
-  const { role, customPermissions } = user;
+  const {
+    role,
+    customPermissions,
+    subscriptionStatus,
+    subscriptionTier,
+    subscriptionPlanIds,
+  } = user;
+
+  // Check if user has active subscription
+  const hasActiveSubscription =
+    subscriptionStatus === 'active' || subscriptionStatus === 'trial';
+  const currentTier = subscriptionTier || 'basic';
+  const planIds = subscriptionPlanIds || [];
+
+  // If subscription is expired or inactive, restrict access significantly
+  if (!hasActiveSubscription && role !== 'admin') {
+    return {
+      dashboard: {
+        canViewRevenue: false,
+        canViewLoadStatistics: false,
+        canViewPerformanceCharts: false,
+        canViewQuickActions: false,
+        canViewAlerts: false,
+        canViewRecentActivity: false,
+        canExportData: false,
+      },
+      dispatchCentral: {
+        canViewLoadBoard: false,
+        canCreateLoads: false,
+        canAssignDrivers: false,
+        canViewDriverLocations: false,
+        canAccessRoutePlanning: false,
+        canViewCommunicationHub: false,
+        canGenerateDocuments: false,
+        canViewRealTimeTracking: false,
+        canManageDispatchFees: false,
+        canViewLoadHistory: false,
+      },
+      brokerBox: {
+        canViewShipperManagement: false,
+        canCreateQuotes: false,
+        canPostLoads: false,
+        canViewMarketRates: false,
+        canAccessRfxCenter: false,
+        canViewPerformanceAnalytics: false,
+        canManageCustomerRelations: false,
+        canAccessLoadMatching: false,
+        canViewCommissionTracking: false,
+        canManageBrokerTools: false,
+      },
+      driverManagement: {
+        canViewDriverList: false,
+        canCreateDriverProfiles: false,
+        canEditDriverDetails: false,
+        canViewDriverPerformance: false,
+        canManageDriverScheduling: false,
+        canAccessDriverCommunication: false,
+        canViewDriverDocuments: false,
+        canManageDriverOnboarding: false,
+        canViewDriverFinancials: false,
+        canAccessDriverPortal: false,
+      },
+      fleetFlow: {
+        canViewRouteOptimization: false,
+        canCreateRoutes: false,
+        canViewVehicleManagement: false,
+        canAccessMaintenanceScheduling: false,
+        canViewFuelManagement: false,
+        canAccessFleetTracking: false,
+        canViewFleetAnalytics: false,
+        canManageVehicleDocuments: false,
+        canViewFleetPerformance: false,
+        canAccessFleetReporting: false,
+      },
+      analytics: {
+        canViewRevenueAnalytics: false,
+        canViewPerformanceMetrics: false,
+        canViewCustomerAnalytics: false,
+        canViewOperationalAnalytics: false,
+        canViewProfitabilityAnalysis: false,
+        canViewTrendAnalysis: false,
+        canCreateCustomReports: false,
+        canExportAnalyticsData: false,
+        canViewRealTimeMetrics: false,
+        canAccessPredictiveAnalytics: false,
+      },
+      financials: {
+        canViewInvoicing: false,
+        canViewAccountsReceivable: false,
+        canViewAccountsPayable: false,
+        canViewPayroll: false,
+        canViewCashFlow: false,
+        canViewProfitLoss: false,
+        canViewTaxDocuments: false,
+        canProcessPayments: false,
+        canViewFinancialReports: false,
+        canAccessAuditTrail: false,
+      },
+      settings: {
+        canViewUserManagement: false,
+        canCreateUsers: false,
+        canEditPermissions: false,
+        canViewSystemSettings: false,
+        canManageIntegrations: false,
+        canViewSecuritySettings: false,
+        canAccessBackupSettings: false,
+        canViewAuditLogs: false,
+        canManageCompanySettings: false,
+        canAccessDeveloperTools: false,
+      },
+      training: {
+        canViewTrainingModules: false,
+        canTakeQuizzes: false,
+        canViewCertificates: false,
+        canViewProgress: false,
+        canAccessInstructor: false,
+        canManageTrainingContent: false,
+        canViewAllUserProgress: false,
+        canAssignTraining: false,
+        canGenerateCertificates: false,
+        canAccessTrainingAnalytics: false,
+      },
+      compliance: {
+        canViewDOTCompliance: false,
+        canManageDriverQualifications: false,
+        canViewSafetyRecords: false,
+        canAccessInspectionReports: false,
+        canViewViolationTracking: false,
+        canManageComplianceDocuments: false,
+        canViewCSAScores: false,
+        canAccessAuditPrep: false,
+        canViewComplianceAnalytics: false,
+        canManageComplianceAlerts: false,
+      },
+      accounting: {
+        canViewRevenueDashboard: false,
+        canViewExpenseTracking: false,
+        canViewInvoiceManagement: false,
+        canViewPayrollProcessing: false,
+        canViewTaxManagement: false,
+        canViewFinancialReporting: false,
+        canViewCashFlowAnalysis: false,
+        canProcessPayments: false,
+        canViewAccountingAudit: false,
+        canAccessFinancialSettings: false,
+      },
+    };
+  }
 
   // Default permissions by role
   let permissions: PageSectionPermissions;
@@ -1147,6 +1864,29 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
       };
   }
 
+  // Merge subscription-based permissions with role-based permissions
+  if (hasActiveSubscription) {
+    const subscriptionPermissions = getSubscriptionPermissions(
+      currentTier,
+      planIds
+    );
+
+    // Merge subscription permissions with role permissions (subscription permissions take precedence for enabled features)
+    Object.keys(subscriptionPermissions).forEach((pageKey) => {
+      const page = pageKey as keyof PageSectionPermissions;
+      if (permissions[page] && subscriptionPermissions[page]) {
+        // For each permission in the subscription, enable it if the subscription allows it
+        Object.keys(subscriptionPermissions[page]!).forEach((permissionKey) => {
+          const permission =
+            permissionKey as keyof (typeof permissions)[typeof page];
+          if (subscriptionPermissions[page]![permission] === true) {
+            (permissions[page] as any)[permission] = true;
+          }
+        });
+      }
+    });
+  }
+
   // Apply custom permission overrides if they exist
   if (customPermissions) {
     Object.keys(customPermissions).forEach((pageKey) => {
@@ -1168,6 +1908,10 @@ export const MOCK_USERS: User[] = [
     email: 'admin@fleetflow.com',
     role: 'admin',
     departmentCode: 'MGR',
+    subscriptionStatus: 'active',
+    subscriptionTier: 'enterprise',
+    subscriptionPlanIds: ['enterprise'],
+    subscriptionExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
   },
   {
     id: 'mgr-001',
@@ -1175,6 +1919,10 @@ export const MOCK_USERS: User[] = [
     email: 'manager@fleetflow.com',
     role: 'manager',
     departmentCode: 'MGR',
+    subscriptionStatus: 'active',
+    subscriptionTier: 'professional',
+    subscriptionPlanIds: ['professional_brokerage'],
+    subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
   },
 
   // Dispatchers (DC Department)
@@ -1185,6 +1933,10 @@ export const MOCK_USERS: User[] = [
     role: 'dispatcher',
     departmentCode: 'DC',
     assignedBrokers: ['broker-001', 'broker-002'],
+    subscriptionStatus: 'trial',
+    subscriptionTier: 'professional',
+    subscriptionPlanIds: ['professional_dispatcher'],
+    trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
   },
   {
     id: 'disp-002',
@@ -1205,6 +1957,10 @@ export const MOCK_USERS: User[] = [
     brokerId: 'broker-001',
     dispatcherId: 'disp-001',
     companyName: 'Global Freight Solutions',
+    subscriptionStatus: 'active',
+    subscriptionTier: 'university',
+    subscriptionPlanIds: ['university'],
+    subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
   },
   {
     id: 'broker-002',

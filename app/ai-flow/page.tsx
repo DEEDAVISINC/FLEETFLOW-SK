@@ -46,6 +46,7 @@ import ServicesSalesDashboard from '../components/ServicesSalesDashboard';
 import SmartLoadNetworkDashboard from '../components/SmartLoadNetworkDashboard';
 import TruckingPlanetIntelligence from '../components/TruckingPlanetIntelligence';
 // WARPSmartBiddingDashboard removed
+import UnifiedLeadGenerationDashboard from '../components/UnifiedLeadGenerationDashboard';
 import { Badge } from '../components/ui/badge';
 import {
   Card,
@@ -561,7 +562,7 @@ export default function AIFlowPage() {
           onValueChange={setActiveTab}
           className='space-y-6'
         >
-          <TabsList className='grid w-full grid-cols-19 border border-gray-200 bg-white/50 backdrop-blur-sm'>
+          <TabsList className='grid w-full grid-cols-20 border border-gray-200 bg-white/50 backdrop-blur-sm'>
             <TabsTrigger value='overview' className='flex items-center gap-2'>
               <Brain className='h-4 w-4' />
               Overview
@@ -699,6 +700,13 @@ export default function AIFlowPage() {
             >
               <Building2 className='h-4 w-4' />
               🏭 ThomasNet Intelligence
+            </TabsTrigger>
+            <TabsTrigger
+              value='unified-lead-generation'
+              className='flex items-center gap-2'
+            >
+              <Target className='h-4 w-4' />
+              🎯 Unified Lead Gen
             </TabsTrigger>
           </TabsList>
 
@@ -2243,6 +2251,11 @@ export default function AIFlowPage() {
           {/* Smart Load Network Tab */}
           <TabsContent value='smart-load-network' className='space-y-6'>
             <SmartLoadNetworkDashboard />
+          </TabsContent>
+
+          {/* Unified Lead Generation Tab */}
+          <TabsContent value='unified-lead-generation' className='space-y-6'>
+            <UnifiedLeadGenerationDashboard />
           </TabsContent>
 
           {/* WARP Smart Bidding Tab */}

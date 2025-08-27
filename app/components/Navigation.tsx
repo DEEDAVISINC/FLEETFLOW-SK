@@ -906,7 +906,7 @@ export default function ProfessionalNavigation() {
                     👥 User Management
                   </Link>
                   <Link
-                    href='/ai-company-dashboard'
+                    href='/depointe-dashboard'
                     onClick={handleDropdownClose}
                     style={{
                       display: 'block',
@@ -917,7 +917,7 @@ export default function ProfessionalNavigation() {
                       fontWeight: '500',
                     }}
                   >
-                    🤖 AI Company Dashboard
+                    🤖 DEPOINTE AI Dashboard
                   </Link>
                   <Link
                     href='/user-profile'

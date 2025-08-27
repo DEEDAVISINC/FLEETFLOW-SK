@@ -1002,7 +1002,7 @@ export default function FleetFlowLandingPage() {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <Link href='/subscription-management/subscription-dashboard'>
+              <Link href='/auth/signup'>
                 <button
                   style={{
                     background:

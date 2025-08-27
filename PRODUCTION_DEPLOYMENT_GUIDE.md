@@ -83,6 +83,12 @@ TWILIO_ACCOUNT_SID=your_twilio_account_sid
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
 FMCSA_API_KEY=7de24c4a0eade12f34685829289e0446daf7880e
 
+# Lead Generation Services
+THOMAS_NET_USERNAME=your_thomas_net_username
+THOMAS_NET_PASSWORD=your_thomas_net_password
+BROKERSNAPSHOT_USERNAME=your_brokersnapshot_username
+BROKERSNAPSHOT_PASSWORD=your_brokersnapshot_password
+
 # Database
 DATABASE_URL=your_production_database_url
 ```

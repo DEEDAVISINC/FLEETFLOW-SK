@@ -83,17 +83,22 @@ const ENTERPRISE_PLANS: PricingTier[] = [
     name: 'Enterprise Professional',
     price: 2698,
     period: '/month',
-    description: 'Complete platform access + unlimited phone system',
+    description:
+      'Complete platform access + unlimited phone system + AI Flow Professional included',
     icon: Crown,
     features: [
       'Complete platform access',
       'FreightFlow RFx platform',
       'All premium features',
-      'Advanced AI automation',
+      '🤖 AI Flow Professional included (unlimited usage)',
+      '🤖 Unlimited AI workflows & operations',
+      '🤖 AI Review System with validations',
+      '🤖 Advanced analytics & reporting',
+      '🤖 Machine learning insights',
+      '🤖 API access & webhooks',
       'Priority support & training',
       'Custom integrations',
       'Dedicated account manager',
-      'API access',
       'White-label options',
       '📞 Unlimited phone minutes',
       '📱 Unlimited SMS messages',
@@ -437,7 +442,7 @@ export default function FleetFlowPlansPage() {
               </div>
 
               {/* CTA Button */}
-              <Link href='/user-profile'>
+              <Link href='/auth/signup'>
                 <button
                   style={{
                     width: '100%',
@@ -1112,6 +1117,409 @@ export default function FleetFlowPlansPage() {
         </div>
       </div>
 
+      {/* AI Flow Add-On Modules */}
+      <div
+        style={{
+          background: 'rgba(236, 72, 153, 0.05)',
+          borderTop: '1px solid rgba(236, 72, 153, 0.2)',
+          padding: '80px 20px',
+        }}
+      >
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <h2
+              style={{
+                fontSize: '2.5rem',
+                fontWeight: '800',
+                color: 'white',
+                marginBottom: '20px',
+              }}
+            >
+              🤖 AI Flow Add-On Modules
+            </h2>
+            <p
+              style={{
+                fontSize: '1.2rem',
+                color: 'rgba(255,255,255,0.8)',
+                marginBottom: '40px',
+              }}
+            >
+              Add powerful AI automation to any FleetFlow subscription.
+              <br />
+              <span style={{ color: '#ec4899', fontWeight: '600' }}>
+                Requires main subscription • Advanced AI capabilities • Custom
+                workflows
+              </span>
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '32px',
+            }}
+          >
+            {[
+              {
+                id: 'ai-flow-starter',
+                name: 'AI Flow Starter Add-On',
+                price: '+$59/month',
+                description: 'Add basic AI automation to any plan',
+                features: [
+                  'Requires main FleetFlow subscription',
+                  '10 AI workflows/month',
+                  '5,000 AI operations/month',
+                  'Pre-built workflow templates',
+                  'Basic AI Review System',
+                  'Email & SMS automation',
+                  'Simple lead generation',
+                  'Community support',
+                ],
+                gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
+                popular: false,
+              },
+              {
+                id: 'ai-flow-professional',
+                name: 'AI Flow Professional Add-On',
+                price: '+$129/month',
+                description: 'Add advanced AI workflows to any plan',
+                features: [
+                  'Requires main FleetFlow subscription',
+                  '100 AI workflows/month',
+                  '50,000 AI operations/month',
+                  'Custom workflow builder',
+                  'AI Review System with validations',
+                  'Role-based lead generation',
+                  'Machine learning insights',
+                  'API access & webhooks',
+                  'Priority support',
+                ],
+                gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
+                popular: true,
+              },
+              {
+                id: 'ai-flow-enterprise',
+                name: 'AI Flow Enterprise Add-On',
+                price: '+$249/month',
+                description: 'Add unlimited AI to any plan',
+                features: [
+                  'Requires main FleetFlow subscription',
+                  'Unlimited AI workflows',
+                  'Unlimited AI operations',
+                  'Custom AI model training',
+                  'Advanced predictive analytics',
+                  'White-label AI capabilities',
+                  'Dedicated AI infrastructure',
+                  'SLA guarantees',
+                  'Dedicated AI support',
+                ],
+                gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
+                popular: false,
+              },
+            ].map((plan) => (
+              <div
+                key={plan.id}
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '20px',
+                  border: `2px solid ${plan.popular ? '#ec4899' : 'rgba(236, 72, 153, 0.2)'}`,
+                  padding: '40px',
+                  position: 'relative',
+                  transition: 'all 0.4s ease',
+                  boxShadow: plan.popular
+                    ? '0 20px 60px rgba(236, 72, 153, 0.2)'
+                    : '0 10px 40px rgba(0,0,0,0.2)',
+                }}
+              >
+                {plan.popular && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-12px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: plan.gradient,
+                      color: 'white',
+                      padding: '8px 24px',
+                      borderRadius: '20px',
+                      fontSize: '0.85rem',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      boxShadow: '0 8px 25px rgba(236, 72, 153, 0.4)',
+                    }}
+                  >
+                    ⭐ Most Popular
+                  </div>
+                )}
+
+                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                  <div
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '20px',
+                      background: plan.gradient,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 20px',
+                      fontSize: '36px',
+                    }}
+                  >
+                    🤖
+                  </div>
+
+                  <h3
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: 'white',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {plan.name}
+                  </h3>
+
+                  <p
+                    style={{
+                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: '0.95rem',
+                      lineHeight: '1.5',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    {plan.description}
+                  </p>
+
+                  <div
+                    style={{
+                      fontSize: '2.6rem',
+                      fontWeight: '900',
+                      color: '#ec4899',
+                      lineHeight: '1',
+                      marginBottom: '24px',
+                    }}
+                  >
+                    {plan.price}
+                  </div>
+
+                  <button
+                    style={{
+                      width: '100%',
+                      padding: '16px 24px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: plan.gradient,
+                      color: 'white',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      marginBottom: '32px',
+                      boxShadow: '0 8px 25px rgba(236, 72, 153, 0.3)',
+                    }}
+                  >
+                    Add to Plan
+                  </button>
+                </div>
+
+                <div>
+                  <h4
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      color: 'rgba(255,255,255,0.9)',
+                      marginBottom: '16px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    AI Features Included:
+                  </h4>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {plan.features.map((feature, index) => (
+                      <li
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          marginBottom: '12px',
+                          color: 'rgba(255,255,255,0.8)',
+                          fontSize: '0.95rem',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '10px',
+                            background: plan.gradient,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          ✓
+                        </div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(236, 72, 153, 0.1)',
+              border: '1px solid rgba(236, 72, 153, 0.3)',
+              borderRadius: '16px',
+              padding: '24px',
+              textAlign: 'center',
+              marginTop: '40px',
+            }}
+          >
+            <h4
+              style={{
+                fontSize: '1.2rem',
+                fontWeight: '600',
+                color: '#ec4899',
+                marginBottom: '12px',
+              }}
+            >
+              💰 Usage-Based AI Flow Add-On Available
+            </h4>
+            <p
+              style={{
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '1rem',
+                marginBottom: '16px',
+              }}
+            >
+              Need variable AI usage? Add{' '}
+              <strong>$0.10 per 1,000 AI operations</strong> to your main
+              subscription with no monthly minimums. Perfect for enterprises
+              with fluctuating AI requirements.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* DEPOINTE AI - Coming Soon */}
+      <div
+        style={{
+          background: 'rgba(245, 158, 11, 0.05)',
+          borderTop: '1px solid rgba(245, 158, 11, 0.2)',
+          padding: '80px 20px',
+        }}
+      >
+        <div
+          style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}
+        >
+          <div style={{ fontSize: '80px', marginBottom: '24px' }}>🤖</div>
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: 'white',
+              padding: '8px 24px',
+              borderRadius: '20px',
+              fontSize: '0.9rem',
+              fontWeight: '700',
+              display: 'inline-block',
+              marginBottom: '20px',
+              boxShadow: '0 8px 25px rgba(245, 158, 11, 0.4)',
+            }}
+          >
+            🚀 COMING SOON
+          </div>
+          <h2
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '20px',
+            }}
+          >
+            🤖 AI Company Dashboard
+          </h2>
+          <p
+            style={{
+              fontSize: '1.3rem',
+              color: 'rgba(255,255,255,0.8)',
+              marginBottom: '32px',
+              lineHeight: '1.6',
+            }}
+          >
+            <strong style={{ color: '#f59e0b' }}>$4,999/month</strong>
+            <br />
+            Powered by <strong style={{ color: '#f59e0b' }}>
+              DEPOINTE AI
+            </strong>{' '}
+            - Revolutionary AI company management with 18 dedicated AI staff
+            representatives. Replace entire departments with intelligent AI
+            workforce.
+          </p>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '16px',
+              marginBottom: '40px',
+            }}
+          >
+            {[
+              '🤖 18 AI Staff Representatives',
+              '💼 Complete company management',
+              '📊 Real-time activity tracking',
+              '📋 Intelligent task assignment',
+              '🎯 AI-powered decision making',
+              '⚡ Instant implementation',
+              '🔧 Custom AI staff training',
+              '📈 Performance analytics',
+            ].map((feature, index) => (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '0.95rem',
+                }}
+              >
+                <Check size={16} color='#f59e0b' />
+                {feature}
+              </div>
+            ))}
+          </div>
+
+          <button
+            style={{
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 8px 25px rgba(245, 158, 11, 0.3)',
+              marginBottom: '40px',
+            }}
+          >
+            Join Waitlist - Coming Q2 2024
+          </button>
+        </div>
+      </div>
+
       {/* Enterprise Solutions */}
       <div
         style={{
@@ -1142,10 +1550,13 @@ export default function FleetFlowPlansPage() {
               lineHeight: '1.6',
             }}
           >
-            <strong style={{ color: '#9333ea' }}>$4,999 - $9,999+/month</strong>
+            <strong style={{ color: '#9333ea' }}>
+              $7,999 - $15,999+/month
+            </strong>
             <br />
-            Custom enterprise deployments with dedicated account management,
-            white-label branding, and 24/7 priority support.
+            Custom enterprise deployments with AI Company Dashboard included,
+            dedicated account management, white-label branding, and 24/7
+            priority support.
           </p>
 
           <div

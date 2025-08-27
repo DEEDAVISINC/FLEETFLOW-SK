@@ -8,9 +8,121 @@ import { calculateFinancialMetrics } from '../services/settlementService';
 // import AISupportDashboard from '../components/AISupportDashboard';
 // ✅ ADD: Platform AI monitoring integration
 import { PlatformAIMonitor } from '../components/PlatformAIMonitor';
+import TaskCreationInterface from '../components/TaskCreationInterface';
+
+// Mobile optimization styles - matching billing-invoices page
+const mobileStyles = `
+  @media (max-width: 768px) {
+    .financial-grid {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    .financial-card {
+      padding: 16px !important;
+      margin-bottom: 12px !important;
+    }
+    .financial-table {
+      font-size: 0.8rem !important;
+      overflow-x: auto !important;
+    }
+    .financial-filters {
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+    .financial-tabs {
+      flex-wrap: wrap !important;
+      gap: 4px !important;
+    }
+    .financial-tab {
+      padding: 8px 12px !important;
+      font-size: 0.8rem !important;
+    }
+    .chart-container {
+      width: 100% !important;
+      overflow-x: auto !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .financial-header {
+      font-size: 1.2rem !important;
+    }
+    .financial-subtitle {
+      font-size: 0.9rem !important;
+    }
+    .performance-metric {
+      font-size: 0.8rem !important;
+    }
+  }
+`;
+
+// Inject mobile styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.type = 'text/css';
+  styleSheet.innerText = mobileStyles;
+  document.head.appendChild(styleSheet);
+}
+
+// Performance metrics component - matching billing-invoices page
+const PerformanceMetrics = ({ title, metrics, color }) => (
+  <div
+    className='financial-card'
+    style={{
+      background: 'rgba(15, 23, 42, 0.8)',
+      border: '1px solid rgba(148, 163, 184, 0.2)',
+      borderRadius: '12px',
+      padding: '20px',
+      backdropFilter: 'blur(10px)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+    }}
+  >
+    <h4
+      className='financial-header'
+      style={{
+        color: 'white',
+        fontSize: '1.1rem',
+        fontWeight: '700',
+        marginBottom: '16px',
+        textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+      }}
+    >
+      {title}
+    </h4>
+    {metrics.map((metric, index) => (
+      <div
+        key={index}
+        className='performance-metric'
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '12px 0',
+          borderBottom:
+            index < metrics.length - 1
+              ? '1px solid rgba(148, 163, 184, 0.1)'
+              : 'none',
+        }}
+      >
+        <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem' }}>
+          {metric.label}
+        </span>
+        <span
+          style={{
+            color: color,
+            fontWeight: '700',
+            fontSize: '1rem',
+            textShadow: `0 2px 8px ${color}40`,
+          }}
+        >
+          {metric.value}
+        </span>
+      </div>
+    ))}
+  </div>
+);
 
 // Enhanced interfaces for comprehensive AI management
-interface PerformanceMetrics {
+interface PerformanceMetricsData {
   hourlyRevenue: number[];
   dailyTasks: number[];
   weeklyEfficiency: number[];
@@ -98,6 +210,10 @@ export default function AICompanyDashboard() {
   const [showStaffDetails, setShowStaffDetails] = useState(false);
   const [showTaskAssignment, setShowTaskAssignment] = useState(false);
   const [showStaffConfig, setShowStaffConfig] = useState(false);
+
+  // Task Creation Interface State
+  const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
+  const [tasks, setTasks] = useState<any[]>([]);
   const [showStaffReports, setShowStaffReports] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
@@ -864,7 +980,7 @@ export default function AICompanyDashboard() {
   ];
 
   // Advanced Analytics Data
-  const performanceMetrics: PerformanceMetrics = {
+  const performanceMetrics: PerformanceMetricsData = {
     hourlyRevenue: [
       8500, 9200, 12400, 15600, 18900, 22300, 19800, 17200, 14500, 16800, 21200,
       25400,
@@ -1403,6 +1519,129 @@ export default function AICompanyDashboard() {
       ? systemAlerts
       : systemAlerts.filter((alert) => alert.department === alertFilter);
 
+  // Task Creation Handler
+  const handleTaskCreate = (taskData: any) => {
+    const newTask = {
+      id: `task-${Date.now()}`,
+      ...taskData,
+      createdAt: new Date().toISOString(),
+    };
+    setTasks((prev) => [...prev, newTask]);
+    setIsTaskCreationOpen(false);
+  };
+
+  // Available AI Staff for Task Assignment
+  const availableStaff = [
+    {
+      id: 'loadbot-alpha',
+      name: 'LoadBot Alpha',
+      role: 'DAT Load Booking Specialist',
+      department: 'Operations',
+    },
+    {
+      id: 'truckstop-ai',
+      name: 'TruckStop AI',
+      role: 'TruckStop Automation Expert',
+      department: 'Operations',
+    },
+    {
+      id: 'ocean-forwarder',
+      name: 'AI Freight Forwarder Ocean',
+      role: 'Maritime Logistics Specialist',
+      department: 'Logistics',
+    },
+    {
+      id: 'booking-analytics',
+      name: 'Booking Analytics AI',
+      role: 'Performance Tracking Specialist',
+      department: 'Analytics',
+    },
+    {
+      id: 'uber-freight-bot',
+      name: 'Uber Freight Bot',
+      role: 'Digital Marketplace Specialist',
+      department: 'Operations',
+    },
+    {
+      id: 'convoy-intelligence',
+      name: 'Convoy Intelligence',
+      role: 'Partnership Load Specialist',
+      department: 'Operations',
+    },
+    {
+      id: 'rpm-calculator',
+      name: 'RPM Calculator Pro',
+      role: 'Profitability Analysis Expert',
+      department: 'Finance',
+    },
+    {
+      id: 'factoring-ratings',
+      name: 'Factoring Ratings AI',
+      role: 'Credit Risk Assessment Specialist',
+      department: 'Finance',
+    },
+    {
+      id: 'telegram-alert',
+      name: 'Telegram Alert Bot',
+      role: 'Notification & Communication Specialist',
+      department: 'Communications',
+    },
+    {
+      id: 'content-creator',
+      name: 'AI Content Creator Pro',
+      role: 'Freight Industry Content Specialist',
+      department: 'Marketing',
+    },
+    {
+      id: 'email-marketing',
+      name: 'AI Email Marketing Specialist',
+      role: 'Automated Campaign Manager',
+      department: 'Marketing',
+    },
+    {
+      id: 'social-media',
+      name: 'AI Social Media Manager',
+      role: 'Multi-Platform Engagement Expert',
+      department: 'Marketing',
+    },
+    {
+      id: 'support-alpha',
+      name: 'DEPOINTE Support AI Alpha',
+      role: '24/7 Customer Support Specialist',
+      department: 'Support',
+    },
+    {
+      id: 'technical-beta',
+      name: 'DEPOINTE Technical AI Beta',
+      role: 'Technical Support & Issue Resolution',
+      department: 'Support',
+    },
+    {
+      id: 'crisis-gamma',
+      name: 'DEPOINTE Crisis AI Gamma',
+      role: 'Emergency Response & Crisis Management',
+      department: 'Operations',
+    },
+    {
+      id: 'chatbot-director',
+      name: 'DEPOINTE Chatbot Director',
+      role: 'Intelligent Chatbot Operations',
+      department: 'Support',
+    },
+    {
+      id: 'billing-support',
+      name: 'AI Billing Support Specialist',
+      role: 'Invoice & Payment Issue Resolution',
+      department: 'Finance',
+    },
+    {
+      id: 'knowledge-manager',
+      name: 'AI Knowledge Base Manager',
+      role: 'Support Content & Training Optimization',
+      department: 'Support',
+    },
+  ];
+
   const totalCompanyRevenue = departments.reduce(
     (sum, dept) => sum + dept.dailyRevenue,
     0
@@ -1534,6 +1773,40 @@ export default function AICompanyDashboard() {
                   Dispatch Division | MC 1647572 | DOT 4250594
                 </p>
               </div>
+              {/* Add Task Button */}
+              <div style={{ marginLeft: 'auto' }}>
+                <button
+                  onClick={() => setIsTaskCreationOpen(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '16px 24px',
+                    color: 'white',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 20px -4px rgba(34, 197, 94, 0.4)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 25px -4px rgba(34, 197, 94, 0.6)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 20px -4px rgba(34, 197, 94, 0.4)';
+                  }}
+                >
+                  <span style={{ fontSize: '20px' }}>➕</span>
+                  Add Task
+                </button>
+              </div>
             </div>
 
             {/* PREMIUM CONTROL PANEL */}
@@ -1627,6 +1900,57 @@ export default function AICompanyDashboard() {
           {/* ✅ PLATFORM AI MONITORING INTEGRATION */}
           <div style={{ marginBottom: '20px' }}>
             <PlatformAIMonitor />
+          </div>
+
+          {/* PERFORMANCE METRICS - Billing-Invoices Style */}
+          <div
+            className='financial-grid'
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+              marginBottom: '30px',
+            }}
+          >
+            <PerformanceMetrics
+              title='💰 Revenue Metrics'
+              metrics={[
+                {
+                  label: 'Daily Revenue',
+                  value: `$${totalCompanyRevenue.toLocaleString()}`,
+                },
+                { label: 'Monthly Target', value: '$2.1M' },
+                { label: 'Growth Rate', value: '+24.3%' },
+                { label: 'Avg Deal Size', value: '$45,300' },
+              ]}
+              color='#22c55e'
+            />
+            <PerformanceMetrics
+              title='⚡ Efficiency Metrics'
+              metrics={[
+                {
+                  label: 'Tasks Completed',
+                  value: totalCompanyTasks.toLocaleString(),
+                },
+                {
+                  label: 'Avg Efficiency',
+                  value: `${averageEfficiency.toFixed(1)}%`,
+                },
+                { label: 'Response Time', value: '0.8s' },
+                { label: 'Uptime', value: '99.9%' },
+              ]}
+              color='#3b82f6'
+            />
+            <PerformanceMetrics
+              title='📈 Growth Metrics'
+              metrics={[
+                { label: 'Active AI Staff', value: totalStaff.toString() },
+                { label: 'Departments', value: departments.length.toString() },
+                { label: 'Success Rate', value: '96.8%' },
+                { label: 'Conversion', value: '32.4%' },
+              ]}
+              color='#8b5cf6'
+            />
           </div>
 
           {/* COMPACT METRICS DASHBOARD */}
@@ -6644,6 +6968,14 @@ export default function AICompanyDashboard() {
           ⚡ Live FleetFlow Data Integration - Updates Every 30 Seconds
         </div>
       </div>
+
+      {/* Task Creation Interface */}
+      <TaskCreationInterface
+        isOpen={isTaskCreationOpen}
+        onClose={() => setIsTaskCreationOpen(false)}
+        onTaskCreate={handleTaskCreate}
+        availableStaff={availableStaff}
+      />
     </div>
   );
 }

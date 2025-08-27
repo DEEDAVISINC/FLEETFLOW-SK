@@ -1,12 +1,16 @@
 // Comprehensive Billing Automation Service
-// Orchestrates Stripe and Bill.com for complete revenue management
+// Orchestrates Square and Bill.com for complete revenue management
 
-import StripeService from '../stripe/StripeService';
-import BillComService, { type Invoice, type InvoiceLineItem, type UsageCharges } from './BillComService';
+import SquareService from '../SquareService';
+import BillComService, {
+  type Invoice,
+  type InvoiceLineItem,
+  type UsageCharges,
+} from './BillComService';
 
 export interface BillingCustomer {
   id: string;
-  stripeCustomerId: string;
+  squareCustomerId: string;
   billComCustomerId: string;
   email: string;
   companyName: string;
@@ -17,7 +21,7 @@ export interface BillingCustomer {
 
 export interface BillingSubscription {
   id: string;
-  stripeSubscriptionId: string;
+  squareSubscriptionId: string;
   planId: string;
   planName: string;
   price: number;
@@ -80,11 +84,11 @@ export interface BillingMetrics {
 }
 
 export class BillingAutomationService {
-  private stripeService: StripeService;
+  private squareService: SquareService;
   private billComService: BillComService;
 
   constructor() {
-    this.stripeService = new StripeService();
+    this.squareService = new SquareService();
     this.billComService = new BillComService();
   }
 
@@ -169,8 +173,12 @@ export class BillingAutomationService {
         price: this.getPlanPrice(planId),
         interval: this.getPlanInterval(planId),
         status: 'active',
-        currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+        currentPeriodStart: new Date(
+          stripeSubscription.current_period_start * 1000
+        ),
+        currentPeriodEnd: new Date(
+          stripeSubscription.current_period_end * 1000
+        ),
         nextBillingDate: new Date(stripeSubscription.current_period_end * 1000),
       };
 
@@ -208,7 +216,9 @@ export class BillingAutomationService {
       await this.updateBillingCustomer(customer);
 
       // Record usage in Stripe for metered billing
-      const subscriptions = await this.stripeService.listCustomerSubscriptions(customer.stripeCustomerId);
+      const subscriptions = await this.stripeService.listCustomerSubscriptions(
+        customer.stripeCustomerId
+      );
       for (const subscription of subscriptions) {
         for (const item of subscription.items.data) {
           if (item.price.metadata?.feature === feature) {
@@ -234,13 +244,18 @@ export class BillingAutomationService {
       if (!customer) return;
 
       const { usage, limits } = customer.usageTracking;
-      const overages: Array<{ feature: string; usage: number; limit: number; overage: number }> = [];
+      const overages: Array<{
+        feature: string;
+        usage: number;
+        limit: number;
+        overage: number;
+      }> = [];
 
       // Check each usage type for overages
-      Object.keys(usage).forEach(feature => {
+      Object.keys(usage).forEach((feature) => {
         const featureUsage = usage[feature as keyof typeof usage];
         const featureLimit = limits[feature as keyof typeof limits];
-        
+
         if (featureLimit !== 'unlimited' && featureUsage > featureLimit) {
           overages.push({
             feature,
@@ -261,13 +276,18 @@ export class BillingAutomationService {
 
   private async handleUsageOverages(
     customerId: string,
-    overages: Array<{ feature: string; usage: number; limit: number; overage: number }>
+    overages: Array<{
+      feature: string;
+      usage: number;
+      limit: number;
+      overage: number;
+    }>
   ): Promise<void> {
     // Send overage notification
     await this.sendOverageNotification(customerId, overages);
 
     // Create overage charges for next invoice
-    const overageCharges: InvoiceLineItem[] = overages.map(overage => ({
+    const overageCharges: InvoiceLineItem[] = overages.map((overage) => ({
       description: `${overage.feature} overage (${overage.overage} over limit)`,
       quantity: overage.overage,
       rate: this.getOverageRate(overage.feature),
@@ -287,9 +307,13 @@ export class BillingAutomationService {
   // AUTOMATED BILLING PROCESSES
   // ========================================
 
-  async processMonthlyBilling(): Promise<{ processed: number; failed: number; totalRevenue: number }> {
+  async processMonthlyBilling(): Promise<{
+    processed: number;
+    failed: number;
+    totalRevenue: number;
+  }> {
     console.log('🔄 Starting monthly billing process...');
-    
+
     let processed = 0;
     let failed = 0;
     let totalRevenue = 0;
@@ -311,16 +335,22 @@ export class BillingAutomationService {
 
           console.log(`✅ Processed billing for ${customer.companyName}`);
         } catch (error) {
-          console.error(`❌ Failed to process billing for ${customer.companyName}:`, error);
+          console.error(
+            `❌ Failed to process billing for ${customer.companyName}:`,
+            error
+          );
           failed++;
         }
       }
 
       // Process recurring billing through Bill.com
-      const recurringProcessed = await this.billComService.processRecurringBilling();
+      const recurringProcessed =
+        await this.billComService.processRecurringBilling();
       processed += recurringProcessed;
 
-      console.log(`🎉 Monthly billing complete: ${processed} processed, ${failed} failed, $${totalRevenue.toFixed(2)} revenue`);
+      console.log(
+        `🎉 Monthly billing complete: ${processed} processed, ${failed} failed, $${totalRevenue.toFixed(2)} revenue`
+      );
 
       return { processed, failed, totalRevenue };
     } catch (error) {
@@ -336,8 +366,8 @@ export class BillingAutomationService {
 
       const { usage } = customer.usageTracking;
       const usageCharges: UsageCharges = {
-        apiCalls: { quantity: usage.apiCalls, rate: 0.10 / 1000 }, // $0.10 per 1000 calls
-        dataExports: { quantity: usage.dataExports, rate: 0.50 }, // $0.50 per export
+        apiCalls: { quantity: usage.apiCalls, rate: 0.1 / 1000 }, // $0.10 per 1000 calls
+        dataExports: { quantity: usage.dataExports, rate: 0.5 }, // $0.50 per export
         smsMessages: { quantity: usage.smsMessages, rate: 0.05 }, // $0.05 per message
         premiumFeatures: { quantity: usage.premiumFeatures, rate: 1.99 }, // $1.99 per feature use
       };
@@ -364,9 +394,12 @@ export class BillingAutomationService {
     }
   }
 
-  async processFailedPayments(): Promise<{ retried: number; suspended: number }> {
+  async processFailedPayments(): Promise<{
+    retried: number;
+    suspended: number;
+  }> {
     console.log('🔄 Processing failed payments...');
-    
+
     let retried = 0;
     let suspended = 0;
 
@@ -379,7 +412,10 @@ export class BillingAutomationService {
           if (!customer) continue;
 
           // Retry payment
-          const paymentAttempt = await this.retryPayment(customer.stripeCustomerId, invoice.total);
+          const paymentAttempt = await this.retryPayment(
+            customer.stripeCustomerId,
+            invoice.total
+          );
 
           if (paymentAttempt.success) {
             await this.markInvoiceAsPaid(invoice.id);
@@ -388,7 +424,7 @@ export class BillingAutomationService {
           } else {
             // Handle failed payment based on number of attempts
             const failureCount = await this.getPaymentFailureCount(invoice.id);
-            
+
             if (failureCount >= 3) {
               // Suspend services after 3 failed attempts
               await this.suspendCustomerServices(customer.id);
@@ -400,11 +436,16 @@ export class BillingAutomationService {
             }
           }
         } catch (error) {
-          console.error(`Error processing failed payment for invoice ${invoice.id}:`, error);
+          console.error(
+            `Error processing failed payment for invoice ${invoice.id}:`,
+            error
+          );
         }
       }
 
-      console.log(`💳 Failed payments processed: ${retried} retried, ${suspended} suspended`);
+      console.log(
+        `💳 Failed payments processed: ${retried} retried, ${suspended} suspended`
+      );
       return { retried, suspended };
     } catch (error) {
       console.error('Error processing failed payments:', error);
@@ -423,11 +464,17 @@ export class BillingAutomationService {
 
       // Calculate MRR
       const mrr = customers.reduce((total, customer) => {
-        return total + customer.subscriptions
-          .filter(sub => sub.status === 'active')
-          .reduce((subTotal, sub) => {
-            return subTotal + (sub.interval === 'month' ? sub.price : sub.price / 12);
-          }, 0);
+        return (
+          total +
+          customer.subscriptions
+            .filter((sub) => sub.status === 'active')
+            .reduce((subTotal, sub) => {
+              return (
+                subTotal +
+                (sub.interval === 'month' ? sub.price : sub.price / 12)
+              );
+            }, 0)
+        );
       }, 0);
 
       // Calculate ARR
@@ -437,7 +484,8 @@ export class BillingAutomationService {
       const revenueByCategory = await this.calculateRevenueByCategory();
 
       // Calculate outstanding and overdue amounts
-      const { outstanding, overdue } = this.calculateOutstandingAmounts(invoices);
+      const { outstanding, overdue } =
+        this.calculateOutstandingAmounts(invoices);
 
       // Calculate churn rate (simplified)
       const churnRate = await this.calculateChurnRate();
@@ -502,30 +550,30 @@ export class BillingAutomationService {
 
   private getPlanName(planId: string): string {
     const planNames: Record<string, string> = {
-      'tms_starter': 'TMS Starter',
-      'tms_professional': 'TMS Professional',
-      'tms_enterprise': 'TMS Enterprise',
-      'consortium_basic': 'Data Consortium Basic',
-      'consortium_professional': 'Data Consortium Professional',
-      'consortium_enterprise': 'Data Consortium Enterprise',
-      'compliance_basic': 'DOT Compliance Basic',
-      'compliance_full': 'DOT Compliance Full',
-      'compliance_managed': 'DOT Compliance Managed',
+      tms_starter: 'TMS Starter',
+      tms_professional: 'TMS Professional',
+      tms_enterprise: 'TMS Enterprise',
+      consortium_basic: 'Data Consortium Basic',
+      consortium_professional: 'Data Consortium Professional',
+      consortium_enterprise: 'Data Consortium Enterprise',
+      compliance_basic: 'DOT Compliance Basic',
+      compliance_full: 'DOT Compliance Full',
+      compliance_managed: 'DOT Compliance Managed',
     };
     return planNames[planId] || 'Unknown Plan';
   }
 
   private getPlanPrice(planId: string): number {
     const planPrices: Record<string, number> = {
-      'tms_starter': 199,
-      'tms_professional': 499,
-      'tms_enterprise': 1299,
-      'consortium_basic': 99,
-      'consortium_professional': 299,
-      'consortium_enterprise': 899,
-      'compliance_basic': 149,
-      'compliance_full': 349,
-      'compliance_managed': 799,
+      tms_starter: 199,
+      tms_professional: 499,
+      tms_enterprise: 1299,
+      consortium_basic: 99,
+      consortium_professional: 299,
+      consortium_enterprise: 899,
+      compliance_basic: 149,
+      compliance_full: 349,
+      compliance_managed: 799,
     };
     return planPrices[planId] || 0;
   }
@@ -554,12 +602,16 @@ export class BillingAutomationService {
     console.log('Storing billing customer:', customer.id);
   }
 
-  private async getBillingCustomer(customerId: string): Promise<BillingCustomer | null> {
+  private async getBillingCustomer(
+    customerId: string
+  ): Promise<BillingCustomer | null> {
     // TODO: Implement database retrieval
     return null;
   }
 
-  private async updateBillingCustomer(customer: BillingCustomer): Promise<void> {
+  private async updateBillingCustomer(
+    customer: BillingCustomer
+  ): Promise<void> {
     // TODO: Implement database update
     console.log('Updating billing customer:', customer.id);
   }
@@ -569,7 +621,10 @@ export class BillingAutomationService {
     return [];
   }
 
-  private async updateUsageLimits(customerId: string, planId: string): Promise<void> {
+  private async updateUsageLimits(
+    customerId: string,
+    planId: string
+  ): Promise<void> {
     // TODO: Update usage limits based on plan
     console.log('Updating usage limits for:', customerId, planId);
   }
@@ -579,12 +634,18 @@ export class BillingAutomationService {
     console.log('Resetting usage tracking for:', customerId);
   }
 
-  private async scheduleOverageCharges(customerId: string, charges: InvoiceLineItem[]): Promise<void> {
+  private async scheduleOverageCharges(
+    customerId: string,
+    charges: InvoiceLineItem[]
+  ): Promise<void> {
     // TODO: Schedule overage charges for next invoice
     console.log('Scheduling overage charges for:', customerId);
   }
 
-  private async sendOverageNotification(customerId: string, overages: any[]): Promise<void> {
+  private async sendOverageNotification(
+    customerId: string,
+    overages: any[]
+  ): Promise<void> {
     // TODO: Send overage notification email
     console.log('Sending overage notification to:', customerId);
   }
@@ -594,12 +655,17 @@ export class BillingAutomationService {
     return [];
   }
 
-  private async getBillingCustomerByInvoice(invoiceId: string): Promise<BillingCustomer | null> {
+  private async getBillingCustomerByInvoice(
+    invoiceId: string
+  ): Promise<BillingCustomer | null> {
     // TODO: Get customer by invoice ID
     return null;
   }
 
-  private async retryPayment(stripeCustomerId: string, amount: number): Promise<{ success: boolean; error?: string }> {
+  private async retryPayment(
+    stripeCustomerId: string,
+    amount: number
+  ): Promise<{ success: boolean; error?: string }> {
     // TODO: Implement payment retry logic
     return { success: false, error: 'Not implemented' };
   }
@@ -619,19 +685,31 @@ export class BillingAutomationService {
     console.log('Suspending services for:', customerId);
   }
 
-  private async sendPaymentSuccessNotification(customerId: string): Promise<void> {
+  private async sendPaymentSuccessNotification(
+    customerId: string
+  ): Promise<void> {
     // TODO: Send payment success notification
     console.log('Sending payment success notification to:', customerId);
   }
 
-  private async sendServiceSuspensionNotification(customerId: string): Promise<void> {
+  private async sendServiceSuspensionNotification(
+    customerId: string
+  ): Promise<void> {
     // TODO: Send service suspension notification
     console.log('Sending service suspension notification to:', customerId);
   }
 
-  private async sendDunningNotification(customerId: string, attemptNumber: number): Promise<void> {
+  private async sendDunningNotification(
+    customerId: string,
+    attemptNumber: number
+  ): Promise<void> {
     // TODO: Send dunning notification
-    console.log('Sending dunning notification to:', customerId, 'attempt:', attemptNumber);
+    console.log(
+      'Sending dunning notification to:',
+      customerId,
+      'attempt:',
+      attemptNumber
+    );
   }
 
   private async getAllInvoices(): Promise<Invoice[]> {
@@ -639,18 +717,23 @@ export class BillingAutomationService {
     return [];
   }
 
-  private async calculateRevenueByCategory(): Promise<BillingMetrics['revenueByCategory']> {
+  private async calculateRevenueByCategory(): Promise<
+    BillingMetrics['revenueByCategory']
+  > {
     // TODO: Calculate revenue by category
     return { tms: 0, consortium: 0, compliance: 0, usage: 0 };
   }
 
-  private calculateOutstandingAmounts(invoices: Invoice[]): { outstanding: number; overdue: number } {
+  private calculateOutstandingAmounts(invoices: Invoice[]): {
+    outstanding: number;
+    overdue: number;
+  } {
     const outstanding = invoices
-      .filter(inv => inv.status === 'SENT')
+      .filter((inv) => inv.status === 'SENT')
       .reduce((total, inv) => total + inv.total, 0);
 
     const overdue = invoices
-      .filter(inv => inv.status === 'OVERDUE')
+      .filter((inv) => inv.status === 'OVERDUE')
       .reduce((total, inv) => total + inv.total, 0);
 
     return { outstanding, overdue };
