@@ -45,8 +45,12 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/privacy-policy.html",
-      "destination": "/privacy-policy.html"
+      "source": "/privacy-policy",
+      "destination": "/api/privacy-policy"
+    },
+    {
+      "source": "/privacy-policy.html", 
+      "destination": "/api/privacy-policy"
     }
   ],
   "headers": [

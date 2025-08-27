@@ -17,7 +17,7 @@ const nextConfig = {
         destination: 'https://fleetflowapp.com/:path*',
         permanent: true,
       },
-    ]
+    ];
   },
   async headers() {
     return [
@@ -34,8 +34,8 @@ const nextConfig = {
           },
         ],
       },
-    ]
+    ];
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
