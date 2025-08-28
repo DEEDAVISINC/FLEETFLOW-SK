@@ -283,40 +283,8 @@ export class CompanyAccountingService {
    * Get invoice data for tenant
    */
   private async getInvoiceData(tenantId: string) {
-    // Generate tenant-specific invoice data
-    const baseAmount = this.getTenantSeed(tenantId) * 1000;
-
-    return [
-      {
-        id: `INV-${tenantId.substring(0, 3).toUpperCase()}-001`,
-        client: this.getTenantCustomerName(tenantId, 0),
-        amount: baseAmount + 850,
-        status: 'paid' as const,
-        date: '2024-12-10',
-      },
-      {
-        id: `INV-${tenantId.substring(0, 3).toUpperCase()}-002`,
-        client: this.getTenantCustomerName(tenantId, 1),
-        amount: baseAmount + 1200,
-        status: 'sent' as const,
-        date: '2024-12-08',
-      },
-      {
-        id: `INV-${tenantId.substring(0, 3).toUpperCase()}-003`,
-        client: this.getTenantCustomerName(tenantId, 2),
-        amount: baseAmount + 750,
-        status: 'overdue' as const,
-        date: '2024-11-25',
-        daysOverdue: 17,
-      },
-      {
-        id: `INV-${tenantId.substring(0, 3).toUpperCase()}-004`,
-        client: this.getTenantCustomerName(tenantId, 3),
-        amount: baseAmount + 2900,
-        status: 'pending' as const,
-        date: '2024-12-05',
-      },
-    ];
+    // Empty state - no invoices configured
+    return [];
   }
 
   /**
@@ -346,6 +314,42 @@ export class CompanyAccountingService {
    * Calculate A/R aging for tenant
    */
   private calculateARaging(invoices: any[]) {
+    // Return empty state when no invoices exist
+    if (!invoices || invoices.length === 0) {
+      return [
+        {
+          bucket: 'Current (0-30)',
+          amount: 0,
+          percentage: 0,
+          count: 0,
+        },
+        {
+          bucket: '31-60 days',
+          amount: 0,
+          percentage: 0,
+          count: 0,
+        },
+        {
+          bucket: '61-90 days',
+          amount: 0,
+          percentage: 0,
+          count: 0,
+        },
+        {
+          bucket: '91-120 days',
+          amount: 0,
+          percentage: 0,
+          count: 0,
+        },
+        {
+          bucket: '120+ days',
+          amount: 0,
+          percentage: 0,
+          count: 0,
+        },
+      ];
+    }
+
     const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.amount, 0);
     const seed = this.getTenantSeed(invoices[0]?.id || '');
 
