@@ -13,6 +13,21 @@ import UserProfileWorkflowService, {
 // Comprehensive mock users with ALL detailed information + drivers with carrier onboarding
 const mockUsers: any[] = [];
 
+// Fallback user object to prevent crashes when no users exist
+const EMPTY_USER_FALLBACK = {
+  id: 'no-users',
+  name: 'No Users',
+  email: 'no-users@configured.com',
+  department: 'None',
+  departmentCode: 'NONE',
+  position: 'No Position',
+  status: 'inactive',
+  permissions: {},
+  systemAccess: { level: 'None', allowedSystems: [] },
+  emergencyContact: { name: 'N/A', relation: 'N/A', phone: 'N/A' },
+  notes: 'No users have been configured yet',
+};
+
 // Permission categories with hierarchical sub-pages and granular section permissions
 const permissionCategories = {
   operations: {
@@ -1363,19 +1378,7 @@ export default function UserManagement() {
       user.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const currentUser = filteredUsers[currentUserIndex] || {
-    id: 'no-users',
-    name: 'No Users',
-    email: 'no-users@configured.com',
-    department: 'None',
-    departmentCode: 'NONE',
-    position: 'No Position',
-    status: 'inactive',
-    permissions: {},
-    systemAccess: { level: 'None', allowedSystems: [] },
-    emergencyContact: { name: 'N/A', relation: 'N/A', phone: 'N/A' },
-    notes: 'No users have been configured yet',
-  };
+  const currentUser = filteredUsers[currentUserIndex] || EMPTY_USER_FALLBACK;
 
   // Initialize user permissions from current user
   useEffect(() => {
