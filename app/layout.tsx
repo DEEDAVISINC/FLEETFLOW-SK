@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { SessionProvider } from 'next-auth/react';
 import Script from 'next/script';
 import ClientLayout from './components/ClientLayout';
 import './globals.css';
@@ -73,4 +72,3 @@ export default function RootLayout({
     </html>
   );
 }
-

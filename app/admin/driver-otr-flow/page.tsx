@@ -1,0 +1,9222 @@
+'use client';
+
+import Link from 'next/link';
+import React, { useEffect, useRef, useState } from 'react';
+import DriverAvailabilityManager from '../../components/DriverAvailabilityManager';
+import MarketplaceIntegration from '../../components/MarketplaceIntegration';
+import UnifiedNotificationBell from '../../components/UnifiedNotificationBell';
+import { driverPreferencesService } from '../../services/DriverPreferencesService';
+import {
+  FinancialMarketsService,
+  FuelPriceData,
+} from '../../services/FinancialMarketsService';
+import { iftaService } from '../../services/IFTAService';
+import { taxBanditsForm2290Service } from '../../services/TaxBanditsForm2290Service';
+import { onboardingIntegration } from '../../services/onboarding-integration';
+import { openELDService } from '../../services/openeld-integration';
+
+// Access Control
+function checkPermission(permission: string): boolean {
+  return true; // TODO: Implement real permission check
+}
+
+function AccessRestricted() {
+  return (
+    <div style={{ textAlign: 'center', padding: '50px', color: 'white' }}>
+      <h2>🚫 Access Restricted</h2>
+      <p>You need management access to view this page.</p>
+      <Link href='/'>
+        <button
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            background: '#3b82f6',
+            color: 'white',
+            border: 'none',
+          }}
+        >
+          Back to Dashboard
+        </button>
+      </Link>
+    </div>
+  );
+}
+
+// Interfaces
+interface DriverNotification {
+  id: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
+
+interface WorkflowTask {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  dueDate: Date;
+  status: string;
+}
+
+// Enhanced User Interface for complete header
+interface EnhancedDriverUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: {
+    type: 'owner_operator' | 'company_driver' | 'fleet_manager' | 'dispatcher';
+    permissions: string[];
+  };
+  tenantId: string;
+  tenantName: string;
+  companyInfo: {
+    mcNumber: string;
+    dotNumber: string;
+    safetyRating: string;
+    insuranceProvider: string;
+    operatingStatus: string;
+  };
+  dispatcher: {
+    name: string;
+    phone: string;
+    email: string;
+    department: string;
+    availability: string;
+    responsiveness: string;
+  };
+  photos: {
+    vehicleEquipment?: string;
+    userPhotoOrLogo?: string;
+  };
+}
+
+// 🚨 TIME-RESTRICTED LOAD ALERT SYSTEM INTERFACES
+interface LoadAlert {
+  id: string;
+  load: {
+    id: string;
+    origin: string;
+    destination: string;
+    commodity: string;
+    pay: string;
+    miles: string;
+    rate: string;
+    pickupDate: string;
+    priority: 'HIGH' | 'URGENT' | 'NORMAL';
+    equipment?: string;
+    weight?: string;
+    distance?: string;
+  };
+  alertType: 'new_load' | 'urgent_load' | 'replacement_load';
+  timeToExpire: number; // seconds remaining
+  originalDuration: number; // original alert duration in seconds
+  priority: 'high' | 'medium' | 'low';
+  dispatcherName: string;
+  dispatcherId: string;
+  createdAt: Date;
+  status: 'active' | 'accepted' | 'expired' | 'declined';
+  soundAlert: boolean;
+  vibrationAlert: boolean;
+  visualAlert: 'flash' | 'pulse' | 'glow';
+  message?: string; // Custom message from dispatcher
+  acceptedBy?: string; // Driver ID who accepted (if any)
+  acceptedAt?: Date;
+}
+
+interface AlertQueueManager {
+  activeAlerts: LoadAlert[];
+  alertHistory: LoadAlert[];
+  totalAlertsToday: number;
+  acceptedAlertsToday: number;
+  acceptanceRate: number;
+  averageResponseTime: number; // seconds
+}
+
+// 🗺️ GPS-PROXIMITY LOAD SYSTEM INTERFACES
+interface DriverLocation {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: Date;
+  address?: string;
+  city?: string;
+  state?: string;
+}
+
+interface NearbyLoad {
+  id: string;
+  origin: {
+    address: string;
+    city: string;
+    state: string;
+    coordinates: { lat: number; lng: number };
+  };
+  destination: {
+    address: string;
+    city: string;
+    state: string;
+    coordinates: { lat: number; lng: number };
+  };
+  commodity: string;
+  pay: string;
+  rate: string;
+  miles: string;
+  pickupDate: string;
+  deliveryDate?: string;
+  equipment: string;
+  weight: string;
+  priority: 'HIGH' | 'URGENT' | 'NORMAL';
+  dispatcherName: string;
+  dispatcherId: string;
+  brokerId?: string;
+  distanceFromDriver: number; // miles
+  estimatedPickupTime: string; // ETA to pickup location
+  postedAt: Date;
+  expiresAt?: Date;
+}
+
+interface LoadInterest {
+  id: string;
+  loadId: string;
+  driverId: string;
+  driverName: string;
+  driverLocation: DriverLocation;
+  status: 'pending' | 'approved' | 'declined' | 'expired';
+  submittedAt: Date;
+  driverMessage?: string;
+  dispatcherResponse?: string;
+  respondedAt?: Date;
+  estimatedArrival: string;
+  distanceToLoad: number;
+}
+
+// TODO: Replace with real workflow manager API
+const workflowManager = {
+  getActiveWorkflowTasks: (driverId: string): WorkflowTask[] => {
+    // TODO: Replace with actual API call to fetch workflow tasks
+    return [];
+  },
+};
+
+export default function AdminDriverOTRFlow() {
+  // All React hooks declared at the top
+  const [selectedTab, setSelectedTab] = useState<
+    | 'dashboard'
+    | 'tasks-loads'
+    | 'business-metrics'
+    | 'notifications'
+    | 'profile'
+    | 'go-with-the-flow'
+    | 'availability'
+    | 'openeld'
+  >('dashboard');
+  const [currentDriverId, setCurrentDriverId] = useState<string | null>(null);
+  const [selectedDriverIndex, setSelectedDriverIndex] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [notifications, setNotifications] = useState<DriverNotification[]>([]);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  const emergencyButtonRef = useRef<HTMLButtonElement>(null);
+
+  // 🚨 LOAD ALERT SYSTEM STATE MANAGEMENT
+  const [loadAlerts, setLoadAlerts] = useState<LoadAlert[]>([]);
+  const [alertQueue, setAlertQueue] = useState<AlertQueueManager>({
+    activeAlerts: [],
+    alertHistory: [],
+    totalAlertsToday: 0,
+    acceptedAlertsToday: 0,
+    acceptanceRate: 0,
+    averageResponseTime: 0,
+  });
+  const [alertSoundsEnabled, setAlertSoundsEnabled] = useState(true);
+  const [instantLoads, setInstantLoads] = useState<any[]>([]);
+  const [driverStatus, setDriverStatus] = useState<
+    'online' | 'offline' | 'on-load'
+  >('online');
+  const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
+
+  // 🏛️ TAXBANDITS FORM 2290 STATE MANAGEMENT
+  const [taxFilingStatus, setTaxFilingStatus] = useState<{
+    isSubmitting: boolean;
+    lastSubmission?: {
+      submissionId: string;
+      status: string;
+      message: string;
+      stampedSchedule1Url?: string;
+    } | null;
+    connectionStatus: { success: boolean; message: string } | null;
+  }>({ isSubmitting: false, lastSubmission: null, connectionStatus: null });
+
+  // 🗺️ IFTA QUARTERLY FILING STATE MANAGEMENT
+  const [iftaFilingStatus, setIftaFilingStatus] = useState<{
+    isSubmitting: boolean;
+    lastSubmission?: {
+      submissionId: string;
+      quarter: string;
+      status: string;
+      message: string;
+      jurisdictions: number;
+      totalTaxOwed: number;
+      filingDeadline: string;
+    } | null;
+    connectionStatus: { success: boolean; message: string } | null;
+    availableStates: string[];
+  }>({
+    isSubmitting: false,
+    lastSubmission: null,
+    connectionStatus: null,
+    availableStates: ['CA', 'TX', 'FL', 'GA', 'AZ', 'NY'],
+  });
+
+  // 💰 FACTORING & PAYMENT PROCESSING STATE MANAGEMENT
+  const [factoringStatus, setFactoringStatus] = useState<{
+    isEnabled: boolean;
+    currentFactor: {
+      name: string;
+      rate: number;
+      advanceRate: number;
+      creditLimit: number;
+      availableCredit: number;
+      daysToPayment: number;
+      status: 'active' | 'pending' | 'suspended';
+    } | null;
+    pendingInvoices: {
+      invoiceId: string;
+      amount: number;
+      customerName: string;
+      loadId: string;
+      invoiceDate: string;
+      status: 'pending_factor' | 'factored' | 'collecting' | 'paid';
+      factorAdvance?: number;
+      advanceDate?: string;
+    }[];
+    paymentMethods: {
+      directDeposit: {
+        enabled: boolean;
+        bankName: string;
+        accountNumber: string;
+      };
+      payCard: { enabled: boolean; cardProvider: string; cardNumber: string };
+      check: { enabled: boolean; address: string };
+    };
+    recentTransactions: {
+      transactionId: string;
+      type:
+        | 'factor_advance'
+        | 'settlement'
+        | 'expense_deduction'
+        | 'dispatch_fee';
+      amount: number;
+      description: string;
+      date: string;
+      status: 'completed' | 'pending' | 'failed';
+    }[];
+  }>({
+    isEnabled: true,
+    currentFactor: {
+      name: 'TBS Factoring Service',
+      rate: 2.5,
+      advanceRate: 95,
+      creditLimit: 50000,
+      availableCredit: 42350,
+      daysToPayment: 1,
+      status: 'active',
+    },
+    pendingInvoices: [
+      {
+        invoiceId: 'INV-2025-003',
+        amount: 2850,
+        customerName: 'Walmart Distribution',
+        loadId: 'L2025-001',
+        invoiceDate: '2025-01-20',
+        status: 'pending_factor',
+      },
+      {
+        invoiceId: 'INV-2025-004',
+        amount: 3200,
+        customerName: 'Home Depot Logistics',
+        loadId: 'L2025-002',
+        invoiceDate: '2025-01-21',
+        status: 'factored',
+        factorAdvance: 3040,
+        advanceDate: '2025-01-21',
+      },
+    ],
+    paymentMethods: {
+      directDeposit: {
+        enabled: true,
+        bankName: 'Wells Fargo',
+        accountNumber: '****1234',
+      },
+      payCard: { enabled: false, cardProvider: '', cardNumber: '' },
+      check: { enabled: false, address: '' },
+    },
+    recentTransactions: [
+      {
+        transactionId: 'TXN-2025-0125',
+        type: 'factor_advance',
+        amount: 3040,
+        description: 'Factor advance for INV-2025-004 (Home Depot load)',
+        date: '2025-01-21',
+        status: 'completed',
+      },
+      {
+        transactionId: 'TXN-2025-0124',
+        type: 'settlement',
+        amount: 12130,
+        description: 'Weekly settlement - 5 loads completed',
+        date: '2025-01-15',
+        status: 'completed',
+      },
+    ],
+  });
+
+  // 🗺️ GPS-PROXIMITY LOAD SYSTEM STATE MANAGEMENT
+  const [driverLocation, setDriverLocation] = useState<DriverLocation | null>(
+    null
+  );
+  const [nearbyLoads, setNearbyLoads] = useState<NearbyLoad[]>([]);
+  const [loadInterests, setLoadInterests] = useState<LoadInterest[]>([]);
+  const [locationPermission, setLocationPermission] = useState<
+    'granted' | 'denied' | 'pending'
+  >('pending');
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [fuelPrice, setFuelPrice] = useState<FuelPriceData | null>(null);
+
+  // 🔒 Access Control Check
+  if (!checkPermission('hasManagementAccess')) {
+    return <AccessRestricted />;
+  }
+
+  // 🚀 Get Driver Data
+  const allDrivers = onboardingIntegration.getAllDrivers();
+  const currentDriver = currentDriverId
+    ? allDrivers.find((d) => d.driverId === currentDriverId) ||
+      allDrivers[selectedDriverIndex]
+    : allDrivers[selectedDriverIndex] || {
+        driverId: 'driver-001',
+        personalInfo: {
+          name: 'John Rodriguez',
+          licenseNumber: 'CDL-TX-8834592',
+          phone: '(555) 234-5678',
+          email: 'john.rodriguez@fleetflow.com',
+        },
+        employmentInfo: {
+          startDate: '2023-01-15',
+          role: 'OTR Driver',
+        },
+      };
+
+  // Enhanced user data for complete header
+  const currentUser: EnhancedDriverUser = {
+    id: 'JR-OO-2025002',
+    name: currentDriver.personalInfo?.name || 'John Rodriguez',
+    email: currentDriver.personalInfo?.email || 'john.rodriguez@fleetflow.com',
+    phone: currentDriver.personalInfo?.phone || '(555) 234-5678',
+    role: {
+      type: 'owner_operator',
+      permissions: ['my_loads_workflow', 'load_board_access'],
+    },
+    tenantId: 'tenant_fleetflow_transport',
+    tenantName: 'FleetFlow Transport LLC',
+    companyInfo: {
+      mcNumber: 'MC-789456',
+      dotNumber: 'DOT-2345678',
+      safetyRating: 'Satisfactory',
+      insuranceProvider: 'Commercial Transport Insurance',
+      operatingStatus: 'Active',
+    },
+    dispatcher: {
+      name: 'Sarah Martinez',
+      phone: '+1 (555) 987-6543',
+      email: 'dispatch@fleetflow.com',
+      department: 'Dispatch Central',
+      availability: 'Available 24/7',
+      responsiveness: 'Avg Response: 8 mins',
+    },
+    photos: {
+      vehicleEquipment:
+        'https://images.unsplash.com/photo-1558618047-f0c1b401b0cf?w=150&h=150&fit=crop&auto=format',
+      userPhotoOrLogo:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&auto=format',
+    },
+  };
+
+  // Helper Functions
+  const handleGenerateRateConfirmation = (load: any) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `rate-confirmation-${load.id}-${Date.now()}`,
+      type: 'rate-confirmation',
+      loadId: load.id,
+      data: {
+        ...load,
+        carrierName: currentDriver?.personalInfo?.name || 'TBD',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with rate confirmation tab
+    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
+
+    // Add notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `📄 Rate Confirmation generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        read: false,
+      },
+      ...prev.slice(0, 4), // Keep only 5 notifications
+    ]);
+  };
+
+  const handleGenerateBOL = (load: any) => {
+    // Store load data in localStorage for auto-population
+    const documentData = {
+      id: `bill-of-lading-${load.id}-${Date.now()}`,
+      type: 'bill-of-lading',
+      loadId: load.id,
+      data: {
+        ...load,
+        weight: load.weight || '40,000 lbs',
+        equipment: load.equipment || 'Dry Van',
+        pickupDate: new Date().toLocaleDateString(),
+        deliveryDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
+      },
+      timestamp: new Date().toISOString(),
+      status: 'generated',
+    };
+
+    const savedDocs = JSON.parse(
+      localStorage.getItem('fleetflow-documents') || '[]'
+    );
+    savedDocs.push(documentData);
+    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
+
+    // Open documents page with bill of lading tab
+    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
+
+    // Add notification
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        message: `📋 Bill of Lading generated for Load #${load.id}`,
+        timestamp: 'Just now',
+        read: false,
+      },
+      ...prev.slice(0, 4), // Keep only 5 notifications
+    ]);
+  };
+
+  const getDepartmentColor = (roleType: string): string => {
+    switch (roleType) {
+      case 'owner_operator':
+      case 'company_driver':
+        return '#f4a832'; // Yellow for drivers/owner operators
+      case 'dispatcher':
+        return '#3b82f6'; // Blue for dispatchers
+      case 'broker':
+        return '#f97316'; // Orange for brokers
+      case 'fleet_manager':
+      case 'manager':
+        return '#6366f1'; // Purple for management
+      default:
+        return '#ffffff'; // White as fallback
+    }
+  };
+
+  const renderVehicleImage = (size: string = '32px') => {
+    if (currentUser.photos.vehicleEquipment) {
+      return (
+        <img
+          src={currentUser.photos.vehicleEquipment}
+          alt=''
+          style={{
+            width: size,
+            height: size,
+            borderRadius: '8px',
+            objectFit: 'cover',
+            border: '2px solid rgba(255, 255, 255, 0.2)',
+          }}
+        />
+      );
+    }
+    return <span style={{ fontSize: size }}>🚛</span>;
+  };
+
+  // 🚨 LOAD ALERT MANAGEMENT FUNCTIONS
+  const playAlertSound = () => {
+    if (alertSoundsEnabled) {
+      // Create audio notification
+      const audio = new Audio(
+        'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBkOZ3vXNeSsFJYTO8diJOQgZab3t559NEAxOpeDxvmwiBkKX3vTOeywGJIHJ8N+PQAoUXrXo66hVFAlFnt/yukwjCFWr5+6zdSAHbKvn77BdGAg6k9/2z34sBSWAye/hizsIGGm98+eeTBIMUarm7axiGAY+jdrzxnkpBSF+yu7bgyEIGGq+8+aeThILT6zn7adcGAhEq+buqmceB1Sq5uyzcyAGX7Du9qpZFgpEoN/twk0iBFad3/C+ayIHRqTh8btbFgpGn+Hzv2sjBkSb2/K6aCAGPqTd88eJOAQgeb3o7axVEwlUreX5mGUbBj2J2/LGciUGLIHO8diJOgcYarzu66hVFApGnt/yu2whBkOY3fLMeSsFJYNO8diIOQgZab3s56BOEAxOpeDxvmcjBkKY3vTNeSsFJIHK8N+PQAoUXrXo66hVFAlFnt/yuj'
+      );
+      audio.volume = 0.3;
+      audio.play().catch(() => {
+        // Fallback for browsers that block autoplay
+        console.log('Audio notification blocked');
+      });
+    }
+  };
+
+  const triggerVibration = () => {
+    if (alertVibrationEnabled && 'vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200]);
+    }
+  };
+
+  const acceptLoadAlert = (alertId: string) => {
+    const alert = loadAlerts.find((a) => a.id === alertId);
+    if (!alert) return;
+
+    // Update alert status
+    setLoadAlerts((prev) =>
+      prev.map((a) =>
+        a.id === alertId
+          ? {
+              ...a,
+              status: 'accepted' as const,
+              acceptedBy: currentUser.id,
+              acceptedAt: new Date(),
+            }
+          : a
+      )
+    );
+
+    // Update alert queue stats
+    setAlertQueue((prev) => ({
+      ...prev,
+      acceptedAlertsToday: prev.acceptedAlertsToday + 1,
+      acceptanceRate: Math.round(
+        ((prev.acceptedAlertsToday + 1) / prev.totalAlertsToday) * 100
+      ),
+      alertHistory: [
+        ...prev.alertHistory,
+        { ...alert, status: 'accepted' as const },
+      ],
+    }));
+
+    // Add to active loads (this would integrate with your load management system)
+    console.log('Load accepted:', alert.load);
+  };
+
+  const declineLoadAlert = (alertId: string) => {
+    const alert = loadAlerts.find((a) => a.id === alertId);
+    if (!alert) return;
+
+    // Update alert status to expired/declined
+    setLoadAlerts((prev) => prev.filter((a) => a.id !== alertId));
+
+    // Update alert queue stats
+    setAlertQueue((prev) => ({
+      ...prev,
+      alertHistory: [
+        ...prev.alertHistory,
+        { ...alert, status: 'declined' as const },
+      ],
+    }));
+
+    console.log('Load alert declined:', alert.load.id);
+  };
+
+  const generateDemoAlert = () => {
+    // No load data available - connect to real load API
+    console.log('No load data available for alerts');
+    return;
+  };
+
+  // 🗺️ GPS LOCATION TRACKING & NEARBY LOADS FUNCTIONS
+  const requestLocationPermission = async () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by this browser');
+      setLocationPermission('denied');
+      return;
+    }
+
+    setIsLoadingLocation(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const newLocation: DriverLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: new Date(),
+        };
+
+        setDriverLocation(newLocation);
+        setLocationPermission('granted');
+        setIsLoadingLocation(false);
+
+        // Start watching position for continuous updates
+        startLocationTracking();
+        // Load nearby loads based on new location
+        loadNearbyLoads(newLocation);
+      },
+      (error) => {
+        setLocationError(`Location error: ${error.message}`);
+        setLocationPermission('denied');
+        setIsLoadingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
+      }
+    );
+  };
+
+  const startLocationTracking = () => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const newLocation: DriverLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: new Date(),
+        };
+
+        setDriverLocation(newLocation);
+        // Reload nearby loads if location changed significantly
+        loadNearbyLoads(newLocation);
+      },
+      (error) => {
+        console.log('Location tracking error:', error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 600000, // 10 minutes
+      }
+    );
+  };
+
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number => {
+    const R = 3959; // Earth's radius in miles
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const loadNearbyLoads = (location: DriverLocation) => {
+    // No nearby loads data available - connect to real load API
+    setNearbyLoads([]);
+  };
+
+  // EXPRESS INTEREST WORKFLOW FUNCTIONS
+  const expressInterest = (loadId: string) => {
+    if (!driverLocation) {
+      alert('Location required to express interest');
+      return;
+    }
+
+    const load = nearbyLoads.find((l) => l.id === loadId);
+    if (!load) return;
+
+    const newInterest: LoadInterest = {
+      id: `INT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      loadId,
+      driverId: currentUser.id,
+      driverName: currentUser.name,
+      driverLocation,
+      status: 'pending',
+      submittedAt: new Date(),
+      estimatedArrival: load.estimatedPickupTime,
+      distanceToLoad: load.distanceFromDriver,
+      driverMessage: `Interested in this load. Currently ${Math.round(load.distanceFromDriver)} miles away, ETA ${load.estimatedPickupTime}.`,
+    };
+
+    setLoadInterests((prev) => [...prev, newInterest]);
+
+    // Will notify dispatcher when connected to real system
+    console.log('Interest submitted for load:', loadId);
+
+    // Show confirmation to driver
+    alert(
+      `Interest expressed for load ${loadId}! Dispatcher ${load.dispatcherName} will be notified.`
+    );
+  };
+
+  const withdrawInterest = (interestId: string) => {
+    setLoadInterests((prev) =>
+      prev.filter((interest) => interest.id !== interestId)
+    );
+    alert('Interest withdrawn successfully.');
+  };
+
+  // Initialize location tracking on component mount
+  React.useEffect(() => {
+    if (locationPermission === 'pending') {
+      requestLocationPermission();
+    }
+  }, []);
+
+  // 📊 COMPREHENSIVE BUSINESS METRICS
+  const businessMetrics = {
+    // Settlement & Payment Tracking
+    settlement: {
+      pendingPayments: '$8,450',
+      lastSettlement: '$12,130',
+      settlementDate: 'Jan 15, 2025',
+      nextSettlement: 'Jan 22, 2025',
+      completedLoads: 47,
+      pendingLoads: 3,
+      disputedAmount: '$0',
+      paymentMethod: 'Direct Deposit',
+      averageSettlementTime: '5 days',
+    },
+    // Detailed Tax Management
+    tax: {
+      alerts: 1,
+      quarterlyDue: 'Q1 2025 - Due Mar 15',
+      ytdDeductions: '$18,750',
+      estimatedTax: '$6,240',
+      mileageDeduction: '$14,040',
+      fuelTaxCredits: '$2,450',
+      lastFilingDate: 'Dec 15, 2024',
+      nextQuarterlyEstimate: '$1,560',
+      deductionCategories: {
+        fuel: '$8,200',
+        maintenance: '$3,400',
+        insurance: '$4,200',
+        permits: '$1,450',
+        other: '$1,500',
+      },
+    },
+    // Pay Period Breakdown
+    payPeriod: {
+      current: {
+        grossPay: '$12,850',
+        fuelSurcharge: '$1,240',
+        bonuses: '$450',
+        detention: '$280',
+        deductions: {
+          fuel: '$3,200',
+          insurance: '$850',
+          equipment: '$420',
+          permits: '$120',
+          other: '$180',
+          total: '$4,770',
+        },
+        netPay: '$9,850',
+        period: 'Jan 1-15, 2025',
+      },
+      lastPeriod: {
+        grossPay: '$11,240',
+        netPay: '$8,650',
+        period: 'Dec 16-31, 2024',
+      },
+    },
+    // Extended Performance Metrics
+    performance: {
+      safetyScore: 94,
+      efficiencyRate: 96,
+      onTimeDelivery: 98,
+      fuelEfficiency: '7.2 MPG',
+      monthlyMiles: '2,340',
+      avgMilesPerLoad: '450',
+      hoursOfService: '68/70',
+      availableHours: '2 hrs',
+      inspectionsDue: 'Next: Feb 1',
+      CSAScore: 'Satisfactory',
+      violations: 0,
+      avgDeliveryTime: '2.3 days',
+    },
+    // Revenue Tracking
+    revenue: {
+      ytd: '$127,450',
+      monthly: '$12,850',
+      weekly: '$3,240',
+      daily: '$485',
+      avgPerLoad: '$2,130',
+      topMonth: 'August ($18,950)',
+      bestWeek: 'Week 32 ($4,650)',
+      revenueGoal: '$150,000',
+      progressToGoal: '85%',
+    },
+  };
+
+  // Performance Metrics (Legacy - keeping for compatibility)
+  const performanceMetrics = {
+    activeLoads: 1,
+    safetyScore: businessMetrics.performance.safetyScore,
+    revenueYTD: businessMetrics.revenue.ytd,
+    efficiencyRate: businessMetrics.performance.efficiencyRate,
+    monthlyMiles: businessMetrics.performance.monthlyMiles,
+    taxAlerts: businessMetrics.tax.alerts,
+  };
+
+  // Helper function for AI load countdown timers
+  const formatTimeRemaining = (deadline: Date): string => {
+    const now = new Date();
+    const timeLeft = deadline.getTime() - now.getTime();
+
+    if (timeLeft <= 0) return 'EXPIRED';
+
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else {
+      return `${minutes}m`;
+    }
+  };
+
+  // Enhanced Available Loads for Loadboard - Mixed Traditional & AI-Generated
+  const availableLoads = [
+    // Traditional Loads (Express Interest)
+    {
+      id: 'L2025-001',
+      origin: 'Dallas, TX',
+      destination: 'Miami, FL',
+      commodity: 'Electronics',
+      pay: '$2,850',
+      miles: '1,180 mi',
+      rate: '$2.42',
+      pickupDate: 'Today',
+      priority: 'HIGH',
+      loadType: 'traditional',
+      dispatcherName: 'Sarah Johnson',
+      dispatcherId: 'DISP-001',
+    },
+    {
+      id: 'L2025-002',
+      origin: 'Fort Worth, TX',
+      destination: 'San Antonio, TX',
+      commodity: 'General Freight',
+      pay: '$2,100',
+      miles: '265 mi',
+      rate: '$7.92',
+      pickupDate: 'Tomorrow',
+      priority: 'URGENT',
+      loadType: 'traditional',
+      dispatcherName: 'Mike Davis',
+      dispatcherId: 'DISP-002',
+    },
+    {
+      id: 'L2025-003',
+      origin: 'Houston, TX',
+      destination: 'New Orleans, LA',
+      commodity: 'Food Products',
+      pay: '$1,650',
+      miles: '348 mi',
+      rate: '$4.74',
+      pickupDate: 'Jan 8',
+      priority: 'NORMAL',
+      loadType: 'traditional',
+      dispatcherName: 'Lisa Chen',
+      dispatcherId: 'DISP-003',
+    },
+    // AI-Generated Loads (Quick Bid)
+    {
+      id: 'AI-MKT-001',
+      origin: 'Dallas, TX',
+      destination: 'Atlanta, GA',
+      commodity: 'Electronics',
+      pay: '$3,200',
+      miles: '831 mi',
+      rate: '$3.85',
+      pickupDate: 'Tomorrow 6:00 AM',
+      priority: 'HIGH',
+      loadType: 'ai_generated',
+      aiSource: 'market_demand',
+      bidDeadline: new Date(Date.now() + 20 * 60 * 60 * 1000), // 20 hours from now
+      minimumBid: 2800,
+      suggestedBidRange: [2900, 3100],
+      competitorCount: 3,
+      aiRecommendation: {
+        suggestedBid: 2950,
+        winProbability: 78,
+        profitabilityScore: 65,
+        riskAssessment: 'low',
+      },
+    },
+    {
+      id: 'AI-RFX-002',
+      origin: 'Houston, TX',
+      destination: 'Phoenix, AZ',
+      commodity: 'Auto Parts',
+      pay: '$2,750',
+      miles: '880 mi',
+      rate: '$3.12',
+      pickupDate: 'Today 4:00 PM',
+      priority: 'URGENT',
+      loadType: 'ai_generated',
+      aiSource: 'freightflow_rfx',
+      bidDeadline: new Date(Date.now() + 16 * 60 * 60 * 1000), // 16 hours from now
+      minimumBid: 2400,
+      suggestedBidRange: [2500, 2700],
+      competitorCount: 5,
+      dedicatedLane: {
+        laneName: 'Houston-Phoenix Automotive',
+        frequency: 'weekly',
+        contractLength: '6 months',
+      },
+      aiRecommendation: {
+        suggestedBid: 2580,
+        winProbability: 62,
+        profitabilityScore: 58,
+        riskAssessment: 'medium',
+      },
+    },
+    {
+      id: 'AI-OPT-003',
+      origin: 'San Antonio, TX',
+      destination: 'Denver, CO',
+      commodity: 'Manufacturing Parts',
+      pay: '$2,950',
+      miles: '650 mi',
+      rate: '$4.54',
+      pickupDate: 'Tomorrow 2:00 PM',
+      priority: 'HIGH',
+      loadType: 'ai_generated',
+      aiSource: 'route_optimization',
+      bidDeadline: new Date(Date.now() + 22 * 60 * 60 * 1000), // 22 hours from now
+      minimumBid: 2600,
+      suggestedBidRange: [2700, 2900],
+      competitorCount: 2,
+      aiRecommendation: {
+        suggestedBid: 2800,
+        winProbability: 85,
+        profitabilityScore: 72,
+        riskAssessment: 'low',
+      },
+    },
+  ];
+
+  // Active Loads (Only confirmed/accepted loads)
+  const activeLoads = [
+    {
+      id: 'L2025-001',
+      origin: 'Dallas, TX',
+      destination: 'Miami, FL',
+      status: 'In Transit',
+      pay: '$2,850',
+      miles: '1,180 mi',
+      deliveryDate: 'Tomorrow',
+      progress: 75,
+    },
+    // L2025-002 (Fort Worth → San Antonio) removed - waiting for confirmation
+    // Only confirmed loads should appear in active loads
+  ];
+
+  // Initialize notifications
+  useEffect(() => {
+    setNotifications([
+      {
+        id: '1',
+        message: '🚨 Load assignment confirmation required for L2025-002',
+        timestamp: '2 hours ago',
+        read: false,
+      },
+      {
+        id: '2',
+        message: '📋 Weekly inspection report submitted successfully',
+        timestamp: '1 day ago',
+        read: true,
+      },
+      {
+        id: '3',
+        message: '💰 Payment processed: $2,850 for load L2025-001',
+        timestamp: '2 days ago',
+        read: false,
+      },
+    ]);
+  }, []);
+
+  // 🚨 COUNTDOWN TIMER FOR LOAD ALERTS
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLoadAlerts((prev) =>
+        prev
+          .map((alert) => {
+            if (alert.status === 'active' && alert.timeToExpire > 0) {
+              const newTimeToExpire = alert.timeToExpire - 1;
+
+              // Warning sounds at specific intervals
+              if (newTimeToExpire === 300 || newTimeToExpire === 60) {
+                // 5 min, 1 min warnings
+                playAlertSound();
+                triggerVibration();
+              }
+
+              // Auto-expire alert
+              if (newTimeToExpire <= 0) {
+                setAlertQueue((queue) => ({
+                  ...queue,
+                  alertHistory: [
+                    ...queue.alertHistory,
+                    { ...alert, status: 'expired' as const },
+                  ],
+                }));
+                return {
+                  ...alert,
+                  status: 'expired' as const,
+                  timeToExpire: 0,
+                };
+              }
+
+              return { ...alert, timeToExpire: newTimeToExpire };
+            }
+            return alert;
+          })
+          .filter((alert) => alert.status === 'active')
+      ); // Remove expired alerts
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [alertSoundsEnabled, alertVibrationEnabled]);
+
+  // Demo: Generate alert every 30 seconds for testing
+  useEffect(() => {
+    const demoTimer = setInterval(() => {
+      if (loadAlerts.length < 3) {
+        // Limit to 3 concurrent alerts
+        generateDemoAlert();
+      }
+    }, 30000);
+
+    // Generate first demo alert after 5 seconds
+    const initialAlert = setTimeout(() => {
+      generateDemoAlert();
+    }, 5000);
+
+    return () => {
+      clearInterval(demoTimer);
+      clearTimeout(initialAlert);
+    };
+  }, [loadAlerts.length]);
+
+  // 🛢️ Fetch Live Fuel Prices
+  useEffect(() => {
+    const financialMarketsService = new FinancialMarketsService();
+
+    const fetchFuelPrice = async () => {
+      try {
+        const data = await financialMarketsService.getDieselPrice();
+        setFuelPrice(data);
+      } catch (error) {
+        console.error('Error fetching fuel price:', error);
+      }
+    };
+
+    // Fetch immediately
+    fetchFuelPrice();
+
+    // Update every 5 minutes
+    const fuelTimer = setInterval(fetchFuelPrice, 5 * 60 * 1000);
+
+    return () => clearInterval(fuelTimer);
+  }, []);
+
+  // ⚡ GO WITH THE FLOW - Real-time load updates via API
+  useEffect(() => {
+    const currentDriverId = 'driver-1'; // For demo, use driver-1 as the current driver
+
+    const loadInstantLoads = async () => {
+      try {
+        const response = await fetch(
+          `/api/go-with-the-flow?action=instant-loads&driverId=${currentDriverId}`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          setInstantLoads(data.loads);
+        } else {
+          console.error('Failed to load instant loads:', data.error);
+          setInstantLoads([]);
+        }
+      } catch (error) {
+        console.error('Error loading instant loads:', error);
+        setInstantLoads([]);
+      }
+    };
+
+    // Load initial data
+    loadInstantLoads();
+
+    // Update every 5 seconds for real-time feel
+    const loadTimer = setInterval(loadInstantLoads, 5000);
+
+    return () => {
+      clearInterval(loadTimer);
+    };
+  }, []);
+
+  // 🏛️ TAXBANDITS FORM 2290 FILING FUNCTIONS
+  const testTaxBanditsConnection = async () => {
+    try {
+      const result = await taxBanditsForm2290Service.testConnection();
+      setTaxFilingStatus((prev) => ({ ...prev, connectionStatus: result }));
+      return result;
+    } catch (error) {
+      const errorResult = {
+        success: false,
+        message: `❌ Connection error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: errorResult,
+      }));
+      return errorResult;
+    }
+  };
+
+  const submitForm2290Filing = async () => {
+    setTaxFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
+
+    try {
+      // Vehicle data will be provided when connected to real system
+      const vehicleData = null;
+
+      // Submit to TaxBandits API
+      const result =
+        await taxBanditsForm2290Service.submitForm2290(vehicleData);
+
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: result.submissionId,
+          status: result.success ? 'submitted' : 'failed',
+          message: result.message,
+          stampedSchedule1Url: result.stampedSchedule1Url,
+        },
+      }));
+
+      if (result.success) {
+        alert(
+          `✅ Form 2290 successfully submitted!nnSubmission ID: ${result.submissionId}nMessage: ${result.message}`
+        );
+      } else {
+        alert(
+          `❌ Form 2290 submission failed:nn${result.message}nnErrors: ${result.errors?.join(', ') || 'None'}`
+        );
+      }
+    } catch (error) {
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: '',
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        },
+      }));
+      alert(
+        `❌ Form 2290 filing error:nn${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const checkSubmissionStatus = async (submissionId: string) => {
+    try {
+      const result =
+        await taxBanditsForm2290Service.checkSubmissionStatus(submissionId);
+
+      setTaxFilingStatus((prev) => ({
+        ...prev,
+        lastSubmission: prev.lastSubmission
+          ? {
+              ...prev.lastSubmission,
+              status: result.status,
+              message: result.message,
+              stampedSchedule1Url: result.stampedSchedule1Url,
+            }
+          : null,
+      }));
+
+      alert(
+        `📊 Submission Status Update:nnStatus: ${result.status}nMessage: ${result.message}`
+      );
+    } catch (error) {
+      alert(
+        `❌ Status check error:nn${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  // 🗺️ IFTA QUARTERLY FILING FUNCTIONS
+  const testIFTAConnection = async () => {
+    try {
+      // Connection status will be determined when connected to real state portals
+      const connectionResult = {
+        success: false,
+        message: 'Connect to state portals to test IFTA connection',
+      };
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: connectionResult,
+      }));
+      return connectionResult;
+    } catch (error) {
+      const errorResult = {
+        success: false,
+        message: `❌ IFTA connection error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        connectionStatus: errorResult,
+      }));
+      return errorResult;
+    }
+  };
+
+  const submitIFTAReturn = async (quarter: string = 'Q4 2024') => {
+    setIftaFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
+
+    try {
+      // IFTA return data will be provided when connected to real system
+      const returnData = null;
+
+      // Submit to multiple state jurisdictions
+      const results = await iftaService.submitIFTAReturn(returnData);
+
+      // Check if all submissions were successful
+      const allSuccessful = results.every((r) => r.success);
+      const totalTaxOwed = results.reduce(
+        (sum, r) => sum + r.totalNetAmount,
+        0
+      );
+
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: results[0]?.submissionId || `IFTA-${Date.now()}`,
+          quarter: quarter,
+          status: allSuccessful ? 'submitted' : 'failed',
+          message: allSuccessful
+            ? 'IFTA return submitted to all jurisdictions'
+            : 'Some jurisdictions failed',
+          jurisdictions: results.length,
+          totalTaxOwed: totalTaxOwed,
+          filingDeadline: 'January 31, 2025',
+        },
+      }));
+
+      if (allSuccessful) {
+        alert(
+          `✅ IFTA ${quarter} return successfully submitted!\n\nJurisdictions: ${results.length}\nTotal Tax Owed: $${totalTaxOwed.toFixed(2)}\nDeadline: January 31, 2025`
+        );
+      } else {
+        const errors = results.flatMap((r) => r.errors || []);
+        alert(
+          `❌ IFTA submission failed:\n\nSome jurisdictions failed\n\nErrors: ${errors.join(', ') || 'None'}`
+        );
+      }
+    } catch (error) {
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        isSubmitting: false,
+        lastSubmission: {
+          submissionId: '',
+          quarter: quarter,
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          jurisdictions: 0,
+          totalTaxOwed: 0,
+          filingDeadline: 'January 31, 2025',
+        },
+      }));
+      alert(
+        `❌ IFTA filing error:\n\n${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const checkIFTASubmissionStatus = async (submissionId: string) => {
+    try {
+      // Status check will be performed when connected to real state portal APIs
+      const statusResult = {
+        success: false,
+        status: 'pending',
+        message: 'Connect to state portals to check IFTA submission status',
+      };
+
+      setIftaFilingStatus((prev) => ({
+        ...prev,
+        lastSubmission: prev.lastSubmission
+          ? {
+              ...prev.lastSubmission,
+              status: statusResult.status,
+              message: statusResult.message,
+            }
+          : null,
+      }));
+
+      alert(
+        `📊 IFTA Status Update:\n\nStatus: ${statusResult.status}\nMessage: ${statusResult.message}`
+      );
+    } catch (error) {
+      alert(
+        `❌ IFTA status check error:\n\n${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  // 💰 FACTORING & PAYMENT PROCESSING FUNCTIONS
+  const submitInvoiceForFactoring = async (invoiceId: string) => {
+    try {
+      setFactoringStatus((prev) => ({
+        ...prev,
+        pendingInvoices: prev.pendingInvoices.map((inv) =>
+          inv.invoiceId === invoiceId
+            ? { ...inv, status: 'factored' as const }
+            : inv
+        ),
+      }));
+
+      // Factoring submission will be processed when connected to real system
+      const invoice = factoringStatus.pendingInvoices.find(
+        (inv) => inv.invoiceId === invoiceId
+      );
+      if (invoice && factoringStatus.currentFactor) {
+        const advanceAmount =
+          invoice.amount * (factoringStatus.currentFactor.advanceRate / 100);
+
+        alert(`✅ Invoice submitted for factoring!
+
+Invoice: ${invoiceId}
+Amount: $${invoice.amount.toFixed(2)}
+Factor Advance (${factoringStatus.currentFactor.advanceRate}%): $${advanceAmount.toFixed(2)}
+Expected Deposit: Within ${factoringStatus.currentFactor.daysToPayment} business day(s)`);
+
+        // Add transaction record
+        const newTransaction = {
+          transactionId: `TXN-${Date.now()}`,
+          type: 'factor_advance' as const,
+          amount: advanceAmount,
+          description: `Factor advance for ${invoiceId} (${invoice.customerName})`,
+          date: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+        };
+
+        setFactoringStatus((prev) => ({
+          ...prev,
+          recentTransactions: [
+            newTransaction,
+            ...prev.recentTransactions.slice(0, 9),
+          ],
+        }));
+      }
+    } catch (error) {
+      alert(
+        `❌ Factoring submission error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const updatePaymentMethod = (
+    method: 'directDeposit' | 'payCard' | 'check',
+    enabled: boolean
+  ) => {
+    setFactoringStatus((prev) => ({
+      ...prev,
+      paymentMethods: {
+        ...prev.paymentMethods,
+        [method]: { ...prev.paymentMethods[method], enabled },
+      },
+    }));
+
+    alert(
+      `${enabled ? '✅ Enabled' : '❌ Disabled'} ${method.replace(/([A-Z])/g, ' $1').toLowerCase()} payment method`
+    );
+  };
+
+  const requestAdvancePayment = async (amount: number) => {
+    try {
+      if (!factoringStatus.currentFactor) {
+        alert('❌ No active factoring agreement');
+        return;
+      }
+
+      if (amount > factoringStatus.currentFactor.availableCredit) {
+        alert(
+          `❌ Advance amount exceeds available credit: $${factoringStatus.currentFactor.availableCredit.toFixed(2)}`
+        );
+        return;
+      }
+
+      // Advance request will be processed when connected to real system
+      const newTransaction = {
+        transactionId: `ADV-${Date.now()}`,
+        type: 'factor_advance' as const,
+        amount: amount,
+        description: `Advance payment request`,
+        date: new Date().toISOString().split('T')[0],
+        status: 'pending' as const,
+      };
+
+      setFactoringStatus((prev) => ({
+        ...prev,
+        currentFactor: prev.currentFactor
+          ? {
+              ...prev.currentFactor,
+              availableCredit: prev.currentFactor.availableCredit - amount,
+            }
+          : null,
+        recentTransactions: [
+          newTransaction,
+          ...prev.recentTransactions.slice(0, 9),
+        ],
+      }));
+
+      alert(`✅ Advance payment requested!
+
+Amount: $${amount.toFixed(2)}
+Processing time: 1-2 business days
+Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).toFixed(2)}`);
+    } catch (error) {
+      alert(
+        `❌ Advance request error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
+
+  const workflowTasks = workflowManager.getActiveWorkflowTasks(
+    currentDriver?.driverId || 'driver-001'
+  );
+
+  return (
+    <>
+      {/* CSS Animations for Load Alerts */}
+      <style jsx>{`
+        @keyframes flash {
+          0%,
+          50% {
+            opacity: 1;
+          }
+          25%,
+          75% {
+            opacity: 0.5;
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.02);
+            opacity: 0.9;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes glow {
+          0%,
+          100% {
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+          }
+          50% {
+            box-shadow:
+              0 0 20px rgba(59, 130, 246, 0.8),
+              0 0 30px rgba(59, 130, 246, 0.6);
+          }
+        }
+
+        .alert-flash {
+          animation: flash 1s infinite;
+        }
+        .alert-pulse {
+          animation: pulse 2s infinite;
+        }
+        .alert-glow {
+          animation: glow 2s infinite;
+        }
+      `}</style>
+
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
+          padding: '20px',
+        }}
+      >
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          {/* 🔧 ENHANCED HEADER - Unified Portal Style with Blue Theme */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '32px',
+              marginBottom: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+              >
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                  }}
+                >
+                  {renderVehicleImage('32px')}
+                </div>
+                <div>
+                  <h1
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                      textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    {currentUser.tenantName}
+                  </h1>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '24px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {currentUser.companyInfo.mcNumber}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {currentUser.companyInfo.dotNumber}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px',
+                        padding: '4px 12px',
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(20, 184, 166, 0.3)',
+                      }}
+                    >
+                      {currentUser.companyInfo.operatingStatus}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '24px',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          background: '#10b981',
+                          borderRadius: '50%',
+                          boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                          animation: 'pulse 2s infinite',
+                        }}
+                      />
+                      <span
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {currentUser.name} •{' '}
+                        <span
+                          style={{
+                            color: getDepartmentColor(currentUser.role.type),
+                            fontWeight: '600',
+                          }}
+                        >
+                          {currentUser.role.type
+                            .replace('_', ' ')
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
+                        </span>
+                        •{' '}
+                        <span
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontWeight: '600',
+                          }}
+                        >
+                          ID:{' '}
+                          <span
+                            style={{
+                              color: getDepartmentColor(currentUser.role.type),
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {currentUser.id}
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  {/* Dispatcher Information */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '24px',
+                      padding: '8px 12px',
+                      background: 'linear-gradient(135deg, #fef3c7, #fbbf24)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(251, 191, 36, 0.3)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background =
+                        'linear-gradient(135deg, #fef9e7, #f59e0b)';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 4px 12px rgba(251, 191, 36, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background =
+                        'linear-gradient(135deg, #fef3c7, #fbbf24)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span style={{ fontSize: '16px' }}>🔔</span>
+                      <div>
+                        <div
+                          style={{
+                            color: '#2d3748',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Dispatcher: {currentUser.dispatcher.name}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(45, 55, 72, 0.7)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {currentUser.dispatcher.phone} •{' '}
+                          {currentUser.dispatcher.availability}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        color: '#2d3748',
+                        fontSize: '12px',
+                        padding: '4px 8px',
+                        background: 'rgba(45, 55, 72, 0.1)',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(45, 55, 72, 0.2)',
+                      }}
+                    >
+                      {currentUser.dispatcher.responsiveness}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+              >
+                {/* Driver Selection Dropdown */}
+                {allDrivers.length > 1 && (
+                  <select
+                    value={selectedDriverIndex}
+                    onChange={(e) =>
+                      setSelectedDriverIndex(Number(e.target.value))
+                    }
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      backdropFilter: 'blur(10px)',
+                      marginRight: '12px',
+                    }}
+                  >
+                    {allDrivers.map((driver, index) => (
+                      <option
+                        key={driver.driverId || index}
+                        value={index}
+                        style={{ background: '#1e293b', color: 'white' }}
+                      >
+                        {driver.personalInfo?.name || `Driver ${index + 1}`}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <UnifiedNotificationBell
+                  userId='current-driver-user'
+                  portal='driver'
+                  position='navigation'
+                  size='md'
+                  theme='auto'
+                  showBadge={true}
+                  showDropdown={true}
+                  maxNotifications={15}
+                />
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #3b82f6, #2563eb)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  🔄 Refresh Data
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* KPI Grid - Separate Section */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '25px',
+              marginBottom: '25px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                gap: '20px',
+              }}
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#dc2626',
+                  }}
+                >
+                  {
+                    workflowTasks.filter((t) => t.priority === 'CRITICAL')
+                      .length
+                  }
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Critical Actions
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#22c55e',
+                  }}
+                >
+                  {alertQueue.acceptanceRate}%
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Acceptance Rate
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#fbbf24',
+                  }}
+                >
+                  {alertQueue.totalAlertsToday}
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Total Alerts Today
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#60a5fa',
+                  }}
+                >
+                  {alertQueue.averageResponseTime}s
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Avg Response Time
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#a78bfa',
+                  }}
+                >
+                  {alertQueue.acceptedAlertsToday}
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Accepted Today
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: '#f87171',
+                  }}
+                >
+                  {loadAlerts.filter((a) => a.status === 'active').length}
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, color: 'white' }}>
+                  Active Alerts
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Critical Load Assignment Alert */}
+          {workflowTasks.some(
+            (task) => task.type === 'load_assignment_confirmation'
+          ) && (
+            <div style={{ marginBottom: '25px' }}>
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  border: '3px solid #fbbf24', // Bright yellow border ring
+                  boxShadow:
+                    '0 0 0 4px rgba(251, 191, 36, 0.4), 0 8px 32px rgba(220, 38, 38, 0.3)', // Yellow outer glow + original red shadow
+                  animation: 'pulse 2s infinite',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        margin: '0',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        color: 'white',
+                      }}
+                    >
+                      🚨 LOAD ASSIGNMENT CONFIRMATION REQUIRED
+                    </h3>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        opacity: 0.9,
+                        fontSize: '16px',
+                        color: 'white',
+                      }}
+                    >
+                      New load L2025-002 assigned: Fort Worth → San Antonio
+                      ($2,100)
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <button
+                      onClick={() =>
+                        handleGenerateRateConfirmation({
+                          id: 'L2025-002',
+                          origin: 'Fort Worth, TX',
+                          destination: 'San Antonio, TX',
+                          rate: '$2,100',
+                          commodity: 'General Freight',
+                          equipment: 'Dry Van',
+                        })
+                      }
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(16, 185, 129, 0.4)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Rate Confirmation'
+                    >
+                      📄 Rate Conf
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleGenerateBOL({
+                          id: 'L2025-002',
+                          origin: 'Fort Worth, TX',
+                          destination: 'San Antonio, TX',
+                          rate: '$2,100',
+                          commodity: 'General Freight',
+                          equipment: 'Dry Van',
+                          weight: '40,000 lbs',
+                        })
+                      }
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow =
+                          '0 4px 12px rgba(245, 158, 11, 0.4)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      title='Generate Bill of Lading'
+                    >
+                      📋 BOL
+                    </button>
+                    <button
+                      style={{
+                        background: 'white',
+                        color: '#dc2626',
+                        border: 'none',
+                        padding: '15px 30px',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      CONFIRM NOW
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 🚫 LOAD ACCESS RESTRICTION WARNING (if invoices overdue) */}
+          {workflowTasks.some(
+            (task) => task.type === 'dispatch_invoice_overdue_restricted'
+          ) && (
+            <div style={{ marginBottom: '25px' }}>
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  border: '3px solid #fbbf24', // Yellow ring around restriction warning
+                  boxShadow:
+                    '0 0 0 4px rgba(251, 191, 36, 0.4), 0 8px 32px rgba(220, 38, 38, 0.3)',
+                  animation: 'pulse 2s infinite',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        margin: '0',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        color: 'white',
+                      }}
+                    >
+                      🚫 LOAD ACCESS RESTRICTED
+                    </h3>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        opacity: 0.9,
+                        fontSize: '16px',
+                        color: 'white',
+                      }}
+                    >
+                      Overdue dispatch invoice prevents load assignments. Pay
+                      immediately to restore access.
+                    </p>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        opacity: 0.8,
+                        fontSize: '14px',
+                        color: '#fbbf24',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📋 Invoice #INV-2024-052 ($285.00) - Overdue since Friday
+                    </p>
+                  </div>
+                  <button
+                    style={{
+                      background: 'white',
+                      color: '#dc2626',
+                      border: 'none',
+                      padding: '15px 30px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    PAY NOW
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab Navigation */}
+          <div style={{ marginBottom: '25px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '16px',
+                padding: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                gap: '8px',
+              }}
+            >
+              {[
+                { key: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+                { key: 'tasks-loads', label: '📋 Tasks & Loads', icon: '📋' },
+                {
+                  key: 'business-metrics',
+                  label: '📈 Business Metrics',
+                  icon: '📈',
+                },
+                {
+                  key: 'go-with-the-flow',
+                  label: '⚡ Go With the Flow',
+                  icon: '⚡',
+                },
+                { key: 'notifications', label: '🔔 Messages', icon: '🔔' },
+                { key: 'profile', label: '👤 Profile', icon: '👤' },
+                { key: 'availability', label: '📅 Availability', icon: '📅' },
+                { key: 'openeld', label: '📱 OpenELD', icon: '📱' },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() =>
+                    setSelectedTab(
+                      tab.key as
+                        | 'dashboard'
+                        | 'tasks-loads'
+                        | 'business-metrics'
+                        | 'notifications'
+                        | 'profile'
+                        | 'go-with-the-flow'
+                        | 'availability'
+                        | 'openeld'
+                    )
+                  }
+                  style={{
+                    flex: 1,
+                    background:
+                      selectedTab === tab.key
+                        ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                        : 'transparent',
+                    color: 'white',
+                    border: 'none',
+                    padding: '15px 20px',
+                    borderRadius: '12px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                  }}
+                >
+                  <span style={{ fontSize: '20px' }}>{tab.icon}</span>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <div>
+            {selectedTab === 'dashboard' && (
+              <div>
+                {/* Quick Stats and Recent Activity */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '25px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '25px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: '0 0 20px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#60a5fa',
+                      }}
+                    >
+                      Quick Stats
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(120px, 1fr))',
+                        gap: '15px',
+                      }}
+                    >
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#fbbf24',
+                          }}
+                        >
+                          {performanceMetrics.revenueYTD}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          YTD Earnings
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {performanceMetrics.safetyScore}%
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Safety
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#a78bfa',
+                          }}
+                        >
+                          {performanceMetrics.monthlyMiles}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Miles
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#60a5fa',
+                          }}
+                        >
+                          {performanceMetrics.activeLoads}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Active Loads
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '25px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: '0 0 20px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#34d399',
+                      }}
+                    >
+                      Recent Activity
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '15px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Last Login
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          2 hours ago
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Last Load Completed
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          Yesterday
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Next Inspection Due
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          15 days
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 🚨 NEW LOAD ALERTS SECTION */}
+                {loadAlerts.filter((a) => a.status === 'active').length > 0 && (
+                  <div
+                    style={{
+                      background: 'rgba(220, 38, 38, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '25px',
+                      marginBottom: '25px',
+                      border: '2px solid rgba(220, 38, 38, 0.3)',
+                      boxShadow: '0 8px 32px rgba(220, 38, 38, 0.2)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        margin: '0 0 20px 0',
+                        fontSize: '22px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                      }}
+                    >
+                      🚨 NEW LOAD ALERTS - TIME RESTRICTED
+                      <span
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          padding: '4px 12px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          animation: 'pulse 2s infinite',
+                        }}
+                      >
+                        {loadAlerts.filter((a) => a.status === 'active').length}{' '}
+                        ACTIVE
+                      </span>
+                    </h3>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        overflow: 'hidden',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      {/* Alert Header Row */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            '100px 2fr 2fr 1fr 1fr 1fr 140px',
+                          gap: '12px',
+                          padding: '15px 20px',
+                          background: 'rgba(220, 38, 38, 0.3)',
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          color: 'white',
+                        }}
+                      >
+                        <div>TIME LEFT</div>
+                        <div>PICKUP</div>
+                        <div>DELIVERY</div>
+                        <div>PAY</div>
+                        <div>DETAILS</div>
+                        <div>DISPATCHER</div>
+                        <div>ACTIONS</div>
+                      </div>
+
+                      {/* Alert Rows */}
+                      {loadAlerts
+                        .filter((alert) => alert.status === 'active')
+                        .map((alert) => (
+                          <LoadAlertRow
+                            key={alert.id}
+                            alert={alert}
+                            onAccept={acceptLoadAlert}
+                            onDecline={declineLoadAlert}
+                          />
+                        ))}
+                    </div>
+
+                    {/* Alert Controls */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '15px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <button
+                        onClick={generateDemoAlert}
+                        style={{
+                          background: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          padding: '10px 20px',
+                          borderRadius: '8px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                        }}
+                      >
+                        🧪 Generate Demo Alert
+                      </button>
+
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          color: 'white',
+                        }}
+                      >
+                        <input
+                          type='checkbox'
+                          checked={alertSoundsEnabled}
+                          onChange={(e) =>
+                            setAlertSoundsEnabled(e.target.checked)
+                          }
+                        />
+                        🔊 Sound Alerts
+                      </label>
+
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          color: 'white',
+                        }}
+                      >
+                        <input
+                          type='checkbox'
+                          checked={alertVibrationEnabled}
+                          onChange={(e) =>
+                            setAlertVibrationEnabled(e.target.checked)
+                          }
+                        />
+                        📳 Vibration
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Available Loads Loadboard */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: '0 0 20px 0',
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                    }}
+                  >
+                    🚛 Available Loads
+                  </h3>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Header Row */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '15px 20px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        color: 'white',
+                      }}
+                    >
+                      <div style={{ minWidth: '80px', marginRight: '20px' }}>
+                        PRIORITY
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', gap: '30px' }}>
+                        <div style={{ minWidth: '250px' }}>LOAD & ROUTE</div>
+                        <div style={{ minWidth: '100px', textAlign: 'center' }}>
+                          PAY & MILES
+                        </div>
+                        <div style={{ minWidth: '80px', textAlign: 'center' }}>
+                          RATE
+                        </div>
+                        <div style={{ minWidth: '100px', textAlign: 'center' }}>
+                          PICKUP
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          minWidth: '150px',
+                          textAlign: 'center',
+                          marginLeft: '20px',
+                        }}
+                      >
+                        ACTIONS
+                      </div>
+                    </div>
+
+                    {/* Load Rows */}
+                    {availableLoads.map((load, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '15px 20px',
+                          borderBottom:
+                            index < availableLoads.length - 1
+                              ? '1px solid rgba(255, 255, 255, 0.1)'
+                              : 'none',
+                          minHeight: '80px',
+                          color: 'white',
+                          background:
+                            load.loadType === 'ai_generated'
+                              ? 'rgba(139, 92, 246, 0.05)'
+                              : 'transparent',
+                          transition: 'all 0.3s ease',
+                          position: 'relative',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            load.loadType === 'ai_generated'
+                              ? 'rgba(139, 92, 246, 0.1)'
+                              : 'rgba(255, 255, 255, 0.05)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            load.loadType === 'ai_generated'
+                              ? 'rgba(139, 92, 246, 0.05)'
+                              : 'transparent';
+                        }}
+                      >
+                        {/* Priority Column with AI Indicators */}
+                        <div
+                          style={{
+                            minWidth: '80px',
+                            marginRight: '20px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          {/* Priority Badge */}
+                          <span
+                            style={{
+                              background:
+                                load.priority === 'URGENT'
+                                  ? '#ef4444'
+                                  : load.priority === 'HIGH'
+                                    ? '#f59e0b'
+                                    : '#34d399',
+                              color: 'white',
+                              padding: '6px 12px',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              fontWeight: '700',
+                              textAlign: 'center',
+                              minWidth: '70px',
+                            }}
+                          >
+                            {load.priority}
+                          </span>
+
+                          {/* AI Badge */}
+                          {load.loadType === 'ai_generated' && (
+                            <span
+                              style={{
+                                background: '#8b5cf6',
+                                color: 'white',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                fontSize: '10px',
+                                fontWeight: '700',
+                              }}
+                            >
+                              🤖 AI
+                            </span>
+                          )}
+
+                          {/* Countdown Timer for AI Loads */}
+                          {load.loadType === 'ai_generated' &&
+                            load.bidDeadline && (
+                              <div
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: '700',
+                                  color:
+                                    new Date() > load.bidDeadline
+                                      ? '#ef4444'
+                                      : formatTimeRemaining(
+                                            load.bidDeadline
+                                          ).includes('h')
+                                        ? '#22c55e'
+                                        : '#fbbf24',
+                                  textAlign: 'center',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  background: 'rgba(0, 0, 0, 0.3)',
+                                  minWidth: '50px',
+                                }}
+                              >
+                                {formatTimeRemaining(load.bidDeadline)}
+                              </div>
+                            )}
+                        </div>
+
+                        {/* Load Details Section */}
+                        <div
+                          style={{
+                            flex: 1,
+                            display: 'flex',
+                            gap: '30px',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {/* Load & Route Info */}
+                          <div style={{ minWidth: '250px' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontWeight: '700',
+                                  color: 'white',
+                                  fontSize: '16px',
+                                }}
+                              >
+                                {load.id}
+                              </span>
+                              {/* AI Source Badge */}
+                              {load.loadType === 'ai_generated' &&
+                                load.aiSource && (
+                                  <span
+                                    style={{
+                                      fontSize: '10px',
+                                      color: '#a78bfa',
+                                      fontWeight: '600',
+                                      background: 'rgba(139, 92, 246, 0.2)',
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                    }}
+                                  >
+                                    {load.aiSource
+                                      .replace('_', ' ')
+                                      .toUpperCase()}
+                                  </span>
+                                )}
+                              {/* Dedicated Lane Badge */}
+                              {load.loadType === 'ai_generated' &&
+                                load.dedicatedLane && (
+                                  <span
+                                    style={{
+                                      fontSize: '10px',
+                                      color: '#fbbf24',
+                                      fontWeight: '600',
+                                      background: 'rgba(251, 191, 36, 0.2)',
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                    }}
+                                  >
+                                    🎯 DEDICATED LANE
+                                  </span>
+                                )}
+                            </div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                opacity: 0.9,
+                                marginBottom: '2px',
+                              }}
+                            >
+                              {load.origin} → {load.destination}
+                            </div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '12px',
+                                opacity: 0.7,
+                              }}
+                            >
+                              {load.commodity}
+                            </div>
+                            {/* Dedicated Lane Details */}
+                            {load.loadType === 'ai_generated' &&
+                              load.dedicatedLane && (
+                                <div
+                                  style={{
+                                    fontSize: '11px',
+                                    color: '#fbbf24',
+                                    marginTop: '2px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.dedicatedLane.laneName} •{' '}
+                                  {load.dedicatedLane.frequency}
+                                </div>
+                              )}
+                          </div>
+
+                          {/* Pay & Miles */}
+                          <div
+                            style={{ minWidth: '100px', textAlign: 'center' }}
+                          >
+                            <div
+                              style={{
+                                color: '#22c55e',
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              {load.pay}
+                            </div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '12px',
+                                opacity: 0.8,
+                              }}
+                            >
+                              {load.miles}
+                            </div>
+                          </div>
+
+                          {/* Rate */}
+                          <div
+                            style={{ minWidth: '80px', textAlign: 'center' }}
+                          >
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              ${load.rate}/mi
+                            </div>
+                          </div>
+
+                          {/* Pickup */}
+                          <div
+                            style={{ minWidth: '100px', textAlign: 'center' }}
+                          >
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              {load.pickupDate}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions Column - Different for Traditional vs AI */}
+                        <div
+                          style={{
+                            minWidth: '180px',
+                            textAlign: 'center',
+                            marginLeft: '20px',
+                          }}
+                        >
+                          {load.loadType === 'traditional' ? (
+                            /* Traditional Load - Express Interest Button */
+                            <button
+                              onClick={() =>
+                                alert(
+                                  `✋ Express Interest submitted for ${load.id}!\n\nDispatcher ${load.dispatcherName} will be notified of your interest and will respond with approval or load availability status.`
+                                )
+                              }
+                              style={{
+                                background: '#22c55e',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 18px',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                width: '140px',
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = '#16a34a';
+                                e.currentTarget.style.transform =
+                                  'translateY(-2px)';
+                                e.currentTarget.style.boxShadow =
+                                  '0 4px 12px rgba(34, 197, 94, 0.3)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = '#22c55e';
+                                e.currentTarget.style.transform =
+                                  'translateY(0)';
+                                e.currentTarget.style.boxShadow = 'none';
+                              }}
+                            >
+                              ✋ Express Interest
+                            </button>
+                          ) : (
+                            /* AI-Generated Load - Quick Bid Interface */
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '8px',
+                                alignItems: 'center',
+                              }}
+                            >
+                              {/* AI Recommendation Display */}
+                              {load.aiRecommendation && (
+                                <div
+                                  style={{
+                                    fontSize: '11px',
+                                    color: '#a78bfa',
+                                    fontWeight: '600',
+                                    textAlign: 'center',
+                                    background: 'rgba(139, 92, 246, 0.1)',
+                                    padding: '4px 8px',
+                                    borderRadius: '6px',
+                                    border: '1px solid rgba(139, 92, 246, 0.2)',
+                                    width: '160px',
+                                  }}
+                                >
+                                  <div>
+                                    🧠 AI: $
+                                    {load.aiRecommendation.suggestedBid.toLocaleString()}
+                                  </div>
+                                  <div
+                                    style={{
+                                      color: '#22c55e',
+                                      fontSize: '10px',
+                                      marginTop: '2px',
+                                    }}
+                                  >
+                                    Win: {load.aiRecommendation.winProbability}%
+                                    • Risk:{' '}
+                                    {load.aiRecommendation.riskAssessment.toUpperCase()}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Quick Bid Button */}
+                              <button
+                                onClick={() => {
+                                  const amount =
+                                    load.aiRecommendation?.suggestedBid ||
+                                    load.minimumBid ||
+                                    0;
+                                  const isExpired =
+                                    load.bidDeadline &&
+                                    new Date() > load.bidDeadline;
+
+                                  if (isExpired) {
+                                    alert(
+                                      '⏰ Bidding period has expired for this load.'
+                                    );
+                                    return;
+                                  }
+
+                                  alert(
+                                    `🎯 Quick Bid Submitted!\n\nLoad: ${load.id}\nBid Amount: $${amount.toLocaleString()}\nCompeting against: ${load.competitorCount} other bidders\n\n✅ Your bid has been submitted to the AI evaluation system. Results will be announced when the 24-hour bidding period ends.`
+                                  );
+                                }}
+                                disabled={
+                                  load.bidDeadline &&
+                                  new Date() > load.bidDeadline
+                                }
+                                style={{
+                                  background:
+                                    load.bidDeadline &&
+                                    new Date() > load.bidDeadline
+                                      ? '#6b7280'
+                                      : '#f97316',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '10px 18px',
+                                  borderRadius: '8px',
+                                  fontSize: '14px',
+                                  fontWeight: '700',
+                                  cursor:
+                                    load.bidDeadline &&
+                                    new Date() > load.bidDeadline
+                                      ? 'not-allowed'
+                                      : 'pointer',
+                                  transition: 'all 0.3s ease',
+                                  opacity:
+                                    load.bidDeadline &&
+                                    new Date() > load.bidDeadline
+                                      ? 0.6
+                                      : 1,
+                                  width: '140px',
+                                }}
+                                onMouseOver={(e) => {
+                                  if (
+                                    !(
+                                      load.bidDeadline &&
+                                      new Date() > load.bidDeadline
+                                    )
+                                  ) {
+                                    e.currentTarget.style.background =
+                                      '#ea580c';
+                                    e.currentTarget.style.transform =
+                                      'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow =
+                                      '0 4px 12px rgba(249, 115, 22, 0.3)';
+                                  }
+                                }}
+                                onMouseOut={(e) => {
+                                  if (
+                                    !(
+                                      load.bidDeadline &&
+                                      new Date() > load.bidDeadline
+                                    )
+                                  ) {
+                                    e.currentTarget.style.background =
+                                      '#f97316';
+                                    e.currentTarget.style.transform =
+                                      'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                  }
+                                }}
+                              >
+                                {load.bidDeadline &&
+                                new Date() > load.bidDeadline
+                                  ? '⏰ Expired'
+                                  : '🎯 Quick Bid'}
+                              </button>
+
+                              {/* Competitor Count & Bid Range */}
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  width: '160px',
+                                  fontSize: '10px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color: '#ef4444',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.competitorCount} bidders
+                                </span>
+                                {load.suggestedBidRange && (
+                                  <span
+                                    style={{ color: 'white', opacity: 0.7 }}
+                                  >
+                                    $
+                                    {load.suggestedBidRange[0].toLocaleString()}
+                                    -$
+                                    {load.suggestedBidRange[1].toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedTab === 'business-metrics' && (
+              <div>
+                {/* 📈 COMPREHENSIVE BUSINESS METRICS SECTION */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    marginBottom: '25px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: '0 0 25px 0',
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                    }}
+                  >
+                    📊 Business Metrics & Performance
+                  </h3>
+
+                  {/* Extended Performance Metrics Grid */}
+                  <div style={{ marginBottom: '30px' }}>
+                    <h4
+                      style={{
+                        margin: '0 0 15px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#60a5fa',
+                      }}
+                    >
+                      🎯 Extended Performance Metrics
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(140px, 1fr))',
+                        gap: '15px',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#60a5fa',
+                          }}
+                        >
+                          {businessMetrics.performance.onTimeDelivery}%
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          On-Time Delivery
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#60a5fa',
+                          }}
+                        >
+                          {businessMetrics.performance.fuelEfficiency}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Fuel Efficiency
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#60a5fa',
+                          }}
+                        >
+                          {businessMetrics.performance.hoursOfService}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Hours of Service
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#60a5fa',
+                          }}
+                        >
+                          {businessMetrics.performance.avgDeliveryTime}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Avg Delivery Time
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {businessMetrics.performance.violations}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Violations
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {businessMetrics.performance.CSAScore}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          CSA Score
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color:
+                              (fuelPrice?.priceChange ?? 0) >= 0
+                                ? '#ef4444'
+                                : '#22c55e',
+                          }}
+                        >
+                          ${fuelPrice?.currentPrice?.toFixed(2) || '3.45'}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '11px',
+                            opacity: 0.8,
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '2px',
+                          }}
+                        >
+                          🛢️ Diesel{' '}
+                          {(fuelPrice?.priceChange ?? 0) >= 0 ? '↗️' : '↘️'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Revenue Tracking */}
+                  <div style={{ marginBottom: '30px' }}>
+                    <h4
+                      style={{
+                        margin: '0 0 15px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#22c55e',
+                      }}
+                    >
+                      💰 Revenue & Goals Tracking
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(140px, 1fr))',
+                        gap: '15px',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {businessMetrics.revenue.monthly}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          This Month
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {businessMetrics.revenue.weekly}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          This Week
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#22c55e',
+                          }}
+                        >
+                          {businessMetrics.revenue.avgPerLoad}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Avg per Load
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            color: '#fbbf24',
+                          }}
+                        >
+                          {businessMetrics.revenue.progressToGoal}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Goal Progress
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        borderRadius: '8px',
+                        padding: '10px',
+                        border: '1px solid rgba(34, 197, 94, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '5px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            opacity: 0.8,
+                          }}
+                        >
+                          Goal: {businessMetrics.revenue.revenueGoal}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            color: '#22c55e',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {businessMetrics.revenue.progressToGoal}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          borderRadius: '10px',
+                          height: '8px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: '#22c55e',
+                            height: '100%',
+                            width: businessMetrics.revenue.progressToGoal,
+                            borderRadius: '10px',
+                            transition: 'width 0.3s ease',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Settlement, Tax, and Pay Period Grid */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(300px, 1fr))',
+                      gap: '25px',
+                    }}
+                  >
+                    {/* Settlement Information */}
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(34, 197, 94, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#22c55e',
+                        }}
+                      >
+                        💳 Settlement & Payments
+                      </h5>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '10px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Pending Payments
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
+                            {businessMetrics.settlement.pendingPayments}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Last Settlement
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.settlement.lastSettlement}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Next Settlement
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.settlement.nextSettlement}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Completed Loads
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.settlement.completedLoads}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Avg Settlement Time
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.settlement.averageSettlementTime}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tax Information */}
+                    <div
+                      style={{
+                        background: 'rgba(251, 191, 36, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(251, 191, 36, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#fbbf24',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        📋 Tax Management
+                        {businessMetrics.tax.alerts > 0 && (
+                          <span
+                            style={{
+                              background: '#ef4444',
+                              color: 'white',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {businessMetrics.tax.alerts} Alert
+                          </span>
+                        )}
+                      </h5>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '10px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Quarterly Due
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            {businessMetrics.tax.quarterlyDue}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            YTD Deductions
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.tax.ytdDeductions}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Mileage Deduction
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.tax.mileageDeduction}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Fuel Tax Credits
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
+                            {businessMetrics.tax.fuelTaxCredits}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Next Estimate
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.tax.nextQuarterlyEstimate}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🚨 ENHANCED IFTA & TAX DASHBOARD */}
+                    <div
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #ef4444',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#ef4444',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        🚨 URGENT: IFTA Filing Alert
+                        <span
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            animation: 'pulse 2s infinite',
+                          }}
+                        >
+                          5 DAYS LEFT
+                        </span>
+                      </h5>
+
+                      <div style={{ marginBottom: '15px' }}>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'white',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Q4 2024 IFTA filing is due in 5 days (January 31,
+                          2025)
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '13px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '12px',
+                          }}
+                        >
+                          Missing fuel receipts detected. Upload required before
+                          filing.
+                        </div>
+
+                        <button
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            marginRight: '10px',
+                          }}
+                        >
+                          🚨 File IFTA Now
+                        </button>
+                        <button
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📋 Upload Receipts
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 📊 COMPREHENSIVE IFTA DASHBOARD */}
+                    <div
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(139, 92, 246, 0.2)',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#a78bfa',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        📊 IFTA Tax Dashboard
+                      </h5>
+
+                      {/* IFTA Summary Cards */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#60a5fa',
+                            }}
+                          >
+                            52,847
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🛣️ Total Miles (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#10b981',
+                            }}
+                          >
+                            $18,247
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ⛽ Fuel Purchased (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#f59e0b',
+                            }}
+                          >
+                            $3,247
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Tax Liability (YTD)
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            $847
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💸 Refunds Received
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Compliance Status */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(200px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#ef4444' }}>
+                            ❌
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              IFTA Status
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Action Required
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#ef4444' }}>
+                            ❌
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              Fuel Receipts
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Missing Receipts
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px', color: '#22c55e' }}>
+                            ✅
+                          </span>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              Mileage Logs
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              Complete
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🧾 MANAGEMENT-APPROVED DISPATCH INVOICES */}
+                    <div
+                      style={{
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #f97316',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(249, 115, 22, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '18px',
+                          fontWeight: '700',
+                          color: '#f97316',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        🧾 Management-Approved Dispatch Invoices
+                        <span
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            animation: 'pulse 2s infinite',
+                          }}
+                        >
+                          PAY BY THURSDAY
+                        </span>
+                      </h5>
+
+                      {/* Payment Schedule Warning */}
+                      <div
+                        style={{
+                          background: 'rgba(220, 38, 38, 0.1)',
+                          border: '1px solid #dc2626',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#ef4444',
+                            marginBottom: '6px',
+                          }}
+                        >
+                          ⚠️ PAYMENT SCHEDULE & RESTRICTIONS:
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '13px',
+                            color: 'white',
+                            lineHeight: '1.4',
+                          }}
+                        >
+                          • <strong>DUE:</strong> Every Thursday by 11:59 PM
+                          <br />• <strong>LATE:</strong> Friday - considered
+                          overdue
+                          <br />• <strong>RESTRICTION:</strong> No load
+                          assignments until paid
+                        </div>
+                      </div>
+
+                      {/* Invoice Status */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#ef4444',
+                            }}
+                          >
+                            $740
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Total Due
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            Thu
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            📅 Due Day
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#dc2626',
+                            }}
+                          >
+                            RESTRICTED
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🚫 Load Access
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            ✅
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            📋 Mgmt Approved
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Recent Invoices List */}
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          overflow: 'hidden',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        {/* Header */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            background: 'rgba(249, 115, 22, 0.3)',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            color: 'white',
+                          }}
+                        >
+                          <div>INVOICE #</div>
+                          <div>PERIOD</div>
+                          <div>DESCRIPTION</div>
+                          <div>AMOUNT</div>
+                          <div>STATUS</div>
+                        </div>
+
+                        {/* Invoice Rows */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-001
+                          </div>
+                          <div>Jan 1-7</div>
+                          <div>3 loads dispatched (10% fee)</div>
+                          <div style={{ fontWeight: '600', color: '#ef4444' }}>
+                            $455.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#ef4444', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#ef4444', fontSize: '12px' }}
+                            >
+                              DUE
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-052
+                          </div>
+                          <div>Dec 18-24</div>
+                          <div>2 loads dispatched + late fee</div>
+                          <div style={{ fontWeight: '600', color: '#dc2626' }}>
+                            $285.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#dc2626', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#dc2626', fontSize: '12px' }}
+                            >
+                              OVERDUE
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '100px 120px 1fr 100px 120px',
+                            gap: '12px',
+                            padding: '12px 16px',
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                        >
+                          <div style={{ fontWeight: '600', color: '#f97316' }}>
+                            INV-002
+                          </div>
+                          <div>Jan 8-14</div>
+                          <div>4 loads dispatched (10% fee)</div>
+                          <div style={{ fontWeight: '600', color: '#f59e0b' }}>
+                            $380.00
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                            }}
+                          >
+                            <span
+                              style={{ color: '#f59e0b', fontSize: '12px' }}
+                            >
+                              ●
+                            </span>
+                            <span
+                              style={{ color: '#f59e0b', fontSize: '12px' }}
+                            >
+                              PENDING
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '15px 25px',
+                          borderRadius: '8px',
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >
+                        💳 PAY ALL INVOICES - RESTORE LOAD ACCESS ($740)
+                      </button>
+                    </div>
+
+                    {/* Pay Period Breakdown */}
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 15px 0',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#60a5fa',
+                        }}
+                      >
+                        💵 Current Pay Period
+                      </h5>
+                      <div style={{ marginBottom: '15px' }}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            {businessMetrics.payPeriod.current.period}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Gross Pay
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
+                            {businessMetrics.payPeriod.current.grossPay}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Bonuses
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            {businessMetrics.payPeriod.current.bonuses}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Deductions
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: '#ef4444',
+                            }}
+                          >
+                            -
+                            {businessMetrics.payPeriod.current.deductions.total}
+                          </span>
+                        </div>
+                        <hr
+                          style={{
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            margin: '10px 0',
+                          }}
+                        />
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            Net Pay
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            {businessMetrics.payPeriod.current.netPay}
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '8px',
+                          padding: '10px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'white',
+                            opacity: 0.8,
+                            marginBottom: '5px',
+                          }}
+                        >
+                          Last Period:{' '}
+                          {businessMetrics.payPeriod.lastPeriod.period}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: 'white',
+                              opacity: 0.8,
+                            }}
+                          >
+                            Net Pay
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {businessMetrics.payPeriod.lastPeriod.netPay}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🚛 AUTOMATED TAX FILING INTEGRATION */}
+                    <div
+                      style={{
+                        background:
+                          'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.1))',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        border: '2px solid #6366f1',
+                        marginBottom: '20px',
+                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          margin: '0 0 20px 0',
+                          fontSize: '18px',
+                          fontWeight: '700',
+                          color: '#6366f1',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        🚛 Automated Tax Filing System
+                        <span
+                          style={{
+                            background: '#22c55e',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          API INTEGRATED
+                        </span>
+                      </h5>
+
+                      {/* Tax Filing Services Grid */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(280px, 1fr))',
+                          gap: '20px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        {/* Form 2290 Heavy Vehicle Tax */}
+                        <div
+                          style={{
+                            background: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid #22c55e',
+                            borderRadius: '12px',
+                            padding: '20px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '20px',
+                                background: '#22c55e',
+                                borderRadius: '8px',
+                                padding: '8px',
+                              }}
+                            >
+                              🏛️
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: '700',
+                                  color: '#22c55e',
+                                }}
+                              >
+                                Form 2290 - IRS e-File
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'white',
+                                  opacity: 0.8,
+                                }}
+                              >
+                                Heavy Highway Vehicle Tax
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tax Status */}
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#22c55e',
+                                }}
+                              >
+                                $550
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Estimated Tax
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#fbbf24',
+                                }}
+                              >
+                                3 Vehicles
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Over 55K lbs
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* TaxBandits Connection Test */}
+                          <div
+                            style={{
+                              marginBottom: '10px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <button
+                              onClick={testTaxBanditsConnection}
+                              style={{
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#2563eb')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#3b82f6')
+                              }
+                            >
+                              🔗 Test TaxBandits Connection
+                            </button>
+                            {taxFilingStatus.connectionStatus && (
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  marginTop: '5px',
+                                  color: taxFilingStatus.connectionStatus
+                                    .success
+                                    ? '#22c55e'
+                                    : '#ef4444',
+                                }}
+                              >
+                                {taxFilingStatus.connectionStatus.message}
+                              </div>
+                            )}
+                          </div>
+                          {/* File Button */}
+                          <button
+                            style={{
+                              width: '100%',
+                              background: '#22c55e',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '10px',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s',
+                            }}
+                            onMouseOver={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#16a34a')
+                            }
+                            onMouseOut={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#22c55e')
+                            }
+                            onClick={submitForm2290Filing}
+                            disabled={taxFilingStatus.isSubmitting}
+                          >
+                            {taxFilingStatus.isSubmitting
+                              ? '⏳ Filing in Progress...'
+                              : '🚀 File Form 2290 Now'}
+                          </button>
+
+                          {/* Last Filing */}
+                          <div
+                            style={{
+                              marginTop: '10px',
+                              fontSize: '11px',
+                              color: 'white',
+                              opacity: 0.7,
+                              textAlign: 'center',
+                            }}
+                          >
+                            {taxFilingStatus.lastSubmission
+                              ? `Last submission: ${taxFilingStatus.lastSubmission.submissionId} (${taxFilingStatus.lastSubmission.status}) ${taxFilingStatus.lastSubmission.status === 'submitted' ? '✅' : '❌'}`
+                              : 'No recent submissions'}
+                          </div>
+                        </div>
+
+                        {/* IFTA Quarterly Filing */}
+                        <div
+                          style={{
+                            background: 'rgba(168, 85, 247, 0.1)',
+                            border: '1px solid #a855f7',
+                            borderRadius: '12px',
+                            padding: '20px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '20px',
+                                background: '#a855f7',
+                                borderRadius: '8px',
+                                padding: '8px',
+                              }}
+                            >
+                              🗺️
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '16px',
+                                  fontWeight: '700',
+                                  color: '#a855f7',
+                                }}
+                              >
+                                IFTA Filing - Q4 2024
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '12px',
+                                  color: 'white',
+                                  opacity: 0.8,
+                                }}
+                              >
+                                International Fuel Tax
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* IFTA Status */}
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                              marginBottom: '15px',
+                            }}
+                          >
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#ef4444',
+                                }}
+                              >
+                                $1,247
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Tax Owed
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  color: '#60a5fa',
+                                }}
+                              >
+                                8 States
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  color: 'white',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                Jurisdictions
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* IFTA Due Date Warning */}
+                          <div
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid #ef4444',
+                              borderRadius: '8px',
+                              padding: '8px',
+                              marginBottom: '15px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color: '#ef4444',
+                              }}
+                            >
+                              ⚠️ DUE: January 31, 2025
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '10px',
+                                color: 'white',
+                                opacity: 0.8,
+                              }}
+                            >
+                              5 days remaining
+                            </div>
+                          </div>
+
+                          {/* IFTA Connection Test */}
+                          <div
+                            style={{
+                              marginBottom: '10px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            <button
+                              onClick={testIFTAConnection}
+                              style={{
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#2563eb')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#3b82f6')
+                              }
+                            >
+                              🌐 Test IFTA Connection
+                            </button>
+                            {iftaFilingStatus.connectionStatus && (
+                              <div
+                                style={{
+                                  fontSize: '10px',
+                                  marginTop: '5px',
+                                  color: iftaFilingStatus.connectionStatus
+                                    .success
+                                    ? '#22c55e'
+                                    : '#ef4444',
+                                }}
+                              >
+                                {iftaFilingStatus.connectionStatus.message}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* File Button */}
+                          <button
+                            style={{
+                              width: '100%',
+                              background: '#a855f7',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '10px',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s',
+                            }}
+                            onMouseOver={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#9333ea')
+                            }
+                            onMouseOut={(e) =>
+                              ((
+                                e.target as HTMLButtonElement
+                              ).style.background = '#a855f7')
+                            }
+                            onClick={() => submitIFTAReturn('Q4 2024')}
+                            disabled={iftaFilingStatus.isSubmitting}
+                          >
+                            {iftaFilingStatus.isSubmitting
+                              ? '⏳ Filing in Progress...'
+                              : '📊 File IFTA Return'}
+                          </button>
+
+                          {/* Multi-State Status */}
+                          <div
+                            style={{
+                              marginTop: '10px',
+                              fontSize: '11px',
+                              color: 'white',
+                              opacity: 0.7,
+                              textAlign: 'center',
+                            }}
+                          >
+                            CA, TX, FL, GA ready for e-filing
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Integration Status */}
+                      <div
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.05)',
+                          border: '1px solid rgba(34, 197, 94, 0.2)',
+                          borderRadius: '8px',
+                          padding: '15px',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        <h6
+                          style={{
+                            margin: '0 0 10px 0',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#22c55e',
+                          }}
+                        >
+                          🔗 API Integration Status
+                        </h6>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: '10px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <span style={{ color: '#22c55e' }}>✅</span>
+                            <span style={{ color: 'white' }}>
+                              IRS e-File (Form 2290)
+                            </span>
+                          </div>
+                          {iftaFilingStatus.lastSubmission ? (
+                            <>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      iftaFilingStatus.lastSubmission.status ===
+                                      'submitted'
+                                        ? '#22c55e'
+                                        : '#ef4444',
+                                  }}
+                                >
+                                  {iftaFilingStatus.lastSubmission.status ===
+                                  'submitted'
+                                    ? '✅'
+                                    : '❌'}
+                                </span>
+                                <span style={{ color: 'white' }}>
+                                  IFTA {iftaFilingStatus.lastSubmission.quarter}{' '}
+                                  Filing
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#3b82f6' }}>📊</span>
+                                <span style={{ color: 'white' }}>
+                                  {
+                                    iftaFilingStatus.lastSubmission
+                                      .jurisdictions
+                                  }{' '}
+                                  Jurisdictions Filed
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#f97316' }}>💰</span>
+                                <span style={{ color: 'white' }}>
+                                  $
+                                  {iftaFilingStatus.lastSubmission.totalTaxOwed.toFixed(
+                                    2
+                                  )}{' '}
+                                  Total Tax
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#22c55e' }}>✅</span>
+                                <span style={{ color: 'white' }}>
+                                  California IFTA Portal
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#fbbf24' }}>🔄</span>
+                                <span style={{ color: 'white' }}>
+                                  Texas IFTA (Ready)
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ color: '#fbbf24' }}>🔄</span>
+                                <span style={{ color: 'white' }}>
+                                  Florida IFTA (Ready)
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Benefits */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#22c55e',
+                            }}
+                          >
+                            15 min
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ⚡ Filing Time Saved
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#60a5fa',
+                            }}
+                          >
+                            $500
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            💰 Annual Savings
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#a855f7',
+                            }}
+                          >
+                            24/7
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            🕒 Automated Filing
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: '#f59e0b',
+                            }}
+                          >
+                            100%
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            ✅ Compliance Rate
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 💰 FACTORING AND FUNDING DASHBOARD */}
+                <div
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1))',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#22c55e',
+                      marginBottom: '20px',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    💰 Factoring and Funding
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(300px, 1fr))',
+                      gap: '20px',
+                    }}
+                  >
+                    {/* Current Factor Information */}
+                    <div
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(34, 197, 94, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#22c55e',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🏦 Current Factor Agreement
+                      </h4>
+
+                      {factoringStatus.currentFactor && (
+                        <>
+                          <div style={{ marginBottom: '10px' }}>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: '#94a3b8',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              Factor Company
+                            </div>
+                            <div style={{ color: 'white', fontWeight: '600' }}>
+                              {factoringStatus.currentFactor.name}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '10px',
+                            }}
+                          >
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Rate
+                              </div>
+                              <div
+                                style={{ color: '#22c55e', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.rate}%
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Advance Rate
+                              </div>
+                              <div
+                                style={{ color: '#22c55e', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.advanceRate}%
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Available Credit
+                              </div>
+                              <div
+                                style={{ color: '#fbbf24', fontWeight: '600' }}
+                              >
+                                $
+                                {factoringStatus.currentFactor.availableCredit.toLocaleString()}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{ fontSize: '10px', color: '#94a3b8' }}
+                              >
+                                Days to Payment
+                              </div>
+                              <div
+                                style={{ color: '#3b82f6', fontWeight: '600' }}
+                              >
+                                {factoringStatus.currentFactor.daysToPayment}{' '}
+                                day(s)
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ marginTop: '15px' }}>
+                            <button
+                              onClick={() => requestAdvancePayment(1000)}
+                              style={{
+                                width: '100%',
+                                background: '#22c55e',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '8px 12px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseOver={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#16a34a')
+                              }
+                              onMouseOut={(e) =>
+                                ((
+                                  e.target as HTMLButtonElement
+                                ).style.background = '#22c55e')
+                              }
+                            >
+                              💳 Request $1,000 Advance
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Pending Invoices */}
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#3b82f6',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📋 Pending Invoices
+                      </h4>
+
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {factoringStatus.pendingInvoices.map(
+                          (invoice, index) => (
+                            <div
+                              key={invoice.invoiceId}
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '6px',
+                                padding: '10px',
+                                marginBottom: '8px',
+                                fontSize: '11px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  marginBottom: '5px',
+                                }}
+                              >
+                                <span
+                                  style={{ color: 'white', fontWeight: '600' }}
+                                >
+                                  {invoice.invoiceId}
+                                </span>
+                                <span
+                                  style={{
+                                    color:
+                                      invoice.status === 'factored'
+                                        ? '#22c55e'
+                                        : invoice.status === 'pending_factor'
+                                          ? '#fbbf24'
+                                          : '#3b82f6',
+                                    fontSize: '10px',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {invoice.status.replace('_', ' ')}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  color: '#94a3b8',
+                                  marginBottom: '3px',
+                                }}
+                              >
+                                {invoice.customerName}
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color: '#22c55e',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  ${invoice.amount.toLocaleString()}
+                                </span>
+                                <span style={{ color: '#94a3b8' }}>
+                                  {invoice.invoiceDate}
+                                </span>
+                              </div>
+
+                              {invoice.status === 'pending_factor' && (
+                                <button
+                                  onClick={() =>
+                                    submitInvoiceForFactoring(invoice.invoiceId)
+                                  }
+                                  style={{
+                                    width: '100%',
+                                    background: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    fontSize: '10px',
+                                    marginTop: '8px',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  💰 Submit for Factoring
+                                </button>
+                              )}
+
+                              {invoice.status === 'factored' &&
+                                invoice.factorAdvance && (
+                                  <div
+                                    style={{
+                                      marginTop: '5px',
+                                      fontSize: '10px',
+                                      color: '#22c55e',
+                                    }}
+                                  >
+                                    Advance: $
+                                    {invoice.factorAdvance.toLocaleString()} (
+                                    {invoice.advanceDate})
+                                  </div>
+                                )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Payment Methods */}
+                    <div
+                      style={{
+                        background: 'rgba(168, 85, 247, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(168, 85, 247, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#a855f7',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        💳 Payment Methods
+                      </h4>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '10px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            🏦 Direct Deposit:{' '}
+                            {factoringStatus.paymentMethods.directDeposit
+                              .enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            💳 Pay Card:{' '}
+                            {factoringStatus.paymentMethods.payCard.enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: 'white',
+                          }}
+                        >
+                          <span>
+                            📮 Check:{' '}
+                            {factoringStatus.paymentMethods.check.enabled
+                              ? 'ON'
+                              : 'OFF'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Transactions */}
+                    <div
+                      style={{
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        border: '1px solid rgba(249, 115, 22, 0.2)',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: '#f97316',
+                          marginBottom: '15px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📊 Recent Transactions
+                      </h4>
+
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {factoringStatus.recentTransactions.map(
+                          (txn, index) => (
+                            <div
+                              key={txn.transactionId}
+                              style={{
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '6px',
+                                padding: '8px',
+                                marginBottom: '6px',
+                                fontSize: '11px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  marginBottom: '3px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color:
+                                      txn.type === 'factor_advance'
+                                        ? '#22c55e'
+                                        : txn.type === 'settlement'
+                                          ? '#3b82f6'
+                                          : '#f97316',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  ${txn.amount.toLocaleString()}
+                                </span>
+                                <span
+                                  style={{ color: '#22c55e', fontSize: '9px' }}
+                                >
+                                  {txn.status.toUpperCase()}
+                                </span>
+                              </div>
+                              <div
+                                style={{ color: 'white', marginBottom: '2px' }}
+                              >
+                                {txn.description}
+                              </div>
+                              <div
+                                style={{ color: '#94a3b8', fontSize: '10px' }}
+                              >
+                                {txn.date}
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedTab === 'tasks-loads' && (
+              <div>
+                {/* Critical Workflow Tasks */}
+                {workflowTasks.length > 0 && (
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '25px',
+                      marginBottom: '25px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        margin: '0 0 20px 0',
+                        fontSize: '22px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                      }}
+                    >
+                      ⚡ Critical Actions Required
+                    </h3>
+                    {workflowTasks
+                      .filter(
+                        (task) => task.type !== 'load_assignment_confirmation'
+                      )
+                      .map((task, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            background:
+                              task.priority === 'CRITICAL'
+                                ? 'rgba(220, 38, 38, 0.2)'
+                                : 'rgba(59, 130, 246, 0.2)',
+                            border: `2px solid ${task.priority === 'CRITICAL' ? 'rgba(220, 38, 38, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                            borderRadius: '12px',
+                            padding: '20px',
+                            marginBottom: '15px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div>
+                              <h4
+                                style={{
+                                  margin: '0',
+                                  fontSize: '18px',
+                                  fontWeight: '700',
+                                  color: 'white',
+                                }}
+                              >
+                                {task.title}
+                              </h4>
+                              <p
+                                style={{
+                                  margin: '8px 0 0 0',
+                                  fontSize: '14px',
+                                  opacity: 0.9,
+                                  color: 'white',
+                                }}
+                              >
+                                {task.description}
+                              </p>
+                            </div>
+                            <span
+                              style={{
+                                background:
+                                  task.priority === 'CRITICAL'
+                                    ? '#dc2626'
+                                    : '#3b82f6',
+                                color: 'white',
+                                padding: '8px 16px',
+                                borderRadius: '10px',
+                                fontSize: '14px',
+                                fontWeight: '700',
+                              }}
+                            >
+                              {task.priority}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+
+                {/* 🗺️ GPS-PROXIMITY NEARBY LOADS SYSTEM */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    marginBottom: '25px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3
+                      style={{
+                        margin: '0 0 10px 0',
+                        fontSize: '22px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                      }}
+                    >
+                      🗺️ Nearby Loads (150 Mile Radius)
+                    </h3>
+
+                    {/* Location Status */}
+                    <div style={{ marginBottom: '15px' }}>
+                      {locationPermission === 'granted' && driverLocation ? (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ color: '#22c55e', fontSize: '16px' }}>
+                            ✓
+                          </span>
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            Location:{' '}
+                            {driverLocation.city || 'Current Position'}(
+                            {Math.round(driverLocation.accuracy)}m accuracy)
+                          </span>
+                          <span style={{ color: '#60a5fa', fontSize: '12px' }}>
+                            {nearbyLoads.length} loads within 150 miles
+                          </span>
+                        </div>
+                      ) : locationPermission === 'pending' ||
+                        isLoadingLocation ? (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ color: '#fbbf24', fontSize: '16px' }}>
+                            ⏳
+                          </span>
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            Getting your location...
+                          </span>
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <span style={{ color: '#ef4444', fontSize: '16px' }}>
+                            ⚠
+                          </span>
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            Location access required to show nearby loads
+                          </span>
+                          <button
+                            onClick={requestLocationPermission}
+                            style={{
+                              background: '#3b82f6',
+                              color: 'white',
+                              border: 'none',
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Enable Location
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Nearby Loads List */}
+                  {nearbyLoads.length > 0 ? (
+                    <div>
+                      {nearbyLoads.map((load) => {
+                        const hasInterest = loadInterests.some(
+                          (interest) =>
+                            interest.loadId === load.id &&
+                            interest.status === 'pending'
+                        );
+
+                        return (
+                          <div
+                            key={load.id}
+                            style={{
+                              background:
+                                load.priority === 'URGENT'
+                                  ? 'rgba(239, 68, 68, 0.1)'
+                                  : 'rgba(59, 130, 246, 0.1)',
+                              border: `2px solid ${
+                                load.priority === 'URGENT'
+                                  ? 'rgba(239, 68, 68, 0.3)'
+                                  : 'rgba(59, 130, 246, 0.3)'
+                              }`,
+                              borderRadius: '12px',
+                              padding: '20px',
+                              marginBottom: '15px',
+                              position: 'relative',
+                            }}
+                          >
+                            {/* Priority Badge */}
+                            {load.priority === 'URGENT' && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: '10px',
+                                  right: '15px',
+                                  background: '#ef4444',
+                                  color: 'white',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '700',
+                                }}
+                              >
+                                URGENT
+                              </div>
+                            )}
+
+                            {/* Load Header */}
+                            <div style={{ marginBottom: '15px' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '15px',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                <h4
+                                  style={{
+                                    margin: '0',
+                                    fontSize: '18px',
+                                    fontWeight: '700',
+                                    color: 'white',
+                                  }}
+                                >
+                                  {load.id}
+                                </h4>
+                                <span
+                                  style={{
+                                    background:
+                                      load.priority === 'HIGH'
+                                        ? '#f59e0b'
+                                        : '#6b7280',
+                                    color: 'white',
+                                    padding: '2px 8px',
+                                    borderRadius: '4px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.priority}
+                                </span>
+                              </div>
+
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '20px',
+                                  marginBottom: '10px',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    color: '#22c55e',
+                                    fontSize: '20px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {load.pay}
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    opacity: 0.8,
+                                  }}
+                                >
+                                  {load.rate} • {load.miles}
+                                </div>
+                                <div
+                                  style={{
+                                    color: '#fbbf24',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {Math.round(load.distanceFromDriver)} mi away
+                                </div>
+                                <div
+                                  style={{ color: '#60a5fa', fontSize: '14px' }}
+                                >
+                                  ETA: {load.estimatedPickupTime}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Route Information */}
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr auto 1fr',
+                                gap: '15px',
+                                marginBottom: '15px',
+                              }}
+                            >
+                              <div>
+                                <div
+                                  style={{
+                                    color: '#22c55e',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  📍 Pickup
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.origin.city}, {load.origin.state}
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.8,
+                                  }}
+                                >
+                                  {load.pickupDate}
+                                </div>
+                              </div>
+
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <div
+                                  style={{ color: '#60a5fa', fontSize: '20px' }}
+                                >
+                                  →
+                                </div>
+                              </div>
+
+                              <div>
+                                <div
+                                  style={{
+                                    color: '#ef4444',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    marginBottom: '4px',
+                                  }}
+                                >
+                                  🏁 Delivery
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.destination.city},{' '}
+                                  {load.destination.state}
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.8,
+                                  }}
+                                >
+                                  {load.deliveryDate || 'TBD'}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Load Details */}
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns:
+                                  'repeat(auto-fit, minmax(150px, 1fr))',
+                                gap: '15px',
+                                marginBottom: '15px',
+                                padding: '12px',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                borderRadius: '8px',
+                              }}
+                            >
+                              <div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  Commodity
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.commodity}
+                                </div>
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  Equipment
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.equipment}
+                                </div>
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  Weight
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.weight}
+                                </div>
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  Dispatcher
+                                </div>
+                                <div
+                                  style={{
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {load.dispatcherName}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Express Interest Actions */}
+                            <div
+                              style={{
+                                display: 'flex',
+                                gap: '10px',
+                                alignItems: 'center',
+                              }}
+                            >
+                              {hasInterest ? (
+                                <>
+                                  <button
+                                    style={{
+                                      background: '#6b7280',
+                                      color: 'white',
+                                      border: 'none',
+                                      padding: '8px 16px',
+                                      borderRadius: '8px',
+                                      fontSize: '14px',
+                                      fontWeight: '600',
+                                      cursor: 'not-allowed',
+                                      opacity: 0.7,
+                                    }}
+                                    disabled
+                                  >
+                                    ✓ Interest Submitted
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const interest = loadInterests.find(
+                                        (i) => i.loadId === load.id
+                                      );
+                                      if (interest)
+                                        withdrawInterest(interest.id);
+                                    }}
+                                    style={{
+                                      background: 'transparent',
+                                      color: '#ef4444',
+                                      border: '1px solid #ef4444',
+                                      padding: '8px 16px',
+                                      borderRadius: '8px',
+                                      fontSize: '14px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    Withdraw Interest
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => expressInterest(load.id)}
+                                  style={{
+                                    background: '#22c55e',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    transition: 'all 0.3s ease',
+                                  }}
+                                  onMouseOver={(e) => {
+                                    e.currentTarget.style.background =
+                                      '#16a34a';
+                                    e.currentTarget.style.transform =
+                                      'translateY(-2px)';
+                                  }}
+                                  onMouseOut={(e) => {
+                                    e.currentTarget.style.background =
+                                      '#22c55e';
+                                    e.currentTarget.style.transform =
+                                      'translateY(0)';
+                                  }}
+                                >
+                                  ✋ Express Interest
+                                </button>
+                              )}
+
+                              <div
+                                style={{
+                                  color: 'white',
+                                  fontSize: '12px',
+                                  opacity: 0.7,
+                                  marginLeft: 'auto',
+                                }}
+                              >
+                                Posted:{' '}
+                                {new Date(load.postedAt).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : driverLocation ? (
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        color: 'white',
+                        opacity: 0.7,
+                        fontSize: '16px',
+                        padding: '40px',
+                      }}
+                    >
+                      No loads found within 150 miles of your current location.
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Active Loads */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: '0 0 20px 0',
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                    }}
+                  >
+                    🚛 Your Active Loads
+                  </h3>
+                  {activeLoads.map((load, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background:
+                          load.status === 'In Transit'
+                            ? 'rgba(34, 197, 94, 0.2)'
+                            : 'rgba(59, 130, 246, 0.2)',
+                        border: `2px solid ${load.status === 'In Transit' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        <div>
+                          <h4
+                            style={{
+                              margin: '0',
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                              color: 'white',
+                            }}
+                          >
+                            {load.origin} → {load.destination}
+                          </h4>
+                          <p
+                            style={{
+                              margin: '4px 0 0 0',
+                              fontSize: '14px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            Load ID: {load.id}
+                          </p>
+                        </div>
+                        <span
+                          style={{
+                            background:
+                              load.status === 'In Transit'
+                                ? '#22c55e'
+                                : '#3b82f6',
+                            color: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            fontSize: '16px',
+                            fontWeight: '700',
+                          }}
+                        >
+                          {load.status}
+                        </span>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(120px, 1fr))',
+                          gap: '20px',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            Pay
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
+                            {load.pay}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            Miles
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {load.miles}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              opacity: 0.8,
+                              color: 'white',
+                            }}
+                          >
+                            Delivery
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            {load.deliveryDate}
+                          </div>
+                        </div>
+                      </div>
+
+                      {load.status === 'In Transit' && (
+                        <div style={{ marginBottom: '15px' }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            <span style={{ fontSize: '14px', color: 'white' }}>
+                              Progress
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
+                              {load.progress}%
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.2)',
+                              borderRadius: '10px',
+                              height: '10px',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <div
+                              style={{
+                                background: '#22c55e',
+                                height: '100%',
+                                width: `${load.progress}%`,
+                                borderRadius: '10px',
+                                transition: 'width 0.3s ease',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        style={{
+                          width: '100%',
+                          background:
+                            load.status === 'Available'
+                              ? '#3b82f6'
+                              : 'rgba(255, 255, 255, 0.2)',
+                          color: 'white',
+                          border:
+                            load.status === 'Available'
+                              ? 'none'
+                              : '1px solid rgba(255, 255, 255, 0.3)',
+                          padding: '12px',
+                          borderRadius: '10px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                        }}
+                      >
+                        {load.status === 'Available'
+                          ? '✅ ACCEPT LOAD'
+                          : '📞 CALL DISPATCH'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedTab === 'notifications' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    margin: '0 0 20px 0',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                  }}
+                >
+                  💬 Messages & Notifications
+                </h3>
+                {notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    style={{
+                      background: notification.read
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(59, 130, 246, 0.2)',
+                      border: `1px solid ${notification.read ? 'rgba(255, 255, 255, 0.1)' : 'rgba(59, 130, 246, 0.3)'}`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <p
+                          style={{
+                            margin: '0',
+                            fontSize: '16px',
+                            fontWeight: notification.read ? 'normal' : '600',
+                            color: 'white',
+                          }}
+                        >
+                          {notification.message}
+                        </p>
+                        <p
+                          style={{
+                            margin: '8px 0 0 0',
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          {notification.timestamp}
+                        </p>
+                      </div>
+                      {!notification.read && (
+                        <div
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            background: '#3b82f6',
+                            borderRadius: '50%',
+                            marginLeft: '15px',
+                            marginTop: '6px',
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedTab === 'profile' && (
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    margin: '0 0 20px 0',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                  }}
+                >
+                  👤 Driver Profile
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '25px',
+                  }}
+                >
+                  <div>
+                    <h4
+                      style={{
+                        margin: '0 0 15px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#60a5fa',
+                      }}
+                    >
+                      Personal Information
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Name
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.personalInfo?.name}
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          License Number
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.personalInfo?.licenseNumber}
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Phone
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.personalInfo?.phone}
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Email
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.personalInfo?.email}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4
+                      style={{
+                        margin: '0 0 15px 0',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: '#34d399',
+                      }}
+                    >
+                      Employment Details
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Department
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          DM - Driver Management
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Start Date
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.employmentInfo?.startDate}
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Status
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          {currentDriver.employmentInfo?.role}
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.8,
+                            color: 'white',
+                          }}
+                        >
+                          Vehicle Assignment
+                        </span>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          TRK-001
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Driver Preferences Section */}
+                <div style={{ marginTop: '30px' }}>
+                  <h4
+                    style={{
+                      margin: '0 0 20px 0',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    ⚙️ Driver Preferences
+                  </h4>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '20px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Maximum Distance Range
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='range'
+                            min='50'
+                            max='500'
+                            defaultValue='250'
+                            style={{
+                              width: '70%',
+                              accentColor: '#f59e0b',
+                            }}
+                          />
+                          <span
+                            style={{
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            250 miles
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Minimum Rate per Mile
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='number'
+                            min='1.50'
+                            max='5.00'
+                            step='0.10'
+                            defaultValue='2.25'
+                            style={{
+                              width: '100px',
+                              padding: '6px 10px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          />
+                          <span style={{ color: 'white', fontSize: '14px' }}>
+                            per mile
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Auto-Accept Settings
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: 'white',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <input
+                              type='checkbox'
+                              defaultChecked={true}
+                              style={{
+                                accentColor: '#f59e0b',
+                                transform: 'scale(1.2)',
+                              }}
+                            />
+                            <span style={{ fontSize: '14px' }}>
+                              Auto-accept preferred loads
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Availability Tab */}
+            {selectedTab === 'availability' && (
+              <div>
+                <DriverAvailabilityManager
+                  driverId={currentDriver?.driverId || 'driver-001'}
+                  driverName={
+                    currentDriver?.personalInfo?.name || 'Demo Driver'
+                  }
+                  onAvailabilityUpdate={(availability) => {
+                    console.log('Driver availability updated:', availability);
+                    // Here you would typically save to your backend
+                    // You can also trigger schedule optimization here
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Go With the Flow Tab */}
+            {selectedTab === 'go-with-the-flow' && (
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: '20px',
+                  }}
+                >
+                  ⚡ Go With the Flow - Admin Real-Time Matching
+                </h3>
+
+                {/* Driver Status Panel */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                      margin: 0,
+                    }}
+                  >
+                    🚛 Driver Status Panel
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Current Location
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Dallas, TX
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Hours Remaining
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        8.5 hrs
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Truck Status
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Available
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                        Equipment Type
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
+                        Dry Van
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real-Time Matching Dashboard */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  {/* Live Matching Queue */}
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '2px solid rgba(59, 130, 246, 0.5)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: '#ffffff',
+                        margin: '0 0 16px 0',
+                        fontSize: '1.2rem',
+                        fontWeight: '700',
+                        textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
+                      }}
+                    >
+                      ⚡ Instant Loads Available
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      {instantLoads.length > 0 ? (
+                        instantLoads.map((load, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.2)',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: '#ffffff',
+                                  fontWeight: '600',
+                                  fontSize: '14px',
+                                }}
+                              >
+                                {load.id}
+                              </div>
+                              <div
+                                style={{
+                                  background: '#22c55e',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {load.rate}
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                color: '#e5e7eb',
+                                fontSize: '13px',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              {load.origin.address} → {load.destination.address}
+                            </div>
+                            <div
+                              style={{
+                                color: '#e5e7eb',
+                                fontSize: '12px',
+                                marginBottom: '8px',
+                              }}
+                            >
+                              Rate: ${load.rate} • Equipment:{' '}
+                              {load.equipmentType} • Expires:{' '}
+                              {Math.max(
+                                0,
+                                Math.floor(
+                                  (new Date(load.offerExpiresAt).getTime() -
+                                    Date.now()) /
+                                    1000
+                                )
+                              )}
+                              s
+                            </div>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <button
+                                style={{
+                                  background: '#22c55e',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      '/api/go-with-the-flow',
+                                      {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          action: 'accept-load',
+                                          driverId: 'driver-1',
+                                          loadId: load.id,
+                                        }),
+                                      }
+                                    );
+
+                                    const data = await response.json();
+
+                                    if (data.success) {
+                                      alert(`✅ ${data.message}`);
+                                    } else {
+                                      alert(`❌ ${data.message}`);
+                                    }
+                                  } catch (error) {
+                                    alert(`❌ Error accepting load: ${error}`);
+                                  }
+                                }}
+                              >
+                                ⚡ Accept Load
+                              </button>
+                              <button
+                                style={{
+                                  background: 'rgba(255, 255, 255, 0.2)',
+                                  color: 'white',
+                                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                                  padding: '6px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  marginLeft: '8px',
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      '/api/go-with-the-flow',
+                                      {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          action: 'decline-load',
+                                          driverId: 'driver-1',
+                                          loadId: load.id,
+                                        }),
+                                      }
+                                    );
+
+                                    const data = await response.json();
+
+                                    if (data.success) {
+                                      alert(`❌ ${data.message}`);
+                                    } else {
+                                      alert(`⚠️ ${data.message}`);
+                                    }
+                                  } catch (error) {
+                                    alert(`⚠️ Error declining load: ${error}`);
+                                  }
+                                }}
+                              >
+                                ❌ Decline
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            padding: '20px',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                          }}
+                        >
+                          <div
+                            style={{ fontSize: '24px', marginBottom: '8px' }}
+                          >
+                            🔍
+                          </div>
+                          <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                            No instant loads available right now
+                          </div>
+                          <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                            We're actively matching loads to your preferences...
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Real-Time Matching Engine */}
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.2)',
+                      border: '2px solid rgba(139, 92, 246, 0.5)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: '#ffffff',
+                        margin: '0 0 16px 0',
+                        fontSize: '1.2rem',
+                        fontWeight: '700',
+                        textShadow: '0 2px 4px rgba(139, 92, 246, 0.8)',
+                      }}
+                    >
+                      🤖 Real-Time Matching Engine
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          AI Matching Algorithms
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='range'
+                            min='50'
+                            max='500'
+                            defaultValue='250'
+                            style={{
+                              width: '60%',
+                              accentColor: '#8b5cf6',
+                            }}
+                          />
+                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
+                            95.2% confidence
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Response Time Metrics
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <input
+                            type='number'
+                            min='1.50'
+                            max='5.00'
+                            step='0.10'
+                            defaultValue='2.25'
+                            style={{
+                              width: '80px',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.3)',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white',
+                              fontSize: '14px',
+                            }}
+                          />
+                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
+                            avg response
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            color: '#e5e7eb',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'block',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          Success Rate Analytics
+                        </label>
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                            }}
+                          >
+                            <input
+                              type='checkbox'
+                              defaultChecked={true}
+                              style={{
+                                accentColor: '#8b5cf6',
+                                transform: 'scale(1.2)',
+                              }}
+                            />
+                            <span
+                              style={{ color: '#e5e7eb', fontSize: '14px' }}
+                            >
+                              Real-time matching enabled
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    border: '2px solid rgba(245, 158, 11, 0.5)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#ffffff',
+                      margin: '0 0 16px 0',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 4px rgba(245, 158, 11, 0.8)',
+                    }}
+                  >
+                    📈 Recent Activity
+                  </h4>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {[
+                      {
+                        time: '2 min ago',
+                        action: 'Accepted load FL-LOAD-001',
+                        result: 'Dallas → Houston ($850)',
+                        status: 'success',
+                      },
+                      {
+                        time: '15 min ago',
+                        action: 'Declined load FL-LOAD-004',
+                        result: 'Rate too low ($1.80/mi)',
+                        status: 'declined',
+                      },
+                      {
+                        time: '32 min ago',
+                        action: 'Auto-accepted load FL-LOAD-002',
+                        result: 'Austin → San Antonio ($450)',
+                        status: 'auto',
+                      },
+                      {
+                        time: '1 hr ago',
+                        action: 'Updated preferences',
+                        result: 'Min rate: $2.25/mi, Max distance: 250mi',
+                        status: 'settings',
+                      },
+                    ].map((activity, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              color: '#ffffff',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {activity.action}
+                          </div>
+                          <div
+                            style={{
+                              color: '#e5e7eb',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {activity.result}
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            gap: '4px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              background:
+                                activity.status === 'success'
+                                  ? '#22c55e'
+                                  : activity.status === 'auto'
+                                    ? '#3b82f6'
+                                    : activity.status === 'declined'
+                                      ? '#ef4444'
+                                      : '#8b5cf6',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {activity.status.toUpperCase()}
+                          </div>
+                          <div
+                            style={{
+                              color: '#e5e7eb',
+                              fontSize: '11px',
+                            }}
+                          >
+                            {activity.time}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Admin Control Panel */}
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '2px solid rgba(34, 197, 94, 0.5)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.15)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#ffffff',
+                      margin: '0 0 16px 0',
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 4px rgba(34, 197, 94, 0.8)',
+                    }}
+                  >
+                    🎛️ Admin Controls
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={async () => {
+                        try {
+                          const driverId =
+                            currentDriver?.driverId || 'driver-001';
+                          const driverName =
+                            currentDriver?.personalInfo?.name || 'Demo Driver';
+
+                          // Get driver preferences
+                          const preferences =
+                            driverPreferencesService.getDriverPreferences(
+                              driverId,
+                              driverName
+                            );
+
+                          // Create urgent load request
+                          const urgentRequest = {
+                            driverId,
+                            driverName,
+                            currentLocation: driverLocation
+                              ? {
+                                  city:
+                                    driverLocation.address?.split(',')[0] ||
+                                    'Dallas',
+                                  state:
+                                    driverLocation.address
+                                      ?.split(',')[1]
+                                      ?.trim() || 'TX',
+                                  lat: driverLocation.latitude,
+                                  lng: driverLocation.longitude,
+                                }
+                              : {
+                                  city: 'Dallas',
+                                  state: 'TX',
+                                  lat: 32.7767,
+                                  lng: -96.797,
+                                },
+                            requestType: 'urgent' as const,
+                            preferences,
+                            requestTime: new Date().toISOString(),
+                            status: 'pending' as const,
+                          };
+
+                          const success =
+                            driverPreferencesService.requestUrgentLoad(
+                              urgentRequest
+                            );
+
+                          if (success) {
+                            // Add notification to driver portal
+                            setNotifications((prev) => [
+                              {
+                                id: Date.now().toString(),
+                                message: `🔍 Urgent load request submitted! Dispatch team has been notified and will respond within 15 minutes.`,
+                                timestamp: 'Just now',
+                                read: false,
+                              },
+                              ...prev.slice(0, 4),
+                            ]);
+
+                            alert(
+                              `🔍 URGENT LOAD REQUEST SUBMITTED\n\n` +
+                                `Driver: ${driverName}\n` +
+                                `Location: ${urgentRequest.currentLocation.city}, ${urgentRequest.currentLocation.state}\n` +
+                                `Equipment: ${preferences.equipmentTypes.join(', ')}\n` +
+                                `Max Distance: ${preferences.maxDistance} miles\n` +
+                                `Min Rate: $${preferences.minRate}/mile\n\n` +
+                                `✅ Dispatch team has been notified\n` +
+                                `⏱️ Expected response: 15 minutes\n` +
+                                `📱 You'll receive a notification when loads are available`
+                            );
+                          } else {
+                            alert(
+                              '❌ Failed to submit urgent load request. Please try again.'
+                            );
+                          }
+                        } catch (error) {
+                          console.error('Error requesting urgent load:', error);
+                          alert(
+                            '❌ Error submitting request. Please check your connection and try again.'
+                          );
+                        }
+                      }}
+                    >
+                      🔍 Request Urgent Load
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        const driverId =
+                          currentDriver?.driverId || 'driver-001';
+                        const driverName =
+                          currentDriver?.personalInfo?.name || 'Demo Driver';
+
+                        // Get current preferences
+                        const preferences =
+                          driverPreferencesService.getDriverPreferences(
+                            driverId,
+                            driverName
+                          );
+
+                        // Show preferences configuration dialog
+                        const newPreferences = prompt(
+                          `⚙️ LOAD MATCHING PREFERENCES\n\n` +
+                            `Current Settings:\n` +
+                            `Equipment Types: ${preferences.equipmentTypes.join(', ')}\n` +
+                            `Max Distance: ${preferences.maxDistance} miles\n` +
+                            `Min Rate: $${preferences.minRate}/mile\n` +
+                            `Preferred States: ${preferences.preferredStates.join(', ')}\n` +
+                            `Hazmat Certified: ${preferences.hazmatCertified ? 'Yes' : 'No'}\n\n` +
+                            `To update your minimum rate per mile, enter new rate:`,
+                          preferences.minRate.toString()
+                        );
+
+                        if (
+                          newPreferences &&
+                          !isNaN(parseFloat(newPreferences))
+                        ) {
+                          const newRate = parseFloat(newPreferences);
+                          if (newRate >= 1.5 && newRate <= 5.0) {
+                            const updatedPreferences = {
+                              ...preferences,
+                              minRate: newRate,
+                            };
+
+                            const success =
+                              driverPreferencesService.saveDriverPreferences(
+                                updatedPreferences
+                              );
+
+                            if (success) {
+                              // Add notification
+                              setNotifications((prev) => [
+                                {
+                                  id: Date.now().toString(),
+                                  message: `⚙️ Load preferences updated! Minimum rate set to $${newRate}/mile`,
+                                  timestamp: 'Just now',
+                                  read: false,
+                                },
+                                ...prev.slice(0, 4),
+                              ]);
+
+                              alert(
+                                `✅ PREFERENCES UPDATED\n\n` +
+                                  `Minimum Rate: $${newRate}/mile\n\n` +
+                                  `Your load matching preferences have been saved.\n` +
+                                  `Future load offers will respect your updated settings.`
+                              );
+                            } else {
+                              alert(
+                                '❌ Failed to save preferences. Please try again.'
+                              );
+                            }
+                          } else {
+                            alert(
+                              '❌ Rate must be between $1.50 and $5.00 per mile.'
+                            );
+                          }
+                        } else if (newPreferences !== null) {
+                          alert('❌ Please enter a valid rate amount.');
+                        }
+                      }}
+                    >
+                      ⚙️ Load Preferences
+                    </button>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        const driverId =
+                          currentDriver?.driverId || 'driver-001';
+                        const driverName =
+                          currentDriver?.personalInfo?.name || 'Demo Driver';
+
+                        // Generate detailed performance report
+                        const detailedReport =
+                          driverPreferencesService.generateDetailedReport(
+                            driverId,
+                            driverName
+                          );
+
+                        // Add notification
+                        setNotifications((prev) => [
+                          {
+                            id: Date.now().toString(),
+                            message: `📊 Performance report generated! Check your email for the detailed PDF version.`,
+                            timestamp: 'Just now',
+                            read: false,
+                          },
+                          ...prev.slice(0, 4),
+                        ]);
+
+                        // Show the report
+                        alert(detailedReport);
+
+                        // Simulate saving report to downloads
+                        try {
+                          const reportBlob = new Blob([detailedReport], {
+                            type: 'text/plain',
+                          });
+                          const url = URL.createObjectURL(reportBlob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = `${driverName.replace(/\s+/g, '_')}_Performance_Report_${new Date().toISOString().split('T')[0]}.txt`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(url);
+                        } catch (error) {
+                          console.error('Error downloading report:', error);
+                        }
+                      }}
+                    >
+                      📊 My Performance Report
+                    </button>
+                    {/* Emergency Override - Management Only */}
+                    {currentUser.role?.type === 'fleet_manager' ||
+                    currentUser.role?.type === 'dispatcher' ? (
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #ef4444, #dc2626)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onClick={() => {
+                          const confirmed = confirm(
+                            '🚨 EMERGENCY OVERRIDE\n\nThis will activate manual dispatch mode and override all automated systems.\n\nAre you sure you want to proceed?'
+                          );
+                          if (confirmed) {
+                            try {
+                              const userId = currentUser.id || 'manager-001';
+                              const userRole =
+                                currentUser.role?.type || 'fleet_manager';
+
+                              const success =
+                                driverPreferencesService.activateEmergencyOverride(
+                                  userId,
+                                  userRole
+                                );
+
+                              if (success) {
+                                // Add critical notification
+                                setNotifications((prev) => [
+                                  {
+                                    id: Date.now().toString(),
+                                    message: `🚨 EMERGENCY OVERRIDE ACTIVATED - All automated systems suspended. Manual dispatch mode enabled.`,
+                                    timestamp: 'Just now',
+                                    read: false,
+                                  },
+                                  ...prev.slice(0, 4),
+                                ]);
+
+                                alert(
+                                  '🚨 EMERGENCY OVERRIDE ACTIVATED\n\n' +
+                                    '✅ Manual dispatch mode enabled\n' +
+                                    '⏸️ All automated load assignments suspended\n' +
+                                    '📢 Dispatch team has been notified\n' +
+                                    '📝 Event logged for audit purposes\n\n' +
+                                    'All load assignments must now be handled manually by dispatch staff.\n' +
+                                    'Contact IT to restore automated systems when emergency is resolved.'
+                                );
+                              } else {
+                                alert(
+                                  '❌ Failed to activate emergency override. Please try again or contact IT support.'
+                                );
+                              }
+                            } catch (error) {
+                              alert(
+                                `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+                              );
+                            }
+                          }
+                        }}
+                      >
+                        🚨 Emergency Override
+                      </button>
+                    ) : (
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #6b7280, #4b5563)',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          border: 'none',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'not-allowed',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onClick={() => {
+                          alert(
+                            '🔒 Access Denied\n\nEmergency Override requires management authorization.\nContact your fleet manager for assistance.'
+                          );
+                        }}
+                        title='Management access required'
+                      >
+                        🔒 Emergency Override
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 📋 Marketplace Loadboard Section */}
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '30px',
+                    border: '2px solid rgba(16, 185, 129, 0.3)',
+                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <div>
+                      <h3
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          color: 'white',
+                          margin: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            borderRadius: '12px',
+                            padding: '8px',
+                            fontSize: '20px',
+                          }}
+                        >
+                          📋
+                        </span>
+                        🎯 Marketplace Load Opportunities & Bidding
+                      </h3>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '16px',
+                          margin: '8px 0 0 0',
+                        }}
+                      >
+                        AI-powered bidding on external load opportunities (MKT
+                        series)
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        borderRadius: '8px',
+                        padding: '12px 16px',
+                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: '#10b981',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🔄 LIVE UPDATES
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Updated every 30 seconds
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Load Board Component */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      minHeight: '400px',
+                    }}
+                  >
+                    <MarketplaceIntegration />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* OpenELD Tab */}
+            {selectedTab === 'openeld' && (
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: '20px',
+                  }}
+                >
+                  📱 OpenELD - Electronic Logging Device
+                </h3>
+
+                {/* ELD Status Panel */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                      margin: 0,
+                    }}
+                  >
+                    🚛 ELD Device Status
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Device Status
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '20px',
+                          fontWeight: 'bold',
+                          color: '#22c55e',
+                        }}
+                      >
+                        CONNECTED
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Driver Status
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                        ON DUTY
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Hours Available
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                        6.5 hrs
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                        Current Location
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                        Dallas, TX
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Weight Compliance Section */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ⚖️ Weight Compliance Logs
+                  </h3>
+
+                  {/* 30-Day Summary */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                      }}
+                    >
+                      📊 30-Day Compliance Summary
+                    </h4>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(120px, 1fr))',
+                        gap: '12px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Total Loads
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'white',
+                          }}
+                        >
+                          12
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Compliant
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#4ade80',
+                          }}
+                        >
+                          11
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Rate
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'white',
+                          }}
+                        >
+                          91.7%
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Violations
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#fbbf24',
+                          }}
+                        >
+                          1
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            color: 'white',
+                          }}
+                        >
+                          Risk Level
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#4ade80',
+                          }}
+                        >
+                          LOW
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Export Controls */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #1f2937, #374151)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 8px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📋 Export Logs for DOT Inspection
+                    </h4>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        margin: '0 0 12px 0',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Generate CSV export for law enforcement or DOT inspectors
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button
+                        style={{
+                          background: '#22c55e',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={async () => {
+                          const driverId =
+                            currentDriver?.driverId || 'driver-001';
+                          try {
+                            const endDate = new Date().toISOString();
+                            const startDate = new Date(
+                              Date.now() - 30 * 24 * 60 * 60 * 1000
+                            ).toISOString();
+
+                            const exportData =
+                              await openELDService.exportWeightComplianceLogs(
+                                driverId,
+                                startDate,
+                                endDate
+                              );
+
+                            // Create downloadable file
+                            const blob = new Blob([exportData.exportData], {
+                              type: 'text/csv',
+                            });
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = `weight-compliance-${driverId}-30days.csv`;
+                            link.click();
+                            URL.revokeObjectURL(url);
+
+                            alert(
+                              `✅ Weight compliance logs exported successfully!\n\nSummary:\n• Total Loads: ${exportData.summary.totalLoads}\n• Compliant: ${exportData.summary.compliantLoads}\n• Violations: ${exportData.summary.violationsCount}\n• Permits Required: ${exportData.summary.permitsRequired}`
+                            );
+                          } catch (error) {
+                            alert('❌ Export failed. Please try again.');
+                          }
+                        }}
+                      >
+                        📥 Export 30 Days
+                      </button>
+                      <button
+                        style={{
+                          background: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={async () => {
+                          const driverId =
+                            currentDriver?.driverId || 'driver-001';
+                          try {
+                            const summary =
+                              await openELDService.getWeightComplianceSummary(
+                                driverId,
+                                7
+                              );
+                            alert(
+                              `📊 7-Day Weight Compliance Report\n\n` +
+                                `Period: ${summary.period}\n` +
+                                `Total Loads: ${summary.totalLoads}\n` +
+                                `Compliant: ${summary.compliantLoads}\n` +
+                                `Compliance Rate: ${summary.complianceRate.toFixed(1)}%\n` +
+                                `Violations: ${summary.violationsCount}\n` +
+                                `Critical Violations: ${summary.criticalViolations}\n` +
+                                `Permits Required: ${summary.permitsRequired}\n` +
+                                `Inspections: ${summary.inspections}\n` +
+                                `Risk Level: ${summary.riskLevel.toUpperCase()}\n` +
+                                `Last Inspection: ${summary.lastInspection ? new Date(summary.lastInspection).toLocaleDateString() : 'None'}`
+                            );
+                          } catch (error) {
+                            alert(
+                              '❌ Failed to generate summary. Please try again.'
+                            );
+                          }
+                        }}
+                      >
+                        📊 7-Day Summary
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Recent Logs */}
+                  <div>
+                    <h4
+                      style={{
+                        color: 'white',
+                        margin: '0 0 12px 0',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📝 Recent Weight Compliance Logs
+                    </h4>
+
+                    {/* Sample logs for display */}
+                    {[
+                      {
+                        id: 'WCL-001',
+                        date: '2024-01-20T14:30:00Z',
+                        loadId: 'MJ-25001-TXFL',
+                        cargoWeight: 42000,
+                        totalWeight: 78000,
+                        states: ['TX', 'LA', 'FL'],
+                        safetyRating: 'SAFE',
+                        violations: 0,
+                        permits: 0,
+                      },
+                      {
+                        id: 'WCL-002',
+                        date: '2024-01-18T09:15:00Z',
+                        loadId: 'MJ-25002-TXCA',
+                        cargoWeight: 46000,
+                        totalWeight: 82000,
+                        states: ['TX', 'NM', 'CA'],
+                        safetyRating: 'CAUTION',
+                        violations: 1,
+                        permits: 1,
+                      },
+                    ].map((log) => (
+                      <div
+                        key={log.id}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          marginBottom: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              color: 'white',
+                            }}
+                          >
+                            {log.loadId}
+                          </span>
+                          <span
+                            style={{
+                              background:
+                                log.safetyRating === 'SAFE'
+                                  ? '#10b981'
+                                  : '#f59e0b',
+                              color: 'white',
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {log.safetyRating}
+                          </span>
+                          <span
+                            style={{
+                              color: 'rgba(255,255,255,0.7)',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {new Date(log.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              'repeat(auto-fit, minmax(100px, 1fr))',
+                            gap: '8px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Weight:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.totalWeight.toLocaleString()} lbs
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              States:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.states.join(', ')}
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Violations:
+                            </span>
+                            <div
+                              style={{
+                                color:
+                                  log.violations > 0 ? '#fbbf24' : '#4ade80',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              {log.violations}
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                              Permits:
+                            </span>
+                            <div style={{ color: 'white', fontWeight: 'bold' }}>
+                              {log.permits}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* HOS Management Section */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      margin: '0 0 16px 0',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ⏰ Hours of Service (HOS)
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Driving Time
+                      </div>
+                      <div
+                        style={{
+                          color: '#4ade80',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        4.5 / 11 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        6.5 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        On Duty Time
+                      </div>
+                      <div
+                        style={{
+                          color: '#3b82f6',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        8.5 / 14 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        5.5 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        70-Hour Limit
+                      </div>
+                      <div
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        52 / 70 hrs
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        18 hours remaining
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '14px',
+                        }}
+                      >
+                        Break Required
+                      </div>
+                      <div
+                        style={{
+                          color: '#22c55e',
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        No
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Last break: 2 hrs ago
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DOT Information */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#60a5fa',
+                      margin: '0 0 12px 0',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ℹ️ DOT Inspection Information
+                  </h4>
+                  <div
+                    style={{
+                      color: 'rgba(255,255,255,0.8)',
+                      fontSize: '14px',
+                      lineHeight: '1.4',
+                    }}
+                  >
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Weight compliance logs are automatically generated for
+                      every load assignment
+                    </p>
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Export logs show axle-based weight calculations and DOT
+                      compliance status
+                    </p>
+                    <p style={{ margin: '0 0 8px 0' }}>
+                      • Bridge formula calculations and state-specific limits
+                      are included
+                    </p>
+                    <p style={{ margin: '0' }}>
+                      • All logs can be exported as CSV files for DOT inspectors
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* System Status Indicator */}
+          <div
+            style={{
+              position: 'fixed',
+              bottom: '20px',
+              right: '20px',
+              background: 'rgba(34, 197, 94, 0.9)',
+              color: 'white',
+              padding: '10px 15px',
+              borderRadius: '25px',
+              fontSize: '14px',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                background: '#22c55e',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite',
+              }}
+            />
+            Enhanced Driver Portal Active • {lastUpdated.toLocaleTimeString()}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// 🚨 LOAD ALERT ROW COMPONENT - Linear Grid Loadboard Style
+const LoadAlertRow: React.FC<{
+  alert: LoadAlert;
+  onAccept: (id: string) => void;
+  onDecline: (id: string) => void;
+}> = ({ alert, onAccept, onDecline }) => {
+  const [timeRemaining, setTimeRemaining] = useState(alert.timeToExpire);
+
+  useEffect(() => {
+    setTimeRemaining(alert.timeToExpire);
+  }, [alert.timeToExpire]);
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getTimeColor = () => {
+    if (timeRemaining <= 60) return '#ef4444'; // Red - Critical
+    if (timeRemaining <= 300) return '#f59e0b'; // Yellow - Warning
+    return '#22c55e'; // Green - Safe
+  };
+
+  const getRowBackground = () => {
+    const baseColor =
+      alert.priority === 'high'
+        ? 'rgba(239, 68, 68, 0.2)'
+        : alert.priority === 'medium'
+          ? 'rgba(245, 158, 11, 0.2)'
+          : 'rgba(59, 130, 246, 0.2)';
+
+    return `linear-gradient(135deg, ${baseColor}, rgba(255, 255, 255, 0.1))`;
+  };
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '100px 2fr 2fr 1fr 1fr 1fr 140px',
+        gap: '12px',
+        padding: '12px 20px',
+        background: getRowBackground(),
+        borderRadius: '8px',
+        marginBottom: '6px',
+        color: 'white',
+        fontSize: '14px',
+        transition: 'all 0.3s ease',
+        border: `1px solid ${alert.priority === 'high' ? '#dc2626' : 'rgba(255, 255, 255, 0.1)'}`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+      className={`alert-${alert.visualAlert}`}
+      onMouseOver={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = 'none';
+      }}
+    >
+      {/* Time Left Column */}
+      <div
+        style={{
+          textAlign: 'center',
+          fontWeight: 'bold',
+          color: getTimeColor(),
+          fontSize: '16px',
+        }}
+      >
+        {formatTime(timeRemaining)}
+      </div>
+
+      {/* Origin Column */}
+      <div style={{ fontWeight: '600' }}>
+        <div>{alert.load.origin}</div>
+        <div style={{ fontSize: '12px', opacity: 0.8 }}>
+          {alert.load.equipment} • {alert.load.weight}
+        </div>
+      </div>
+
+      {/* Destination Column */}
+      <div style={{ fontWeight: '600' }}>
+        <div>{alert.load.destination}</div>
+        <div style={{ fontSize: '12px', opacity: 0.8 }}>
+          {alert.load.commodity}
+        </div>
+      </div>
+
+      {/* Rate Column */}
+      <div
+        style={{
+          textAlign: 'center',
+          fontWeight: 'bold',
+          color: '#22c55e',
+          fontSize: '16px',
+        }}
+      >
+        {alert.load.pay}
+        <div style={{ fontSize: '12px', opacity: 0.8, color: 'white' }}>
+          {alert.load.rate}/mi
+        </div>
+      </div>
+
+      {/* Details Column */}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontWeight: '600' }}>{alert.load.miles}</div>
+        <div style={{ fontSize: '12px', opacity: 0.8 }}>
+          {alert.load.pickupDate}
+        </div>
+      </div>
+
+      {/* Dispatcher Column */}
+      <div style={{ fontSize: '12px' }}>
+        <div style={{ fontWeight: '600' }}>{alert.dispatcherName}</div>
+        <div style={{ opacity: 0.8 }}>{alert.alertType.replace('_', ' ')}</div>
+      </div>
+
+      {/* Action Column */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <button
+          onClick={() => onAccept(alert.id)}
+          style={{
+            background: '#22c55e',
+            color: 'white',
+            border: 'none',
+            padding: '6px 12px',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = '#16a34a';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = '#22c55e';
+          }}
+        >
+          ✅ Accept
+        </button>
+        <button
+          onClick={() => onDecline(alert.id)}
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            color: 'white',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            padding: '6px 12px',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+          }}
+        >
+          ⏰ Decline
+        </button>
+      </div>
+
+      {/* Progress bar at bottom */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '3px',
+          background: 'rgba(255, 255, 255, 0.2)',
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${((alert.originalDuration - timeRemaining) / alert.originalDuration) * 100}%`,
+            background: getTimeColor(),
+            transition: 'width 1s linear',
+          }}
+        />
+      </div>
+    </div>
+  );
+};

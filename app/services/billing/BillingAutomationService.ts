@@ -1,7 +1,6 @@
 // Comprehensive Billing Automation Service
 // Orchestrates Square and Bill.com for complete revenue management
 
-import SquareService from '../SquareService';
 import BillComService, {
   type Invoice,
   type InvoiceLineItem,

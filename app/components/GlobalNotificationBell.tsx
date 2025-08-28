@@ -48,13 +48,8 @@ interface IntraofficeNotification {
     source?: string;
     conversionType?: string;
     onboardingId?: string;
-    onboardingType?: 'carrier' | 'driver';
-    currentStep?: string;
-    completionPercentage?: number;
-    daysStuck?: number;
-    scheduledDate?: string;
-    carrierName?: string;
-    driverName?: string;
+    step?: string;
+    progress?: number;
   };
 }
 
@@ -69,6 +64,7 @@ export default function GlobalNotificationBell({
   position = 'navigation',
   className = '',
 }: NotificationBellProps) {
+  const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<IntraofficeNotification[]>(
     []
   );
@@ -79,299 +75,164 @@ export default function GlobalNotificationBell({
   const bellRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Generate onboarding progress notifications based on role
+  // Handle hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Generate onboarding progress notifications based on role (SSR-safe)
   const generateOnboardingNotifications = (): IntraofficeNotification[] => {
+    if (!mounted) return []; // Return empty during SSR
+
     const onboardingNotifications: IntraofficeNotification[] = [];
 
     // Role-based onboarding notifications
     if (department === 'admin') {
-      // Admins see all onboarding progress across the platform
       onboardingNotifications.push(
         {
-          id: 'ONB-001',
+          id: 'ONBOARD-001',
           type: 'onboarding_stuck',
-          priority: 'high',
-          title: '⚠️ Onboarding Stuck: ABC Trucking',
+          priority: 'urgent',
+          title: '🚨 Onboarding Alert: Global Freight Inc',
           message:
             'Carrier onboarding stuck at Document Upload step for 5 days - requires attention',
           timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
           read: false,
           fromDepartment: 'system',
           toDepartment: 'admin',
-          fromUser: 'FleetFlow System',
-          toUser: 'Admin',
+          fromUser: 'Onboarding System',
+          toUser: 'Admin Team',
           requiresResponse: true,
           metadata: {
-            onboardingId: 'ONB-ABC-001',
-            onboardingType: 'carrier',
-            currentStep: 'Document Upload',
-            completionPercentage: 50,
-            daysStuck: 5,
-            carrierName: 'ABC Trucking',
+            onboardingId: 'ONB-2024-001',
+            step: 'document_upload',
+            progress: 45,
+            action: 'review_documents',
           },
         },
         {
-          id: 'ONB-002',
+          id: 'ONBOARD-002',
           type: 'onboarding_pending',
           priority: 'normal',
-          title: '⏳ Pending Approval: XYZ Logistics',
+          title: '⏳ Pending Review: TechTrans Solutions',
           message:
             'Factoring setup completed - waiting for final agreement approval',
           timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
           read: false,
           fromDepartment: 'system',
           toDepartment: 'admin',
-          fromUser: 'FleetFlow System',
-          toUser: 'Admin',
-          requiresResponse: true,
+          fromUser: 'Onboarding System',
+          toUser: 'Admin Team',
+          requiresResponse: false,
           metadata: {
-            onboardingId: 'ONB-XYZ-001',
-            onboardingType: 'carrier',
-            currentStep: 'Agreement Signing',
-            completionPercentage: 83,
-            carrierName: 'XYZ Logistics',
+            onboardingId: 'ONB-2024-002',
+            step: 'factoring_approval',
+            progress: 85,
+            action: 'approve_factoring',
           },
         }
       );
     }
 
-    if (department === 'dispatcher' || department === 'broker') {
-      // Managers see their team's onboarding status
-      onboardingNotifications.push(
-        {
-          id: 'ONB-003',
-          type: 'onboarding_completed',
-          priority: 'low',
-          title: '✅ Driver Onboarded: John Smith',
-          message:
-            'Driver onboarding completed successfully - portal access activated',
-          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: department,
-          fromUser: 'FleetFlow System',
-          toUser: 'Manager',
-          requiresResponse: false,
-          metadata: {
-            onboardingId: 'ONB-JS-001',
-            onboardingType: 'driver',
-            currentStep: 'Portal Access',
-            completionPercentage: 100,
-            driverName: 'John Smith',
-          },
-        },
-        {
-          id: 'ONB-004',
-          type: 'onboarding_upcoming',
-          priority: 'normal',
-          title: '📅 Scheduled Onboarding: Maria Garcia',
-          message: 'Driver onboarding scheduled for tomorrow at 9:00 AM',
-          timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: department,
-          fromUser: 'FleetFlow System',
-          toUser: 'Manager',
-          requiresResponse: false,
-          metadata: {
-            onboardingId: 'ONB-MG-001',
-            onboardingType: 'driver',
-            scheduledDate: 'Tomorrow 9:00 AM',
-            driverName: 'Maria Garcia',
-          },
-        }
-      );
-    }
-
-    if (department === 'carrier') {
-      // Carriers see their own onboarding progress
+    if (department === 'dispatcher') {
       onboardingNotifications.push({
-        id: 'ONB-005',
-        type: 'onboarding_active',
-        priority: 'normal',
-        title: '🔄 Next Step: Upload Insurance Certificate',
+        id: 'ONBOARD-003',
+        type: 'onboarding_completed',
+        priority: 'low',
+        title: '✅ New Driver Ready: Carlos Rodriguez',
         message:
-          'Your onboarding is 66% complete - please upload your insurance certificate',
-        timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+          'Driver onboarding completed successfully - portal access activated',
+        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
         read: false,
         fromDepartment: 'system',
-        toDepartment: 'carrier',
-        fromUser: 'FleetFlow System',
-        toUser: 'Carrier',
-        requiresResponse: true,
+        toDepartment: 'dispatcher',
+        fromUser: 'Onboarding System',
+        toUser: 'Dispatch Team',
+        requiresResponse: false,
         metadata: {
-          onboardingId: 'ONB-SELF-001',
-          onboardingType: 'carrier',
-          currentStep: 'Document Upload',
-          completionPercentage: 66,
+          onboardingId: 'ONB-2024-003',
+          step: 'completed',
+          progress: 100,
+          action: 'assign_loads',
+        },
+      });
+    }
+
+    if (department === 'carrier' || department === 'broker') {
+      onboardingNotifications.push({
+        id: 'ONBOARD-004',
+        type: 'onboarding_upcoming',
+        priority: 'normal',
+        title: '📅 Scheduled Onboarding: Maria Garcia',
+        message: 'Driver onboarding scheduled for tomorrow at 9:00 AM',
+        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+        read: false,
+        fromDepartment: 'system',
+        toDepartment: department,
+        fromUser: 'Onboarding System',
+        toUser: 'Operations Team',
+        requiresResponse: false,
+        metadata: {
+          onboardingId: 'ONB-2024-004',
+          step: 'scheduled',
+          progress: 0,
+          action: 'prepare_session',
         },
       });
     }
 
     if (department === 'driver') {
-      // Drivers see their individual onboarding steps
-      onboardingNotifications.push({
-        id: 'ONB-006',
-        type: 'onboarding_active',
-        priority: 'normal',
-        title: '🔄 Complete Your Profile Setup',
-        message: 'Please complete your driver profile - 2 steps remaining',
-        timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-        read: false,
-        fromDepartment: 'system',
-        toDepartment: 'driver',
-        fromUser: 'FleetFlow System',
-        toUser: 'Driver',
-        requiresResponse: true,
-        metadata: {
-          onboardingId: 'ONB-DRIVER-001',
-          onboardingType: 'driver',
-          currentStep: 'Profile Setup',
-          completionPercentage: 75,
+      // Driver-specific onboarding notifications
+      onboardingNotifications.push(
+        {
+          id: 'ONBOARD-DRIVER-001',
+          type: 'onboarding_active',
+          priority: 'high',
+          title: '📋 Complete Your Onboarding',
+          message:
+            'Your onboarding is 66% complete - please upload your insurance certificate',
+          timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: 'driver',
+          fromUser: 'Onboarding System',
+          toUser: 'Driver',
+          requiresResponse: true,
+          metadata: {
+            onboardingId: 'ONB-DRIVER-001',
+            step: 'insurance_upload',
+            progress: 66,
+            action: 'upload_insurance',
+          },
         },
-      });
+        {
+          id: 'ONBOARD-DRIVER-002',
+          type: 'onboarding_pending',
+          priority: 'normal',
+          title: '🔄 Complete Your Profile Setup',
+          message: 'Please complete your driver profile - 2 steps remaining',
+          timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+          read: false,
+          fromDepartment: 'system',
+          toDepartment: 'driver',
+          fromUser: 'Onboarding System',
+          toUser: 'Driver',
+          requiresResponse: true,
+          metadata: {
+            onboardingId: 'ONB-DRIVER-002',
+            step: 'profile_completion',
+            progress: 80,
+            action: 'complete_profile',
+          },
+        }
+      );
     }
 
     return onboardingNotifications;
   };
 
-  // Mock notifications with intraoffice messaging and onboarding progress
-  const mockNotifications: IntraofficeNotification[] = [
-    ...generateOnboardingNotifications(),
-    {
-      id: 'INTRA-001',
-      type: 'intraoffice',
-      priority: 'high',
-      title: 'Broker Request: Load Assignment',
-      message:
-        'Alex Rodriguez (Broker) requests driver assignment for Load LD-2025-789 - Urgent customer delivery needed',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'broker',
-      toDepartment: 'dispatcher',
-      fromUser: 'Alex Rodriguez',
-      toUser: 'Sarah Johnson',
-      requiresResponse: true,
-      metadata: { loadId: 'LD-2025-789', action: 'driver_assignment' },
-    },
-    {
-      id: 'INTRA-002',
-      type: 'intraoffice',
-      priority: 'urgent',
-      title: 'Dispatcher Alert: ETA Delay',
-      message:
-        'Sarah Johnson (Dispatch) reports 3-hour delay on Load LD-2025-456 due to weather conditions',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'dispatcher',
-      toDepartment: 'broker',
-      fromUser: 'Sarah Johnson',
-      toUser: 'Michael Chen',
-      requiresResponse: true,
-      metadata: { loadId: 'LD-2025-456', action: 'client_notification' },
-    },
-    {
-      id: 'INTRA-003',
-      type: 'intraoffice',
-      priority: 'normal',
-      title: 'Admin Notice: System Maintenance',
-      message:
-        'System maintenance scheduled for tonight 11 PM - 1 AM EST. Please complete urgent tasks before maintenance window.',
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'admin',
-      toDepartment: 'all',
-      fromUser: 'IT Admin',
-      toUser: 'All Departments',
-      requiresResponse: false,
-      metadata: { action: 'system_maintenance' },
-    },
-    {
-      id: 'INTRA-004',
-      type: 'emergency',
-      priority: 'critical',
-      title: 'Emergency: Driver Breakdown',
-      message:
-        'Driver Mike Wilson reports mechanical breakdown on I-95. Immediate roadside assistance required.',
-      timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'driver',
-      toDepartment: 'dispatcher',
-      fromUser: 'Mike Wilson',
-      toUser: 'Sarah Johnson',
-      requiresResponse: true,
-      metadata: { action: 'emergency_response' },
-    },
-    {
-      id: 'LEAD-001',
-      type: 'lead_conversion',
-      priority: 'high',
-      title: '🚨 NEW SHIPPER - Quote Accepted',
-      message:
-        'FMCSA Discovery generated lead converted! Global Manufacturing Corp (shipper) quote accepted with potential value of $35,000. Immediate follow-up required.',
-      timestamp: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'system',
-      toDepartment: 'admin',
-      fromUser: 'AI Flow Platform',
-      toUser: 'Management Team',
-      requiresResponse: true,
-      metadata: {
-        leadId: 'CONV-123',
-        customerName: 'Global Manufacturing Corp',
-        potentialValue: 35000,
-        source: 'fmcsa',
-        conversionType: 'quote_accepted',
-        action: 'review_lead',
-      },
-    },
-    {
-      id: 'LEAD-002',
-      type: 'lead_conversion',
-      priority: 'urgent',
-      title: '🚨 NEW CONTRACT - RFP Won',
-      message:
-        'RFx Automation generated lead converted! AutoTech Manufacturing (shipper) rfp won with potential value of $125,000. Immediate follow-up required.',
-      timestamp: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'system',
-      toDepartment: 'admin',
-      fromUser: 'AI Flow Platform',
-      toUser: 'Management Team',
-      requiresResponse: true,
-      metadata: {
-        leadId: 'CONV-124',
-        customerName: 'AutoTech Manufacturing',
-        potentialValue: 125000,
-        source: 'rfx_automation',
-        conversionType: 'rfp_won',
-        action: 'review_lead',
-      },
-    },
-    {
-      id: 'LEAD-003',
-      type: 'lead_conversion',
-      priority: 'high',
-      title: '🚨 NEW CUSTOMER - Service Booked',
-      message:
-        'Call Center Lead generated lead converted! Pacific Distribution Group (shipper) service booked with potential value of $78,000. Immediate follow-up required.',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-      read: false,
-      fromDepartment: 'system',
-      toDepartment: 'admin',
-      fromUser: 'AI Flow Platform',
-      toUser: 'Management Team',
-      requiresResponse: true,
-      metadata: {
-        leadId: 'CONV-125',
-        customerName: 'Pacific Distribution Group',
-        potentialValue: 78000,
-        source: 'twilio',
-        conversionType: 'service_booked',
-        action: 'review_lead',
-      },
-    },
-  ];
+  // No mock notifications - will use real service data (SSR-safe)
+  const mockNotifications: IntraofficeNotification[] = [];
 
   // Function to fetch live lead conversion notifications
   const fetchLeadConversions = async () => {
@@ -451,26 +312,24 @@ export default function GlobalNotificationBell({
       quote_accepted: '🚨 NEW SHIPPER - Quote Accepted',
       service_booked: '🚨 NEW CUSTOMER - Service Booked',
       rfp_won: '🚨 NEW CONTRACT - RFP Won',
-      call_converted: '🚨 NEW LEAD - Call Converted',
-      shipment_requested: '🚨 NEW SHIPPER - Shipment Requested',
-      partnership_formed: '🚨 NEW PARTNER - Partnership Formed',
+      contact_form: '🚨 NEW LEAD - Contact Form',
+      phone_inquiry: '🚨 NEW LEAD - Phone Inquiry',
+      chat_conversion: '🚨 NEW LEAD - Chat Conversion',
     };
-    return titleMap[conversionType] || '🚨 NEW LEAD - Converted';
+    return titleMap[conversionType] || '🚨 NEW LEAD - Conversion';
   };
 
   const getSourceLabel = (source: string) => {
     const sourceMap: { [key: string]: string } = {
       fmcsa: 'FMCSA Discovery',
-      weather: 'Weather Intelligence',
-      exchange_rate: 'Currency Exchange',
-      claude_ai: 'Claude AI Analysis',
-      twilio: 'Call Center Lead',
-      thomasnet: 'ThomasNet Manufacturing',
       rfx_automation: 'RFx Automation',
-      sam_gov: 'Government Contracts',
-      instant_markets: 'InstantMarkets',
+      twilio: 'Call Center Lead',
+      website: 'Website Form',
+      chat: 'Chat Widget',
+      phone: 'Phone System',
+      email: 'Email Campaign',
     };
-    return sourceMap[source] || 'AI Flow Platform';
+    return sourceMap[source] || 'Lead System';
   };
 
   const formatCurrency = (amount: number) => {
@@ -482,6 +341,8 @@ export default function GlobalNotificationBell({
   };
 
   useEffect(() => {
+    if (!mounted) return; // Wait for hydration
+
     const loadNotifications = async () => {
       const allNotifications = await fetchLeadConversions();
 
@@ -495,11 +356,18 @@ export default function GlobalNotificationBell({
             (department === 'admin' || department === 'broker'))
       );
 
-      setNotifications(departmentNotifications);
-      setUnreadCount(departmentNotifications.filter((n) => !n.read).length);
+      // Add onboarding notifications
+      const onboardingNotifications = generateOnboardingNotifications();
+      const finalNotifications = [
+        ...departmentNotifications,
+        ...onboardingNotifications,
+      ];
+
+      setNotifications(finalNotifications);
+      setUnreadCount(finalNotifications.filter((n) => !n.read).length);
     };
 
-    // Initial load with slight delay to allow development server to fully start
+    // Initial load with delay to avoid hydration conflicts
     const initialTimeout = setTimeout(() => {
       loadNotifications();
     }, 1000); // 1 second delay
@@ -511,19 +379,16 @@ export default function GlobalNotificationBell({
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [department]);
+  }, [department, mounted]);
 
-  // Play notification sound
-  const playNotificationSound = (priority: string) => {
+  const playNotificationSound = async (notificationType: string) => {
     try {
+      const soundUrl =
+        DEPARTMENT_SOUNDS[department] || '/sounds/default-notification.mp3';
       if (audioRef.current) {
-        audioRef.current.volume = priority === 'critical' ? 0.8 : 0.5;
-        audioRef.current.play();
+        audioRef.current.src = soundUrl;
+        await audioRef.current.play();
       }
-
-      // Add bell animation
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 1000);
     } catch (error) {
       console.log('Could not play notification sound:', error);
     }
@@ -531,6 +396,8 @@ export default function GlobalNotificationBell({
 
   // Simulate new notification - disabled autoplay to prevent browser errors
   useEffect(() => {
+    if (!mounted) return; // Wait for hydration
+
     const interval = setInterval(() => {
       // Random chance of new notification (without auto-sound)
       if (Math.random() < 0.1) {
@@ -541,28 +408,46 @@ export default function GlobalNotificationBell({
     }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [mounted]);
 
   const getPriorityColor = (priority: string) => {
     const colors = {
       critical: '#dc2626',
       urgent: '#ea580c',
-      high: '#d97706',
-      normal: '#059669',
+      high: '#f59e0b',
+      normal: '#3b82f6',
       low: '#6b7280',
     };
-    return colors[priority as keyof typeof colors] || '#6b7280';
+    return colors[priority as keyof typeof colors] || colors.normal;
   };
 
-  const getDepartmentColor = (dept: string) => {
-    const colors = {
-      dispatcher: '#3b82f6',
-      broker: '#f97316',
-      driver: '#f7c52d',
-      admin: '#8b5cf6',
-      carrier: '#14b8a6',
+  const getPriorityIcon = (priority: string) => {
+    const icons = {
+      critical: '🔥',
+      urgent: '⚡',
+      high: '⚠️',
+      normal: 'ℹ️',
+      low: '📝',
     };
-    return colors[dept as keyof typeof colors] || '#6b7280';
+    return icons[priority as keyof typeof icons] || icons.normal;
+  };
+
+  const getTypeIcon = (type: string) => {
+    const icons = {
+      intraoffice: '💬',
+      emergency: '🚨',
+      load: '📦',
+      dispatch: '🚛',
+      compliance: '📋',
+      system: '⚙️',
+      lead_conversion: '💰',
+      onboarding_active: '🔄',
+      onboarding_pending: '⏳',
+      onboarding_completed: '✅',
+      onboarding_stuck: '🚨',
+      onboarding_upcoming: '📅',
+    };
+    return icons[type as keyof typeof icons] || icons.system;
   };
 
   const handleNotificationClick = (id: string) => {
@@ -577,70 +462,22 @@ export default function GlobalNotificationBell({
     setUnreadCount(0);
   };
 
-  // Tooltip component
-  const InfoTooltip = ({
-    text,
-    children,
-  }: {
-    text: string;
-    children: React.ReactNode;
-  }) => (
-    <div
-      style={{ position: 'relative', display: 'inline-block' }}
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
-      {children}
-      {showTooltip && (
-        <div
-          style={{
-            position: 'absolute',
-            background: 'rgba(0, 0, 0, 0.9)',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            fontSize: '0.8rem',
-            whiteSpace: 'nowrap',
-            zIndex: 10000,
-            bottom: '100%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            marginBottom: '5px',
-          }}
-        >
-          {text}
-          <div
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 0,
-              height: 0,
-              borderLeft: '5px solid transparent',
-              borderRight: '5px solid transparent',
-              borderTop: '5px solid rgba(0, 0, 0, 0.9)',
-            }}
-          />
-        </div>
-      )}
-    </div>
-  );
+  // Don't render anything during SSR to prevent hydration mismatch
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <div ref={bellRef} style={{ position: 'relative' }}>
-      {/* Hidden audio element for notification sounds */}
-      <audio ref={audioRef} preload='auto' style={{ display: 'none' }}>
-        <source src={DEPARTMENT_SOUNDS[department]} type='audio/mpeg' />
-        {/* Fallback generic sound */}
-        <source src='/sounds/notification-bell.mp3' type='audio/mpeg' />
-      </audio>
+    <div className={`notification-bell-container ${className}`}>
+      <audio ref={audioRef} preload='none' />
 
-      {/* Notification Bell */}
-      <InfoTooltip
-        text={`${unreadCount} new notifications for ${department} department`}
-      >
+      {/* Navigation Bell */}
+      {position === 'navigation' && (
         <div
+          ref={bellRef}
+          className={`bell-wrapper ${isAnimating ? 'animate' : ''}`}
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
           onClick={() => setIsOpen(!isOpen)}
           style={{
             position: 'relative',
@@ -648,372 +485,326 @@ export default function GlobalNotificationBell({
             padding: '8px',
             borderRadius: '50%',
             background:
-              position === 'navigation'
-                ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
-            color: 'white',
-            fontSize: position === 'navigation' ? '1.2rem' : '1.1rem',
+              unreadCount > 0 ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+            border:
+              unreadCount > 0
+                ? '1px solid rgba(59, 130, 246, 0.3)'
+                : '1px solid transparent',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          <div style={{ position: 'relative' }}>
+            <span style={{ fontSize: '20px', color: 'white' }}>🔔</span>
+            {unreadCount > 0 && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  background: '#ef4444',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                }}
+              >
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Driver Portal Bell */}
+      {position === 'driver-portal' && (
+        <div
+          ref={bellRef}
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '40px',
-            height: '40px',
-            transition: 'all 0.3s ease',
-            transform: isAnimating
-              ? 'scale(1.2) rotate(15deg)'
-              : 'scale(1) rotate(0deg)',
-            boxShadow:
-              unreadCount > 0 ? '0 0 20px rgba(245, 158, 11, 0.5)' : 'none',
-            animation: unreadCount > 0 ? 'pulse 2s infinite' : 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            border: '2px solid rgba(255, 255, 255, 0.2)',
+            zIndex: 1000,
           }}
-          className={className}
         >
-          🔔
-          {/* Unread count badge */}
+          <span style={{ fontSize: '24px', color: 'white' }}>🔔</span>
           {unreadCount > 0 && (
             <div
               style={{
                 position: 'absolute',
-                top: '-2px',
-                right: '-2px',
-                background: '#dc2626',
+                top: '-5px',
+                right: '-5px',
+                background: '#ef4444',
                 color: 'white',
                 borderRadius: '50%',
-                width: '18px',
-                height: '18px',
+                width: '24px',
+                height: '24px',
+                fontSize: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.7rem',
                 fontWeight: 'bold',
-                border: '2px solid white',
               }}
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </div>
           )}
         </div>
-      </InfoTooltip>
+      )}
+
+      {/* Tooltip */}
+      {showTooltip && position === 'navigation' && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(0, 0, 0, 0.9)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            whiteSpace: 'nowrap',
+            zIndex: 1000,
+            marginBottom: '8px',
+          }}
+        >
+          {unreadCount > 0
+            ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
+            : 'No new notifications'}
+        </div>
+      )}
 
       {/* Notification Dropdown */}
       {isOpen && (
         <div
           style={{
             position: 'absolute',
-            top: '100%',
-            right: 0,
-            width: '380px',
-            maxHeight: '500px',
-            background: 'white',
+            top: position === 'navigation' ? '100%' : 'auto',
+            bottom: position === 'driver-portal' ? '100%' : 'auto',
+            right: position === 'driver-portal' ? '0' : 'auto',
+            left: position === 'navigation' ? '50%' : 'auto',
+            transform: position === 'navigation' ? 'translateX(-50%)' : 'none',
+            background: 'rgba(15, 23, 42, 0.95)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',
-            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            zIndex: 10000,
-            overflow: 'hidden',
-            marginTop: '5px',
+            width: '420px',
+            maxHeight: '500px',
+            overflowY: 'auto',
+            zIndex: 1001,
+            marginTop: position === 'navigation' ? '12px' : '0',
+            marginBottom: position === 'driver-portal' ? '12px' : '0',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
           }}
         >
           {/* Header */}
           <div
             style={{
               padding: '16px 20px',
-              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-              background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}
           >
-            <div>
-              <h3 style={{ margin: 0, color: '#1e293b', fontSize: '1.1rem' }}>
-                🔔 Notifications
-              </h3>
-              <p
-                style={{
-                  margin: '2px 0 0 0',
-                  color: '#64748b',
-                  fontSize: '0.8rem',
-                }}
-              >
-                {department.charAt(0).toUpperCase() + department.slice(1)}{' '}
-                Department
-              </p>
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <h3
+              style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '600',
+                margin: 0,
+              }}
+            >
+              Notifications ({unreadCount})
+            </h3>
+            {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#3b82f6',
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '6px',
+                  color: '#60a5fa',
+                  padding: '6px 12px',
+                  fontSize: '12px',
                   cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
                 }}
               >
                 Mark All Read
               </button>
-              <Link href='/notifications' style={{ textDecoration: 'none' }}>
-                <button
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  View All
-                </button>
-              </Link>
-            </div>
+            )}
           </div>
 
           {/* Notifications List */}
-          <div
-            style={{
-              maxHeight: '400px',
-              overflowY: 'auto',
-            }}
-          >
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {notifications.length === 0 ? (
               <div
                 style={{
                   padding: '40px 20px',
                   textAlign: 'center',
-                  color: '#64748b',
+                  color: 'rgba(255, 255, 255, 0.6)',
                 }}
               >
-                <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📭</div>
-                <p>No notifications</p>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔔</div>
+                <p style={{ fontSize: '16px', margin: 0 }}>
+                  No notifications yet
+                </p>
+                <p style={{ fontSize: '14px', marginTop: '8px', margin: 0 }}>
+                  You'll see updates here as they come in
+                </p>
               </div>
             ) : (
-              notifications.slice(0, 5).map((notification) => (
+              notifications.map((notification) => (
                 <div
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification.id)}
                   style={{
                     padding: '16px 20px',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                     cursor: 'pointer',
-                    background:
-                      notification.type === 'lead_conversion'
-                        ? notification.read
-                          ? 'linear-gradient(135deg, #ecfdf5, #f0fdf4)'
-                          : 'linear-gradient(135deg, #dcfce7, #bbf7d0)'
-                        : notification.read
-                          ? 'white'
-                          : '#f8fafc',
-                    transition: 'background 0.2s ease',
-                    borderLeft:
-                      notification.type === 'lead_conversion'
-                        ? '4px solid #10b981'
-                        : notification.priority === 'critical'
-                          ? '4px solid #dc2626'
-                          : notification.priority === 'urgent'
-                            ? '4px solid #ea580c'
-                            : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (notification.type === 'lead_conversion') {
-                      e.currentTarget.style.background =
-                        'linear-gradient(135deg, #d1fae5, #a7f3d0)';
-                    } else {
-                      e.currentTarget.style.background = '#f1f5f9';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (notification.type === 'lead_conversion') {
-                      e.currentTarget.style.background = notification.read
-                        ? 'linear-gradient(135deg, #ecfdf5, #f0fdf4)'
-                        : 'linear-gradient(135deg, #dcfce7, #bbf7d0)';
-                    } else {
-                      e.currentTarget.style.background = notification.read
-                        ? 'white'
-                        : '#f8fafc';
-                    }
+                    background: notification.read
+                      ? 'transparent'
+                      : 'rgba(59, 130, 246, 0.05)',
+                    transition: 'all 0.2s ease',
+                    ':hover': {
+                      background: 'rgba(255, 255, 255, 0.05)',
+                    },
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '8px',
-                    }}
-                  >
+                  <div style={{ display: 'flex', gap: '12px' }}>
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
+                        fontSize: '20px',
+                        flexShrink: 0,
                       }}
                     >
+                      {getTypeIcon(notification.type)}
+                    </div>
+                    <div style={{ flex: 1 }}>
                       <div
                         style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: getPriorityColor(notification.priority),
-                        }}
-                      />
-                      <span
-                        style={{
-                          color: '#1e293b',
-                          fontSize: '0.9rem',
-                          fontWeight: notification.read ? 'normal' : 'bold',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          marginBottom: '4px',
                         }}
                       >
-                        {notification.title}
-                      </span>
-                      {notification.type === 'lead_conversion' &&
-                        notification.metadata?.potentialValue && (
-                          <span
-                            style={{
-                              background:
-                                'linear-gradient(135deg, #10b981, #059669)',
-                              color: 'white',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '0.7rem',
-                              fontWeight: '600',
-                              marginLeft: '8px',
-                            }}
-                          >
-                            {formatCurrency(
-                              notification.metadata.potentialValue
-                            )}
-                          </span>
-                        )}
-                    </div>
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <span
-                        style={{
-                          background: getDepartmentColor(
-                            notification.fromDepartment
-                          ),
-                          color: 'white',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          fontSize: '0.7rem',
-                          fontWeight: '500',
-                        }}
-                      >
-                        {notification.fromDepartment.toUpperCase()}
-                      </span>
-                      {notification.requiresResponse && (
-                        <span
+                        <h4
                           style={{
-                            background: '#dc2626',
                             color: 'white',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.7rem',
-                            fontWeight: '500',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            margin: 0,
+                            flex: 1,
                           }}
                         >
-                          RESPONSE REQUIRED
+                          {notification.title}
+                        </h4>
+                        <span
+                          style={{
+                            background: getPriorityColor(notification.priority),
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '12px',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {notification.priority}
                         </span>
+                      </div>
+                      <p
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '13px',
+                          lineHeight: '1.4',
+                          margin: '0 0 8px 0',
+                        }}
+                      >
+                        {notification.message}
+                      </p>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        <span>From: {notification.fromDepartment}</span>
+                        <span>
+                          {new Date(
+                            notification.timestamp
+                          ).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      {notification.metadata?.action && (
+                        <div style={{ marginTop: '8px' }}>
+                          <Link
+                            href={`/admin?action=${notification.metadata.action}&id=${notification.metadata.leadId || notification.id}`}
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.2)',
+                              border: '1px solid rgba(59, 130, 246, 0.3)',
+                              borderRadius: '6px',
+                              color: '#60a5fa',
+                              padding: '6px 12px',
+                              fontSize: '12px',
+                              textDecoration: 'none',
+                              display: 'inline-block',
+                            }}
+                          >
+                            Take Action
+                          </Link>
+                        </div>
                       )}
                     </div>
-                  </div>
-
-                  <p
-                    style={{
-                      color: '#64748b',
-                      fontSize: '0.85rem',
-                      margin: '0 0 8px 0',
-                      lineHeight: '1.4',
-                    }}
-                  >
-                    {notification.message}
-                  </p>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '0.75rem',
-                      color: '#94a3b8',
-                    }}
-                  >
-                    <span>From: {notification.fromUser}</span>
-                    <span>
-                      {new Date(notification.timestamp).toLocaleTimeString()}
-                    </span>
                   </div>
                 </div>
               ))
             )}
           </div>
-
-          {/* Footer */}
-          <div
-            style={{
-              padding: '12px 20px',
-              background: '#f8fafc',
-              borderTop: '1px solid rgba(0, 0, 0, 0.05)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: '#10b981',
-                  animation: 'pulse 2s infinite',
-                }}
-              />
-              <span
-                style={{
-                  color: '#64748b',
-                  fontSize: '0.75rem',
-                }}
-              >
-                Live updates enabled
-              </span>
-            </div>
-            <Link href='/notifications' style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#3b82f6',
-                  cursor: 'pointer',
-                  fontSize: '0.75rem',
-                }}
-              >
-                View All Notifications →
-              </button>
-            </Link>
-          </div>
         </div>
       )}
 
-      {/* CSS Animations */}
       <style jsx>{`
-        @keyframes pulse {
+        .bell-wrapper.animate {
+          animation: bellShake 0.5s ease-in-out;
+        }
+
+        @keyframes bellShake {
           0%,
           100% {
-            opacity: 1;
+            transform: rotate(0deg);
           }
-          50% {
-            opacity: 0.7;
+          25% {
+            transform: rotate(-10deg);
           }
+          75% {
+            transform: rotate(10deg);
+          }
+        }
+
+        .notification-bell-container:hover .bell-wrapper {
+          transform: scale(1.1);
         }
       `}</style>
     </div>

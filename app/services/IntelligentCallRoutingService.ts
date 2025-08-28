@@ -198,6 +198,8 @@ class IntelligentCallRoutingService {
   // Update agent status
   updateAgentStatus(agentId: string, status: Agent['status']): boolean {
     try {
+      if (typeof window === 'undefined') return false;
+
       const agents = this.getAgents();
       const agentIndex = agents.findIndex((a) => a.id === agentId);
 
@@ -498,6 +500,7 @@ class IntelligentCallRoutingService {
   // Get routing rules
   getRoutingRules(): RoutingRule[] {
     try {
+      if (typeof window === 'undefined') return this.getDefaultRoutingRules();
       const stored = localStorage.getItem(this.ROUTING_RULES_KEY);
       return stored ? JSON.parse(stored) : this.getDefaultRoutingRules();
     } catch (error) {
@@ -509,6 +512,7 @@ class IntelligentCallRoutingService {
   // Get call queues
   getCallQueues(): CallQueue[] {
     try {
+      if (typeof window === 'undefined') return this.getDefaultCallQueues();
       const stored = localStorage.getItem(this.CALL_QUEUES_KEY);
       return stored ? JSON.parse(stored) : this.getDefaultCallQueues();
     } catch (error) {
@@ -520,34 +524,50 @@ class IntelligentCallRoutingService {
   // Get call metrics
   getCallMetrics(): CallMetrics {
     try {
+      if (typeof window === 'undefined') {
+        // Return empty metrics for SSR
+        return {
+          totalCalls: 0,
+          answeredCalls: 0,
+          missedCalls: 0,
+          averageWaitTime: 0,
+          averageCallDuration: 0,
+          customerSatisfaction: 0,
+          firstCallResolution: 0,
+          agentUtilization: 0,
+          peakHours: [],
+          callDistribution: {
+            sales: 0,
+            support: 0,
+            complaints: 0,
+            bookings: 0,
+            emergency: 0,
+          },
+        };
+      }
+
       const stored = localStorage.getItem(this.CALL_METRICS_KEY);
       if (stored) {
         return JSON.parse(stored);
       }
 
-      // Generate sample metrics
+      // Return empty metrics - no mock data
       return {
-        totalCalls: 247,
-        answeredCalls: 231,
-        missedCalls: 16,
-        averageWaitTime: 45, // seconds
-        averageCallDuration: 312, // seconds
-        customerSatisfaction: 8.7,
-        firstCallResolution: 0.84,
-        agentUtilization: 0.73,
-        peakHours: [
-          { hour: 9, callVolume: 23 },
-          { hour: 10, callVolume: 31 },
-          { hour: 11, callVolume: 28 },
-          { hour: 14, callVolume: 26 },
-          { hour: 15, callVolume: 24 },
-        ],
+        totalCalls: 0,
+        answeredCalls: 0,
+        missedCalls: 0,
+        averageWaitTime: 0,
+        averageCallDuration: 0,
+        customerSatisfaction: 0,
+        firstCallResolution: 0,
+        agentUtilization: 0,
+        peakHours: [],
         callDistribution: {
-          sales: 89,
-          support: 76,
-          complaints: 23,
-          bookings: 45,
-          emergency: 14,
+          sales: 0,
+          support: 0,
+          complaints: 0,
+          bookings: 0,
+          emergency: 0,
         },
       };
     } catch (error) {
@@ -556,198 +576,19 @@ class IntelligentCallRoutingService {
     }
   }
 
-  // Default agents
+  // Default agents - empty for production
   private getDefaultAgents(): Agent[] {
-    return [
-      {
-        id: 'agent-001',
-        name: 'Sarah Johnson',
-        email: 'sarah.johnson@fleetflow.com',
-        phone: '+15551234567',
-        status: 'available',
-        skills: [
-          'sales',
-          'customer_service',
-          'negotiation',
-          'freight_logistics',
-        ],
-        languages: ['English', 'Spanish'],
-        experience: 'expert',
-        specialties: ['sales', 'retention'],
-        performance: {
-          averageCallTime: 285,
-          resolutionRate: 0.92,
-          customerSatisfaction: 9.2,
-          conversionRate: 0.31,
-          callsHandledToday: 12,
-          totalCallsHandled: 2847,
-        },
-        schedule: {
-          timezone: 'America/Chicago',
-          workingHours: { start: '08:00', end: '17:00' },
-          workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          breaks: [
-            { start: '12:00', end: '13:00', duration: 60 },
-            { start: '15:00', end: '15:15', duration: 15 },
-          ],
-        },
-        lastActivity: new Date().toISOString(),
-      },
-      {
-        id: 'agent-002',
-        name: 'Mike Davis',
-        email: 'mike.davis@fleetflow.com',
-        phone: '+15559876543',
-        status: 'available',
-        skills: [
-          'support',
-          'technical_support',
-          'problem_solving',
-          'freight_operations',
-        ],
-        languages: ['English'],
-        experience: 'senior',
-        specialties: ['support', 'collections'],
-        performance: {
-          averageCallTime: 398,
-          resolutionRate: 0.89,
-          customerSatisfaction: 8.9,
-          conversionRate: 0.18,
-          callsHandledToday: 8,
-          totalCallsHandled: 1923,
-        },
-        schedule: {
-          timezone: 'America/Chicago',
-          workingHours: { start: '07:00', end: '16:00' },
-          workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          breaks: [
-            { start: '11:30', end: '12:30', duration: 60 },
-            { start: '14:30', end: '14:45', duration: 15 },
-          ],
-        },
-        lastActivity: new Date().toISOString(),
-      },
-    ];
+    return [];
   }
 
-  // Default routing rules
+  // Default routing rules - empty for production
   private getDefaultRoutingRules(): RoutingRule[] {
-    return [
-      {
-        id: 'rule-001',
-        name: 'VIP Customer Priority',
-        priority: 1,
-        conditions: {
-          customerTier: 'platinum',
-        },
-        actions: {
-          routeTo: 'queue',
-          targetQueueId: 'queue-vip',
-          priority: 1,
-          maxWaitTime: 30,
-          fallbackAction: 'callback',
-        },
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: 'rule-002',
-        name: 'Emergency Calls',
-        priority: 1,
-        conditions: {
-          callType: 'emergency',
-        },
-        actions: {
-          routeTo: 'queue',
-          targetQueueId: 'queue-emergency',
-          priority: 1,
-          maxWaitTime: 15,
-          fallbackAction: 'transfer',
-        },
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
+    return [];
   }
 
-  // Default call queues
+  // Default call queues - empty for production
   private getDefaultCallQueues(): CallQueue[] {
-    return [
-      {
-        id: 'queue-sales',
-        name: 'Sales Queue',
-        description: 'New customer inquiries and sales calls',
-        type: 'sales',
-        maxSize: 20,
-        estimatedWaitTime: 120,
-        announcements: {
-          welcome:
-            'Thank you for calling FleetFlow. You are in our sales queue.',
-          position: 'You are number {position} in line.',
-          estimatedWait: 'Your estimated wait time is {time} minutes.',
-          callback: 'Press 1 to request a callback instead of waiting.',
-        },
-        agents: ['agent-001'],
-        calls: [],
-        metrics: {
-          totalCalls: 89,
-          averageWaitTime: 95,
-          abandonmentRate: 0.12,
-          serviceLevel: 0.87,
-        },
-        isActive: true,
-      },
-      {
-        id: 'queue-support',
-        name: 'Customer Support',
-        description: 'Technical support and customer service',
-        type: 'support',
-        maxSize: 15,
-        estimatedWaitTime: 180,
-        announcements: {
-          welcome:
-            'Thank you for calling FleetFlow support. We value your business.',
-          position: 'You are number {position} in line.',
-          estimatedWait: 'Your estimated wait time is {time} minutes.',
-          callback: 'Press 1 to request a callback instead of waiting.',
-        },
-        agents: ['agent-002'],
-        calls: [],
-        metrics: {
-          totalCalls: 76,
-          averageWaitTime: 142,
-          abandonmentRate: 0.08,
-          serviceLevel: 0.91,
-        },
-        isActive: true,
-      },
-      {
-        id: 'queue-vip',
-        name: 'VIP Queue',
-        description: 'Platinum and gold tier customers',
-        type: 'vip',
-        maxSize: 10,
-        estimatedWaitTime: 30,
-        announcements: {
-          welcome:
-            'Thank you for calling FleetFlow. As a VIP customer, you will be connected shortly.',
-          position: 'You are number {position} in our priority queue.',
-          estimatedWait: 'Your estimated wait time is {time} minutes.',
-          callback: 'Press 1 to request a priority callback.',
-        },
-        agents: ['agent-001', 'agent-002'],
-        calls: [],
-        metrics: {
-          totalCalls: 34,
-          averageWaitTime: 25,
-          abandonmentRate: 0.03,
-          serviceLevel: 0.97,
-        },
-        isActive: true,
-      },
-    ];
+    return [];
   }
 }
 

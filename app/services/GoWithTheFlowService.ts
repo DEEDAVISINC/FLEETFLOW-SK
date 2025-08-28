@@ -439,79 +439,9 @@ class GoWithTheFlowService extends EventEmitter {
 
   // MARKETPLACE INTEGRATION: Initialize External Load Sources
   private initializeMarketplaceLoads() {
-    // Mock external loads from DAT, Truckstop, etc.
-    this.externalLoads = [
-      {
-        id: 'MKT-001',
-        origin: {
-          lat: 32.7767,
-          lng: -96.797,
-          address: 'Dallas, TX - Cross-Dock Facility',
-        },
-        destination: {
-          lat: 29.7604,
-          lng: -95.3698,
-          address: 'Houston, TX - Distribution Center',
-        },
-        pickupTime: new Date(Date.now() + 6 * 3600 * 1000),
-        deliveryTime: new Date(Date.now() + 12 * 3600 * 1000),
-        weight: 800,
-        dimensions: { length: 12, width: 6, height: 6 },
-        equipmentType: 'Sprinter Van',
-        rate: 420,
-        status: 'pending',
-        urgency: 'high',
-        loadType: 'marketplace', // 5% dispatch fee
-      },
-      {
-        id: 'MKT-002',
-        origin: {
-          lat: 30.2672,
-          lng: -97.7431,
-          address: 'Austin, TX - Manufacturing Plant',
-        },
-        destination: {
-          lat: 29.4241,
-          lng: -98.4936,
-          address: 'San Antonio, TX - Retail Hub',
-        },
-        pickupTime: new Date(Date.now() + 4 * 3600 * 1000),
-        deliveryTime: new Date(Date.now() + 8 * 3600 * 1000),
-        weight: 1200,
-        dimensions: { length: 16, width: 8, height: 7 },
-        equipmentType: 'Box Truck (24ft)',
-        rate: 485,
-        status: 'pending',
-        urgency: 'medium',
-        loadType: 'marketplace', // 5% dispatch fee
-      },
-      {
-        id: 'MKT-003',
-        origin: {
-          lat: 32.7555,
-          lng: -97.3308,
-          address: 'Fort Worth, TX - E-commerce Warehouse',
-        },
-        destination: {
-          lat: 35.4676,
-          lng: -97.5164,
-          address: 'Oklahoma City, OK - Last Mile Hub',
-        },
-        pickupTime: new Date(Date.now() + 2 * 3600 * 1000),
-        deliveryTime: new Date(Date.now() + 6 * 3600 * 1000),
-        weight: 650,
-        dimensions: { length: 8, width: 5, height: 5 },
-        equipmentType: 'Cargo Van',
-        rate: 320,
-        status: 'pending',
-        urgency: 'high',
-        loadType: 'marketplace', // 5% dispatch fee
-      },
-    ];
-
-    this.activityFeed.push(
-      `Marketplace external load integration initialized: ${this.externalLoads.length} external opportunities loaded.`
-    );
+    // Initialize empty external loads array - will be populated by real marketplace integrations
+    this.externalLoads = [];
+    // TODO: Implement real marketplace integrations (DAT, Truckstop, etc.)
   }
 
   // MARKETPLACE: Process External Load Opportunities with Intelligent Bidding
@@ -1326,8 +1256,8 @@ class GoWithTheFlowService extends EventEmitter {
     return {
       totalExternalLoadsEvaluated: this.externalLoads.length,
       externalBidsSubmitted: this.activeBids.size,
-      bidAcceptanceRate: 0.75, // 75% acceptance rate for marketplace loads
-      averageProfitMargin: 18.2, // Average 18.2% profit margin
+      bidAcceptanceRate: 0, // TODO: Calculate real acceptance rate from historical data
+      averageProfitMargin: 0, // TODO: Calculate real profit margin from completed loads
       crossDockingOpportunities: crossDockLoads,
       rightSizedAssetUtilization: rightSizedAssets,
     };

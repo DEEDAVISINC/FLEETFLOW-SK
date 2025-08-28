@@ -150,15 +150,15 @@ export default function CallFlow() {
                     marginBottom: '4px',
                   }}
                 >
-                  FleetFlow Logistics Solutions
+                  FleetFlow System
                 </div>
                 <div
                   style={{
                     fontSize: '0.9rem',
-                    color: 'rgba(255, 255, 255, 0.92)',
+                    color: 'rgba(255, 255, 255, 0.7)',
                   }}
                 >
-                  MC: 123456 | DOT: 789012
+                  Company Info: Not Configured
                 </div>
                 {user && (
                   <div

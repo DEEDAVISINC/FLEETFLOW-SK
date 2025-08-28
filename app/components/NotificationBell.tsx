@@ -40,7 +40,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
     try {
       // Load unread notifications
-      const notificationResult = await notificationService.getUserNotifications(
+      const notifications = await notificationService.getUserNotifications(
         userId,
         {
           limit: 50,
@@ -48,8 +48,8 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
         }
       );
 
-      if (notificationResult.success && notificationResult.notifications) {
-        setUnreadCount(notificationResult.notifications.length);
+      if (notifications && Array.isArray(notifications)) {
+        setUnreadCount(notifications.length);
       }
 
       // Load unread messages

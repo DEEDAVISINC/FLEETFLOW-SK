@@ -17,108 +17,49 @@ import UserProfileWorkflowService, {
 } from '../services/UserProfileWorkflowService';
 import { UserProfile } from '../services/user-data-service';
 
-// Single demo user - can be toggled between DC (Internal Staff) and DM (Driver/Carrier)
-const demoUser = {
-  id: 'DD-MGR-20240101-1',
-  name: 'David Davis',
-  email: 'ddavis@freight1stdirect.com',
-  phone: '(555) 987-6543',
-  department: 'Executive Management',
-  departmentCode: 'MGR',
-  position: 'President & Owner',
-  hiredDate: '2024-01-01',
-  role: 'Owner',
-  status: 'active',
-  lastActive: '2024-12-19T16:45:00Z',
-  cdlNumber: null,
-  carrierMC: 'MC-123456',
-  usDot: 'DOT-7654321',
-  companyName: 'Freight 1st Direct Brokerage LLC',
+// Default empty user profile structure
+const getDefaultUserProfile = () => ({
+  id: '',
+  name: 'Not configured',
+  email: 'Not configured',
+  phone: 'Not configured',
+  department: 'Not assigned',
+  departmentCode: 'N/A',
+  position: 'Not assigned',
+  hiredDate: '',
+  role: 'Not assigned',
+  status: 'inactive',
+  lastActive: '',
+  cdlNumber: '',
+  carrierMC: '',
+  usDot: '',
+  companyName: 'Not configured',
   systemAccess: {
-    level: 'Executive Portal',
-    accessCode: 'ACC-DD-MGR',
-    securityLevel: 'Level 5 - Executive',
-    allowedSystems: [
-      'Executive Dashboard',
-      'Regulatory Compliance',
-      'Financial Management',
-      'Strategic Analytics',
-      'Brokerage Operations',
-      'Risk Management',
-    ],
+    level: 'No access',
+    accessCode: '',
+    securityLevel: 'No clearance',
+    allowedSystems: [],
   },
   emergencyContact: {
-    name: 'Sarah Davis',
-    relation: 'Wife',
-    phone: '(555) 444-8888',
-    altPhone: '(555) 555-9999',
+    name: 'Not provided',
+    relation: 'Not specified',
+    phone: 'Not provided',
+    altPhone: 'Not provided',
   },
-  notes:
-    '• Company President & Owner since 2024\n• 15+ years freight brokerage experience\n• Licensed freight broker with MC authority\n• Responsible for regulatory compliance oversight\n• Emergency contact updated December 2024',
-  permissions: {
-    'executive-dashboard-access': true,
-    'regulatory-compliance-management': true,
-    'financial-oversight': true,
-    'strategic-analytics': true,
-    'brokerage-operations-oversight': true,
-    'risk-management': true,
-    'user-management': true,
-    'compliance-alerts': true,
-    'system-administration': true,
-    'fleet-location-tracking': true,
-    'ai-flow-platform': true,
-    'crm-customer-management': true,
-    'government-contracts-rfp': true,
-    'financial-services-integration': true,
-    'system-notifications-receive': true,
-    'system-profile-edit': true,
-    'system-password-change': true,
-  },
-  // Training progress data - connects to user-management and instructor portal
+  notes: 'Profile not configured',
+  permissions: {},
+  // Training progress data - empty state
   trainingProgress: {
-    required: [
-      'Executive Leadership',
-      'Regulatory Compliance',
-      'Risk Management',
-      'Financial Oversight',
-      'Strategic Planning',
-    ],
-    completed: [
-      {
-        name: 'Executive Leadership',
-        completedDate: '2024-01-15',
-        score: 98,
-        instructor: 'John Maxwell',
-      },
-      {
-        name: 'Regulatory Compliance',
-        completedDate: '2024-02-01',
-        score: 96,
-        instructor: 'Lisa Rodriguez',
-      },
-      {
-        name: 'Risk Management',
-        completedDate: '2024-02-15',
-        score: 94,
-        instructor: 'Michael Chen',
-      },
-    ],
-    inProgress: [
-      {
-        name: 'Strategic Planning',
-        startedDate: '2024-03-01',
-        progress: 75,
-        dueDate: '2024-03-30',
-        instructor: 'Sarah Johnson',
-      },
-    ],
-    overallProgress: 85,
-    totalModules: 5,
-    completedModules: 3,
-    inProgressModules: 1,
-    pendingModules: 1,
+    required: [],
+    completed: [],
+    inProgress: [],
+    overallProgress: 0,
+    totalModules: 0,
+    completedModules: 0,
+    inProgressModules: 0,
+    pendingModules: 0,
   },
-};
+});
 
 // Permission categories with colors - exactly from user-management
 const permissionCategories = {
@@ -300,6 +241,7 @@ const formatDate = (dateString: string) => {
 };
 
 export default function UserProfile() {
+  const [mounted, setMounted] = useState(false);
   const [userPermissions, setUserPermissions] = useState<{
     [key: string]: boolean;
   }>({});
@@ -313,17 +255,43 @@ export default function UserProfile() {
   const [showOpenELDSetup, setShowOpenELDSetup] = useState(false);
   const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
 
-  const currentUser = demoUser;
+  const [currentUser, setCurrentUser] = useState(getDefaultUserProfile());
+
+  // Handle client-side mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Load real user data from authentication/storage
+    // For now, use default empty state until proper user system is implemented
+    const loadUserProfile = async () => {
+      try {
+        // In a real implementation, this would fetch from API or auth system
+        // For now, keeping empty default state to remove mock data
+        setCurrentUser(getDefaultUserProfile());
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        setCurrentUser(getDefaultUserProfile());
+      }
+    };
+
+    loadUserProfile();
+  }, [mounted]);
   const workflowService = UserProfileWorkflowService.getInstance();
   const extensionService = FleetFlowExtensionService.getInstance();
 
   // Check phone dialer status on component mount
   useEffect(() => {
+    if (!mounted) return;
+
     const dialerStatus = localStorage.getItem(
       `fleetflow-phone-dialer-${currentUser.id}`
     );
     setPhoneDialerEnabled(dialerStatus !== 'disabled');
-  }, [currentUser.id]);
+  }, [currentUser.id, mounted]);
 
   // Initialize user permissions and ICA onboarding
   useEffect(() => {
@@ -364,39 +332,35 @@ export default function UserProfile() {
       // If no workflow exists, create one (simulates user creation from user-management)
       console.log('🔄 Initializing user workflow for:', currentUser.name);
 
-      // For DM users, add mock carrier onboarding status
+      // Initialize empty workflow data - no mock data
       if (currentUser.departmentCode === 'DM') {
-        const mockUserProfile: UserProfile = {
+        const emptyUserProfile: UserProfile = {
           ...currentUser,
-          firstName: currentUser.name.split(' ')[0],
-          lastName: currentUser.name.split(' ')[1] || '',
-          location: 'Dallas, TX',
-          lastLogin: new Date().toISOString(),
+          firstName: currentUser.name?.split(' ')[0] || '',
+          lastName: currentUser.name?.split(' ')[1] || '',
+          location: 'Not configured',
+          lastLogin: '',
           createdDate: currentUser.hiredDate,
-          status: 'active' as const,
+          status: 'inactive' as const,
         };
 
-        const mockWorkflowData: UserProfileWorkflowData = {
-          user: mockUserProfile,
+        const emptyWorkflowData: UserProfileWorkflowData = {
+          user: emptyUserProfile,
           trainingAssignments: [],
           trainingProgress: [],
           icaOnboardingStatus: {
-            currentStep: 1,
+            currentStep: 0,
             completedSteps: [],
             overallProgress: 0,
           },
           carrierOnboardingStatus: {
-            currentStep: 4,
-            overallProgress: 57,
-            completedSteps: [
-              'FMCSA Verification',
-              'Travel Limits',
-              'Documents',
-            ],
+            currentStep: 0,
+            overallProgress: 0,
+            completedSteps: [],
           },
-          workflowStatus: 'onboarding',
+          workflowStatus: 'training',
         };
-        setWorkflowData(mockWorkflowData);
+        setWorkflowData(emptyWorkflowData);
       }
     }
   }, [currentUser, workflowService]);
@@ -415,6 +379,36 @@ export default function UserProfile() {
       }
     }
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          background:
+            'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+          padding: '60px 16px 16px 16px',
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div
+            style={{ fontSize: '48px', marginBottom: '16px', color: 'white' }}
+          >
+            ⏳
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px' }}>
+            Loading User Profile...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Exact return structure from user-management with proper styling
   return (
@@ -875,7 +869,7 @@ export default function UserProfile() {
                           boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                         }}
                       >
-                        {currentUser.carrierMC || 'MC-123456'}
+                        {currentUser.carrierMC || 'Not configured'}
                       </div>
                     </div>
 
@@ -940,7 +934,7 @@ export default function UserProfile() {
                           boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                         }}
                       >
-                        {currentUser.cdlNumber || 'CDL-123456789'}
+                        {currentUser.cdlNumber || 'Not provided'}
                       </div>
                     </div>
 
@@ -1000,7 +994,7 @@ export default function UserProfile() {
                           boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                         }}
                       >
-                        {currentUser.usDot || 'DOT-3456789'}
+                        {currentUser.usDot || 'Not configured'}
                       </div>
                     </div>
                   </>
@@ -2250,9 +2244,9 @@ export default function UserProfile() {
                           );
                           setPhoneDialerEnabled(false);
                           alert(
-                            '📞 Phone Dialer disconnected for ' +
-                              currentUser.name +
-                              '. The phone widget will disappear.'
+                            currentUser.name !== 'Not configured'
+                              ? `📞 Phone Dialer disconnected for ${currentUser.name}. The phone widget will disappear.`
+                              : '📞 Phone Dialer disconnected. The phone widget will disappear.'
                           );
                         } else {
                           localStorage.removeItem(
@@ -2260,13 +2254,17 @@ export default function UserProfile() {
                           );
                           setPhoneDialerEnabled(true);
                           alert(
-                            '📞 Phone Dialer connected for ' +
-                              currentUser.name +
-                              '. The phone widget will appear shortly.'
+                            currentUser.name !== 'Not configured'
+                              ? `📞 Phone Dialer connected for ${currentUser.name}. The phone widget will appear shortly.`
+                              : '📞 Phone Dialer connected. The phone widget will appear shortly.'
                           );
                         }
                         // Small delay to let state update, then refresh to show/hide widget
-                        setTimeout(() => window.location.reload(), 800);
+                        setTimeout(() => {
+                          if (typeof window !== 'undefined') {
+                            window.location.reload();
+                          }
+                        }, 800);
                       }}
                     >
                       {phoneDialerEnabled ? 'DISCONNECT' : 'CONNECT'}
@@ -2480,7 +2478,9 @@ export default function UserProfile() {
                       }}
                       onClick={() => {
                         alert(
-                          'Testing phone connection for ' + currentUser.name
+                          currentUser.name !== 'Not configured'
+                            ? `Testing phone connection for ${currentUser.name}`
+                            : 'Cannot test connection - user profile not configured'
                         );
                       }}
                     >
@@ -2583,7 +2583,9 @@ export default function UserProfile() {
                               setupData
                             );
                             alert(
-                              `Phone setup completed successfully for ${currentUser.name}!`
+                              currentUser.name !== 'Not configured'
+                                ? `Phone setup completed successfully for ${currentUser.name}!`
+                                : 'Phone setup completed successfully!'
                             );
                             setShowOpenELDSetup(false);
                           }}

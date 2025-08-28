@@ -1,13 +1,9 @@
 'use client';
 
-// import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import {
-  getShipperDashboardSummary,
-  getShipperLoads,
-} from '../services/loadService';
 import { vendorDocumentService } from '../services/vendorDocumentService';
 
 interface VendorSession {
@@ -498,7 +494,7 @@ interface CustomField {
 }
 
 export default function VendorPortalPage() {
-  // const { data: authSession, status } = useSession();
+  const { data: authSession, status } = useSession();
   const [loads, setLoads] = useState<any[]>([]);
   const [dashboardSummary, setDashboardSummary] = useState<any>(null);
   const [selectedLoad, setSelectedLoad] = useState<any>(null);
@@ -652,44 +648,40 @@ export default function VendorPortalPage() {
   };
 
   // Live tracking functions
-  const generateMockTrackingData = (load: any): LiveTrackingData => {
-    const baseLat = 33.749; // Atlanta
-    const baseLng = -84.388;
-    const progress =
-      load.currentStatus === 'in_transit' ? Math.random() * 0.8 + 0.1 : 0;
-
-    return {
-      loadId: load.loadId,
-      currentLocation: {
-        lat: baseLat + (Math.random() - 0.5) * 2,
-        lng: baseLng + (Math.random() - 0.5) * 2,
-        timestamp: new Date().toISOString(),
-        city: 'Atlanta',
-        state: 'GA',
-      },
-      estimatedProgress: progress,
-      realTimeETA: new Date(
-        Date.now() + Math.random() * 24 * 60 * 60 * 1000
-      ).toISOString(),
-      currentSpeed: Math.random() * 20 + 50, // 50-70 mph
-      lastUpdate: new Date().toISOString(),
-      isOnline: Math.random() > 0.1, // 90% online rate
-    };
+  // Load real tracking data from API
+  const loadTrackingData = async (
+    loadId: string
+  ): Promise<LiveTrackingData | null> => {
+    try {
+      // TODO: Replace with actual tracking API call
+      // const response = await fetch(`/api/tracking/${loadId}`);
+      // const trackingData = await response.json();
+      // return trackingData;
+      return null; // No tracking data available yet
+    } catch (error) {
+      console.error('Error loading tracking data:', error);
+      return null;
+    }
   };
 
-  const updateLiveTracking = () => {
-    const inTransitLoads = loads.filter(
+  const updateLiveTracking = async () => {
+    const inTransitLoads = (loads || []).filter(
       (load) => load.currentStatus === 'in_transit'
     );
-    const newTrackingData = inTransitLoads.map((load) =>
-      generateMockTrackingData(load)
+
+    // Load real tracking data for each in-transit load
+    const trackingPromises = inTransitLoads.map((load) =>
+      loadTrackingData(load.loadId)
     );
-    setLiveTrackingData(newTrackingData);
+    const trackingResults = await Promise.all(trackingPromises);
+    const validTrackingData = trackingResults.filter((data) => data !== null);
+
+    setLiveTrackingData(validTrackingData as LiveTrackingData[]);
   };
 
   // Start live tracking when loads tab is active
   useEffect(() => {
-    if (activeTab === 'operations' && loads.length > 0) {
+    if (activeTab === 'operations' && loads && loads.length > 0) {
       // Initial update
       updateLiveTracking();
 
@@ -710,272 +702,71 @@ export default function VendorPortalPage() {
   }, [activeTab, loads]);
 
   useEffect(() => {
-    // Check if user is logged in with NextAuth
-    if (status === 'loading') return; // Still loading
-
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
-    }
-
-    // Check if user has vendor role
-    if (authSession?.user?.role !== 'vendor') {
-      router.push('/'); // Redirect to main dashboard
-      return;
-    }
-
-    // Get company ID from session (stored in NextAuth)
-    const companyId = (authSession.user as any).companyId;
-    if (companyId) {
-      loadDashboardData(companyId);
-      loadPhase1Data(companyId);
-      loadPhase2Data(companyId);
-    }
-  }, [status, authSession, router]);
+    // Load real dashboard data from API
+    loadDashboardData();
+    loadPhase1Data();
+    loadPhase2Data();
+  }, []);
 
   // Removed useEffect for tab changes - now handled directly in onClick
 
   // No need for floating scroll button since we use page refresh
 
-  const loadDashboardData = async (shipperId: string) => {
+  const loadDashboardData = async () => {
     try {
       setIsLoading(true);
-      const [loadsData, summaryData] = await Promise.all([
-        getShipperLoads(shipperId),
-        getShipperDashboardSummary(shipperId),
-      ]);
 
-      // Add a mock in-transit load for demonstration
-      const mockInTransitLoad = {
-        id: 'LF-25001-ATLMIA-WMT-DVFL-001',
-        loadId: 'LF-25001-ATLMIA-WMT-DVFL-001',
-        currentStatus: 'in_transit',
-        origin: 'Atlanta, GA',
-        destination: 'Miami, FL',
-        commodity: 'Electronics',
-        weight: 15000,
-        equipment: 'Dry Van',
-        rate: 2800,
-        pickupDate: new Date(
-          Date.now() - 2 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        deliveryDate: new Date(
-          Date.now() + 1 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        driver: 'John Rodriguez',
-        truck: 'ABC-123',
-        trailer: 'XYZ-789',
-      };
+      // TODO: Replace with actual API calls
+      // const response = await fetch('/api/vendor/dashboard');
+      // const data = await response.json();
+      // setLoads(data.loads || []);
+      // setDashboardSummary(data.summary || null);
 
-      setLoads([mockInTransitLoad, ...loadsData]);
-      setDashboardSummary(summaryData);
+      // For now, set empty states
+      setLoads([]);
+      setDashboardSummary(null);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      setLoads([]);
+      setDashboardSummary(null);
     } finally {
       setIsLoading(false);
     }
   };
 
   // Phase 1 - Load enhanced data
-  const loadPhase1Data = async (shipperId: string) => {
+  const loadPhase1Data = async () => {
     try {
-      // Mock data for Phase 1 features
-      const mockLoadRequests: LoadRequest[] = [
-        {
-          id: 'LR-001',
-          requestType: 'load',
-          status: 'quoted',
-          submittedDate: new Date(
-            Date.now() - 2 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          pickupDate: new Date(
-            Date.now() + 3 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          deliveryDate: new Date(
-            Date.now() + 5 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          origin: 'Atlanta, GA',
-          destination: 'Miami, FL',
-          commodity: 'Electronics',
-          weight: 15000,
-          equipment: 'Dry Van',
-          rate: 2800,
-          brokerResponse: 'Rate confirmed. Driver assigned.',
-          responseDate: new Date(
-            Date.now() - 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-        },
-        {
-          id: 'LR-002',
-          requestType: 'rfp',
-          status: 'pending',
-          submittedDate: new Date(
-            Date.now() - 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          pickupDate: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          deliveryDate: new Date(
-            Date.now() + 10 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          origin: 'Chicago, IL',
-          destination: 'Los Angeles, CA',
-          commodity: 'Automotive Parts',
-          weight: 25000,
-          equipment: 'Reefer',
-          specialInstructions: 'Temperature controlled - keep at 35°F',
-        },
-      ];
+      // TODO: Replace with actual API calls for Phase 1 features
+      // const loadRequestsResponse = await fetch('/api/vendor/load-requests');
+      // const financialResponse = await fetch('/api/vendor/financials');
+      // const usersResponse = await fetch('/api/vendor/users');
+      // const analyticsResponse = await fetch('/api/vendor/analytics');
 
-      const mockFinancialData: FinancialData = {
-        outstandingInvoices: [
-          {
-            id: 'INV-001',
-            loadId: 'LF-25001-ATLMIA-WMT-DVFL-001',
-            amount: 2800,
-            dueDate: new Date(
-              Date.now() + 15 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            status: 'pending',
-            description: 'Atlanta to Miami - Electronics',
-          },
-          {
-            id: 'INV-002',
-            loadId: 'LF-25002-CHILAX-TS-DVFL-002',
-            amount: 4200,
-            dueDate: new Date(
-              Date.now() + 8 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            status: 'pending',
-            description: 'Chicago to LA - Automotive Parts',
-          },
-        ],
-        paymentHistory: [
-          {
-            id: 'PAY-001',
-            invoiceId: 'INV-003',
-            amount: 1800,
-            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            method: 'ACH',
-            reference: 'ACH-2024-001',
-          },
-        ],
-        creditLimit: 50000,
-        availableCredit: 43000,
-        paymentTerms: 'Net 30',
-        totalSpent: 125000,
-        averageRate: 2850,
-        onTimePaymentRate: 95.2,
-      };
-
-      const mockUserAccess: UserAccess[] = [
-        {
-          id: 'USR-001',
-          name: 'John Smith',
-          email: 'john.smith@abcmfg.com',
-          role: 'primary',
-          permissions: {
-            viewLoads: true,
-            submitRequests: true,
-            viewFinancials: true,
-            manageUsers: true,
-            accessAnalytics: true,
-          },
-          lastLogin: new Date().toISOString(),
-          isActive: true,
-        },
-        {
-          id: 'USR-002',
-          name: 'Sarah Johnson',
-          email: 'sarah.johnson@abcmfg.com',
-          role: 'secondary',
-          permissions: {
-            viewLoads: true,
-            submitRequests: true,
-            viewFinancials: false,
-            manageUsers: false,
-            accessAnalytics: false,
-          },
-          lastLogin: new Date(
-            Date.now() - 2 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          isActive: true,
-        },
-      ];
-
-      const mockAnalyticsData: AnalyticsData = {
-        loadMetrics: {
-          totalLoads: 47,
-          completedLoads: 42,
-          onTimeDelivery: 96.2,
-          averageTransitTime: 2.3,
-          totalRevenue: 125000,
-          averageRate: 2850,
-        },
-        performanceTrends: {
-          monthlyLoads: [12, 15, 18, 14, 16, 19, 22, 20, 18, 21, 24, 26],
-          monthlyRevenue: [
-            32000, 38000, 42000, 36000, 41000, 45000, 52000, 48000, 43000,
-            49000, 55000, 58000,
-          ],
-          onTimeRate: [94, 95, 96, 93, 97, 96, 98, 95, 96, 97, 98, 96],
-        },
-        topLanes: [
-          {
-            origin: 'Atlanta, GA',
-            destination: 'Miami, FL',
-            loadCount: 12,
-            averageRate: 2800,
-          },
-          {
-            origin: 'Chicago, IL',
-            destination: 'Los Angeles, CA',
-            loadCount: 8,
-            averageRate: 4200,
-          },
-        ],
-      };
-
-      setLoadRequests(mockLoadRequests);
-      setFinancialData(mockFinancialData);
-      setUserAccess(mockUserAccess);
-      setAnalyticsData(mockAnalyticsData);
+      // For now, set empty states
+      setLoadRequests([]);
+      setFinancialData(null);
+      setUserAccess([]);
+      setAnalyticsData(null);
     } catch (error) {
       console.error('Error loading Phase 1 data:', error);
     }
   };
 
   // Phase 2 - Load enhanced data
-  const loadPhase2Data = async (shipperId: string) => {
+  const loadPhase2Data = async () => {
     try {
-      // Mock data for Phase 2 features
-      const mockErpIntegration: ERPIntegration = {
-        sap: {
-          connected: true,
-          lastSync: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          syncStatus: 'active',
-          modules: ['MM', 'SD', 'FI', 'CO'],
-        },
-        oracle: {
-          connected: false,
-          lastSync: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-          syncStatus: 'disconnected',
-          modules: [],
-        },
-        netsuite: {
-          connected: true,
-          lastSync: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          syncStatus: 'active',
-          modules: ['Inventory', 'Orders', 'Financials'],
-        },
-        quickbooks: {
-          connected: true,
-          lastSync: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-          syncStatus: 'active',
-          modules: ['Invoicing', 'Payments', 'Reports'],
-        },
-      };
+      // TODO: Replace with actual API calls for Phase 2 features
+      // const erpResponse = await fetch('/api/vendor/erp-integrations');
+      // const wmsResponse = await fetch('/api/vendor/wms-integrations');
+      // const contractsResponse = await fetch('/api/vendor/contracts');
+      // const trackingResponse = await fetch('/api/vendor/advanced-tracking');
+      // const brandingResponse = await fetch('/api/vendor/branding');
+      // const workflowResponse = await fetch('/api/vendor/workflows');
 
+      // For now, set empty states
+
+      /*
       const mockWmsIntegration: WMSIntegration = {
         warehouseManagement: {
           connected: true,
@@ -1388,13 +1179,14 @@ export default function VendorPortalPage() {
           ],
         },
       };
+      */
 
-      setErpIntegration(mockErpIntegration);
-      setWmsIntegration(mockWmsIntegration);
-      setContractManagement(mockContractManagement);
-      setAdvancedTracking(mockAdvancedTracking);
-      setCustomBranding(mockCustomBranding);
-      setWorkflowCustomization(mockWorkflowCustomization);
+      setErpIntegration(null);
+      setWmsIntegration(null);
+      setContractManagement(null);
+      setAdvancedTracking(null);
+      setCustomBranding(null);
+      setWorkflowCustomization(null);
     } catch (error) {
       console.error('Error loading Phase 2 data:', error);
     }
@@ -1539,33 +1331,7 @@ export default function VendorPortalPage() {
     );
   }
 
-  // Show loading while authentication is being checked
-  if (status === 'loading') {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        }}
-      >
-        <div style={{ textAlign: 'center', color: 'white' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🚛</div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-            FleetFlow Vendor Portal
-          </h2>
-          <p>Loading your account...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect handled in useEffect, return null if not authenticated or not vendor
-  if (status === 'unauthenticated' || authSession?.user?.role !== 'vendor') {
-    return null;
-  }
+  // No authentication restrictions - accessible like any other FleetFlow page
 
   return (
     <div
@@ -1605,7 +1371,7 @@ export default function VendorPortalPage() {
               marginBottom: '8px',
             }}
           >
-            🚚 {authSession?.user?.name}
+            🚚 Vendor Portal Dashboard
           </h1>
           <p
             style={{
@@ -2377,19 +2143,89 @@ export default function VendorPortalPage() {
               >
                 🔄 Loading recent activity...
               </div>
-            ) : loads.length === 0 ? (
+            ) : !loads || loads.length === 0 ? (
               <div
                 style={{
+                  background:
+                    'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '48px 32px',
                   textAlign: 'center',
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  padding: '40px',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 }}
               >
-                📭 No loads found
+                <div
+                  style={{
+                    fontSize: '3rem',
+                    marginBottom: '20px',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+                  }}
+                >
+                  🚛
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    color: '#ffffff',
+                    marginBottom: '12px',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  No Recent Activity
+                </h3>
+                <p
+                  style={{
+                    fontSize: '1rem',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '24px',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  Your recent load activity will appear here once loads are
+                  created and tracked in the system.
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      color: '#60a5fa',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                    }}
+                  >
+                    📋 Load Tracking
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      color: '#34d399',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                    }}
+                  >
+                    📊 Real-time Updates
+                  </div>
+                </div>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '12px' }}>
-                {loads.slice(0, 5).map((load, index) => (
+                {(loads || []).slice(0, 5).map((load, index) => (
                   <div
                     key={index}
                     style={{
@@ -2428,7 +2264,8 @@ export default function VendorPortalPage() {
                             fontSize: '0.9rem',
                           }}
                         >
-                          {load.route.origin} → {load.route.destination}
+                          {load.route?.origin || 'N/A'} →{' '}
+                          {load.route?.destination || 'N/A'}
                         </div>
                       </div>
                     </div>
@@ -2460,6 +2297,104 @@ export default function VendorPortalPage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Dashboard Empty State */}
+      {activeTab === 'dashboard' && !dashboardSummary && (
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+            backdropFilter: 'blur(15px)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '60px 40px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '4rem',
+              marginBottom: '24px',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+            }}
+          >
+            📊
+          </div>
+          <h3
+            style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '16px',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+            }}
+          >
+            Dashboard Ready for Data
+          </h3>
+          <p
+            style={{
+              fontSize: '1.2rem',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '32px',
+              lineHeight: '1.6',
+              maxWidth: '600px',
+              margin: '0 auto 32px',
+            }}
+          >
+            Your dashboard will display real-time metrics, KPIs, and business
+            intelligence once your loads and operations data is connected.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#60a5fa',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              📈 Performance Metrics
+            </div>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#34d399',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              💰 Financial Analytics
+            </div>
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#fbbf24',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              🚚 Fleet Insights
+            </div>
           </div>
         </div>
       )}
@@ -2661,19 +2596,105 @@ export default function VendorPortalPage() {
               >
                 🔄 Loading your loads...
               </div>
-            ) : loads.length === 0 ? (
+            ) : !loads || loads.length === 0 ? (
               <div
                 style={{
+                  background:
+                    'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+                  backdropFilter: 'blur(15px)',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '60px 40px',
                   textAlign: 'center',
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  padding: '40px',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
                 }}
               >
-                📭 No loads found
+                <div
+                  style={{
+                    fontSize: '4rem',
+                    marginBottom: '24px',
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                  }}
+                >
+                  🚛
+                </div>
+                <h3
+                  style={{
+                    fontSize: '2rem',
+                    fontWeight: '700',
+                    color: '#ffffff',
+                    marginBottom: '16px',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  Operations Center Ready
+                </h3>
+                <p
+                  style={{
+                    fontSize: '1.2rem',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '32px',
+                    lineHeight: '1.6',
+                    maxWidth: '600px',
+                    margin: '0 auto 32px',
+                  }}
+                >
+                  Your load operations, live tracking, and fleet management
+                  tools will appear here once connected to your transportation
+                  management system.
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      border: '1px solid rgba(59, 130, 246, 0.4)',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      color: '#60a5fa',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                    }}
+                  >
+                    📊 Live Tracking
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.4)',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      color: '#34d399',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                    }}
+                  >
+                    🗺️ Route Optimization
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      color: '#fbbf24',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                    }}
+                  >
+                    📋 Load Management
+                  </div>
+                </div>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '20px' }}>
-                {loads.map((load, index) => {
+                {(loads || []).map((load, index) => {
                   const trackingData = getTrackingStatus(load.loadId);
                   const isInTransit = load.currentStatus === 'in_transit';
 
@@ -2764,7 +2785,8 @@ export default function VendorPortalPage() {
                               marginBottom: '8px',
                             }}
                           >
-                            {load.route.origin} → {load.route.destination}
+                            {load.route?.origin || 'N/A'} →{' '}
+                            {load.route?.destination || 'N/A'}
                           </div>
                           <div
                             style={{
@@ -2772,7 +2794,7 @@ export default function VendorPortalPage() {
                               fontSize: '0.9rem',
                             }}
                           >
-                            Distance: {load.route.distance}
+                            Distance: {load.route?.distance || 'N/A'}
                           </div>
                         </div>
                         <div
@@ -3262,7 +3284,7 @@ export default function VendorPortalPage() {
                             style={{
                               fontSize: '1.2rem',
                               marginBottom: '4px',
-                              opacity: load.milestones.bolCreated?.completed
+                              opacity: load.milestones?.bolCreated?.completed
                                 ? 1
                                 : 0.4,
                             }}
@@ -3271,7 +3293,7 @@ export default function VendorPortalPage() {
                           </div>
                           <div
                             style={{
-                              color: load.milestones.bolCreated?.completed
+                              color: load.milestones?.bolCreated?.completed
                                 ? 'white'
                                 : 'rgba(255, 255, 255, 0.5)',
                               fontSize: '0.8rem',
@@ -3280,14 +3302,14 @@ export default function VendorPortalPage() {
                           >
                             BOL Created
                           </div>
-                          {load.milestones.bolCreated?.completed && (
+                          {load.milestones?.bolCreated?.completed && (
                             <div
                               style={{
                                 color: 'rgba(255, 255, 255, 0.6)',
                                 fontSize: '0.7rem',
                               }}
                             >
-                              {load.milestones.bolCreated.timestamp
+                              {load.milestones?.bolCreated?.timestamp
                                 ? new Date(
                                     load.milestones.bolCreated.timestamp
                                   ).toLocaleDateString()
@@ -3301,7 +3323,7 @@ export default function VendorPortalPage() {
                             style={{
                               fontSize: '1.2rem',
                               marginBottom: '4px',
-                              opacity: load.milestones.transitUpdate?.completed
+                              opacity: load.milestones?.transitUpdate?.completed
                                 ? 1
                                 : 0.4,
                             }}
@@ -3310,7 +3332,7 @@ export default function VendorPortalPage() {
                           </div>
                           <div
                             style={{
-                              color: load.milestones.transitUpdate?.completed
+                              color: load.milestones?.transitUpdate?.completed
                                 ? 'white'
                                 : 'rgba(255, 255, 255, 0.5)',
                               fontSize: '0.8rem',
@@ -3319,7 +3341,7 @@ export default function VendorPortalPage() {
                           >
                             In Transit
                           </div>
-                          {load.milestones.transitUpdate?.completed && (
+                          {load.milestones?.transitUpdate?.completed && (
                             <div
                               style={{
                                 color: 'rgba(255, 255, 255, 0.6)',
@@ -3341,7 +3363,7 @@ export default function VendorPortalPage() {
                             style={{
                               fontSize: '1.2rem',
                               marginBottom: '4px',
-                              opacity: load.milestones.deliveryComplete
+                              opacity: load.milestones?.deliveryComplete
                                 ?.completed
                                 ? 1
                                 : 0.4,
@@ -3351,7 +3373,8 @@ export default function VendorPortalPage() {
                           </div>
                           <div
                             style={{
-                              color: load.milestones.deliveryComplete?.completed
+                              color: load.milestones?.deliveryComplete
+                                ?.completed
                                 ? 'white'
                                 : 'rgba(255, 255, 255, 0.5)',
                               fontSize: '0.8rem',
@@ -3360,14 +3383,14 @@ export default function VendorPortalPage() {
                           >
                             Delivered
                           </div>
-                          {load.milestones.deliveryComplete?.completed && (
+                          {load.milestones?.deliveryComplete?.completed && (
                             <div
                               style={{
                                 color: 'rgba(255, 255, 255, 0.6)',
                                 fontSize: '0.7rem',
                               }}
                             >
-                              {load.milestones.deliveryComplete.timestamp
+                              {load.milestones?.deliveryComplete?.timestamp
                                 ? new Date(
                                     load.milestones.deliveryComplete.timestamp
                                   ).toLocaleDateString()
@@ -3405,16 +3428,16 @@ export default function VendorPortalPage() {
                               fontWeight: '600',
                             }}
                           >
-                            {load.contact.brokerName}
+                            {load.contact?.brokerName || 'N/A'}
                           </div>
-                          {load.contact.dispatcherName && (
+                          {load.contact?.dispatcherName && (
                             <div
                               style={{
                                 color: 'rgba(255, 255, 255, 0.6)',
                                 fontSize: '0.8rem',
                               }}
                             >
-                              Dispatcher: {load.contact.dispatcherName}
+                              Dispatcher: {load.contact?.dispatcherName}
                             </div>
                           )}
                         </div>
@@ -3502,11 +3525,8 @@ export default function VendorPortalPage() {
 
             {/* Broker Information */}
             {(() => {
-              const broker = (authSession?.user as any)?.companyId
-                ? vendorDocumentService.getShipperBroker(
-                    (authSession.user as any).companyId
-                  )
-                : null;
+              const broker =
+                vendorDocumentService.getShipperBroker('demo-company-001');
 
               if (broker) {
                 return (
@@ -3546,7 +3566,7 @@ export default function VendorPortalPage() {
                           Name:
                         </span>
                         <div style={{ color: 'white', fontWeight: '500' }}>
-                          {broker.brokerName}
+                          {broker?.brokerName || 'N/A'}
                         </div>
                       </div>
                       <div>
@@ -3585,7 +3605,7 @@ export default function VendorPortalPage() {
                       }}
                     >
                       All document uploads will automatically notify{' '}
-                      {broker.brokerName}
+                      {broker?.brokerName || 'your broker'}
                     </p>
                   </div>
                 );
@@ -5634,6 +5654,105 @@ export default function VendorPortalPage() {
         </div>
       )}
 
+      {/* Financial Empty State */}
+      {activeTab === 'financials' && !financialData && (
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+            backdropFilter: 'blur(15px)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '60px 40px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '4rem',
+              marginBottom: '24px',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+            }}
+          >
+            💰
+          </div>
+          <h3
+            style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '16px',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+            }}
+          >
+            Financial Center Ready
+          </h3>
+          <p
+            style={{
+              fontSize: '1.2rem',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '32px',
+              lineHeight: '1.6',
+              maxWidth: '600px',
+              margin: '0 auto 32px',
+            }}
+          >
+            Your financial dashboard will display invoicing, payments, credit
+            management, and financial analytics once connected to your
+            accounting system.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#60a5fa',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              🧾 Invoice Management
+            </div>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#34d399',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              💳 Payment Processing
+            </div>
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#fbbf24',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              📊 Financial Reports
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Analytics Tab */}
       {activeTab === 'analytics' && analyticsData && (
         <div>
@@ -6443,6 +6562,105 @@ export default function VendorPortalPage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Analytics Empty State */}
+      {activeTab === 'analytics' && !analyticsData && (
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+            backdropFilter: 'blur(15px)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '60px 40px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '4rem',
+              marginBottom: '24px',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+            }}
+          >
+            📈
+          </div>
+          <h3
+            style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '16px',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+            }}
+          >
+            Analytics Hub Ready
+          </h3>
+          <p
+            style={{
+              fontSize: '1.2rem',
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '32px',
+              lineHeight: '1.6',
+              maxWidth: '600px',
+              margin: '0 auto 32px',
+            }}
+          >
+            Advanced business intelligence, performance metrics, and predictive
+            analytics will be available here once your operational data is
+            connected.
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#60a5fa',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              📊 Performance KPIs
+            </div>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#34d399',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              📈 Trend Analysis
+            </div>
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 24px',
+                color: '#fbbf24',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+              }}
+            >
+              🎯 Predictive Insights
             </div>
           </div>
         </div>
@@ -7778,11 +7996,12 @@ export default function VendorPortalPage() {
                 <strong>Status:</strong> {selectedLoad.statusDisplay}
               </div>
               <div style={{ marginBottom: '20px' }}>
-                <strong>Route:</strong> {selectedLoad.route.origin} →{' '}
-                {selectedLoad.route.destination}
+                <strong>Route:</strong> {selectedLoad.route?.origin || 'N/A'} →{' '}
+                {selectedLoad.route?.destination || 'N/A'}
               </div>
               <div style={{ marginBottom: '20px' }}>
-                <strong>Distance:</strong> {selectedLoad.route.distance}
+                <strong>Distance:</strong>{' '}
+                {selectedLoad.route?.distance || 'N/A'}
               </div>
               <div style={{ marginBottom: '20px' }}>
                 <strong>Estimated Delivery:</strong>{' '}
@@ -7794,12 +8013,12 @@ export default function VendorPortalPage() {
               </div>
               <div style={{ marginBottom: '20px' }}>
                 <strong>Broker Contact:</strong>{' '}
-                {selectedLoad.contact.brokerName}
+                {selectedLoad.contact?.brokerName || 'N/A'}
               </div>
-              {selectedLoad.contact.dispatcherName && (
+              {selectedLoad.contact?.dispatcherName && (
                 <div style={{ marginBottom: '20px' }}>
                   <strong>Dispatcher:</strong>{' '}
-                  {selectedLoad.contact.dispatcherName}
+                  {selectedLoad.contact?.dispatcherName}
                 </div>
               )}
             </div>

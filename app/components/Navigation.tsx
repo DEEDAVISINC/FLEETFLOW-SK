@@ -154,6 +154,9 @@ export default function ProfessionalNavigation() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    // Extra safety guard for SSR
+    if (!isHydrated || typeof document === 'undefined') return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -177,7 +180,7 @@ export default function ProfessionalNavigation() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [activeDropdown, activeSubDropdown]);
+  }, [activeDropdown, activeSubDropdown, isHydrated]);
 
   // Prevent hydration mismatch by not rendering until hydrated
   if (!isHydrated) {
@@ -1108,20 +1111,7 @@ export default function ProfessionalNavigation() {
                   >
                     💰 Accounting & Finance
                   </Link>
-                  <Link
-                    href='/user-profile'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📊 My Subscription
-                  </Link>
+
                   <Link
                     href='/billing-invoices'
                     onClick={handleDropdownClose}

@@ -136,12 +136,14 @@ export default function MarketplaceIntegration() {
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-medium ${getUrgencyColor(load.urgency)}`}
                     >
-                      {load.urgency.toUpperCase()}
+                      {load.urgency?.toUpperCase() || 'UNKNOWN'}
                     </span>
                   </div>
                   <div className='mb-2 text-sm text-gray-300'>
-                    <div>📍 {load.origin.address}</div>
-                    <div>📍 {load.destination.address}</div>
+                    <div>📍 {load.origin?.address || 'Unknown origin'}</div>
+                    <div>
+                      📍 {load.destination?.address || 'Unknown destination'}
+                    </div>
                   </div>
                   <div className='flex items-center justify-between'>
                     <div className='font-bold text-green-400'>
@@ -188,15 +190,17 @@ export default function MarketplaceIntegration() {
                             : 'bg-yellow-100 text-yellow-800'
                       }`}
                     >
-                      {bid.status.toUpperCase()}
+                      {bid.status?.toUpperCase() || 'UNKNOWN'}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
                     <div className='font-bold text-green-400'>
-                      ${bid.bidAmount.toFixed(2)}
+                      ${bid.bidAmount?.toFixed(2) || '0.00'}
                     </div>
                     <div className='text-xs text-gray-400'>
-                      {new Date(bid.submittedAt).toLocaleTimeString()}
+                      {bid.submittedAt
+                        ? new Date(bid.submittedAt).toLocaleTimeString()
+                        : 'Unknown time'}
                     </div>
                   </div>
                 </div>
@@ -240,6 +244,3 @@ export default function MarketplaceIntegration() {
     </div>
   );
 }
-
-
-

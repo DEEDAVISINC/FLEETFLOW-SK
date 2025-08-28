@@ -25,9 +25,10 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [flowterOpen, setFlowterOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(false); // Default to false for SSR
   const pathname = usePathname();
 
-  // Get user data for permissions and functionality
+  // Get user data for permissions and functionality - but don't use until hydrated
   const { user } = getCurrentUser();
 
   // Track hydration to prevent mismatches
@@ -56,6 +57,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // Generate sample notifications for the current user
   useEffect(() => {
+    if (!isHydrated) return; // Wait for hydration
+
     const generateSampleData = async () => {
       // Only generate once per session and if user is available
       const hasGeneratedSamples = sessionStorage.getItem(
@@ -91,7 +94,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     };
 
     generateSampleData();
-  }, [user?.id]); // Run when user is available
+  }, [user?.id, isHydrated]); // Run when user is available and hydrated
 
   const handleFlowterOpen = () => {
     setFlowterOpen(true);
@@ -102,62 +105,66 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   };
 
   // Show Flowter on landing page for subscription questions, and on other pages except university
-  const shouldShowFlowter =
-    pathname === '/' || // Always show on landing page for subscription help
-    !pathname?.includes('/university') ||
-    pathname?.includes('/training/instructor');
+  const shouldShowFlowter = isHydrated
+    ? pathname === '/' || // Always show on landing page for subscription help
+      !pathname?.includes('/university') ||
+      pathname?.includes('/training/instructor')
+    : false;
+
+  // Check if user has phone dialer enabled (from user profile settings)
+  useEffect(() => {
+    if (!isHydrated || !user?.id) return; // Wait for hydration and user
+
+    const isEnabled =
+      localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) !== 'disabled';
+    setPhoneDialerEnabled(isEnabled);
+  }, [user?.id, isHydrated]);
+
+  // Compute all conditional logic safely - only after hydration
+  const isOperationsPage = isHydrated
+    ? pathname &&
+      !pathname.includes('/auth/') &&
+      !pathname.includes('/privacy') &&
+      !pathname.includes('/terms') &&
+      !pathname.includes('/carrier-landing') &&
+      pathname !== '/broker' && // Allow broker subpages, just not the main broker page
+      !pathname.includes('/university') &&
+      pathname !== '/' &&
+      pathname !== '/plans'
+    : false;
 
   // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
   const hasPhoneEligibleRole =
-    user &&
-    (user.role === 'admin' ||
-      user.role === 'manager' ||
-      user.role === 'dispatcher' ||
-      checkPermission('hasDispatchAccess'));
-
-  // Check if user has phone dialer enabled (from user profile settings)
-  // Use state to prevent hydration mismatch
-  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
-
-  useEffect(() => {
-    if (user?.id) {
-      const isEnabled =
-        localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) !==
-        'disabled';
-      setPhoneDialerEnabled(isEnabled);
-    }
-  }, [user?.id]);
-
-  // Only show phone widget on operations pages (exclude auth, landing, and other non-operations pages)
-  const isOperationsPage =
-    pathname &&
-    !pathname.includes('/auth/') &&
-    !pathname.includes('/privacy') &&
-    !pathname.includes('/terms') &&
-    !pathname.includes('/carrier-landing') &&
-    pathname !== '/broker' && // Allow broker subpages, just not the main broker page
-    !pathname.includes('/university') &&
-    pathname !== '/' &&
-    pathname !== '/plans';
+    isHydrated && user
+      ? user.role === 'admin' ||
+        user.role === 'manager' ||
+        user.role === 'dispatcher' ||
+        checkPermission('hasDispatchAccess')
+      : false;
 
   const shouldShowPhoneWidget =
-    hasPhoneEligibleRole && phoneDialerEnabled && isOperationsPage;
+    isHydrated &&
+    hasPhoneEligibleRole &&
+    phoneDialerEnabled &&
+    isOperationsPage;
 
   // Debug logging
-  console.log('🔍 ClientLayout Debug:', {
-    pathname,
-    shouldShowFlowter,
-    shouldShowPhoneWidget,
-    hasPhoneEligibleRole,
-    phoneDialerEnabled,
-    isOperationsPage,
-    userRole: user?.role,
-    userId: user?.id,
-    isLandingPage: pathname === '/',
-    isUniversity: pathname?.includes('/university'),
-    isInstructor: pathname?.includes('/training/instructor'),
-    willShowNotificationBell: user?.id && pathname !== '/',
-  });
+  if (isHydrated) {
+    console.log('🔍 ClientLayout Debug:', {
+      pathname,
+      shouldShowFlowter,
+      shouldShowPhoneWidget,
+      hasPhoneEligibleRole,
+      phoneDialerEnabled,
+      isOperationsPage,
+      userRole: user?.role,
+      userId: user?.id,
+      isLandingPage: pathname === '/',
+      isUniversity: pathname?.includes('/university'),
+      isInstructor: pathname?.includes('/training/instructor'),
+      willShowNotificationBell: user?.id && pathname !== '/',
+    });
+  }
 
   // Full-screen admin pages (no navigation) - DEPOINTE dashboard removed as it needs all app functions
   const isAdminDashboard = pathname === '/ai-company-dashboard';
@@ -180,11 +187,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 >
                   {children}
                 </main>
-                          </LoadProvider>
-          </ShipperProvider>
-        </SimpleErrorBoundary>
-      </MaintenanceMode>
-    </Providers>
+              </LoadProvider>
+            </ShipperProvider>
+          </SimpleErrorBoundary>
+        </MaintenanceMode>
+      </Providers>
     );
   }
 

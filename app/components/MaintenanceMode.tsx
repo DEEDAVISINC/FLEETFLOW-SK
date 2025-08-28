@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface MaintenanceModeProps {
   children: React.ReactNode;
@@ -8,15 +9,27 @@ interface MaintenanceModeProps {
 
 export default function MaintenanceMode({ children }: MaintenanceModeProps) {
   const pathname = usePathname();
+  const [isDevelopment, setIsDevelopment] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  // Check if we're in development environment (localhost, 127.0.0.1, etc.)
-  const isDevelopment =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
+  // Check client-side environment after hydration
+  useEffect(() => {
+    setIsClient(true);
+    // Check if we're in development environment (localhost, 127.0.0.1, etc.)
+    const isDev =
+      window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname.startsWith('192.168.') ||
       window.location.hostname.endsWith('.local') ||
-      process.env.NODE_ENV === 'development');
+      process.env.NODE_ENV === 'development';
+
+    setIsDevelopment(isDev);
+  }, []);
+
+  // During SSR or before hydration, default to allowing content (safer for development)
+  if (!isClient) {
+    return <>{children}</>;
+  }
 
   // Allow full access in development environment
   if (isDevelopment) {
@@ -31,6 +44,9 @@ export default function MaintenanceMode({ children }: MaintenanceModeProps) {
     '/terms',
     '/legal',
     '/about', // Allow About page to be accessible
+    '/vendor-portal', // Allow Vendor Portal to be accessible
+    '/vendor-management', // Allow Vendor Management page to be accessible
+    '/admin/driver-otr-flow', // Allow Driver OTR Flow page to be accessible
     '/api', // Allow API routes to function
   ];
 

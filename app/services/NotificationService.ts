@@ -131,10 +131,14 @@ export type BusinessEventType =
 // ============================================================================
 
 export class NotificationService {
-  private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  private supabase =
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ? createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        )
+      : null;
 
   private templates: Map<string, NotificationTemplate> = new Map();
   private eventListeners: Map<
@@ -170,7 +174,14 @@ export class NotificationService {
       notification.createdAt = new Date();
       notification.updatedAt = new Date();
 
-      // Store in database
+      // Store in database if Supabase is configured
+      if (!this.supabase) {
+        console.log(
+          '📭 NotificationService: Supabase not configured, notification not stored'
+        );
+        return notification;
+      }
+
       const { data, error } = await this.supabase
         .from('notifications')
         .insert([
@@ -201,7 +212,9 @@ export class NotificationService {
         .single();
 
       if (error) {
-        console.error('❌ Failed to store notification:', error);
+        console.log(
+          '📭 NotificationService: Database not configured, notification not stored'
+        );
         return null;
       }
 
@@ -302,6 +315,14 @@ export class NotificationService {
     }
   ): Promise<NotificationData[]> {
     try {
+      // Return empty array if Supabase is not configured
+      if (!this.supabase) {
+        console.log(
+          '📭 NotificationService: Supabase not configured, returning empty notifications'
+        );
+        return [];
+      }
+
       let query = this.supabase
         .from('notifications')
         .select('*')
@@ -338,13 +359,17 @@ export class NotificationService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ Failed to fetch notifications:', error);
+        console.log(
+          '📭 NotificationService: Database not configured, returning empty notifications'
+        );
         return [];
       }
 
       return data?.map(this.mapDatabaseNotification) || [];
     } catch (error) {
-      console.error('❌ getUserNotifications error:', error);
+      console.log(
+        '📭 NotificationService: Connection not available, returning empty notifications'
+      );
       return [];
     }
   }
@@ -354,6 +379,13 @@ export class NotificationService {
    */
   async markAsRead(notificationIds: string[]): Promise<boolean> {
     try {
+      if (!this.supabase) {
+        console.log(
+          '📭 NotificationService: Supabase not configured, cannot mark as read'
+        );
+        return false;
+      }
+
       const { error } = await this.supabase
         .from('notifications')
         .update({
@@ -363,7 +395,9 @@ export class NotificationService {
         .in('id', notificationIds);
 
       if (error) {
-        console.error('❌ Failed to mark notifications as read:', error);
+        console.log(
+          '📭 NotificationService: Database not configured, cannot mark as read'
+        );
         return false;
       }
 
@@ -380,6 +414,13 @@ export class NotificationService {
    */
   async archiveNotifications(notificationIds: string[]): Promise<boolean> {
     try {
+      if (!this.supabase) {
+        console.log(
+          '📭 NotificationService: Supabase not configured, cannot archive'
+        );
+        return false;
+      }
+
       const { error } = await this.supabase
         .from('notifications')
         .update({
@@ -414,6 +455,18 @@ export class NotificationService {
     byPriority: Record<NotificationPriority, number>;
   }> {
     try {
+      if (!this.supabase) {
+        console.log(
+          '📭 NotificationService: Supabase not configured, returning empty stats'
+        );
+        return {
+          total: 0,
+          unread: 0,
+          byType: {} as Record<NotificationType, number>,
+          byPriority: {} as Record<NotificationPriority, number>,
+        };
+      }
+
       let query = this.supabase
         .from('notifications')
         .select('type, priority, read');
@@ -429,7 +482,9 @@ export class NotificationService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ Failed to fetch notification stats:', error);
+        console.log(
+          '📭 NotificationService: Database not configured, returning empty stats'
+        );
         return {
           total: 0,
           unread: 0,

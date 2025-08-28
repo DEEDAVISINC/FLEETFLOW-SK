@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 
 export default function TestSessionPage() {
   const { data: session, status } = useSession();
-  
+
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h1>Session Provider Test</h1>

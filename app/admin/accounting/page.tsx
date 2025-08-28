@@ -2699,9 +2699,7 @@ export default function ModernAccountingPage() {
                       'linear-gradient(90deg, #10b981, #059669, #047857)',
                   }}
                 />
-                {dataLoading
-                  ? '🔄 Loading...'
-                  : '🔄 Refresh Company Data'}
+                {dataLoading ? '🔄 Loading...' : '🔄 Refresh Company Data'}
               </button>
             </div>
           </div>
