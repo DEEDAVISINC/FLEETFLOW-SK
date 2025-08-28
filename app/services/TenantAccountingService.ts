@@ -291,22 +291,20 @@ export class CompanyAccountingService {
    * Calculate tenant-specific KPIs
    */
   private calculateTenantKPIs(qbData: any, stripeData: any, billingData: any) {
-    const seed = this.getTenantSeed(qbData?.tenantId || '');
-    const multiplier = (seed % 10) + 1; // 1-10 multiplier based on tenant
-
+    // Return empty state - no tenant KPI data configured
     return {
-      totalRevenue: 150000 + multiplier * 25000,
-      revenueChange: (seed % 20) - 10, // -10 to +10
-      ebitdaMargin: 20 + (seed % 10), // 20-30%
-      ebitdaChange: (seed % 5) - 2, // -2 to +3
-      cashPosition: 500000 + multiplier * 100000,
-      cashChange: (seed % 15) - 7, // -7 to +8
-      dso: 25 + (seed % 15), // 25-40 days
-      dsoChange: (seed % 7) - 3, // -3 to +4
-      workingCapital: 800000 + multiplier * 150000,
-      workingCapitalChange: (seed % 12) - 6, // -6 to +6
-      collectionRate: 88 + (seed % 10), // 88-98%
-      collectionRateChange: (seed % 4) - 1, // -1 to +3
+      totalRevenue: 0,
+      revenueChange: 0,
+      ebitdaMargin: 0,
+      ebitdaChange: 0,
+      cashPosition: 0,
+      cashChange: 0,
+      dso: 0,
+      dsoChange: 0,
+      workingCapital: 0,
+      workingCapitalChange: 0,
+      collectionRate: 0,
+      collectionRateChange: 0,
     };
   }
 
@@ -490,13 +488,11 @@ export class CompanyAccountingService {
   }
 
   private generateTenantExpenses(tenantId: string): number {
-    const revenue = this.generateTenantRevenue(tenantId);
-    return revenue * (0.6 + (this.getTenantSeed(tenantId + 'exp') % 20) / 100); // 60-80% of revenue
+    return 0; // Empty state - no expense data
   }
 
   private generateTenantCash(tenantId: string): number {
-    const revenue = this.generateTenantRevenue(tenantId);
-    return revenue * (0.1 + (this.getTenantSeed(tenantId + 'cash') % 30) / 100); // 10-40% of revenue
+    return 0; // Empty state - no cash data
   }
 
   private getTenantCustomerName(tenantId: string, index: number): string {
@@ -542,33 +538,21 @@ export class CompanyAccountingService {
    * Get company name based on user's department
    */
   private getCompanyName(user: UserProfile): string {
-    const departmentCompanyMap: Record<string, string> = {
-      MGR: 'FleetFlow Management LLC',
-      DC: 'FleetFlow Dispatch Services',
-      BB: 'FleetFlow Brokerage Solutions',
-      DM: 'FleetFlow Driver Management',
-    };
-
-    return (
-      departmentCompanyMap[user.departmentCode] ||
-      `FleetFlow ${user.department} Division`
-    );
+    return 'Company Not Configured';
   }
 
   /**
    * Get company tax ID based on user's department
    */
   private getCompanyTaxId(user: UserProfile): string {
-    const seed = this.getUserSeed(user.id);
-    return `${12 + (seed % 88)}-${seed % 9}${seed % 9}${seed % 9}${seed % 9}${seed % 9}${seed % 9}${seed % 9}`;
+    return 'Not Configured';
   }
 
   /**
    * Get company EIN based on user's department
    */
   private getCompanyEIN(user: UserProfile): string {
-    const seed = this.getUserSeed(user.id);
-    return `${12 + (seed % 88)}-${seed % 9999999}`;
+    return 'Not Configured';
   }
 
   /**
@@ -581,33 +565,20 @@ export class CompanyAccountingService {
     user: UserProfile,
     subscriptionData?: any
   ) {
-    const seed = this.getUserSeed(user.id);
-    const departmentMultiplier = this.getDepartmentMultiplier(
-      user.departmentCode
-    );
-
-    // Base revenue calculation
-    let baseRevenue = 150000 + departmentMultiplier * 50000 + seed * 25000;
-
-    // Add subscription revenue if active
-    if (subscriptionData?.isActive) {
-      const annualSubscriptionRevenue = subscriptionData.monthlyRevenue * 12;
-      baseRevenue += annualSubscriptionRevenue;
-    }
-
+    // Return empty state - no KPI data configured
     return {
-      totalRevenue: baseRevenue,
-      revenueChange: (seed % 20) - 10, // -10 to +10
-      ebitdaMargin: 20 + (seed % 10), // 20-30%
-      ebitdaChange: (seed % 5) - 2, // -2 to +3
-      cashPosition: 500000 + departmentMultiplier * 200000 + seed * 100000,
-      cashChange: (seed % 15) - 7, // -7 to +8
-      dso: 25 + (seed % 15), // 25-40 days
-      dsoChange: (seed % 7) - 3, // -3 to +4
-      workingCapital: 800000 + departmentMultiplier * 300000 + seed * 150000,
-      workingCapitalChange: (seed % 12) - 6, // -6 to +6
-      collectionRate: 88 + (seed % 10), // 88-98%
-      collectionRateChange: (seed % 4) - 1, // -1 to +3
+      totalRevenue: 0,
+      revenueChange: 0,
+      ebitdaMargin: 0,
+      ebitdaChange: 0,
+      cashPosition: 0,
+      cashChange: 0,
+      dso: 0,
+      dsoChange: 0,
+      workingCapital: 0,
+      workingCapitalChange: 0,
+      collectionRate: 0,
+      collectionRateChange: 0,
     };
   }
 
