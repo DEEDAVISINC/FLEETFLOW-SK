@@ -88,8 +88,9 @@ export class BillingAutomationService {
   private billComService: BillComService;
 
   constructor() {
-    this.squareService = new SquareService();
-    this.billComService = new BillComService();
+    // Temporarily disable services to prevent fallback mock data
+    this.squareService = null as any;
+    this.billComService = null as any;
   }
 
   // ========================================

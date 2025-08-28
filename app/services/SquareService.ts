@@ -115,69 +115,13 @@ class SquareService {
   private getMockData(endpoint: string): any {
     if (endpoint.includes('/invoices')) {
       return {
-        invoices: [
-          {
-            id: 'inv_001',
-            invoice_number: 'INV-2024-001',
-            primary_recipient: {
-              given_name: 'John',
-              family_name: 'Smith',
-            },
-            payment_requests: [
-              {
-                request_type: 'BALANCE',
-                due_date: '2024-02-15',
-              },
-            ],
-            delivery_method: 'EMAIL',
-            invoice_status: 'UNPAID',
-            order_date: '2024-01-15T10:00:00Z',
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z',
-          },
-          {
-            id: 'inv_002',
-            invoice_number: 'INV-2024-002',
-            primary_recipient: {
-              given_name: 'Jane',
-              family_name: 'Doe',
-            },
-            payment_requests: [
-              {
-                request_type: 'BALANCE',
-                due_date: '2024-02-20',
-              },
-            ],
-            delivery_method: 'EMAIL',
-            invoice_status: 'PAID',
-            order_date: '2024-01-20T10:00:00Z',
-            created_at: '2024-01-20T10:00:00Z',
-            updated_at: '2024-01-22T14:30:00Z',
-          },
-        ],
+        invoices: [],
       };
     }
 
     if (endpoint.includes('/payments')) {
       return {
-        payments: [
-          {
-            id: 'pay_001',
-            amount_money: {
-              amount: 15000,
-              currency: 'USD',
-            },
-            status: 'COMPLETED',
-            created_at: '2024-01-15T10:00:00Z',
-            source_type: 'CARD',
-            card_details: {
-              card: {
-                card_brand: 'VISA',
-                last_4: '1234',
-              },
-            },
-          },
-        ],
+        payments: [],
       };
     }
 
