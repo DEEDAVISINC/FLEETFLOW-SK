@@ -2147,9 +2147,8 @@ export default function ModernAccountingPage() {
     const currentUser = userDataService.getCurrentUser();
 
     if (!currentUser) {
-      // Auto-login the demo user (Frank Miller - Manager) for accounting page demo
-      console.log('🔐 Auto-logging in demo user for accounting page');
-      userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
+      // No auto-login - show empty state
+      console.log('🔐 No user logged in - showing empty state');
     }
 
     checkAccess();
@@ -2529,7 +2528,7 @@ export default function ModernAccountingPage() {
                         fontWeight: '500',
                       }}
                     >
-                      {currentUser.name} •{' '}
+                      User Not Configured •{' '}
                       <span
                         style={{
                           color: '#10b981',
@@ -2537,9 +2536,7 @@ export default function ModernAccountingPage() {
                           textShadow: '0 0 8px rgba(16, 185, 129, 0.5)',
                         }}
                       >
-                        {currentUser.role.type
-                          .replace('_', ' ')
-                          .replace(/\b\w/g, (l) => l.toUpperCase())}
+                        Not Configured
                       </span>
                       •{' '}
                       <span
@@ -2556,7 +2553,7 @@ export default function ModernAccountingPage() {
                             textShadow: '0 0 8px rgba(16, 185, 129, 0.5)',
                           }}
                         >
-                          {currentUser.id}
+                          Not Configured
                         </span>
                       </span>
                     </span>
@@ -2704,7 +2701,7 @@ export default function ModernAccountingPage() {
                 />
                 {dataLoading
                   ? '🔄 Loading...'
-                  : `🔄 Refresh ${currentUser.name}'s Company Data`}
+                  : '🔄 Refresh Company Data'}
               </button>
             </div>
           </div>
@@ -3175,7 +3172,7 @@ export default function ModernAccountingPage() {
                   animation: 'spin 1s linear infinite',
                 }}
               />
-              Loading {currentUser.name}'s company financial data...
+              Loading company financial data...
             </div>
           </div>
         )}
