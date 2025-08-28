@@ -388,32 +388,31 @@ export class CompanyAccountingService {
    */
   private getRecentTransactions(stripeData: any, billingData: any) {
     const seed = this.getTenantSeed(stripeData?.tenantId || '');
-    const baseAmount = seed * 10000;
 
     return [
       {
         id: `TXN-${seed}001`,
         type: 'Wire',
-        entity: this.getTenantCustomerName('', 0),
-        amount: baseAmount + 45000,
-        status: 'Cleared',
-        time: '09:23 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
       {
         id: `TXN-${seed}002`,
         type: 'ACH',
-        entity: this.getTenantCustomerName('', 1),
-        amount: baseAmount + 75000,
-        status: 'Pending',
-        time: '09:18 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
       {
         id: `TXN-${seed}003`,
         type: 'Check',
-        entity: this.getTenantCustomerName('', 2),
-        amount: baseAmount + 20000,
-        status: 'Cleared',
-        time: '08:45 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
     ];
   }
@@ -422,45 +421,42 @@ export class CompanyAccountingService {
    * Calculate monthly P&L for tenant
    */
   private calculateMonthlyPnL(qbData: any, stripeData: any) {
-    const seed = this.getTenantSeed(qbData?.tenantId || '');
-    const baseRevenue = 150000 + seed * 25000;
-
     return [
       {
         month: 'Jan',
-        revenue: baseRevenue * 0.8,
-        expenses: baseRevenue * 0.6,
-        netIncome: baseRevenue * 0.2,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
       {
         month: 'Feb',
-        revenue: baseRevenue * 0.9,
-        expenses: baseRevenue * 0.65,
-        netIncome: baseRevenue * 0.25,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
       {
         month: 'Mar',
-        revenue: baseRevenue * 0.85,
-        expenses: baseRevenue * 0.7,
-        netIncome: baseRevenue * 0.15,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
       {
         month: 'Apr',
-        revenue: baseRevenue * 1.1,
-        expenses: baseRevenue * 0.75,
-        netIncome: baseRevenue * 0.35,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
       {
         month: 'May',
-        revenue: baseRevenue * 1.0,
-        expenses: baseRevenue * 0.68,
-        netIncome: baseRevenue * 0.32,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
       {
         month: 'Jun',
-        revenue: baseRevenue * 1.2,
-        expenses: baseRevenue * 0.8,
-        netIncome: baseRevenue * 0.4,
+        revenue: 0,
+        expenses: 0,
+        netIncome: 0,
       },
     ];
   }
@@ -486,8 +482,7 @@ export class CompanyAccountingService {
   }
 
   private generateTenantRevenue(tenantId: string): number {
-    const seed = this.getTenantSeed(tenantId);
-    return 1000000 + (seed % 5000000); // 1M - 6M range
+    return 0; // Empty state - no revenue data
   }
 
   private generateTenantExpenses(tenantId: string): number {
@@ -671,32 +666,31 @@ export class CompanyAccountingService {
     user: UserProfile
   ) {
     const seed = this.getUserSeed(user.id);
-    const baseAmount = seed * 5000;
 
     return [
       {
         id: `TXN-${seed}001`,
         type: 'Wire',
-        entity: this.getCompanyCustomerName(user.departmentCode, 0),
-        amount: baseAmount + 45000,
-        status: 'Cleared',
-        time: '09:23 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
       {
         id: `TXN-${seed}002`,
         type: 'ACH',
-        entity: this.getCompanyCustomerName(user.departmentCode, 1),
-        amount: baseAmount + 75000,
-        status: 'Pending',
-        time: '09:18 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
       {
         id: `TXN-${seed}003`,
         type: 'Check',
-        entity: this.getCompanyCustomerName(user.departmentCode, 2),
-        amount: baseAmount + 20000,
-        status: 'Cleared',
-        time: '08:45 EST',
+        entity: 'No Recent Transactions',
+        amount: 0,
+        status: 'No Data',
+        time: '--:-- EST',
       },
     ];
   }
