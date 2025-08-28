@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -498,7 +498,7 @@ interface CustomField {
 }
 
 export default function VendorPortalPage() {
-  const { data: authSession, status } = useSession();
+  // const { data: authSession, status } = useSession();
   const [loads, setLoads] = useState<any[]>([]);
   const [dashboardSummary, setDashboardSummary] = useState<any>(null);
   const [selectedLoad, setSelectedLoad] = useState<any>(null);

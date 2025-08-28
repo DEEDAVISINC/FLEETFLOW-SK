@@ -8591,17 +8591,18 @@ export default function AboutUsPage() {
                       fontWeight: '700',
                     }}
                   >
-                    🚀 Ready to Transform Your Logistics Operations?
+                    📧 Connect with Our Logistics Intelligence Experts
                   </h3>
                   <p style={{ fontSize: '18px', margin: '0 0 24px 0' }}>
-                    Connect with our **Logistics Intelligence Experts** for a
-                    comprehensive consultation on how FLEETFLOW can optimize
-                    your supply chain operations, reduce costs by 25-40%, and
-                    accelerate your digital transformation journey.
+                    **Email us directly** to connect with our specialized
+                    departments for a comprehensive consultation on how
+                    FLEETFLOW can optimize your supply chain operations, reduce
+                    costs by 25-40%, and accelerate your digital transformation
+                    journey.
                   </p>
                   <p style={{ fontSize: '16px', margin: 0, opacity: 0.9 }}>
-                    **24/7 Enterprise Support** • **Response within 24 hours** •
-                    **Free Initial Consultation**
+                    **Email Response within 24 hours** • **Specialized
+                    Department Routing** • **Free Initial Consultation**
                   </p>
                 </div>
 
@@ -8668,7 +8669,7 @@ export default function AboutUsPage() {
                     </div>
                   </div>
 
-                  {/* Phone & Support */}
+                  {/* Email Priority Contact */}
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.05)',
@@ -8686,17 +8687,17 @@ export default function AboutUsPage() {
                         fontWeight: '600',
                       }}
                     >
-                      📞 24/7 Enterprise Support
+                      📧 Priority Email Support
                     </h4>
                     <div
                       style={{
-                        fontSize: '28px',
-                        fontWeight: '800',
+                        fontSize: '20px',
+                        fontWeight: '700',
                         color: '#ef4444',
                         margin: '0 0 16px 0',
                       }}
                     >
-                      (833) 386-3509
+                      **contact@fleetflowapp.com**
                     </div>
                     <div
                       style={{
@@ -8705,11 +8706,11 @@ export default function AboutUsPage() {
                         margin: '0 0 16px 0',
                       }}
                     >
-                      **Emergency Hotline Available**
+                      **Get Started Today**
                       <br />
-                      Voice & SMS Capabilities
+                      General Inquiries & Support
                       <br />
-                      Twilio-Powered Communications
+                      Enterprise Solutions Consultation
                     </div>
                     <div
                       style={{
@@ -8718,7 +8719,7 @@ export default function AboutUsPage() {
                         color: '#ef4444',
                       }}
                     >
-                      Response Time: Within 24 Hours
+                      Email Response: Within 24 Hours
                     </div>
                   </div>
                 </div>
@@ -8944,7 +8945,7 @@ export default function AboutUsPage() {
                         24/7
                       </div>
                       <p style={{ margin: 0, opacity: 0.9 }}>
-                        Emergency Support Available
+                        Email Monitoring & Response
                       </p>
                     </div>
                     <div style={{ textAlign: 'center' }}>
@@ -8983,10 +8984,10 @@ export default function AboutUsPage() {
                           fontWeight: '800',
                         }}
                       >
-                        15min
+                        1h
                       </div>
                       <p style={{ margin: 0, opacity: 0.9 }}>
-                        Critical Emergency Response
+                        Priority Email Response
                       </p>
                     </div>
                   </div>
@@ -9058,9 +9059,9 @@ export default function AboutUsPage() {
                     style={{
                       display: 'grid',
                       gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
+                        'repeat(auto-fit, minmax(250px, 1fr))',
                       gap: '16px',
-                      maxWidth: '600px',
+                      maxWidth: '800px',
                       margin: '0 auto',
                     }}
                   >
@@ -9072,9 +9073,10 @@ export default function AboutUsPage() {
                         border: '1px solid rgba(59, 130, 246, 0.5)',
                         color: 'white',
                         fontWeight: '600',
+                        textAlign: 'center',
                       }}
                     >
-                      📞 Call (833) 386-3509
+                      📧 Email contact@fleetflowapp.com
                     </div>
                     <div
                       style={{
@@ -9084,9 +9086,23 @@ export default function AboutUsPage() {
                         border: '1px solid rgba(16, 185, 129, 0.5)',
                         color: 'white',
                         fontWeight: '600',
+                        textAlign: 'center',
                       }}
                     >
-                      📧 Email sales@fleetflowapp.com
+                      📧 Email info@fleetflowapp.com
+                    </div>
+                    <div
+                      style={{
+                        padding: '16px 24px',
+                        background: 'rgba(239, 68, 68, 0.3)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(239, 68, 68, 0.5)',
+                        color: 'white',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                      }}
+                    >
+                      📧 Email go@fleetflowapp.com
                     </div>
                   </div>
                 </div>

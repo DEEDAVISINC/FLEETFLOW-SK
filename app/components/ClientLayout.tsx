@@ -12,6 +12,7 @@ import MaintenanceMode from './MaintenanceMode';
 import Navigation from './Navigation';
 import NotificationBell from './NotificationBell';
 import PhoneSystemWidget from './PhoneSystemWidget';
+import Providers from './Providers';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 // ✅ ADD: Platform AI initialization
 import { initializeFleetFlowAI } from '../config/ai-config';
@@ -23,10 +24,16 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [flowterOpen, setFlowterOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const pathname = usePathname();
 
   // Get user data for permissions and functionality
   const { user } = getCurrentUser();
+
+  // Track hydration to prevent mismatches
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // ✅ Initialize Platform AI on app startup
   useEffect(() => {
@@ -109,11 +116,17 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       checkPermission('hasDispatchAccess'));
 
   // Check if user has phone dialer enabled (from user profile settings)
-  const phoneDialerEnabled =
-    typeof window !== 'undefined'
-      ? localStorage.getItem(`fleetflow-phone-dialer-${user?.id}`) !==
-        'disabled'
-      : true; // Default to enabled on server-side
+  // Use state to prevent hydration mismatch
+  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      const isEnabled =
+        localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) !==
+        'disabled';
+      setPhoneDialerEnabled(isEnabled);
+    }
+  }, [user?.id]);
 
   // Only show phone widget on operations pages (exclude auth, landing, and other non-operations pages)
   const isOperationsPage =
@@ -151,76 +164,86 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   if (isAdminDashboard) {
     return (
-      <MaintenanceMode>
-        <SimpleErrorBoundary>
-          <ShipperProvider>
-            <LoadProvider>
-              {/* Full-screen admin interface - no navigation */}
-              <main
-                style={{
-                  minHeight: '100vh',
-                  background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {children}
-              </main>
-            </LoadProvider>
+      <Providers>
+        <MaintenanceMode>
+          <SimpleErrorBoundary>
+            <ShipperProvider>
+              <LoadProvider>
+                {/* Full-screen admin interface - no navigation */}
+                <main
+                  style={{
+                    minHeight: '100vh',
+                    background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  {children}
+                </main>
+                          </LoadProvider>
           </ShipperProvider>
         </SimpleErrorBoundary>
       </MaintenanceMode>
+    </Providers>
     );
   }
 
   return (
-    <MaintenanceMode>
-      <SimpleErrorBoundary>
-        <ShipperProvider>
-          <LoadProvider>
-            <Navigation />
-            <main
-              style={{
-                paddingTop: '70px',
-                minHeight: '100vh',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ flex: 1 }}>{children}</div>
-              <FleetFlowFooter variant='transparent' />
-            </main>
+    <Providers>
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <ShipperProvider>
+            <LoadProvider>
+              <Navigation />
+              <main
+                style={{
+                  paddingTop: '70px',
+                  minHeight: '100vh',
+                  background:
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ flex: 1 }}>{children}</div>
+                <FleetFlowFooter variant='transparent' />
+              </main>
 
-            {/* Flowter AI Button - appears on all pages except university */}
-            {shouldShowFlowter && (
-              <>
-                {console.log('🎯 Rendering Flowter AI Button')}
-                <FlowterButton onOpen={handleFlowterOpen} />
-              </>
-            )}
+              {/* Flowter AI Button - appears on all pages except university */}
+              {isHydrated && shouldShowFlowter && (
+                <>
+                  {console.log('🎯 Rendering Flowter AI Button')}
+                  <FlowterButton onOpen={handleFlowterOpen} />
+                </>
+              )}
 
-            {/* Phone System Widget - Only for logged-in users on operations pages */}
-            {shouldShowPhoneWidget && (
-              <>
-                {console.log('📞 Rendering Phone System Widget for operations')}
-                <PhoneSystemWidget position='bottom-left' />
-              </>
-            )}
+              {/* Phone System Widget - Only for logged-in users on operations pages */}
+              {isHydrated && shouldShowPhoneWidget && (
+                <>
+                  {console.log(
+                    '📞 Rendering Phone System Widget for operations'
+                  )}
+                  <PhoneSystemWidget position='bottom-left' />
+                </>
+              )}
 
-            {/* Notification Bell - Only for logged-in users, not on landing page */}
-            {user?.id && pathname !== '/' && (
-              <NotificationBell userId={user.id} position='bottom-right' />
-            )}
+              {/* Notification Bell - Only for logged-in users, not on landing/marketing pages */}
+              {isHydrated &&
+                user?.id &&
+                pathname !== '/' &&
+                pathname !== '/carrier-landing' && (
+                  <NotificationBell userId={user.id} position='bottom-right' />
+                )}
 
-            {/* Enhanced Flowter AI Modal - Available on landing page for subscription questions */}
-            <EnhancedFlowterModal
-              isOpen={flowterOpen}
-              onClose={handleFlowterClose}
-            />
-          </LoadProvider>
-        </ShipperProvider>
-      </SimpleErrorBoundary>
-    </MaintenanceMode>
+              {/* Enhanced Flowter AI Modal - Available on landing page for subscription questions */}
+              <EnhancedFlowterModal
+                isOpen={flowterOpen}
+                onClose={handleFlowterClose}
+              />
+            </LoadProvider>
+          </ShipperProvider>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    </Providers>
   );
 }
