@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import Logo from './Logo';
-import UnifiedNotificationBell from './UnifiedNotificationBell';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
@@ -18,14 +17,24 @@ export default function ProfessionalNavigation() {
   );
   const [isManager, setIsManager] = useState(false);
   const [isBrokerAgent, setIsBrokerAgent] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Get current user data
-  const { user, permissions } = getCurrentUser();
-
-  // Check user role on component mount
+  // Hydration effect
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Get user data and check role on component mount (after hydration)
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    // Get current user data after hydration to prevent SSR/client mismatch
+    const { user, permissions } = getCurrentUser();
+    setCurrentUser({ user, permissions });
+
     const checkUserRole = () => {
       const managerStatus = ManagerAccessControlService.isCurrentUserManager();
       const brokerAgentStatus =
@@ -35,7 +44,7 @@ export default function ProfessionalNavigation() {
     };
 
     checkUserRole();
-  }, []);
+  }, [isHydrated]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -46,6 +55,8 @@ export default function ProfessionalNavigation() {
 
   // Helper function to get user display info
   const getUserDisplayInfo = () => {
+    if (!currentUser) return { title: 'Loading...', badges: [] };
+
     const roleDisplayMap: Record<string, { title: string; badges: string[] }> =
       {
         admin: {
@@ -72,7 +83,7 @@ export default function ProfessionalNavigation() {
       };
 
     return (
-      roleDisplayMap[user.role as string] || {
+      roleDisplayMap[currentUser.user.role as string] || {
         title: 'FleetFlow User',
         badges: ['User Access'],
       }
@@ -80,11 +91,13 @@ export default function ProfessionalNavigation() {
   };
 
   const userInfo = getUserDisplayInfo();
-  const userInitials = user.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase();
+  const userInitials = currentUser?.user.name
+    ? currentUser.user.name
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+    : 'U';
 
   const clearDropdownTimer = () => {
     if (dropdownTimerRef.current) {
@@ -165,6 +178,11 @@ export default function ProfessionalNavigation() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [activeDropdown, activeSubDropdown]);
+
+  // Prevent hydration mismatch by not rendering until hydrated
+  if (!isHydrated) {
+    return null;
+  }
 
   return (
     <nav
@@ -1181,18 +1199,6 @@ export default function ProfessionalNavigation() {
             </div>
           )}
 
-          {/* Unified Notification Bell */}
-          <UnifiedNotificationBell
-            userId='current-user'
-            portal='admin'
-            position='navigation'
-            size='md'
-            theme='auto'
-            showBadge={true}
-            showDropdown={true}
-            maxNotifications={15}
-          />
-
           {/* User Profile Dropdown */}
           <div style={{ position: 'relative', marginLeft: '10px' }}>
             <div
@@ -1279,7 +1285,7 @@ export default function ProfessionalNavigation() {
                           fontWeight: '600',
                         }}
                       >
-                        {user.name}
+                        {currentUser?.user.name || 'Loading...'}
                       </div>
                       <div style={{ color: '#6b7280', fontSize: '14px' }}>
                         {userInfo.title}
@@ -1460,14 +1466,14 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canEditLoads
+                          color: (currentUser?.permissions as any)?.canEditLoads
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canEditLoads
+                        {(currentUser?.permissions as any)?.canEditLoads
                           ? '✓ Full'
                           : '✗ Limited'}
                       </span>
@@ -1484,14 +1490,15 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canViewAllLoads
+                          color: (currentUser?.permissions as any)
+                            ?.canViewAllLoads
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canViewAllLoads
+                        {(currentUser?.permissions as any)?.canViewAllLoads
                           ? '✓ Full'
                           : '✗ Limited'}
                       </span>
@@ -1508,14 +1515,15 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.hasManagementAccess
+                          color: (currentUser?.permissions as any)
+                            ?.hasManagementAccess
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.hasManagementAccess
+                        {(currentUser?.permissions as any)?.hasManagementAccess
                           ? '✓ Admin'
                           : '✗ No Access'}
                       </span>
@@ -1532,14 +1540,15 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canViewFinancials
+                          color: (currentUser?.permissions as any)
+                            ?.canViewFinancials
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canViewFinancials
+                        {(currentUser?.permissions as any)?.canViewFinancials
                           ? '✓ Manager'
                           : '✗ No Access'}
                       </span>

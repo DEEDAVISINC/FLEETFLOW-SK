@@ -5,14 +5,17 @@ import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
+import EnhancedFlowterModal from './EnhancedFlowterModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import FlowterButton from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
 import Navigation from './Navigation';
+import NotificationBell from './NotificationBell';
 import PhoneSystemWidget from './PhoneSystemWidget';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 // ✅ ADD: Platform AI initialization
 import { initializeFleetFlowAI } from '../config/ai-config';
+// ✅ ADD: Test notification generator for development
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -21,6 +24,9 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [flowterOpen, setFlowterOpen] = useState(false);
   const pathname = usePathname();
+
+  // Get user data for permissions and functionality
+  const { user } = getCurrentUser();
 
   // ✅ Initialize Platform AI on app startup
   useEffect(() => {
@@ -32,7 +38,53 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       console.error('❌ Platform AI initialization failed:', error);
       console.warn('⚠️ FleetFlow will continue with original AI behavior');
     }
-  }, []); // Run once on app startup
+
+    // Initialize test notification generator in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        '🧪 Test notification generator initialized. Use testNotifications.help() in console.'
+      );
+    }
+  }, []);
+
+  // Generate sample notifications for the current user
+  useEffect(() => {
+    const generateSampleData = async () => {
+      // Only generate once per session and if user is available
+      const hasGeneratedSamples = sessionStorage.getItem(
+        'fleetflow-sample-data-generated'
+      );
+      if (hasGeneratedSamples || !user?.id) return;
+
+      try {
+        // Generate sample notifications
+        const { notificationService } = await import(
+          '../services/NotificationService'
+        );
+        await notificationService.generateSampleNotifications(
+          user.id,
+          'default'
+        );
+        console.log('🎯 Sample notifications generated for user:', user.id);
+
+        // Generate sample messages
+        const { messageService } = await import('../services/MessageService');
+        await messageService.generateSampleMessages(
+          user.id,
+          user.name || 'Current User',
+          user.role || 'employee',
+          'default'
+        );
+        console.log('📬 Sample messages generated for user:', user.id);
+
+        sessionStorage.setItem('fleetflow-sample-data-generated', 'true');
+      } catch (error) {
+        console.error('❌ Failed to generate sample data:', error);
+      }
+    };
+
+    generateSampleData();
+  }, [user?.id]); // Run when user is available
 
   const handleFlowterOpen = () => {
     setFlowterOpen(true);
@@ -42,13 +94,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     setFlowterOpen(false);
   };
 
-  // Hide Flowter button on main university pages (but allow on instructors page)
+  // Show Flowter on landing page for subscription questions, and on other pages except university
   const shouldShowFlowter =
+    pathname === '/' || // Always show on landing page for subscription help
     !pathname?.includes('/university') ||
     pathname?.includes('/training/instructor');
 
   // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
-  const { user } = getCurrentUser();
   const hasPhoneEligibleRole =
     user &&
     (user.role === 'admin' ||
@@ -70,7 +122,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     !pathname.includes('/privacy') &&
     !pathname.includes('/terms') &&
     !pathname.includes('/carrier-landing') &&
-    !pathname.includes('/broker') &&
+    pathname !== '/broker' && // Allow broker subpages, just not the main broker page
     !pathname.includes('/university') &&
     pathname !== '/' &&
     pathname !== '/plans';
@@ -88,8 +140,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     isOperationsPage,
     userRole: user?.role,
     userId: user?.id,
+    isLandingPage: pathname === '/',
     isUniversity: pathname?.includes('/university'),
     isInstructor: pathname?.includes('/training/instructor'),
+    willShowNotificationBell: user?.id && pathname !== '/',
   });
 
   // Full-screen admin pages (no navigation) - DEPOINTE dashboard removed as it needs all app functions
@@ -146,116 +200,24 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               </>
             )}
 
-            {/* Phone System Widget - appears for dispatch/admin/manager roles */}
+            {/* Phone System Widget - Only for logged-in users on operations pages */}
             {shouldShowPhoneWidget && (
               <>
-                {console.log('📞 Rendering Phone System Widget')}
+                {console.log('📞 Rendering Phone System Widget for operations')}
                 <PhoneSystemWidget position='bottom-left' />
               </>
             )}
 
-            {/* Simple Flowter Modal */}
-            {flowterOpen && (
-              <div
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  zIndex: 1001,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                onClick={handleFlowterClose}
-              >
-                <div
-                  style={{
-                    backgroundColor: 'white',
-                    borderRadius: '12px',
-                    padding: '24px',
-                    maxWidth: '500px',
-                    width: '90%',
-                    maxHeight: '80vh',
-                    overflow: 'auto',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    <h2 style={{ margin: 0, color: '#1f2937' }}>
-                      🤖 Flowter AI
-                    </h2>
-                    <button
-                      onClick={handleFlowterClose}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '24px',
-                        cursor: 'pointer',
-                        color: '#6b7280',
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-
-                  <div style={{ marginBottom: '20px' }}>
-                    <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
-                      Hi! I'm Flowter, your AI assistant. I can help you
-                      navigate FleetFlow, discover features, troubleshoot
-                      issues, and optimize your workflow.
-                    </p>
-                  </div>
-
-                  <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ color: '#1f2937', marginBottom: '12px' }}>
-                      What I can help with:
-                    </h3>
-                    <ul
-                      style={{
-                        color: '#4b5563',
-                        lineHeight: '1.6',
-                        paddingLeft: '20px',
-                      }}
-                    >
-                      <li>📚 Learning FleetFlow features and best practices</li>
-                      <li>🔍 Finding hidden features and shortcuts</li>
-                      <li>🚛 Driver scheduling and load matching</li>
-                      <li>📊 Route optimization and analytics</li>
-                      <li>❓ Troubleshooting and support</li>
-                    </ul>
-                  </div>
-
-                  <div
-                    style={{
-                      backgroundColor: '#f3f4f6',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      border: '1px solid #e5e7eb',
-                    }}
-                  >
-                    <p
-                      style={{ margin: 0, color: '#6b7280', fontSize: '14px' }}
-                    >
-                      💡 <strong>Tip:</strong> For advanced AI features and
-                      real-time assistance, visit the AI Flow section of
-                      FleetFlow where I can take direct actions and provide more
-                      interactive help.
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* Notification Bell - Only for logged-in users, not on landing page */}
+            {user?.id && pathname !== '/' && (
+              <NotificationBell userId={user.id} position='bottom-right' />
             )}
+
+            {/* Enhanced Flowter AI Modal - Available on landing page for subscription questions */}
+            <EnhancedFlowterModal
+              isOpen={flowterOpen}
+              onClose={handleFlowterClose}
+            />
           </LoadProvider>
         </ShipperProvider>
       </SimpleErrorBoundary>

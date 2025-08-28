@@ -1237,7 +1237,7 @@ export default function CarrierLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  1-800-FLEET-FLOW
+                  (833) 386-3509
                 </div>
                 <div
                   style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}

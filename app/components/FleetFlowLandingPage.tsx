@@ -138,7 +138,7 @@ export default function FleetFlowLandingPage() {
               FLEETFLOWDASH
             </button>
           </Link>
-          <Link href='/settings'>
+          <Link href='/auth/signin'>
             <button
               style={{
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -151,7 +151,7 @@ export default function FleetFlowLandingPage() {
                 cursor: 'pointer',
               }}
             >
-              Settings
+              Sign In
             </button>
           </Link>
         </div>
@@ -223,7 +223,7 @@ export default function FleetFlowLandingPage() {
             >
               Book Enterprise Demo
             </button>
-            <Link href='/settings'>
+            <Link href='/auth/signin'>
               <button
                 style={{
                   background: 'rgba(255,255,255,0.1)',
@@ -237,7 +237,7 @@ export default function FleetFlowLandingPage() {
                   backdropFilter: 'blur(10px)',
                 }}
               >
-                Platform Access
+                Log In
               </button>
             </Link>
           </div>

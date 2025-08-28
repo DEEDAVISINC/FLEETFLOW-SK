@@ -31,6 +31,7 @@ import {
   brokerAnalyticsService,
 } from '../../services/BrokerAnalyticsService';
 // Removed old CRM imports - now using Enhanced CRM system
+import UnifiedNotificationBell from '../../components/UnifiedNotificationBell';
 import {
   BrokerContract,
   brokerContractService,
@@ -865,43 +866,16 @@ export default function BrokerDashboard() {
                 style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
               >
                 <DocumentsPortalButton variant='small' />
-                <button
-                  onClick={() => router.push('/notifications')}
-                  style={{
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    color: 'white',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    padding: '12px',
-                    borderRadius: '12px',
-                    fontSize: '20px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    backdropFilter: 'blur(10px)',
-                    width: '48px',
-                    height: '48px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background =
-                      'linear-gradient(135deg, #d97706, #f59e0b)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 25px rgba(245, 158, 11, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background =
-                      'linear-gradient(135deg, #f59e0b, #d97706)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow =
-                      '0 4px 15px rgba(245, 158, 11, 0.3)';
-                  }}
-                  title='Notifications'
-                >
-                  🔔
-                </button>
+                <UnifiedNotificationBell
+                  userId={brokerSession?.id || 'broker-user'}
+                  portal='vendor'
+                  position='inline'
+                  size='md'
+                  theme='dark'
+                  showBadge={true}
+                  showDropdown={true}
+                  maxNotifications={25}
+                />
                 <button
                   onClick={() => setShowSettings(true)}
                   style={{
@@ -6176,14 +6150,22 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                                 {/* Transport Mode Badge */}
                                 <span
                                   style={{
-                                    background: load.transportMode === 'truckload' ? 'rgba(59, 130, 246, 0.3)' : 
-                                                load.transportMode === 'ltl' ? 'rgba(16, 185, 129, 0.3)' :
-                                                load.transportMode === 'rail' ? 'rgba(168, 85, 247, 0.3)' :
-                                                'rgba(245, 158, 11, 0.3)',
-                                    color: load.transportMode === 'truckload' ? '#60a5fa' : 
-                                           load.transportMode === 'ltl' ? '#10b981' :
-                                           load.transportMode === 'rail' ? '#a855f7' :
-                                           '#f59e0b',
+                                    background:
+                                      load.transportMode === 'truckload'
+                                        ? 'rgba(59, 130, 246, 0.3)'
+                                        : load.transportMode === 'ltl'
+                                          ? 'rgba(16, 185, 129, 0.3)'
+                                          : load.transportMode === 'rail'
+                                            ? 'rgba(168, 85, 247, 0.3)'
+                                            : 'rgba(245, 158, 11, 0.3)',
+                                    color:
+                                      load.transportMode === 'truckload'
+                                        ? '#60a5fa'
+                                        : load.transportMode === 'ltl'
+                                          ? '#10b981'
+                                          : load.transportMode === 'rail'
+                                            ? '#a855f7'
+                                            : '#f59e0b',
                                     fontSize: '9px',
                                     padding: '2px 6px',
                                     borderRadius: '8px',
@@ -6191,27 +6173,35 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                                     textTransform: 'uppercase',
                                   }}
                                 >
-                                  {load.transportMode === 'truckload' ? '🚛 FTL' : 
-                                   load.transportMode === 'ltl' ? '📦 LTL' :
-                                   load.transportMode === 'rail' ? '🚂 RAIL' :
-                                   load.transportMode === 'intermodal' ? '🚛🚂 IM' :
-                                   '🚛 TL'}
+                                  {load.transportMode === 'truckload'
+                                    ? '🚛 FTL'
+                                    : load.transportMode === 'ltl'
+                                      ? '📦 LTL'
+                                      : load.transportMode === 'rail'
+                                        ? '🚂 RAIL'
+                                        : load.transportMode === 'intermodal'
+                                          ? '🚛🚂 IM'
+                                          : '🚛 TL'}
                                 </span>
                                 {/* Cost Savings Indicator */}
-                                {load.multimodalOptions && load.multimodalOptions.some(opt => opt.costSavings && opt.costSavings > 0) && (
-                                  <span
-                                    style={{
-                                      background: 'rgba(16, 185, 129, 0.2)',
-                                      color: '#10b981',
-                                      fontSize: '9px',
-                                      padding: '2px 4px',
-                                      borderRadius: '6px',
-                                      fontWeight: '600',
-                                    }}
-                                  >
-                                    💰
-                                  </span>
-                                )}
+                                {load.multimodalOptions &&
+                                  load.multimodalOptions.some(
+                                    (opt) =>
+                                      opt.costSavings && opt.costSavings > 0
+                                  ) && (
+                                    <span
+                                      style={{
+                                        background: 'rgba(16, 185, 129, 0.2)',
+                                        color: '#10b981',
+                                        fontSize: '9px',
+                                        padding: '2px 4px',
+                                        borderRadius: '6px',
+                                        fontWeight: '600',
+                                      }}
+                                    >
+                                      💰
+                                    </span>
+                                  )}
                               </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
@@ -6293,9 +6283,13 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                       🚛🚂✈️ Multimodal Cost Savings
                     </h3>
                     {(() => {
-                      const costSavings = brokerAnalyticsService.getCostSavingsOpportunities();
-                      const totalSavings = costSavings.reduce((sum, item) => sum + item.potentialSavings, 0);
-                      
+                      const costSavings =
+                        brokerAnalyticsService.getCostSavingsOpportunities();
+                      const totalSavings = costSavings.reduce(
+                        (sum, item) => sum + item.potentialSavings,
+                        0
+                      );
+
                       return (
                         <div>
                           <div
@@ -6317,7 +6311,8 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                                 fontWeight: '600',
                               }}
                             >
-                              💰 Potential Monthly Savings: ${totalSavings.toLocaleString()}
+                              💰 Potential Monthly Savings: $
+                              {totalSavings.toLocaleString()}
                             </div>
                             <div
                               style={{
@@ -6328,7 +6323,7 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                               {costSavings.length} opportunities identified
                             </div>
                           </div>
-                          
+
                           <div
                             style={{
                               display: 'flex',
@@ -6352,36 +6347,48 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                                 onClick={() => {
                                   const shouldUpdate = confirm(
                                     `Switch ${saving.loadNumber} from Truckload to ${saving.bestAlternative.mode}?\n\n` +
-                                    `Current Rate: $${saving.currentRate.toLocaleString()}\n` +
-                                    `New Rate: $${saving.bestAlternative.rate.toLocaleString()}\n` +
-                                    `Savings: $${saving.potentialSavings.toLocaleString()}\n` +
-                                    `Transit Time: ${saving.bestAlternative.transitTime}h\n` +
-                                    `Confidence: ${saving.bestAlternative.confidence}%`
+                                      `Current Rate: $${saving.currentRate.toLocaleString()}\n` +
+                                      `New Rate: $${saving.bestAlternative.rate.toLocaleString()}\n` +
+                                      `Savings: $${saving.potentialSavings.toLocaleString()}\n` +
+                                      `Transit Time: ${saving.bestAlternative.transitTime}h\n` +
+                                      `Confidence: ${saving.bestAlternative.confidence}%`
                                   );
-                                  
+
                                   if (shouldUpdate) {
                                     brokerAnalyticsService.updateLoadTransportMode(
-                                      saving.loadId, 
-                                      saving.bestAlternative.mode, 
+                                      saving.loadId,
+                                      saving.bestAlternative.mode,
                                       saving.bestAlternative.rate
                                     );
-                                    alert(`✅ Load ${saving.loadNumber} updated to ${saving.bestAlternative.mode} mode!`);
+                                    alert(
+                                      `✅ Load ${saving.loadNumber} updated to ${saving.bestAlternative.mode} mode!`
+                                    );
                                   }
                                 }}
                               >
-                                <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                <div
+                                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                >
                                   {saving.loadNumber}
                                 </div>
-                                <div style={{ color: '#60a5fa', fontSize: '11px' }}>
+                                <div
+                                  style={{ color: '#60a5fa', fontSize: '11px' }}
+                                >
                                   Switch to {saving.bestAlternative.mode}
                                 </div>
-                                <div style={{ color: '#10b981', fontWeight: 'bold' }}>
-                                  Save ${saving.potentialSavings.toLocaleString()}
+                                <div
+                                  style={{
+                                    color: '#10b981',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  Save $
+                                  {saving.potentialSavings.toLocaleString()}
                                 </div>
                               </div>
                             ))}
                           </div>
-                          
+
                           {costSavings.length === 0 && (
                             <div
                               style={{
@@ -6391,7 +6398,8 @@ Regional Freight Inc,MC-567890,DOT-123456,COMPLIANT,1,0,CONNECTED,LOW,2024-01-16
                                 padding: '20px',
                               }}
                             >
-                              🎯 All loads are optimally priced across transport modes
+                              🎯 All loads are optimally priced across transport
+                              modes
                             </div>
                           )}
                         </div>

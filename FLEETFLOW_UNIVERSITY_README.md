@@ -230,7 +230,7 @@ app/
 
 ### **Technical Support**
 
-- **Help Desk:** 1-800-FLEETFLOW
+- **Help Desk:** (833) 386-3509
 - **Email:** support@fleetflow.com
 - **Live Chat:** Available 24/7 in the platform
 

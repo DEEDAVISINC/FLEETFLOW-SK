@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -497,7 +498,7 @@ interface CustomField {
 }
 
 export default function VendorPortalPage() {
-  const [session, setSession] = useState<VendorSession | null>(null);
+  const { data: authSession, status } = useSession();
   const [loads, setLoads] = useState<any[]>([]);
   const [dashboardSummary, setDashboardSummary] = useState<any>(null);
   const [selectedLoad, setSelectedLoad] = useState<any>(null);
@@ -709,19 +710,28 @@ export default function VendorPortalPage() {
   }, [activeTab, loads]);
 
   useEffect(() => {
-    // Check if user is logged in
-    const sessionData = localStorage.getItem('vendorSession');
-    if (!sessionData) {
-      router.push('/vendor-login');
+    // Check if user is logged in with NextAuth
+    if (status === 'loading') return; // Still loading
+
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
       return;
     }
 
-    const parsedSession = JSON.parse(sessionData);
-    setSession(parsedSession);
-    loadDashboardData(parsedSession.shipperId);
-    loadPhase1Data(parsedSession.shipperId);
-    loadPhase2Data(parsedSession.shipperId);
-  }, [router]);
+    // Check if user has vendor role
+    if (authSession?.user?.role !== 'vendor') {
+      router.push('/'); // Redirect to main dashboard
+      return;
+    }
+
+    // Get company ID from session (stored in NextAuth)
+    const companyId = (authSession.user as any).companyId;
+    if (companyId) {
+      loadDashboardData(companyId);
+      loadPhase1Data(companyId);
+      loadPhase2Data(companyId);
+    }
+  }, [status, authSession, router]);
 
   // Removed useEffect for tab changes - now handled directly in onClick
 
@@ -1390,9 +1400,9 @@ export default function VendorPortalPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('vendorSession');
-    router.push('/vendor-login');
+  const handleLogout = async () => {
+    const { signOut } = await import('next-auth/react');
+    await signOut({ callbackUrl: '/auth/signin' });
   };
 
   const getStatusIcon = (status: string) => {
@@ -1529,7 +1539,31 @@ export default function VendorPortalPage() {
     );
   }
 
-  if (!session) {
+  // Show loading while authentication is being checked
+  if (status === 'loading') {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        }}
+      >
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🚛</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+            FleetFlow Vendor Portal
+          </h2>
+          <p>Loading your account...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect handled in useEffect, return null if not authenticated or not vendor
+  if (status === 'unauthenticated' || authSession?.user?.role !== 'vendor') {
     return null;
   }
 
@@ -1571,7 +1605,7 @@ export default function VendorPortalPage() {
               marginBottom: '8px',
             }}
           >
-            🚚 {session.companyName}
+            🚚 {authSession?.user?.name}
           </h1>
           <p
             style={{
@@ -3468,8 +3502,10 @@ export default function VendorPortalPage() {
 
             {/* Broker Information */}
             {(() => {
-              const broker = session?.shipperId
-                ? vendorDocumentService.getShipperBroker(session.shipperId)
+              const broker = (authSession?.user as any)?.companyId
+                ? vendorDocumentService.getShipperBroker(
+                    (authSession.user as any).companyId
+                  )
                 : null;
 
               if (broker) {
@@ -3567,8 +3603,10 @@ export default function VendorPortalPage() {
               }}
             >
               {(() => {
-                const stats = session?.shipperId
-                  ? vendorDocumentService.getDocumentStats(session.shipperId)
+                const stats = (authSession?.user as any)?.companyId
+                  ? vendorDocumentService.getDocumentStats(
+                      (authSession.user as any).companyId
+                    )
                   : {
                       total: 0,
                       pending: 0,
@@ -3774,10 +3812,11 @@ export default function VendorPortalPage() {
                     const description = formData.get('description') as string;
                     const priority = formData.get('priority') as string;
 
-                    if (!file || !session?.shipperId) return;
+                    const companyId = (authSession?.user as any)?.companyId;
+                    if (!file || !companyId) return;
 
                     await vendorDocumentService.uploadDocument(
-                      session.shipperId,
+                      companyId,
                       file,
                       docType as any,
                       description,
@@ -3980,9 +4019,9 @@ export default function VendorPortalPage() {
 
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                 {(() => {
-                  const documents = session?.shipperId
+                  const documents = (authSession?.user as any)?.companyId
                     ? vendorDocumentService.getShipperDocuments(
-                        session.shipperId
+                        (authSession.user as any).companyId
                       )
                     : [];
 
@@ -7558,7 +7597,7 @@ export default function VendorPortalPage() {
                   Company Name:
                 </div>
                 <div style={{ color: 'white', fontWeight: '600' }}>
-                  {session.companyName}
+                  {authSession?.user?.name}
                 </div>
               </div>
 
@@ -7581,7 +7620,7 @@ export default function VendorPortalPage() {
                   Shipper ID:
                 </div>
                 <div style={{ color: 'white', fontWeight: '600' }}>
-                  {session.shipperId}
+                  {(authSession?.user as any)?.companyId}
                 </div>
               </div>
 
@@ -7627,7 +7666,7 @@ export default function VendorPortalPage() {
                   Last Login:
                 </div>
                 <div style={{ color: 'white', fontWeight: '600' }}>
-                  {new Date(session.loginTime).toLocaleString()}
+                  {new Date().toLocaleString()} (Current Session)
                 </div>
               </div>
 

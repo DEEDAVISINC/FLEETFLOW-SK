@@ -1054,7 +1054,9 @@ export class ContractLifecycleService {
 
   private setupPerformanceReviews(): void {
     // TEMPORARILY DISABLED - Performance reviews were causing console spam
-    console.log('📊 Performance reviews scheduled for quarterly execution (currently disabled)');
+    console.log(
+      '📊 Performance reviews scheduled for quarterly execution (currently disabled)'
+    );
     // TODO: Re-enable with proper singleton pattern
     /*
     setInterval(
@@ -1143,5 +1145,3 @@ export class ContractLifecycleService {
 
 // Export singleton instance
 export const contractLifecycleService = ContractLifecycleService.getInstance();
-
-

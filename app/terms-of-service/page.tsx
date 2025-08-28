@@ -48,7 +48,7 @@ export default function TermsOfServicePage() {
               fontWeight: '500',
             }}
           >
-            FleetFlow™ Technologies, Inc.
+            FLEETFLOW TMS LLC
           </div>
           <div
             style={{
@@ -225,9 +225,9 @@ export default function TermsOfServicePage() {
             </h2>
             <p style={{ marginBottom: '15px' }}>
               The Service and its original content, features, and functionality
-              are and will remain the exclusive property of FleetFlow
-              Technologies, Inc. and its licensors. The Service is protected by
-              copyright, trademark, and other laws.
+              are and will remain the exclusive property of FleetFlow FLEETFLOW
+              TMS LLC and its licensors. The Service is protected by copyright,
+              trademark, and other laws.
             </p>
             <p style={{ marginBottom: '15px' }}>
               Our trademarks and trade dress may not be used in connection with
@@ -326,10 +326,10 @@ export default function TermsOfServicePage() {
               8. Limitation of Liability
             </h2>
             <p style={{ marginBottom: '15px' }}>
-              In no event shall FleetFlow Technologies, Inc., nor its directors,
-              employees, partners, agents, suppliers, or affiliates, be liable
-              for any indirect, incidental, special, consequential, or punitive
-              damages, including without limitation, loss of profits, data, use,
+              In no event shall FLEETFLOW TMS LLC, nor its directors, employees,
+              partners, agents, suppliers, or affiliates, be liable for any
+              indirect, incidental, special, consequential, or punitive damages,
+              including without limitation, loss of profits, data, use,
               goodwill, or other intangible losses, resulting from your use of
               the Service.
             </p>
@@ -392,7 +392,7 @@ export default function TermsOfServicePage() {
                 <strong>General Contact:</strong> contact@fleetflowapp.com
               </p>
               <p style={{ marginBottom: '10px' }}>
-                <strong>Address:</strong> FleetFlow Technologies, Inc.
+                <strong>Address:</strong> FLEETFLOW TMS LLC
                 <br />
                 [Address will be provided upon platform launch]
               </p>
@@ -420,7 +420,7 @@ export default function TermsOfServicePage() {
           >
             <div style={{ fontSize: '1.5rem', marginBottom: '10px' }}>🚛</div>
             <div style={{ fontWeight: '600', marginBottom: '5px' }}>
-              FleetFlow™ Technologies, Inc.
+              FLEETFLOW TMS LLC
             </div>
             <div style={{ fontSize: '0.9rem', opacity: '0.9' }}>
               Advanced Transportation Management Solutions

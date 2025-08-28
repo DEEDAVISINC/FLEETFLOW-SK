@@ -55,11 +55,11 @@ interface DispatchInvoiceProps {
 const DispatchInvoice = forwardRef<HTMLDivElement, DispatchInvoiceProps>(
   ({ invoice, companyInfo }, ref) => {
     const defaultCompanyInfo = {
-      name: 'Dispatch Services',
-      address: '1234 Logistics Way, Suite 100\nAtlanta, GA 30309',
-      phone: '(555) 123-4567',
-      email: 'billing@dispatchservices.com',
-      website: 'www.dispatchservices.com',
+      name: 'FLEETFLOW TMS LLC',
+      address: '755 W. Big Beaver Rd STE 2020\nTroy, MI 48084',
+      phone: '(833) 386-3509',
+      email: 'billing@fleetflowapp.com',
+      website: 'fleetflowapp.com',
       logo: '🚛',
     };
 

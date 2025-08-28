@@ -49,7 +49,7 @@
       "destination": "/api/privacy-policy"
     },
     {
-      "source": "/privacy-policy.html", 
+      "source": "/privacy-policy.html",
       "destination": "/api/privacy-policy"
     }
   ],

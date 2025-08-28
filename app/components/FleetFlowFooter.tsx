@@ -60,7 +60,7 @@ export default function FleetFlowFooter({
               textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
             }}
           >
-            © 2025 Transportation Management System
+            © 2025 FLEETFLOW TMS LLC | Troy, MI
           </div>
         </div>
       </div>

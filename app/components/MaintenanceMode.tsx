@@ -30,6 +30,7 @@ export default function MaintenanceMode({ children }: MaintenanceModeProps) {
     '/privacy',
     '/terms',
     '/legal',
+    '/about', // Allow About page to be accessible
     '/api', // Allow API routes to function
   ];
 
@@ -254,7 +255,7 @@ export default function MaintenanceMode({ children }: MaintenanceModeProps) {
             color: 'rgba(255, 255, 255, 0.7)',
           }}
         >
-          © 2024 FleetFlow Technologies, Inc. All rights reserved.
+          © 2024 FLEETFLOW TMS LLC All rights reserved.
         </div>
       </div>
 

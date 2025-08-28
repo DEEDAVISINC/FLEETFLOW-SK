@@ -468,43 +468,6 @@ const VendorManagementPage: React.FC = () => {
           >
             📊 Reports
           </button>
-          <button
-            style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              color: '#fbbf24',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              position: 'relative',
-            }}
-          >
-            🔔 Notifications
-            <span
-              style={{
-                position: 'absolute',
-                top: '-4px',
-                right: '-4px',
-                background: '#ef4444',
-                color: 'white',
-                borderRadius: '50%',
-                width: '16px',
-                height: '16px',
-                fontSize: '0.7rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: '600',
-              }}
-            >
-              3
-            </span>
-          </button>
         </div>
       </div>
 

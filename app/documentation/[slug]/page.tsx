@@ -1560,7 +1560,7 @@ const aiLoadMatching = {
 **Support Channels (24/7 Available)**
 - **Live Chat**: Available in-app during business hours
 - **Email Support**: support@fleetflow.com (24-hour response)
-- **Phone Support**: 1-800-FLEETFLOW (urgent issues)
+- **Phone Support**: (833) 386-3509 (urgent issues)
 - **Emergency Line**: 1-800-EMERGENCY (critical system issues)
 
 **Specialized Support Teams**
@@ -2458,7 +2458,7 @@ Quotes appear with enhanced information:
 **Training Support:**
 - **Email**: university@fleetflow.com
 - **Live Chat**: Available during training sessions
-- **Phone**: 1-800-FLEETFLOW (8 AM - 6 PM EST)
+- **Phone**: (833) 386-3509 (8 AM - 6 PM EST)
 
 **Quick Reference Materials:**
 - Cheat Sheet: One-page workflow summary

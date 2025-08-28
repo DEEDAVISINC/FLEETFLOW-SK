@@ -1027,36 +1027,39 @@ export default function EnhancedLoadBoard() {
                     </button>
                     {load.status === 'Available' && (
                       <>
-                        <button
-                          onClick={() => handleDriverAcceptance(load.id)}
-                          style={{
-                            padding: '8px 16px',
-                            background:
-                              'linear-gradient(135deg, #22c55e, #16a34a)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            transition: 'all 0.3s ease',
-                            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)',
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.transform =
-                              'translateY(-2px)';
-                            e.currentTarget.style.boxShadow =
-                              '0 4px 16px rgba(34, 197, 94, 0.4)';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow =
-                              '0 2px 8px rgba(34, 197, 94, 0.3)';
-                          }}
-                          title='Accept this load and add to your schedule'
-                        >
-                          🚛 Accept Load
-                        </button>
+                        {/* Only show Accept Load button for dispatchers and drivers, not brokers */}
+                        {getCurrentUser()?.user?.role !== 'broker' && (
+                          <button
+                            onClick={() => handleDriverAcceptance(load.id)}
+                            style={{
+                              padding: '8px 16px',
+                              background:
+                                'linear-gradient(135deg, #22c55e, #16a34a)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              fontWeight: '700',
+                              transition: 'all 0.3s ease',
+                              boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)',
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform =
+                                'translateY(-2px)';
+                              e.currentTarget.style.boxShadow =
+                                '0 4px 16px rgba(34, 197, 94, 0.4)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow =
+                                '0 2px 8px rgba(34, 197, 94, 0.3)';
+                            }}
+                            title='Accept this load and add to your schedule'
+                          >
+                            🚛 Accept Load
+                          </button>
+                        )}
                         <select
                           style={{
                             padding: '8px 12px',
@@ -1211,33 +1214,36 @@ export default function EnhancedLoadBoard() {
                   </button>
                   {load.status === 'Available' && (
                     <>
-                      <button
-                        onClick={() => handleDriverAcceptance(load.id)}
-                        style={{
-                          padding: '3px 8px',
-                          background:
-                            'linear-gradient(135deg, #22c55e, #16a34a)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          fontSize: '8px',
-                          fontWeight: '700',
-                          marginBottom: '2px',
-                          transition: 'all 0.2s ease',
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.background =
-                            'linear-gradient(135deg, #16a34a, #15803d)';
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.background =
-                            'linear-gradient(135deg, #22c55e, #16a34a)';
-                        }}
-                        title='Accept this load'
-                      >
-                        🚛 Accept
-                      </button>
+                      {/* Only show Accept button for dispatchers and drivers, not brokers */}
+                      {getCurrentUser()?.user?.role !== 'broker' && (
+                        <button
+                          onClick={() => handleDriverAcceptance(load.id)}
+                          style={{
+                            padding: '3px 8px',
+                            background:
+                              'linear-gradient(135deg, #22c55e, #16a34a)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            fontSize: '8px',
+                            fontWeight: '700',
+                            marginBottom: '2px',
+                            transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                              'linear-gradient(135deg, #16a34a, #15803d)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                              'linear-gradient(135deg, #22c55e, #16a34a)';
+                          }}
+                          title='Accept this load'
+                        >
+                          🚛 Accept
+                        </button>
+                      )}
                       <select
                         value={load.dispatcherId || ''}
                         onChange={(e) =>

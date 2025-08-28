@@ -61,7 +61,7 @@ const privacyPolicyHTML = `<!DOCTYPE html>
         <div class="header">
             <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
             <h1>Privacy Policy</h1>
-            <div style="font-size: 1.1rem; color: #64748b; font-weight: 500;">FleetFlow™ Technologies, Inc.</div>
+            <div style="font-size: 1.1rem; color: #64748b; font-weight: 500;">FLEETFLOW TMS LLC</div>
             <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 5px;">Effective Date: December 2024 | Last Updated: December 2024</div>
         </div>
 
@@ -130,7 +130,9 @@ const privacyPolicyHTML = `<!DOCTYPE html>
             <div class="contact-box">
                 <p><strong>Privacy Team:</strong> privacy@fleetflowapp.com</p>
                 <p><strong>General Contact:</strong> contact@fleetflowapp.com</p>
-                <p><strong>Address:</strong> FleetFlow Technologies, Inc.<br>[Address will be provided upon platform launch]</p>
+                <p><strong>Address:</strong> FLEETFLOW TMS LLC<br>
+                755 W. Big Beaver Rd STE 2020<br>
+                Troy, MI 48084</p>
             </div>
         </div>
 

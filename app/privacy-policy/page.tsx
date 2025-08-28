@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
               fontWeight: '500',
             }}
           >
-            FleetFlow™ Technologies, Inc.
+            FLEETFLOW TMS LLC
           </div>
           <div
             style={{
@@ -289,7 +289,7 @@ export default function PrivacyPolicyPage() {
                 <strong>General Contact:</strong> contact@fleetflowapp.com
               </p>
               <p style={{ marginBottom: '10px' }}>
-                <strong>Address:</strong> FleetFlow Technologies, Inc.
+                <strong>Address:</strong> FLEETFLOW TMS LLC
                 <br />
                 [Address will be provided upon platform launch]
               </p>
@@ -337,7 +337,7 @@ export default function PrivacyPolicyPage() {
           >
             <div style={{ fontSize: '1.5rem', marginBottom: '10px' }}>🚛</div>
             <div style={{ fontWeight: '600', marginBottom: '5px' }}>
-              FleetFlow™ Technologies, Inc.
+              FLEETFLOW TMS LLC
             </div>
             <div style={{ fontSize: '0.9rem', opacity: '0.9' }}>
               Advanced Transportation Management Solutions

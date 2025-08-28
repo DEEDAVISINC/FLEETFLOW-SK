@@ -356,7 +356,7 @@ class AISupportService extends EventEmitter {
         id: 'KB-003',
         title: 'Emergency Contact Procedures',
         content:
-          'For urgent issues: Call emergency hotline 1-800-FLEET-911 or use the emergency chat feature in your portal.',
+          'For urgent issues: Call our hotline (833) 386-3509 or use the emergency chat feature in your portal.',
         category: 'emergency',
         tags: ['emergency', 'contact', 'urgent', 'hotline'],
         popularity: 89,
@@ -631,7 +631,7 @@ class AISupportService extends EventEmitter {
       },
       emergency: {
         message:
-          'I understand this is urgent! For immediate emergency assistance, please call our 24/7 hotline at 1-800-FLEET-911. I can also alert our emergency response team right now.',
+          'I understand this is urgent! For immediate emergency assistance, please call our 24/7 hotline at (833) 386-3509. I can also alert our emergency response team right now.',
         suggestions: [
           'Call emergency hotline',
           'Alert response team',

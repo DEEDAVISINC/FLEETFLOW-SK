@@ -7,9 +7,9 @@
 
 ## 📋 **EXECUTIVE SUMMARY**
 
-FleetFlow Technologies, Inc. ("FleetFlow", "Company") is committed to protecting personal data and
-complying with all applicable data protection laws including the General Data Protection Regulation
-(GDPR), California Consumer Privacy Act (CCPA), and transportation industry regulations. This policy
+FLEETFLOW TMS LLC ("FleetFlow", "Company") is committed to protecting personal data and complying
+with all applicable data protection laws including the General Data Protection Regulation (GDPR),
+California Consumer Privacy Act (CCPA), and transportation industry regulations. This policy
 establishes comprehensive data retention and deletion procedures for our multi-tenant SaaS platform
 serving the transportation industry.
 
@@ -553,7 +553,7 @@ This policy applies to:
 
 - Portal: https://fleetflow.com/privacy-requests
 - Email: requests@fleetflow.com
-- Phone: 1-800-FLEET-FLOW ext. PRIVACY
+- Phone: (833) 386-3509 ext. PRIVACY
 
 **Privacy Complaints:**
 

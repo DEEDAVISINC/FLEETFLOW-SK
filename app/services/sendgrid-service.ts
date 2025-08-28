@@ -46,6 +46,14 @@ export class SendGridService {
     this.fromEmail =
       process.env.SENDGRID_FROM_EMAIL || 'noreply@fleetflowapp.com';
     this.fromName = 'FleetFlow';
+
+    // Note: ImprovMX handles incoming email forwarding
+    // For outgoing emails, you'll need a transactional email service
+    if (!this.apiKey) {
+      console.log(
+        '💡 Consider setting up a transactional email service (Brevo, Resend, etc.) for sending emails'
+      );
+    }
   }
 
   // Send single email
@@ -502,95 +510,3 @@ FleetFlow Billing Team`;
 
 // Export singleton instance
 export const sendGridService = new SendGridService();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

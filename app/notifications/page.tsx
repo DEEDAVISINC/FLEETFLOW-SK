@@ -1,214 +1,14 @@
 'use client';
 
-import {
-  AlertTriangle,
-  Ban,
-  Bell,
-  CheckCircle,
-  ChevronDown,
-  Clock,
-  Filter,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { BarChart3, Bell, Settings, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { EnhancedNotificationHub } from '../components/EnhancedNotificationHub';
+import NotificationPreferences from '../components/NotificationPreferences';
+import { getCurrentUser } from '../config/access';
 
 export default function NotificationsHub() {
-  // Simulated notification data
-  const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Predefined notification types and their colors
-  const notificationTypes = [
-    { id: 'all', label: 'All Notifications', color: '#4b5563' },
-    { id: 'system', label: 'System', color: '#3b82f6' },
-    { id: 'shipment', label: 'Shipment', color: '#10b981' },
-    { id: 'compliance', label: 'Compliance', color: '#ef4444' },
-    { id: 'billing', label: 'Billing', color: '#8b5cf6' },
-    { id: 'maintenance', label: 'Maintenance', color: '#f59e0b' },
-  ];
-
-  const [selectedType, setSelectedType] = useState('all');
-  const [filterOpen, setFilterOpen] = useState(false);
-
-  useEffect(() => {
-    // Simulate API fetch delay
-    const timer = setTimeout(() => {
-      setLiveAlerts([
-        {
-          id: 1,
-          type: 'system',
-          title: 'System Maintenance',
-          message: 'Scheduled maintenance will occur on Sunday at 2:00 AM EST',
-          timestamp: '2023-11-15T14:30:00',
-          priority: 'medium',
-          isRead: false,
-          actions: [{ label: 'Acknowledge', type: 'primary' }],
-        },
-        {
-          id: 2,
-          type: 'shipment',
-          title: 'Load Delivered',
-          message:
-            'Load #FL-23456 has been delivered and signed for by recipient',
-          timestamp: '2023-11-15T10:12:00',
-          priority: 'low',
-          isRead: false,
-          actions: [
-            { label: 'View POD', type: 'primary' },
-            { label: 'Invoice', type: 'secondary' },
-          ],
-        },
-        {
-          id: 3,
-          type: 'compliance',
-          title: 'URGENT: DOT Filing Deadline',
-          message: 'Your quarterly IFTA filing is due in 48 hours',
-          timestamp: '2023-11-14T09:45:00',
-          priority: 'high',
-          isRead: false,
-          actions: [{ label: 'Complete Filing', type: 'primary' }],
-        },
-        {
-          id: 4,
-          type: 'billing',
-          title: 'Invoice Paid',
-          message: 'Customer ABC Logistics has paid invoice #INV-34567',
-          timestamp: '2023-11-13T16:20:00',
-          priority: 'low',
-          isRead: true,
-          actions: [{ label: 'View Details', type: 'primary' }],
-        },
-        {
-          id: 5,
-          type: 'maintenance',
-          title: 'Vehicle Maintenance Alert',
-          message: 'Truck #T-789 is due for scheduled maintenance',
-          timestamp: '2023-11-13T08:15:00',
-          priority: 'medium',
-          isRead: true,
-          actions: [{ label: 'Schedule Service', type: 'primary' }],
-        },
-        {
-          id: 6,
-          type: 'system',
-          title: 'New Feature Available',
-          message:
-            'Explore our new route optimization tools in the dispatch module',
-          timestamp: '2023-11-12T11:00:00',
-          priority: 'low',
-          isRead: true,
-          actions: [{ label: 'Learn More', type: 'primary' }],
-        },
-        {
-          id: 7,
-          type: 'compliance',
-          title: 'ELD Compliance Alert',
-          message: 'Driver John Smith has 3 HOS violations in the past week',
-          timestamp: '2023-11-11T14:25:00',
-          priority: 'high',
-          isRead: false,
-          actions: [{ label: 'Review Logs', type: 'primary' }],
-        },
-        {
-          id: 8,
-          type: 'shipment',
-          title: 'Delivery Exception',
-          message: 'Load #FL-23789 delayed due to weather conditions in Denver',
-          timestamp: '2023-11-11T09:40:00',
-          priority: 'medium',
-          isRead: false,
-          actions: [{ label: 'Update Customer', type: 'primary' }],
-        },
-        {
-          id: 9,
-          type: 'billing',
-          title: 'Payment Reminder',
-          message:
-            'Invoice #INV-45678 for Customer XYZ Transport is due in 3 days',
-          timestamp: '2023-11-10T15:30:00',
-          priority: 'medium',
-          isRead: true,
-          actions: [{ label: 'Send Reminder', type: 'primary' }],
-        },
-        {
-          id: 10,
-          type: 'maintenance',
-          title: 'Trailer Repair Complete',
-          message: 'Trailer #TR-456 repairs completed and ready for pickup',
-          timestamp: '2023-11-09T13:20:00',
-          priority: 'low',
-          isRead: true,
-          actions: [{ label: 'View Details', type: 'primary' }],
-        },
-      ]);
-      setIsLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Filter notifications based on selected type
-  const filteredAlerts =
-    selectedType === 'all'
-      ? liveAlerts
-      : liveAlerts.filter((alert) => alert.type === selectedType);
-
-  // Format the timestamp for display
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  // Priority icon selector
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return <AlertTriangle size={16} className='text-red-500' />;
-      case 'medium':
-        return <Clock size={16} className='text-amber-500' />;
-      case 'low':
-        return <CheckCircle size={16} className='text-green-500' />;
-      default:
-        return null;
-    }
-  };
-
-  // Get color for notification type
-  const getTypeColor = (type: string) => {
-    const foundType = notificationTypes.find((t) => t.id === type);
-    return foundType ? foundType.color : '#4b5563';
-  };
-
-  // Toggle read status
-  const toggleReadStatus = (id: number) => {
-    setLiveAlerts((prevAlerts) =>
-      prevAlerts.map((alert) =>
-        alert.id === id ? { ...alert, isRead: !alert.isRead } : alert
-      )
-    );
-  };
-
-  // Mark all as read
-  const markAllAsRead = () => {
-    setLiveAlerts((prevAlerts) =>
-      prevAlerts.map((alert) => ({ ...alert, isRead: true }))
-    );
-  };
-
-  // Clear all read notifications
-  const clearReadNotifications = () => {
-    setLiveAlerts((prevAlerts) => prevAlerts.filter((alert) => !alert.isRead));
-  };
-
-  const handleAlertAction = (alertId: number) => {
-    console.log('Alert action taken for alert:', alertId);
-    // Remove alert after action is taken
-    setLiveAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
-  };
+  const [showPreferences, setShowPreferences] = useState(false);
+  const { user } = getCurrentUser();
 
   return (
     <div
@@ -224,355 +24,224 @@ export default function NotificationsHub() {
           margin: '0 auto',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '24px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Bell size={28} style={{ color: '#2d3748' }} />
-            <h1
-              style={{
-                fontSize: '28px',
-                fontWeight: '700',
-                color: '#2d3748',
-                margin: 0,
-              }}
+        {/* Page Header */}
+        <div className='mb-8'>
+          <div className='mb-6 flex items-center justify-between'>
+            <div className='flex items-center gap-4'>
+              <div className='bg-opacity-20 flex h-12 w-12 items-center justify-center rounded-xl bg-white'>
+                <Bell className='h-6 w-6 text-gray-800' />
+              </div>
+              <div>
+                <h1 className='text-3xl font-bold text-gray-900'>
+                  Notification Center
+                </h1>
+                <p className='text-lg text-gray-700'>
+                  Stay informed with real-time updates and alerts
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowPreferences(true)}
+              className='bg-opacity-20 hover:bg-opacity-30 flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-medium text-gray-800 transition-colors'
             >
-              FleetFlow Notification Hub
-            </h1>
+              <Settings className='h-5 w-5' />
+              Preferences
+            </button>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button
-              onClick={markAllAsRead}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: 'none',
-                background: 'rgba(255, 255, 255, 0.5)',
-                color: '#2d3748',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <CheckCircle size={16} />
-              Mark All Read
-            </button>
-            <button
-              onClick={clearReadNotifications}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: 'none',
-                background: 'rgba(255, 255, 255, 0.5)',
-                color: '#2d3748',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <Ban size={16} />
-              Clear Read
-            </button>
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setFilterOpen(!filterOpen)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: 'rgba(255, 255, 255, 0.5)',
-                  color: '#2d3748',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <Filter size={16} />
-                Filter
-                <ChevronDown size={16} />
-              </button>
-              {filterOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    right: 0,
-                    width: '200px',
-                    background: 'white',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    zIndex: 10,
-                    padding: '8px',
-                    marginTop: '4px',
-                  }}
-                >
-                  {notificationTypes.map((type) => (
-                    <div
-                      key={type.id}
-                      onClick={() => {
-                        setSelectedType(type.id);
-                        setFilterOpen(false);
-                      }}
-                      style={{
-                        padding: '8px 12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        cursor: 'pointer',
-                        borderRadius: '4px',
-                        backgroundColor:
-                          selectedType === type.id
-                            ? 'rgba(59, 130, 246, 0.1)'
-                            : 'transparent',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          borderRadius: '50%',
-                          backgroundColor: type.color,
-                        }}
-                      />
-                      <span>{type.label}</span>
-                      {selectedType === type.id && (
-                        <CheckCircle
-                          size={16}
-                          style={{ marginLeft: 'auto', color: '#3b82f6' }}
-                        />
-                      )}
-                    </div>
-                  ))}
+
+          {/* Stats Cards */}
+          <div className='mb-8 grid grid-cols-1 gap-6 md:grid-cols-3'>
+            <div className='bg-opacity-60 border-opacity-20 rounded-xl border border-white bg-white p-6 backdrop-blur-sm'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-gray-600'>
+                    Active Alerts
+                  </p>
+                  <p className='mt-1 text-2xl font-bold text-gray-900'>12</p>
                 </div>
-              )}
+                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-red-100'>
+                  <Bell className='h-6 w-6 text-red-600' />
+                </div>
+              </div>
+              <div className='mt-4 flex items-center gap-1'>
+                <TrendingUp className='h-4 w-4 text-green-600' />
+                <span className='text-sm font-medium text-green-600'>
+                  3 new today
+                </span>
+              </div>
+            </div>
+
+            <div className='bg-opacity-60 border-opacity-20 rounded-xl border border-white bg-white p-6 backdrop-blur-sm'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-gray-600'>
+                    High Priority
+                  </p>
+                  <p className='mt-1 text-2xl font-bold text-gray-900'>4</p>
+                </div>
+                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100'>
+                  <BarChart3 className='h-6 w-6 text-orange-600' />
+                </div>
+              </div>
+              <div className='mt-4 flex items-center gap-1'>
+                <TrendingUp className='h-4 w-4 text-red-600' />
+                <span className='text-sm font-medium text-red-600'>
+                  2 urgent
+                </span>
+              </div>
+            </div>
+
+            <div className='bg-opacity-60 border-opacity-20 rounded-xl border border-white bg-white p-6 backdrop-blur-sm'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-gray-600'>This Week</p>
+                  <p className='mt-1 text-2xl font-bold text-gray-900'>47</p>
+                </div>
+                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100'>
+                  <TrendingUp className='h-6 w-6 text-blue-600' />
+                </div>
+              </div>
+              <div className='mt-4 flex items-center gap-1'>
+                <TrendingUp className='h-4 w-4 text-blue-600' />
+                <span className='text-sm font-medium text-blue-600'>
+                  18% increase
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {isLoading ? (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.5)',
-              borderRadius: '16px',
-              padding: '40px',
-              textAlign: 'center',
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-block',
-                width: '40px',
-                height: '40px',
-                border: '4px solid rgba(59, 130, 246, 0.3)',
-                borderTopColor: '#3b82f6',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-              }}
-            ></div>
-            <p
-              style={{ marginTop: '16px', color: '#2d3748', fontWeight: '500' }}
-            >
-              Loading notifications...
-            </p>
-          </div>
-        ) : filteredAlerts.length === 0 ? (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.5)',
-              borderRadius: '16px',
-              padding: '40px',
-              textAlign: 'center',
-            }}
-          >
-            <Bell
-              size={48}
-              style={{ color: '#9ca3af', margin: '0 auto 16px' }}
-            />
-            <p
-              style={{ color: '#4b5563', fontWeight: '500', fontSize: '18px' }}
-            >
-              No{' '}
-              {selectedType !== 'all'
-                ? notificationTypes.find((t) => t.id === selectedType)?.label
-                : ''}{' '}
-              notifications at this time
-            </p>
-          </div>
-        ) : (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-          >
-            {filteredAlerts.map((alert) => (
-              <div
-                key={alert.id}
-                style={{
-                  background: alert.isRead
-                    ? 'rgba(255, 255, 255, 0.5)'
-                    : 'rgba(255, 255, 255, 0.8)',
-                  borderRadius: '12px',
-                  padding: '16px 20px',
-                  boxShadow: alert.isRead
-                    ? 'none'
-                    : '0 4px 12px rgba(0,0,0,0.05)',
-                  borderLeft: `4px solid ${getTypeColor(alert.type)}`,
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        padding: '4px 8px',
-                        background: `${getTypeColor(alert.type)}20`,
-                        color: getTypeColor(alert.type),
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {alert.type}
-                    </div>
-                    {!alert.isRead && (
-                      <div
-                        style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: '#3b82f6',
-                        }}
-                      ></div>
-                    )}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
-                    >
-                      {getPriorityIcon(alert.priority)}
-                      <span
-                        style={{
-                          fontSize: '12px',
-                          color:
-                            alert.priority === 'high'
-                              ? '#ef4444'
-                              : alert.priority === 'medium'
-                                ? '#f59e0b'
-                                : '#10b981',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {alert.priority}
-                      </span>
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                    {formatTimestamp(alert.timestamp)}
+        {/* Enhanced Notification Hub */}
+        <div className='bg-opacity-60 border-opacity-20 overflow-hidden rounded-xl border border-white bg-white backdrop-blur-sm'>
+          <EnhancedNotificationHub
+            userId={user.id}
+            maxHeight='70vh'
+            showHeader={false}
+          />
+        </div>
+
+        {/* Additional Information */}
+        <div className='mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+          <div className='bg-opacity-60 border-opacity-20 rounded-xl border border-white bg-white p-6 backdrop-blur-sm'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              Notification Types
+            </h3>
+            <div className='space-y-3'>
+              {[
+                {
+                  type: 'System',
+                  color: 'bg-gray-500',
+                  desc: 'Platform updates and maintenance',
+                },
+                {
+                  type: 'Shipment',
+                  color: 'bg-green-500',
+                  desc: 'Load status and delivery updates',
+                },
+                {
+                  type: 'Compliance',
+                  color: 'bg-red-500',
+                  desc: 'DOT and regulatory alerts',
+                },
+                {
+                  type: 'Billing',
+                  color: 'bg-purple-500',
+                  desc: 'Invoice and payment notifications',
+                },
+                {
+                  type: 'Maintenance',
+                  color: 'bg-orange-500',
+                  desc: 'Vehicle service alerts',
+                },
+              ].map((item, index) => (
+                <div key={index} className='flex items-center gap-3'>
+                  <div className={`h-4 w-4 ${item.color} rounded-full`}></div>
+                  <div>
+                    <span className='font-medium text-gray-900'>
+                      {item.type}
+                    </span>
+                    <span className='ml-2 text-sm text-gray-600'>
+                      {item.desc}
+                    </span>
                   </div>
                 </div>
-                <h3
-                  style={{
-                    margin: '8px 0 6px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#1f2937',
-                  }}
-                >
-                  {alert.title}
-                </h3>
-                <p
-                  style={{
-                    margin: '0 0 12px',
-                    fontSize: '14px',
-                    color: '#4b5563',
-                  }}
-                >
-                  {alert.message}
-                </p>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {alert.actions.map((action: any, i: number) => (
-                      <button
-                        key={i}
-                        onClick={() => handleAlertAction(alert.id)}
-                        style={{
-                          padding: '6px 12px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          background:
-                            action.type === 'primary'
-                              ? '#3b82f6'
-                              : 'rgba(0,0,0,0.05)',
-                          color:
-                            action.type === 'primary' ? 'white' : '#4b5563',
-                          fontSize: '13px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => toggleReadStatus(alert.id)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      fontSize: '13px',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      padding: '6px',
-                    }}
-                  >
-                    {alert.isRead ? 'Mark as unread' : 'Mark as read'}
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        )}
+
+          <div className='bg-opacity-60 border-opacity-20 rounded-xl border border-white bg-white p-6 backdrop-blur-sm'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              Quick Actions
+            </h3>
+            <div className='space-y-3'>
+              {[
+                {
+                  action: 'Mark All Read',
+                  desc: 'Clear all unread notifications',
+                  icon: '✓',
+                },
+                {
+                  action: 'Filter by Priority',
+                  desc: 'Show only high-priority alerts',
+                  icon: '⚠️',
+                },
+                {
+                  action: 'Export Report',
+                  desc: 'Download notification history',
+                  icon: '📊',
+                },
+                {
+                  action: 'Manage Preferences',
+                  desc: 'Customize notification settings',
+                  icon: '⚙️',
+                },
+                {
+                  action: 'Real-time Alerts',
+                  desc: 'Enable desktop notifications',
+                  icon: '🔔',
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className='hover:bg-opacity-50 flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white'
+                >
+                  <span className='text-lg'>{item.icon}</span>
+                  <div>
+                    <span className='block font-medium text-gray-900'>
+                      {item.action}
+                    </span>
+                    <span className='text-sm text-gray-600'>{item.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
+      {/* Preferences Modal */}
+      {showPreferences && (
+        <NotificationPreferences
+          userId={user.id}
+          onClose={() => setShowPreferences(false)}
+        />
+      )}
+
+      {/* Styles */}
       <style jsx global>{`
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
         body {
           margin: 0;
           font-family:
             -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       `}</style>
     </div>

@@ -752,6 +752,62 @@ export class FleetFlowAI {
   }
 
   /**
+   * Generate documents using Claude AI
+   * Used by ContractLifecycleService and other document generation services
+   */
+  async generateDocument(
+    prompt: string,
+    documentType: string
+  ): Promise<string> {
+    if (!this.isEnabled) {
+      return this.mockDocumentGeneration(prompt, documentType);
+    }
+
+    try {
+      const response = await this.claude.generateDocument(prompt, documentType);
+      return response;
+    } catch (error) {
+      console.error('Claude AI document generation failed:', error);
+      return this.mockDocumentGeneration(prompt, documentType);
+    }
+  }
+
+  /**
+   * Mock document generation for development/fallback
+   */
+  private mockDocumentGeneration(prompt: string, documentType: string): string {
+    // Analyze document type to generate appropriate mock response
+    switch (documentType.toLowerCase()) {
+      case 'contract_analysis':
+        return JSON.stringify({
+          recommendation: 'renew',
+          confidence: 0.85,
+          reasoning: [
+            'Current vendor performance meets expectations',
+            'Competitive pricing maintained',
+            'Strong relationship value',
+          ],
+          financialImpact: {
+            estimatedSavings: 0,
+            riskAssessment: 'low',
+          },
+          alternatives: [],
+        });
+
+      case 'route_optimization':
+        return JSON.stringify({
+          optimizedRoute: ['Origin', 'Stop 1', 'Stop 2', 'Destination'],
+          estimatedTime: '4.5 hours',
+          estimatedFuel: '32 gallons',
+          efficiency: '15% improvement',
+        });
+
+      default:
+        return `Mock ${documentType} document generated for: ${prompt.substring(0, 100)}...`;
+    }
+  }
+
+  /**
    * Mock conversation response for development/fallback
    */
   private mockConversationResponse(prompt: string): string {

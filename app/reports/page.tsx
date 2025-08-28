@@ -1163,56 +1163,6 @@ export default function ReportsPage() {
             ))}
           </div>
         </div>
-
-        {/* Executive Notifications - Simple Button */}
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '8px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-            textAlign: 'center',
-          }}
-        >
-          <button
-            style={{
-              background: 'linear-gradient(135deg, #fef3c7, #fbbf24)',
-              border: '1px solid #f59e0b',
-              color: '#2d3748',
-              padding: '6px 12px',
-              borderRadius: '6px',
-              fontSize: '10px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(245, 158, 11, 0.4)';
-              e.currentTarget.style.background =
-                'linear-gradient(135deg, #fde68a, #f59e0b)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow =
-                '0 2px 8px rgba(245, 158, 11, 0.3)';
-              e.currentTarget.style.background =
-                'linear-gradient(135deg, #fef3c7, #fbbf24)';
-            }}
-            onClick={() => {
-              // Add notification functionality here
-              alert('Executive notifications feature coming soon!');
-            }}
-          >
-            🔔 Notifications
-          </button>
-        </div>
       </div>
 
       <style jsx>{`

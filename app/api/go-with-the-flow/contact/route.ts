@@ -74,8 +74,10 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     success: true,
     contactInfo: {
+      company: 'FLEETFLOW TMS LLC',
       email: 'support@fleetflowapp.com',
-      phone: '1-800-FLEETFLOW',
+      phone: '(833) 386-3509',
+      address: '755 W. Big Beaver Rd STE 2020, Troy, MI 48084',
       hours: '24/7 Support Available',
       responseTime: 'Within 24 hours',
     },

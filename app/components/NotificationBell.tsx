@@ -1,67 +1,113 @@
-import { useEffect, useState } from 'react';
+'use client';
+
 import { createClient } from '@supabase/supabase-js';
-import { FaBell } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { MessageService } from '../services/MessageService';
+import { NotificationService } from '../services/NotificationService';
+import MessageComposer from './MessageComposer';
+import NotificationDropdown from './NotificationDropdown';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-export interface Notification {
-  id: string;
-  message: string;
-  type: string;
-  read: boolean;
-  timestamp: string;
-  link?: string;
-  user_id: string;
+interface NotificationBellProps {
+  userId: string;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 }
 
-export default function NotificationBell({ userId }: { userId: string }) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [open, setOpen] = useState(false);
+export const NotificationBell: React.FC<NotificationBellProps> = ({
+  userId,
+  position = 'bottom-right',
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const [isHydrated, setIsHydrated] = useState(false);
 
+  const notificationService = new NotificationService();
+  const messageService = new MessageService();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  // Hydration fix
   useEffect(() => {
-    if (!userId) return;
+    setIsHydrated(true);
+  }, []);
 
-    // Fetch initial notifications
-    const fetchNotifications = async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+  // Load unread counts for both notifications and messages
+  const loadUnreadCounts = async () => {
+    if (!isHydrated) return;
 
-      if (error) {
-        console.error('Error fetching notifications:', error);
-        return;
+    try {
+      // Load unread notifications
+      const notificationResult = await notificationService.getUserNotifications(
+        userId,
+        {
+          limit: 50,
+          includeRead: false, // Only unread
+        }
+      );
+
+      if (notificationResult.success && notificationResult.notifications) {
+        setUnreadCount(notificationResult.notifications.length);
       }
 
-      setNotifications(data || []);
-    };
+      // Load unread messages
+      const messageResult = await messageService.getUserMessages(
+        userId,
+        {
+          unreadOnly: true,
+        },
+        50
+      );
 
-    fetchNotifications();
+      if (messageResult.messages) {
+        setUnreadMessageCount(messageResult.messages.length);
+      }
+    } catch (error) {
+      console.error('Failed to load unread counts:', error);
+    }
+  };
 
-    // Set up real-time subscription
+  // Initial load
+  useEffect(() => {
+    if (isHydrated) {
+      loadUnreadCounts();
+    }
+  }, [isHydrated, userId]);
+
+  // Real-time updates for unread counts
+  useEffect(() => {
+    if (!isHydrated) return;
+
     const subscription = supabase
-      .channel('notifications')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
+      .channel('notification_bell')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        }, 
+          filter: `user_id=eq.${userId}`,
+        },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setNotifications(prev => [payload.new as Notification, ...prev]);
-          } else if (payload.eventType === 'UPDATE') {
-            setNotifications(prev => 
-              prev.map(n => n.id === payload.new.id ? payload.new as Notification : n)
-            );
-          } else if (payload.eventType === 'DELETE') {
-            setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
-          }
+          console.log('🔔 Bell: Real-time notification update:', payload);
+          // Reload unread counts
+          loadUnreadCounts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'intraoffice_messages',
+          filter: `to_user_ids.cs.{${userId}}`,
+        },
+        (payload) => {
+          console.log('📬 Bell: Real-time message update:', payload);
+          // Reload unread counts
+          loadUnreadCounts();
         }
       )
       .subscribe();
@@ -69,74 +115,124 @@ export default function NotificationBell({ userId }: { userId: string }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [userId]);
+  }, [isHydrated, userId]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const handleBellClick = () => {
+    setIsOpen(!isOpen);
+  };
 
-  const markAllRead = async () => {
-    const unreadNotifications = notifications.filter(n => !n.read);
-    
-    for (const notification of unreadNotifications) {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true })
-        .eq('id', notification.id);
+  const handleDropdownClose = () => {
+    setIsOpen(false);
+    // Reload unread counts when dropdown closes
+    loadUnreadCounts();
+  };
 
-      if (error) {
-        console.error('Error marking notification as read:', error);
-      }
+  const handleComposeMessage = () => {
+    setIsOpen(false);
+    setComposerOpen(true);
+  };
+
+  const handleComposerClose = () => {
+    setComposerOpen(false);
+  };
+
+  if (!isHydrated) {
+    return null; // Prevent hydration mismatch
+  }
+
+  const getPositionStyles = () => {
+    const baseStyles = {
+      position: 'fixed' as const,
+      zIndex: 9999,
+    };
+
+    switch (position) {
+      case 'bottom-right':
+        return { ...baseStyles, bottom: '20px', right: '90px' };
+      case 'bottom-left':
+        return { ...baseStyles, bottom: '20px', left: '20px' };
+      case 'top-right':
+        return { ...baseStyles, top: '20px', right: '90px' };
+      case 'top-left':
+        return { ...baseStyles, top: '20px', left: '20px' };
+      default:
+        return { ...baseStyles, bottom: '20px', right: '90px' };
     }
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
-  };
-
   return (
-    <div style={{ position: 'relative' }}>
-      <button
-        onClick={() => {
-          setOpen((v) => !v);
-          if (!open) markAllRead();
-        }}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative' }}
-        aria-label="Notifications"
-      >
-        <FaBell size={24} color="#fff" />
-        {unreadCount > 0 && (
-          <span style={{
-            position: 'absolute', top: -4, right: -4,
-            background: 'red', color: 'white', borderRadius: '50%',
-            padding: '2px 6px', fontSize: '0.75rem', fontWeight: 'bold',
-            zIndex: 2
-          }}>{unreadCount}</span>
-        )}
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', right: 0, top: '120%', minWidth: 320, background: 'white',
-          border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 8px 32px rgba(31,38,135,0.2)',
-          zIndex: 10000, padding: 16
-        }}>
-          <h4 style={{ margin: 0, marginBottom: 8, fontWeight: 600 }}>Notifications</h4>
-          {notifications.length === 0 && <div style={{ color: '#888' }}>No notifications</div>}
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {notifications.map((n) => (
-              <li key={n.id} style={{
-                background: n.read ? 'transparent' : 'rgba(33,150,243,0.08)',
-                borderRadius: 8, marginBottom: 8, padding: 8, fontWeight: n.read ? 400 : 600
-              }}>
-                {n.link ? (
-                  <a href={n.link} style={{ color: '#1976d2', textDecoration: 'underline' }}>{n.message}</a>
-                ) : n.message}
-                <span style={{ float: 'right', fontSize: '0.8em', color: '#888' }}>
-                  {formatTimestamp(n.timestamp)}
-                </span>
-              </li>
-            ))}
-          </ul>
+    <>
+      {/* Notification Bell Button */}
+      <div style={getPositionStyles()} onClick={handleBellClick}>
+        <div
+          style={{
+            width: '56px',
+            height: '56px',
+            backgroundColor: '#f59e0b',
+            borderRadius: '50%',
+            border: '3px solid white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow =
+              '0 6px 20px rgba(245, 158, 11, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 12px rgba(245, 158, 11, 0.3)';
+          }}
+        >
+          🔔
+          {/* Unread Badge - Combined notifications and messages */}
+          {(unreadCount > 0 || unreadMessageCount > 0) && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '-2px',
+                right: '-2px',
+                width: '18px',
+                height: '18px',
+                backgroundColor: unreadMessageCount > 0 ? '#f59e0b' : '#ef4444',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                color: 'white',
+                border: '2px solid white',
+              }}
+            >
+              {(() => {
+                const totalUnread = unreadCount + unreadMessageCount;
+                return totalUnread > 99 ? '99+' : totalUnread;
+              })()}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+
+      {/* Notification Dropdown with Messages */}
+      <NotificationDropdown
+        isOpen={isOpen}
+        onClose={handleDropdownClose}
+        userId={userId}
+        maxNotifications={15}
+        onComposeMessage={handleComposeMessage}
+      />
+
+      {/* Message Composer */}
+      <MessageComposer isOpen={composerOpen} onClose={handleComposerClose} />
+    </>
   );
-}
+};
+
+export default NotificationBell;
