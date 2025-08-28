@@ -1187,55 +1187,18 @@ const AISettlementTab = () => {
   const [processingInvoices, setProcessingInvoices] = useState<any[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // Mock data for AI settlement automation
+  // AI settlement automation data - empty state
   const settlementData = {
-    todayProcessed: 45,
-    accuracy: 99.2,
-    savedTime: 8.5,
-    discrepanciesFound: 12,
-    autoResolvedDiscrepancies: 8,
-    pendingReview: 4,
-    averageProcessingTime: '12 seconds'
+    todayProcessed: 0,
+    accuracy: 0,
+    savedTime: 0,
+    discrepanciesFound: 0,
+    autoResolvedDiscrepancies: 0,
+    pendingReview: 0,
+    averageProcessingTime: 'No data'
   };
 
-  const recentInvoices = [
-    {
-      id: 'INV-2025-001',
-      carrier: 'Swift Transportation',
-      amount: 2450.00,
-      status: 'AI Processed',
-      confidence: 98,
-      discrepancies: [],
-      processingTime: '8s'
-    },
-    {
-      id: 'INV-2025-002', 
-      carrier: 'YRC Freight',
-      amount: 1850.00,
-      status: 'Discrepancy Detected',
-      confidence: 76,
-      discrepancies: ['Rate mismatch: $1850 vs $1780 expected'],
-      processingTime: '15s'
-    },
-    {
-      id: 'INV-2025-003',
-      carrier: 'FedEx Freight', 
-      amount: 3200.00,
-      status: 'Auto-Approved',
-      confidence: 95,
-      discrepancies: [],
-      processingTime: '6s'
-    },
-    {
-      id: 'INV-2025-004',
-      carrier: 'J.B. Hunt',
-      amount: 2100.00,
-      status: 'Pending Review',
-      confidence: 82,
-      discrepancies: ['Fuel surcharge variance', 'Detention time dispute'],
-      processingTime: '22s'
-    }
-  ];
+  const recentInvoices: any[] = [];
 
   const handleInvoiceUpload = () => {
     setUploadProgress(0);
