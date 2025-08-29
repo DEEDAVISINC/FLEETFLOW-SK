@@ -21,81 +21,8 @@ interface MaintenanceRecord {
 }
 
 export default function MaintenancePage() {
-  const [maintenanceRecords] = useState<MaintenanceRecord[]>([
-    {
-      id: 'M001',
-      vehicleId: 'V001',
-      vehicleName: 'Truck-045',
-      type: 'scheduled',
-      status: 'pending',
-      description: 'Oil change and filter replacement',
-      scheduledDate: '2024-06-25',
-      cost: 150,
-      mileage: 125000,
-      technician: 'Mike Thompson',
-      priority: 'medium',
-      estimatedDuration: '2h',
-    },
-    {
-      id: 'M002',
-      vehicleId: 'V002',
-      vehicleName: 'Van-012',
-      type: 'repair',
-      status: 'in_progress',
-      description: 'Brake system repair',
-      scheduledDate: '2024-06-24',
-      cost: 450,
-      mileage: 89000,
-      technician: 'Sarah Wilson',
-      priority: 'high',
-      estimatedDuration: '4h',
-      actualDuration: '3h',
-    },
-    {
-      id: 'M003',
-      vehicleId: 'V003',
-      vehicleName: 'Truck-089',
-      type: 'inspection',
-      status: 'completed',
-      description: 'DOT safety inspection',
-      scheduledDate: '2024-06-20',
-      completedDate: '2024-06-20',
-      cost: 200,
-      mileage: 156000,
-      technician: 'Bob Rodriguez',
-      priority: 'high',
-      estimatedDuration: '3h',
-      actualDuration: '2.5h',
-    },
-    {
-      id: 'M004',
-      vehicleId: 'V004',
-      vehicleName: 'Van-023',
-      type: 'emergency',
-      status: 'overdue',
-      description: 'Engine overheating - coolant system failure',
-      scheduledDate: '2024-06-18',
-      cost: 850,
-      mileage: 78000,
-      technician: 'Mike Thompson',
-      priority: 'critical',
-      estimatedDuration: '6h',
-    },
-    {
-      id: 'M005',
-      vehicleId: 'V005',
-      vehicleName: 'Truck-156',
-      type: 'scheduled',
-      status: 'pending',
-      description: 'Tire rotation and alignment',
-      scheduledDate: '2024-06-28',
-      cost: 120,
-      mileage: 142000,
-      technician: 'Sarah Wilson',
-      priority: 'low',
-      estimatedDuration: '1.5h',
-    },
-  ]);
+  // Maintenance records data (cleared for production)
+  const [maintenanceRecords] = useState<MaintenanceRecord[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
