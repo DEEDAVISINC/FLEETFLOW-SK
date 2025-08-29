@@ -378,7 +378,7 @@ const ONBOARDING_STEPS = [
       'Operating Authority Status',
     ],
     avgDuration: '15 minutes',
-    automationLevel: '95%',
+    automationLevel: '0%',
   },
   {
     id: 'travel_limits',
@@ -396,7 +396,7 @@ const ONBOARDING_STEPS = [
       'Radius Limitations',
     ],
     avgDuration: '25 minutes',
-    automationLevel: '78%',
+    automationLevel: '0%',
   },
   {
     id: 'document_verification',
@@ -414,7 +414,7 @@ const ONBOARDING_STEPS = [
       'ELD Compliance',
     ],
     avgDuration: '35 minutes',
-    automationLevel: '87%',
+    automationLevel: '0%',
   },
   {
     id: 'factoring_setup',
@@ -432,7 +432,7 @@ const ONBOARDING_STEPS = [
       'ACH Configuration',
     ],
     avgDuration: '20 minutes',
-    automationLevel: '92%',
+    automationLevel: '0%',
   },
   {
     id: 'agreement_execution',
@@ -450,7 +450,7 @@ const ONBOARDING_STEPS = [
       'Commission Structure',
     ],
     avgDuration: '30 minutes',
-    automationLevel: '83%',
+    automationLevel: '0%',
   },
   {
     id: 'portal_activation',
@@ -468,7 +468,7 @@ const ONBOARDING_STEPS = [
       'System Integration',
     ],
     avgDuration: '45 minutes',
-    automationLevel: '76%',
+    automationLevel: '0%',
   },
 ];
 
@@ -948,7 +948,7 @@ export default function EnhancedCarrierPortal() {
   const loadRecruitingProspects = async () => {
     try {
       const response = await fetch(
-        '/api/ai-flow/recruiting-prospects?action=get_prospects&tenantId=tenant-demo-123&limit=10'
+        '/api/ai-flow/recruiting-prospects?action=get_prospects&tenantId=production&limit=10'
       );
       const data = await response.json();
       if (data.success) {
@@ -2001,7 +2001,7 @@ export default function EnhancedCarrierPortal() {
                       marginBottom: '8px',
                     }}
                   >
-                    85%
+                    0%
                   </div>
                   <div
                     style={{
@@ -2041,7 +2041,7 @@ export default function EnhancedCarrierPortal() {
                       marginBottom: '8px',
                     }}
                   >
-                    92%
+                    0%
                   </div>
                   <div
                     style={{
@@ -2081,7 +2081,7 @@ export default function EnhancedCarrierPortal() {
                       marginBottom: '8px',
                     }}
                   >
-                    78%
+                    0%
                   </div>
                   <div
                     style={{
@@ -3370,7 +3370,7 @@ export default function EnhancedCarrierPortal() {
                     marginBottom: '8px',
                   }}
                 >
-                  +18%
+                  +0%
                 </div>
                 <p
                   style={{
@@ -3410,7 +3410,7 @@ export default function EnhancedCarrierPortal() {
                     marginBottom: '8px',
                   }}
                 >
-                  94%
+                  0%
                 </div>
                 <p
                   style={{
