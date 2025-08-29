@@ -37,13 +37,15 @@ export default function RoutesPage() {
     costSavings: 0,
   });
   // Recent optimizations data (cleared for production)
-  const [recentOptimizations, setRecentOptimizations] = useState<{
-    id: string;
-    driver: string;
-    efficiency: number;
-    savings: string;
-    status: string;
-  }[]>([]);
+  const [recentOptimizations, setRecentOptimizations] = useState<
+    {
+      id: string;
+      driver: string;
+      efficiency: number;
+      savings: string;
+      status: string;
+    }[]
+  >([]);
   const [showRouteSharing, setShowRouteSharing] = useState(false);
   const [selectedRouteForSharing, setSelectedRouteForSharing] =
     useState<OptimizedRoute | null>(null);
@@ -752,183 +754,184 @@ export default function RoutesPage() {
               >
                 {recentOptimizations.length > 0 ? (
                   recentOptimizations.map((route) => (
-                  <div
-                    key={route.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '16px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(255, 255, 255, 0.15)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(255, 255, 255, 0.1)';
-                    }}
-                  >
                     <div
+                      key={route.id}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '16px',
+                        justifyContent: 'space-between',
+                        padding: '16px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        transition: 'all 0.3s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.15)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background =
+                          'rgba(255, 255, 255, 0.1)';
                       }}
                     >
                       <div
                         style={{
-                          width: '48px',
-                          height: '48px',
-                          background:
-                            'linear-gradient(135deg, #3b82f6, #2563eb)',
-                          borderRadius: '8px',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          fontSize: '18px',
+                          gap: '16px',
                         }}
                       >
-                        {route.id.slice(-1)}
-                      </div>
-                      <div>
-                        <h3
+                        <div
                           style={{
+                            width: '48px',
+                            height: '48px',
+                            background:
+                              'linear-gradient(135deg, #3b82f6, #2563eb)',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '18px',
+                          }}
+                        >
+                          {route.id.slice(-1)}
+                        </div>
+                        <div>
+                          <h3
+                            style={{
+                              fontWeight: '600',
+                              color: 'white',
+                              margin: '0 0 4px 0',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {route.driver}
+                          </h3>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                              fontSize: '14px',
+                            }}
+                          >
+                            Route {route.id}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '24px',
+                        }}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <p
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                              color: '#4ade80',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {route.efficiency}%
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                              fontSize: '12px',
+                            }}
+                          >
+                            Efficiency
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: 'bold',
+                              color: 'white',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {route.savings}
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                              fontSize: '12px',
+                            }}
+                          >
+                            Savings
+                          </p>
+                        </div>
+                        <div
+                          style={{
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
                             fontWeight: '600',
-                            color: 'white',
-                            margin: '0 0 4px 0',
-                            fontSize: '16px',
+                            background:
+                              route.status === 'Completed'
+                                ? 'rgba(74, 222, 128, 0.2)'
+                                : route.status === 'In Progress'
+                                  ? 'rgba(59, 130, 246, 0.2)'
+                                  : 'rgba(251, 191, 36, 0.2)',
+                            color:
+                              route.status === 'Completed'
+                                ? '#4ade80'
+                                : route.status === 'In Progress'
+                                  ? '#3b82f6'
+                                  : '#fbbf24',
+                            border: `1px solid ${
+                              route.status === 'Completed'
+                                ? '#4ade80'
+                                : route.status === 'In Progress'
+                                  ? '#3b82f6'
+                                  : '#fbbf24'
+                            }`,
                           }}
                         >
-                          {route.driver}
-                        </h3>
-                        <p
+                          {route.status}
+                        </div>
+                        {/* Share Button */}
+                        <button
+                          onClick={() => handleRouteShare(route.id)}
                           style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            margin: 0,
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            color: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: 'none',
                             fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              'translateY(-2px)';
+                            e.currentTarget.style.boxShadow =
+                              '0 8px 25px rgba(0, 0, 0, 0.2)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
                           }}
                         >
-                          Route {route.id}
-                        </p>
+                          <span>🔗</span>
+                          Share
+                        </button>
                       </div>
                     </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '24px',
-                      }}
-                    >
-                      <div style={{ textAlign: 'center' }}>
-                        <p
-                          style={{
-                            fontSize: '20px',
-                            fontWeight: 'bold',
-                            color: '#4ade80',
-                            margin: '0 0 4px 0',
-                          }}
-                        >
-                          {route.efficiency}%
-                        </p>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            margin: 0,
-                            fontSize: '12px',
-                          }}
-                        >
-                          Efficiency
-                        </p>
-                      </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <p
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            margin: '0 0 4px 0',
-                          }}
-                        >
-                          {route.savings}
-                        </p>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            margin: 0,
-                            fontSize: '12px',
-                          }}
-                        >
-                          Savings
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          background:
-                            route.status === 'Completed'
-                              ? 'rgba(74, 222, 128, 0.2)'
-                              : route.status === 'In Progress'
-                                ? 'rgba(59, 130, 246, 0.2)'
-                                : 'rgba(251, 191, 36, 0.2)',
-                          color:
-                            route.status === 'Completed'
-                              ? '#4ade80'
-                              : route.status === 'In Progress'
-                                ? '#3b82f6'
-                                : '#fbbf24',
-                          border: `1px solid ${
-                            route.status === 'Completed'
-                              ? '#4ade80'
-                              : route.status === 'In Progress'
-                                ? '#3b82f6'
-                                : '#fbbf24'
-                          }`,
-                        }}
-                      >
-                        {route.status}
-                      </div>
-                      {/* Share Button */}
-                      <button
-                        onClick={() => handleRouteShare(route.id)}
-                        style={{
-                          background:
-                            'linear-gradient(135deg, #10b981, #059669)',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow =
-                            '0 8px 25px rgba(0, 0, 0, 0.2)';
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                      >
-                        <span>🔗</span>
-                        Share
-                      </button>
-                    </div>
-                  </div>
                   ))
                 ) : (
                   <div
@@ -1866,48 +1869,11 @@ export default function RoutesPage() {
                     <div>Status</div>
                   </div>
 
-                  {[
-                    {
-                      id: 'PH-R001',
-                      route: 'Pfizer NJ → Mount Sinai Hospital NYC',
-                      product: 'COVID-19 Vaccines',
-                      temperature: '-70°C',
-                      compliance: 'FDA, CDC',
-                      eta: '2:45 PM',
-                      status: 'In Transit',
-                      urgency: 'critical',
-                    },
-                    {
-                      id: 'PH-R002',
-                      route: 'J&J Facility → Boston Medical Center',
-                      product: 'Clinical Trial Samples',
-                      temperature: '-20°C',
-                      compliance: 'FDA, GCP',
-                      eta: '4:15 PM',
-                      status: 'Loading',
-                      urgency: 'high',
-                    },
-                    {
-                      id: 'PH-R003',
-                      route: 'Merck PA → CVS Distribution Center',
-                      product: 'Prescription Medications',
-                      temperature: '2-8°C',
-                      compliance: 'FDA, USP',
-                      eta: '11:30 AM',
-                      status: 'Delivered',
-                      urgency: 'medium',
-                    },
-                    {
-                      id: 'PH-R004',
-                      route: 'AbbVie IL → Mayo Clinic MN',
-                      product: 'Specialty Biologics',
-                      temperature: '2-8°C',
-                      compliance: 'FDA, GMP',
-                      eta: '6:20 PM',
-                      status: 'Optimizing',
-                      urgency: 'medium',
-                    },
-                  ].map((route, index) => (
+                  {/* Pharmaceutical routes data (cleared for production) */}
+                  {(() => {
+                    const pharmaceuticalRoutes: any[] = [];
+                    return pharmaceuticalRoutes.length > 0 ? (
+                      pharmaceuticalRoutes.map((route, index) => (
                     <div
                       key={route.id}
                       style={{
@@ -1986,7 +1952,33 @@ export default function RoutesPage() {
                         {route.status}
                       </div>
                     </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        gridColumn: '1 / -1',
+                        textAlign: 'center',
+                        padding: '40px 20px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '48px',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        💊
+                      </div>
+                      <p style={{ fontSize: '16px', margin: 0 }}>
+                        No pharmaceutical routes yet
+                      </p>
+                      <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                        Pharmaceutical routes will appear here once created
+                      </p>
+                    </div>
+                  );
+                })()}
                 </div>
 
                 {/* Pharmaceutical Route Actions */}
@@ -2251,48 +2243,11 @@ export default function RoutesPage() {
                     <div>Status</div>
                   </div>
 
-                  {[
-                    {
-                      id: 'MC-R001',
-                      route: 'Mayo Clinic → Emergency Room',
-                      service: 'STAT Lab Results',
-                      urgency: 'Critical',
-                      compliance: 'HIPAA',
-                      eta: '12 min',
-                      status: 'In Transit',
-                      urgencyLevel: 'critical',
-                    },
-                    {
-                      id: 'MC-R002',
-                      route: 'Medical Center → Specialty Clinic',
-                      service: 'Medical Equipment',
-                      urgency: 'High',
-                      compliance: 'DOT, OSHA',
-                      eta: '45 min',
-                      status: 'Loading',
-                      urgencyLevel: 'high',
-                    },
-                    {
-                      id: 'MC-R003',
-                      route: 'Research Lab → Hospital Network',
-                      service: 'Clinical Trial Samples',
-                      urgency: 'Medium',
-                      compliance: 'FDA, GCP',
-                      eta: '1:20 PM',
-                      status: 'Delivered',
-                      urgencyLevel: 'medium',
-                    },
-                    {
-                      id: 'MC-R004',
-                      route: 'Organ Bank → Transplant Center',
-                      service: 'Organ Transport',
-                      urgency: 'Critical',
-                      compliance: 'UNOS',
-                      eta: '18 min',
-                      status: 'Emergency',
-                      urgencyLevel: 'critical',
-                    },
-                  ].map((route, index) => (
+                  {/* Medical courier routes data (cleared for production) */}
+                  {(() => {
+                    const medicalCourierRoutes: any[] = [];
+                    return medicalCourierRoutes.length > 0 ? (
+                      medicalCourierRoutes.map((route, index) => (
                     <div
                       key={route.id}
                       style={{
@@ -2381,7 +2336,33 @@ export default function RoutesPage() {
                         {route.status}
                       </div>
                     </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        gridColumn: '1 / -1',
+                        textAlign: 'center',
+                        padding: '40px 20px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '48px',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        🏥
+                      </div>
+                      <p style={{ fontSize: '16px', margin: 0 }}>
+                        No medical courier routes yet
+                      </p>
+                      <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                        Medical courier routes will appear here once created
+                      </p>
+                    </div>
+                  );
+                })()}
                 </div>
 
                 {/* Medical Courier Service Actions */}

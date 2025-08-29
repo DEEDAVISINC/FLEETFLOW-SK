@@ -39,60 +39,10 @@ export default function RouteOptimizerDashboard({ onOptimizationComplete }: Rout
     useQuantumOptimization: false
   })
 
-  // Initialize with sample data
+  // Initialize with empty data (cleared for production)
   useEffect(() => {
-    const sampleVehicles: Vehicle[] = [
-      {
-        id: 'V001',
-        type: 'truck',
-        capacity: 40000,
-        location: '1600 Amphitheatre Pkwy, Mountain View, CA',
-        driver: 'John Smith',
-        fuelType: 'diesel',
-        mpg: 6.5,
-        maxDrivingHours: 11,
-        specializations: ['hazmat', 'refrigerated']
-      },
-      {
-        id: 'V002',
-        type: 'van',
-        capacity: 10000,
-        location: '350 Fifth Avenue, New York, NY',
-        driver: 'Sarah Johnson',
-        fuelType: 'gas',
-        mpg: 12.0,
-        maxDrivingHours: 10
-      }
-    ]
-
-    const sampleStops: Stop[] = [
-      {
-        id: 'S001',
-        address: '1 Microsoft Way, Redmond, WA',
-        type: 'pickup',
-        timeWindow: { start: '09:00', end: '11:00' },
-        serviceTime: 30,
-        weight: 5000,
-        priority: 'high'
-      },
-      {
-        id: 'S002',
-        address: '410 Terry Ave N, Seattle, WA',
-        type: 'delivery',
-        timeWindow: { start: '14:00', end: '16:00' },
-        serviceTime: 20,
-        weight: 3000,
-        priority: 'urgent'
-      },
-      {
-        id: 'S003',
-        address: '1 Hacker Way, Menlo Park, CA',
-        type: 'pickup',
-        serviceTime: 25,
-        weight: 8000,
-        priority: 'medium'
-      }
-    ]
+    const sampleVehicles: Vehicle[] = []
+    const sampleStops: Stop[] = []
 
     setVehicles(sampleVehicles)
     setStops(sampleStops)
