@@ -1525,9 +1525,9 @@ export const getShipperTrackingStatus = async (
       },
     },
     route: {
-      origin: load.origin,
-      destination: load.destination,
-      distance: load.distance,
+      origin: load.origin || 'TBD',
+      destination: load.destination || 'TBD',
+      distance: load.distance || 'Calculating...',
     },
     contact: {
       brokerName: load.brokerName,

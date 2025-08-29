@@ -43,7 +43,7 @@ export default function VendorPortalTest() {
     if (storedSession) {
       setSession(JSON.parse(storedSession));
     } else {
-      router.push('/vendor-login');
+      // Demo session - no redirect needed
     }
   }, [router]);
 
