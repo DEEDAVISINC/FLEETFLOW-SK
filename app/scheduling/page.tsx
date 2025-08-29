@@ -78,163 +78,23 @@ interface VehicleAvailability {
   currentDriver?: string;
 }
 
-// Mock service
+// Mock service (cleared for production)
 const schedulingService = {
   getSchedules: (filter?: any) => {
-    return [
-      {
-        id: 'SCH001',
-        title: 'LA to Phoenix Route - $2,850',
-        status: 'Scheduled' as const,
-        priority: 'High' as const,
-        startDate: '2025-01-15',
-        startTime: '08:00',
-        endTime: '18:00',
-        origin: 'Los Angeles, CA',
-        destination: 'Phoenix, AZ',
-        driverName: 'Mike Johnson',
-        driverId: 'DRV001',
-        estimatedHours: 10,
-        reason: 'Walmart Distribution - Urgent delivery',
-        loadWeight: 42000, // 42,000 lbs - retail goods
-        miles: 372, // LA to Phoenix distance
-        fmcsaCompliant: true,
-        hoursOfService: {
-          drivingHours: 8,
-          onDutyHours: 10,
-          restHours: 14,
-          weeklyDriving: 45,
-          weeklyOnDuty: 55,
-        },
-      },
-      {
-        id: 'SCH002',
-        title: 'Dallas to Atlanta - $3,200',
-        status: 'In Progress' as const,
-        priority: 'Medium' as const,
-        startDate: '2025-01-14',
-        startTime: '06:00',
-        endTime: '20:00',
-        origin: 'Dallas, TX',
-        destination: 'Atlanta, GA',
-        driverName: 'Sarah Williams',
-        driverId: 'DRV002',
-        estimatedHours: 14,
-        reason: 'Home Depot Supply - Regular delivery',
-        loadWeight: 38500, // 38,500 lbs - building materials
-        miles: 925, // Dallas to Atlanta distance
-        fmcsaCompliant: false,
-        hoursOfService: {
-          drivingHours: 12,
-          onDutyHours: 14,
-          restHours: 10,
-          weeklyDriving: 62,
-          weeklyOnDuty: 72,
-        },
-      },
-      {
-        id: 'SCH003',
-        title: 'Chicago to Denver - $2,950',
-        status: 'Completed' as const,
-        priority: 'Low' as const,
-        startDate: '2025-01-13',
-        startTime: '07:00',
-        endTime: '19:00',
-        origin: 'Chicago, IL',
-        destination: 'Denver, CO',
-        driverName: 'John Davis',
-        driverId: 'DRV003',
-        estimatedHours: 12,
-        reason: 'Amazon Logistics - Standard delivery',
-        loadWeight: 45200, // 45,200 lbs - e-commerce packages
-        miles: 920, // Chicago to Denver distance
-        fmcsaCompliant: true,
-        hoursOfService: {
-          drivingHours: 10,
-          onDutyHours: 12,
-          restHours: 12,
-          weeklyDriving: 48,
-          weeklyOnDuty: 58,
-        },
-      },
-    ];
+    return [];
   },
-  getDriverAvailability: () => [
-    {
-      driverId: 'DRV001',
-      name: 'Mike Johnson',
-      status: 'Available' as const,
-      hoursOfService: {
-        drivingHours: 0,
-        onDutyHours: 0,
-        restHours: 24,
-        weeklyDriving: 45,
-        weeklyOnDuty: 55,
-      },
-      fmcsaStatus: 'Compliant' as const,
-    },
-    {
-      driverId: 'DRV002',
-      name: 'Sarah Williams',
-      status: 'On Duty' as const,
-      currentLoad: 'SCH002',
-      hoursOfService: {
-        drivingHours: 12,
-        onDutyHours: 14,
-        restHours: 10,
-        weeklyDriving: 62,
-        weeklyOnDuty: 72,
-      },
-      fmcsaStatus: 'Violation' as const,
-    },
-    {
-      driverId: 'DRV003',
-      name: 'John Davis',
-      status: 'Rest Required' as const,
-      hoursOfService: {
-        drivingHours: 10,
-        onDutyHours: 12,
-        restHours: 12,
-        weeklyDriving: 48,
-        weeklyOnDuty: 58,
-      },
-      fmcsaStatus: 'Warning' as const,
-    },
-    {
-      driverId: 'DRV004',
-      name: 'Lisa Chen',
-      status: 'Available' as const,
-      hoursOfService: {
-        drivingHours: 0,
-        onDutyHours: 0,
-        restHours: 24,
-        weeklyDriving: 35,
-        weeklyOnDuty: 45,
-      },
-      fmcsaStatus: 'Compliant' as const,
-    },
-  ],
-  getVehicleAvailability: () => [
-    { vehicleId: 'VEH001', name: 'Truck 001', status: 'Available' as const },
-    {
-      vehicleId: 'VEH002',
-      name: 'Truck 002',
-      status: 'In Use' as const,
-      currentDriver: 'Sarah Williams',
-    },
-    { vehicleId: 'VEH003', name: 'Truck 003', status: 'Available' as const },
-    { vehicleId: 'VEH004', name: 'Truck 004', status: 'Maintenance' as const },
-  ],
+  getDriverAvailability: () => [],
+  getVehicleAvailability: () => [],
   getScheduleStatistics: () => ({
-    totalSchedules: 45,
-    inProgressCount: 12,
-    completedCount: 28,
-    utilizationRate: 87,
-    complianceRate: 94,
-    onTimePerformance: 96,
-    fmcsaViolations: 3,
-    driversAvailable: 8,
-    vehiclesAvailable: 12,
+    totalSchedules: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    utilizationRate: 0,
+    complianceRate: 0,
+    onTimePerformance: 0,
+    fmcsaViolations: 0,
+    driversAvailable: 0,
+    vehiclesAvailable: 0,
   }),
 };
 
@@ -1967,7 +1827,7 @@ export default function SchedulingDashboard() {
                     gap: '12px',
                   }}
                 >
-                  {schedules.map((schedule) => (
+                  {schedules.length > 0 ? schedules.map((schedule) => (
                     <div
                       key={schedule.id}
                       style={{
@@ -2231,7 +2091,17 @@ export default function SchedulingDashboard() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#6b7280' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>📅</div>
+                      <p style={{ fontSize: '16px', margin: '0 0 8px 0', fontWeight: '600', color: '#4b5563' }}>
+                        No schedules available
+                      </p>
+                      <p style={{ fontSize: '14px', margin: 0 }}>
+                        Create a new schedule to get started with route planning
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
