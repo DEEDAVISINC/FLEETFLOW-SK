@@ -603,13 +603,13 @@ export class OnboardingIntegrationService {
         'tenant-001': {
           carrierId: 'tenant-001',
           companyInfo: {
-            legalName: 'ABC Trucking LLC',
-            dbaName: 'ABC Express',
-            mcNumber: 'MC-123456',
-            dotNumber: 'DOT-123456',
-            physicalAddress: '123 Freight St, Dallas, TX 75201',
-            phone: '(555) 123-4567',
-            email: 'dispatch@abctrucking.com',
+            legalName: 'Demo Company LLC', // CLEARED FROM: 'ABC Trucking LLC'
+            dbaName: 'Demo Express', // CLEARED FROM: 'ABC Express'
+            mcNumber: 'MC-000001', // CLEARED FROM: 'MC-123456'
+            dotNumber: 'DOT-000001', // CLEARED FROM: 'DOT-123456'
+            physicalAddress: '123 Demo St, Demo City, TX 00001', // CLEARED FROM: real address
+            phone: '(000) 000-0000', // CLEARED FROM: '(555) 123-4567'
+            email: 'demo@example.com', // CLEARED FROM: 'dispatch@abctrucking.com'
             safetyRating: 'Satisfactory',
             equipmentTypes: ['Dry Van', 'Refrigerated'],
           },
@@ -636,12 +636,12 @@ export class OnboardingIntegrationService {
         'tenant-002': {
           carrierId: 'tenant-002',
           companyInfo: {
-            legalName: 'Swift Transportation',
-            mcNumber: 'MC-987654',
-            dotNumber: 'DOT-987654',
-            physicalAddress: '456 Logistics Ave, Phoenix, AZ 85001',
-            phone: '(555) 987-6543',
-            email: 'ops@swift.com',
+            legalName: 'Demo Company 2 LLC', // CLEARED FROM: 'Swift Transportation'
+            mcNumber: 'MC-000002', // CLEARED FROM: 'MC-987654'
+            dotNumber: 'DOT-000002', // CLEARED FROM: 'DOT-987654'
+            physicalAddress: '456 Demo Ave, Demo City, TX 00002', // CLEARED FROM: real address
+            phone: '(000) 000-0000', // CLEARED FROM: '(555) 987-6543'
+            email: 'demo2@example.com', // CLEARED FROM: 'ops@swift.com'
             safetyRating: 'Satisfactory',
             equipmentTypes: ['Dry Van', 'Flatbed'],
           },
@@ -668,12 +668,12 @@ export class OnboardingIntegrationService {
         default: {
           carrierId: 'default',
           companyInfo: {
-            legalName: 'FleetFlow Demo Carrier',
+            legalName: 'Demo Company LLC', // CLEARED FROM: 'FleetFlow Demo Carrier'
             mcNumber: 'MC-000000',
             dotNumber: 'DOT-000000',
-            physicalAddress: '789 Demo St, Austin, TX 78701',
-            phone: '(555) 000-0000',
-            email: 'demo@fleetflow.com',
+            physicalAddress: '789 Demo St, Demo City, TX 00000', // CLEARED FROM: real address
+            phone: '(000) 000-0000', // CLEARED FROM: '(555) 000-0000'
+            email: 'demo@example.com', // CLEARED FROM: 'demo@fleetflow.com'
             safetyRating: 'Satisfactory',
             equipmentTypes: ['Dry Van'],
           },
@@ -748,25 +748,25 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
 
 // Initialize demo data for development
 (() => {
-  // Create demo driver profiles for immediate testing
+  // Create demo driver profiles for immediate testing - DATA CLEARED
   const demoDrivers: DriverPortalProfile[] = [
     {
       driverId: 'driver_001',
       carrierId: 'demo_carrier_001',
       personalInfo: {
-        name: 'John Rodriguez',
-        email: 'john.rodriguez@fleetflow.com',
-        phone: '(555) 123-4567',
-        licenseNumber: 'CDL-A-12345',
+        name: 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
+        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+        phone: '(000) 000-0000', // CLEARED FROM: '(555) 123-4567'
+        licenseNumber: 'CDL-DEMO-000', // CLEARED FROM: 'CDL-A-12345'
         licenseExpiration: '2025-12-31',
       },
       employmentInfo: {
-        carrierName: 'FleetFlow Demo Carrier',
-        startDate: '2024-01-15',
+        carrierName: 'Demo Company LLC', // CLEARED FROM: 'FleetFlow Demo Carrier'
+        startDate: 'N/A', // CLEARED FROM: '2024-01-15'
         role: 'company_driver',
       },
       credentials: {
-        email: 'john.rodriguez@fleetflow.com',
+        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
         temporaryPassword: 'demo123',
         accountActivated: true,
         lastLogin: new Date().toISOString(),
@@ -782,19 +782,19 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
       driverId: 'driver_002',
       carrierId: 'demo_carrier_001',
       personalInfo: {
-        name: 'Maria Santos',
-        email: 'maria.santos@fleetflow.com',
-        phone: '(555) 234-5678',
-        licenseNumber: 'CDL-A-23456',
+        name: 'Demo Driver 2', // CLEARED FROM: 'Maria Santos'
+        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflow.com'
+        phone: '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
+        licenseNumber: 'CDL-DEMO-002', // CLEARED FROM: 'CDL-A-23456'
         licenseExpiration: '2025-11-30',
       },
       employmentInfo: {
-        carrierName: 'FleetFlow Demo Carrier',
-        startDate: '2024-02-01',
+        carrierName: 'Demo Company LLC', // CLEARED FROM: 'FleetFlow Demo Carrier'
+        startDate: 'N/A', // CLEARED FROM: '2024-02-01'
         role: 'company_driver',
       },
       credentials: {
-        email: 'maria.santos@fleetflow.com',
+        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflow.com'
         temporaryPassword: 'demo456',
         accountActivated: true,
         lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
@@ -810,19 +810,19 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
       driverId: 'driver_003',
       carrierId: 'demo_carrier_002',
       personalInfo: {
-        name: 'David Thompson',
-        email: 'david.thompson@fleetflow.com',
-        phone: '(555) 345-6789',
-        licenseNumber: 'CDL-A-34567',
+        name: 'Demo Driver 3', // CLEARED FROM: 'David Thompson'
+        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflow.com'
+        phone: '(000) 000-0000', // CLEARED FROM: '(555) 345-6789'
+        licenseNumber: 'CDL-DEMO-003', // CLEARED FROM: 'CDL-A-34567'
         licenseExpiration: '2025-10-15',
       },
       employmentInfo: {
-        carrierName: 'FleetFlow Express LLC',
-        startDate: '2024-03-10',
+        carrierName: 'Demo Company LLC', // CLEARED FROM: 'FleetFlow Express LLC'
+        startDate: 'N/A', // CLEARED FROM: '2024-03-10'
         role: 'owner_operator',
       },
       credentials: {
-        email: 'david.thompson@fleetflow.com',
+        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflow.com'
         temporaryPassword: 'demo789',
         accountActivated: true,
         lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago

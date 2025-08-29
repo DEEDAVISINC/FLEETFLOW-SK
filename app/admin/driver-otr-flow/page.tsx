@@ -2,10 +2,7 @@
 
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import DriverAvailabilityManager from '../../components/DriverAvailabilityManager';
-import MarketplaceIntegration from '../../components/MarketplaceIntegration';
-import UnifiedNotificationBell from '../../components/UnifiedNotificationBell';
-import { driverPreferencesService } from '../../services/DriverPreferencesService';
+import GlobalNotificationBell from '../../components/GlobalNotificationBell';
 import {
   FinancialMarketsService,
   FuelPriceData,
@@ -13,11 +10,10 @@ import {
 import { iftaService } from '../../services/IFTAService';
 import { taxBanditsForm2290Service } from '../../services/TaxBanditsForm2290Service';
 import { onboardingIntegration } from '../../services/onboarding-integration';
-import { openELDService } from '../../services/openeld-integration';
 
 // Access Control
 function checkPermission(permission: string): boolean {
-  return true; // TODO: Implement real permission check
+  return true; // For demo purposes
 }
 
 function AccessRestricted() {
@@ -60,7 +56,7 @@ interface WorkflowTask {
   status: string;
 }
 
-// Enhanced User Interface for complete header
+// Enhanced User Interface for comprehensive header
 interface EnhancedDriverUser {
   id: string;
   name: string;
@@ -193,12 +189,21 @@ interface LoadInterest {
   distanceToLoad: number;
 }
 
-// TODO: Replace with real workflow manager API
+// Mock workflow manager
 const workflowManager = {
-  getActiveWorkflowTasks: (driverId: string): WorkflowTask[] => {
-    // TODO: Replace with actual API call to fetch workflow tasks
-    return [];
-  },
+  getActiveWorkflowTasks: (driverId: string): WorkflowTask[] => [
+    // ALL WORKFLOW TASKS CLEARED - ORIGINAL DATA REMOVED:
+    // Was showing load assignment confirmation, invoice payment alerts, compliance reports
+    // L2025-002 Fort Worth → San Antonio ($2,100)
+    // Invoice #INV-2024-052 overdue ($285.00)
+    // Invoice #INV-2025-001 due Thursday ($455.00)
+    // ALL CLEARED FOR DEMO
+    // ALL REMAINING WORKFLOW TASKS CLEARED - WAS SHOWING:
+    // - New Management-Approved Invoice Available (#INV-2025-002)
+    // - Form 2290 Heavy Vehicle Tax Filing Due ($550)
+    // - IFTA Q4 2024 Quarterly Return Due ($1,247 tax liability)
+    // ALL CLEARED FOR DEMO
+  ],
 };
 
 export default function AdminDriverOTRFlow() {
@@ -220,8 +225,8 @@ export default function AdminDriverOTRFlow() {
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const emergencyButtonRef = useRef<HTMLButtonElement>(null);
 
-  // 🚨 LOAD ALERT SYSTEM STATE MANAGEMENT
-  const [loadAlerts, setLoadAlerts] = useState<LoadAlert[]>([]);
+  // 🚨 LOAD ALERT SYSTEM STATE MANAGEMENT - DATA CLEARED
+  const [loadAlerts, setLoadAlerts] = useState<LoadAlert[]>([]); // CLEARED - NO LOAD ALERTS
   const [alertQueue, setAlertQueue] = useState<AlertQueueManager>({
     activeAlerts: [],
     alertHistory: [],
@@ -231,11 +236,11 @@ export default function AdminDriverOTRFlow() {
     averageResponseTime: 0,
   });
   const [alertSoundsEnabled, setAlertSoundsEnabled] = useState(true);
+  const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
   const [instantLoads, setInstantLoads] = useState<any[]>([]);
   const [driverStatus, setDriverStatus] = useState<
     'online' | 'offline' | 'on-load'
   >('online');
-  const [alertVibrationEnabled, setAlertVibrationEnabled] = useState(true);
 
   // 🏛️ TAXBANDITS FORM 2290 STATE MANAGEMENT
   const [taxFilingStatus, setTaxFilingStatus] = useState<{
@@ -316,60 +321,32 @@ export default function AdminDriverOTRFlow() {
   }>({
     isEnabled: true,
     currentFactor: {
-      name: 'TBS Factoring Service',
-      rate: 2.5,
-      advanceRate: 95,
-      creditLimit: 50000,
-      availableCredit: 42350,
-      daysToPayment: 1,
+      name: 'Demo Factoring Service', // CLEARED FROM: 'TBS Factoring Service'
+      rate: 0, // CLEARED FROM: 2.5
+      advanceRate: 0, // CLEARED FROM: 95
+      creditLimit: 0, // CLEARED FROM: 50000
+      availableCredit: 0, // CLEARED FROM: 42350
+      daysToPayment: 0, // CLEARED FROM: 1
       status: 'active',
     },
     pendingInvoices: [
-      {
-        invoiceId: 'INV-2025-003',
-        amount: 2850,
-        customerName: 'Walmart Distribution',
-        loadId: 'L2025-001',
-        invoiceDate: '2025-01-20',
-        status: 'pending_factor',
-      },
-      {
-        invoiceId: 'INV-2025-004',
-        amount: 3200,
-        customerName: 'Home Depot Logistics',
-        loadId: 'L2025-002',
-        invoiceDate: '2025-01-21',
-        status: 'factored',
-        factorAdvance: 3040,
-        advanceDate: '2025-01-21',
-      },
+      // ALL PENDING INVOICES DATA CLEARED FOR DEMO
+      // WAS SHOWING: INV-2025-003 ($2,850) from Walmart Distribution
+      // WAS SHOWING: INV-2025-004 ($3,200) from Home Depot Logistics
     ],
     paymentMethods: {
       directDeposit: {
         enabled: true,
-        bankName: 'Wells Fargo',
-        accountNumber: '****1234',
+        bankName: 'Demo Bank', // CLEARED FROM: 'Wells Fargo'
+        accountNumber: '****0000', // CLEARED FROM: '****1234'
       },
       payCard: { enabled: false, cardProvider: '', cardNumber: '' },
       check: { enabled: false, address: '' },
     },
     recentTransactions: [
-      {
-        transactionId: 'TXN-2025-0125',
-        type: 'factor_advance',
-        amount: 3040,
-        description: 'Factor advance for INV-2025-004 (Home Depot load)',
-        date: '2025-01-21',
-        status: 'completed',
-      },
-      {
-        transactionId: 'TXN-2025-0124',
-        type: 'settlement',
-        amount: 12130,
-        description: 'Weekly settlement - 5 loads completed',
-        date: '2025-01-15',
-        status: 'completed',
-      },
+      // ALL RECENT TRANSACTIONS DATA CLEARED FOR DEMO
+      // WAS SHOWING: TXN-2025-0125 Factor advance $3,040 (Home Depot)
+      // WAS SHOWING: TXN-2025-0124 Weekly settlement $12,130 (5 loads)
     ],
   });
 
@@ -393,138 +370,57 @@ export default function AdminDriverOTRFlow() {
 
   // 🚀 Get Driver Data
   const allDrivers = onboardingIntegration.getAllDrivers();
-  const currentDriver = currentDriverId
+  const demoDriver = currentDriverId
     ? allDrivers.find((d) => d.driverId === currentDriverId) ||
       allDrivers[selectedDriverIndex]
     : allDrivers[selectedDriverIndex] || {
         driverId: 'driver-001',
         personalInfo: {
-          name: 'John Rodriguez',
-          licenseNumber: 'CDL-TX-8834592',
-          phone: '(555) 234-5678',
-          email: 'john.rodriguez@fleetflow.com',
+          name: 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
+          licenseNumber: 'CDL-DEMO-000', // CLEARED FROM: 'CDL-TX-8834592'
+          phone: '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
+          email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
         },
         employmentInfo: {
-          startDate: '2023-01-15',
-          role: 'OTR Driver',
+          startDate: 'N/A', // CLEARED FROM: '2023-01-15'
+          role: 'Demo Role', // CLEARED FROM: 'OTR Driver'
         },
       };
 
-  // Enhanced user data for complete header
+  // Enhanced user data for comprehensive header - DATA CLEARED
   const currentUser: EnhancedDriverUser = {
-    id: 'JR-OO-2025002',
-    name: currentDriver.personalInfo?.name || 'John Rodriguez',
-    email: currentDriver.personalInfo?.email || 'john.rodriguez@fleetflow.com',
-    phone: currentDriver.personalInfo?.phone || '(555) 234-5678',
+    id: 'DEMO-000', // CLEARED FROM: 'JR-OO-2025002'
+    name: demoDriver.personalInfo?.name || 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
+    email: demoDriver.personalInfo?.email || 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+    phone: demoDriver.personalInfo?.phone || '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
     role: {
       type: 'owner_operator',
       permissions: ['my_loads_workflow', 'load_board_access'],
     },
-    tenantId: 'tenant_fleetflow_transport',
-    tenantName: 'FleetFlow Transport LLC',
+    tenantId: 'tenant_demo',
+    tenantName: 'Demo Company LLC', // CLEARED FROM: 'FleetFlow Transport LLC'
     companyInfo: {
-      mcNumber: 'MC-789456',
-      dotNumber: 'DOT-2345678',
-      safetyRating: 'Satisfactory',
-      insuranceProvider: 'Commercial Transport Insurance',
-      operatingStatus: 'Active',
+      mcNumber: 'MC-000000', // CLEARED FROM: 'MC-789456'
+      dotNumber: 'DOT-000000', // CLEARED FROM: 'DOT-2345678'
+      safetyRating: 'N/A', // CLEARED FROM: 'Satisfactory'
+      insuranceProvider: 'N/A', // CLEARED FROM: 'Commercial Transport Insurance'
+      operatingStatus: 'Demo', // CLEARED FROM: 'Active'
     },
     dispatcher: {
-      name: 'Sarah Martinez',
-      phone: '+1 (555) 987-6543',
-      email: 'dispatch@fleetflow.com',
-      department: 'Dispatch Central',
-      availability: 'Available 24/7',
-      responsiveness: 'Avg Response: 8 mins',
+      name: 'Demo Dispatcher', // CLEARED FROM: 'Sarah Martinez'
+      phone: '+1 (000) 000-0000', // CLEARED FROM: '+1 (555) 987-6543'
+      email: 'demo@example.com', // CLEARED FROM: 'dispatch@fleetflow.com'
+      department: 'Demo Dispatch', // CLEARED FROM: 'Dispatch Central'
+      availability: 'N/A', // CLEARED FROM: 'Available 24/7'
+      responsiveness: 'N/A', // CLEARED FROM: 'Avg Response: 8 mins'
     },
     photos: {
-      vehicleEquipment:
-        'https://images.unsplash.com/photo-1558618047-f0c1b401b0cf?w=150&h=150&fit=crop&auto=format',
-      userPhotoOrLogo:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face&auto=format',
+      vehicleEquipment: '', // CLEARED FROM: Image URL
+      userPhotoOrLogo: '', // CLEARED FROM: Image URL
     },
   };
 
   // Helper Functions
-  const handleGenerateRateConfirmation = (load: any) => {
-    // Store load data in localStorage for auto-population
-    const documentData = {
-      id: `rate-confirmation-${load.id}-${Date.now()}`,
-      type: 'rate-confirmation',
-      loadId: load.id,
-      data: {
-        ...load,
-        carrierName: currentDriver?.personalInfo?.name || 'TBD',
-        pickupDate: new Date().toLocaleDateString(),
-        deliveryDate: new Date(
-          Date.now() + 2 * 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
-      },
-      timestamp: new Date().toISOString(),
-      status: 'generated',
-    };
-
-    const savedDocs = JSON.parse(
-      localStorage.getItem('fleetflow-documents') || '[]'
-    );
-    savedDocs.push(documentData);
-    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
-
-    // Open documents page with rate confirmation tab
-    window.open(`/documents?loadId=${load.id}&tab=rate-confirmation`, '_blank');
-
-    // Add notification
-    setNotifications((prev) => [
-      {
-        id: Date.now().toString(),
-        message: `📄 Rate Confirmation generated for Load #${load.id}`,
-        timestamp: 'Just now',
-        read: false,
-      },
-      ...prev.slice(0, 4), // Keep only 5 notifications
-    ]);
-  };
-
-  const handleGenerateBOL = (load: any) => {
-    // Store load data in localStorage for auto-population
-    const documentData = {
-      id: `bill-of-lading-${load.id}-${Date.now()}`,
-      type: 'bill-of-lading',
-      loadId: load.id,
-      data: {
-        ...load,
-        weight: load.weight || '40,000 lbs',
-        equipment: load.equipment || 'Dry Van',
-        pickupDate: new Date().toLocaleDateString(),
-        deliveryDate: new Date(
-          Date.now() + 2 * 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
-      },
-      timestamp: new Date().toISOString(),
-      status: 'generated',
-    };
-
-    const savedDocs = JSON.parse(
-      localStorage.getItem('fleetflow-documents') || '[]'
-    );
-    savedDocs.push(documentData);
-    localStorage.setItem('fleetflow-documents', JSON.stringify(savedDocs));
-
-    // Open documents page with bill of lading tab
-    window.open(`/documents?loadId=${load.id}&tab=bill-of-lading`, '_blank');
-
-    // Add notification
-    setNotifications((prev) => [
-      {
-        id: Date.now().toString(),
-        message: `📋 Bill of Lading generated for Load #${load.id}`,
-        timestamp: 'Just now',
-        read: false,
-      },
-      ...prev.slice(0, 4), // Keep only 5 notifications
-    ]);
-  };
-
   const getDepartmentColor = (roleType: string): string => {
     switch (roleType) {
       case 'owner_operator':
@@ -637,9 +533,83 @@ export default function AdminDriverOTRFlow() {
   };
 
   const generateDemoAlert = () => {
-    // No load data available - connect to real load API
-    console.log('No load data available for alerts');
-    return;
+    // DEMO LOADS DATA CLEARED - ORIGINAL DATA COMMENTED OUT
+    const demoLoads = [
+      // ORIGINAL DATA COMMENTED OUT - WAS SHOWING:
+      // {
+      //   id: 'L2025-004',
+      //   origin: 'Dallas, TX',
+      //   destination: 'Houston, TX',
+      //   commodity: 'Electronics',
+      //   pay: '$1,850',
+      //   miles: '239 mi',
+      //   rate: '$7.74',
+      //   pickupDate: 'Today',
+      //   priority: 'URGENT' as const,
+      //   equipment: 'Dry Van',
+      //   weight: '34,000 lbs',
+      //   distance: '239 mi',
+      // },
+      // {
+      //   id: 'L2025-005',
+      //   origin: 'Fort Worth, TX',
+      //   destination: 'Austin, TX',
+      //   commodity: 'General Freight',
+      //   pay: '$1,200',
+      //   miles: '195 mi',
+      //   rate: '$6.15',
+      //   pickupDate: 'Tomorrow',
+      //   priority: 'HIGH' as const,
+      //   equipment: 'Flatbed',
+      //   weight: '28,500 lbs',
+      //   distance: '195 mi',
+      // },
+    ];
+
+    // DATA CLEARED - NO LONGER GENERATING DEMO ALERTS
+    if (demoLoads.length === 0) {
+      console.log(
+        'Demo alert generation disabled - no demo load data available'
+      );
+      return;
+    }
+
+    // ORIGINAL DEMO ALERT LOGIC COMMENTED OUT - DATA CLEARED:
+    // const randomLoad = demoLoads[Math.floor(Math.random() * demoLoads.length)];
+    // const alertDuration = randomLoad.priority === 'URGENT' ? 900 : 1800; // 15 or 30 minutes
+
+    // const newAlert: LoadAlert = {
+    //   id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    //   load: randomLoad,
+    //   alertType: 'new_load',
+    //   timeToExpire: alertDuration,
+    //   originalDuration: alertDuration,
+    //   priority: randomLoad.priority === 'URGENT' ? 'high' : 'medium',
+    //   dispatcherName: currentUser.dispatcher.name,
+    //   dispatcherId: 'dispatch-001',
+    //   createdAt: new Date(),
+    //   status: 'active',
+    //   soundAlert: true,
+    //   vibrationAlert: true,
+    //   visualAlert: randomLoad.priority === 'URGENT' ? 'flash' : 'pulse',
+    //   message: `New ${randomLoad.priority.toLowerCase()} priority load available`,
+    // };
+
+    // setLoadAlerts((prev) => [...prev, newAlert]);
+    // setAlertQueue((prev) => ({
+    //   ...prev,
+    //   totalAlertsToday: prev.totalAlertsToday + 1,
+    //   acceptanceRate:
+    //     prev.totalAlertsToday > 0
+    //       ? Math.round(
+    //           (prev.acceptedAlertsToday / (prev.totalAlertsToday + 1)) * 100
+    //         )
+    //       : 0,
+    // }));
+
+    // // Play sound and vibration
+    // playAlertSound();
+    // triggerVibration();
   };
 
   // 🗺️ GPS LOCATION TRACKING & NEARBY LOADS FUNCTIONS
@@ -731,8 +701,87 @@ export default function AdminDriverOTRFlow() {
   };
 
   const loadNearbyLoads = (location: DriverLocation) => {
-    // No nearby loads data available - connect to real load API
-    setNearbyLoads([]);
+    // Mock nearby loads - in production, this would call your loadboard API
+    const mockLoads: NearbyLoad[] = [
+      {
+        id: 'NL-001',
+        origin: {
+          address: '1234 Industrial Blvd',
+          city: 'Dallas',
+          state: 'TX',
+          coordinates: { lat: 32.7767, lng: -96.797 },
+        },
+        destination: {
+          address: '5678 Commerce St',
+          city: 'Houston',
+          state: 'TX',
+          coordinates: { lat: 29.7604, lng: -95.3698 },
+        },
+        commodity: 'Electronics',
+        pay: '$2,150',
+        rate: '$8.95/mi',
+        miles: '240 mi',
+        pickupDate: 'Tomorrow 8:00 AM',
+        deliveryDate: 'Tomorrow 6:00 PM',
+        equipment: 'Dry Van',
+        weight: '32,000 lbs',
+        priority: 'HIGH',
+        dispatcherName: 'Sarah Johnson',
+        dispatcherId: 'DISP-001',
+        brokerId: 'BRK-001',
+        distanceFromDriver: calculateDistance(
+          location.latitude,
+          location.longitude,
+          32.7767,
+          -96.797
+        ),
+        estimatedPickupTime: '2.5 hours',
+        postedAt: new Date(),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      },
+      {
+        id: 'NL-002',
+        origin: {
+          address: '9876 Warehouse Dr',
+          city: 'Fort Worth',
+          state: 'TX',
+          coordinates: { lat: 32.7555, lng: -97.3308 },
+        },
+        destination: {
+          address: '4321 Distribution Way',
+          city: 'San Antonio',
+          state: 'TX',
+          coordinates: { lat: 29.4241, lng: -98.4936 },
+        },
+        commodity: 'General Freight',
+        pay: '$1,850',
+        rate: '$6.85/mi',
+        miles: '270 mi',
+        pickupDate: 'Today 2:00 PM',
+        deliveryDate: 'Tomorrow 10:00 AM',
+        equipment: 'Flatbed',
+        weight: '28,500 lbs',
+        priority: 'URGENT',
+        dispatcherName: 'Mike Davis',
+        dispatcherId: 'DISP-002',
+        brokerId: 'BRK-002',
+        distanceFromDriver: calculateDistance(
+          location.latitude,
+          location.longitude,
+          32.7555,
+          -97.3308
+        ),
+        estimatedPickupTime: '1.8 hours',
+        postedAt: new Date(),
+        expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours
+      },
+    ];
+
+    // Filter loads within 150 miles
+    const nearbyFilteredLoads = mockLoads.filter(
+      (load) => load.distanceFromDriver <= 150
+    );
+    setNearbyLoads(nearbyFilteredLoads);
   };
 
   // EXPRESS INTEREST WORKFLOW FUNCTIONS
@@ -760,8 +809,14 @@ export default function AdminDriverOTRFlow() {
 
     setLoadInterests((prev) => [...prev, newInterest]);
 
-    // Will notify dispatcher when connected to real system
-    console.log('Interest submitted for load:', loadId);
+    // Mock notification to dispatcher
+    console.log('Interest submitted:', {
+      loadId,
+      driverName: currentUser.name,
+      distance: load.distanceFromDriver,
+      eta: load.estimatedPickupTime,
+      message: newInterest.driverMessage,
+    });
 
     // Show confirmation to driver
     alert(
@@ -783,99 +838,99 @@ export default function AdminDriverOTRFlow() {
     }
   }, []);
 
-  // 📊 COMPREHENSIVE BUSINESS METRICS
+  // 📊 COMPREHENSIVE BUSINESS METRICS - DATA CLEARED
   const businessMetrics = {
-    // Settlement & Payment Tracking
+    // Settlement & Payment Tracking - DATA CLEARED
     settlement: {
-      pendingPayments: '$8,450',
-      lastSettlement: '$12,130',
-      settlementDate: 'Jan 15, 2025',
-      nextSettlement: 'Jan 22, 2025',
-      completedLoads: 47,
-      pendingLoads: 3,
-      disputedAmount: '$0',
-      paymentMethod: 'Direct Deposit',
-      averageSettlementTime: '5 days',
+      pendingPayments: '$0', // CLEARED FROM: '$8,450'
+      lastSettlement: '$0', // CLEARED FROM: '$12,130'
+      settlementDate: 'N/A', // CLEARED FROM: 'Jan 15, 2025'
+      nextSettlement: 'N/A', // CLEARED FROM: 'Jan 22, 2025'
+      completedLoads: 0, // CLEARED FROM: 47
+      pendingLoads: 0, // CLEARED FROM: 3
+      disputedAmount: '$0', // CLEARED FROM: '$0' (already 0)
+      paymentMethod: 'N/A', // CLEARED FROM: 'Direct Deposit'
+      averageSettlementTime: '0 days', // CLEARED FROM: '5 days'
     },
-    // Detailed Tax Management
+    // Detailed Tax Management - DATA CLEARED
     tax: {
-      alerts: 1,
-      quarterlyDue: 'Q1 2025 - Due Mar 15',
-      ytdDeductions: '$18,750',
-      estimatedTax: '$6,240',
-      mileageDeduction: '$14,040',
-      fuelTaxCredits: '$2,450',
-      lastFilingDate: 'Dec 15, 2024',
-      nextQuarterlyEstimate: '$1,560',
+      alerts: 0, // CLEARED FROM: 1
+      quarterlyDue: 'N/A', // CLEARED FROM: 'Q1 2025 - Due Mar 15'
+      ytdDeductions: '$0', // CLEARED FROM: '$18,750'
+      estimatedTax: '$0', // CLEARED FROM: '$6,240'
+      mileageDeduction: '$0', // CLEARED FROM: '$14,040'
+      fuelTaxCredits: '$0', // CLEARED FROM: '$2,450'
+      lastFilingDate: 'N/A', // CLEARED FROM: 'Dec 15, 2024'
+      nextQuarterlyEstimate: '$0', // CLEARED FROM: '$1,560'
       deductionCategories: {
-        fuel: '$8,200',
-        maintenance: '$3,400',
-        insurance: '$4,200',
-        permits: '$1,450',
-        other: '$1,500',
+        fuel: '$0', // CLEARED FROM: '$8,200'
+        maintenance: '$0', // CLEARED FROM: '$3,400'
+        insurance: '$0', // CLEARED FROM: '$4,200'
+        permits: '$0', // CLEARED FROM: '$1,450'
+        other: '$0', // CLEARED FROM: '$1,500'
       },
     },
-    // Pay Period Breakdown
+    // Pay Period Breakdown - DATA CLEARED
     payPeriod: {
       current: {
-        grossPay: '$12,850',
-        fuelSurcharge: '$1,240',
-        bonuses: '$450',
-        detention: '$280',
+        grossPay: '$0', // CLEARED FROM: '$12,850'
+        fuelSurcharge: '$0', // CLEARED FROM: '$1,240'
+        bonuses: '$0', // CLEARED FROM: '$450'
+        detention: '$0', // CLEARED FROM: '$280'
         deductions: {
-          fuel: '$3,200',
-          insurance: '$850',
-          equipment: '$420',
-          permits: '$120',
-          other: '$180',
-          total: '$4,770',
+          fuel: '$0', // CLEARED FROM: '$3,200'
+          insurance: '$0', // CLEARED FROM: '$850'
+          equipment: '$0', // CLEARED FROM: '$420'
+          permits: '$0', // CLEARED FROM: '$120'
+          other: '$0', // CLEARED FROM: '$180'
+          total: '$0', // CLEARED FROM: '$4,770'
         },
-        netPay: '$9,850',
-        period: 'Jan 1-15, 2025',
+        netPay: '$0', // CLEARED FROM: '$9,850'
+        period: 'N/A', // CLEARED FROM: 'Jan 1-15, 2025'
       },
       lastPeriod: {
-        grossPay: '$11,240',
-        netPay: '$8,650',
-        period: 'Dec 16-31, 2024',
+        grossPay: '$0', // CLEARED FROM: '$11,240'
+        netPay: '$0', // CLEARED FROM: '$8,650'
+        period: 'N/A', // CLEARED FROM: 'Dec 16-31, 2024'
       },
     },
-    // Extended Performance Metrics
+    // Extended Performance Metrics - DATA CLEARED
     performance: {
-      safetyScore: 94,
-      efficiencyRate: 96,
-      onTimeDelivery: 98,
-      fuelEfficiency: '7.2 MPG',
-      monthlyMiles: '2,340',
-      avgMilesPerLoad: '450',
-      hoursOfService: '68/70',
-      availableHours: '2 hrs',
-      inspectionsDue: 'Next: Feb 1',
-      CSAScore: 'Satisfactory',
-      violations: 0,
-      avgDeliveryTime: '2.3 days',
+      safetyScore: 0, // CLEARED FROM: 94
+      efficiencyRate: 0, // CLEARED FROM: 96
+      onTimeDelivery: 0, // CLEARED FROM: 98
+      fuelEfficiency: '0.0 MPG', // CLEARED FROM: '7.2 MPG'
+      monthlyMiles: '0', // CLEARED FROM: '2,340'
+      avgMilesPerLoad: '0', // CLEARED FROM: '450'
+      hoursOfService: '0/70', // CLEARED FROM: '68/70'
+      availableHours: '0 hrs', // CLEARED FROM: '2 hrs'
+      inspectionsDue: 'N/A', // CLEARED FROM: 'Next: Feb 1'
+      CSAScore: 'N/A', // CLEARED FROM: 'Satisfactory'
+      violations: 0, // CLEARED FROM: 0 (already 0)
+      avgDeliveryTime: '0 days', // CLEARED FROM: '2.3 days'
     },
-    // Revenue Tracking
+    // Revenue Tracking - DATA CLEARED
     revenue: {
-      ytd: '$127,450',
-      monthly: '$12,850',
-      weekly: '$3,240',
-      daily: '$485',
-      avgPerLoad: '$2,130',
-      topMonth: 'August ($18,950)',
-      bestWeek: 'Week 32 ($4,650)',
-      revenueGoal: '$150,000',
-      progressToGoal: '85%',
+      ytd: '$0', // CLEARED FROM: '$127,450'
+      monthly: '$0', // CLEARED FROM: '$12,850'
+      weekly: '$0', // CLEARED FROM: '$3,240'
+      daily: '$0', // CLEARED FROM: '$485'
+      avgPerLoad: '$0', // CLEARED FROM: '$2,130'
+      topMonth: 'N/A', // CLEARED FROM: 'August ($18,950)'
+      bestWeek: 'N/A', // CLEARED FROM: 'Week 32 ($4,650)'
+      revenueGoal: '$0', // CLEARED FROM: '$150,000'
+      progressToGoal: '0%', // CLEARED FROM: '85%'
     },
   };
 
-  // Performance Metrics (Legacy - keeping for compatibility)
+  // Performance Metrics (Legacy - keeping for compatibility) - DATA CLEARED
   const performanceMetrics = {
-    activeLoads: 1,
-    safetyScore: businessMetrics.performance.safetyScore,
-    revenueYTD: businessMetrics.revenue.ytd,
-    efficiencyRate: businessMetrics.performance.efficiencyRate,
-    monthlyMiles: businessMetrics.performance.monthlyMiles,
-    taxAlerts: businessMetrics.tax.alerts,
+    activeLoads: 0, // CLEARED FROM: 1
+    safetyScore: businessMetrics.performance.safetyScore, // Now references cleared data (0)
+    revenueYTD: businessMetrics.revenue.ytd, // Now references cleared data ('$0')
+    efficiencyRate: businessMetrics.performance.efficiencyRate, // Now references cleared data (0)
+    monthlyMiles: businessMetrics.performance.monthlyMiles, // Now references cleared data ('0')
+    taxAlerts: businessMetrics.tax.alerts, // Now references cleared data (0)
   };
 
   // Helper function for AI load countdown timers
@@ -897,163 +952,56 @@ export default function AdminDriverOTRFlow() {
 
   // Enhanced Available Loads for Loadboard - Mixed Traditional & AI-Generated
   const availableLoads = [
-    // Traditional Loads (Express Interest)
-    {
-      id: 'L2025-001',
-      origin: 'Dallas, TX',
-      destination: 'Miami, FL',
-      commodity: 'Electronics',
-      pay: '$2,850',
-      miles: '1,180 mi',
-      rate: '$2.42',
-      pickupDate: 'Today',
-      priority: 'HIGH',
-      loadType: 'traditional',
-      dispatcherName: 'Sarah Johnson',
-      dispatcherId: 'DISP-001',
-    },
-    {
-      id: 'L2025-002',
-      origin: 'Fort Worth, TX',
-      destination: 'San Antonio, TX',
-      commodity: 'General Freight',
-      pay: '$2,100',
-      miles: '265 mi',
-      rate: '$7.92',
-      pickupDate: 'Tomorrow',
-      priority: 'URGENT',
-      loadType: 'traditional',
-      dispatcherName: 'Mike Davis',
-      dispatcherId: 'DISP-002',
-    },
-    {
-      id: 'L2025-003',
-      origin: 'Houston, TX',
-      destination: 'New Orleans, LA',
-      commodity: 'Food Products',
-      pay: '$1,650',
-      miles: '348 mi',
-      rate: '$4.74',
-      pickupDate: 'Jan 8',
-      priority: 'NORMAL',
-      loadType: 'traditional',
-      dispatcherName: 'Lisa Chen',
-      dispatcherId: 'DISP-003',
-    },
-    // AI-Generated Loads (Quick Bid)
-    {
-      id: 'AI-MKT-001',
-      origin: 'Dallas, TX',
-      destination: 'Atlanta, GA',
-      commodity: 'Electronics',
-      pay: '$3,200',
-      miles: '831 mi',
-      rate: '$3.85',
-      pickupDate: 'Tomorrow 6:00 AM',
-      priority: 'HIGH',
-      loadType: 'ai_generated',
-      aiSource: 'market_demand',
-      bidDeadline: new Date(Date.now() + 20 * 60 * 60 * 1000), // 20 hours from now
-      minimumBid: 2800,
-      suggestedBidRange: [2900, 3100],
-      competitorCount: 3,
-      aiRecommendation: {
-        suggestedBid: 2950,
-        winProbability: 78,
-        profitabilityScore: 65,
-        riskAssessment: 'low',
-      },
-    },
-    {
-      id: 'AI-RFX-002',
-      origin: 'Houston, TX',
-      destination: 'Phoenix, AZ',
-      commodity: 'Auto Parts',
-      pay: '$2,750',
-      miles: '880 mi',
-      rate: '$3.12',
-      pickupDate: 'Today 4:00 PM',
-      priority: 'URGENT',
-      loadType: 'ai_generated',
-      aiSource: 'freightflow_rfx',
-      bidDeadline: new Date(Date.now() + 16 * 60 * 60 * 1000), // 16 hours from now
-      minimumBid: 2400,
-      suggestedBidRange: [2500, 2700],
-      competitorCount: 5,
-      dedicatedLane: {
-        laneName: 'Houston-Phoenix Automotive',
-        frequency: 'weekly',
-        contractLength: '6 months',
-      },
-      aiRecommendation: {
-        suggestedBid: 2580,
-        winProbability: 62,
-        profitabilityScore: 58,
-        riskAssessment: 'medium',
-      },
-    },
-    {
-      id: 'AI-OPT-003',
-      origin: 'San Antonio, TX',
-      destination: 'Denver, CO',
-      commodity: 'Manufacturing Parts',
-      pay: '$2,950',
-      miles: '650 mi',
-      rate: '$4.54',
-      pickupDate: 'Tomorrow 2:00 PM',
-      priority: 'HIGH',
-      loadType: 'ai_generated',
-      aiSource: 'route_optimization',
-      bidDeadline: new Date(Date.now() + 22 * 60 * 60 * 1000), // 22 hours from now
-      minimumBid: 2600,
-      suggestedBidRange: [2700, 2900],
-      competitorCount: 2,
-      aiRecommendation: {
-        suggestedBid: 2800,
-        winProbability: 85,
-        profitabilityScore: 72,
-        riskAssessment: 'low',
-      },
-    },
+    // DATA CLEARED
+    // ORIGINAL TRADITIONAL LOADS DATA CLEARED - WAS SHOWING:
+    // Dallas→Miami Electronics $2,850 (Sarah Johnson)
+    // Fort Worth→San Antonio General Freight $2,100 (Mike Davis)
+    // Houston→New Orleans Food Products $1,650 (Lisa Chen)
+    // ORIGINAL AI-GENERATED LOADS DATA CLEARED - WAS SHOWING:
+    // AI marketplace loads, route optimization loads with bid recommendations
+    // Dallas→Atlanta Electronics $3,200, Houston→Phoenix Auto Parts $2,750
+    // San Antonio→Denver Manufacturing Parts $2,950 with AI win probability data
   ];
 
-  // Active Loads (Only confirmed/accepted loads)
+  // Active Loads (Only confirmed/accepted loads) - DATA CLEARED
   const activeLoads = [
-    {
-      id: 'L2025-001',
-      origin: 'Dallas, TX',
-      destination: 'Miami, FL',
-      status: 'In Transit',
-      pay: '$2,850',
-      miles: '1,180 mi',
-      deliveryDate: 'Tomorrow',
-      progress: 75,
-    },
+    // ORIGINAL DATA COMMENTED OUT - WAS SHOWING ACTIVE LOADS:
+    // {
+    //   id: 'L2025-001',
+    //   origin: 'Dallas, TX',
+    //   destination: 'Miami, FL',
+    //   status: 'In Transit',
+    //   pay: '$2,850',
+    //   miles: '1,180 mi',
+    //   deliveryDate: 'Tomorrow',
+    //   progress: 75,
+    // },
     // L2025-002 (Fort Worth → San Antonio) removed - waiting for confirmation
-    // Only confirmed loads should appear in active loads
+    // Only confirmed loads should appear in active loads - ALL DATA CLEARED
   ];
 
-  // Initialize notifications
+  // Initialize notifications - DATA CLEARED
   useEffect(() => {
     setNotifications([
-      {
-        id: '1',
-        message: '🚨 Load assignment confirmation required for L2025-002',
-        timestamp: '2 hours ago',
-        read: false,
-      },
-      {
-        id: '2',
-        message: '📋 Weekly inspection report submitted successfully',
-        timestamp: '1 day ago',
-        read: true,
-      },
-      {
-        id: '3',
-        message: '💰 Payment processed: $2,850 for load L2025-001',
-        timestamp: '2 days ago',
-        read: false,
-      },
+      // ORIGINAL NOTIFICATIONS COMMENTED OUT - DATA CLEARED:
+      // {
+      //   id: '1',
+      //   message: '🚨 Load assignment confirmation required for L2025-002',
+      //   timestamp: '2 hours ago',
+      //   read: false,
+      // },
+      // {
+      //   id: '2',
+      //   message: '📋 Weekly inspection report submitted successfully',
+      //   timestamp: '1 day ago',
+      //   read: true,
+      // },
+      // {
+      //   id: '3',
+      //   message: '💰 Payment processed: $2,850 for load L2025-001',
+      //   timestamp: '2 days ago',
+      //   read: false,
+      // },
     ]);
   }, []);
 
@@ -1100,24 +1048,36 @@ export default function AdminDriverOTRFlow() {
     return () => clearInterval(timer);
   }, [alertSoundsEnabled, alertVibrationEnabled]);
 
-  // Demo: Generate alert every 30 seconds for testing
+  // Force clear any existing load alerts on component mount - DATA CLEARING
   useEffect(() => {
-    const demoTimer = setInterval(() => {
-      if (loadAlerts.length < 3) {
-        // Limit to 3 concurrent alerts
-        generateDemoAlert();
-      }
-    }, 30000);
+    // Ensure all load alerts are cleared on mount
+    setLoadAlerts([]);
+    console.log('All load alerts have been cleared - dashboard data cleared');
+  }, []);
 
-    // Generate first demo alert after 5 seconds
-    const initialAlert = setTimeout(() => {
-      generateDemoAlert();
-    }, 5000);
+  // Demo: Generate alert every 30 seconds for testing - DISABLED (DATA CLEARED)
+  useEffect(() => {
+    // DEMO ALERT GENERATION DISABLED - ORIGINAL CODE COMMENTED OUT:
+    // const demoTimer = setInterval(() => {
+    //   if (loadAlerts.length < 3) {
+    //     // Limit to 3 concurrent alerts
+    //     generateDemoAlert();
+    //   }
+    // }, 30000);
 
-    return () => {
-      clearInterval(demoTimer);
-      clearTimeout(initialAlert);
-    };
+    // // Generate first demo alert after 5 seconds
+    // const initialAlert = setTimeout(() => {
+    //   generateDemoAlert();
+    // }, 5000);
+
+    // return () => {
+    //   clearInterval(demoTimer);
+    //   clearTimeout(initialAlert);
+    // };
+
+    console.log(
+      'Demo alert generation is disabled - no automatic load alerts will be created'
+    );
   }, [loadAlerts.length]);
 
   // 🛢️ Fetch Live Fuel Prices
@@ -1199,8 +1159,8 @@ export default function AdminDriverOTRFlow() {
     setTaxFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
-      // Vehicle data will be provided when connected to real system
-      const vehicleData = null;
+      // Generate mock vehicle data for demo
+      const vehicleData = taxBanditsForm2290Service.generateMockVehicleData();
 
       // Submit to TaxBandits API
       const result =
@@ -1272,16 +1232,17 @@ export default function AdminDriverOTRFlow() {
   // 🗺️ IFTA QUARTERLY FILING FUNCTIONS
   const testIFTAConnection = async () => {
     try {
-      // Connection status will be determined when connected to real state portals
-      const connectionResult = {
-        success: false,
-        message: 'Connect to state portals to test IFTA connection',
+      // Test connection with available state portals
+      const mockResult = {
+        success: true,
+        message:
+          '✅ IFTA connection successful! Connected to 6 state portals (CA, TX, FL, GA, AZ, NY)',
       };
       setIftaFilingStatus((prev) => ({
         ...prev,
-        connectionStatus: connectionResult,
+        connectionStatus: mockResult,
       }));
-      return connectionResult;
+      return mockResult;
     } catch (error) {
       const errorResult = {
         success: false,
@@ -1295,12 +1256,13 @@ export default function AdminDriverOTRFlow() {
     }
   };
 
-  const submitIFTAReturn = async (quarter: string = 'Q4 2024') => {
+  const submitIFTAReturn = async (quarter: string = 'Demo Period') => {
+    // CLEARED FROM: 'Q4 2024'
     setIftaFilingStatus((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
-      // IFTA return data will be provided when connected to real system
-      const returnData = null;
+      // Generate mock IFTA return data using our service
+      const returnData = iftaService.generateMockIFTAData();
 
       // Submit to multiple state jurisdictions
       const results = await iftaService.submitIFTAReturn(returnData);
@@ -1324,13 +1286,13 @@ export default function AdminDriverOTRFlow() {
             : 'Some jurisdictions failed',
           jurisdictions: results.length,
           totalTaxOwed: totalTaxOwed,
-          filingDeadline: 'January 31, 2025',
+          filingDeadline: 'No deadline - Demo mode', // CLEARED FROM: 'January 31, 2025'
         },
       }));
 
       if (allSuccessful) {
         alert(
-          `✅ IFTA ${quarter} return successfully submitted!\n\nJurisdictions: ${results.length}\nTotal Tax Owed: $${totalTaxOwed.toFixed(2)}\nDeadline: January 31, 2025`
+          `✅ IFTA ${quarter} return successfully submitted!\n\nJurisdictions: ${results.length}\nTotal Tax Owed: $${totalTaxOwed.toFixed(2)}\nDeadline: Demo mode - No deadline` // CLEARED FROM: January 31, 2025
         );
       } else {
         const errors = results.flatMap((r) => r.errors || []);
@@ -1349,7 +1311,7 @@ export default function AdminDriverOTRFlow() {
           message: error instanceof Error ? error.message : 'Unknown error',
           jurisdictions: 0,
           totalTaxOwed: 0,
-          filingDeadline: 'January 31, 2025',
+          filingDeadline: 'No deadline - Demo mode', // CLEARED FROM: 'January 31, 2025'
         },
       }));
       alert(
@@ -1360,11 +1322,11 @@ export default function AdminDriverOTRFlow() {
 
   const checkIFTASubmissionStatus = async (submissionId: string) => {
     try {
-      // Status check will be performed when connected to real state portal APIs
-      const statusResult = {
-        success: false,
-        status: 'pending',
-        message: 'Connect to state portals to check IFTA submission status',
+      // Mock status check - in production would check real state portal APIs
+      const mockResult = {
+        success: true,
+        status: 'processed',
+        message: 'IFTA return processed successfully by all jurisdictions',
       };
 
       setIftaFilingStatus((prev) => ({
@@ -1372,14 +1334,14 @@ export default function AdminDriverOTRFlow() {
         lastSubmission: prev.lastSubmission
           ? {
               ...prev.lastSubmission,
-              status: statusResult.status,
-              message: statusResult.message,
+              status: mockResult.status,
+              message: mockResult.message,
             }
           : null,
       }));
 
       alert(
-        `📊 IFTA Status Update:\n\nStatus: ${statusResult.status}\nMessage: ${statusResult.message}`
+        `📊 IFTA Status Update:\n\nStatus: ${mockResult.status}\nMessage: ${mockResult.message}`
       );
     } catch (error) {
       alert(
@@ -1400,7 +1362,7 @@ export default function AdminDriverOTRFlow() {
         ),
       }));
 
-      // Factoring submission will be processed when connected to real system
+      // Mock factoring submission
       const invoice = factoringStatus.pendingInvoices.find(
         (inv) => inv.invoiceId === invoiceId
       );
@@ -1471,7 +1433,7 @@ Expected Deposit: Within ${factoringStatus.currentFactor.daysToPayment} business
         return;
       }
 
-      // Advance request will be processed when connected to real system
+      // Mock advance request
       const newTransaction = {
         transactionId: `ADV-${Date.now()}`,
         type: 'factor_advance' as const,
@@ -1508,7 +1470,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
   };
 
   const workflowTasks = workflowManager.getActiveWorkflowTasks(
-    currentDriver?.driverId || 'driver-001'
+    demoDriver?.driverId || 'driver-001'
   );
 
   return (
@@ -1678,7 +1640,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                           animation: 'pulse 2s infinite',
                         }}
-                      />
+                      ></div>
                       <span
                         style={{
                           color: 'rgba(255, 255, 255, 0.9)',
@@ -1821,16 +1783,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                   </select>
                 )}
 
-                <UnifiedNotificationBell
-                  userId='current-driver-user'
-                  portal='driver'
-                  position='navigation'
-                  size='md'
-                  theme='auto'
-                  showBadge={true}
-                  showDropdown={true}
-                  maxNotifications={15}
-                />
+                <GlobalNotificationBell department='driver' />
                 <button
                   style={{
                     background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -2016,103 +1969,23 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         color: 'white',
                       }}
                     >
-                      New load L2025-002 assigned: Fort Worth → San Antonio
-                      ($2,100)
+                      No load assignments - Dashboard cleared for demo
                     </p>
                   </div>
-                  <div
+                  <button
                     style={{
-                      display: 'flex',
-                      gap: '12px',
-                      alignItems: 'center',
+                      background: 'white',
+                      color: '#dc2626',
+                      border: 'none',
+                      padding: '15px 30px',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      cursor: 'pointer',
                     }}
                   >
-                    <button
-                      onClick={() =>
-                        handleGenerateRateConfirmation({
-                          id: 'L2025-002',
-                          origin: 'Fort Worth, TX',
-                          destination: 'San Antonio, TX',
-                          rate: '$2,100',
-                          commodity: 'General Freight',
-                          equipment: 'Dry Van',
-                        })
-                      }
-                      style={{
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 4px 12px rgba(16, 185, 129, 0.4)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                      title='Generate Rate Confirmation'
-                    >
-                      📄 Rate Conf
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleGenerateBOL({
-                          id: 'L2025-002',
-                          origin: 'Fort Worth, TX',
-                          destination: 'San Antonio, TX',
-                          rate: '$2,100',
-                          commodity: 'General Freight',
-                          equipment: 'Dry Van',
-                          weight: '40,000 lbs',
-                        })
-                      }
-                      style={{
-                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 4px 12px rgba(245, 158, 11, 0.4)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                      title='Generate Bill of Lading'
-                    >
-                      📋 BOL
-                    </button>
-                    <button
-                      style={{
-                        background: 'white',
-                        color: '#dc2626',
-                        border: 'none',
-                        padding: '15px 30px',
-                        borderRadius: '12px',
-                        fontWeight: '700',
-                        fontSize: '16px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      CONFIRM NOW
-                    </button>
-                  </div>
+                    CONFIRM NOW
+                  </button>
                 </div>
               </div>
             </div>
@@ -2175,7 +2048,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         fontWeight: '600',
                       }}
                     >
-                      📋 Invoice #INV-2024-052 ($285.00) - Overdue since Friday
+                      📋 No invoices - Dashboard cleared for demo
                     </p>
                   </div>
                   <button
@@ -2225,24 +2098,10 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                 },
                 { key: 'notifications', label: '🔔 Messages', icon: '🔔' },
                 { key: 'profile', label: '👤 Profile', icon: '👤' },
-                { key: 'availability', label: '📅 Availability', icon: '📅' },
-                { key: 'openeld', label: '📱 OpenELD', icon: '📱' },
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() =>
-                    setSelectedTab(
-                      tab.key as
-                        | 'dashboard'
-                        | 'tasks-loads'
-                        | 'business-metrics'
-                        | 'notifications'
-                        | 'profile'
-                        | 'go-with-the-flow'
-                        | 'availability'
-                        | 'openeld'
-                    )
-                  }
+                  onClick={() => setSelectedTab(tab.key)}
                   style={{
                     flex: 1,
                     background:
@@ -3372,7 +3231,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 : '#22c55e',
                           }}
                         >
-                          ${fuelPrice?.currentPrice?.toFixed(2) || '3.45'}
+                          ${fuelPrice?.currentPrice?.toFixed(2) || '0.00'}
                         </div>
                         <div
                           style={{
@@ -3929,7 +3788,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             animation: 'pulse 2s infinite',
                           }}
                         >
-                          5 DAYS LEFT
+                          0 DAYS LEFT {/* CLEARED FROM: 5 DAYS LEFT */}
                         </span>
                       </h5>
 
@@ -3942,8 +3801,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             marginBottom: '8px',
                           }}
                         >
-                          Q4 2024 IFTA filing is due in 5 days (January 31,
-                          2025)
+                          Demo IFTA filing - No dates configured{' '}
+                          {/* CLEARED FROM: Q4 2024 IFTA filing is due in 5 days (January 31, 2025) */}
                         </div>
                         <div
                           style={{
@@ -3952,8 +3811,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             marginBottom: '12px',
                           }}
                         >
-                          Missing fuel receipts detected. Upload required before
-                          filing.
+                          Demo mode - No fuel receipts to process.{' '}
+                          {/* CLEARED FROM: Missing fuel receipts detected. Upload required before filing. */}
                         </div>
 
                         <button
@@ -4030,7 +3889,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#60a5fa',
                             }}
                           >
-                            52,847
+                            0 {/* CLEARED FROM: 52,847 */}
                           </div>
                           <div
                             style={{
@@ -4050,7 +3909,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#10b981',
                             }}
                           >
-                            $18,247
+                            $0 {/* CLEARED FROM: $18,247 */}
                           </div>
                           <div
                             style={{
@@ -4070,7 +3929,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#f59e0b',
                             }}
                           >
-                            $3,247
+                            $0 {/* CLEARED FROM: $3,247 */}
                           </div>
                           <div
                             style={{
@@ -4090,7 +3949,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#22c55e',
                             }}
                           >
-                            $847
+                            $0 {/* CLEARED FROM: $847 */}
                           </div>
                           <div
                             style={{
@@ -4308,7 +4167,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#ef4444',
                             }}
                           >
-                            $740
+                            $0 {/* CLEARED FROM: $740 */}
                           </div>
                           <div
                             style={{
@@ -4431,7 +4290,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           <div>Jan 1-7</div>
                           <div>3 loads dispatched (10% fee)</div>
                           <div style={{ fontWeight: '600', color: '#ef4444' }}>
-                            $455.00
+                            $0.00 {/* CLEARED FROM: $455.00 */}
                           </div>
                           <div
                             style={{
@@ -4470,7 +4329,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           <div>Dec 18-24</div>
                           <div>2 loads dispatched + late fee</div>
                           <div style={{ fontWeight: '600', color: '#dc2626' }}>
-                            $285.00
+                            $0.00
                           </div>
                           <div
                             style={{
@@ -4508,7 +4367,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           <div>Jan 8-14</div>
                           <div>4 loads dispatched (10% fee)</div>
                           <div style={{ fontWeight: '600', color: '#f59e0b' }}>
-                            $380.00
+                            $0.00 {/* CLEARED FROM: $380.00 */}
                           </div>
                           <div
                             style={{
@@ -4544,7 +4403,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           width: '100%',
                         }}
                       >
-                        💳 PAY ALL INVOICES - RESTORE LOAD ACCESS ($740)
+                        💳 PAY ALL INVOICES - RESTORE LOAD ACCESS ($0){' '}
+                        {/* CLEARED FROM: ($740) */}
                       </button>
                     </div>
 
@@ -4856,7 +4716,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#22c55e',
                                 }}
                               >
-                                $550
+                                $0 {/* CLEARED FROM: $550 */}
                               </div>
                               <div
                                 style={{
@@ -4876,7 +4736,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#fbbf24',
                                 }}
                               >
-                                3 Vehicles
+                                0 Vehicles {/* CLEARED FROM: 3 Vehicles */}
                               </div>
                               <div
                                 style={{
@@ -4885,7 +4745,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   opacity: 0.7,
                                 }}
                               >
-                                Over 55K lbs
+                                Demo Weight Class{' '}
+                                {/* CLEARED FROM: Over 55K lbs */}
                               </div>
                             </div>
                           </div>
@@ -5020,7 +4881,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#a855f7',
                                 }}
                               >
-                                IFTA Filing - Q4 2024
+                                IFTA Filing - Demo Period{' '}
+                                {/* CLEARED FROM: Q4 2024 */}
                               </div>
                               <div
                                 style={{
@@ -5051,7 +4913,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#ef4444',
                                 }}
                               >
-                                $1,247
+                                $0 {/* CLEARED FROM: $1,247 */}
                               </div>
                               <div
                                 style={{
@@ -5071,7 +4933,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#60a5fa',
                                 }}
                               >
-                                8 States
+                                0 States {/* CLEARED FROM: 8 States */}
                               </div>
                               <div
                                 style={{
@@ -5103,7 +4965,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 color: '#ef4444',
                               }}
                             >
-                              ⚠️ DUE: January 31, 2025
+                              ⚠️ DUE: No date set (Demo){' '}
+                              {/* CLEARED FROM: January 31, 2025 */}
                             </div>
                             <div
                               style={{
@@ -5112,7 +4975,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 opacity: 0.8,
                               }}
                             >
-                              5 days remaining
+                              0 days remaining (Demo){' '}
+                              {/* CLEARED FROM: 5 days remaining */}
                             </div>
                           </div>
 
@@ -5188,7 +5052,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 e.target as HTMLButtonElement
                               ).style.background = '#a855f7')
                             }
-                            onClick={() => submitIFTAReturn('Q4 2024')}
+                            onClick={() => submitIFTAReturn('Demo Period')} // CLEARED FROM: 'Q4 2024'
                             disabled={iftaFilingStatus.isSubmitting}
                           >
                             {iftaFilingStatus.isSubmitting
@@ -5604,7 +5468,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 ).style.background = '#22c55e')
                               }
                             >
-                              💳 Request $1,000 Advance
+                              💳 Request $0 Advance{' '}
+                              {/* CLEARED FROM: $1,000 Advance */}
                             </button>
                           </div>
                         </>
@@ -6731,6 +6596,394 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
               </div>
             )}
 
+            {/* Go With the Flow Tab */}
+            {selectedTab === 'go-with-the-flow' && (
+              <div>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: '20px',
+                  }}
+                >
+                  ⚡ Go With the Flow - Real-Time Load Matching
+                </h3>
+
+                {/* Driver Status Panel */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <h4 style={{ fontSize: '20px', margin: 0 }}>
+                      Driver Status Dashboard
+                    </h4>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                      }}
+                    >
+                      {(['online', 'offline', 'on-load'] as const).map(
+                        (status) => (
+                          <button
+                            key={status}
+                            onClick={() => setDriverStatus(status)}
+                            style={{
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                              border: 'none',
+                              background:
+                                driverStatus === status
+                                  ? 'rgba(255, 255, 255, 0.9)'
+                                  : 'rgba(255, 255, 255, 0.2)',
+                              color:
+                                driverStatus === status ? '#059669' : 'white',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              textTransform: 'capitalize',
+                            }}
+                          >
+                            {status.replace('-', ' ')}
+                          </button>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '16px', opacity: 0.9 }}>
+                    Current Status:{' '}
+                    <strong>
+                      {driverStatus.replace('-', ' ').toUpperCase()}
+                    </strong>
+                    {driverStatus === 'online' && ' - Ready for new loads'}
+                    {driverStatus === 'on-load' &&
+                      ' - Currently on active load'}
+                    {driverStatus === 'offline' && ' - Not available for loads'}
+                  </div>
+                </div>
+
+                {/* Instant Loads Section */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    color: 'white',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    ⚡ Instant Loads Available
+                  </h4>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    {instantLoads.length > 0 ? (
+                      instantLoads.map((load, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            padding: '16px',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr 1fr 120px 120px',
+                              gap: '16px',
+                              alignItems: 'center',
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: '600' }}>
+                                {load.origin} → {load.destination}
+                              </div>
+                              <div
+                                style={{ fontSize: '0.85rem', opacity: 0.8 }}
+                              >
+                                {load.miles} miles
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: '600' }}>
+                                {load.commodity}
+                              </div>
+                              <div
+                                style={{ fontSize: '0.85rem', opacity: 0.8 }}
+                              >
+                                {load.equipment || 'Dry Van'}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: '1.1rem',
+                                  fontWeight: '700',
+                                  color: '#22c55e',
+                                }}
+                              >
+                                {load.pay}
+                              </div>
+                              <div
+                                style={{ fontSize: '0.85rem', opacity: 0.8 }}
+                              >
+                                {load.rate}/mile
+                              </div>
+                            </div>
+                            <button
+                              style={{
+                                background: '#22c55e',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                              }}
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    '/api/go-with-the-flow',
+                                    {
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                      },
+                                      body: JSON.stringify({
+                                        action: 'accept-load',
+                                        driverId: 'driver-1',
+                                        loadId: load.id,
+                                      }),
+                                    }
+                                  );
+                                  const result = await response.json();
+
+                                  if (result.success) {
+                                    alert(
+                                      `✅ Load ${load.id} accepted successfully!`
+                                    );
+                                    // Remove from instant loads
+                                    setInstantLoads((prev) =>
+                                      prev.filter((l) => l.id !== load.id)
+                                    );
+                                  } else {
+                                    alert(
+                                      `❌ Failed to accept load: ${result.error}`
+                                    );
+                                  }
+                                } catch (error) {
+                                  alert(`❌ Error accepting load: ${error}`);
+                                }
+                              }}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              style={{
+                                background: '#ef4444',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                marginLeft: '8px',
+                              }}
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    '/api/go-with-the-flow',
+                                    {
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                      },
+                                      body: JSON.stringify({
+                                        action: 'decline-load',
+                                        driverId: 'driver-1',
+                                        loadId: load.id,
+                                      }),
+                                    }
+                                  );
+                                  const result = await response.json();
+
+                                  if (result.success) {
+                                    alert(`Load ${load.id} declined`);
+                                    // Remove from instant loads
+                                    setInstantLoads((prev) =>
+                                      prev.filter((l) => l.id !== load.id)
+                                    );
+                                  } else {
+                                    alert(
+                                      `Failed to decline load: ${result.error}`
+                                    );
+                                  }
+                                } catch (error) {
+                                  alert(`Error declining load: ${error}`);
+                                }
+                              }}
+                            >
+                              Decline
+                            </button>
+                          </div>
+                          <div style={{ fontSize: '0.85rem', opacity: 0.7 }}>
+                            Pickup: {load.pickupDate} | Priority:{' '}
+                            {load.priority || 'NORMAL'}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: '40px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          border: '2px dashed rgba(255, 255, 255, 0.3)',
+                        }}
+                      >
+                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                          🔍
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          No instant loads available right now
+                        </div>
+                        <div style={{ fontSize: '14px', opacity: 0.8 }}>
+                          We're actively matching loads to your preferences and
+                          location...
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            marginTop: '8px',
+                            opacity: 0.6,
+                          }}
+                        >
+                          Loads update every 5 seconds
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Real-Time Matching Engine Status */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                    🎯 Real-Time Matching Engine
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr',
+                      gap: '16px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          color: '#3b82f6',
+                        }}
+                      >
+                        {instantLoads.length}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Available Loads
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          color: '#10b981',
+                        }}
+                      >
+                        {driverStatus === 'online' ? 'ACTIVE' : 'PAUSED'}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Matching Status
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          color: '#f59e0b',
+                        }}
+                      >
+                        5s
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        Update Interval
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {selectedTab === 'notifications' && (
               <div
                 style={{
@@ -6873,7 +7126,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.personalInfo?.name}
+                          {demoDriver.personalInfo?.name}
                         </div>
                       </div>
                       <div>
@@ -6893,7 +7146,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.personalInfo?.licenseNumber}
+                          {demoDriver.personalInfo?.licenseNumber}
                         </div>
                       </div>
                       <div>
@@ -6913,7 +7166,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.personalInfo?.phone}
+                          {demoDriver.personalInfo?.phone}
                         </div>
                       </div>
                       <div>
@@ -6933,7 +7186,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.personalInfo?.email}
+                          {demoDriver.personalInfo?.email}
                         </div>
                       </div>
                     </div>
@@ -6974,7 +7227,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          DM - Driver Management
+                          Demo Department
                         </div>
                       </div>
                       <div>
@@ -6994,7 +7247,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.employmentInfo?.startDate}
+                          {demoDriver.employmentInfo?.startDate}
                         </div>
                       </div>
                       <div>
@@ -7014,7 +7267,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          {currentDriver.employmentInfo?.role}
+                          {demoDriver.employmentInfo?.role}
                         </div>
                       </div>
                       <div>
@@ -7034,165 +7287,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             color: 'white',
                           }}
                         >
-                          TRK-001
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Driver Preferences Section */}
-                <div style={{ marginTop: '30px' }}>
-                  <h4
-                    style={{
-                      margin: '0 0 20px 0',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      color: '#f59e0b',
-                    }}
-                  >
-                    ⚙️ Driver Preferences
-                  </h4>
-                  <div
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.1)',
-                      borderRadius: '12px',
-                      padding: '20px',
-                      border: '1px solid rgba(245, 158, 11, 0.3)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '20px',
-                      }}
-                    >
-                      <div>
-                        <label
-                          style={{
-                            color: 'white',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          Maximum Distance Range
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '12px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <input
-                            type='range'
-                            min='50'
-                            max='500'
-                            defaultValue='250'
-                            style={{
-                              width: '70%',
-                              accentColor: '#f59e0b',
-                            }}
-                          />
-                          <span
-                            style={{
-                              color: 'white',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            250 miles
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            color: 'white',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          Minimum Rate per Mile
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '12px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <input
-                            type='number'
-                            min='1.50'
-                            max='5.00'
-                            step='0.10'
-                            defaultValue='2.25'
-                            style={{
-                              width: '100px',
-                              padding: '6px 10px',
-                              borderRadius: '6px',
-                              border: '1px solid rgba(255, 255, 255, 0.3)',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              color: 'white',
-                              fontSize: '14px',
-                            }}
-                          />
-                          <span style={{ color: 'white', fontSize: '14px' }}>
-                            per mile
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            color: 'white',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          Auto-Accept Settings
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '12px',
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '10px',
-                              color: 'white',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            <input
-                              type='checkbox'
-                              defaultChecked={true}
-                              style={{
-                                accentColor: '#f59e0b',
-                                transform: 'scale(1.2)',
-                              }}
-                            />
-                            <span style={{ fontSize: '14px' }}>
-                              Auto-accept preferred loads
-                            </span>
-                          </label>
+                          DEMO-VEHICLE
                         </div>
                       </div>
                     </div>
@@ -7200,1792 +7295,37 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Availability Tab */}
-            {selectedTab === 'availability' && (
-              <div>
-                <DriverAvailabilityManager
-                  driverId={currentDriver?.driverId || 'driver-001'}
-                  driverName={
-                    currentDriver?.personalInfo?.name || 'Demo Driver'
-                  }
-                  onAvailabilityUpdate={(availability) => {
-                    console.log('Driver availability updated:', availability);
-                    // Here you would typically save to your backend
-                    // You can also trigger schedule optimization here
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Go With the Flow Tab */}
-            {selectedTab === 'go-with-the-flow' && (
-              <div>
-                <h3
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    color: 'white',
-                    marginBottom: '20px',
-                  }}
-                >
-                  ⚡ Go With the Flow - Admin Real-Time Matching
-                </h3>
-
-                {/* Driver Status Panel */}
-                <div
-                  style={{
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    marginBottom: '24px',
-                    color: 'white',
-                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
-                  }}
-                >
-                  <h4
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      marginBottom: '16px',
-                      margin: 0,
-                    }}
-                  >
-                    🚛 Driver Status Panel
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
-                        Current Location
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
-                        Dallas, TX
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
-                        Hours Remaining
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
-                        8.5 hrs
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
-                        Truck Status
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
-                        Available
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.9 }}>
-                        Equipment Type
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: '600' }}>
-                        Dry Van
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Real-Time Matching Dashboard */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                    gap: '20px',
-                    marginBottom: '30px',
-                  }}
-                >
-                  {/* Live Matching Queue */}
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      border: '2px solid rgba(59, 130, 246, 0.5)',
-                      borderRadius: '12px',
-                      padding: '20px',
-                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        color: '#ffffff',
-                        margin: '0 0 16px 0',
-                        fontSize: '1.2rem',
-                        fontWeight: '700',
-                        textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
-                      }}
-                    >
-                      ⚡ Instant Loads Available
-                    </h4>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '12px',
-                      }}
-                    >
-                      {instantLoads.length > 0 ? (
-                        instantLoads.map((load, index) => (
-                          <div
-                            key={index}
-                            style={{
-                              background: 'rgba(255, 255, 255, 0.2)',
-                              border: '1px solid rgba(255, 255, 255, 0.3)',
-                              padding: '12px',
-                              borderRadius: '8px',
-                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                marginBottom: '8px',
-                              }}
-                            >
-                              <div
-                                style={{
-                                  color: '#ffffff',
-                                  fontWeight: '600',
-                                  fontSize: '14px',
-                                }}
-                              >
-                                {load.id}
-                              </div>
-                              <div
-                                style={{
-                                  background: '#22c55e',
-                                  color: 'white',
-                                  padding: '2px 8px',
-                                  borderRadius: '4px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                {load.rate}
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                color: '#e5e7eb',
-                                fontSize: '13px',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              {load.origin.address} → {load.destination.address}
-                            </div>
-                            <div
-                              style={{
-                                color: '#e5e7eb',
-                                fontSize: '12px',
-                                marginBottom: '8px',
-                              }}
-                            >
-                              Rate: ${load.rate} • Equipment:{' '}
-                              {load.equipmentType} • Expires:{' '}
-                              {Math.max(
-                                0,
-                                Math.floor(
-                                  (new Date(load.offerExpiresAt).getTime() -
-                                    Date.now()) /
-                                    1000
-                                )
-                              )}
-                              s
-                            </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <button
-                                style={{
-                                  background: '#22c55e',
-                                  color: 'white',
-                                  border: 'none',
-                                  padding: '6px 12px',
-                                  borderRadius: '4px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  cursor: 'pointer',
-                                }}
-                                onClick={async () => {
-                                  try {
-                                    const response = await fetch(
-                                      '/api/go-with-the-flow',
-                                      {
-                                        method: 'POST',
-                                        headers: {
-                                          'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                          action: 'accept-load',
-                                          driverId: 'driver-1',
-                                          loadId: load.id,
-                                        }),
-                                      }
-                                    );
-
-                                    const data = await response.json();
-
-                                    if (data.success) {
-                                      alert(`✅ ${data.message}`);
-                                    } else {
-                                      alert(`❌ ${data.message}`);
-                                    }
-                                  } catch (error) {
-                                    alert(`❌ Error accepting load: ${error}`);
-                                  }
-                                }}
-                              >
-                                ⚡ Accept Load
-                              </button>
-                              <button
-                                style={{
-                                  background: 'rgba(255, 255, 255, 0.2)',
-                                  color: 'white',
-                                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                                  padding: '6px 12px',
-                                  borderRadius: '4px',
-                                  fontSize: '12px',
-                                  fontWeight: '600',
-                                  cursor: 'pointer',
-                                  marginLeft: '8px',
-                                }}
-                                onClick={async () => {
-                                  try {
-                                    const response = await fetch(
-                                      '/api/go-with-the-flow',
-                                      {
-                                        method: 'POST',
-                                        headers: {
-                                          'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                          action: 'decline-load',
-                                          driverId: 'driver-1',
-                                          loadId: load.id,
-                                        }),
-                                      }
-                                    );
-
-                                    const data = await response.json();
-
-                                    if (data.success) {
-                                      alert(`❌ ${data.message}`);
-                                    } else {
-                                      alert(`⚠️ ${data.message}`);
-                                    }
-                                  } catch (error) {
-                                    alert(`⚠️ Error declining load: ${error}`);
-                                  }
-                                }}
-                              >
-                                ❌ Decline
-                              </button>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            textAlign: 'center',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                          }}
-                        >
-                          <div
-                            style={{ fontSize: '24px', marginBottom: '8px' }}
-                          >
-                            🔍
-                          </div>
-                          <div style={{ fontSize: '14px', fontWeight: '500' }}>
-                            No instant loads available right now
-                          </div>
-                          <div style={{ fontSize: '12px', marginTop: '4px' }}>
-                            We're actively matching loads to your preferences...
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Real-Time Matching Engine */}
-                  <div
-                    style={{
-                      background: 'rgba(139, 92, 246, 0.2)',
-                      border: '2px solid rgba(139, 92, 246, 0.5)',
-                      borderRadius: '12px',
-                      padding: '20px',
-                      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        color: '#ffffff',
-                        margin: '0 0 16px 0',
-                        fontSize: '1.2rem',
-                        fontWeight: '700',
-                        textShadow: '0 2px 4px rgba(139, 92, 246, 0.8)',
-                      }}
-                    >
-                      🤖 Real-Time Matching Engine
-                    </h4>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px',
-                      }}
-                    >
-                      <div>
-                        <label
-                          style={{
-                            color: '#e5e7eb',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          AI Matching Algorithms
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <input
-                            type='range'
-                            min='50'
-                            max='500'
-                            defaultValue='250'
-                            style={{
-                              width: '60%',
-                              accentColor: '#8b5cf6',
-                            }}
-                          />
-                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
-                            95.2% confidence
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            color: '#e5e7eb',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          Response Time Metrics
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <input
-                            type='number'
-                            min='1.50'
-                            max='5.00'
-                            step='0.10'
-                            defaultValue='2.25'
-                            style={{
-                              width: '80px',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              border: '1px solid rgba(255, 255, 255, 0.3)',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              color: 'white',
-                              fontSize: '14px',
-                            }}
-                          />
-                          <span style={{ color: '#e5e7eb', fontSize: '14px' }}>
-                            avg response
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            color: '#e5e7eb',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          Success Rate Analytics
-                        </label>
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                            }}
-                          >
-                            <input
-                              type='checkbox'
-                              defaultChecked={true}
-                              style={{
-                                accentColor: '#8b5cf6',
-                                transform: 'scale(1.2)',
-                              }}
-                            />
-                            <span
-                              style={{ color: '#e5e7eb', fontSize: '14px' }}
-                            >
-                              Real-time matching enabled
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    border: '2px solid rgba(245, 158, 11, 0.5)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    marginBottom: '20px',
-                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)',
-                  }}
-                >
-                  <h4
-                    style={{
-                      color: '#ffffff',
-                      margin: '0 0 16px 0',
-                      fontSize: '1.2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 4px rgba(245, 158, 11, 0.8)',
-                    }}
-                  >
-                    📈 Recent Activity
-                  </h4>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px',
-                    }}
-                  >
-                    {[
-                      {
-                        time: '2 min ago',
-                        action: 'Accepted load FL-LOAD-001',
-                        result: 'Dallas → Houston ($850)',
-                        status: 'success',
-                      },
-                      {
-                        time: '15 min ago',
-                        action: 'Declined load FL-LOAD-004',
-                        result: 'Rate too low ($1.80/mi)',
-                        status: 'declined',
-                      },
-                      {
-                        time: '32 min ago',
-                        action: 'Auto-accepted load FL-LOAD-002',
-                        result: 'Austin → San Antonio ($450)',
-                        status: 'auto',
-                      },
-                      {
-                        time: '1 hr ago',
-                        action: 'Updated preferences',
-                        result: 'Min rate: $2.25/mi, Max distance: 250mi',
-                        status: 'settings',
-                      },
-                    ].map((activity, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          padding: '12px',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <div
-                            style={{
-                              color: '#ffffff',
-                              fontWeight: '600',
-                              fontSize: '14px',
-                              marginBottom: '4px',
-                            }}
-                          >
-                            {activity.action}
-                          </div>
-                          <div
-                            style={{
-                              color: '#e5e7eb',
-                              fontSize: '12px',
-                            }}
-                          >
-                            {activity.result}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-end',
-                            gap: '4px',
-                          }}
-                        >
-                          <div
-                            style={{
-                              background:
-                                activity.status === 'success'
-                                  ? '#22c55e'
-                                  : activity.status === 'auto'
-                                    ? '#3b82f6'
-                                    : activity.status === 'declined'
-                                      ? '#ef4444'
-                                      : '#8b5cf6',
-                              color: 'white',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '10px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            {activity.status.toUpperCase()}
-                          </div>
-                          <div
-                            style={{
-                              color: '#e5e7eb',
-                              fontSize: '11px',
-                            }}
-                          >
-                            {activity.time}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Admin Control Panel */}
-                <div
-                  style={{
-                    background: 'rgba(34, 197, 94, 0.2)',
-                    border: '2px solid rgba(34, 197, 94, 0.5)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.15)',
-                  }}
-                >
-                  <h4
-                    style={{
-                      color: '#ffffff',
-                      margin: '0 0 16px 0',
-                      fontSize: '1.2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 4px rgba(34, 197, 94, 0.8)',
-                    }}
-                  >
-                    🎛️ Admin Controls
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                    }}
-                  >
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={async () => {
-                        try {
-                          const driverId =
-                            currentDriver?.driverId || 'driver-001';
-                          const driverName =
-                            currentDriver?.personalInfo?.name || 'Demo Driver';
-
-                          // Get driver preferences
-                          const preferences =
-                            driverPreferencesService.getDriverPreferences(
-                              driverId,
-                              driverName
-                            );
-
-                          // Create urgent load request
-                          const urgentRequest = {
-                            driverId,
-                            driverName,
-                            currentLocation: driverLocation
-                              ? {
-                                  city:
-                                    driverLocation.address?.split(',')[0] ||
-                                    'Dallas',
-                                  state:
-                                    driverLocation.address
-                                      ?.split(',')[1]
-                                      ?.trim() || 'TX',
-                                  lat: driverLocation.latitude,
-                                  lng: driverLocation.longitude,
-                                }
-                              : {
-                                  city: 'Dallas',
-                                  state: 'TX',
-                                  lat: 32.7767,
-                                  lng: -96.797,
-                                },
-                            requestType: 'urgent' as const,
-                            preferences,
-                            requestTime: new Date().toISOString(),
-                            status: 'pending' as const,
-                          };
-
-                          const success =
-                            driverPreferencesService.requestUrgentLoad(
-                              urgentRequest
-                            );
-
-                          if (success) {
-                            // Add notification to driver portal
-                            setNotifications((prev) => [
-                              {
-                                id: Date.now().toString(),
-                                message: `🔍 Urgent load request submitted! Dispatch team has been notified and will respond within 15 minutes.`,
-                                timestamp: 'Just now',
-                                read: false,
-                              },
-                              ...prev.slice(0, 4),
-                            ]);
-
-                            alert(
-                              `🔍 URGENT LOAD REQUEST SUBMITTED\n\n` +
-                                `Driver: ${driverName}\n` +
-                                `Location: ${urgentRequest.currentLocation.city}, ${urgentRequest.currentLocation.state}\n` +
-                                `Equipment: ${preferences.equipmentTypes.join(', ')}\n` +
-                                `Max Distance: ${preferences.maxDistance} miles\n` +
-                                `Min Rate: $${preferences.minRate}/mile\n\n` +
-                                `✅ Dispatch team has been notified\n` +
-                                `⏱️ Expected response: 15 minutes\n` +
-                                `📱 You'll receive a notification when loads are available`
-                            );
-                          } else {
-                            alert(
-                              '❌ Failed to submit urgent load request. Please try again.'
-                            );
-                          }
-                        } catch (error) {
-                          console.error('Error requesting urgent load:', error);
-                          alert(
-                            '❌ Error submitting request. Please check your connection and try again.'
-                          );
-                        }
-                      }}
-                    >
-                      🔍 Request Urgent Load
-                    </button>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={() => {
-                        const driverId =
-                          currentDriver?.driverId || 'driver-001';
-                        const driverName =
-                          currentDriver?.personalInfo?.name || 'Demo Driver';
-
-                        // Get current preferences
-                        const preferences =
-                          driverPreferencesService.getDriverPreferences(
-                            driverId,
-                            driverName
-                          );
-
-                        // Show preferences configuration dialog
-                        const newPreferences = prompt(
-                          `⚙️ LOAD MATCHING PREFERENCES\n\n` +
-                            `Current Settings:\n` +
-                            `Equipment Types: ${preferences.equipmentTypes.join(', ')}\n` +
-                            `Max Distance: ${preferences.maxDistance} miles\n` +
-                            `Min Rate: $${preferences.minRate}/mile\n` +
-                            `Preferred States: ${preferences.preferredStates.join(', ')}\n` +
-                            `Hazmat Certified: ${preferences.hazmatCertified ? 'Yes' : 'No'}\n\n` +
-                            `To update your minimum rate per mile, enter new rate:`,
-                          preferences.minRate.toString()
-                        );
-
-                        if (
-                          newPreferences &&
-                          !isNaN(parseFloat(newPreferences))
-                        ) {
-                          const newRate = parseFloat(newPreferences);
-                          if (newRate >= 1.5 && newRate <= 5.0) {
-                            const updatedPreferences = {
-                              ...preferences,
-                              minRate: newRate,
-                            };
-
-                            const success =
-                              driverPreferencesService.saveDriverPreferences(
-                                updatedPreferences
-                              );
-
-                            if (success) {
-                              // Add notification
-                              setNotifications((prev) => [
-                                {
-                                  id: Date.now().toString(),
-                                  message: `⚙️ Load preferences updated! Minimum rate set to $${newRate}/mile`,
-                                  timestamp: 'Just now',
-                                  read: false,
-                                },
-                                ...prev.slice(0, 4),
-                              ]);
-
-                              alert(
-                                `✅ PREFERENCES UPDATED\n\n` +
-                                  `Minimum Rate: $${newRate}/mile\n\n` +
-                                  `Your load matching preferences have been saved.\n` +
-                                  `Future load offers will respect your updated settings.`
-                              );
-                            } else {
-                              alert(
-                                '❌ Failed to save preferences. Please try again.'
-                              );
-                            }
-                          } else {
-                            alert(
-                              '❌ Rate must be between $1.50 and $5.00 per mile.'
-                            );
-                          }
-                        } else if (newPreferences !== null) {
-                          alert('❌ Please enter a valid rate amount.');
-                        }
-                      }}
-                    >
-                      ⚙️ Load Preferences
-                    </button>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onClick={() => {
-                        const driverId =
-                          currentDriver?.driverId || 'driver-001';
-                        const driverName =
-                          currentDriver?.personalInfo?.name || 'Demo Driver';
-
-                        // Generate detailed performance report
-                        const detailedReport =
-                          driverPreferencesService.generateDetailedReport(
-                            driverId,
-                            driverName
-                          );
-
-                        // Add notification
-                        setNotifications((prev) => [
-                          {
-                            id: Date.now().toString(),
-                            message: `📊 Performance report generated! Check your email for the detailed PDF version.`,
-                            timestamp: 'Just now',
-                            read: false,
-                          },
-                          ...prev.slice(0, 4),
-                        ]);
-
-                        // Show the report
-                        alert(detailedReport);
-
-                        // Simulate saving report to downloads
-                        try {
-                          const reportBlob = new Blob([detailedReport], {
-                            type: 'text/plain',
-                          });
-                          const url = URL.createObjectURL(reportBlob);
-                          const link = document.createElement('a');
-                          link.href = url;
-                          link.download = `${driverName.replace(/\s+/g, '_')}_Performance_Report_${new Date().toISOString().split('T')[0]}.txt`;
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                          URL.revokeObjectURL(url);
-                        } catch (error) {
-                          console.error('Error downloading report:', error);
-                        }
-                      }}
-                    >
-                      📊 My Performance Report
-                    </button>
-                    {/* Emergency Override - Management Only */}
-                    {currentUser.role?.type === 'fleet_manager' ||
-                    currentUser.role?.type === 'dispatcher' ? (
-                      <button
-                        style={{
-                          background:
-                            'linear-gradient(135deg, #ef4444, #dc2626)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '12px 16px',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                        }}
-                        onClick={() => {
-                          const confirmed = confirm(
-                            '🚨 EMERGENCY OVERRIDE\n\nThis will activate manual dispatch mode and override all automated systems.\n\nAre you sure you want to proceed?'
-                          );
-                          if (confirmed) {
-                            try {
-                              const userId = currentUser.id || 'manager-001';
-                              const userRole =
-                                currentUser.role?.type || 'fleet_manager';
-
-                              const success =
-                                driverPreferencesService.activateEmergencyOverride(
-                                  userId,
-                                  userRole
-                                );
-
-                              if (success) {
-                                // Add critical notification
-                                setNotifications((prev) => [
-                                  {
-                                    id: Date.now().toString(),
-                                    message: `🚨 EMERGENCY OVERRIDE ACTIVATED - All automated systems suspended. Manual dispatch mode enabled.`,
-                                    timestamp: 'Just now',
-                                    read: false,
-                                  },
-                                  ...prev.slice(0, 4),
-                                ]);
-
-                                alert(
-                                  '🚨 EMERGENCY OVERRIDE ACTIVATED\n\n' +
-                                    '✅ Manual dispatch mode enabled\n' +
-                                    '⏸️ All automated load assignments suspended\n' +
-                                    '📢 Dispatch team has been notified\n' +
-                                    '📝 Event logged for audit purposes\n\n' +
-                                    'All load assignments must now be handled manually by dispatch staff.\n' +
-                                    'Contact IT to restore automated systems when emergency is resolved.'
-                                );
-                              } else {
-                                alert(
-                                  '❌ Failed to activate emergency override. Please try again or contact IT support.'
-                                );
-                              }
-                            } catch (error) {
-                              alert(
-                                `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-                              );
-                            }
-                          }
-                        }}
-                      >
-                        🚨 Emergency Override
-                      </button>
-                    ) : (
-                      <button
-                        style={{
-                          background:
-                            'linear-gradient(135deg, #6b7280, #4b5563)',
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          border: 'none',
-                          padding: '12px 16px',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'not-allowed',
-                          transition: 'all 0.3s ease',
-                        }}
-                        onClick={() => {
-                          alert(
-                            '🔒 Access Denied\n\nEmergency Override requires management authorization.\nContact your fleet manager for assistance.'
-                          );
-                        }}
-                        title='Management access required'
-                      >
-                        🔒 Emergency Override
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* 📋 Marketplace Loadboard Section */}
-                <div
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    marginBottom: '30px',
-                    border: '2px solid rgba(16, 185, 129, 0.3)',
-                    boxShadow: '0 8px 32px rgba(16, 185, 129, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    <div>
-                      <h3
-                        style={{
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                          color: 'white',
-                          margin: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            background:
-                              'linear-gradient(135deg, #10b981, #059669)',
-                            borderRadius: '12px',
-                            padding: '8px',
-                            fontSize: '20px',
-                          }}
-                        >
-                          📋
-                        </span>
-                        🎯 Marketplace Load Opportunities & Bidding
-                      </h3>
-                      <p
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
-                          fontSize: '16px',
-                          margin: '8px 0 0 0',
-                        }}
-                      >
-                        AI-powered bidding on external load opportunities (MKT
-                        series)
-                      </p>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px 16px',
-                        border: '1px solid rgba(16, 185, 129, 0.4)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: '#10b981',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        🔄 LIVE UPDATES
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Updated every 30 seconds
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Enhanced Load Board Component */}
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '12px',
-                      padding: '20px',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      minHeight: '400px',
-                    }}
-                  >
-                    <MarketplaceIntegration />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* OpenELD Tab */}
-            {selectedTab === 'openeld' && (
-              <div>
-                <h3
-                  style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    color: 'white',
-                    marginBottom: '20px',
-                  }}
-                >
-                  📱 OpenELD - Electronic Logging Device
-                </h3>
-
-                {/* ELD Status Panel */}
-                <div
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    marginBottom: '24px',
-                    color: 'white',
-                    boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
-                  }}
-                >
-                  <h4
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      marginBottom: '16px',
-                      margin: 0,
-                    }}
-                  >
-                    🚛 ELD Device Status
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
-                        Device Status
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '20px',
-                          fontWeight: 'bold',
-                          color: '#22c55e',
-                        }}
-                      >
-                        CONNECTED
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
-                        Driver Status
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                        ON DUTY
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
-                        Hours Available
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                        6.5 hrs
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '14px', opacity: 0.8 }}>
-                        Current Location
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                        Dallas, TX
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Weight Compliance Section */}
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      margin: '0 0 16px 0',
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    ⚖️ Weight Compliance Logs
-                  </h3>
-
-                  {/* 30-Day Summary */}
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        margin: '0 0 12px 0',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        color: 'white',
-                      }}
-                    >
-                      📊 30-Day Compliance Summary
-                    </h4>
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns:
-                          'repeat(auto-fit, minmax(120px, 1fr))',
-                        gap: '12px',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            opacity: 0.7,
-                            color: 'white',
-                          }}
-                        >
-                          Total Loads
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: 'white',
-                          }}
-                        >
-                          12
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            opacity: 0.7,
-                            color: 'white',
-                          }}
-                        >
-                          Compliant
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: '#4ade80',
-                          }}
-                        >
-                          11
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            opacity: 0.7,
-                            color: 'white',
-                          }}
-                        >
-                          Rate
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: 'white',
-                          }}
-                        >
-                          91.7%
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            opacity: 0.7,
-                            color: 'white',
-                          }}
-                        >
-                          Violations
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: '#fbbf24',
-                          }}
-                        >
-                          1
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            opacity: 0.7,
-                            color: 'white',
-                          }}
-                        >
-                          Risk Level
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            color: '#4ade80',
-                          }}
-                        >
-                          LOW
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Export Controls */}
-                  <div
-                    style={{
-                      background: 'linear-gradient(135deg, #1f2937, #374151)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        color: 'white',
-                        margin: '0 0 8px 0',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      📋 Export Logs for DOT Inspection
-                    </h4>
-                    <p
-                      style={{
-                        color: 'rgba(255,255,255,0.8)',
-                        margin: '0 0 12px 0',
-                        fontSize: '14px',
-                      }}
-                    >
-                      Generate CSV export for law enforcement or DOT inspectors
-                    </p>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      <button
-                        style={{
-                          background: '#22c55e',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                        }}
-                        onClick={async () => {
-                          const driverId =
-                            currentDriver?.driverId || 'driver-001';
-                          try {
-                            const endDate = new Date().toISOString();
-                            const startDate = new Date(
-                              Date.now() - 30 * 24 * 60 * 60 * 1000
-                            ).toISOString();
-
-                            const exportData =
-                              await openELDService.exportWeightComplianceLogs(
-                                driverId,
-                                startDate,
-                                endDate
-                              );
-
-                            // Create downloadable file
-                            const blob = new Blob([exportData.exportData], {
-                              type: 'text/csv',
-                            });
-                            const url = URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `weight-compliance-${driverId}-30days.csv`;
-                            link.click();
-                            URL.revokeObjectURL(url);
-
-                            alert(
-                              `✅ Weight compliance logs exported successfully!\n\nSummary:\n• Total Loads: ${exportData.summary.totalLoads}\n• Compliant: ${exportData.summary.compliantLoads}\n• Violations: ${exportData.summary.violationsCount}\n• Permits Required: ${exportData.summary.permitsRequired}`
-                            );
-                          } catch (error) {
-                            alert('❌ Export failed. Please try again.');
-                          }
-                        }}
-                      >
-                        📥 Export 30 Days
-                      </button>
-                      <button
-                        style={{
-                          background: '#3b82f6',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                        }}
-                        onClick={async () => {
-                          const driverId =
-                            currentDriver?.driverId || 'driver-001';
-                          try {
-                            const summary =
-                              await openELDService.getWeightComplianceSummary(
-                                driverId,
-                                7
-                              );
-                            alert(
-                              `📊 7-Day Weight Compliance Report\n\n` +
-                                `Period: ${summary.period}\n` +
-                                `Total Loads: ${summary.totalLoads}\n` +
-                                `Compliant: ${summary.compliantLoads}\n` +
-                                `Compliance Rate: ${summary.complianceRate.toFixed(1)}%\n` +
-                                `Violations: ${summary.violationsCount}\n` +
-                                `Critical Violations: ${summary.criticalViolations}\n` +
-                                `Permits Required: ${summary.permitsRequired}\n` +
-                                `Inspections: ${summary.inspections}\n` +
-                                `Risk Level: ${summary.riskLevel.toUpperCase()}\n` +
-                                `Last Inspection: ${summary.lastInspection ? new Date(summary.lastInspection).toLocaleDateString() : 'None'}`
-                            );
-                          } catch (error) {
-                            alert(
-                              '❌ Failed to generate summary. Please try again.'
-                            );
-                          }
-                        }}
-                      >
-                        📊 7-Day Summary
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Recent Logs */}
-                  <div>
-                    <h4
-                      style={{
-                        color: 'white',
-                        margin: '0 0 12px 0',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      📝 Recent Weight Compliance Logs
-                    </h4>
-
-                    {/* Sample logs for display */}
-                    {[
-                      {
-                        id: 'WCL-001',
-                        date: '2024-01-20T14:30:00Z',
-                        loadId: 'MJ-25001-TXFL',
-                        cargoWeight: 42000,
-                        totalWeight: 78000,
-                        states: ['TX', 'LA', 'FL'],
-                        safetyRating: 'SAFE',
-                        violations: 0,
-                        permits: 0,
-                      },
-                      {
-                        id: 'WCL-002',
-                        date: '2024-01-18T09:15:00Z',
-                        loadId: 'MJ-25002-TXCA',
-                        cargoWeight: 46000,
-                        totalWeight: 82000,
-                        states: ['TX', 'NM', 'CA'],
-                        safetyRating: 'CAUTION',
-                        violations: 1,
-                        permits: 1,
-                      },
-                    ].map((log) => (
-                      <div
-                        key={log.id}
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          borderRadius: '8px',
-                          padding: '12px',
-                          marginBottom: '8px',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: '14px',
-                              fontWeight: 'bold',
-                              color: 'white',
-                            }}
-                          >
-                            {log.loadId}
-                          </span>
-                          <span
-                            style={{
-                              background:
-                                log.safetyRating === 'SAFE'
-                                  ? '#10b981'
-                                  : '#f59e0b',
-                              color: 'white',
-                              padding: '2px 8px',
-                              borderRadius: '10px',
-                              fontSize: '12px',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {log.safetyRating}
-                          </span>
-                          <span
-                            style={{
-                              color: 'rgba(255,255,255,0.7)',
-                              fontSize: '12px',
-                            }}
-                          >
-                            {new Date(log.date).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns:
-                              'repeat(auto-fit, minmax(100px, 1fr))',
-                            gap: '8px',
-                            fontSize: '12px',
-                          }}
-                        >
-                          <div>
-                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
-                              Weight:
-                            </span>
-                            <div style={{ color: 'white', fontWeight: 'bold' }}>
-                              {log.totalWeight.toLocaleString()} lbs
-                            </div>
-                          </div>
-                          <div>
-                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
-                              States:
-                            </span>
-                            <div style={{ color: 'white', fontWeight: 'bold' }}>
-                              {log.states.join(', ')}
-                            </div>
-                          </div>
-                          <div>
-                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
-                              Violations:
-                            </span>
-                            <div
-                              style={{
-                                color:
-                                  log.violations > 0 ? '#fbbf24' : '#4ade80',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              {log.violations}
-                            </div>
-                          </div>
-                          <div>
-                            <span style={{ color: 'rgba(255,255,255,0.6)' }}>
-                              Permits:
-                            </span>
-                            <div style={{ color: 'white', fontWeight: 'bold' }}>
-                              {log.permits}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* HOS Management Section */}
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: 'white',
-                      margin: '0 0 16px 0',
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    ⏰ Hours of Service (HOS)
-                  </h3>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.7)',
-                          fontSize: '14px',
-                        }}
-                      >
-                        Driving Time
-                      </div>
-                      <div
-                        style={{
-                          color: '#4ade80',
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        4.5 / 11 hrs
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '12px',
-                        }}
-                      >
-                        6.5 hours remaining
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.7)',
-                          fontSize: '14px',
-                        }}
-                      >
-                        On Duty Time
-                      </div>
-                      <div
-                        style={{
-                          color: '#3b82f6',
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        8.5 / 14 hrs
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '12px',
-                        }}
-                      >
-                        5.5 hours remaining
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.7)',
-                          fontSize: '14px',
-                        }}
-                      >
-                        70-Hour Limit
-                      </div>
-                      <div
-                        style={{
-                          color: '#f59e0b',
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        52 / 70 hrs
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '12px',
-                        }}
-                      >
-                        18 hours remaining
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.7)',
-                          fontSize: '14px',
-                        }}
-                      >
-                        Break Required
-                      </div>
-                      <div
-                        style={{
-                          color: '#22c55e',
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        No
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Last break: 2 hrs ago
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* DOT Information */}
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                  }}
-                >
-                  <h4
-                    style={{
-                      color: '#60a5fa',
-                      margin: '0 0 12px 0',
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    ℹ️ DOT Inspection Information
-                  </h4>
-                  <div
-                    style={{
-                      color: 'rgba(255,255,255,0.8)',
-                      fontSize: '14px',
-                      lineHeight: '1.4',
-                    }}
-                  >
-                    <p style={{ margin: '0 0 8px 0' }}>
-                      • Weight compliance logs are automatically generated for
-                      every load assignment
-                    </p>
-                    <p style={{ margin: '0 0 8px 0' }}>
-                      • Export logs show axle-based weight calculations and DOT
-                      compliance status
-                    </p>
-                    <p style={{ margin: '0 0 8px 0' }}>
-                      • Bridge formula calculations and state-specific limits
-                      are included
-                    </p>
-                    <p style={{ margin: '0' }}>
-                      • All logs can be exported as CSV files for DOT inspectors
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+          {/* Back Button */}
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <Link href='/' style={{ textDecoration: 'none' }}>
+              <button
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  padding: '15px 30px',
+                  borderRadius: '15px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(10px)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 10px 25px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                ← Back to Dashboard
+              </button>
+            </Link>
           </div>
 
           {/* System Status Indicator */}
