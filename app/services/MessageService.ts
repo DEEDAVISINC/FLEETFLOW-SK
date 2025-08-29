@@ -165,6 +165,14 @@ export class MessageService {
       'id' | 'createdAt' | 'updatedAt' | 'status' | 'isRead'
     >
   ): Promise<string | null> {
+    // Return early if Supabase is not configured
+    if (!this.supabase) {
+      console.log(
+        '📬 MessageService: Supabase not configured, skipping message send'
+      );
+      return null;
+    }
+
     try {
       console.log(`📤 Sending ${message.messageType}: ${message.subject}`);
 
@@ -246,6 +254,11 @@ export class MessageService {
     limit: number = 20,
     offset: number = 0
   ): Promise<{ messages: IntraofficeMessage[]; total: number }> {
+    // Return empty results if Supabase is not configured
+    if (!this.supabase) {
+      return { messages: [], total: 0 };
+    }
+
     try {
       let query = this.supabase
         .from('intraoffice_messages')
@@ -312,6 +325,11 @@ export class MessageService {
   async getMessageThread(
     conversationId: string
   ): Promise<MessageThread | null> {
+    // Return null if Supabase is not configured
+    if (!this.supabase) {
+      return null;
+    }
+
     try {
       const { data, error } = await this.supabase
         .from('intraoffice_messages')
@@ -382,6 +400,11 @@ export class MessageService {
     fromUserRole: string,
     tenantId: string
   ): Promise<string | null> {
+    // Return null if Supabase is not configured
+    if (!this.supabase) {
+      return null;
+    }
+
     try {
       // Get parent message to extract conversation details
       const { data: parentData, error: parentError } = await this.supabase
@@ -430,6 +453,11 @@ export class MessageService {
    * Mark message as read
    */
   async markMessageAsRead(messageId: string, userId: string): Promise<boolean> {
+    // Return false if Supabase is not configured
+    if (!this.supabase) {
+      return false;
+    }
+
     try {
       const { error } = await this.supabase
         .from('intraoffice_messages')
@@ -464,6 +492,11 @@ export class MessageService {
     userName: string,
     response?: string
   ): Promise<boolean> {
+    // Return false if Supabase is not configured
+    if (!this.supabase) {
+      return false;
+    }
+
     try {
       // Get current message
       const { data, error: fetchError } = await this.supabase
@@ -524,6 +557,11 @@ export class MessageService {
    * Save message as draft
    */
   async saveDraft(draft: MessageDraft): Promise<string | null> {
+    // Return null if Supabase is not configured
+    if (!this.supabase) {
+      return null;
+    }
+
     try {
       const draftId =
         draft.id ||
@@ -567,6 +605,11 @@ export class MessageService {
    * Get user's drafts
    */
   async getUserDrafts(userId: string): Promise<MessageDraft[]> {
+    // Return empty array if Supabase is not configured
+    if (!this.supabase) {
+      return [];
+    }
+
     try {
       const { data, error } = await this.supabase
         .from('message_drafts')

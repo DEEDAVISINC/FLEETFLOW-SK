@@ -88,8 +88,16 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   SMART_TASK_PRIORITIZATION: true,
 };
 
+// Cache for feature flags to prevent recreating the object on every call
+let cachedFeatureFlags: FeatureFlags | null = null;
+
 // Get feature flags from environment variables
 export function getFeatureFlags(): FeatureFlags {
+  // Return cached flags if already computed
+  if (cachedFeatureFlags) {
+    return cachedFeatureFlags;
+  }
+
   const flags = { ...DEFAULT_FEATURE_FLAGS };
 
   // Override with environment variables
@@ -105,6 +113,8 @@ export function getFeatureFlags(): FeatureFlags {
     }
   });
 
+  // Cache the result
+  cachedFeatureFlags = flags;
   return flags;
 }
 
@@ -123,7 +133,7 @@ export function getEnabledFeatures(): string[] {
 
 // Feature flag hook for React components
 export function useFeatureFlag(feature: keyof FeatureFlags): boolean {
-  // In a real implementation, this would use React context
-  // For now, return the environment-based value
+  // For now, return the cached environment-based value
+  // The caching in getFeatureFlags() prevents object recreation
   return isFeatureEnabled(feature);
 }
