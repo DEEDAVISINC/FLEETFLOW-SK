@@ -129,53 +129,10 @@ export default function FreightFlowQuotingEngine() {
     networkDiscount: 0,
   });
 
-  // Virtual Warehousing State
+  // Virtual Warehousing State (cleared for production)
   const [warehouseProviders, setWarehouseProviders] = useState<
     WarehouseProvider[]
-  >([
-    {
-      id: 'wp-001',
-      name: 'LogiCore Solutions',
-      location: 'Atlanta, GA',
-      rating: 4.8,
-      reviewCount: 127,
-      services: ['Storage', 'Cross Docking', 'Pick & Pack'],
-      capacity: 50000,
-      availableCapacity: 15000,
-      baseRate: 120,
-      markup: 15,
-      specialties: ['E-commerce', 'Retail'],
-      certifications: ['ISO 9001', 'C-TPAT'],
-    },
-    {
-      id: 'wp-002',
-      name: 'Global Storage Partners',
-      location: 'Chicago, IL',
-      rating: 4.6,
-      reviewCount: 89,
-      services: ['Storage', 'Temperature Controlled', 'Hazmat Storage'],
-      capacity: 75000,
-      availableCapacity: 25000,
-      baseRate: 140,
-      markup: 12,
-      specialties: ['Pharmaceutical', 'Food & Beverage'],
-      certifications: ['FDA', 'HACCP'],
-    },
-    {
-      id: 'wp-003',
-      name: 'Coastal Logistics Hub',
-      location: 'Los Angeles, CA',
-      rating: 4.9,
-      reviewCount: 203,
-      services: ['Storage', 'Cross Docking', 'Returns Processing'],
-      capacity: 100000,
-      availableCapacity: 30000,
-      baseRate: 160,
-      markup: 18,
-      specialties: ['Import/Export', 'Fashion'],
-      certifications: ['C-TPAT', 'ISO 14001'],
-    },
-  ]);
+  >([]);
 
   const [virtualQuotes, setVirtualQuotes] = useState<VirtualWarehouseQuote[]>(
     []
@@ -3449,63 +3406,89 @@ export default function FreightFlowQuotingEngine() {
                       gap: '12px',
                     }}
                   >
-                    {warehouseProviders.map((provider) => (
-                      <label
-                        key={provider.id}
+                    {warehouseProviders.length > 0 ? (
+                      warehouseProviders.map((provider) => (
+                        <label
+                          key={provider.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '14px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '6px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                          }}
+                        >
+                          <input
+                            type='checkbox'
+                            checked={warehousingData.preferredProviders.includes(
+                              provider.id
+                            )}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setWarehousingData({
+                                  ...warehousingData,
+                                  preferredProviders: [
+                                    ...warehousingData.preferredProviders,
+                                    provider.id,
+                                  ],
+                                });
+                              } else {
+                                setWarehousingData({
+                                  ...warehousingData,
+                                  preferredProviders:
+                                    warehousingData.preferredProviders.filter(
+                                      (p) => p !== provider.id
+                                    ),
+                                });
+                              }
+                            }}
+                            style={{ width: '16px', height: '16px' }}
+                          />
+                          <div>
+                            <div style={{ fontWeight: '600' }}>
+                              {provider.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                              }}
+                            >
+                              {provider.location} • ⭐ {provider.rating} (
+                              {provider.reviewCount})
+                            </div>
+                          </div>
+                        </label>
+                      ))
+                    ) : (
+                      <div
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          fontSize: '14px',
-                          color: 'white',
-                          cursor: 'pointer',
-                          padding: '8px',
-                          borderRadius: '6px',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          gridColumn: '1 / -1',
+                          textAlign: 'center',
+                          padding: '40px 20px',
+                          color: 'rgba(255, 255, 255, 0.6)',
                         }}
                       >
-                        <input
-                          type='checkbox'
-                          checked={warehousingData.preferredProviders.includes(
-                            provider.id
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setWarehousingData({
-                                ...warehousingData,
-                                preferredProviders: [
-                                  ...warehousingData.preferredProviders,
-                                  provider.id,
-                                ],
-                              });
-                            } else {
-                              setWarehousingData({
-                                ...warehousingData,
-                                preferredProviders:
-                                  warehousingData.preferredProviders.filter(
-                                    (p) => p !== provider.id
-                                  ),
-                              });
-                            }
+                        <div
+                          style={{
+                            fontSize: '48px',
+                            marginBottom: '16px',
                           }}
-                          style={{ width: '16px', height: '16px' }}
-                        />
-                        <div>
-                          <div style={{ fontWeight: '600' }}>
-                            {provider.name}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '12px',
-                              color: 'rgba(255, 255, 255, 0.7)',
-                            }}
-                          >
-                            {provider.location} • ⭐ {provider.rating} (
-                            {provider.reviewCount})
-                          </div>
+                        >
+                          🏭
                         </div>
-                      </label>
-                    ))}
+                        <p style={{ fontSize: '16px', margin: 0 }}>
+                          No warehouse providers available yet
+                        </p>
+                        <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                          Warehouse providers will appear here once configured
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
