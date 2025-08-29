@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from 'chart.js';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { Suspense, useState } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 
@@ -78,31 +77,19 @@ export default function OptimizedAnalyticsPage() {
     'week' | 'month' | 'quarter' | 'year'
   >('month');
 
-  // Lightweight analytics data (no heavy calculations)
+  // Analytics data structure (cleared for production)
   const analyticsData: AnalyticsData = {
-    revenue: [65000, 72000, 68000, 81000, 75000, 89000],
-    loads: [156, 178, 162, 201, 189, 223],
-    fuelCosts: [12000, 13500, 12800, 15200, 14100, 16800],
-    driverPerformance: [
-      { name: 'John Smith', score: 95, loads: 28, onTime: 96 },
-      { name: 'Sarah Johnson', score: 92, loads: 25, onTime: 94 },
-      { name: 'Mike Wilson', score: 88, loads: 22, onTime: 89 },
-    ],
-    vehicleUtilization: [
-      { vehicle: 'Truck-001', utilization: 87, revenue: 15200 },
-      { vehicle: 'Truck-002', utilization: 82, revenue: 14800 },
-      { vehicle: 'Truck-003', utilization: 91, revenue: 16100 },
-    ],
-    routeEfficiency: [
-      { route: 'Atlanta → Miami', profit: 2450, frequency: 12 },
-      { route: 'Chicago → Houston', profit: 2180, frequency: 8 },
-      { route: 'Dallas → Phoenix', profit: 1950, frequency: 6 },
-    ],
+    revenue: [],
+    loads: [],
+    fuelCosts: [],
+    driverPerformance: [],
+    vehicleUtilization: [],
+    routeEfficiency: [],
   };
 
-  // Chart configurations (simplified)
+  // Chart configurations (cleared data)
   const revenueChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: [],
     datasets: [
       {
         label: 'Revenue ($)',
@@ -126,7 +113,7 @@ export default function OptimizedAnalyticsPage() {
     datasets: [
       {
         data: analyticsData.vehicleUtilization.map((v) => v.utilization),
-        backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6'],
+        backgroundColor: [],
         borderWidth: 0,
       },
     ],
@@ -267,16 +254,17 @@ export default function OptimizedAnalyticsPage() {
           },
           {
             label: 'Avg Revenue/Load',
-            value: `$${Math.round(
-              analyticsData.revenue.reduce((a, b) => a + b, 0) /
-                analyticsData.loads.reduce((a, b) => a + b, 0)
-            )}`,
+            value: `$${
+              analyticsData.loads.reduce((a, b) => a + b, 0) > 0 
+                ? Math.round(analyticsData.revenue.reduce((a, b) => a + b, 0) / analyticsData.loads.reduce((a, b) => a + b, 0))
+                : 0
+            }`,
             icon: '📈',
             color: '#8b5cf6',
           },
           {
             label: 'Profit Margin',
-            value: '28.3%',
+            value: '0%',
             icon: '🎯',
             color: '#f59e0b',
           },
@@ -692,8 +680,9 @@ export default function OptimizedAnalyticsPage() {
           ⚡ High-Performance Analytics
         </div>
         <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
-          Enterprise-grade analytics dashboard optimized for stability and performance.
-          Features comprehensive reporting with intelligent component loading.
+          Enterprise-grade analytics dashboard optimized for stability and
+          performance. Features comprehensive reporting with intelligent
+          component loading.
         </div>
       </div>
     </div>
