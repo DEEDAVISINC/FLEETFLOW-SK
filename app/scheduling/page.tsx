@@ -537,56 +537,56 @@ export default function SchedulingDashboard() {
                   label: 'Total',
                   value: statistics.totalSchedules,
                   color: '#3b82f6',
-                  trend: '+12%',
+                  trend: '+0%',
                 },
                 {
                   icon: '⏳',
                   label: 'In Progress',
                   value: statistics.inProgressCount,
                   color: '#f59e0b',
-                  trend: '+5%',
+                  trend: '+0%',
                 },
                 {
                   icon: '✅',
                   label: 'Completed',
                   value: statistics.completedCount,
                   color: '#10b981',
-                  trend: '+18%',
+                  trend: '+0%',
                 },
                 {
                   icon: '📊',
                   label: 'Utilization',
                   value: `${statistics.utilizationRate}%`,
                   color: '#8b5cf6',
-                  trend: '+3%',
+                  trend: '+0%',
                 },
                 {
                   icon: '🛡️',
                   label: 'FMCSA Compliant',
                   value: `${statistics.complianceRate}%`,
                   color: '#06b6d4',
-                  trend: '+2%',
+                  trend: '+0%',
                 },
                 {
                   icon: '⚠️',
                   label: 'Violations',
                   value: statistics.fmcsaViolations,
                   color: '#ef4444',
-                  trend: '-1',
+                  trend: '+0',
                 },
                 {
                   icon: '👥',
                   label: 'Drivers Available',
                   value: statistics.driversAvailable,
                   color: '#10b981',
-                  trend: '+2',
+                  trend: '+0',
                 },
                 {
                   icon: '🚛',
                   label: 'Vehicles Available',
                   value: statistics.vehiclesAvailable,
                   color: '#3b82f6',
-                  trend: '+1',
+                  trend: '+0',
                 },
               ].map((stat, index) => (
                 <div
@@ -2770,95 +2770,26 @@ export default function SchedulingDashboard() {
                   🚛 Load Consolidation & Time Optimization
                 </h2>
                 <LoadConsolidationOptimizer
-                  driverId='driver-001'
-                  driverName='Demo Driver'
-                  currentLoad={{
-                    id: 'LOAD-001',
-                    origin: 'Baltimore, MD',
-                    destination: 'Detroit, MI',
-                    weight: 10000,
-                    dimensions: { length: 8, width: 4, height: 6 },
-                    palletCount: 4,
-                    commodity: 'General Freight',
-                    hazmat: false,
-                    stackable: true,
-                    fragile: false,
-                    revenue: 2850,
-                    pickupTimeWindow: {
-                      start: '2025-01-16T08:00:00Z',
-                      end: '2025-01-16T10:00:00Z',
-                    },
-                    deliveryTimeWindow: {
-                      start: '2025-01-17T14:00:00Z',
-                      end: '2025-01-17T16:00:00Z',
-                    },
-                    priority: 'medium',
-                    customerType: 'regular',
-                  }}
-                  availableLoads={[
-                    {
-                      id: 'LOAD-002',
-                      origin: 'Toledo, OH',
-                      destination: 'Lansing, MI',
-                      weight: 8000,
-                      dimensions: { length: 6, width: 4, height: 5 },
-                      palletCount: 3,
-                      commodity: 'Auto Parts',
-                      hazmat: false,
-                      stackable: true,
-                      fragile: false,
-                      revenue: 1200,
-                      pickupTimeWindow: {
-                        start: '2025-01-16T12:00:00Z',
-                        end: '2025-01-16T14:00:00Z',
-                      },
-                      deliveryTimeWindow: {
-                        start: '2025-01-17T10:00:00Z',
-                        end: '2025-01-17T12:00:00Z',
-                      },
-                      priority: 'medium',
-                      customerType: 'regular',
-                    },
-                    {
-                      id: 'LOAD-003',
-                      origin: 'Cleveland, OH',
-                      destination: 'Grand Rapids, MI',
-                      weight: 12000,
-                      dimensions: { length: 10, width: 4, height: 7 },
-                      palletCount: 5,
-                      commodity: 'Manufacturing Equipment',
-                      hazmat: false,
-                      stackable: false,
-                      fragile: true,
-                      revenue: 1800,
-                      pickupTimeWindow: {
-                        start: '2025-01-16T10:00:00Z',
-                        end: '2025-01-16T12:00:00Z',
-                      },
-                      deliveryTimeWindow: {
-                        start: '2025-01-17T16:00:00Z',
-                        end: '2025-01-17T18:00:00Z',
-                      },
-                      priority: 'high',
-                      customerType: 'premium',
-                    },
-                  ]}
+                  driverId=''
+                  driverName=''
+                  currentLoad={undefined}
+                  availableLoads={[]}
                   driverAvailability={{
-                    driverId: 'driver-001',
-                    driverName: 'Demo Driver',
-                    availableFrom: '2025-01-16T06:00:00Z',
-                    availableTo: '2025-01-30T18:00:00Z',
-                    preferredRegions: ['Midwest', 'Great Lakes'],
-                    maxWeeklyHours: 60,
-                    homeBase: 'Detroit, MI',
-                    currentLocation: 'Baltimore, MD',
-                    weeklyHoursUsed: 25,
+                    driverId: '',
+                    driverName: '',
+                    availableFrom: '',
+                    availableTo: '',
+                    preferredRegions: [],
+                    maxWeeklyHours: 0,
+                    homeBase: '',
+                    currentLocation: '',
+                    weeklyHoursUsed: 0,
                     preferences: {
-                      preferLongHaul: true,
+                      preferLongHaul: false,
                       preferLocalDelivery: false,
                       avoidNightDriving: false,
-                      preferWeekends: true,
-                      maxDaysOut: 7,
+                      preferWeekends: false,
+                      maxDaysOut: 0,
                     },
                   }}
                   onRouteOptimized={(route) => {
