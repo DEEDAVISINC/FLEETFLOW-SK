@@ -29,35 +29,21 @@ export default function RoutesPage() {
     | 'pharmaceutical'
     | 'medical-courier'
   >('permits');
+  // Route statistics (cleared for production)
   const [routeStats, setRouteStats] = useState({
-    activeRoutes: 12,
-    totalMiles: 2847,
-    avgEfficiency: 89,
-    costSavings: 1250,
+    activeRoutes: 0,
+    totalMiles: 0,
+    avgEfficiency: 0,
+    costSavings: 0,
   });
-  const [recentOptimizations, setRecentOptimizations] = useState([
-    {
-      id: 'R001',
-      driver: 'John Smith',
-      efficiency: 94,
-      savings: '$187',
-      status: 'Completed',
-    },
-    {
-      id: 'R002',
-      driver: 'Sarah Wilson',
-      efficiency: 91,
-      savings: '$145',
-      status: 'In Progress',
-    },
-    {
-      id: 'R003',
-      driver: 'Mike Johnson',
-      efficiency: 87,
-      savings: '$98',
-      status: 'Optimizing',
-    },
-  ]);
+  // Recent optimizations data (cleared for production)
+  const [recentOptimizations, setRecentOptimizations] = useState<{
+    id: string;
+    driver: string;
+    efficiency: number;
+    savings: string;
+    status: string;
+  }[]>([]);
   const [showRouteSharing, setShowRouteSharing] = useState(false);
   const [selectedRouteForSharing, setSelectedRouteForSharing] =
     useState<OptimizedRoute | null>(null);
@@ -71,66 +57,8 @@ export default function RoutesPage() {
     string[]
   >([]);
 
-  // Sample route data for sharing functionality
-  const sampleRoutes: OptimizedRoute[] = [
-    {
-      id: 'R001',
-      vehicleId: 'V001',
-      stops: [
-        {
-          id: 'S001',
-          address: '1600 Amphitheatre Pkwy, Mountain View, CA',
-          type: 'pickup',
-          timeWindow: { start: '09:00', end: '11:00' },
-          serviceTime: 30,
-          weight: 5000,
-          priority: 'high',
-        },
-        {
-          id: 'S002',
-          address: '410 Terry Ave N, Seattle, WA',
-          type: 'delivery',
-          timeWindow: { start: '14:00', end: '16:00' },
-          serviceTime: 20,
-          weight: 3000,
-          priority: 'urgent',
-        },
-      ],
-      totalDistance: 850.5,
-      totalTime: 12.5,
-      efficiency: 94,
-      fuelCost: 145.5,
-      estimatedArrival: '2024-01-15T16:30:00Z',
-    },
-    {
-      id: 'R002',
-      vehicleId: 'V002',
-      stops: [
-        {
-          id: 'S003',
-          address: '1 Microsoft Way, Redmond, WA',
-          type: 'pickup',
-          serviceTime: 25,
-          weight: 8000,
-          priority: 'medium',
-        },
-        {
-          id: 'S004',
-          address: '350 Fifth Avenue, New York, NY',
-          type: 'delivery',
-          timeWindow: { start: '10:00', end: '12:00' },
-          serviceTime: 30,
-          weight: 8000,
-          priority: 'high',
-        },
-      ],
-      totalDistance: 2847.0,
-      totalTime: 38.5,
-      efficiency: 91,
-      fuelCost: 285.75,
-      estimatedArrival: '2024-01-16T12:30:00Z',
-    },
-  ];
+  // Sample route data (cleared for production)
+  const sampleRoutes: OptimizedRoute[] = [];
 
   const handleRouteShare = (routeId: string) => {
     const route = sampleRoutes.find((r) => r.id === routeId);
@@ -822,7 +750,8 @@ export default function RoutesPage() {
                   gap: '16px',
                 }}
               >
-                {recentOptimizations.map((route) => (
+                {recentOptimizations.length > 0 ? (
+                  recentOptimizations.map((route) => (
                   <div
                     key={route.id}
                     style={{
@@ -1000,7 +929,31 @@ export default function RoutesPage() {
                       </button>
                     </div>
                   </div>
-                ))}
+                  ))
+                ) : (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      padding: '40px 20px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '48px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      🗺️
+                    </div>
+                    <p style={{ fontSize: '16px', margin: 0 }}>
+                      No recent optimizations yet
+                    </p>
+                    <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                      Route optimizations will appear here once created
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
