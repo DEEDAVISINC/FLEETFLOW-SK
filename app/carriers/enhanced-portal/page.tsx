@@ -1758,56 +1758,16 @@ export default function EnhancedCarrierPortal() {
 
               {/* Mock onboarding pipeline data */}
               {(() => {
-                const pipelineCarriers = [
-                  {
-                    id: 'pipeline-1',
-                    name: 'Swift Logistics LLC',
-                    mcNumber: 'MC-789456',
-                    currentStep: 3,
-                    steps: [
-                      'FMCSA Verification',
-                      'Service Configuration',
-                      'Document Intelligence',
-                      'Financial Integration',
-                      'Digital Agreements',
-                      'Portal Activation',
-                    ],
-                    startDate: '2024-12-18',
-                    estimatedCompletion: '2024-12-30',
-                  },
-                  {
-                    id: 'pipeline-2',
-                    name: 'Prime Transport Inc',
-                    mcNumber: 'MC-456789',
-                    currentStep: 5,
-                    steps: [
-                      'FMCSA Verification',
-                      'Service Configuration',
-                      'Document Intelligence',
-                      'Financial Integration',
-                      'Digital Agreements',
-                      'Portal Activation',
-                    ],
-                    startDate: '2024-12-15',
-                    estimatedCompletion: '2024-12-27',
-                  },
-                  {
-                    id: 'pipeline-3',
-                    name: 'Elite Freight Solutions',
-                    mcNumber: 'MC-123987',
-                    currentStep: 1,
-                    steps: [
-                      'FMCSA Verification',
-                      'Service Configuration',
-                      'Document Intelligence',
-                      'Financial Integration',
-                      'Digital Agreements',
-                      'Portal Activation',
-                    ],
-                    startDate: '2024-12-20',
-                    estimatedCompletion: '2025-01-02',
-                  },
-                ];
+                // Onboarding pipeline carriers (cleared for production)
+                const pipelineCarriers: Array<{
+                  id: string;
+                  name: string;
+                  mcNumber: string;
+                  currentStep: number;
+                  steps: string[];
+                  startDate: string;
+                  estimatedCompletion: string;
+                }> = [];
 
                 return pipelineCarriers.length > 0 ? (
                   <div style={{ display: 'grid', gap: '12px' }}>
@@ -2121,7 +2081,7 @@ export default function EnhancedCarrierPortal() {
                       marginBottom: '8px',
                     }}
                   >
-                    3
+                    0
                   </div>
                   <div
                     style={{
@@ -2158,23 +2118,15 @@ export default function EnhancedCarrierPortal() {
                   ⚠️ Document Expiration Alerts
                 </h3>
                 <div style={{ display: 'grid', gap: '8px' }}>
-                  {[
-                    {
-                      carrier: 'Swift Logistics LLC',
-                      doc: 'Auto Liability Insurance',
-                      expires: '2024-12-30',
-                    },
-                    {
-                      carrier: 'Prime Transport Inc',
-                      doc: 'Cargo Insurance',
-                      expires: '2025-01-05',
-                    },
-                    {
-                      carrier: 'Elite Freight Solutions',
-                      doc: 'Certificate of Insurance',
-                      expires: '2025-01-10',
-                    },
-                  ].map((alert, index) => (
+                  {(() => {
+                    // Document expiration alerts (cleared for production)
+                    const expirationAlerts: Array<{
+                      carrier: string;
+                      doc: string;
+                      expires: string;
+                    }> = [];
+                    
+                    return expirationAlerts.length > 0 ? expirationAlerts.map((alert, index) => (
                     <div
                       key={index}
                       style={{
@@ -2202,7 +2154,17 @@ export default function EnhancedCarrierPortal() {
                         Expires {alert.expires}
                       </span>
                     </div>
-                  ))}
+                    )) : (
+                      <div style={{ 
+                        textAlign: 'center', 
+                        padding: '20px', 
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.9rem'
+                      }}>
+                        No document expiration alerts
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
