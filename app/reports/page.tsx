@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+// Removed StickyNote import
 
 export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState('executive-overview');
@@ -13,6 +14,141 @@ export default function ReportsPage() {
   const [aiInsightsMode, setAiInsightsMode] = useState('predictive');
   const [viewMode, setViewMode] = useState('strategic');
   const [alertLevel, setAlertLevel] = useState('executive');
+
+  const mainChartRef = useRef<HTMLCanvasElement>(null);
+  const revenueChartRef = useRef<HTMLCanvasElement>(null);
+  const performanceChartRef = useRef<HTMLCanvasElement>(null);
+  const predictiveChartRef = useRef<HTMLCanvasElement>(null);
+  const networkChartRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    // Enterprise Multi-Dimensional Performance Chart
+    const canvas = mainChartRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Multi-dimensional data streams
+    const revenueData: number[] = [];
+    const efficiencyData: number[] = [];
+    const marketShareData: number[] = [];
+    const aiOptimizationData: number[] = [];
+
+    const padding = 40;
+    const chartWidth = canvas.width - padding * 2;
+    const chartHeight = canvas.height - padding * 2;
+
+    // Advanced grid system
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= 8; i++) {
+      const y = padding + (i * chartHeight) / 8;
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(canvas.width - padding, y);
+      ctx.stroke();
+    }
+
+    for (let i = 0; i <= 12; i++) {
+      const x = padding + (i * chartWidth) / 12;
+      ctx.beginPath();
+      ctx.moveTo(x, padding);
+      ctx.lineTo(x, canvas.height - padding);
+      ctx.stroke();
+    }
+
+    // Revenue Performance Line (Primary)
+    const gradient1 = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient1.addColorStop(0, '#10b981');
+    gradient1.addColorStop(1, '#059669');
+
+    ctx.strokeStyle = gradient1;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    revenueData.forEach((value, index) => {
+      const x = padding + (index * chartWidth) / (revenueData.length - 1);
+      const y = padding + chartHeight - (value / 20) * chartHeight;
+
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.stroke();
+
+    // Market Share Line
+    const gradient2 = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient2.addColorStop(0, '#3b82f6');
+    gradient2.addColorStop(1, '#1d4ed8');
+
+    ctx.strokeStyle = gradient2;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    marketShareData.forEach((value, index) => {
+      const x = padding + (index * chartWidth) / (marketShareData.length - 1);
+      const y = padding + chartHeight - (value / 60) * chartHeight;
+
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.stroke();
+
+    // AI Optimization Performance
+    const gradient3 = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient3.addColorStop(0, '#8b5cf6');
+    gradient3.addColorStop(1, '#7c3aed');
+
+    ctx.strokeStyle = gradient3;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    aiOptimizationData.forEach((value, index) => {
+      const x =
+        padding + (index * chartWidth) / (aiOptimizationData.length - 1);
+      const y = padding + chartHeight - (value / 100) * chartHeight;
+
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.stroke();
+
+    // Data points with glow effect
+    const datasets = [
+      { data: revenueData, color: '#10b981', scale: 20 },
+      { data: marketShareData, color: '#3b82f6', scale: 60 },
+      { data: aiOptimizationData, color: '#8b5cf6', scale: 100 },
+    ];
+
+    datasets.forEach((dataset) => {
+      ctx.shadowColor = dataset.color;
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = dataset.color;
+
+      dataset.data.forEach((value, index) => {
+        const x = padding + (index * chartWidth) / (dataset.data.length - 1);
+        const y = padding + chartHeight - (value / dataset.scale) * chartHeight;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+
+      ctx.shadowBlur = 0;
+    });
+  }, [selectedReport, realTimeData]);
 
   const enterpriseDashboards = [
     {
@@ -62,6 +198,174 @@ export default function ReportsPage() {
         'International Markets, Regulatory Compliance & Growth Opportunities',
     },
   ];
+
+  const executiveKpis = [
+    {
+      label: 'Enterprise Valuation',
+      value: '$0',
+      change: '+0%',
+      trend: 'up',
+      category: 'strategic',
+      color: '#10b981',
+      benchmark: 'Industry Leader',
+      confidence: 98.7,
+    },
+    {
+      label: 'Global Market Share',
+      value: '0%',
+      change: '+0%',
+      trend: 'up',
+      category: 'strategic',
+      color: '#3b82f6',
+      benchmark: '#1 Worldwide',
+      confidence: 96.2,
+    },
+    {
+      label: 'AI Optimization Score',
+      value: '0%',
+      change: '+0%',
+      trend: 'up',
+      category: 'operational',
+      color: '#8b5cf6',
+      benchmark: 'Industry Best',
+      confidence: 99.9,
+    },
+    {
+      label: 'Revenue Growth Rate',
+      value: '0%',
+      change: '+0%',
+      trend: 'up',
+      category: 'financial',
+      color: '#10b981',
+      benchmark: 'Exceptional',
+      confidence: 95.4,
+    },
+    {
+      label: 'Customer Acquisition Cost',
+      value: '$0',
+      change: '+0%',
+      trend: 'up',
+      category: 'financial',
+      color: '#06b6d4',
+      benchmark: 'Best in Class',
+      confidence: 97.8,
+    },
+    {
+      label: 'Enterprise Customers',
+      value: '0',
+      change: '+0%',
+      trend: 'up',
+      category: 'operational',
+      color: '#f59e0b',
+      benchmark: 'Market Leader',
+      confidence: 98.1,
+    },
+    {
+      label: 'Global Network Efficiency',
+      value: '0%',
+      change: '+0%',
+      trend: 'up',
+      category: 'operational',
+      color: '#ef4444',
+      benchmark: 'World Class',
+      confidence: 99.2,
+    },
+    {
+      label: 'Strategic Partnership Value',
+      value: '$0',
+      change: '+0%',
+      trend: 'up',
+      category: 'strategic',
+      color: '#8b5cf6',
+      benchmark: 'Industry First',
+      confidence: 94.6,
+    },
+    {
+      label: 'Innovation Index Score',
+      value: '9.8/10',
+      change: '+0.7',
+      trend: 'up',
+      category: 'strategic',
+      color: '#10b981',
+      benchmark: 'Innovation Leader',
+      confidence: 99.5,
+    },
+  ];
+
+  const aiInsights = [
+    {
+      category: 'STRATEGIC ALERT',
+      priority: 'CRITICAL',
+      title: '🎯 Acquisition Opportunity Detected',
+      insight:
+        'AI analysis identifies optimal acquisition window for European logistics leader. Projected synergy value: $0. Recommended action within 72 hours.',
+      confidence: 0,
+      impact: '$0 Value Creation',
+      color: '#ef4444',
+      actions: [
+        'Schedule Board Meeting',
+        'Prepare Due Diligence',
+        'Engage Investment Banking',
+      ],
+    },
+    {
+      category: 'MARKET INTELLIGENCE',
+      priority: 'HIGH',
+      title: '📊 Market Disruption Prediction',
+      insight:
+        'Predictive models indicate 0% demand surge in autonomous freight by Q3 2025. FleetFlow™ positioned to capture 0% market share.',
+      confidence: 0,
+      impact: '$0 Revenue Opportunity',
+      color: '#3b82f6',
+      actions: [
+        'Accelerate R&D Investment',
+        'Scale Infrastructure',
+        'Strategic Partnerships',
+      ],
+    },
+    {
+      category: 'OPERATIONAL EXCELLENCE',
+      priority: 'MEDIUM',
+      title: '⚡ Efficiency Breakthrough Identified',
+      insight:
+        'Quantum-inspired routing algorithms achieve 0% efficiency gain. Implementation across global network projected to save $0 annually.',
+      confidence: 0,
+      impact: '$0 Annual Savings',
+      color: '#10b981',
+      actions: [
+        'Deploy Globally',
+        'Patent Technology',
+        'Competitive Advantage',
+      ],
+    },
+    {
+      category: 'COMPETITIVE ADVANTAGE',
+      priority: 'STRATEGIC',
+      title: '🏆 Industry Dominance Confirmed',
+      insight:
+        'FleetFlow™ achieves 0% global market share, surpassing all competitors combined. Regulatory approval for mega-merger opportunities.',
+      confidence: 0,
+      impact: 'Market Leadership',
+      color: '#8b5cf6',
+      actions: [
+        'Strategic Communications',
+        'Regulatory Engagement',
+        'Market Expansion',
+      ],
+    },
+  ];
+
+  const filteredKpis = executiveKpis.filter((kpi) =>
+    selectedDashboard === 'enterprise-command'
+      ? kpi.category === 'strategic'
+      : selectedDashboard === 'financial-markets'
+        ? kpi.category === 'financial'
+        : selectedDashboard === 'operational-excellence'
+          ? kpi.category === 'operational'
+          : selectedDashboard === 'ai-intelligence'
+            ? ['strategic', 'operational'].includes(kpi.category)
+            : true
+  );
 
   return (
     <div
@@ -190,7 +494,7 @@ export default function ReportsPage() {
                   fontWeight: '500',
                 }}
               >
-                Global Transportation Intelligence Platform
+                $0 Global Transportation Intelligence Platform
               </p>
               <div
                 style={{
@@ -215,9 +519,7 @@ export default function ReportsPage() {
                     letterSpacing: '0.5px',
                   }}
                 >
-                  {realTimeData
-                    ? '🟢 READY FOR LIVE DATA'
-                    : '🔴 AWAITING CONNECTION'}
+                  {realTimeData ? '🟢 LIVE GLOBAL FEED' : '🔴 HISTORICAL DATA'}
                 </div>
                 <div
                   style={{
@@ -226,7 +528,7 @@ export default function ReportsPage() {
                     fontWeight: '500',
                   }}
                 >
-                  Global Network Status: READY • Awaiting Data Connection
+                  Global Network Status: OPTIMAL • 0% Uptime
                 </div>
               </div>
             </div>
@@ -317,7 +619,7 @@ export default function ReportsPage() {
                     textTransform: 'uppercase',
                   }}
                 >
-                  {realTimeData ? '⚡ READY MODE' : '🔄 ACTIVATE READY'}
+                  {realTimeData ? '⚡ LIVE MODE' : '🔄 ACTIVATE LIVE'}
                 </button>
               </div>
             </div>
@@ -437,101 +739,424 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* Main Content - Standard Empty State */}
+        {/* Executive KPI Grid */}
         <div
           style={{
-            background:
-              'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
-            backdropFilter: 'blur(15px)',
-            borderRadius: '20px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            padding: '60px 40px',
-            textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '16px',
             marginBottom: '24px',
+          }}
+        >
+          {filteredKpis.map((kpi, index) => (
+            <div
+              key={index}
+              style={{
+                background: 'rgba(15, 23, 42, 0.9)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: `1px solid ${kpi.color}40`,
+                boxShadow: `0 4px 16px ${kpi.color}20`,
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = `0 8px 24px ${kpi.color}30`;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = `0 4px 16px ${kpi.color}20`;
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: `linear-gradient(90deg, ${kpi.color}, ${kpi.color}80)`,
+                }}
+              />
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  marginBottom: '8px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {kpi.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      color: kpi.color,
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {kpi.benchmark}
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: kpi.trend === 'up' ? '#10b981' : '#ef4444',
+                    background:
+                      kpi.trend === 'up'
+                        ? 'rgba(16, 185, 129, 0.2)'
+                        : 'rgba(239, 68, 68, 0.2)',
+                    padding: '4px 8px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    border: `1px solid ${kpi.trend === 'up' ? '#10b981' : '#ef4444'}`,
+                  }}
+                >
+                  {kpi.trend === 'up' ? '🚀' : '📉'} {kpi.change}
+                </span>
+              </div>
+
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '800',
+                  color: 'white',
+                  marginBottom: '8px',
+                }}
+              >
+                {kpi.value}
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: '70%',
+                    height: '4px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '2px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${kpi.confidence}%`,
+                      height: '100%',
+                      background: `linear-gradient(90deg, ${kpi.color}, ${kpi.color}CC)`,
+                      borderRadius: '2px',
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    fontSize: '10px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontWeight: '600',
+                  }}
+                >
+                  {kpi.confidence}% Confidence
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Enterprise Performance Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '20px',
+            marginBottom: '24px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
           }}
         >
           <div
             style={{
-              fontSize: '4rem',
-              marginBottom: '24px',
-              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-            }}
-          >
-            📊
-          </div>
-          <h3
-            style={{
-              fontSize: '2rem',
-              fontWeight: '700',
-              color: '#ffffff',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               marginBottom: '16px',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              flexWrap: 'wrap',
+              gap: '12px',
             }}
           >
-            Enterprise Reports Ready
-          </h3>
-          <p
-            style={{
-              fontSize: '1.2rem',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '32px',
-              lineHeight: '1.6',
-              maxWidth: '600px',
-              margin: '0 auto 32px',
-            }}
-          >
-            Your comprehensive enterprise reporting dashboard will display KPIs,
-            analytics, and strategic insights once data sources are connected to
-            your system.
-          </p>
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                color: 'white',
+              }}
+            >
+              📈 ENTERPRISE PERFORMANCE MATRIX
+            </h3>
+            <div
+              style={{
+                display: 'flex',
+                gap: '16px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '16px',
+                  fontSize: '10px',
+                  fontWeight: '600',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: 'white',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '3px',
+                      background: '#10b981',
+                      borderRadius: '2px',
+                    }}
+                  />
+                  REVENUE GROWTH
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: 'white',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '3px',
+                      background: '#3b82f6',
+                      borderRadius: '2px',
+                    }}
+                  />
+                  MARKET SHARE
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: 'white',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '3px',
+                      background: '#8b5cf6',
+                      borderRadius: '2px',
+                    }}
+                  />
+                  AI OPTIMIZATION
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div
             style={{
-              display: 'flex',
-              gap: '16px',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
+              background: 'rgba(0, 0, 0, 0.3)',
+              borderRadius: '12px',
+              padding: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <div
-              style={{
-                background: 'rgba(59, 130, 246, 0.2)',
-                border: '1px solid rgba(59, 130, 246, 0.4)',
-                borderRadius: '12px',
-                padding: '12px 24px',
-                color: '#60a5fa',
-                fontWeight: '600',
-                fontSize: '0.95rem',
-              }}
-            >
-              📈 Performance KPIs
-            </div>
-            <div
-              style={{
-                background: 'rgba(16, 185, 129, 0.2)',
-                border: '1px solid rgba(16, 185, 129, 0.4)',
-                borderRadius: '12px',
-                padding: '12px 24px',
-                color: '#34d399',
-                fontWeight: '600',
-                fontSize: '0.95rem',
-              }}
-            >
-              🧠 AI Insights
-            </div>
-            <div
-              style={{
-                background: 'rgba(245, 158, 11, 0.2)',
-                border: '1px solid rgba(245, 158, 11, 0.4)',
-                borderRadius: '12px',
-                padding: '12px 24px',
-                color: '#fbbf24',
-                fontWeight: '600',
-                fontSize: '0.95rem',
-              }}
-            >
-              📊 Strategic Analytics
-            </div>
+            <canvas
+              ref={mainChartRef}
+              width={1000}
+              height={300}
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+          </div>
+        </div>
+
+        {/* AI Strategic Insights */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '20px',
+            marginBottom: '24px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: 'white',
+              marginBottom: '16px',
+              textAlign: 'center',
+            }}
+          >
+            🧠 AI STRATEGIC INTELLIGENCE CENTER
+          </h3>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {aiInsights.map((insight, index) => (
+              <div
+                key={index}
+                style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  border: `2px solid ${insight.color}`,
+                  borderLeft: `4px solid ${insight.color}`,
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    background: insight.color,
+                    color: 'white',
+                    padding: '3px 8px',
+                    borderRadius: '12px',
+                    fontSize: '8px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  {insight.priority}
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      fontSize: '9px',
+                      color: insight.color,
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {insight.category}
+                  </div>
+                  <h4
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      color: 'white',
+                      margin: '0 0 8px 0',
+                    }}
+                  >
+                    {insight.title}
+                  </h4>
+                </div>
+
+                <p
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: '1.4',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {insight.insight}
+                </p>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '12px',
+                    flexWrap: 'wrap',
+                    gap: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      color: insight.color,
+                    }}
+                  >
+                    {insight.impact}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {insight.confidence}% AI Confidence
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {insight.actions.map((action, actionIndex) => (
+                    <button
+                      key={actionIndex}
+                      style={{
+                        background: `linear-gradient(135deg, ${insight.color}, ${insight.color}CC)`,
+                        border: 'none',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '9px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
