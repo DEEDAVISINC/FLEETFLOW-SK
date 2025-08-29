@@ -125,192 +125,8 @@ export default function LiveTrackingPage() {
     'overview' | 'tracking' | 'analytics' | 'maritime' | 'canada' | 'mexico'
   >('overview');
 
-  // ... existing code ...
-  const [shipments, setShipments] = useState<Shipment[]>([
-    {
-      id: 'SHP-001',
-      status: 'in-transit',
-      origin: 'Los Angeles, CA',
-      destination: 'Chicago, IL',
-      carrier: 'Swift Transport',
-      progress: 65,
-      currentLocation: [36.7783, -110.4179],
-      originCoords: [34.0522, -118.2437],
-      destCoords: [41.8781, -87.6298],
-      speed: 65,
-      eta: '2024-01-15 14:30',
-      driverName: 'John Smith',
-      driverPhone: '555-0123',
-      vehicleInfo: 'Truck #T-456',
-      temperature: 72,
-      humidity: 45,
-      fuelLevel: 78,
-      lastUpdate: '2024-01-14 10:15',
-      alerts: ['Weather Alert', 'Traffic Delay'],
-      priority: 'high',
-      value: 25000,
-      weight: 15000,
-      commodity: 'Electronics',
-      createdDate: '2024-01-10',
-      pickupDate: '2024-01-12',
-      deliveryDate: '2024-01-15',
-      customerName: 'TechCorp Industries',
-      miles: 2015,
-
-      // NOAD Maritime Intelligence Data
-      vesselInfo: {
-        vesselName: 'MSC GÜLSÜN',
-        vesselType: 'Container Vessel',
-        mmsi: '636019825',
-        imo: '9811000',
-        arrivalPort: 'Port of Los Angeles',
-        departurePort: 'Port of Long Beach',
-        scheduledArrival: '2024-01-12 08:00',
-        scheduledDeparture: '2024-01-12 14:00',
-        portCongestion: 'medium',
-        berthAssignment: 'B-15',
-        shippingLine: 'MSC',
-      },
-
-      portIntelligence: {
-        originPortCode: 'USLAX',
-        destinationPortCode: 'USCHI',
-        originPortName: 'Port of Los Angeles',
-        destinationPortName: 'Port of Chicago',
-        portDelays: 3.5,
-        berthAvailability: true,
-        cargoVolume: 45000,
-        congestionLevel: 'medium',
-        averageWaitTime: 4.2,
-        weatherImpact: 'minor',
-      },
-
-      maritimeAlerts: [
-        'Port congestion expected',
-        'Vessel arrived on schedule',
-      ],
-    },
-    {
-      id: 'SHP-002',
-      status: 'delivered',
-      origin: 'Miami, FL',
-      destination: 'Atlanta, GA',
-      carrier: 'FedEx Freight',
-      progress: 100,
-      currentLocation: [33.749, -84.388],
-      originCoords: [25.7617, -80.1918],
-      destCoords: [33.749, -84.388],
-      speed: 0,
-      eta: '2024-01-14 16:00',
-      driverName: 'Sarah Johnson',
-      driverPhone: '555-0456',
-      vehicleInfo: 'Truck #F-789',
-      temperature: 68,
-      humidity: 52,
-      fuelLevel: 45,
-      lastUpdate: '2024-01-14 16:00',
-      alerts: [],
-      priority: 'medium',
-      value: 18000,
-      weight: 12000,
-      commodity: 'Machinery',
-      createdDate: '2024-01-09',
-      pickupDate: '2024-01-11',
-      deliveryDate: '2024-01-14',
-      customerName: 'Manufacturing Co.',
-      miles: 662,
-    },
-    {
-      id: 'SHP-003',
-      status: 'delayed',
-      origin: 'New York, NY',
-      destination: 'Boston, MA',
-      carrier: 'UPS Freight',
-      progress: 45,
-      currentLocation: [41.2033, -73.0468],
-      originCoords: [40.7128, -74.006],
-      destCoords: [42.3601, -71.0589],
-      speed: 0,
-      eta: '2024-01-15 09:00',
-      driverName: 'Mike Wilson',
-      driverPhone: '555-0789',
-      vehicleInfo: 'Truck #U-123',
-      temperature: 65,
-      humidity: 48,
-      fuelLevel: 62,
-      lastUpdate: '2024-01-14 08:30',
-      alerts: ['Mechanical Issue', 'ETA Delay'],
-      priority: 'high',
-      value: 32000,
-      weight: 18000,
-      commodity: 'Pharmaceuticals',
-      createdDate: '2024-01-11',
-      pickupDate: '2024-01-13',
-      deliveryDate: '2024-01-15',
-      customerName: 'MedSupply Corp',
-      miles: 215,
-    },
-    {
-      id: 'SHP-004',
-      status: 'loading',
-      origin: 'Seattle, WA',
-      destination: 'Portland, OR',
-      carrier: 'Pacific Freight',
-      progress: 0,
-      currentLocation: [47.6062, -122.3321],
-      originCoords: [47.6062, -122.3321],
-      destCoords: [45.5152, -122.6784],
-      speed: 0,
-      eta: '2024-01-15 11:00',
-      driverName: 'Emily Davis',
-      driverPhone: '555-0321',
-      vehicleInfo: 'Truck #P-567',
-      temperature: 70,
-      humidity: 55,
-      fuelLevel: 95,
-      lastUpdate: '2024-01-14 09:00',
-      alerts: ['Loading in Progress'],
-      priority: 'low',
-      value: 12000,
-      weight: 8000,
-      commodity: 'Textiles',
-      createdDate: '2024-01-12',
-      pickupDate: '2024-01-14',
-      deliveryDate: '2024-01-15',
-      customerName: 'Fashion Retail Inc.',
-      miles: 173,
-    },
-    {
-      id: 'SHP-005',
-      status: 'unloading',
-      origin: 'Dallas, TX',
-      destination: 'Houston, TX',
-      carrier: 'Lone Star Logistics',
-      progress: 95,
-      currentLocation: [29.7604, -95.3698],
-      originCoords: [32.7767, -96.797],
-      destCoords: [29.7604, -95.3698],
-      speed: 0,
-      eta: '2024-01-14 18:00',
-      driverName: 'Carlos Rodriguez',
-      driverPhone: '555-0654',
-      vehicleInfo: 'Truck #L-890',
-      temperature: 75,
-      humidity: 60,
-      fuelLevel: 40,
-      lastUpdate: '2024-01-14 17:30',
-      alerts: ['Unloading at Destination'],
-      priority: 'medium',
-      value: 21000,
-      weight: 14000,
-      commodity: 'Food Products',
-      createdDate: '2024-01-13',
-      pickupDate: '2024-01-14',
-      deliveryDate: '2024-01-14',
-      customerName: 'SuperMarket Chain',
-      miles: 239,
-    },
-  ]);
+  // LiveLoad tracking data (cleared for production)
+  const [shipments, setShipments] = useState<Shipment[]>([]);
 
   // Filter and Search States
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(
@@ -754,8 +570,9 @@ export default function LiveTrackingPage() {
     const delivered = shipments.filter((s) => s.status === 'delivered').length;
     const delayed = shipments.filter((s) => s.status === 'delayed').length;
     const totalValue = shipments.reduce((sum, s) => sum + s.value, 0);
-    const avgProgress =
-      shipments.reduce((sum, s) => sum + s.progress, 0) / totalShipments;
+    const avgProgress = totalShipments > 0 
+      ? shipments.reduce((sum, s) => sum + s.progress, 0) / totalShipments
+      : 0;
     const totalMiles = shipments.reduce((sum, s) => sum + (s.miles || 0), 0);
     const highPriority = shipments.filter((s) => s.priority === 'high').length;
 
@@ -2225,20 +2042,51 @@ export default function LiveTrackingPage() {
                         gap: '12px',
                       }}
                     >
-                      {sortedShipments.map((shipment) => (
-                        <ShipmentCard
-                          key={shipment.id}
-                          shipment={shipment}
-                          isSelected={selectedShipment?.id === shipment.id}
-                          onSelect={() => setSelectedShipment(shipment)}
-                          getStatusColor={getStatusColor}
-                          formatStatus={formatStatus}
-                          getPriorityColor={getPriorityColor}
-                          formatCurrency={formatCurrency}
-                          isSelectedForBulk={selectedShipments.has(shipment.id)}
-                          onBulkSelect={handleBulkSelect}
-                        />
-                      ))}
+                      {sortedShipments.length > 0 ? (
+                        sortedShipments.map((shipment) => (
+                          <ShipmentCard
+                            key={shipment.id}
+                            shipment={shipment}
+                            isSelected={selectedShipment?.id === shipment.id}
+                            onSelect={() => setSelectedShipment(shipment)}
+                            getStatusColor={getStatusColor}
+                            formatStatus={formatStatus}
+                            getPriorityColor={getPriorityColor}
+                            formatCurrency={formatCurrency}
+                            isSelectedForBulk={selectedShipments.has(shipment.id)}
+                            onBulkSelect={handleBulkSelect}
+                          />
+                        ))
+                      ) : (
+                        <div
+                          style={{
+                            textAlign: 'center',
+                            padding: '60px 20px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: '64px',
+                              marginBottom: '20px',
+                            }}
+                          >
+                            🚚
+                          </div>
+                          <h3
+                            style={{
+                              fontSize: '18px',
+                              margin: '0 0 8px 0',
+                              color: 'white',
+                            }}
+                          >
+                            No LiveLoad shipments yet
+                          </h3>
+                          <p style={{ fontSize: '14px', margin: 0 }}>
+                            Shipments will appear here once tracking data is available
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2538,11 +2386,12 @@ export default function LiveTrackingPage() {
                         const carrierShipments = shipments.filter(
                           (s) => s.carrier === carrier
                         );
-                        const avgProgress =
-                          carrierShipments.reduce(
-                            (sum, s) => sum + s.progress,
-                            0
-                          ) / carrierShipments.length;
+                        const avgProgress = carrierShipments.length > 0
+                          ? carrierShipments.reduce(
+                              (sum, s) => sum + s.progress,
+                              0
+                            ) / carrierShipments.length
+                          : 0;
                         const onTimeCount = carrierShipments.filter(
                           (s) => s.status === 'delivered'
                         ).length;
