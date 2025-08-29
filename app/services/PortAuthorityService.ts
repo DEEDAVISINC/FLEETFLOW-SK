@@ -226,13 +226,13 @@ export class PortAuthorityService {
     }
 
     try {
-      // In production, this would fetch from actual Port Authority APIs
-      const mockData = this.generateMockPortTrafficData(portCode);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Port traffic data (cleared for production)
+      const emptyData: PortTrafficData[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching port traffic data:', error);
-      return this.generateMockPortTrafficData(portCode);
+      return [];
     }
   }
 
@@ -250,12 +250,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockCargoVolumeData(portCode, cargoType);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Cargo volume data (cleared for production)
+      const emptyData: CargoVolume[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching cargo volume data:', error);
-      return this.generateMockCargoVolumeData(portCode, cargoType);
+      return [];
     }
   }
 
@@ -270,12 +271,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockVesselSchedules(portCode);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Vessel schedules (cleared for production)
+      const emptyData: VesselSchedule[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching vessel schedules:', error);
-      return this.generateMockVesselSchedules(portCode);
+      return [];
     }
   }
 
@@ -293,15 +295,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockShippingRates(
-        originPort,
-        destinationPort
-      );
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Shipping rates (cleared for production)
+      const emptyData: ShippingRate[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching shipping rates:', error);
-      return this.generateMockShippingRates(originPort, destinationPort);
+      return [];
     }
   }
 
@@ -316,12 +316,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockPortPerformance();
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Port performance (cleared for production)
+      const emptyData: PortPerformance[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching port performance data:', error);
-      return this.generateMockPortPerformance();
+      return [];
     }
   }
 
@@ -336,12 +337,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockSupplyChainInsights();
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Supply chain insights (cleared for production)
+      const emptyData: SupplyChainInsight[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching supply chain insights:', error);
-      return this.generateMockSupplyChainInsights();
+      return [];
     }
   }
 
@@ -356,12 +358,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockMaritimeMarketTrends();
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Maritime market trends (cleared for production)
+      const emptyData: MaritimeMarketTrend[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching maritime market trends:', error);
-      return this.generateMockMaritimeMarketTrends();
+      return [];
     }
   }
 
@@ -376,12 +379,13 @@ export class PortAuthorityService {
     }
 
     try {
-      const mockData = this.generateMockTopUSPorts();
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Top US ports (cleared for production)
+      const emptyData: PortTrafficData[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching top US ports:', error);
-      return this.generateMockTopUSPorts();
+      return [];
     }
   }
 

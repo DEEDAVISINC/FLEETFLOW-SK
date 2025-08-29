@@ -112,66 +112,20 @@ export default function CanadaCrossBorderView({
       // Simulate API call to Canada cross-border intelligence
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Canada cross-border data (cleared for production)
       setCrossBorderData({
-        totalCrossBorderShipments: 1456,
-        pendingClearance: 67,
-        averageCrossingTime: 1.8,
-        delayedShipments: 18,
-        majorCrossings: [
-          {
-            name: 'Ambassador Bridge/Windsor',
-            code: 'AMB',
-            waitTime: 1.2,
-            throughput: 8500,
-            congestionLevel: 'medium',
-            operatingHours: '24/7',
-          },
-          {
-            name: 'Peace Bridge/Fort Erie',
-            code: 'PEA',
-            waitTime: 2.1,
-            throughput: 4200,
-            congestionLevel: 'high',
-            operatingHours: '24/7',
-          },
-          {
-            name: 'Rainbow Bridge/Niagara Falls',
-            code: 'RBW',
-            waitTime: 1.7,
-            throughput: 2800,
-            congestionLevel: 'medium',
-            operatingHours: '6:00 AM - 2:00 AM',
-          },
-          {
-            name: 'Thousand Islands Bridge',
-            code: 'TIB',
-            waitTime: 1.3,
-            throughput: 1500,
-            congestionLevel: 'low',
-            operatingHours: '6:00 AM - 10:00 PM',
-          },
-          {
-            name: 'Pacific Highway/Surrey',
-            code: 'PAC',
-            waitTime: 2.8,
-            throughput: 3200,
-            congestionLevel: 'high',
-            operatingHours: '24/7',
-          },
-        ],
+        totalCrossBorderShipments: 0,
+        pendingClearance: 0,
+        averageCrossingTime: 0,
+        delayedShipments: 0,
+        majorCrossings: [],
         complianceStats: {
-          aciCompliance: 96.8,
-          parsCompliance: 94.3,
-          documentationErrors: 89,
-          inspectionRate: 8.2,
+          aciCompliance: 0,
+          parsCompliance: 0,
+          documentationErrors: 0,
+          inspectionRate: 0,
         },
-        recentAlerts: [
-          'ACI eManifest system maintenance scheduled for this weekend',
-          'Enhanced inspection protocols at Peace Bridge due to security alert',
-          'FAST lane delays at Ambassador Bridge - system upgrades in progress',
-          'New CBSA documentation requirements effective February 2025',
-          'Weather advisory: Snow delays expected at Pacific Highway crossing',
-        ],
+        recentAlerts: [],
       });
     } catch (error) {
       console.error('Error fetching Canada cross-border data:', error);

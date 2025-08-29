@@ -186,14 +186,13 @@ export class NOADService {
     }
 
     try {
-      // In production, this would connect to NVMC API
-      // For now, generate enhanced mock data based on NOAD schema
-      const mockData = this.generateNOADVesselData(portCode);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // NOAD vessel data (cleared for production)
+      const emptyData: NOADVesselData[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching NOAD vessel arrivals:', error);
-      return this.generateNOADVesselData(portCode);
+      return [];
     }
   }
 
@@ -208,12 +207,51 @@ export class NOADService {
     }
 
     try {
-      const mockData = this.generatePortIntelligence(portCode);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Port intelligence (cleared for production)
+      const emptyData: PortIntelligence = {
+        portCode,
+        portName: '',
+        location: { city: '', state: '', coordinates: [0, 0] },
+        currentVessels: 0,
+        vesselsInbound: 0,
+        vesselsOutbound: 0,
+        congestionLevel: 'low',
+        averageWaitTime: 0,
+        berthAvailability: [],
+        weatherConditions: { condition: 'clear', visibility: 0, windSpeed: 0 },
+        portOperationalStatus: 'operational',
+        notices: [],
+        trafficVolume: { inbound: 0, outbound: 0 },
+        cargoTypes: [],
+        lastUpdated: new Date().toISOString(),
+        historicalData: [],
+        predictedCongestion: [],
+        alerts: [],
+      };
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching port intelligence:', error);
-      return this.generatePortIntelligence(portCode);
+      return {
+        portCode,
+        portName: '',
+        location: { city: '', state: '', coordinates: [0, 0] },
+        currentVessels: 0,
+        vesselsInbound: 0,
+        vesselsOutbound: 0,
+        congestionLevel: 'low',
+        averageWaitTime: 0,
+        berthAvailability: [],
+        weatherConditions: { condition: 'clear', visibility: 0, windSpeed: 0 },
+        portOperationalStatus: 'operational',
+        notices: [],
+        trafficVolume: { inbound: 0, outbound: 0 },
+        cargoTypes: [],
+        lastUpdated: new Date().toISOString(),
+        historicalData: [],
+        predictedCongestion: [],
+        alerts: [],
+      };
     }
   }
 
@@ -228,12 +266,13 @@ export class NOADService {
     }
 
     try {
-      const mockData = this.generateVesselSchedules(portCode);
-      this.setCache(cacheKey, mockData);
-      return mockData;
+      // Vessel schedules (cleared for production)
+      const emptyData: VesselSchedule[] = [];
+      this.setCache(cacheKey, emptyData);
+      return emptyData;
     } catch (error) {
       console.error('Error fetching vessel schedules:', error);
-      return this.generateVesselSchedules(portCode);
+      return [];
     }
   }
 

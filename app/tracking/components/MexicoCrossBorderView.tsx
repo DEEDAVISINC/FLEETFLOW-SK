@@ -112,66 +112,20 @@ export default function MexicoCrossBorderView({
       // Simulate API call to Mexico cross-border intelligence
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Mexico cross-border data (cleared for production)
       setCrossBorderData({
-        totalCrossBorderShipments: 1247,
-        pendingClearance: 89,
-        averageCrossingTime: 2.3,
-        delayedShipments: 23,
-        majorCrossings: [
-          {
-            name: 'Laredo/Nuevo Laredo',
-            code: 'LRD',
-            waitTime: 1.8,
-            throughput: 4500,
-            congestionLevel: 'medium',
-            operatingHours: '24/7',
-          },
-          {
-            name: 'El Paso/Ciudad Juárez',
-            code: 'ELP',
-            waitTime: 2.1,
-            throughput: 2800,
-            congestionLevel: 'high',
-            operatingHours: '6:00 AM - 10:00 PM',
-          },
-          {
-            name: 'Otay Mesa/Tijuana',
-            code: 'OTM',
-            waitTime: 3.2,
-            throughput: 1900,
-            congestionLevel: 'critical',
-            operatingHours: '6:00 AM - 2:00 AM',
-          },
-          {
-            name: 'Brownsville/Matamoros',
-            code: 'BRO',
-            waitTime: 1.5,
-            throughput: 1200,
-            congestionLevel: 'low',
-            operatingHours: '24/7',
-          },
-          {
-            name: 'Nogales/Nogales',
-            code: 'NOG',
-            waitTime: 2.7,
-            throughput: 950,
-            congestionLevel: 'medium',
-            operatingHours: '6:00 AM - 8:00 PM',
-          },
-        ],
+        totalCrossBorderShipments: 0,
+        pendingClearance: 0,
+        averageCrossingTime: 0,
+        delayedShipments: 0,
+        majorCrossings: [],
         complianceStats: {
-          aceCompliance: 94.2,
-          saaiCompliance: 87.6,
-          documentationErrors: 156,
-          inspectionRate: 12.8,
+          aceCompliance: 0,
+          saaiCompliance: 0,
+          documentationErrors: 0,
+          inspectionRate: 0,
         },
-        recentAlerts: [
-          'QR Code requirements now mandatory at Laredo port',
-          'Enhanced security screening at El Paso due to high risk cargo',
-          'Otay Mesa experiencing 4+ hour delays due to system maintenance',
-          'New IMMEX documentation requirements effective January 2025',
-          'Weather delays expected at Nogales crossing this weekend',
-        ],
+        recentAlerts: [],
       });
     } catch (error) {
       console.error('Error fetching cross-border data:', error);
