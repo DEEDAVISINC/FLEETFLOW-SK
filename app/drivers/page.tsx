@@ -868,7 +868,7 @@ export default function DriverManagement() {
                   gap: 6,
                 }}
               >
-                <span style={{ fontSize: 18 }}>📨</span> 3 Unread
+                <span style={{ fontSize: 18 }}>📨</span> 0 Unread
               </div>
               <div
                 style={{
@@ -880,7 +880,7 @@ export default function DriverManagement() {
                   gap: 6,
                 }}
               >
-                <span style={{ fontSize: 18 }}>⚠️</span> 1 Urgent
+                <span style={{ fontSize: 18 }}>⚠️</span> 0 Urgent
               </div>
               <div
                 style={{
@@ -892,7 +892,7 @@ export default function DriverManagement() {
                   gap: 6,
                 }}
               >
-                <span style={{ fontSize: 18 }}>📋</span> 8 Total
+                <span style={{ fontSize: 18 }}>📋</span> 0 Total
               </div>
             </div>
           </div>
@@ -909,68 +909,15 @@ export default function DriverManagement() {
               background: 'transparent',
             }}
           >
-            {/* Sample alerts - these would come from real data */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                background: 'linear-gradient(90deg, #fef3c7 0%, #fde68a 100%)',
-                border: '1.5px solid #fbbf24',
-                borderRadius: 12,
-                padding: '16px 20px',
-                gap: 16,
-                boxShadow: '0 2px 8px rgba(251,191,36,0.08)',
-              }}
-            >
-              <img
-                src='https://randomuser.me/api/portraits/men/32.jpg'
-                alt='avatar'
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: '50%',
-                  border: '2px solid #fbbf24',
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{ fontWeight: 700, color: '#b45309', fontSize: 15 }}
-                >
-                  HOS Violation Alert{' '}
-                  <span
-                    style={{
-                      fontWeight: 500,
-                      color: '#f59e0b',
-                      fontSize: 13,
-                      marginLeft: 8,
-                    }}
-                  >
-                    Urgent
-                  </span>
-                </div>
-                <div style={{ color: '#92400e', fontSize: 14 }}>
-                  Driver John Smith exceeded daily limit
-                </div>
-                <div style={{ color: '#b45309', fontSize: 12, marginTop: 2 }}>
-                  2 min ago
-                </div>
-              </div>
-              <button
-                style={{
-                  background: '#fbbf24',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontWeight: 700,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 4px rgba(251,191,36,0.10)',
-                  transition: 'background 0.2s',
-                }}
-              >
-                Acknowledge
-              </button>
+            {/* Empty state for communications and alerts */}
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'rgba(139, 69, 19, 0.6)' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>📨</div>
+              <p style={{ fontSize: '16px', margin: '0 0 8px 0', fontWeight: '600', color: '#6b7280' }}>
+                No communications or alerts
+              </p>
+              <p style={{ fontSize: '14px', margin: 0, color: '#9ca3af' }}>
+                Driver communications and safety alerts will appear here
+              </p>
             </div>
           </div>
         </div>
