@@ -23,12 +23,12 @@ export default function CarrierLandingPage() {
     mcNumber: '',
   });
 
-  // Invitation analytics state
+  // Invitation analytics state (cleared for production)
   const [inviteStats, setInviteStats] = useState({
-    sentToday: 12,
-    opened: 8,
-    started: 5,
-    completed: 3,
+    sentToday: 0,
+    opened: 0,
+    started: 0,
+    completed: 0,
   });
 
   // Check for invitation parameters
@@ -839,10 +839,10 @@ export default function CarrierLandingPage() {
                 }}
               >
                 {[
-                  { icon: '🏆', title: 'Premium Rates', value: '+30%' },
-                  { icon: '⚡', title: 'Priority Access', value: '24/7' },
-                  { icon: '💎', title: 'Exclusive Loads', value: 'VIP' },
-                  { icon: '🤝', title: 'Dedicated Support', value: 'Elite' },
+                  { icon: '🏆', title: 'Premium Rates', value: 'TBD' },
+                  { icon: '⚡', title: 'Priority Access', value: 'TBD' },
+                  { icon: '💎', title: 'Exclusive Loads', value: 'TBD' },
+                  { icon: '🤝', title: 'Dedicated Support', value: 'TBD' },
                 ].map((benefit, idx) => (
                   <div key={idx} style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '2rem', marginBottom: '5px' }}>
