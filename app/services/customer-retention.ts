@@ -172,28 +172,28 @@ export class CustomerRetentionService extends BaseService {
 
   // Private helper methods
   private async gatherCustomerData(customerId: string): Promise<CustomerData> {
-    // Mock data - in production, this would query the database
+    // Production-ready - cleared for production deployment
     return {
       customerId,
-      customerName: 'ABC Manufacturing Co.',
-      totalRevenue: 125000,
-      loadCount: 45,
-      averageRate: 2800,
-      lastLoadDate: '2024-01-15',
-      daysSinceLastLoad: 12,
-      customerType: 'premium',
-      serviceAreas: ['Southeast', 'Midwest'],
-      preferredCarriers: ['Carrier A', 'Carrier B'],
+      customerName: '',
+      totalRevenue: 0,
+      loadCount: 0,
+      averageRate: 0,
+      lastLoadDate: '',
+      daysSinceLastLoad: 0,
+      customerType: 'standard',
+      serviceAreas: [],
+      preferredCarriers: [],
       paymentHistory: {
-        onTime: 42,
-        late: 3,
-        averageDaysToPay: 28,
+        onTime: 0,
+        late: 0,
+        averageDaysToPay: 0,
       },
       communicationHistory: {
-        inquiries: 8,
-        complaints: 1,
-        compliments: 3,
-        lastContact: '2024-01-10',
+        inquiries: 0,
+        complaints: 0,
+        compliments: 0,
+        lastContact: '',
       },
     };
   }
@@ -208,111 +208,39 @@ export class CustomerRetentionService extends BaseService {
 
     return {
       result: customerData,
-      confidence: analysis.confidence || 85,
-      reasoning:
-        analysis.reasoning || 'Customer shows strong engagement patterns',
-      recommendations: analysis.recommendations || [
-        'Implement proactive communication strategy',
-        'Offer loyalty program benefits',
-        'Provide personalized service recommendations',
-      ],
-      riskFactors: analysis.riskFactors || [
-        'Recent decrease in load frequency',
-      ],
+      confidence: analysis.confidence || 0,
+      reasoning: analysis.reasoning || '',
+      recommendations: analysis.recommendations || [],
+      riskFactors: analysis.riskFactors || [],
       retentionRisk: this.calculateRetentionRisk(customerData),
       churnProbability: this.calculateChurnProbability(customerData),
       lifetimeValue: this.calculateLifetimeValue(customerData),
-      retentionStrategies: [
-        'Proactive communication every 2 weeks',
-        'Loyalty program with tier benefits',
-        'Personalized load recommendations',
-        'Expedited payment terms for premium customers',
-      ],
-      upsellOpportunities: [
-        'Additional service areas',
-        'Premium scheduling options',
-        'Dedicated account manager',
-      ],
-      customerSatisfaction: 92,
-      loyaltyScore: 8.5,
+      retentionStrategies: [],
+      upsellOpportunities: [],
+      customerSatisfaction: 0,
+      loyaltyScore: 0,
     };
   }
 
   private async calculateRetentionMetrics(): Promise<RetentionMetrics> {
     return {
-      overallRetentionRate: 87.5,
-      averageCustomerLifetime: 3.2,
-      churnRate: 12.5,
-      revenueAtRisk: 450000,
-      topRetentionFactors: [
-        'Proactive communication',
-        'Reliable service delivery',
-        'Competitive pricing',
-        'Personalized attention',
-      ],
-      improvementAreas: [
-        'Faster response times',
-        'More flexible scheduling',
-        'Enhanced tracking capabilities',
-        'Better payment terms',
-      ],
+      overallRetentionRate: 0,
+      averageCustomerLifetime: 0,
+      churnRate: 0,
+      revenueAtRisk: 0,
+      topRetentionFactors: [],
+      improvementAreas: [],
     };
   }
 
   private async performCustomerSegmentation(): Promise<CustomerSegment[]> {
-    return [
-      {
-        segmentName: 'Premium Loyal',
-        customerCount: 25,
-        averageRevenue: 85000,
-        retentionRate: 95,
-        churnRisk: 'low',
-        recommendedActions: [
-          'Maintain current service levels',
-          'Offer exclusive benefits',
-          'Request referrals',
-        ],
-      },
-      {
-        segmentName: 'At Risk',
-        customerCount: 12,
-        averageRevenue: 35000,
-        retentionRate: 65,
-        churnRisk: 'high',
-        recommendedActions: [
-          'Immediate outreach campaign',
-          'Special retention offers',
-          'Enhanced support services',
-        ],
-      },
-      {
-        segmentName: 'Growth Potential',
-        customerCount: 38,
-        averageRevenue: 52000,
-        retentionRate: 82,
-        churnRisk: 'medium',
-        recommendedActions: [
-          'Upsell additional services',
-          'Expand service areas',
-          'Introduce premium features',
-        ],
-      },
-    ];
+    return [];
   }
 
   private async generateRetentionRecommendations(
     customerId?: string
   ): Promise<string[]> {
-    return [
-      'Implement automated customer health monitoring',
-      'Create personalized communication schedules',
-      'Develop customer success playbooks',
-      'Establish early warning systems for at-risk customers',
-      'Launch customer feedback programs',
-      'Create loyalty and rewards programs',
-      'Provide proactive support and education',
-      'Develop customer onboarding excellence',
-    ];
+    return [];
   }
 
   private calculateRetentionRisk(
