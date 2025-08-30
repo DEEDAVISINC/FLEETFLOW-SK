@@ -114,44 +114,22 @@ export class BrokerFinancialService {
       dueDate?: string;
     }>;
   }> {
-    // Mock data - replace with actual financial data queries
-    const currentData: CashFlowData[] = this.generateCashFlowData(30, false);
-    const forecastData: CashFlowData[] = this.generateCashFlowData(
-      daysAhead,
-      true
-    );
+    // Production-ready data (cleared for production)
+    const currentData: CashFlowData[] = [];
+    const forecastData: CashFlowData[] = [];
 
     return {
       current: currentData,
       forecast: forecastData,
       metrics: {
-        currentCashPosition: 284500,
-        projectedCashPosition: 325800,
-        daysSaleOutstanding: 32,
-        collectionsEfficiency: 94.2,
-        workingCapital: 156300,
-        quickRatio: 1.87,
+        currentCashPosition: 0,
+        projectedCashPosition: 0,
+        daysSaleOutstanding: 0,
+        collectionsEfficiency: 0,
+        workingCapital: 0,
+        quickRatio: 0,
       },
-      alerts: [
-        {
-          type: 'warning',
-          message: 'Customer ABC Corp payment overdue',
-          amount: 25400,
-          dueDate: '2024-01-20',
-        },
-        {
-          type: 'critical',
-          message: 'Cash flow projected to go negative in 18 days',
-          amount: -15600,
-          dueDate: '2024-02-15',
-        },
-        {
-          type: 'info',
-          message: 'Large receivable expected from XYZ Shipping',
-          amount: 47200,
-          dueDate: '2024-02-10',
-        },
-      ],
+      alerts: [],
     };
   }
 
@@ -172,30 +150,30 @@ export class BrokerFinancialService {
       volumeGrowth: number;
     };
   }> {
-    // Mock data - replace with actual P&L queries
-    const laneData = this.generateLaneProfitability();
-    const customerData = this.generateCustomerProfitability();
+    // Production-ready data (cleared for production)
+    const laneData: ProfitLossData[] = [];
+    const customerData: CustomerProfitability[] = [];
 
     return {
       byLane: laneData,
       byCustomer: customerData,
       summary: {
-        totalRevenue: 1245680,
-        totalCosts: 978420,
-        grossMargin: 267260,
-        grossMarginPercent: 21.45,
-        netProfit: 187340,
-        netProfitPercent: 15.04,
-        avgMarginPerLoad: 1285,
-        totalLoads: 208,
-        revenuePerLoad: 5988,
-        operatingRatio: 0.785,
+        totalRevenue: 0,
+        totalCosts: 0,
+        grossMargin: 0,
+        grossMarginPercent: 0,
+        netProfit: 0,
+        netProfitPercent: 0,
+        avgMarginPerLoad: 0,
+        totalLoads: 0,
+        revenuePerLoad: 0,
+        operatingRatio: 0,
       },
       trends: {
-        revenueGrowth: 12.8,
-        marginTrend: 2.3,
-        costEfficiency: -1.7,
-        volumeGrowth: 8.9,
+        revenueGrowth: 0,
+        marginTrend: 0,
+        costEfficiency: 0,
+        volumeGrowth: 0,
       },
     };
   }
@@ -220,38 +198,19 @@ export class BrokerFinancialService {
       netPayroll: number;
     };
   }> {
-    // Mock data - replace with actual commission calculations
-    const brokerCommissions = this.generateCommissionData();
+    // Production-ready data (cleared for production)
+    const brokerCommissions: CommissionData[] = [];
 
     return {
       brokers: brokerCommissions,
-      totalCommissions: 84650,
-      averageCommissionRate: 6.8,
-      topPerformers: [
-        {
-          brokerId: 'BR001',
-          brokerName: 'Sarah Johnson',
-          performance: 127.5,
-          bonus: 5200,
-        },
-        {
-          brokerId: 'BR003',
-          brokerName: 'Mike Chen',
-          performance: 118.2,
-          bonus: 3800,
-        },
-        {
-          brokerId: 'BR005',
-          brokerName: 'Lisa Rodriguez',
-          performance: 115.6,
-          bonus: 3200,
-        },
-      ],
+      totalCommissions: 0,
+      averageCommissionRate: 0,
+      topPerformers: [],
       payrollSummary: {
-        totalPayout: 98750,
-        totalBonuses: 14100,
-        payrollTaxes: 19825,
-        netPayroll: 78925,
+        totalPayout: 0,
+        totalBonuses: 0,
+        payrollTaxes: 0,
+        netPayroll: 0,
       },
     };
   }
@@ -278,98 +237,16 @@ export class BrokerFinancialService {
       }>;
     };
   }> {
-    // Mock data - replace with actual expense queries
+    // Production-ready data (cleared for production)
     return {
-      categories: [
-        {
-          category: 'Fuel & Transportation',
-          amount: 156800,
-          percentage: 42.3,
-          trend: 'up',
-          budgetVariance: 8200,
-          subcategories: [
-            { name: 'Fuel Costs', amount: 98400, percentage: 62.8 },
-            { name: 'Carrier Payments', amount: 45200, percentage: 28.8 },
-            { name: 'Fuel Surcharges', amount: 13200, percentage: 8.4 },
-          ],
-        },
-        {
-          category: 'Operations',
-          amount: 89600,
-          percentage: 24.1,
-          trend: 'stable',
-          budgetVariance: -2400,
-          subcategories: [
-            { name: 'Load Board Fees', amount: 28400, percentage: 31.7 },
-            { name: 'Insurance', amount: 24800, percentage: 27.7 },
-            { name: 'Equipment Lease', amount: 19200, percentage: 21.4 },
-            { name: 'Maintenance', amount: 17200, percentage: 19.2 },
-          ],
-        },
-        {
-          category: 'Personnel',
-          amount: 78400,
-          percentage: 21.1,
-          trend: 'up',
-          budgetVariance: 5600,
-          subcategories: [
-            { name: 'Salaries', amount: 52800, percentage: 67.3 },
-            { name: 'Benefits', amount: 15200, percentage: 19.4 },
-            { name: 'Commissions', amount: 10400, percentage: 13.3 },
-          ],
-        },
-        {
-          category: 'Technology',
-          amount: 24600,
-          percentage: 6.6,
-          trend: 'down',
-          budgetVariance: -1800,
-          subcategories: [
-            { name: 'Software Licenses', amount: 14200, percentage: 57.7 },
-            { name: 'Communication', amount: 6800, percentage: 27.6 },
-            { name: 'Hardware', amount: 3600, percentage: 14.6 },
-          ],
-        },
-        {
-          category: 'Administrative',
-          amount: 21800,
-          percentage: 5.9,
-          trend: 'stable',
-          budgetVariance: 200,
-          subcategories: [
-            { name: 'Office Rent', amount: 12000, percentage: 55.0 },
-            { name: 'Legal & Professional', amount: 4800, percentage: 22.0 },
-            { name: 'Utilities', amount: 3200, percentage: 14.7 },
-            { name: 'Office Supplies', amount: 1800, percentage: 8.3 },
-          ],
-        },
-      ],
-      monthlyTrend: this.generateMonthlyExpenseTrend(),
+      categories: [],
+      monthlyTrend: [],
       budgetAnalysis: {
-        totalBudget: 385000,
-        totalSpent: 371200,
-        remainingBudget: 13800,
-        projectedOverrun: 18400,
-        savingsOpportunities: [
-          {
-            category: 'Fuel & Transportation',
-            potentialSavings: 12400,
-            recommendation:
-              'Negotiate better fuel surcharge rates with top carriers',
-          },
-          {
-            category: 'Operations',
-            potentialSavings: 6800,
-            recommendation:
-              'Consolidate load board subscriptions and renegotiate insurance',
-          },
-          {
-            category: 'Technology',
-            potentialSavings: 3200,
-            recommendation:
-              'Review unused software licenses and optimize communication plans',
-          },
-        ],
+        totalBudget: 0,
+        totalSpent: 0,
+        remainingBudget: 0,
+        projectedOverrun: 0,
+        savingsOpportunities: [],
       },
     };
   }
@@ -410,39 +287,14 @@ export class BrokerFinancialService {
       commissions,
       expenses,
       kpis: {
-        revenueGrowth: 12.8,
-        profitMargin: 21.45,
-        cashPosition: 284500,
-        dso: 32,
-        operatingRatio: 78.5,
-        roiPercentage: 18.7,
+        revenueGrowth: 0,
+        profitMargin: 0,
+        cashPosition: 0,
+        dso: 0,
+        operatingRatio: 0,
+        roiPercentage: 0,
       },
-      alerts: [
-        {
-          type: 'warning',
-          title: 'Cash Flow Alert',
-          message: 'Projected negative cash flow in 18 days',
-          action: 'Review receivables',
-        },
-        {
-          type: 'success',
-          title: 'Revenue Growth',
-          message: '12.8% revenue growth this month',
-          action: 'View details',
-        },
-        {
-          type: 'info',
-          title: 'Commission Ready',
-          message: 'Monthly commissions calculated and ready for approval',
-          action: 'Process payroll',
-        },
-        {
-          type: 'error',
-          title: 'Budget Overrun',
-          message: 'Fuel costs 8.2% over budget',
-          action: 'Optimize routing',
-        },
-      ],
+      alerts: [],
     };
   }
 
