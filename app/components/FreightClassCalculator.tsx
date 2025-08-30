@@ -23,9 +23,11 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
   onClassSelected,
   currentValue = '',
   embedded = false,
-  title = "Freight Class Calculator"
+  title = 'Freight Class Calculator',
 }) => {
-  const [searchType, setSearchType] = useState<'description' | 'item'>('description');
+  const [searchType, setSearchType] = useState<'description' | 'item'>(
+    'description'
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<FreightClassResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,24 +38,24 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setIsLoading(true);
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       let searchResults: FreightClassResult[] = [];
-      
+
       if (searchType === 'description') {
-        searchResults = mockNMFCData.filter(item =>
+        searchResults = mockNMFCData.filter((item) =>
           item.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
       } else {
-        searchResults = mockNMFCData.filter(item =>
+        searchResults = mockNMFCData.filter((item) =>
           item.itemNumber.includes(searchQuery)
         );
       }
-      
+
       setResults(searchResults);
     } catch (error) {
       console.error('Search error:', error);
@@ -70,30 +72,34 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
     }
   };
 
-  const containerStyle = embedded ? {
-    background: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: '8px',
-    padding: '16px',
-    border: '1px solid rgba(255, 255, 255, 0.1)'
-  } : {
-    background: 'rgba(255, 255, 255, 0.12)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '16px',
-    padding: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  };
+  const containerStyle = embedded
+    ? {
+        background: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: '8px',
+        padding: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+      }
+    : {
+        background: 'rgba(255, 255, 255, 0.12)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+      };
 
   return (
     <div style={containerStyle}>
-      <h3 style={{ 
-        color: 'white', 
-        marginBottom: '16px', 
-        fontSize: embedded ? '16px' : '18px',
-        fontWeight: '600'
-      }}>
+      <h3
+        style={{
+          color: 'white',
+          marginBottom: '16px',
+          fontSize: embedded ? '16px' : '18px',
+          fontWeight: '600',
+        }}
+      >
         📦 {title}
       </h3>
-      
+
       {/* Search Type Toggle */}
       <div style={{ marginBottom: '16px' }}>
         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -101,15 +107,16 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
             onClick={() => setSearchType('description')}
             style={{
               padding: '8px 16px',
-              background: searchType === 'description' 
-                ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
-                : 'rgba(255, 255, 255, 0.1)',
+              background:
+                searchType === 'description'
+                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                  : 'rgba(255, 255, 255, 0.1)',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
             }}
           >
             Search by Description
@@ -118,30 +125,32 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
             onClick={() => setSearchType('item')}
             style={{
               padding: '8px 16px',
-              background: searchType === 'item' 
-                ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
-                : 'rgba(255, 255, 255, 0.1)',
+              background:
+                searchType === 'item'
+                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                  : 'rgba(255, 255, 255, 0.1)',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
             }}
           >
             Search by NMFC Item
           </button>
         </div>
-        
+
         {/* Search Input */}
         <div style={{ display: 'flex', gap: '8px' }}>
           <input
-            type="text"
+            type='text'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={searchType === 'description' 
-              ? "Enter commodity description (e.g., 'auto parts')" 
-              : "Enter NMFC item number (e.g., '52640')"
+            placeholder={
+              searchType === 'description'
+                ? "Enter commodity description (e.g., 'auto parts')"
+                : "Enter NMFC item number (e.g., '52640')"
             }
             style={{
               flex: 1,
@@ -150,7 +159,7 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
               border: '1px solid rgba(255, 255, 255, 0.3)',
               background: 'rgba(255, 255, 255, 0.1)',
               color: 'white',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
@@ -166,7 +175,7 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
               fontWeight: '600',
               cursor: 'pointer',
               fontSize: '14px',
-              opacity: (isLoading || !searchQuery.trim()) ? 0.5 : 1
+              opacity: isLoading || !searchQuery.trim() ? 0.5 : 1,
             }}
           >
             {isLoading ? 'Searching...' : 'Search'}
@@ -176,14 +185,18 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
 
       {/* Current Selection */}
       {selectedClass && (
-        <div style={{
-          background: 'rgba(16, 185, 129, 0.2)',
-          border: '1px solid #10b981',
-          borderRadius: '8px',
-          padding: '12px',
-          marginBottom: '16px'
-        }}>
-          <div style={{ color: '#10b981', fontWeight: '600', fontSize: '14px' }}>
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.2)',
+            border: '1px solid #10b981',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '16px',
+          }}
+        >
+          <div
+            style={{ color: '#10b981', fontWeight: '600', fontSize: '14px' }}
+          >
             ✅ Selected Freight Class: {selectedClass}
           </div>
         </div>
@@ -191,63 +204,88 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
 
       {/* Results */}
       {results.length > 0 && (
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          borderRadius: '8px',
-          padding: '16px',
-          marginTop: '16px'
-        }}>
-          <h4 style={{ color: 'white', marginBottom: '12px', fontSize: '14px' }}>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '8px',
+            padding: '16px',
+            marginTop: '16px',
+          }}
+        >
+          <h4
+            style={{ color: 'white', marginBottom: '12px', fontSize: '14px' }}
+          >
             Search Results ({results.length} found)
           </h4>
-          <div style={{ display: 'grid', gap: '8px', maxHeight: '300px', overflowY: 'auto' }}>
+          <div
+            style={{
+              display: 'grid',
+              gap: '8px',
+              maxHeight: '300px',
+              overflowY: 'auto',
+            }}
+          >
             {results.map((result, index) => (
               <div
                 key={index}
                 onClick={() => handleClassSelect(result)}
                 style={{
-                  background: selectedClass === result.class.toString() 
-                    ? 'rgba(16, 185, 129, 0.2)' 
-                    : 'rgba(255, 255, 255, 0.1)',
-                  border: selectedClass === result.class.toString() 
-                    ? '1px solid #10b981' 
-                    : '1px solid rgba(255, 255, 255, 0.2)',
+                  background:
+                    selectedClass === result.class.toString()
+                      ? 'rgba(16, 185, 129, 0.2)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  border:
+                    selectedClass === result.class.toString()
+                      ? '1px solid #10b981'
+                      : '1px solid rgba(255, 255, 255, 0.2)',
                   padding: '12px',
                   borderRadius: '6px',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
                 }}
                 onMouseEnter={(e) => {
                   if (selectedClass !== result.class.toString()) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.15)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (selectedClass !== result.class.toString()) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.1)';
                   }
                 }}
               >
-                <div style={{ 
-                  color: selectedClass === result.class.toString() ? '#10b981' : 'white', 
-                  fontWeight: '600', 
-                  marginBottom: '4px',
-                  fontSize: '14px'
-                }}>
+                <div
+                  style={{
+                    color:
+                      selectedClass === result.class.toString()
+                        ? '#10b981'
+                        : 'white',
+                    fontWeight: '600',
+                    marginBottom: '4px',
+                    fontSize: '14px',
+                  }}
+                >
                   Item {result.itemNumber} - Class {result.class}
                 </div>
-                <div style={{ 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  marginBottom: '4px',
-                  fontSize: '13px'
-                }}>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '4px',
+                    fontSize: '13px',
+                  }}
+                >
                   {result.description}
                 </div>
-                <div style={{ 
-                  color: 'rgba(255, 255, 255, 0.7)', 
-                  fontSize: '12px'
-                }}>
-                  Density: {result.density} PCF | Handling: {result.handling} | Liability: {result.liability}
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '12px',
+                  }}
+                >
+                  Density: {result.density} PCF | Handling: {result.handling} |
+                  Liability: {result.liability}
                 </div>
               </div>
             ))}
@@ -256,17 +294,28 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
       )}
 
       {/* Quick Class Reference */}
-      <div style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        borderRadius: '8px',
-        padding: '12px',
-        marginTop: '16px'
-      }}>
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '8px',
+          padding: '12px',
+          marginTop: '16px',
+        }}
+      >
         <h4 style={{ color: 'white', marginBottom: '8px', fontSize: '14px' }}>
           Quick Freight Class Reference
         </h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '6px' }}>
-          {[50, 55, 60, 65, 70, 77.5, 85, 92.5, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500].map(classNum => (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+            gap: '6px',
+          }}
+        >
+          {[
+            50, 55, 60, 65, 70, 77.5, 85, 92.5, 100, 110, 125, 150, 175, 200,
+            250, 300, 400, 500,
+          ].map((classNum) => (
             <button
               key={classNum}
               onClick={() => {
@@ -279,21 +328,23 @@ export const FreightClassCalculator: React.FC<FreightClassCalculatorProps> = ({
                     density: 'Various',
                     stowability: 'Various',
                     handling: 'Various',
-                    liability: 'Various'
+                    liability: 'Various',
                   };
                   onClassSelected(classNum, mockResult);
                 }
               }}
               style={{
-                padding: '6px',              background: selectedClass === classNum.toString() 
-                ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
-                : 'rgba(255, 255, 255, 0.1)',
+                padding: '6px',
+                background:
+                  selectedClass === classNum.toString()
+                    ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                    : 'rgba(255, 255, 255, 0.1)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
                 fontSize: '12px',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
               }}
             >
               {classNum}

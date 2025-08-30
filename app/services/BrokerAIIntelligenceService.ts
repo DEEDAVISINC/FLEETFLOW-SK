@@ -105,7 +105,7 @@ export class BrokerAIIntelligenceService {
   private initializeMockData() {
     // Production-ready data (cleared for production)
     this.loadOpportunities = [];
-    
+
     // Initialize empty customer insights
     this.customerInsights.clear();
   }

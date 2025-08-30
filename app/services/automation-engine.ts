@@ -69,7 +69,7 @@ export class AIAutomationEngine {
   private scheduleTask(name: string, schedule: string, callback: () => void) {
     try {
       const task = cron.schedule(schedule, callback, {
-        timezone: "America/New_York"
+        timezone: 'America/New_York',
       });
 
       this.tasks.set(name, task);
@@ -80,7 +80,11 @@ export class AIAutomationEngine {
   }
 
   // Helper function to send SMS notifications
-  private async sendSMSNotification(to: string, message: string, priority: string = 'normal') {
+  private async sendSMSNotification(
+    to: string,
+    message: string,
+    priority: string = 'normal'
+  ) {
     try {
       const response = await fetch('/api/notifications/send', {
         method: 'POST',
@@ -89,8 +93,8 @@ export class AIAutomationEngine {
           type: 'sms',
           to,
           message,
-          priority
-        })
+          priority,
+        }),
       });
       return await response.json();
     } catch (error) {
@@ -99,7 +103,12 @@ export class AIAutomationEngine {
   }
 
   // Helper function to send email notifications
-  private async sendEmailNotification(to: string, subject: string, htmlMessage: string, type: string = 'notification') {
+  private async sendEmailNotification(
+    to: string,
+    subject: string,
+    htmlMessage: string,
+    type: string = 'notification'
+  ) {
     try {
       const response = await fetch('/api/notifications/send', {
         method: 'POST',
@@ -109,8 +118,8 @@ export class AIAutomationEngine {
           to,
           subject,
           htmlMessage,
-          emailType: type
-        })
+          emailType: type,
+        }),
       });
       return await response.json();
     } catch (error) {
@@ -121,20 +130,20 @@ export class AIAutomationEngine {
   // Run predictive maintenance analysis
   private async runPredictiveMaintenance() {
     console.log('🔧 Running AI Predictive Maintenance Analysis...');
-    
+
     try {
       // Get vehicle data (in real app, this would come from database)
       const vehicles = await this.getVehicleData();
-      
+
       for (const vehicle of vehicles) {
         const analysis = await fleetAI.predictMaintenance(vehicle);
-        
+
         // Send alerts for high-risk vehicles
         if (analysis.riskLevel === 'high') {
           await this.sendMaintenanceAlert(vehicle, analysis);
         }
       }
-      
+
       console.log('✅ Predictive maintenance analysis completed');
     } catch (error) {
       console.error('❌ Predictive maintenance analysis failed:', error);
@@ -144,18 +153,21 @@ export class AIAutomationEngine {
   // Run route optimization
   private async runRouteOptimization() {
     console.log('🗺️ Running AI Route Optimization...');
-    
+
     try {
       const vehicles = await this.getActiveVehicles();
       const destinations = await this.getPendingDestinations();
-      
+
       if (vehicles.length > 0 && destinations.length > 0) {
-        const optimization = await fleetAI.optimizeRoute(vehicles, destinations);
-        
+        const optimization = await fleetAI.optimizeRoute(
+          vehicles,
+          destinations
+        );
+
         // Notify dispatch team of optimized routes
         await this.sendRouteOptimizationAlert(optimization);
       }
-      
+
       console.log('✅ Route optimization completed');
     } catch (error) {
       console.error('❌ Route optimization failed:', error);
@@ -165,19 +177,19 @@ export class AIAutomationEngine {
   // Run driver performance analysis
   private async runDriverAnalysis() {
     console.log('👨‍💼 Running AI Driver Performance Analysis...');
-    
+
     try {
       const drivers = await this.getDriverData();
-      
+
       for (const driver of drivers) {
         const analysis = await fleetAI.analyzeDriverPerformance(driver);
-        
+
         // Send performance reports to management
         if (analysis.performanceScore < 70) {
           await this.sendDriverPerformanceAlert(driver, analysis);
         }
       }
-      
+
       console.log('✅ Driver performance analysis completed');
     } catch (error) {
       console.error('❌ Driver performance analysis failed:', error);
@@ -187,14 +199,14 @@ export class AIAutomationEngine {
   // Run cost optimization analysis
   private async runCostOptimization() {
     console.log('💰 Running AI Cost Optimization Analysis...');
-    
+
     try {
       const fleetData = await this.getFleetData();
       const optimization = await fleetAI.optimizeCosts(fleetData);
-      
+
       // Send cost optimization recommendations to management
       await this.sendCostOptimizationReport(optimization);
-      
+
       console.log('✅ Cost optimization analysis completed');
     } catch (error) {
       console.error('❌ Cost optimization analysis failed:', error);
@@ -204,16 +216,17 @@ export class AIAutomationEngine {
   // Run smart monitoring
   private async runSmartMonitoring() {
     console.log('🧠 Running Smart Monitoring...');
-    
+
     try {
       // Monitor various fleet metrics
       const alerts = await this.checkForAnomalies();
-      
+
       for (const alert of alerts) {
-        const smartNotification = await fleetAI.generateSmartNotification(alert);
+        const smartNotification =
+          await fleetAI.generateSmartNotification(alert);
         await this.sendSmartAlert(smartNotification);
       }
-      
+
       console.log('✅ Smart monitoring completed');
     } catch (error) {
       console.error('❌ Smart monitoring failed:', error);
@@ -223,7 +236,7 @@ export class AIAutomationEngine {
   // Send maintenance alert
   private async sendMaintenanceAlert(vehicle: any, analysis: any) {
     const message = `🚨 HIGH MAINTENANCE RISK: Vehicle ${vehicle.name} requires immediate attention. Risk: ${analysis.riskLevel}. Next service due: ${analysis.nextServiceDue}`;
-    
+
     // Send SMS to fleet manager
     await this.sendSMSNotification(
       process.env.FLEET_MANAGER_PHONE || '+1234567890',
@@ -243,7 +256,7 @@ export class AIAutomationEngine {
   // Send route optimization alert
   private async sendRouteOptimizationAlert(optimization: any) {
     const message = `🗺️ AI Route Optimization Complete! Efficiency Score: ${optimization.efficiencyScore}%. Estimated savings: $${optimization.totalEstimatedCost}`;
-    
+
     await this.sendSMSNotification(
       process.env.DISPATCH_PHONE || '+1234567890',
       message,
@@ -273,7 +286,10 @@ export class AIAutomationEngine {
 
   // Send smart alert
   private async sendSmartAlert(notification: any) {
-    if (notification.priority === 'critical' || notification.priority === 'high') {
+    if (
+      notification.priority === 'critical' ||
+      notification.priority === 'high'
+    ) {
       await this.sendSMSNotification(
         process.env.EMERGENCY_CONTACT || '+1234567890',
         notification.message,
@@ -289,7 +305,7 @@ export class AIAutomationEngine {
 
   private async getActiveVehicles() {
     const vehicles = await this.getVehicleData();
-    return vehicles.filter(v => v.status === 'active');
+    return vehicles.filter((v) => v.status === 'active');
   }
 
   private async getPendingDestinations() {
@@ -297,7 +313,7 @@ export class AIAutomationEngine {
       'New York, NY',
       'Philadelphia, PA',
       'Baltimore, MD',
-      'Washington, DC'
+      'Washington, DC',
     ];
   }
 
@@ -309,7 +325,7 @@ export class AIAutomationEngine {
         experience: 5,
         safetyRecord: 98,
         deliveryRate: 94,
-        fuelEfficiency: 87
+        fuelEfficiency: 87,
       },
       {
         id: 'D002',
@@ -317,8 +333,8 @@ export class AIAutomationEngine {
         experience: 3,
         safetyRecord: 92,
         deliveryRate: 89,
-        fuelEfficiency: 91
-      }
+        fuelEfficiency: 91,
+      },
     ];
   }
 
@@ -328,14 +344,14 @@ export class AIAutomationEngine {
       totalDrivers: 30,
       monthlyFuelCost: 45000,
       monthlyMaintenanceCost: 12000,
-      averageUtilization: 78
+      averageUtilization: 78,
     };
   }
 
   private async checkForAnomalies() {
     // Check for various anomalies
     const alerts = [];
-    
+
     // Example: Check fuel efficiency drop
     const vehicles = await this.getVehicleData();
     for (const vehicle of vehicles) {
@@ -343,11 +359,11 @@ export class AIAutomationEngine {
         alerts.push({
           type: 'fuel_efficiency_drop',
           vehicle: vehicle,
-          severity: 'medium'
+          severity: 'medium',
         });
       }
     }
-    
+
     return alerts;
   }
 

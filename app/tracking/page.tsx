@@ -570,9 +570,10 @@ export default function LiveTrackingPage() {
     const delivered = shipments.filter((s) => s.status === 'delivered').length;
     const delayed = shipments.filter((s) => s.status === 'delayed').length;
     const totalValue = shipments.reduce((sum, s) => sum + s.value, 0);
-    const avgProgress = totalShipments > 0 
-      ? shipments.reduce((sum, s) => sum + s.progress, 0) / totalShipments
-      : 0;
+    const avgProgress =
+      totalShipments > 0
+        ? shipments.reduce((sum, s) => sum + s.progress, 0) / totalShipments
+        : 0;
     const totalMiles = shipments.reduce((sum, s) => sum + (s.miles || 0), 0);
     const highPriority = shipments.filter((s) => s.priority === 'high').length;
 
@@ -2053,7 +2054,9 @@ export default function LiveTrackingPage() {
                             formatStatus={formatStatus}
                             getPriorityColor={getPriorityColor}
                             formatCurrency={formatCurrency}
-                            isSelectedForBulk={selectedShipments.has(shipment.id)}
+                            isSelectedForBulk={selectedShipments.has(
+                              shipment.id
+                            )}
                             onBulkSelect={handleBulkSelect}
                           />
                         ))
@@ -2083,7 +2086,8 @@ export default function LiveTrackingPage() {
                             No LiveLoad shipments yet
                           </h3>
                           <p style={{ fontSize: '14px', margin: 0 }}>
-                            Shipments will appear here once tracking data is available
+                            Shipments will appear here once tracking data is
+                            available
                           </p>
                         </div>
                       )}
@@ -2386,12 +2390,13 @@ export default function LiveTrackingPage() {
                         const carrierShipments = shipments.filter(
                           (s) => s.carrier === carrier
                         );
-                        const avgProgress = carrierShipments.length > 0
-                          ? carrierShipments.reduce(
-                              (sum, s) => sum + s.progress,
-                              0
-                            ) / carrierShipments.length
-                          : 0;
+                        const avgProgress =
+                          carrierShipments.length > 0
+                            ? carrierShipments.reduce(
+                                (sum, s) => sum + s.progress,
+                                0
+                              ) / carrierShipments.length
+                            : 0;
                         const onTimeCount = carrierShipments.filter(
                           (s) => s.status === 'delivered'
                         ).length;

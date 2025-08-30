@@ -234,42 +234,42 @@ class UnifiedLoadBoardService {
   // Private Methods
   private async getDATFreeLoads(): Promise<UnifiedLoad[]> {
     // DAT Free API integration
-    return this.generateMockLoads('DAT_FREE', 15);
+    return [];
   }
 
   private async getTruckstopPublicLoads(): Promise<UnifiedLoad[]> {
     // Truckstop.com public API
-    return this.generateMockLoads('TRUCKSTOP_PUBLIC', 12);
+    return [];
   }
 
   private async get123LoadBoardPublic(): Promise<UnifiedLoad[]> {
     // 123LoadBoard public API
-    return this.generateMockLoads('123LOADBOARD', 18);
+    return [];
   }
 
   private async getGovernmentLoads(): Promise<UnifiedLoad[]> {
     // Government contracts (USPS, military, etc.)
-    return this.generateMockLoads('GOVERNMENT', 8);
+    return [];
   }
 
   private async getPublicFreightExchanges(): Promise<UnifiedLoad[]> {
     // Public freight exchanges
-    return this.generateMockLoads('DAT_FREE', 10);
+    return [];
   }
 
   private async getTQLPartnerLoads(): Promise<UnifiedLoad[]> {
     // TQL Partnership API (Phase 3)
-    return this.generateMockLoads('TQL_PARTNER', 25);
+    return [];
   }
 
   private async getLandstarPartnerLoads(): Promise<UnifiedLoad[]> {
     // Landstar Partnership API (Phase 3)
-    return this.generateMockLoads('LANDSTAR_PARTNER', 20);
+    return [];
   }
 
   private async getSpotFreightPartnerLoads(): Promise<UnifiedLoad[]> {
     // Spot Freight Partnership API (Phase 3)
-    return this.generateMockLoads('SPOT_FREIGHT', 22);
+    return [];
   }
 
   private normalizeAndMerge(loads: UnifiedLoad[]): UnifiedLoad[] {
@@ -350,124 +350,26 @@ class UnifiedLoadBoardService {
   }
 
   private generateMockLoads(source: string, count: number): UnifiedLoad[] {
-    const cities = [
-      { city: 'Atlanta', state: 'GA', zipCode: '30309' },
-      { city: 'Dallas', state: 'TX', zipCode: '75201' },
-      { city: 'Chicago', state: 'IL', zipCode: '60601' },
-      { city: 'Los Angeles', state: 'CA', zipCode: '90210' },
-      { city: 'Miami', state: 'FL', zipCode: '33101' },
-      { city: 'Phoenix', state: 'AZ', zipCode: '85001' },
-      { city: 'Denver', state: 'CO', zipCode: '80202' },
-      { city: 'Seattle', state: 'WA', zipCode: '98101' },
-    ];
-
-    const equipment = ['van', 'reefer', 'flatbed', 'stepdeck'];
-    const commodities = [
-      'General Freight',
-      'Food Products',
-      'Electronics',
-      'Auto Parts',
-      'Machinery',
-    ];
-
-    return Array.from({ length: count }, (_, i) => {
-      const origin = cities[Math.floor(Math.random() * cities.length)];
-      const destination = cities[Math.floor(Math.random() * cities.length)];
-      const miles = Math.floor(Math.random() * 2000) + 100;
-      const rate = Math.floor(miles * (1.8 + Math.random() * 1.5));
-
-      return {
-        id: `${source}-${Date.now()}-${i}`,
-        source: source as any,
-        sourceStatus: source.includes('PARTNER')
-          ? 'partnership'
-          : ('free' as any),
-        origin,
-        destination,
-        pickupDate: new Date(
-          Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        deliveryDate: new Date(
-          Date.now() + Math.random() * 10 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        postedDate: new Date(
-          Date.now() - Math.random() * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        rate,
-        rateType: 'flat' as const,
-        weight: Math.floor(Math.random() * 45000) + 5000,
-        equipment: equipment[
-          Math.floor(Math.random() * equipment.length)
-        ] as any,
-        commodity: commodities[Math.floor(Math.random() * commodities.length)],
-        hazmat: Math.random() > 0.9,
-        miles,
-        deadheadMiles: Math.floor(Math.random() * 200),
-        brokerInfo: {
-          name: `${source.replace('_', ' ')} Logistics`,
-          phone: `(555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
-          email:
-            Math.random() > 0.3
-              ? `dispatch@${source.toLowerCase().replace('_', '')}.com`
-              : undefined,
-          rating: Math.floor(Math.random() * 2) + 3,
-          paymentTerms: 'Net 30',
-        },
-        lastUpdated: new Date().toISOString(),
-      };
-    });
+    return [];
   }
 
   private getMockFreeLoads(): UnifiedLoad[] {
-    return this.generateMockLoads('DAT_FREE', 20);
+    return [];
   }
 
   private getMockAllLoads(): UnifiedLoad[] {
-    return [
-      ...this.generateMockLoads('DAT_FREE', 15),
-      ...this.generateMockLoads('TRUCKSTOP_PUBLIC', 12),
-      ...this.generateMockLoads('123LOADBOARD', 18),
-      ...this.generateMockLoads('GOVERNMENT', 8),
-      ...this.generateMockLoads('TQL_PARTNER', 25),
-      ...this.generateMockLoads('LANDSTAR_PARTNER', 20),
-    ];
+    return [];
   }
 
   private getMockMetrics(): LoadBoardMetrics {
     return {
-      totalLoads: 1247,
-      averageRate: 2850,
-      topSources: [
-        { source: 'TQL_PARTNER', count: 342, avgRate: 3200 },
-        { source: 'DAT_FREE', count: 298, avgRate: 2650 },
-        { source: 'LANDSTAR_PARTNER', count: 267, avgRate: 3100 },
-        { source: '123LOADBOARD', count: 189, avgRate: 2400 },
-        { source: 'TRUCKSTOP_PUBLIC', count: 151, avgRate: 2300 },
-      ],
-      geographicDistribution: [
-        { state: 'TX', count: 187 },
-        { state: 'CA', count: 156 },
-        { state: 'FL', count: 134 },
-        { state: 'IL', count: 98 },
-        { state: 'GA', count: 87 },
-      ],
-      equipmentDemand: [
-        { equipment: 'van', count: 456, avgRate: 2650 },
-        { equipment: 'reefer', count: 342, avgRate: 3200 },
-        { equipment: 'flatbed', count: 289, avgRate: 2950 },
-        { equipment: 'stepdeck', count: 160, avgRate: 3400 },
-      ],
-      timeToBook: [
-        { source: 'TQL_PARTNER', avgMinutes: 45 },
-        { source: 'LANDSTAR_PARTNER', avgMinutes: 62 },
-        { source: 'DAT_FREE', avgMinutes: 180 },
-        { source: '123LOADBOARD', avgMinutes: 240 },
-      ],
-      partnershipROI: [
-        { source: 'TQL', freeVsPaid: { free: 2650, paid: 3200 } },
-        { source: 'LANDSTAR', freeVsPaid: { free: 2400, paid: 3100 } },
-        { source: 'DAT', freeVsPaid: { free: 2200, paid: 2800 } },
-      ],
+      totalLoads: 0,
+      averageRate: 0,
+      topSources: [],
+      geographicDistribution: [],
+      equipmentDemand: [],
+      timeToBook: [],
+      partnershipROI: [],
     };
   }
 }

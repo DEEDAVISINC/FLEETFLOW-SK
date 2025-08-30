@@ -105,7 +105,10 @@ class OnboardingIntegration {
   }
 
   // Update carrier profile
-  updateCarrierProfile(carrierId: string, updates: Partial<CarrierPortalProfile>): boolean {
+  updateCarrierProfile(
+    carrierId: string,
+    updates: Partial<CarrierPortalProfile>
+  ): boolean {
     const profile = this.carrierProfiles.get(carrierId);
     if (!profile) return false;
 
@@ -117,7 +120,7 @@ class OnboardingIntegration {
   // Create new carrier from onboarding data
   createCarrierFromOnboarding(onboardingData: OnboardingData): string {
     const carrierId = `carrier_${Date.now()}`;
-    
+
     const profile: CarrierPortalProfile = {
       id: carrierId,
       companyName: onboardingData.carrierInfo.companyName,
@@ -135,17 +138,21 @@ class OnboardingIntegration {
       agreementSigned: onboardingData.agreements.masterAgreement,
       portalAccess: onboardingData.portalAccess.enabled,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.carrierProfiles.set(carrierId, profile);
     this.onboardingData.set(carrierId, onboardingData);
-    
+
     return carrierId;
   }
 
   // Get onboarding progress
-  getOnboardingProgress(carrierId: string): { completed: number; total: number; percentage: number } {
+  getOnboardingProgress(carrierId: string): {
+    completed: number;
+    total: number;
+    percentage: number;
+  } {
     const data = this.onboardingData.get(carrierId);
     if (!data) return { completed: 0, total: 6, percentage: 0 };
 
@@ -159,7 +166,11 @@ class OnboardingIntegration {
     if (data.agreements.masterAgreement) completed++;
     if (data.portalAccess.enabled) completed++;
 
-    return { completed, total, percentage: Math.round((completed / total) * 100) };
+    return {
+      completed,
+      total,
+      percentage: Math.round((completed / total) * 100),
+    };
   }
 }
 

@@ -234,46 +234,46 @@ export default function UnifiedLiveTrackingWorkflow({
   // Initialize tracking data
   useEffect(() => {
     const initializeTracking = () => {
-      // Default values for when no load is provided (demo mode)
+      // Default values for when no load is provided
       const defaultLoad = {
-        id: 'DEMO-001',
-        origin: 'Atlanta, GA',
-        destination: 'Miami, FL',
-        pickupDate: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-        deliveryDate: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
-        status: 'In Transit',
+        id: '',
+        origin: '',
+        destination: '',
+        pickupDate: '',
+        deliveryDate: '',
+        status: '',
       };
 
       const currentLoad = load || defaultLoad;
-      const currentDriverName = driverName || 'Demo Driver';
-      const currentDriverId = driverId || 'DRV-001';
+      const currentDriverName = driverName || '';
+      const currentDriverId = driverId || '';
 
       setTrackingData({
         loadId: currentLoad.id,
         currentLocation: {
-          lat: 33.749 + Math.random() * 0.1,
-          lng: -84.388 + Math.random() * 0.1,
+          lat: 0,
+          lng: 0,
           timestamp: new Date().toISOString(),
-          speed: 65 + Math.random() * 10,
-          heading: 45,
+          speed: 0,
+          heading: 0,
         },
         status:
           currentLoad.status === 'In Transit' ? 'in_transit' : 'at_pickup',
         eta: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
         distance: {
-          total: 647,
-          remaining: 423,
-          traveled: 224,
+          total: 0,
+          remaining: 0,
+          traveled: 0,
         },
         driver: {
           name: currentDriverName,
-          phone: '(555) 123-4567',
+          phone: '',
           id: currentDriverId,
         },
         vehicle: {
-          unit: 'TRK-2024-001',
-          make: 'Freightliner',
-          model: 'Cascadia',
+          unit: '',
+          make: '',
+          model: '',
         },
         milestones: [
           {
@@ -312,7 +312,7 @@ export default function UnifiedLiveTrackingWorkflow({
   // Initialize workflow
   useEffect(() => {
     const initializeWorkflow = () => {
-      const currentLoadId = load?.id || 'DEMO-001';
+      const currentLoadId = load?.id || '';
       const currentDriverId = driverId || 'DRV-001';
 
       let currentWorkflow = workflowManager.getWorkflow(currentLoadId);
@@ -363,7 +363,7 @@ export default function UnifiedLiveTrackingWorkflow({
       }
 
       // Update workflow status
-      const currentLoadId = load?.id || 'DEMO-001';
+      const currentLoadId = load?.id || '';
       const updatedWorkflow = workflowManager.getWorkflow(currentLoadId);
       if (updatedWorkflow) {
         setWorkflow(updatedWorkflow);
@@ -425,35 +425,43 @@ export default function UnifiedLiveTrackingWorkflow({
 
   const generateBOL = () => {
     const currentLoad = load || {
-      id: 'DEMO-001',
-      origin: 'Atlanta, GA',
-      destination: 'Miami, FL',
+      id: '',
+      origin: '',
+      destination: '',
     };
-    const currentDriverName = driverName || 'Demo Driver';
+    const currentDriverName = driverName || '';
 
     const newBOLData: BOLData = {
       bolNumber: `BOL-${currentLoad.id.replace(/\D/g, '').slice(-6)}-001`,
       shipperInfo: {
-        name: 'Shipper Company Inc.',
-        address: '123 Shipping Lane',
-        city: currentLoad.origin.split(',')[0].trim(),
-        state: currentLoad.origin.split(',')[1]?.trim() || 'TX',
-        zipCode: '75001',
+        name: '',
+        address: '',
+        city: currentLoad.origin
+          ? currentLoad.origin.split(',')[0]?.trim()
+          : '',
+        state: currentLoad.origin
+          ? currentLoad.origin.split(',')[1]?.trim()
+          : '',
+        zipCode: '',
       },
       consigneeInfo: {
-        name: 'Consignee Company LLC',
-        address: '456 Delivery Drive',
-        city: currentLoad.destination.split(',')[0].trim(),
-        state: currentLoad.destination.split(',')[1]?.trim() || 'GA',
-        zipCode: '30301',
+        name: '',
+        address: '',
+        city: currentLoad.destination
+          ? currentLoad.destination.split(',')[0]?.trim()
+          : '',
+        state: currentLoad.destination
+          ? currentLoad.destination.split(',')[1]?.trim()
+          : '',
+        zipCode: '',
       },
       freightDetails: {
-        description: 'General Freight',
-        weight: 20000,
-        pieces: 10,
-        class: '70',
+        description: '',
+        weight: 0,
+        pieces: 0,
+        class: '',
       },
-      specialInstructions: 'Handle with care',
+      specialInstructions: '',
       generatedAt: new Date().toISOString(),
       signedBy: currentDriverName,
       signatureDate: new Date().toISOString(),
@@ -548,8 +556,7 @@ export default function UnifiedLiveTrackingWorkflow({
                 margin: '8px 0 0 0',
               }}
             >
-              Load {load?.id || 'DEMO-001'} • Driver:{' '}
-              {driverName || 'Demo Driver'}
+              Load {load?.id || ''} • Driver: {driverName || ''}
             </p>
           </div>
           <div
@@ -586,7 +593,7 @@ export default function UnifiedLiveTrackingWorkflow({
                 height: '40px',
                 background: 'rgba(255, 255, 255, 0.2)',
               }}
-             />
+            />
             <div style={{ textAlign: 'center' }}>
               <div
                 style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}
@@ -1127,7 +1134,7 @@ export default function UnifiedLiveTrackingWorkflow({
                             fontWeight: '500',
                           }}
                         >
-                          TRK-2024-001
+                          {trackingData?.vehicle?.unit || 'N/A'}
                         </span>
                       </div>
                       <div
@@ -1151,7 +1158,10 @@ export default function UnifiedLiveTrackingWorkflow({
                             fontWeight: '500',
                           }}
                         >
-                          Freightliner Cascadia
+                          {trackingData?.vehicle?.make &&
+                          trackingData?.vehicle?.model
+                            ? `${trackingData.vehicle.make} ${trackingData.vehicle.model}`
+                            : 'N/A'}
                         </span>
                       </div>
                       <div

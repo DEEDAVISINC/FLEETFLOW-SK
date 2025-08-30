@@ -2125,42 +2125,46 @@ export default function EnhancedCarrierPortal() {
                       doc: string;
                       expires: string;
                     }> = [];
-                    
-                    return expirationAlerts.length > 0 ? expirationAlerts.map((alert, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        fontSize: '0.9rem',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        padding: '8px 0',
-                      }}
-                    >
-                      <span>
-                        {alert.carrier} - {alert.doc}
-                      </span>
-                      <span
+
+                    return expirationAlerts.length > 0 ? (
+                      expirationAlerts.map((alert, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '0.9rem',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            padding: '8px 0',
+                          }}
+                        >
+                          <span>
+                            {alert.carrier} - {alert.doc}
+                          </span>
+                          <span
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.2)',
+                              color: '#fca5a5',
+                              padding: '4px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              fontWeight: '500',
+                            }}
+                          >
+                            Expires {alert.expires}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div
                         style={{
-                          background: 'rgba(239, 68, 68, 0.2)',
-                          color: '#fca5a5',
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '0.8rem',
-                          fontWeight: '500',
+                          textAlign: 'center',
+                          padding: '20px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          fontSize: '0.9rem',
                         }}
                       >
-                        Expires {alert.expires}
-                      </span>
-                    </div>
-                    )) : (
-                      <div style={{ 
-                        textAlign: 'center', 
-                        padding: '20px', 
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        fontSize: '0.9rem'
-                      }}>
                         No document expiration alerts
                       </div>
                     );

@@ -111,7 +111,8 @@ class BrokerAnalyticsService {
       const customerRate = load.rate || 0;
       const carrierRate = customerRate; // No margin calculation until real data
       const margin = customerRate - carrierRate;
-      const marginPercent = customerRate > 0 ? (margin / customerRate) * 100 : 0;
+      const marginPercent =
+        customerRate > 0 ? (margin / customerRate) * 100 : 0;
       const targetMargin = 0; // No target margin until real data
 
       let status: 'on_target' | 'below_target' | 'above_target';
@@ -264,7 +265,11 @@ class BrokerAnalyticsService {
    * Update load transport mode
    */
   updateLoadTransportMode(loadId: string, newMode: string, newRate: number) {
-    return brokerAgentIntegrationService.updateLoadTransportMode(loadId, newMode, newRate);
+    return brokerAgentIntegrationService.updateLoadTransportMode(
+      loadId,
+      newMode,
+      newRate
+    );
   }
 
   /**

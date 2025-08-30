@@ -9,7 +9,7 @@ import EnhancedFlowterModal from './EnhancedFlowterModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import FlowterButton from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
-import Navigation from './Navigation';
+import ProfessionalNavigation from './Navigation';
 import NotificationBell from './NotificationBell';
 import PhoneSystemWidget from './PhoneSystemWidget';
 import Providers from './Providers';
@@ -169,6 +169,16 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // Full-screen admin pages (no navigation) - DEPOINTE dashboard removed as it needs all app functions
   const isAdminDashboard = pathname === '/ai-company-dashboard';
 
+  // Debug logging for DEPOINTE dashboard
+  if (pathname === '/depointe-dashboard') {
+    console.log('🔍 DEPOINTE Dashboard Debug:', {
+      pathname,
+      isAdminDashboard,
+      isHydrated,
+      user: user?.id,
+    });
+  }
+
   if (isAdminDashboard) {
     return (
       <Providers>
@@ -201,7 +211,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <SimpleErrorBoundary>
           <ShipperProvider>
             <LoadProvider>
-              <Navigation />
+              <ProfessionalNavigation />
               <main
                 style={{
                   paddingTop: '70px',

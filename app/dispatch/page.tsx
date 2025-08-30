@@ -63,133 +63,29 @@ interface Notification {
   read: boolean;
 }
 
-// Mock dispatcher profile
+// Dispatcher profile
 const dispatcher: DispatcherProfile = {
-  id: 'disp-001',
-  name: 'Sarah Johnson',
-  email: 'sarah.johnson@fleetflow.com',
-  phone: '(555) 123-4567',
-  department: 'Operations',
-  role: 'Senior Dispatcher',
-  experience: '8 years',
-  activeLoads: 12,
-  completedLoads: 847,
-  efficiency: 96,
-  avgResponseTime: '3 min',
+  id: '',
+  name: '',
+  email: '',
+  phone: '',
+  department: '',
+  role: '',
+  experience: '',
+  activeLoads: 0,
+  completedLoads: 0,
+  efficiency: 0,
+  avgResponseTime: '0 min',
 };
 
-// Mock notifications
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    message: 'New load FL-001 requires immediate assignment',
-    timestamp: '2 minutes ago',
-    type: 'load_assignment',
-    read: false,
-  },
-  {
-    id: '2',
-    message: 'Driver John Smith confirmed load TX-002',
-    timestamp: '15 minutes ago',
-    type: 'dispatch_update',
-    read: false,
-  },
-  {
-    id: '3',
-    message: 'System maintenance scheduled for tonight',
-    timestamp: '1 hour ago',
-    type: 'system_alert',
-    read: true,
-  },
-];
+// Notifications
+const mockNotifications: Notification[] = [];
 
-// Mock compliance data for drivers
-const mockComplianceData: ComplianceStatus[] = [
-  {
-    driverId: 'driver-001',
-    driverName: 'John Rodriguez',
-    hosStatus: 'compliant',
-    drivingTimeRemaining: 8.5,
-    dutyTimeRemaining: 11.2,
-    nextRestRequired: '2024-01-15T22:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: true,
-    complianceScore: 95,
-  },
-  {
-    driverId: 'driver-002',
-    driverName: 'Maria Santos',
-    hosStatus: 'warning',
-    drivingTimeRemaining: 2.1,
-    dutyTimeRemaining: 3.5,
-    nextRestRequired: '2024-01-15T18:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: true,
-    complianceScore: 78,
-  },
-  {
-    driverId: 'driver-003',
-    driverName: 'David Thompson',
-    hosStatus: 'violation',
-    drivingTimeRemaining: 0,
-    dutyTimeRemaining: 0,
-    nextRestRequired: '2024-01-15T16:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'expiring_soon',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: false,
-    complianceScore: 45,
-  },
-  {
-    driverId: 'driver-004',
-    driverName: 'Lisa Chen',
-    hosStatus: 'unavailable',
-    drivingTimeRemaining: 0,
-    dutyTimeRemaining: 0,
-    nextRestRequired: '2024-01-16T06:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: false,
-    complianceScore: 88,
-  },
-];
+// Compliance data for drivers
+const mockComplianceData: ComplianceStatus[] = [];
 
 // Drivers currently on the road
-const driversOnTheRoad = [
-  {
-    id: 'driver-001',
-    truckingCompany: 'Rodriguez Transport LLC',
-    driverName: 'John Rodriguez',
-    mcNumber: 'MC-123456',
-    currentLoad: 'FL-001 (Dallas → Phoenix)',
-    status: 'En Route',
-  },
-  {
-    id: 'driver-002',
-    truckingCompany: 'Santos Logistics Inc',
-    driverName: 'Maria Santos',
-    mcNumber: 'MC-789012',
-    currentLoad: 'FL-002 (Houston → Denver)',
-    status: 'Loading',
-  },
-  {
-    id: 'driver-003',
-    truckingCompany: 'Thompson Freight Co',
-    driverName: 'David Thompson',
-    mcNumber: 'MC-345678',
-    currentLoad: 'FL-003 (Austin → Seattle)',
-    status: 'At Delivery',
-  },
-];
+const driversOnTheRoad = [];
 
 // Unified Load Board Section Component
 const UnifiedLoadBoardSection = () => {
@@ -1516,348 +1412,7 @@ export default function DispatchCentral() {
     );
   });
 
-  const sampleLoads = [
-    {
-      id: 'L-001',
-      loadBoardNumber: '100001',
-      loadIdentifier: 'MJ-25015-LAXPHX-SMP-DVF-001',
-      bolNumber: 'BOL-MJ25015-001',
-      origin: 'Los Angeles, CA',
-      destination: 'Phoenix, AZ',
-      broker: 'Mike Johnson',
-      rate: 2800,
-      status: 'Delivered',
-      distance: '372',
-      type: 'Dry Van',
-      equipment: 'Dry Van 53ft',
-      weight: '40,000 lbs',
-      dispatcher: 'Mike Johnson',
-      pickupDate: '2024-01-15',
-      deliveryDate: '2024-01-16',
-      serviceLevel: 'Express',
-      priorityLevel: 'High',
-      loadDescription: {
-        commodity: 'Electronics',
-        description: 'Consumer electronics - laptops, phones, tablets',
-        pieces: 240,
-        palletCount: 12,
-        packagingType: 'Cartons on pallets',
-        poNumber: 'PO-2024-0115',
-        specialHandling: 'Handle with care - fragile items',
-        weight: '40,000 lbs',
-        dimensions: '53ft trailer',
-      },
-      billingDetails: {
-        baseRate: 2800,
-        lumperFee: {
-          pickup: 125,
-          delivery: 150,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 280,
-        },
-        detention: 0,
-        layover: 0,
-        liftgateFee: 75,
-        accessorials: [
-          { type: 'Liftgate', amount: 75 },
-          { type: 'Inside Delivery', amount: 100 },
-        ],
-        customCharges: [{ name: 'Inside Delivery', amount: 100 }],
-        totalAccessorials: 175,
-        totalAmount: 3530, // 2800 + 125 + 150 + 280 + 175
-        totalRate: 3530,
-      },
-      customerInfo: {
-        name: 'Tech Solutions Inc.',
-        address: '123 Business Blvd\nLos Angeles, CA 90210',
-        phone: '(555) 123-4567',
-        email: 'shipping@techsolutions.com',
-        contactPerson: 'Sarah Johnson',
-      },
-      equipmentDetail: {
-        type: 'Dry Van',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-002',
-      loadBoardNumber: '200002',
-      loadIdentifier: 'AJ-25016-CHINYC-BIG-FBL-002',
-      origin: 'Chicago, IL',
-      destination: 'New York, NY',
-      broker: 'Alex Johnson',
-      rate: 1800,
-      status: 'Assigned',
-      distance: '780',
-      type: 'Flatbed',
-      equipment: 'Flatbed 48ft',
-      weight: '35,000 lbs',
-      dispatcher: 'Sarah Wilson',
-      pickupDate: '2024-01-16',
-      deliveryDate: '2024-01-18',
-      serviceLevel: 'Standard',
-      priorityLevel: 'Medium',
-      loadDescription: {
-        commodity: 'Steel Coils',
-        description: 'Hot rolled steel coils for construction',
-        pieces: 8,
-        palletCount: 0,
-        packagingType: 'Banded coils',
-        poNumber: 'PO-2024-0116',
-        specialHandling: 'Requires tarps and chains',
-        weight: '35,000 lbs',
-        dimensions: '48ft flatbed',
-      },
-      billingDetails: {
-        baseRate: 1800,
-        lumperFee: {
-          pickup: 0,
-          delivery: 200,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 180,
-        },
-        detention: 100,
-        layover: 0,
-        accessorials: [
-          { type: 'Tarps', amount: 150 },
-          { type: 'Chains', amount: 75 },
-        ],
-        customCharges: [
-          { name: 'Tarps', amount: 150 },
-          { name: 'Chains', amount: 75 },
-        ],
-        totalAccessorials: 225,
-        totalAmount: 2505, // 1800 + 0 + 200 + 180 + 100 + 225
-        totalRate: 2505,
-      },
-      customerInfo: {
-        name: 'Industrial Steel Corp',
-        address: '456 Manufacturing St\nChicago, IL 60601',
-        phone: '(555) 234-5678',
-        email: 'logistics@industrialsteel.com',
-        contactPerson: 'Mike Rodriguez',
-      },
-      equipmentDetail: {
-        type: 'Flatbed',
-        length: '48ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-003',
-      loadBoardNumber: '300003',
-      loadIdentifier: 'BJ-25017-HOUDAL-COO-REF-003',
-      origin: 'Houston, TX',
-      destination: 'Dallas, TX',
-      broker: 'Bob Johnson',
-      rate: 3200,
-      status: 'In Transit',
-      distance: '200',
-      type: 'Refrigerated',
-      equipment: 'Reefer 53ft',
-      weight: '42,000 lbs',
-      dispatcher: 'Emily Davis',
-      pickupDate: '2024-01-17',
-      deliveryDate: '2024-01-17',
-      serviceLevel: 'Temperature Controlled',
-      priorityLevel: 'High',
-      loadDescription: {
-        commodity: 'Frozen Foods',
-        description: 'Frozen vegetables and prepared meals',
-        pieces: 320,
-        palletCount: 16,
-        packagingType: 'Frozen cartons',
-        poNumber: 'PO-2024-0117',
-        specialHandling: 'Maintain -10°F throughout transport',
-        weight: '42,000 lbs',
-        dimensions: '53ft reefer',
-      },
-      billingDetails: {
-        baseRate: 3200,
-        lumperFee: {
-          pickup: 175,
-          delivery: 200,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 320,
-        },
-        detention: 0,
-        layover: 0,
-        accessorials: [
-          { type: 'Temperature Monitoring', amount: 100 },
-          { type: 'Fuel Reefer', amount: 250 },
-        ],
-        customCharges: [
-          { name: 'Temperature Monitoring', amount: 100 },
-          { name: 'Fuel Reefer', amount: 250 },
-        ],
-        totalAccessorials: 350,
-        totalAmount: 4245, // 3200 + 175 + 200 + 320 + 350
-        totalRate: 4245,
-      },
-      customerInfo: {
-        name: 'Fresh Foods Distribution',
-        address: '789 Cold Storage Way\nHouston, TX 77001',
-        phone: '(555) 345-6789',
-        email: 'dispatch@freshfoods.com',
-        contactPerson: 'Lisa Chen',
-      },
-      equipmentDetail: {
-        type: 'Refrigerated',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: true,
-      },
-    },
-    {
-      id: 'L-004',
-      loadBoardNumber: '400004',
-      loadIdentifier: 'MJ-25018-MIAORL-FAS-DVF-004',
-      bolNumber: 'BOL-MJ25018-004',
-      origin: 'Miami, FL',
-      destination: 'Orlando, FL',
-      broker: 'Mike Johnson',
-      rate: 2200,
-      status: 'Delivered',
-      distance: '120',
-      type: 'Dry Van',
-      equipment: 'Dry Van 53ft',
-      weight: '38,000 lbs',
-      dispatcher: 'Sarah Wilson',
-      pickupDate: '2024-01-18',
-      deliveryDate: '2024-01-18',
-      serviceLevel: 'Same Day',
-      priorityLevel: 'Urgent',
-      loadDescription: {
-        commodity: 'Medical Supplies',
-        description: 'Hospital medical equipment and supplies',
-        pieces: 180,
-        palletCount: 9,
-        packagingType: 'Medical grade packaging',
-        poNumber: 'PO-2024-0118',
-        specialHandling: 'Clean transport - medical grade',
-        weight: '38,000 lbs',
-        dimensions: '53ft dry van',
-      },
-      billingDetails: {
-        baseRate: 2200,
-        lumperFee: {
-          pickup: 100,
-          delivery: 125,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 220,
-        },
-        detention: 50,
-        layover: 0,
-        accessorials: [
-          { type: 'Express Service', amount: 300 },
-          { type: 'Clean Trailer', amount: 150 },
-        ],
-        customCharges: [
-          { name: 'Express Service', amount: 300 },
-          { name: 'Clean Trailer', amount: 150 },
-        ],
-        totalAccessorials: 450,
-        totalAmount: 3145, // 2200 + 100 + 125 + 220 + 50 + 450
-        totalRate: 3145,
-      },
-      customerInfo: {
-        name: 'Miami Medical Center',
-        address: '321 Hospital Drive\nMiami, FL 33101',
-        phone: '(555) 456-7890',
-        email: 'procurement@miamimedical.com',
-        contactPerson: 'Dr. James Wilson',
-      },
-      equipmentDetail: {
-        type: 'Dry Van',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-005',
-      loadBoardNumber: '500005',
-      loadIdentifier: 'AJ-25019-SEAPOR-HEA-FBL-005',
-      origin: 'Seattle, WA',
-      destination: 'Portland, OR',
-      broker: 'Alex Johnson',
-      rate: 2000,
-      status: 'Available',
-      distance: '400',
-      type: 'Flatbed',
-      equipment: 'Flatbed 48ft',
-      weight: '45,000 lbs',
-      dispatcher: 'Emily Davis',
-      pickupDate: '2024-01-19',
-      deliveryDate: '2024-01-20',
-      serviceLevel: 'Standard',
-      priorityLevel: 'Medium',
-      loadDescription: {
-        commodity: 'Lumber',
-        description: 'Construction grade lumber and building materials',
-        pieces: 120,
-        palletCount: 0,
-        packagingType: 'Banded lumber stacks',
-        poNumber: 'PO-2024-0119',
-        specialHandling: 'Requires tarps for weather protection',
-        weight: '45,000 lbs',
-        dimensions: '48ft flatbed',
-      },
-      billingDetails: {
-        baseRate: 2000,
-        lumperFee: {
-          pickup: 75,
-          delivery: 100,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 200,
-        },
-        detention: 0,
-        layover: 0,
-        accessorials: [
-          { type: 'Tarps', amount: 125 },
-          { type: 'Straps', amount: 50 },
-        ],
-        customCharges: [
-          { name: 'Tarps', amount: 125 },
-          { name: 'Straps', amount: 50 },
-        ],
-        totalAccessorials: 175,
-        totalAmount: 2550, // 2000 + 75 + 100 + 200 + 175
-        totalRate: 2550,
-      },
-      customerInfo: {
-        name: 'Pacific Lumber Co.',
-        address: '654 Timber Lane\nSeattle, WA 98101',
-        phone: '(555) 567-8901',
-        email: 'shipping@pacificlumber.com',
-        contactPerson: 'Robert Kim',
-      },
-      equipmentDetail: {
-        type: 'Flatbed',
-        length: '48ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-  ];
+  const sampleLoads = [];
 
   return (
     <>
@@ -2115,7 +1670,11 @@ export default function DispatchCentral() {
                 label: '🤖 AI Optimization',
                 icon: '🤖',
               },
-              { id: 'ai-dock-scheduling', label: '🏭 AI Dock Scheduling', icon: '🏭' },
+              {
+                id: 'ai-dock-scheduling',
+                label: '🏭 AI Dock Scheduling',
+                icon: '🏭',
+              },
               { id: 'go-with-flow', label: '⚡ Go With the Flow', icon: '⚡' },
               { id: 'task-priority', label: '🎯 Task Priority', icon: '🎯' },
               { id: 'loads', label: '📋 Load Management', icon: '📋' },
@@ -2180,7 +1739,7 @@ export default function DispatchCentral() {
                     value: stats.total,
                     color: '#3b82f6',
                     bgGradient: 'linear-gradient(135deg, #3b82f6, #1e40af)',
-                    trend: '+5%',
+                    trend: '+0%',
                     icon: '📋',
                   },
                   {
@@ -2188,7 +1747,7 @@ export default function DispatchCentral() {
                     value: stats.available,
                     color: '#10b981',
                     bgGradient: 'linear-gradient(135deg, #10b981, #059669)',
-                    trend: '+12%',
+                    trend: '+0%',
                     icon: '✅',
                   },
                   {
@@ -2196,7 +1755,7 @@ export default function DispatchCentral() {
                     value: stats.assigned,
                     color: '#f59e0b',
                     bgGradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    trend: '+8%',
+                    trend: '+0%',
                     icon: '👤',
                   },
                   {
@@ -2204,7 +1763,7 @@ export default function DispatchCentral() {
                     value: stats.inTransit,
                     color: '#8b5cf6',
                     bgGradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                    trend: '+3%',
+                    trend: '+0%',
                     icon: '🚛',
                   },
                   {
@@ -2212,7 +1771,7 @@ export default function DispatchCentral() {
                     value: stats.delivered,
                     color: '#059669',
                     bgGradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    trend: '+15%',
+                    trend: '+0%',
                     icon: '✅',
                   },
                   {
@@ -2220,7 +1779,7 @@ export default function DispatchCentral() {
                     value: stats.unassigned,
                     color: '#ef4444',
                     bgGradient: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                    trend: '-2%',
+                    trend: '+0%',
                     icon: '❌',
                   },
                 ].map((item, index) => (
@@ -2656,7 +2215,9 @@ export default function DispatchCentral() {
                       gap: '8px',
                     }}
                     onClick={() => {
-                      alert('🤖 AI is analyzing dock availability and optimizing appointment times...\n\n✅ 3 bottlenecks predicted and resolved!\n📅 12 appointments optimized for maximum efficiency!');
+                      alert(
+                        '🤖 AI dock optimization ready.\n\nNo appointments to optimize at this time.'
+                      );
                     }}
                   >
                     🤖 Optimize All Appointments
@@ -2676,7 +2237,9 @@ export default function DispatchCentral() {
                       gap: '8px',
                     }}
                     onClick={() => {
-                      alert('📊 Bottleneck Analysis:\n\n🚨 High Risk:\n- Dock 3: 85% utilization (11:00 AM - 2:00 PM)\n- Dock 7: 78% utilization (2:00 PM - 4:00 PM)\n\n⚠️ Medium Risk:\n- Dock 1: 65% utilization (9:00 AM - 11:00 AM)\n\n📈 Recommendations:\n- Redistribute 3 appointments from Dock 3\n- Schedule LTL deliveries during off-peak hours');
+                      alert(
+                        '📊 Bottleneck Analysis:\n\nNo bottlenecks detected.\nAll dock utilization is optimal.'
+                      );
                     }}
                   >
                     📊 Predict Bottlenecks
@@ -2713,54 +2276,89 @@ export default function DispatchCentral() {
                   >
                     🏭 Real-Time Dock Status
                   </h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                    {[
-                      { dock: 'Dock 1', status: 'Available', utilization: 35, nextAppointment: '10:30 AM', type: 'LTL' },
-                      { dock: 'Dock 2', status: 'Loading', utilization: 95, nextAppointment: 'Now', type: 'FTL' },
-                      { dock: 'Dock 3', status: 'Critical', utilization: 85, nextAppointment: '11:00 AM', type: 'FTL' },
-                      { dock: 'Dock 4', status: 'Available', utilization: 20, nextAppointment: '2:00 PM', type: 'LTL' },
-                      { dock: 'Dock 5', status: 'Loading', utilization: 60, nextAppointment: '12:15 PM', type: 'Bulk' },
-                      { dock: 'Dock 6', status: 'Available', utilization: 45, nextAppointment: '3:30 PM', type: 'FTL' }
-                    ].map((dock, index) => (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr',
+                      gap: '12px',
+                    }}
+                  >
+                    {[].map((dock, index) => (
                       <div
                         key={index}
                         style={{
                           padding: '12px',
-                          background: dock.status === 'Critical' ? 'rgba(239, 68, 68, 0.2)' :
-                                     dock.status === 'Loading' ? 'rgba(245, 158, 11, 0.2)' :
-                                     'rgba(16, 185, 129, 0.2)',
-                          border: `1px solid ${dock.status === 'Critical' ? 'rgba(239, 68, 68, 0.4)' :
-                                                dock.status === 'Loading' ? 'rgba(245, 158, 11, 0.4)' :
-                                                'rgba(16, 185, 129, 0.4)'}`,
+                          background:
+                            dock.status === 'Critical'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : dock.status === 'Loading'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(16, 185, 129, 0.2)',
+                          border: `1px solid ${
+                            dock.status === 'Critical'
+                              ? 'rgba(239, 68, 68, 0.4)'
+                              : dock.status === 'Loading'
+                                ? 'rgba(245, 158, 11, 0.4)'
+                                : 'rgba(16, 185, 129, 0.4)'
+                          }`,
                           borderRadius: '8px',
                           cursor: 'pointer',
                         }}
                         onClick={() => {
-                          alert(`${dock.dock} Details:\n\n` +
-                                `Status: ${dock.status}\n` +
-                                `Utilization: ${dock.utilization}%\n` +
-                                `Next: ${dock.nextAppointment}\n` +
-                                `Type: ${dock.type}\n\n` +
-                                `${dock.status === 'Critical' ? '🚨 AI Recommendation: Redistribute 2 appointments to Dock 1 and Dock 4' : 
-                                  dock.status === 'Loading' ? '⏳ Estimated completion in 45 minutes' : 
-                                  '✅ Optimal for next appointment'}`);
+                          alert(
+                            `${dock.dock} Details:\n\n` +
+                              `Status: ${dock.status}\n` +
+                              `Utilization: ${dock.utilization}%\n` +
+                              `Next: ${dock.nextAppointment}\n` +
+                              `Type: ${dock.type}\n\n` +
+                              `${
+                                dock.status === 'Critical'
+                                  ? '🚨 AI Recommendation: Redistribute 2 appointments to Dock 1 and Dock 4'
+                                  : dock.status === 'Loading'
+                                    ? '⏳ Estimated completion in 45 minutes'
+                                    : '✅ Optimal for next appointment'
+                              }`
+                          );
                         }}
                       >
-                        <div style={{ color: 'white', fontWeight: 'bold', fontSize: '14px' }}>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
                           {dock.dock}
                         </div>
-                        <div style={{ 
-                          color: dock.status === 'Critical' ? '#ef4444' :
-                                 dock.status === 'Loading' ? '#f59e0b' : '#10b981',
-                          fontSize: '12px',
-                          fontWeight: '600'
-                        }}>
+                        <div
+                          style={{
+                            color:
+                              dock.status === 'Critical'
+                                ? '#ef4444'
+                                : dock.status === 'Loading'
+                                  ? '#f59e0b'
+                                  : '#10b981',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                          }}
+                        >
                           {dock.status}
                         </div>
-                        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px', marginTop: '4px' }}>
+                        <div
+                          style={{
+                            color: 'rgba(255,255,255,0.8)',
+                            fontSize: '11px',
+                            marginTop: '4px',
+                          }}
+                        >
                           {dock.utilization}% utilized
                         </div>
-                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '10px' }}>
+                        <div
+                          style={{
+                            color: 'rgba(255,255,255,0.7)',
+                            fontSize: '10px',
+                          }}
+                        >
                           Next: {dock.nextAppointment}
                         </div>
                       </div>
@@ -2788,27 +2386,83 @@ export default function DispatchCentral() {
                   >
                     📊 AI Performance
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '15px',
+                    }}
+                  >
                     {[
-                      { label: 'Appointments Optimized', value: '23', change: '+12%', color: '#10b981' },
-                      { label: 'Bottlenecks Prevented', value: '8', change: '+4', color: '#8b5cf6' },
-                      { label: 'Average Wait Time', value: '12min', change: '-8min', color: '#06b6d4' },
-                      { label: 'Dock Utilization', value: '87%', change: '+15%', color: '#f59e0b' }
+                      {
+                        label: 'Appointments Optimized',
+                        value: '0',
+                        change: '+0%',
+                        color: '#10b981',
+                      },
+                      {
+                        label: 'Bottlenecks Prevented',
+                        value: '0',
+                        change: '+0',
+                        color: '#8b5cf6',
+                      },
+                      {
+                        label: 'Average Wait Time',
+                        value: '0min',
+                        change: '0min',
+                        color: '#06b6d4',
+                      },
+                      {
+                        label: 'Dock Utilization',
+                        value: '0%',
+                        change: '+0%',
+                        color: '#f59e0b',
+                      },
                     ].map((stat, index) => (
-                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
                         <div>
-                          <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                            }}
+                          >
                             {stat.label}
                           </div>
-                          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255,255,255,0.7)',
+                              fontSize: '12px',
+                            }}
+                          >
                             Today
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ color: stat.color, fontSize: '18px', fontWeight: 'bold' }}>
+                          <div
+                            style={{
+                              color: stat.color,
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                            }}
+                          >
                             {stat.value}
                           </div>
-                          <div style={{ color: '#10b981', fontSize: '11px', fontWeight: '600' }}>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                            }}
+                          >
                             {stat.change}
                           </div>
                         </div>
@@ -2838,49 +2492,14 @@ export default function DispatchCentral() {
                 >
                   📅 AI-Optimized Appointment Queue
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {[
-                    { 
-                      time: '10:30 AM', 
-                      carrier: 'Swift Transportation', 
-                      load: 'FL-2025-007', 
-                      dock: '1', 
-                      type: 'FTL',
-                      priority: 'High',
-                      aiStatus: 'Optimized',
-                      optimization: 'Moved from Dock 3 to reduce bottleneck'
-                    },
-                    { 
-                      time: '11:15 AM', 
-                      carrier: 'YRC Freight', 
-                      load: 'FL-2025-012', 
-                      dock: '4', 
-                      type: 'LTL',
-                      priority: 'Medium',
-                      aiStatus: 'New',
-                      optimization: 'AI scheduled during low-utilization window'
-                    },
-                    { 
-                      time: '12:00 PM', 
-                      carrier: 'FedEx Freight', 
-                      load: 'FL-2025-015', 
-                      dock: '2', 
-                      type: 'Express',
-                      priority: 'Urgent',
-                      aiStatus: 'Priority',
-                      optimization: 'Fast-tracked for time-sensitive delivery'
-                    },
-                    { 
-                      time: '1:30 PM', 
-                      carrier: 'J.B. Hunt', 
-                      load: 'FL-2025-018', 
-                      dock: '6', 
-                      type: 'FTL',
-                      priority: 'Medium',
-                      aiStatus: 'Optimized',
-                      optimization: 'Adjusted time to maximize dock efficiency'
-                    }
-                  ].map((appointment, index) => (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                  }}
+                >
+                  {[].map((appointment, index) => (
                     <div
                       key={index}
                       style={{
@@ -2894,75 +2513,123 @@ export default function DispatchCentral() {
                         cursor: 'pointer',
                       }}
                       onClick={() => {
-                        alert(`Appointment Details:\n\n` +
-                              `Time: ${appointment.time}\n` +
-                              `Carrier: ${appointment.carrier}\n` +
-                              `Load: ${appointment.load}\n` +
-                              `Dock: ${appointment.dock}\n` +
-                              `Type: ${appointment.type}\n` +
-                              `Priority: ${appointment.priority}\n\n` +
-                              `🤖 AI Optimization: ${appointment.optimization}`);
+                        alert(
+                          `Appointment Details:\n\n` +
+                            `Time: ${appointment.time}\n` +
+                            `Carrier: ${appointment.carrier}\n` +
+                            `Load: ${appointment.load}\n` +
+                            `Dock: ${appointment.dock}\n` +
+                            `Type: ${appointment.type}\n` +
+                            `Priority: ${appointment.priority}\n\n` +
+                            `🤖 AI Optimization: ${appointment.optimization}`
+                        );
                       }}
                     >
-                      <div style={{ color: '#60a5fa', fontSize: '14px', fontWeight: 'bold' }}>
+                      <div
+                        style={{
+                          color: '#60a5fa',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                        }}
+                      >
                         {appointment.time}
                       </div>
                       <div>
-                        <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                          }}
+                        >
                           {appointment.carrier}
                         </div>
-                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
+                        <div
+                          style={{
+                            color: 'rgba(255,255,255,0.7)',
+                            fontSize: '12px',
+                          }}
+                        >
                           Load: {appointment.load}
                         </div>
                       </div>
-                      <div style={{ 
-                        background: appointment.type === 'Express' ? 'rgba(239, 68, 68, 0.3)' :
-                                   appointment.type === 'FTL' ? 'rgba(59, 130, 246, 0.3)' :
-                                   'rgba(16, 185, 129, 0.3)',
-                        color: appointment.type === 'Express' ? '#ef4444' :
-                               appointment.type === 'FTL' ? '#60a5fa' : '#10b981',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        textAlign: 'center'
-                      }}>
+                      <div
+                        style={{
+                          background:
+                            appointment.type === 'Express'
+                              ? 'rgba(239, 68, 68, 0.3)'
+                              : appointment.type === 'FTL'
+                                ? 'rgba(59, 130, 246, 0.3)'
+                                : 'rgba(16, 185, 129, 0.3)',
+                          color:
+                            appointment.type === 'Express'
+                              ? '#ef4444'
+                              : appointment.type === 'FTL'
+                                ? '#60a5fa'
+                                : '#10b981',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                        }}
+                      >
                         {appointment.type}
                       </div>
-                      <div style={{ 
-                        color: '#f59e0b',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        textAlign: 'center'
-                      }}>
+                      <div
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}
+                      >
                         D{appointment.dock}
                       </div>
-                      <div style={{ 
-                        background: appointment.priority === 'Urgent' ? 'rgba(239, 68, 68, 0.2)' :
-                                   appointment.priority === 'High' ? 'rgba(245, 158, 11, 0.2)' :
-                                   'rgba(107, 114, 128, 0.2)',
-                        color: appointment.priority === 'Urgent' ? '#ef4444' :
-                               appointment.priority === 'High' ? '#f59e0b' : '#9ca3af',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        textAlign: 'center'
-                      }}>
+                      <div
+                        style={{
+                          background:
+                            appointment.priority === 'Urgent'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : appointment.priority === 'High'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(107, 114, 128, 0.2)',
+                          color:
+                            appointment.priority === 'Urgent'
+                              ? '#ef4444'
+                              : appointment.priority === 'High'
+                                ? '#f59e0b'
+                                : '#9ca3af',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                        }}
+                      >
                         {appointment.priority}
                       </div>
-                      <div style={{ 
-                        background: appointment.aiStatus === 'Optimized' ? 'rgba(139, 92, 246, 0.2)' :
-                                   appointment.aiStatus === 'Priority' ? 'rgba(239, 68, 68, 0.2)' :
-                                   'rgba(16, 185, 129, 0.2)',
-                        color: appointment.aiStatus === 'Optimized' ? '#8b5cf6' :
-                               appointment.aiStatus === 'Priority' ? '#ef4444' : '#10b981',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        textAlign: 'center'
-                      }}>
+                      <div
+                        style={{
+                          background:
+                            appointment.aiStatus === 'Optimized'
+                              ? 'rgba(139, 92, 246, 0.2)'
+                              : appointment.aiStatus === 'Priority'
+                                ? 'rgba(239, 68, 68, 0.2)'
+                                : 'rgba(16, 185, 129, 0.2)',
+                          color:
+                            appointment.aiStatus === 'Optimized'
+                              ? '#8b5cf6'
+                              : appointment.aiStatus === 'Priority'
+                                ? '#ef4444'
+                                : '#10b981',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                        }}
+                      >
                         🤖 {appointment.aiStatus}
                       </div>
                     </div>
@@ -2970,7 +2637,9 @@ export default function DispatchCentral() {
                 </div>
 
                 {/* Queue Management Actions */}
-                <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+                <div
+                  style={{ marginTop: '15px', display: 'flex', gap: '10px' }}
+                >
                   <button
                     style={{
                       flex: 1,
@@ -2984,7 +2653,9 @@ export default function DispatchCentral() {
                       cursor: 'pointer',
                     }}
                     onClick={() => {
-                      alert('🤖 AI Auto-Scheduling Activated!\n\n✅ 5 appointments automatically rescheduled\n📊 Dock utilization optimized to 92%\n⏱️ Average wait time reduced by 18 minutes');
+                      alert(
+                        '🤖 AI Auto-Scheduling Ready.\n\nNo appointments to reschedule at this time.'
+                      );
                     }}
                   >
                     🤖 Auto-Schedule Next 10
@@ -3002,7 +2673,9 @@ export default function DispatchCentral() {
                       cursor: 'pointer',
                     }}
                     onClick={() => {
-                      alert('📱 Notifications Sent!\n\n✅ SMS sent to 12 carriers with updated appointment times\n📧 Email confirmations dispatched\n🔔 Dock teams notified of schedule changes');
+                      alert(
+                        '📱 Notification System Ready.\n\nNo notifications to send at this time.'
+                      );
                     }}
                   >
                     📱 Notify All Carriers
@@ -3071,7 +2744,7 @@ export default function DispatchCentral() {
                     }}
                     onClick={() => {
                       alert(
-                        '📡 Refreshing online drivers... Found 24 drivers available within 50 miles.'
+                        '📡 Driver refresh complete.\n\nNo drivers found at this time.'
                       );
                     }}
                   >
@@ -3108,7 +2781,7 @@ export default function DispatchCentral() {
                       textShadow: '0 2px 4px rgba(16, 185, 129, 0.8)',
                     }}
                   >
-                    🟢 Online Drivers (24)
+                    🟢 Online Drivers ({goWithFlowData.drivers.length})
                   </h3>
                   <div
                     style={{
@@ -3117,36 +2790,7 @@ export default function DispatchCentral() {
                       gap: '12px',
                     }}
                   >
-                    {[
-                      {
-                        name: 'John Rodriguez',
-                        location: 'Dallas, TX',
-                        distance: '12 mi',
-                        status: 'Available',
-                        equipment: 'Dry Van',
-                      },
-                      {
-                        name: 'Maria Santos',
-                        location: 'Houston, TX',
-                        distance: '45 mi',
-                        status: 'Available',
-                        equipment: 'Refrigerated',
-                      },
-                      {
-                        name: 'David Thompson',
-                        location: 'Austin, TX',
-                        distance: '78 mi',
-                        status: 'Available',
-                        equipment: 'Flatbed',
-                      },
-                      {
-                        name: 'Lisa Chen',
-                        location: 'San Antonio, TX',
-                        distance: '95 mi',
-                        status: 'Available',
-                        equipment: 'Dry Van',
-                      },
-                    ].map((driver, index) => (
+                    {[].map((driver, index) => (
                       <div
                         key={index}
                         style={{
@@ -3218,7 +2862,15 @@ export default function DispatchCentral() {
                       textShadow: '0 2px 4px rgba(239, 68, 68, 0.8)',
                     }}
                   >
-                    🚨 Urgent Loads (8)
+                    🚨 Urgent Loads (
+                    {
+                      goWithFlowData.loads.filter(
+                        (load) =>
+                          load.priority === 'URGENT' ||
+                          load.priority === 'CRITICAL'
+                      ).length
+                    }
+                    )
                   </h3>
                   <div
                     style={{
@@ -3227,29 +2879,7 @@ export default function DispatchCentral() {
                       gap: '12px',
                     }}
                   >
-                    {[
-                      {
-                        id: 'FL-2401',
-                        route: 'Dallas → Phoenix',
-                        rate: '$2,800',
-                        pickup: '2 hrs',
-                        priority: 'CRITICAL',
-                      },
-                      {
-                        id: 'FL-2402',
-                        route: 'Houston → Denver',
-                        rate: '$3,200',
-                        pickup: '4 hrs',
-                        priority: 'HIGH',
-                      },
-                      {
-                        id: 'FL-2403',
-                        route: 'Austin → Seattle',
-                        rate: '$4,500',
-                        pickup: '6 hrs',
-                        priority: 'HIGH',
-                      },
-                    ].map((load, index) => (
+                    {[].map((load, index) => (
                       <div
                         key={index}
                         style={{
@@ -3345,7 +2975,7 @@ export default function DispatchCentral() {
                           }}
                           onClick={() => {
                             alert(
-                              `⚡ Broadcasting ${load.id} to 24 nearby drivers... Expected response in 2-5 minutes.`
+                              `⚡ Broadcasting ready.\n\nNo drivers found to broadcast to.`
                             );
                           }}
                         >
@@ -3375,7 +3005,7 @@ export default function DispatchCentral() {
                       textShadow: '0 2px 4px rgba(59, 130, 246, 0.8)',
                     }}
                   >
-                    📡 Active Offers (12)
+                    📡 Active Offers (0)
                   </h3>
                   <div
                     style={{
@@ -3384,26 +3014,7 @@ export default function DispatchCentral() {
                       gap: '12px',
                     }}
                   >
-                    {[
-                      {
-                        load: 'FL-2401',
-                        driver: 'John Rodriguez',
-                        expires: '4:32',
-                        status: 'Pending',
-                      },
-                      {
-                        load: 'FL-2402',
-                        driver: 'Maria Santos',
-                        expires: '2:15',
-                        status: 'Viewed',
-                      },
-                      {
-                        load: 'FL-2403',
-                        driver: 'David Thompson',
-                        expires: '6:45',
-                        status: 'Pending',
-                      },
-                    ].map((offer, index) => (
+                    {[].map((offer, index) => (
                       <div
                         key={index}
                         style={{
@@ -3528,7 +3139,7 @@ export default function DispatchCentral() {
                     </label>
                     <input
                       type='text'
-                      placeholder='FL-2404'
+                      placeholder='Load ID'
                       style={{
                         width: '100%',
                         padding: '12px',
@@ -3555,7 +3166,7 @@ export default function DispatchCentral() {
                     </label>
                     <input
                       type='text'
-                      placeholder='Dallas, TX → Phoenix, AZ'
+                      placeholder='Origin → Destination'
                       style={{
                         width: '100%',
                         padding: '12px',
@@ -3582,7 +3193,7 @@ export default function DispatchCentral() {
                     </label>
                     <input
                       type='text'
-                      placeholder='$2,800'
+                      placeholder='Rate'
                       style={{
                         width: '100%',
                         padding: '12px',
@@ -3650,7 +3261,7 @@ export default function DispatchCentral() {
                     }}
                     onClick={() => {
                       alert(
-                        '⚡ Broadcasting load to 24 online drivers within 50 miles... Drivers will receive instant notifications on their mobile apps.'
+                        '⚡ Broadcasting ready. No drivers found to broadcast to at this time.'
                       );
                     }}
                   >
@@ -3672,7 +3283,7 @@ export default function DispatchCentral() {
                     }}
                     onClick={() => {
                       alert(
-                        '🤖 AI is analyzing driver performance, location, equipment, and preferences to find the best matches...'
+                        '🤖 AI driver matching ready.\n\nNo drivers or loads to match at this time.'
                       );
                     }}
                   >
@@ -3703,48 +3314,7 @@ export default function DispatchCentral() {
                   📈 Real-Time Activity Feed
                 </h3>
                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  {[
-                    {
-                      time: '2:34 PM',
-                      action: '✅ John Rodriguez accepted FL-2401 ($2,800)',
-                      type: 'success',
-                    },
-                    {
-                      time: '2:32 PM',
-                      action: '📡 FL-2401 broadcasted to 12 nearby drivers',
-                      type: 'info',
-                    },
-                    {
-                      time: '2:31 PM',
-                      action: '⚡ Auto-match triggered for urgent load FL-2401',
-                      type: 'warning',
-                    },
-                    {
-                      time: '2:29 PM',
-                      action: '🚛 Maria Santos came online in Houston area',
-                      type: 'info',
-                    },
-                    {
-                      time: '2:27 PM',
-                      action: '❌ David Thompson declined FL-2399',
-                      type: 'error',
-                    },
-                    {
-                      time: '2:25 PM',
-                      action: '✅ Lisa Chen accepted FL-2398 ($3,400)',
-                      type: 'success',
-                    },
-                    {
-                      time: '2:23 PM',
-                      action: '📡 FL-2398 broadcasted to 8 nearby drivers',
-                      type: 'info',
-                    },
-                    {
-                      time: '2:21 PM',
-                      action: '🤖 AI recommended premium rate for FL-2398',
-                      type: 'warning',
-                    },
-                  ].map((activity, index) => (
+                  {[].map((activity, index) => (
                     <div
                       key={index}
                       style={{

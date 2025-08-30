@@ -61,133 +61,29 @@ interface Notification {
   read: boolean;
 }
 
-// Mock dispatcher profile
+// Dispatcher profile
 const dispatcher: DispatcherProfile = {
-  id: 'disp-001',
-  name: 'Sarah Johnson',
-  email: 'sarah.johnson@fleetflow.com',
-  phone: '(555) 123-4567',
-  department: 'Operations',
-  role: 'Senior Dispatcher',
-  experience: '8 years',
-  activeLoads: 12,
-  completedLoads: 847,
-  efficiency: 96,
-  avgResponseTime: '3 min',
+  id: '',
+  name: '',
+  email: '',
+  phone: '',
+  department: '',
+  role: '',
+  experience: '',
+  activeLoads: 0,
+  completedLoads: 0,
+  efficiency: 0,
+  avgResponseTime: '0 min',
 };
 
-// Mock notifications
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    message: 'New load FL-001 requires immediate assignment',
-    timestamp: '2 minutes ago',
-    type: 'load_assignment',
-    read: false,
-  },
-  {
-    id: '2',
-    message: 'Driver John Smith confirmed load TX-002',
-    timestamp: '15 minutes ago',
-    type: 'dispatch_update',
-    read: false,
-  },
-  {
-    id: '3',
-    message: 'System maintenance scheduled for tonight',
-    timestamp: '1 hour ago',
-    type: 'system_alert',
-    read: true,
-  },
-];
+// Notifications
+const mockNotifications: Notification[] = [];
 
-// Mock compliance data for drivers
-const mockComplianceData: ComplianceStatus[] = [
-  {
-    driverId: 'driver-001',
-    driverName: 'John Rodriguez',
-    hosStatus: 'compliant',
-    drivingTimeRemaining: 8.5,
-    dutyTimeRemaining: 11.2,
-    nextRestRequired: '2024-01-15T22:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: true,
-    complianceScore: 95,
-  },
-  {
-    driverId: 'driver-002',
-    driverName: 'Maria Santos',
-    hosStatus: 'warning',
-    drivingTimeRemaining: 2.1,
-    dutyTimeRemaining: 3.5,
-    nextRestRequired: '2024-01-15T18:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: true,
-    complianceScore: 78,
-  },
-  {
-    driverId: 'driver-003',
-    driverName: 'David Thompson',
-    hosStatus: 'violation',
-    drivingTimeRemaining: 0,
-    dutyTimeRemaining: 0,
-    nextRestRequired: '2024-01-15T16:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'expiring_soon',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: false,
-    complianceScore: 45,
-  },
-  {
-    driverId: 'driver-004',
-    driverName: 'Lisa Chen',
-    hosStatus: 'unavailable',
-    drivingTimeRemaining: 0,
-    dutyTimeRemaining: 0,
-    nextRestRequired: '2024-01-16T06:00:00Z',
-    cdlStatus: 'valid',
-    clearinghouseStatus: 'clear',
-    medicalCertStatus: 'current',
-    lastUpdated: new Date().toISOString(),
-    canReceiveAssignment: false,
-    complianceScore: 88,
-  },
-];
+// Compliance data for drivers
+const mockComplianceData: ComplianceStatus[] = [];
 
 // Drivers currently on the road
-const driversOnTheRoad = [
-  {
-    id: 'driver-001',
-    truckingCompany: 'Rodriguez Transport LLC',
-    driverName: 'John Rodriguez',
-    mcNumber: 'MC-123456',
-    currentLoad: 'FL-001 (Dallas → Phoenix)',
-    status: 'En Route',
-  },
-  {
-    id: 'driver-002',
-    truckingCompany: 'Santos Logistics Inc',
-    driverName: 'Maria Santos',
-    mcNumber: 'MC-789012',
-    currentLoad: 'FL-002 (Houston → Denver)',
-    status: 'Loading',
-  },
-  {
-    id: 'driver-003',
-    truckingCompany: 'Thompson Freight Co',
-    driverName: 'David Thompson',
-    mcNumber: 'MC-345678',
-    currentLoad: 'FL-003 (Austin → Seattle)',
-    status: 'At Delivery',
-  },
-];
+const driversOnTheRoad = [];
 
 // The Flow Hub Section Component
 const LoadBoardPortalSection = () => {
@@ -201,17 +97,8 @@ const LoadBoardPortalSection = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Mock driver load board access data
-    const mockData = [
-      {
-        loadBoard: 'DAT',
-        count: 2,
-        drivers: ['John Smith', 'Maria Rodriguez'],
-      },
-      { loadBoard: 'TruckStop', count: 1, drivers: ['John Smith'] },
-      { loadBoard: '123LoadBoard', count: 1, drivers: ['David Wilson'] },
-      { loadBoard: 'Sylectus', count: 0, drivers: [] },
-    ];
+    // Driver load board access data
+    const mockData = [];
 
     setTimeout(() => {
       setDriverAccounts(mockData);
@@ -1182,348 +1069,7 @@ export default function DispatcherPortal() {
     );
   });
 
-  const sampleLoads = [
-    {
-      id: 'L-001',
-      loadBoardNumber: '100001',
-      loadIdentifier: 'MJ-25015-LAXPHX-SMP-DVF-001',
-      bolNumber: 'BOL-MJ25015-001',
-      origin: 'Los Angeles, CA',
-      destination: 'Phoenix, AZ',
-      broker: 'Mike Johnson',
-      rate: 2800,
-      status: 'Delivered',
-      distance: '372',
-      type: 'Dry Van',
-      equipment: 'Dry Van 53ft',
-      weight: '40,000 lbs',
-      dispatcher: 'Mike Johnson',
-      pickupDate: '2024-01-15',
-      deliveryDate: '2024-01-16',
-      serviceLevel: 'Express',
-      priorityLevel: 'High',
-      loadDescription: {
-        commodity: 'Electronics',
-        description: 'Consumer electronics - laptops, phones, tablets',
-        pieces: 240,
-        palletCount: 12,
-        packagingType: 'Cartons on pallets',
-        poNumber: 'PO-2024-0115',
-        specialHandling: 'Handle with care - fragile items',
-        weight: '40,000 lbs',
-        dimensions: '53ft trailer',
-      },
-      billingDetails: {
-        baseRate: 2800,
-        lumperFee: {
-          pickup: 125,
-          delivery: 150,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 280,
-        },
-        detention: 0,
-        layover: 0,
-        liftgateFee: 75,
-        accessorials: [
-          { type: 'Liftgate', amount: 75 },
-          { type: 'Inside Delivery', amount: 100 },
-        ],
-        customCharges: [{ name: 'Inside Delivery', amount: 100 }],
-        totalAccessorials: 175,
-        totalAmount: 3530, // 2800 + 125 + 150 + 280 + 175
-        totalRate: 3530,
-      },
-      customerInfo: {
-        name: 'Tech Solutions Inc.',
-        address: '123 Business Blvd\nLos Angeles, CA 90210',
-        phone: '(555) 123-4567',
-        email: 'shipping@techsolutions.com',
-        contactPerson: 'Sarah Johnson',
-      },
-      equipmentDetail: {
-        type: 'Dry Van',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-002',
-      loadBoardNumber: '200002',
-      loadIdentifier: 'AJ-25016-CHINYC-BIG-FBL-002',
-      origin: 'Chicago, IL',
-      destination: 'New York, NY',
-      broker: 'Alex Johnson',
-      rate: 1800,
-      status: 'Assigned',
-      distance: '780',
-      type: 'Flatbed',
-      equipment: 'Flatbed 48ft',
-      weight: '35,000 lbs',
-      dispatcher: 'Sarah Wilson',
-      pickupDate: '2024-01-16',
-      deliveryDate: '2024-01-18',
-      serviceLevel: 'Standard',
-      priorityLevel: 'Medium',
-      loadDescription: {
-        commodity: 'Steel Coils',
-        description: 'Hot rolled steel coils for construction',
-        pieces: 8,
-        palletCount: 0,
-        packagingType: 'Banded coils',
-        poNumber: 'PO-2024-0116',
-        specialHandling: 'Requires tarps and chains',
-        weight: '35,000 lbs',
-        dimensions: '48ft flatbed',
-      },
-      billingDetails: {
-        baseRate: 1800,
-        lumperFee: {
-          pickup: 0,
-          delivery: 200,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 180,
-        },
-        detention: 100,
-        layover: 0,
-        accessorials: [
-          { type: 'Tarps', amount: 150 },
-          { type: 'Chains', amount: 75 },
-        ],
-        customCharges: [
-          { name: 'Tarps', amount: 150 },
-          { name: 'Chains', amount: 75 },
-        ],
-        totalAccessorials: 225,
-        totalAmount: 2505, // 1800 + 0 + 200 + 180 + 100 + 225
-        totalRate: 2505,
-      },
-      customerInfo: {
-        name: 'Industrial Steel Corp',
-        address: '456 Manufacturing St\nChicago, IL 60601',
-        phone: '(555) 234-5678',
-        email: 'logistics@industrialsteel.com',
-        contactPerson: 'Mike Rodriguez',
-      },
-      equipmentDetail: {
-        type: 'Flatbed',
-        length: '48ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-003',
-      loadBoardNumber: '300003',
-      loadIdentifier: 'BJ-25017-HOUDAL-COO-REF-003',
-      origin: 'Houston, TX',
-      destination: 'Dallas, TX',
-      broker: 'Bob Johnson',
-      rate: 3200,
-      status: 'In Transit',
-      distance: '200',
-      type: 'Refrigerated',
-      equipment: 'Reefer 53ft',
-      weight: '42,000 lbs',
-      dispatcher: 'Emily Davis',
-      pickupDate: '2024-01-17',
-      deliveryDate: '2024-01-17',
-      serviceLevel: 'Temperature Controlled',
-      priorityLevel: 'High',
-      loadDescription: {
-        commodity: 'Frozen Foods',
-        description: 'Frozen vegetables and prepared meals',
-        pieces: 320,
-        palletCount: 16,
-        packagingType: 'Frozen cartons',
-        poNumber: 'PO-2024-0117',
-        specialHandling: 'Maintain -10°F throughout transport',
-        weight: '42,000 lbs',
-        dimensions: '53ft reefer',
-      },
-      billingDetails: {
-        baseRate: 3200,
-        lumperFee: {
-          pickup: 175,
-          delivery: 200,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 320,
-        },
-        detention: 0,
-        layover: 0,
-        accessorials: [
-          { type: 'Temperature Monitoring', amount: 100 },
-          { type: 'Fuel Reefer', amount: 250 },
-        ],
-        customCharges: [
-          { name: 'Temperature Monitoring', amount: 100 },
-          { name: 'Fuel Reefer', amount: 250 },
-        ],
-        totalAccessorials: 350,
-        totalAmount: 4245, // 3200 + 175 + 200 + 320 + 350
-        totalRate: 4245,
-      },
-      customerInfo: {
-        name: 'Fresh Foods Distribution',
-        address: '789 Cold Storage Way\nHouston, TX 77001',
-        phone: '(555) 345-6789',
-        email: 'dispatch@freshfoods.com',
-        contactPerson: 'Lisa Chen',
-      },
-      equipmentDetail: {
-        type: 'Refrigerated',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: true,
-      },
-    },
-    {
-      id: 'L-004',
-      loadBoardNumber: '400004',
-      loadIdentifier: 'MJ-25018-MIAORL-FAS-DVF-004',
-      bolNumber: 'BOL-MJ25018-004',
-      origin: 'Miami, FL',
-      destination: 'Orlando, FL',
-      broker: 'Mike Johnson',
-      rate: 2200,
-      status: 'Delivered',
-      distance: '120',
-      type: 'Dry Van',
-      equipment: 'Dry Van 53ft',
-      weight: '38,000 lbs',
-      dispatcher: 'Sarah Wilson',
-      pickupDate: '2024-01-18',
-      deliveryDate: '2024-01-18',
-      serviceLevel: 'Same Day',
-      priorityLevel: 'Urgent',
-      loadDescription: {
-        commodity: 'Medical Supplies',
-        description: 'Hospital medical equipment and supplies',
-        pieces: 180,
-        palletCount: 9,
-        packagingType: 'Medical grade packaging',
-        poNumber: 'PO-2024-0118',
-        specialHandling: 'Clean transport - medical grade',
-        weight: '38,000 lbs',
-        dimensions: '53ft dry van',
-      },
-      billingDetails: {
-        baseRate: 2200,
-        lumperFee: {
-          pickup: 100,
-          delivery: 125,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 220,
-        },
-        detention: 50,
-        layover: 0,
-        accessorials: [
-          { type: 'Express Service', amount: 300 },
-          { type: 'Clean Trailer', amount: 150 },
-        ],
-        customCharges: [
-          { name: 'Express Service', amount: 300 },
-          { name: 'Clean Trailer', amount: 150 },
-        ],
-        totalAccessorials: 450,
-        totalAmount: 3145, // 2200 + 100 + 125 + 220 + 50 + 450
-        totalRate: 3145,
-      },
-      customerInfo: {
-        name: 'Miami Medical Center',
-        address: '321 Hospital Drive\nMiami, FL 33101',
-        phone: '(555) 456-7890',
-        email: 'procurement@miamimedical.com',
-        contactPerson: 'Dr. James Wilson',
-      },
-      equipmentDetail: {
-        type: 'Dry Van',
-        length: '53ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-    {
-      id: 'L-005',
-      loadBoardNumber: '500005',
-      loadIdentifier: 'AJ-25019-SEAPOR-HEA-FBL-005',
-      origin: 'Seattle, WA',
-      destination: 'Portland, OR',
-      broker: 'Alex Johnson',
-      rate: 2000,
-      status: 'Available',
-      distance: '400',
-      type: 'Flatbed',
-      equipment: 'Flatbed 48ft',
-      weight: '45,000 lbs',
-      dispatcher: 'Emily Davis',
-      pickupDate: '2024-01-19',
-      deliveryDate: '2024-01-20',
-      serviceLevel: 'Standard',
-      priorityLevel: 'Medium',
-      loadDescription: {
-        commodity: 'Lumber',
-        description: 'Construction grade lumber and building materials',
-        pieces: 120,
-        palletCount: 0,
-        packagingType: 'Banded lumber stacks',
-        poNumber: 'PO-2024-0119',
-        specialHandling: 'Requires tarps for weather protection',
-        weight: '45,000 lbs',
-        dimensions: '48ft flatbed',
-      },
-      billingDetails: {
-        baseRate: 2000,
-        lumperFee: {
-          pickup: 75,
-          delivery: 100,
-        },
-        fuelSurcharge: {
-          percentage: 10,
-          amount: 200,
-        },
-        detention: 0,
-        layover: 0,
-        accessorials: [
-          { type: 'Tarps', amount: 125 },
-          { type: 'Straps', amount: 50 },
-        ],
-        customCharges: [
-          { name: 'Tarps', amount: 125 },
-          { name: 'Straps', amount: 50 },
-        ],
-        totalAccessorials: 175,
-        totalAmount: 2550, // 2000 + 75 + 100 + 200 + 175
-        totalRate: 2550,
-      },
-      customerInfo: {
-        name: 'Pacific Lumber Co.',
-        address: '654 Timber Lane\nSeattle, WA 98101',
-        phone: '(555) 567-8901',
-        email: 'shipping@pacificlumber.com',
-        contactPerson: 'Robert Kim',
-      },
-      equipmentDetail: {
-        type: 'Flatbed',
-        length: '48ft',
-        weight: '80,000 lbs GVWR',
-        hazmat: false,
-        temperature: false,
-      },
-    },
-  ];
+  const sampleLoads = [];
 
   return (
     <div>
@@ -2413,36 +1959,7 @@ export default function DispatcherPortal() {
                         gap: '12px',
                       }}
                     >
-                      {[
-                        {
-                          name: 'John Rodriguez',
-                          location: 'Dallas, TX',
-                          distance: '12 mi',
-                          status: 'Available',
-                          equipment: 'Dry Van',
-                        },
-                        {
-                          name: 'Maria Santos',
-                          location: 'Houston, TX',
-                          distance: '45 mi',
-                          status: 'Available',
-                          equipment: 'Refrigerated',
-                        },
-                        {
-                          name: 'David Thompson',
-                          location: 'Austin, TX',
-                          distance: '78 mi',
-                          status: 'Available',
-                          equipment: 'Flatbed',
-                        },
-                        {
-                          name: 'Lisa Chen',
-                          location: 'San Antonio, TX',
-                          distance: '95 mi',
-                          status: 'Available',
-                          equipment: 'Dry Van',
-                        },
-                      ].map((driver, index) => (
+                      {[].map((driver, index) => (
                         <div
                           key={index}
                           style={{
@@ -2523,29 +2040,7 @@ export default function DispatcherPortal() {
                         gap: '12px',
                       }}
                     >
-                      {[
-                        {
-                          id: 'FL-2401',
-                          route: 'Dallas → Phoenix',
-                          rate: '$2,800',
-                          pickup: '2 hrs',
-                          priority: 'CRITICAL',
-                        },
-                        {
-                          id: 'FL-2402',
-                          route: 'Houston → Denver',
-                          rate: '$3,200',
-                          pickup: '4 hrs',
-                          priority: 'HIGH',
-                        },
-                        {
-                          id: 'FL-2403',
-                          route: 'Austin → Seattle',
-                          rate: '$4,500',
-                          pickup: '6 hrs',
-                          priority: 'HIGH',
-                        },
-                      ].map((load, index) => (
+                      {[].map((load, index) => (
                         <div
                           key={index}
                           style={{
@@ -2680,26 +2175,7 @@ export default function DispatcherPortal() {
                         gap: '12px',
                       }}
                     >
-                      {[
-                        {
-                          load: 'FL-2401',
-                          driver: 'John Rodriguez',
-                          expires: '4:32',
-                          status: 'Pending',
-                        },
-                        {
-                          load: 'FL-2402',
-                          driver: 'Maria Santos',
-                          expires: '2:15',
-                          status: 'Viewed',
-                        },
-                        {
-                          load: 'FL-2403',
-                          driver: 'David Thompson',
-                          expires: '6:45',
-                          status: 'Pending',
-                        },
-                      ].map((offer, index) => (
+                      {[].map((offer, index) => (
                         <div
                           key={index}
                           style={{
@@ -2825,7 +2301,7 @@ export default function DispatcherPortal() {
                       </label>
                       <input
                         type='text'
-                        placeholder='FL-2404'
+                        placeholder='Load ID'
                         style={{
                           width: '100%',
                           padding: '12px',
@@ -2852,7 +2328,7 @@ export default function DispatcherPortal() {
                       </label>
                       <input
                         type='text'
-                        placeholder='Dallas, TX → Phoenix, AZ'
+                        placeholder='Origin → Destination'
                         style={{
                           width: '100%',
                           padding: '12px',
@@ -2879,7 +2355,7 @@ export default function DispatcherPortal() {
                       </label>
                       <input
                         type='text'
-                        placeholder='$2,800'
+                        placeholder='Rate'
                         style={{
                           width: '100%',
                           padding: '12px',
@@ -3000,49 +2476,7 @@ export default function DispatcherPortal() {
                     📈 Real-Time Activity Feed
                   </h3>
                   <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                    {[
-                      {
-                        time: '2:34 PM',
-                        action: '✅ John Rodriguez accepted FL-2401 ($2,800)',
-                        type: 'success',
-                      },
-                      {
-                        time: '2:32 PM',
-                        action: '📡 FL-2401 broadcasted to 12 nearby drivers',
-                        type: 'info',
-                      },
-                      {
-                        time: '2:31 PM',
-                        action:
-                          '⚡ Auto-match triggered for urgent load FL-2401',
-                        type: 'warning',
-                      },
-                      {
-                        time: '2:29 PM',
-                        action: '🚛 Maria Santos came online in Houston area',
-                        type: 'info',
-                      },
-                      {
-                        time: '2:27 PM',
-                        action: '❌ David Thompson declined FL-2399',
-                        type: 'error',
-                      },
-                      {
-                        time: '2:25 PM',
-                        action: '✅ Lisa Chen accepted FL-2398 ($3,400)',
-                        type: 'success',
-                      },
-                      {
-                        time: '2:23 PM',
-                        action: '📡 FL-2398 broadcasted to 8 nearby drivers',
-                        type: 'info',
-                      },
-                      {
-                        time: '2:21 PM',
-                        action: '🤖 AI recommended premium rate for FL-2398',
-                        type: 'warning',
-                      },
-                    ].map((activity, index) => (
+                    {[].map((activity, index) => (
                       <div
                         key={index}
                         style={{
@@ -4721,12 +4155,7 @@ export default function DispatcherPortal() {
                     onClick={async () => {
                       try {
                         // Mock export of fleet compliance data
-                        const fleetComplianceData = `Driver Name,Driver ID,ELD Device ID,Last Load,ELD Compliance,HOS Violations,Weight Violations,Device Status,Risk Level,Last Updated
-John Rodriguez,DR-001,ELD-001,MJ-25001-TXFL,COMPLIANT,0,0,CONNECTED,LOW,2024-01-20
-Maria Santos,DR-002,ELD-002,MJ-25002-TXCA,CAUTION,1,1,CONNECTED,MEDIUM,2024-01-19
-David Thompson,DR-003,ELD-003,MJ-25003-ILOH,COMPLIANT,0,0,CONNECTED,LOW,2024-01-18
-Robert Johnson,DR-004,ELD-004,MJ-25004-FLNY,VIOLATION,2,1,PARTIAL,HIGH,2024-01-17
-Sarah Williams,DR-005,ELD-005,MJ-25005-TXCA,COMPLIANT,0,0,CONNECTED,LOW,2024-01-16`;
+                        const fleetComplianceData = `Driver Name,Driver ID,ELD Device ID,Last Load,ELD Compliance,HOS Violations,Weight Violations,Device Status,Risk Level,Last Updated`;
 
                         const blob = new Blob([fleetComplianceData], {
                           type: 'text/csv',
@@ -5163,10 +4592,6 @@ Malfunctioning Devices: 0 (0%)
 
 DRIVER COMPLIANCE DETAILS:
 Driver Name,ID,Loads,Violations,Risk Level,Last Violation Date
-John Rodriguez,DR-001,12,0,LOW,None
-Maria Santos,DR-002,14,1,MEDIUM,2024-01-19
-David Thompson,DR-003,11,0,LOW,None
-Robert Johnson,DR-004,9,2,HIGH,2024-01-17
 
 CORRECTIVE ACTIONS TAKEN:
 - Driver retraining scheduled for violation cases

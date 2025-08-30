@@ -184,8 +184,23 @@ export default function ProfessionalNavigation() {
 
   // Prevent hydration mismatch by not rendering until hydrated
   if (!isHydrated) {
-    return null;
+    console.log('🚫 Navigation not hydrated yet, waiting...');
+    return (
+      <div
+        style={{
+          height: '70px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+        }}
+      />
+    );
   }
+
+  console.log('✅ Navigation is hydrated and rendering...');
 
   return (
     <nav
