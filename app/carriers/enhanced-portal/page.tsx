@@ -1109,7 +1109,7 @@ export default function EnhancedCarrierPortal() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <Link href='/' style={{ textDecoration: 'none' }}>
+            <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
               <button
                 style={{
                   background: 'linear-gradient(135deg, #3b82f6, #1e40af)',
