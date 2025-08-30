@@ -274,14 +274,9 @@ export default function VehiclesPage() {
     overdueItems: 1,
   };
 
-  // Initialize inspection demo data and auto-refresh functionality
+  // Initialize auto-refresh functionality  
   useEffect(() => {
-    // Initialize vehicle inspection demo data
-    import('../services/VehicleInspectionService').then(
-      ({ VehicleInspectionService }) => {
-        VehicleInspectionService.initializeDemoData();
-      }
-    );
+    // Remove demo data initialization for production
 
     const interval = setInterval(() => {
       // Simulate real-time data updates
