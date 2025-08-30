@@ -1,21 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import HealthcareBatchDeployment, {
+  HealthcareTask,
+} from '../components/HealthcareBatchDeployment';
 import TaskCreationInterface from '../components/TaskCreationInterface';
 
-// Mobile optimization styles - matching billing-invoices page
-const mobileStyles = `
-  @media (max-width: 768px) {
-    .financial-grid {
-      grid-template-columns: 1fr !important;
-    }
-    .financial-card {
-      margin: 10px 0 !important;
-    }
-  }
-`;
-
-// DEPOINTE AI Staff with Human Names (all 18 members)
+// DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
 const depointeStaff = [
   {
     id: 'desiree-001',
@@ -23,12 +14,11 @@ const depointeStaff = [
     role: 'Desperate Prospects Specialist',
     department: 'Business Development',
     avatar: '🎯',
-    status: 'busy',
-    currentTask:
-      'Analyzing 47 companies with safety violations - found 12 desperate shippers',
-    tasksCompleted: 156,
-    revenue: 24500,
-    efficiency: 94.2,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'cliff-002',
@@ -37,11 +27,10 @@ const depointeStaff = [
     department: 'Business Development',
     avatar: '⛰️',
     status: 'active',
-    currentTask:
-      'Processing edge-case prospects - 23 urgent carriers identified',
-    tasksCompleted: 89,
-    revenue: 34200,
-    efficiency: 98.7,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'gary-003',
@@ -50,11 +39,10 @@ const depointeStaff = [
     department: 'Business Development',
     avatar: '📈',
     status: 'active',
-    currentTask:
-      'Generating 234 new leads - qualification pipeline flowing smoothly',
-    tasksCompleted: 178,
-    revenue: 28900,
-    efficiency: 91.5,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'will-004',
@@ -62,12 +50,11 @@ const depointeStaff = [
     role: 'Sales Operations Specialist',
     department: 'Freight Operations',
     avatar: '💼',
-    status: 'busy',
-    currentTask:
-      'Closing deals on 47 automotive suppliers - industrial sales goldmine',
-    tasksCompleted: 234,
-    revenue: 67500,
-    efficiency: 96.8,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'hunter-005',
@@ -76,11 +63,10 @@ const depointeStaff = [
     department: 'Freight Operations',
     avatar: '🎯',
     status: 'active',
-    currentTask:
-      'Hunting for talent - contacted 156 owner-operators, building recruitment army',
-    tasksCompleted: 145,
-    revenue: 45300,
-    efficiency: 93.4,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'logan-006',
@@ -88,12 +74,11 @@ const depointeStaff = [
     role: 'Logistics Coordination Specialist',
     department: 'Freight Operations',
     avatar: '🚛',
-    status: 'busy',
-    currentTask:
-      'Orchestrating supply chain logistics - managing 89 active shipments',
-    tasksCompleted: 198,
-    revenue: 54700,
-    efficiency: 97.1,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'miles-007',
@@ -102,11 +87,10 @@ const depointeStaff = [
     department: 'Freight Operations',
     avatar: '📍',
     status: 'active',
-    currentTask:
-      'Coordinating routes across 1,247 miles - optimizing dispatch efficiency',
-    tasksCompleted: 167,
-    revenue: 32100,
-    efficiency: 95.2,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'dee-008',
@@ -114,11 +98,11 @@ const depointeStaff = [
     role: 'Freight Brokerage Specialist',
     department: 'Freight Operations',
     avatar: '🚚',
-    status: 'busy',
-    currentTask: 'Negotiating freight contracts - secured $45K in new business',
-    tasksCompleted: 203,
-    revenue: 78900,
-    efficiency: 98.1,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'brook-009',
@@ -127,11 +111,10 @@ const depointeStaff = [
     department: 'Relationships',
     avatar: '🌊',
     status: 'active',
-    currentTask:
-      'Managing broker relationships - 34 new partnerships established',
-    tasksCompleted: 134,
-    revenue: 41200,
-    efficiency: 94.8,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'carrie-010',
@@ -140,11 +123,10 @@ const depointeStaff = [
     department: 'Relationships',
     avatar: '🚛',
     status: 'active',
-    currentTask:
-      'Building carrier network - onboarded 67 new carriers this month',
-    tasksCompleted: 187,
-    revenue: 52300,
-    efficiency: 96.2,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'shanell-011',
@@ -153,11 +135,10 @@ const depointeStaff = [
     department: 'Support & Service',
     avatar: '💬',
     status: 'active',
-    currentTask:
-      'Customer excellence - resolved 89 issues with 98% satisfaction',
-    tasksCompleted: 212,
-    revenue: 18700,
-    efficiency: 99.1,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'resse-012',
@@ -166,11 +147,10 @@ const depointeStaff = [
     department: 'Financial',
     avatar: '💰',
     status: 'active',
-    currentTask:
-      'Processing receivables - $78K in outstanding invoices reconciled',
-    tasksCompleted: 167,
-    revenue: 12400,
-    efficiency: 99.2,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'dell-013',
@@ -179,10 +159,10 @@ const depointeStaff = [
     department: 'Technology',
     avatar: '💻',
     status: 'active',
-    currentTask: 'System maintenance - upgraded 15 workstations, zero downtime',
-    tasksCompleted: 89,
-    revenue: 8900,
-    efficiency: 97.8,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'kameelah-014',
@@ -190,12 +170,11 @@ const depointeStaff = [
     role: 'DOT Compliance Specialist',
     department: 'Compliance & Safety',
     avatar: '⚖️',
-    status: 'busy',
-    currentTask:
-      'DOT compliance audit - reviewed 234 driver records, all compliant',
-    tasksCompleted: 145,
-    revenue: 15600,
-    efficiency: 96.4,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'regina-015',
@@ -203,11 +182,11 @@ const depointeStaff = [
     role: 'FMCSA Regulations Specialist',
     department: 'Compliance & Safety',
     avatar: '📋',
-    status: 'busy',
-    currentTask: 'FMCSA violations analysis - 8 critical issues resolved',
-    tasksCompleted: 134,
-    revenue: 18700,
-    efficiency: 98.9,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'clarence-016',
@@ -216,10 +195,10 @@ const depointeStaff = [
     department: 'Support & Service',
     avatar: '🛡️',
     status: 'active',
-    currentTask: 'Processing cargo claims - 5 claims resolved successfully',
-    tasksCompleted: 98,
-    revenue: 22300,
-    efficiency: 94.7,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'drew-017',
@@ -228,11 +207,10 @@ const depointeStaff = [
     department: 'Business Development',
     avatar: '📢',
     status: 'active',
-    currentTask:
-      'Digital marketing campaigns - 3 new campaigns launched, ROI +18%',
-    tasksCompleted: 112,
-    revenue: 31200,
-    efficiency: 93.1,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'cal-018',
@@ -241,11 +219,10 @@ const depointeStaff = [
     department: 'Operations',
     avatar: '📅',
     status: 'active',
-    currentTask:
-      'Optimizing AI schedules - 3 efficiency improvements identified',
-    tasksCompleted: 67,
-    revenue: 9800,
-    efficiency: 99.5,
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
   {
     id: 'ana-019',
@@ -253,19 +230,22 @@ const depointeStaff = [
     role: 'Data Analysis Specialist',
     department: 'Operations',
     avatar: '📊',
-    status: 'busy',
-    currentTask:
-      'Performance analytics - identified 5 optimization opportunities',
-    tasksCompleted: 156,
-    revenue: 14500,
-    efficiency: 97.2,
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
   },
 ];
 
 export default function DEPOINTEDashboard() {
   const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
+  const [isHealthcareTaskOpen, setIsHealthcareTaskOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [healthcareTasks, setHealthcareTasks] = useState<HealthcareTask[]>([]);
   const [selectedView, setSelectedView] = useState('overview');
+  const [liveActivities, setLiveActivities] = useState<any[]>([]);
+  const [staffData, setStaffData] = useState(depointeStaff);
   const [expandedDepartments, setExpandedDepartments] = useState<string[]>([
     'FREIGHT_OPERATIONS',
     'BUSINESS_DEVELOPMENT',
@@ -278,22 +258,85 @@ export default function DEPOINTEDashboard() {
     'overview' | 'tasks' | 'crm' | 'performance'
   >('overview');
 
+  // Load saved healthcare tasks and activity feed on page load
+  useEffect(() => {
+    // Load healthcare tasks from localStorage
+    const savedHealthcareTasks = localStorage.getItem(
+      'depointe-healthcare-tasks'
+    );
+    if (savedHealthcareTasks) {
+      try {
+        const tasks = JSON.parse(savedHealthcareTasks);
+        setHealthcareTasks(tasks);
+
+        // Update staff status based on saved tasks
+        setStaffData((prevStaff) => {
+          const updatedStaff = [...prevStaff];
+
+          tasks.forEach((task: HealthcareTask) => {
+            task.assignedTo.forEach((staffId: string) => {
+              const staffIndex = updatedStaff.findIndex(
+                (staff) => staff.id === staffId
+              );
+              if (staffIndex !== -1) {
+                updatedStaff[staffIndex] = {
+                  ...updatedStaff[staffIndex],
+                  status: 'busy',
+                  currentTask: `🏥 ${task.title}`,
+                  tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+                  revenue:
+                    updatedStaff[staffIndex].revenue +
+                    (task.priority === 'CRITICAL'
+                      ? 125000
+                      : task.priority === 'HIGH'
+                        ? 75000
+                        : task.priority === 'MEDIUM'
+                          ? 45000
+                          : 25000),
+                  efficiency: Math.min(
+                    95,
+                    updatedStaff[staffIndex].efficiency + 15
+                  ),
+                };
+              }
+            });
+          });
+
+          return updatedStaff;
+        });
+      } catch (error) {
+        console.error('Error loading healthcare tasks:', error);
+      }
+    }
+
+    // Load activity feed from localStorage
+    const savedActivityFeed = localStorage.getItem('depointe-activity-feed');
+    if (savedActivityFeed) {
+      try {
+        const activities = JSON.parse(savedActivityFeed);
+        setLiveActivities(activities);
+      } catch (error) {
+        console.error('Error loading activity feed:', error);
+      }
+    }
+  }, []);
+
   // Department structure and organization
   const departments = {
     FINANCIAL: {
       name: '💰 Financial',
       color: '#f59e0b',
-      staff: depointeStaff.filter((staff) => staff.department === 'Financial'),
+      staff: staffData.filter((staff) => staff.department === 'Financial'),
     },
     TECHNOLOGY: {
       name: '💻 Technology',
       color: '#3b82f6',
-      staff: depointeStaff.filter((staff) => staff.department === 'Technology'),
+      staff: staffData.filter((staff) => staff.department === 'Technology'),
     },
     FREIGHT_OPERATIONS: {
       name: '🚛 Freight Operations',
       color: '#10b981',
-      staff: depointeStaff.filter((staff) =>
+      staff: staffData.filter((staff) =>
         [
           'Logistics Coordination Specialist',
           'Dispatch Coordination Specialist',
@@ -306,7 +349,7 @@ export default function DEPOINTEDashboard() {
     RELATIONSHIPS: {
       name: '🤝 Relationships',
       color: '#8b5cf6',
-      staff: depointeStaff.filter((staff) =>
+      staff: staffData.filter((staff) =>
         [
           'Brokerage Operations Specialist',
           'Carrier Relations Specialist',
@@ -316,28 +359,28 @@ export default function DEPOINTEDashboard() {
     COMPLIANCE_SAFETY: {
       name: '⚖️ Compliance & Safety',
       color: '#ef4444',
-      staff: depointeStaff.filter(
+      staff: staffData.filter(
         (staff) => staff.department === 'Compliance & Safety'
       ),
     },
     SUPPORT_SERVICE: {
       name: '🛡️ Support & Service',
       color: '#06b6d4',
-      staff: depointeStaff.filter(
+      staff: staffData.filter(
         (staff) => staff.department === 'Support & Service'
       ),
     },
     BUSINESS_DEVELOPMENT: {
       name: '📈 Business Development',
       color: '#ec4899',
-      staff: depointeStaff.filter(
+      staff: staffData.filter(
         (staff) => staff.department === 'Business Development'
       ),
     },
     OPERATIONS: {
       name: '📊 Operations',
       color: '#f97316',
-      staff: depointeStaff.filter((staff) => staff.department === 'Operations'),
+      staff: staffData.filter((staff) => staff.department === 'Operations'),
     },
   };
 
@@ -358,23 +401,20 @@ export default function DEPOINTEDashboard() {
   };
 
   // Calculate metrics
-  const totalRevenue = depointeStaff.reduce(
-    (sum, staff) => sum + staff.revenue,
-    0
-  );
-  const totalTasks = depointeStaff.reduce(
+  const totalRevenue = staffData.reduce((sum, staff) => sum + staff.revenue, 0);
+  const totalTasks = staffData.reduce(
     (sum, staff) => sum + staff.tasksCompleted,
     0
   );
   const averageEfficiency =
-    depointeStaff.reduce((sum, staff) => sum + staff.efficiency, 0) /
-    depointeStaff.length;
-  const activeStaff = depointeStaff.filter(
+    staffData.reduce((sum, staff) => sum + staff.efficiency, 0) /
+    staffData.length;
+  const activeStaff = staffData.filter(
     (staff) => staff.status !== 'offline'
   ).length;
 
   // Available staff for task assignment
-  const availableStaff = depointeStaff.map((staff) => ({
+  const availableStaff = staffData.map((staff) => ({
     id: staff.id,
     name: staff.name,
     role: staff.role,
@@ -392,9 +432,109 @@ export default function DEPOINTEDashboard() {
     setIsTaskCreationOpen(false);
   };
 
+  // Handle healthcare batch deployment
+  const handleHealthcareBatchDeploy = (
+    healthcareTasksData: HealthcareTask[]
+  ) => {
+    console.log('🚀 HEALTHCARE BATCH DEPLOYMENT:', healthcareTasksData);
+
+    // Update healthcare tasks state
+    setHealthcareTasks(healthcareTasksData);
+
+    // Save to localStorage for persistence
+    localStorage.setItem(
+      'depointe-healthcare-tasks',
+      JSON.stringify(healthcareTasksData)
+    );
+
+    // Update staff members with their assigned tasks
+    setStaffData((prevStaff) => {
+      const updatedStaff = [...prevStaff];
+
+      healthcareTasksData.forEach((task) => {
+        task.assignedTo.forEach((staffId) => {
+          const staffIndex = updatedStaff.findIndex(
+            (staff) => staff.id === staffId
+          );
+          if (staffIndex !== -1) {
+            // Update staff member's current task and status
+            updatedStaff[staffIndex] = {
+              ...updatedStaff[staffIndex],
+              status: 'busy',
+              currentTask: `🏥 ${task.title}`,
+              tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+              // Add estimated revenue based on task priority
+              revenue:
+                updatedStaff[staffIndex].revenue +
+                (task.priority === 'CRITICAL'
+                  ? 125000
+                  : task.priority === 'HIGH'
+                    ? 75000
+                    : task.priority === 'MEDIUM'
+                      ? 45000
+                      : 25000),
+              efficiency: Math.min(
+                95,
+                updatedStaff[staffIndex].efficiency + 15
+              ),
+            };
+          }
+        });
+      });
+
+      return updatedStaff;
+    });
+
+    // Create activity entries
+    const newActivities = [
+      {
+        id: `batch-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        type: 'healthcare_deployment' as const,
+        staffId: 'system',
+        staffName: 'DEPOINTE AI',
+        action: `🚀 HEALTHCARE DEPLOYMENT: ${healthcareTasksData.length} tasks deployed to ${[...new Set(healthcareTasksData.flatMap((t) => t.assignedTo))].length} AI specialists`,
+        details: `Healthcare logistics expansion launched with $1,250K+ revenue target`,
+        priority: 'critical' as const,
+      },
+      ...healthcareTasksData.map((task) => ({
+        id: `activity-${task.id}`,
+        timestamp: new Date().toISOString(),
+        type: 'healthcare_deployment' as const,
+        staffId: task.assignedTo[0], // Primary assignee
+        staffName:
+          staffData.find((s) => s.id === task.assignedTo[0])?.name ||
+          'AI Staff',
+        action: `Healthcare task deployed: ${task.title}`,
+        details: `Priority: ${task.priority} | Timeline: ${task.timeline} | Revenue Target: ${task.revenueTarget || 'TBD'}`,
+        priority: task.priority.toLowerCase() as
+          | 'low'
+          | 'medium'
+          | 'high'
+          | 'critical',
+      })),
+    ];
+
+    // Add to activity feed
+    setLiveActivities((prev) => [...newActivities, ...prev].slice(0, 50));
+
+    // Save activity feed to localStorage
+    localStorage.setItem(
+      'depointe-activity-feed',
+      JSON.stringify([...newActivities, ...liveActivities].slice(0, 50))
+    );
+
+    setIsHealthcareTaskOpen(false);
+
+    // Show success notification
+    console.log(
+      '✅ Healthcare tasks deployed successfully to DEPOINTE AI team!'
+    );
+  };
+
   // Get detailed staff member data for CRM
   const getStaffDetails = (staffId: string) => {
-    const staff = depointeStaff.find((s) => s.id === staffId);
+    const staff = staffData.find((s) => s.id === staffId);
     if (!staff) return null;
 
     return {
@@ -571,14 +711,15 @@ export default function DEPOINTEDashboard() {
   return (
     <div
       style={{
-        minHeight: '100vh',
         background:
           'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
         padding: '20px',
+        paddingTop: '90px',
+        color: 'white',
+        fontFamily:
+          'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segue UI", Roboto, sans-serif',
       }}
     >
-      <style>{mobileStyles}</style>
-
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <div
@@ -616,29 +757,298 @@ export default function DEPOINTEDashboard() {
               Direct
             </p>
           </div>
-          <button
-            onClick={() => setIsTaskCreationOpen(true)}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {healthcareTasks.length === 0 && (
+              <button
+                onClick={() => setIsHealthcareTaskOpen(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '16px 24px',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 20px -4px rgba(239, 68, 68, 0.4)',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span style={{ fontSize: '18px' }}>🏥</span>
+                Healthcare Tasks
+              </button>
+            )}
+            <button
+              onClick={() => setIsTaskCreationOpen(true)}
+              style={{
+                background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '16px 24px',
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 8px 20px -4px rgba(34, 197, 94, 0.4)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span style={{ fontSize: '20px' }}>➕</span>
+              Add Task
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Live Campaign Deployments Section */}
+      {healthcareTasks.length > 0 && (
+        <div style={{ marginBottom: '20px' }}>
+          <h3
             style={{
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '16px 24px',
               color: 'white',
-              fontSize: '18px',
+              fontSize: '1.2rem',
               fontWeight: '700',
+              marginBottom: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            🚀 Live Campaign Deployments
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.2)',
+                color: '#22c55e',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '0.7rem',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  animation: 'pulse 2s infinite',
+                }}
+              />
+              LIVE
+            </div>
+          </h3>
+
+          {/* Ultra-Compact Campaign Card */}
+          <div
+            onClick={() => {
+              // Click to expand functionality will go here
+              console.log(
+                'Healthcare campaign clicked - expand to show individual tasks'
+              );
+            }}
+            style={{
+              background: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '12px',
+              padding: '16px 20px',
               cursor: 'pointer',
-              boxShadow: '0 8px 20px -4px rgba(34, 197, 94, 0.4)',
               transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              justifyContent: 'space-between',
+              minHeight: '60px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(34, 197, 94, 0.1)';
+              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            <span style={{ fontSize: '20px' }}>➕</span>
-            Add Task
-          </button>
+            {/* Left side - Campaign info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                }}
+              >
+                🏥
+              </div>
+              <div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '700',
+                    margin: 0,
+                  }}
+                >
+                  Healthcare Logistics Campaign
+                </h4>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.85rem',
+                    marginTop: '2px',
+                  }}
+                >
+                  {healthcareTasks.length} tasks,{' '}
+                  {
+                    [
+                      ...new Set(
+                        healthcareTasks.flatMap((task) => task.assignedTo)
+                      ),
+                    ].length
+                  }{' '}
+                  staff, $1,250K+ target,{' '}
+                  {
+                    healthcareTasks.filter(
+                      (task) => task.priority === 'CRITICAL'
+                    ).length
+                  }{' '}
+                  critical
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Staff avatars and actions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              {/* Staff avatars */}
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[
+                  ...new Set(
+                    healthcareTasks.flatMap((task) => task.assignedTo)
+                  ),
+                ]
+                  .slice(0, 3)
+                  .map((staffId) => {
+                    const staff = staffData.find((s) => s.id === staffId);
+                    return staff ? (
+                      <div
+                        key={staffId}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          background:
+                            'linear-gradient(135deg, #22c55e, #16a34a)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          border: '1px solid rgba(34, 197, 94, 0.5)',
+                        }}
+                        title={staff.name}
+                      >
+                        {staff.avatar}
+                      </div>
+                    ) : null;
+                  })}
+                {[
+                  ...new Set(
+                    healthcareTasks.flatMap((task) => task.assignedTo)
+                  ),
+                ].length > 3 && (
+                  <div
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '10px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    +
+                    {[
+                      ...new Set(
+                        healthcareTasks.flatMap((task) => task.assignedTo)
+                      ),
+                    ].length - 3}
+                  </div>
+                )}
+              </div>
+
+              {/* Clear button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent campaign click
+                  setHealthcareTasks([]);
+                  setLiveActivities([]);
+                  localStorage.removeItem('depointe-healthcare-tasks');
+                  localStorage.removeItem('depointe-activity-feed');
+                  setStaffData((prevStaff) =>
+                    prevStaff.map((staff) => ({
+                      ...staff,
+                      status: 'available',
+                      currentTask: 'Ready for task assignment',
+                      revenue: 0,
+                      efficiency: 0,
+                      tasksCompleted: 0,
+                    }))
+                  );
+                }}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  color: '#ef4444',
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+              >
+                Clear
+              </button>
+
+              {/* Expand indicator */}
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  fontSize: '12px',
+                }}
+              >
+                ▶
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+            @keyframes pulse {
+              0%,
+              100% {
+                opacity: 1;
+              }
+              50% {
+                opacity: 0.5;
+              }
+            }
+          `}</style>
         </div>
-      </div>
+      )}
 
       {/* Performance Metrics Cards */}
       <div
@@ -653,10 +1063,19 @@ export default function DEPOINTEDashboard() {
         <PerformanceMetrics
           title='💰 Revenue Metrics'
           metrics={[
-            { label: 'Daily Revenue', value: '$593,000' },
-            { label: 'Monthly Target', value: '$2.1M' },
-            { label: 'Growth Rate', value: '+24.3%' },
-            { label: 'Avg Deal Size', value: '$45,300' },
+            {
+              label: 'Total Revenue',
+              value: `$${(totalRevenue / 1000).toFixed(0)}K`,
+            },
+            { label: 'Monthly Target', value: '$500K+' },
+            { label: 'Growth Rate', value: totalRevenue > 0 ? '+15%' : '0%' },
+            {
+              label: 'Avg Deal Size',
+              value:
+                totalTasks > 0
+                  ? `$${Math.round(totalRevenue / totalTasks / 1000)}K`
+                  : '$0',
+            },
           ]}
           color='#22c55e'
         />
@@ -668,8 +1087,8 @@ export default function DEPOINTEDashboard() {
               label: 'Avg Efficiency',
               value: `${averageEfficiency.toFixed(1)}%`,
             },
-            { label: 'Response Time', value: '0.8s' },
-            { label: 'Uptime', value: '99.9%' },
+            { label: 'Response Time', value: '--' },
+            { label: 'Uptime', value: '--' },
           ]}
           color='#3b82f6'
         />
@@ -681,11 +1100,129 @@ export default function DEPOINTEDashboard() {
               label: 'Departments',
               value: Object.keys(departments).length.toString(),
             },
-            { label: 'Success Rate', value: '96.8%' },
-            { label: 'Conversion', value: '32.4%' },
+            { label: 'Success Rate', value: '--' },
+            { label: 'Conversion', value: '--' },
           ]}
           color='#8b5cf6'
         />
+      </div>
+
+      {/* Live Activity Feed */}
+      <div
+        className='financial-card'
+        style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          borderRadius: '12px',
+          padding: '20px',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          marginTop: '30px',
+        }}
+      >
+        <h2
+          className='financial-header'
+          style={{
+            color: 'white',
+            fontSize: '1.5rem',
+            fontWeight: '800',
+            marginBottom: '20px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+          }}
+        >
+          📡 Live DEPOINTE Activity Feed ({liveActivities.length} activities)
+        </h2>
+        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          {liveActivities.length > 0 ? (
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+            >
+              {liveActivities.map((activity) => (
+                <div
+                  key={activity.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(148, 163, 184, 0.1)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background:
+                        activity.priority === 'critical'
+                          ? '#ef4444'
+                          : activity.priority === 'high'
+                            ? '#f59e0b'
+                            : activity.priority === 'medium'
+                              ? '#3b82f6'
+                              : '#10b981',
+                    }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {activity.staffName}: {activity.action}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      {activity.details}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    {new Date(activity.timestamp).toLocaleTimeString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '40px 20px',
+                color: 'rgba(255, 255, 255, 0.6)',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📡</div>
+              <h3
+                style={{
+                  margin: '0 0 8px 0',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Waiting for Live Activity
+              </h3>
+              <p style={{ margin: '0', fontSize: '0.9rem' }}>
+                Your DEPOINTE AI staff activity will appear here in real-time
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Department Filter Controls */}
@@ -699,6 +1236,7 @@ export default function DEPOINTEDashboard() {
           backdropFilter: 'blur(10px)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           marginBottom: '20px',
+          marginTop: '30px',
         }}
       >
         <div
@@ -721,7 +1259,7 @@ export default function DEPOINTEDashboard() {
             }}
           >
             🎯 DEPOINTE AI Departments ({Object.keys(departments).length} Depts,{' '}
-            {depointeStaff.length} Staff)
+            {staffData.length} Staff)
           </h2>
 
           <div
@@ -1148,157 +1686,6 @@ export default function DEPOINTEDashboard() {
             </div>
           );
         })}
-      </div>
-
-      {/* Live Activity Feed */}
-      <div
-        className='financial-card'
-        style={{
-          background: 'rgba(15, 23, 42, 0.8)',
-          border: '1px solid rgba(148, 163, 184, 0.2)',
-          borderRadius: '12px',
-          padding: '20px',
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          marginTop: '30px',
-        }}
-      >
-        <h2
-          className='financial-header'
-          style={{
-            color: 'white',
-            fontSize: '1.5rem',
-            fontWeight: '800',
-            marginBottom: '20px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-          }}
-        >
-          📡 Live DEPOINTE Activity Feed
-        </h2>
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-          {[
-            {
-              time: '2 min ago',
-              message:
-                'Desiree identified 12 companies with safety violations - classic desperation signals detected',
-              agent: 'Desiree (Desperate Prospects)',
-              type: 'success',
-            },
-            {
-              time: '5 min ago',
-              message:
-                'Will completed outreach to 47 automotive suppliers - industrial sales goldmine',
-              agent: 'Will (Sales Operations)',
-              type: 'info',
-            },
-            {
-              time: '8 min ago',
-              message:
-                'Cliff generated 23 leads from desperate carriers - urgent needs identified',
-              agent: 'Cliff (Desperate Prospects)',
-              type: 'success',
-            },
-            {
-              time: '12 min ago',
-              message:
-                'Hunter contacted 156 owner-operators - building the recruitment pipeline',
-              agent: 'Hunter (Recruiting & Onboarding)',
-              type: 'info',
-            },
-            {
-              time: '15 min ago',
-              message:
-                'Logan orchestrated 89 shipments - supply chain running smoothly',
-              agent: 'Logan (Logistics)',
-              type: 'success',
-            },
-            {
-              time: '18 min ago',
-              message:
-                'Miles coordinated 1,247 miles of routes - dispatch efficiency optimized',
-              agent: 'Miles (Dispatch)',
-              type: 'info',
-            },
-            {
-              time: '22 min ago',
-              message:
-                'Regina resolved 8 FMCSA violations - compliance maintained',
-              agent: 'Regina (FMCSA Regulations)',
-              type: 'warning',
-            },
-            {
-              time: '25 min ago',
-              message:
-                'Clarence processed 5 cargo claims - all resolved successfully',
-              agent: 'Clarence (Claims & Insurance)',
-              type: 'success',
-            },
-            {
-              time: '28 min ago',
-              message:
-                'Drew launched 3 marketing campaigns - ROI increased by 18%',
-              agent: 'Drew (Marketing)',
-              type: 'success',
-            },
-            {
-              time: '32 min ago',
-              message:
-                'Resse A. Bell reconciled $78K in receivables - accounting current',
-              agent: 'Resse A. Bell (Accounting)',
-              type: 'info',
-            },
-          ].map((activity, index) => (
-            <div
-              key={index}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px',
-                marginBottom: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                border: '1px solid rgba(148, 163, 184, 0.1)',
-              }}
-            >
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background:
-                    activity.type === 'success'
-                      ? '#22c55e'
-                      : activity.type === 'warning'
-                        ? '#f59e0b'
-                        : '#3b82f6',
-                  animation: 'pulse 2s infinite',
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <p
-                  style={{
-                    color: 'white',
-                    margin: 0,
-                    fontSize: '0.9rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  {activity.message}
-                </p>
-                <p
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    margin: 0,
-                    fontSize: '0.7rem',
-                  }}
-                >
-                  {activity.agent} • {activity.time}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Staff Member CRM Details Modal */}
@@ -2526,11 +2913,18 @@ export default function DEPOINTEDashboard() {
       )}
 
       {/* Task Creation Modal */}
-      {isTaskCreationOpen && (
-        <TaskCreationInterface
-          onClose={() => setIsTaskCreationOpen(false)}
-          onTaskCreate={handleTaskCreate}
-          availableStaff={availableStaff}
+      <TaskCreationInterface
+        isOpen={isTaskCreationOpen}
+        onClose={() => setIsTaskCreationOpen(false)}
+        onTaskCreate={handleTaskCreate}
+        availableStaff={availableStaff}
+      />
+
+      {/* Healthcare Batch Deployment Modal */}
+      {isHealthcareTaskOpen && (
+        <HealthcareBatchDeployment
+          onClose={() => setIsHealthcareTaskOpen(false)}
+          onBatchDeploy={handleHealthcareBatchDeploy}
         />
       )}
     </div>
