@@ -75,73 +75,8 @@ export default function AIAutomationDashboard() {
   const loadAIInsights = async () => {
     setLoading(true);
     try {
-      // Generate sample insights (in production, these would come from your database)
-      const sampleInsights: AIInsight[] = [
-        {
-          type: 'dispatch_optimization',
-          title: 'Smart Dispatch Recommendation',
-          description:
-            'AI identified optimal carrier for Load #FL-2024-0892 with 95% confidence',
-          priority: 'high',
-          data: {
-            loadId: 'FL-2024-0892',
-            recommendedCarrier: 'Premium Transport LLC',
-            confidence: 95,
-            savings: 180,
-          },
-          timestamp: new Date().toISOString(),
-        },
-        {
-          type: 'carrier_matching',
-          title: 'Carrier Performance Alert',
-          description:
-            'Swift Logistics showing improved on-time performance (+12% this month)',
-          priority: 'medium',
-          data: { carrierId: 'CAR-001', improvement: 12, newRating: 92 },
-          timestamp: new Date().toISOString(),
-        },
-        {
-          type: 'rate_optimization',
-          title: 'Rate Optimization Opportunity',
-          description:
-            'Current market rates 8% above our pricing on Atlanta-Miami lane',
-          priority: 'medium',
-          data: {
-            lane: 'Atlanta-Miami',
-            marketRate: 2850,
-            currentRate: 2640,
-            opportunity: 210,
-          },
-          timestamp: new Date().toISOString(),
-        },
-        {
-          type: 'maintenance_prediction',
-          title: 'Predictive Maintenance Alert',
-          description:
-            'Vehicle Truck-045 showing early signs of potential brake system issues',
-          priority: 'high',
-          data: { vehicleId: 'V001', estimatedCost: 850, daysUntilService: 7 },
-          timestamp: new Date().toISOString(),
-        },
-        {
-          type: 'route_optimization',
-          title: 'Route Efficiency Opportunity',
-          description:
-            'AI identified 15% fuel savings potential on current routes',
-          priority: 'medium',
-          data: { potentialSavings: 1250, affectedRoutes: 5 },
-          timestamp: new Date().toISOString(),
-        },
-        {
-          type: 'cost_optimization',
-          title: 'Cost Reduction Opportunity',
-          description:
-            'Maintenance scheduling optimization could save $3,200/month',
-          priority: 'medium',
-          data: { monthlySavings: 3200, implementationTime: '2 weeks' },
-          timestamp: new Date().toISOString(),
-        },
-      ];
+      // Production-ready insights (cleared for production)
+      const sampleInsights: AIInsight[] = [];
 
       setInsights(sampleInsights);
     } catch (error) {
@@ -172,80 +107,9 @@ export default function AIAutomationDashboard() {
   const testAIDispatch = async () => {
     setTestingDispatch(true);
     try {
-      // Sample load and carriers for testing
-      const testLoad = {
-        id: 'FL-TEST-001',
-        origin: 'Atlanta, GA',
-        destination: 'Miami, FL',
-        weight: 35000,
-        freightClass: 'Class 70',
-        specialRequirements: ['refrigerated'],
-        urgency: 'medium',
-        value: 45000,
-        pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        deliveryDate: new Date(
-          Date.now() + 3 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        distance: 650,
-      };
-
-      const testCarriers = [
-        {
-          id: 'CAR-001',
-          name: 'Premium Transport LLC',
-          currentLocation: 'Atlanta, GA',
-          capacity: 40000,
-          specializations: ['refrigerated', 'general_freight'],
-          performanceScore: 92,
-          rateHistory: [2.45, 2.52, 2.48],
-          availability: {
-            earliestPickup: new Date().toISOString(),
-            preferredLanes: ['Southeast'],
-          },
-          equipmentType: 'refrigerated_trailer',
-          safetyRating: 88,
-          onTimePercentage: 94,
-          customerSatisfaction: 4.3,
-        },
-        {
-          id: 'CAR-002',
-          name: 'Swift Logistics Inc',
-          currentLocation: 'Jacksonville, FL',
-          capacity: 45000,
-          specializations: ['general_freight'],
-          performanceScore: 85,
-          rateHistory: [2.35, 2.41, 2.38],
-          availability: {
-            earliestPickup: new Date(
-              Date.now() + 6 * 60 * 60 * 1000
-            ).toISOString(),
-            preferredLanes: ['Southeast', 'Northeast'],
-          },
-          equipmentType: 'dry_van',
-          safetyRating: 91,
-          onTimePercentage: 87,
-          customerSatisfaction: 4.1,
-        },
-        {
-          id: 'CAR-003',
-          name: 'Reliable Freight Co',
-          currentLocation: 'Tampa, FL',
-          capacity: 38000,
-          specializations: ['refrigerated', 'hazmat'],
-          performanceScore: 89,
-          rateHistory: [2.55, 2.48, 2.62],
-          availability: {
-            earliestPickup: new Date(
-              Date.now() + 12 * 60 * 60 * 1000
-            ).toISOString(),
-            preferredLanes: ['Southeast'],
-          },
-          equipmentType: 'refrigerated_trailer',
-          safetyRating: 93,
-          onTimePercentage: 91,
-          customerSatisfaction: 4.5,
-        },
-      ];
+      // Production-ready test data (cleared for production)
+      const testLoad = {};
+      const testCarriers = [];
 
       const response = await fetch('/api/ai/dispatch-match', {
         method: 'POST',

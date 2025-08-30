@@ -441,7 +441,7 @@ const BrokerOperationsPage: React.FC = () => {
                           textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                         }}
                       >
-                        2.4h
+                        0h
                       </p>
                     </div>
                     <div
