@@ -228,7 +228,7 @@ export default function ProfessionalNavigation() {
         }}
       >
         <Link
-          href='/'
+          href='/fleetflowdash'
           style={{
             textDecoration: 'none',
             display: 'flex',
