@@ -3266,7 +3266,7 @@ export default function BrokerDashboard() {
                           fontWeight: 'bold',
                         }}
                       >
-                        24hrs
+                        0hrs
                       </div>
                     </div>
 
@@ -3298,7 +3298,7 @@ export default function BrokerDashboard() {
                           fontWeight: 'bold',
                         }}
                       >
-                        94%
+                        0%
                       </div>
                     </div>
                   </div>
@@ -3332,36 +3332,7 @@ export default function BrokerDashboard() {
                         gap: '16px',
                       }}
                     >
-                      {[
-                        {
-                          name: 'Auto-Quote Generation',
-                          trigger: 'New RFQ Received',
-                          status: 'Active',
-                          lastRun: '2 min ago',
-                          success: '98%',
-                        },
-                        {
-                          name: 'Invoice Processing',
-                          trigger: 'Load Delivered',
-                          status: 'Active',
-                          lastRun: '15 min ago',
-                          success: '95%',
-                        },
-                        {
-                          name: 'Carrier Assignment',
-                          trigger: 'Quote Accepted',
-                          status: 'Active',
-                          lastRun: '1 hour ago',
-                          success: '92%',
-                        },
-                        {
-                          name: 'Document Generation',
-                          trigger: 'Contract Signed',
-                          status: 'Paused',
-                          lastRun: '3 hours ago',
-                          success: '88%',
-                        },
-                      ].map((rule, index) => (
+                      {[].map((rule, index) => (
                         <div
                           key={index}
                           style={{
@@ -3498,38 +3469,7 @@ export default function BrokerDashboard() {
                         gap: '12px',
                       }}
                     >
-                      {[
-                        {
-                          task: 'Generated quote for Atlanta → Miami shipment',
-                          rule: 'Auto-Quote Generation',
-                          status: 'Completed',
-                          time: '2 minutes ago',
-                        },
-                        {
-                          task: 'Processed invoice #INV-2024-0892',
-                          rule: 'Invoice Processing',
-                          status: 'Completed',
-                          time: '15 minutes ago',
-                        },
-                        {
-                          task: 'Assigned carrier for Load #L-24-5678',
-                          rule: 'Carrier Assignment',
-                          status: 'Completed',
-                          time: '1 hour ago',
-                        },
-                        {
-                          task: 'Generated BOL for shipment #SH-24-9876',
-                          rule: 'Document Generation',
-                          status: 'In Progress',
-                          time: '2 hours ago',
-                        },
-                        {
-                          task: 'Sent delivery confirmation to customer',
-                          rule: 'Customer Notifications',
-                          status: 'Completed',
-                          time: '3 hours ago',
-                        },
-                      ].map((task, index) => (
+                      {[].map((task, index) => (
                         <div
                           key={index}
                           style={{

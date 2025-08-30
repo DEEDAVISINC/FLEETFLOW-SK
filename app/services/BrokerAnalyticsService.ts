@@ -71,22 +71,16 @@ class BrokerAnalyticsService {
     const avgLoadValue =
       completedLoads.length > 0 ? totalRevenue / completedLoads.length : 0;
 
-    // Mock margin calculation (20-25% broker upcharge)
-    const avgMargin = 22.5; // Average 22.5% margin
-    const monthlyGrowth = 15.3; // 15.3% month-over-month growth
+    // Production-ready calculations (cleared for production)
+    const avgMargin = 0; // No margin data yet
+    const monthlyGrowth = 0; // No growth data yet
 
-    // Mock win rate calculation
-    const totalBids = brokerLoads.length + 15; // Assume some lost bids
-    const winRate = (brokerLoads.length / totalBids) * 100;
+    // Production-ready win rate calculation
+    const totalBids = brokerLoads.length; // Real bids only
+    const winRate = totalBids > 0 ? (brokerLoads.length / totalBids) * 100 : 0;
 
-    // Mock top customers
-    const topCustomers = [
-      { name: 'Walmart Distribution', revenue: 125000, loadCount: 23 },
-      { name: 'Amazon Logistics', revenue: 98000, loadCount: 18 },
-      { name: 'Target Supply Chain', revenue: 87000, loadCount: 16 },
-      { name: 'Home Depot Freight', revenue: 76000, loadCount: 14 },
-      { name: 'Costco Wholesale', revenue: 65000, loadCount: 12 },
-    ];
+    // Production-ready top customers (empty until real data)
+    const topCustomers = [];
 
     return {
       totalLoads: brokerLoads.length,
@@ -115,10 +109,10 @@ class BrokerAnalyticsService {
 
     return brokerLoads.map((load) => {
       const customerRate = load.rate || 0;
-      const carrierRate = Math.round(customerRate * 0.775); // 22.5% margin
+      const carrierRate = customerRate; // No margin calculation until real data
       const margin = customerRate - carrierRate;
-      const marginPercent = (margin / customerRate) * 100;
-      const targetMargin = 22.5;
+      const marginPercent = customerRate > 0 ? (margin / customerRate) * 100 : 0;
+      const targetMargin = 0; // No target margin until real data
 
       let status: 'on_target' | 'below_target' | 'above_target';
       if (
@@ -148,64 +142,21 @@ class BrokerAnalyticsService {
   getBiddingHistory(): LoadBidding[] {
     const currentUser = getCurrentUser();
 
-    // Mock bidding data - in production this would come from database
-    return [
-      {
-        loadId: 'FL-2025-001',
-        bidAmount: 2450,
-        margin: 22.5,
-        bidStatus: 'won',
-        submittedAt: '2025-01-19T10:30:00Z',
-        notes: 'Competitive rate, reliable customer',
-      },
-      {
-        loadId: 'FL-2025-002',
-        bidAmount: 3200,
-        margin: 25.0,
-        bidStatus: 'pending',
-        submittedAt: '2025-01-19T14:15:00Z',
-        notes: 'Premium rate for expedited delivery',
-      },
-      {
-        loadId: 'FL-2025-003',
-        bidAmount: 1850,
-        margin: 20.0,
-        bidStatus: 'lost',
-        submittedAt: '2025-01-18T16:45:00Z',
-        notes: 'Rate too low, carrier availability limited',
-      },
-      {
-        loadId: 'FL-2025-004',
-        bidAmount: 2750,
-        margin: 23.5,
-        bidStatus: 'expired',
-        submittedAt: '2025-01-18T09:20:00Z',
-        notes: 'Bid expired before customer response',
-      },
-    ];
+    // Production-ready bidding data (cleared for production)
+    return [];
   }
 
   // Market rate intelligence
   getMarketRateIntelligence(route: string, equipment: string) {
-    // Mock market data - in production would integrate with DAT, Truckstop.com APIs
-    const mockRates = {
-      'Atlanta-Miami': { avg: 2400, high: 2800, low: 2100, trend: 'up' },
-      'Chicago-Houston': { avg: 3100, high: 3500, low: 2800, trend: 'stable' },
-      'Los Angeles-Phoenix': {
-        avg: 1200,
-        high: 1400,
-        low: 1000,
-        trend: 'down',
-      },
-      'Dallas-Denver': { avg: 2200, high: 2600, low: 1900, trend: 'up' },
-    };
+    // Production-ready market data (cleared for production)
+    const mockRates = {};
 
     const routeKey = route.replace(' → ', '-').replace(', ', '-');
     return (
       mockRates[routeKey as keyof typeof mockRates] || {
-        avg: 2000,
-        high: 2400,
-        low: 1700,
+        avg: 0,
+        high: 0,
+        low: 0,
         trend: 'stable' as const,
       }
     );

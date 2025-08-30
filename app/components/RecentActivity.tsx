@@ -1,46 +1,5 @@
 const RecentActivity = () => {
-  const activities = [
-    {
-      id: 1,
-      type: 'route_completed',
-      message: 'Route #234 completed by John Smith',
-      vehicle: 'Truck-045',
-      time: '2 minutes ago',
-      status: 'success'
-    },
-    {
-      id: 2,
-      type: 'maintenance_scheduled',
-      message: 'Maintenance scheduled for Van-012',
-      vehicle: 'Van-012',
-      time: '15 minutes ago',
-      status: 'warning'
-    },
-    {
-      id: 3,
-      type: 'fuel_alert',
-      message: 'Low fuel alert for Truck-089',
-      vehicle: 'Truck-089',
-      time: '32 minutes ago',
-      status: 'alert'
-    },
-    {
-      id: 4,
-      type: 'driver_assigned',
-      message: 'Sarah Johnson assigned to Route #567',
-      vehicle: 'Van-023',
-      time: '1 hour ago',
-      status: 'info'
-    },
-    {
-      id: 5,
-      type: 'route_started',
-      message: 'Route #890 started by Mike Wilson',
-      vehicle: 'Truck-156',
-      time: '1 hour ago',
-      status: 'success'
-    }
-  ]
+  const activities = []
 
   const getStatusIcon = (status: string) => {
     switch (status) {
