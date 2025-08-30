@@ -1316,7 +1316,7 @@ export default function BrokerDashboard() {
                   ) / 1000
                 ).toFixed(1),
                 unit: 'K',
-                change: '+18.5%',
+                change: '+0%',
                 trend: 'up',
                 description: 'Total revenue from active contracts',
                 color: '#8b5cf6',
@@ -1325,9 +1325,9 @@ export default function BrokerDashboard() {
               },
               {
                 title: 'Customer Satisfaction',
-                value: 94.2,
+                value: 0,
                 unit: '%',
-                change: '+2.1%',
+                change: '+0%',
                 trend: 'up',
                 description: 'Overall customer satisfaction score',
                 color: '#f59e0b',
@@ -1336,9 +1336,9 @@ export default function BrokerDashboard() {
               },
               {
                 title: 'On-Time Delivery',
-                value: 96.8,
+                value: 0,
                 unit: '%',
-                change: '+1.3%',
+                change: '+0%',
                 trend: 'up',
                 description: 'On-time delivery performance',
                 color: '#14b8a6',
@@ -1347,9 +1347,9 @@ export default function BrokerDashboard() {
               },
               {
                 title: 'Cost Savings',
-                value: 12.4,
+                value: 0,
                 unit: '%',
-                change: '+3.2%',
+                change: '+0%',
                 trend: 'up',
                 description: 'Cost optimization vs previous period',
                 color: '#ef4444',
@@ -4301,7 +4301,7 @@ export default function BrokerDashboard() {
                         fontSize: '12px',
                       }}
                     >
-                      Industry Average: 65%
+                      Industry Average: 0%
                     </div>
                   </div>
 
@@ -4358,7 +4358,7 @@ export default function BrokerDashboard() {
                         fontSize: '12px',
                       }}
                     >
-                      Target: 22.5%
+                      Target: 0%
                     </div>
                   </div>
                 </div>
