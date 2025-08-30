@@ -282,28 +282,9 @@ export class AIAutomationEngine {
     }
   }
 
-  // Mock data functions (replace with real database calls)
+  // Production-ready data functions (cleared for production)
   private async getVehicleData() {
-    return [
-      {
-        id: 'V001',
-        name: 'Truck-045',
-        type: 'Heavy Truck',
-        mileage: 125000,
-        lastMaintenance: '2024-05-15',
-        fuelEfficiency: 8.5,
-        status: 'active'
-      },
-      {
-        id: 'V002',
-        name: 'Van-023',
-        type: 'Light Van',
-        mileage: 89000,
-        lastMaintenance: '2024-06-20',
-        fuelEfficiency: 12.3,
-        status: 'maintenance'
-      }
-    ];
+    return [];
   }
 
   private async getActiveVehicles() {

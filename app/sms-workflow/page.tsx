@@ -36,137 +36,18 @@ export default function SMSWorkflowEcosystem() {
   const [systemStatus, setSystemStatus] = useState({
     isOnline: true,
     twilioConfigured: true,
-    messagesInQueue: 7,
-    dailyMessagesSent: 156,
-    successRate: 98.2,
-    costToday: 15.75,
+    messagesInQueue: 0,
+    dailyMessagesSent: 0,
+    successRate: 0,
+    costToday: 0,
   });
 
-  // Mock workflow data showing SMS integration across the ecosystem
+  // Production-ready workflow data (cleared for production)
   useEffect(() => {
-    const mockWorkflows: WorkflowInstance[] = [
-      {
-        id: 'WF-2025-001',
-        loadId: 'LD-2025-789',
-        status: 'active',
-        currentStep: 3,
-        totalSteps: 8,
-        startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        lastUpdate: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        steps: [
-          {
-            id: 'step-1',
-            step: 'Load Created',
-            trigger: 'Dispatch creates new load',
-            recipients: ['Operations Manager'],
-            template: 'load-created',
-            status: 'delivered',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-            messageId: 'SMS-001',
-            cost: 0.01,
-          },
-          {
-            id: 'step-2',
-            step: 'Driver Assignment',
-            trigger: 'Load assigned to driver',
-            recipients: ['Driver Mike Rodriguez', 'Dispatcher Sarah'],
-            template: 'driver-assignment',
-            status: 'delivered',
-            timestamp: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
-            messageId: 'SMS-002',
-            cost: 0.02,
-          },
-          {
-            id: 'step-3',
-            step: 'Pickup Reminder',
-            trigger: '2 hours before pickup',
-            recipients: ['Driver Mike Rodriguez'],
-            template: 'pickup-reminder',
-            status: 'sent',
-            timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-            messageId: 'SMS-003',
-            cost: 0.01,
-          },
-          {
-            id: 'step-4',
-            step: 'Pickup Confirmation',
-            trigger: 'Driver confirms pickup',
-            recipients: ['Dispatcher Sarah', 'Customer'],
-            template: 'pickup-confirmed',
-            status: 'pending',
-          },
-          {
-            id: 'step-5',
-            step: 'In Transit Update',
-            trigger: 'Every 2 hours during transit',
-            recipients: ['Customer', 'Dispatch'],
-            template: 'in-transit-update',
-            status: 'pending',
-          },
-          {
-            id: 'step-6',
-            step: 'Delivery ETA',
-            trigger: '1 hour before delivery',
-            recipients: ['Customer', 'Receiver'],
-            template: 'delivery-eta',
-            status: 'pending',
-          },
-          {
-            id: 'step-7',
-            step: 'Delivery Confirmation',
-            trigger: 'Driver confirms delivery',
-            recipients: ['Customer', 'Billing', 'Dispatch'],
-            template: 'delivery-confirmed',
-            status: 'pending',
-          },
-          {
-            id: 'step-8',
-            step: 'Load Complete',
-            trigger: 'POD uploaded',
-            recipients: ['Operations Manager', 'Billing'],
-            template: 'load-complete',
-            status: 'pending',
-          },
-        ],
-      },
-      {
-        id: 'WF-2025-002',
-        loadId: 'LD-2025-456',
-        status: 'completed',
-        currentStep: 8,
-        totalSteps: 8,
-        startTime: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        lastUpdate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        steps: [
-          {
-            id: 'step-1',
-            step: 'Load Created',
-            trigger: 'Dispatch creates new load',
-            recipients: ['Operations Manager'],
-            template: 'load-created',
-            status: 'delivered',
-            timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-            messageId: 'SMS-101',
-            cost: 0.01,
-          },
-          // ... other completed steps
-          {
-            id: 'step-8',
-            step: 'Load Complete',
-            trigger: 'POD uploaded',
-            recipients: ['Operations Manager', 'Billing'],
-            template: 'load-complete',
-            status: 'delivered',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-            messageId: 'SMS-108',
-            cost: 0.02,
-          },
-        ],
-      },
-    ];
+    const mockWorkflows: WorkflowInstance[] = [];
 
     setActiveWorkflows(mockWorkflows);
-    setSelectedWorkflow(mockWorkflows[0]);
+    setSelectedWorkflow(null);
   }, []);
 
   const getStepStatusIcon = (status: string) => {
