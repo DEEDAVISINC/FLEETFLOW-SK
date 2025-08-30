@@ -1,9 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import DesperateProspectsBatchDeployment, {
+  DesperateProspectsTask,
+} from '../components/DesperateProspectsBatchDeployment';
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
+import ShipperBatchDeployment, {
+  ShipperTask,
+} from '../components/ShipperBatchDeployment';
 import TaskCreationInterface from '../components/TaskCreationInterface';
 
 // DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
@@ -241,11 +247,28 @@ const depointeStaff = [
 export default function DEPOINTEDashboard() {
   const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
   const [isHealthcareTaskOpen, setIsHealthcareTaskOpen] = useState(false);
+  const [isShipperTaskOpen, setIsShipperTaskOpen] = useState(false);
+  const [isDesperateProspectsTaskOpen, setIsDesperateProspectsTaskOpen] =
+    useState(false);
   const [tasks, setTasks] = useState([]);
   const [healthcareTasks, setHealthcareTasks] = useState<HealthcareTask[]>([]);
+  const [shipperTasks, setShipperTasks] = useState<ShipperTask[]>([]);
+  const [desperateProspectsTasks, setDesperateProspectsTasks] = useState<
+    DesperateProspectsTask[]
+  >([]);
   const [selectedView, setSelectedView] = useState('overview');
+  const [selectedMainView, setSelectedMainView] = useState<'overview' | 'crm' | 'analytics' | 'campaigns'>('overview');
+  const [crmLeads, setCrmLeads] = useState<any[]>([]);
+  const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
   const [staffData, setStaffData] = useState(depointeStaff);
+  const [expandedHealthcareCampaign, setExpandedHealthcareCampaign] =
+    useState(false);
+  const [expandedShipperCampaign, setExpandedShipperCampaign] = useState(false);
+  const [
+    expandedDesperateProspectsCampaign,
+    setExpandedDesperateProspectsCampaign,
+  ] = useState(false);
   const [expandedDepartments, setExpandedDepartments] = useState<string[]>([
     'FREIGHT_OPERATIONS',
     'BUSINESS_DEVELOPMENT',
@@ -309,6 +332,102 @@ export default function DEPOINTEDashboard() {
       }
     }
 
+    // Load shipper tasks from localStorage
+    const savedShipperTasks = localStorage.getItem('depointe-shipper-tasks');
+    if (savedShipperTasks) {
+      try {
+        const tasks = JSON.parse(savedShipperTasks);
+        setShipperTasks(tasks);
+
+        // Update staff status based on saved shipper tasks
+        setStaffData((prevStaff) => {
+          const updatedStaff = [...prevStaff];
+
+          tasks.forEach((task: ShipperTask) => {
+            task.assignedTo.forEach((staffId: string) => {
+              const staffIndex = updatedStaff.findIndex(
+                (staff) => staff.id === staffId
+              );
+              if (staffIndex !== -1) {
+                updatedStaff[staffIndex] = {
+                  ...updatedStaff[staffIndex],
+                  status: 'busy',
+                  currentTask: `🚛 ${task.title}`,
+                  tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+                  revenue:
+                    updatedStaff[staffIndex].revenue +
+                    (task.priority === 'CRITICAL'
+                      ? 200000
+                      : task.priority === 'HIGH'
+                        ? 150000
+                        : task.priority === 'MEDIUM'
+                          ? 100000
+                          : 75000),
+                  efficiency: Math.min(
+                    95,
+                    updatedStaff[staffIndex].efficiency + 12
+                  ),
+                };
+              }
+            });
+          });
+
+          return updatedStaff;
+        });
+      } catch (error) {
+        console.error('Error loading shipper tasks:', error);
+      }
+    }
+
+    // Load desperate prospects tasks from localStorage
+    const savedDesperateProspectsTasks = localStorage.getItem(
+      'depointe-desperate-prospects-tasks'
+    );
+    if (savedDesperateProspectsTasks) {
+      try {
+        const tasks = JSON.parse(savedDesperateProspectsTasks);
+        setDesperateProspectsTasks(tasks);
+
+        // Update staff status based on saved desperate prospects tasks
+        setStaffData((prevStaff) => {
+          const updatedStaff = [...prevStaff];
+
+          tasks.forEach((task: DesperateProspectsTask) => {
+            task.assignedTo.forEach((staffId: string) => {
+              const staffIndex = updatedStaff.findIndex(
+                (staff) => staff.id === staffId
+              );
+              if (staffIndex !== -1) {
+                updatedStaff[staffIndex] = {
+                  ...updatedStaff[staffIndex],
+                  status: 'busy',
+                  currentTask: `🚨 ${task.title}`,
+                  tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+                  revenue:
+                    updatedStaff[staffIndex].revenue +
+                    (task.priority === 'CRITICAL'
+                      ? 300000
+                      : task.priority === 'HIGH'
+                        ? 200000
+                        : task.priority === 'MEDIUM'
+                          ? 150000
+                          : 100000),
+                  efficiency: Math.min(
+                    95,
+                    updatedStaff[staffIndex].efficiency + 20
+                  ),
+                };
+              }
+            });
+          });
+
+          return updatedStaff;
+        });
+      } catch (error) {
+        console.error('Error loading desperate prospects tasks:', error);
+      }
+    }
+
     // Load activity feed from localStorage
     const savedActivityFeed = localStorage.getItem('depointe-activity-feed');
     if (savedActivityFeed) {
@@ -317,6 +436,28 @@ export default function DEPOINTEDashboard() {
         setLiveActivities(activities);
       } catch (error) {
         console.error('Error loading activity feed:', error);
+      }
+    }
+
+    // Load CRM leads from localStorage
+    const savedCrmLeads = localStorage.getItem('depointe-crm-leads');
+    if (savedCrmLeads) {
+      try {
+        const leads = JSON.parse(savedCrmLeads);
+        setCrmLeads(leads);
+      } catch (error) {
+        console.error('Error loading CRM leads:', error);
+      }
+    }
+
+    // Load follow-up tasks from localStorage
+    const savedFollowUpTasks = localStorage.getItem('depointe-followup-tasks');
+    if (savedFollowUpTasks) {
+      try {
+        const tasks = JSON.parse(savedFollowUpTasks);
+        setFollowUpTasks(tasks);
+      } catch (error) {
+        console.error('Error loading follow-up tasks:', error);
       }
     }
   }, []);
@@ -432,6 +573,63 @@ export default function DEPOINTEDashboard() {
     setIsTaskCreationOpen(false);
   };
 
+  // Create CRM lead from campaign results
+  const createCRMLead = (campaignData: {
+    company: string;
+    contactName: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    source: 'healthcare' | 'shipper' | 'desperate-prospects';
+    campaignId?: string;
+    estimatedValue: number;
+    assignedTo: string;
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    notes?: string;
+  }) => {
+    const newLead = {
+      id: `lead-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      company: campaignData.company,
+      contactName: campaignData.contactName,
+      contactEmail: campaignData.contactEmail || '',
+      contactPhone: campaignData.contactPhone || '',
+      source: campaignData.source,
+      campaignId: campaignData.campaignId,
+      status: 'new',
+      priority: campaignData.priority,
+      estimatedValue: campaignData.estimatedValue,
+      assignedTo: campaignData.assignedTo,
+      lastContact: new Date(),
+      nextFollowUp: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+      notes: campaignData.notes ? [campaignData.notes] : [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const updatedLeads = [...crmLeads, newLead];
+    setCrmLeads(updatedLeads);
+    localStorage.setItem('depointe-crm-leads', JSON.stringify(updatedLeads));
+
+    // Create automatic follow-up task
+    const followUpTask = {
+      id: `followup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      leadId: newLead.id,
+      title: `Follow up with ${campaignData.company}`,
+      description: `Initial contact from ${campaignData.source} campaign`,
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      priority: campaignData.priority,
+      assignedTo: campaignData.assignedTo,
+      status: 'pending',
+      type: 'call',
+      createdAt: new Date(),
+    };
+
+    const updatedTasks = [...followUpTasks, followUpTask];
+    setFollowUpTasks(updatedTasks);
+    localStorage.setItem('depointe-followup-tasks', JSON.stringify(updatedTasks));
+
+    return newLead;
+  };
+
   // Handle healthcare batch deployment
   const handleHealthcareBatchDeploy = (
     healthcareTasksData: HealthcareTask[]
@@ -529,6 +727,214 @@ export default function DEPOINTEDashboard() {
     // Show success notification
     console.log(
       '✅ Healthcare tasks deployed successfully to DEPOINTE AI team!'
+    );
+  };
+
+  // Handle shipper batch deployment
+  const handleShipperBatchDeploy = (shipperTasksData: ShipperTask[]) => {
+    console.log('🚀 SHIPPER EXPANSION DEPLOYMENT:', shipperTasksData);
+
+    // Update shipper tasks state
+    setShipperTasks(shipperTasksData);
+
+    // Save to localStorage for persistence
+    localStorage.setItem(
+      'depointe-shipper-tasks',
+      JSON.stringify(shipperTasksData)
+    );
+
+    // Update staff members with their assigned tasks
+    setStaffData((prevStaff) => {
+      const updatedStaff = [...prevStaff];
+
+      shipperTasksData.forEach((task) => {
+        task.assignedTo.forEach((staffId) => {
+          const staffIndex = updatedStaff.findIndex(
+            (staff) => staff.id === staffId
+          );
+          if (staffIndex !== -1) {
+            // Update staff member's current task and status
+            updatedStaff[staffIndex] = {
+              ...updatedStaff[staffIndex],
+              status: 'busy',
+              currentTask: `🚛 ${task.title}`,
+              tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+              // Add estimated revenue based on task priority
+              revenue:
+                updatedStaff[staffIndex].revenue +
+                (task.priority === 'CRITICAL'
+                  ? 200000
+                  : task.priority === 'HIGH'
+                    ? 150000
+                    : task.priority === 'MEDIUM'
+                      ? 100000
+                      : 75000),
+              efficiency: Math.min(
+                95,
+                updatedStaff[staffIndex].efficiency + 12
+              ),
+            };
+          }
+        });
+      });
+
+      return updatedStaff;
+    });
+
+    // Create activity entries
+    const newActivities = [
+      {
+        id: `shipper-batch-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        type: 'shipper_deployment' as const,
+        staffId: 'system',
+        staffName: 'DEPOINTE AI',
+        message: `🚛 Shipper Expansion Campaign deployed with ${shipperTasksData.length} tasks`,
+        details: `Assigned to ${
+          [...new Set(shipperTasksData.flatMap((task) => task.assignedTo))]
+            .length
+        } AI staff members`,
+        priority: 'HIGH',
+        category: 'deployment',
+      },
+      ...shipperTasksData.map((task, index) => ({
+        id: `shipper-task-${Date.now()}-${index}`,
+        timestamp: new Date().toISOString(),
+        type: 'task_assignment' as const,
+        staffId: task.assignedTo[0] || 'unknown',
+        staffName:
+          staffData.find((s) => s.id === task.assignedTo[0])?.name ||
+          'AI Staff',
+        message: `📋 ${task.title} assigned`,
+        details: `Priority: ${task.priority} | Target: ${task.revenueTarget} | Timeline: ${task.timeline}`,
+        priority: task.priority,
+        category: 'shipper_expansion',
+      })),
+    ];
+
+    // Update activities and save to localStorage
+    setLiveActivities((prevActivities) => [
+      ...newActivities,
+      ...prevActivities,
+    ]);
+    localStorage.setItem(
+      'depointe-activity-feed',
+      JSON.stringify([...newActivities, ...liveActivities].slice(0, 50))
+    );
+
+    setIsShipperTaskOpen(false);
+
+    // Show success notification
+    console.log(
+      '✅ Shipper expansion tasks deployed successfully to DEPOINTE AI team!'
+    );
+  };
+
+  // Handle desperate prospects batch deployment
+  const handleDesperateProspectsBatchDeploy = (
+    desperateProspectsTasksData: DesperateProspectsTask[]
+  ) => {
+    console.log(
+      '🚨 DESPERATE PROSPECTS DEPLOYMENT:',
+      desperateProspectsTasksData
+    );
+
+    // Update desperate prospects tasks state
+    setDesperateProspectsTasks(desperateProspectsTasksData);
+
+    // Save to localStorage for persistence
+    localStorage.setItem(
+      'depointe-desperate-prospects-tasks',
+      JSON.stringify(desperateProspectsTasksData)
+    );
+
+    // Update staff members with their assigned tasks
+    setStaffData((prevStaff) => {
+      const updatedStaff = [...prevStaff];
+
+      desperateProspectsTasksData.forEach((task) => {
+        task.assignedTo.forEach((staffId) => {
+          const staffIndex = updatedStaff.findIndex(
+            (staff) => staff.id === staffId
+          );
+          if (staffIndex !== -1) {
+            // Update staff member's current task and status
+            updatedStaff[staffIndex] = {
+              ...updatedStaff[staffIndex],
+              status: 'busy',
+              currentTask: `🚨 ${task.title}`,
+              tasksCompleted: updatedStaff[staffIndex].tasksCompleted + 1,
+              // Add estimated revenue based on task priority (higher for desperate prospects)
+              revenue:
+                updatedStaff[staffIndex].revenue +
+                (task.priority === 'CRITICAL'
+                  ? 300000
+                  : task.priority === 'HIGH'
+                    ? 200000
+                    : task.priority === 'MEDIUM'
+                      ? 150000
+                      : 100000),
+              efficiency: Math.min(
+                95,
+                updatedStaff[staffIndex].efficiency + 20
+              ),
+            };
+          }
+        });
+      });
+
+      return updatedStaff;
+    });
+
+    // Create activity entries
+    const newActivities = [
+      {
+        id: `desperate-batch-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        type: 'desperate_prospects_deployment' as const,
+        staffId: 'system',
+        staffName: 'DEPOINTE AI',
+        message: `🚨 Desperate Prospects Campaign deployed with ${desperateProspectsTasksData.length} crisis response tasks`,
+        details: `Assigned to ${
+          [
+            ...new Set(
+              desperateProspectsTasksData.flatMap((task) => task.assignedTo)
+            ),
+          ].length
+        } AI staff members for rapid conversion`,
+        priority: 'CRITICAL',
+        category: 'deployment',
+      },
+      ...desperateProspectsTasksData.map((task, index) => ({
+        id: `desperate-task-${Date.now()}-${index}`,
+        timestamp: new Date().toISOString(),
+        type: 'task_assignment' as const,
+        staffId: task.assignedTo[0] || 'unknown',
+        staffName:
+          staffData.find((s) => s.id === task.assignedTo[0])?.name ||
+          'AI Staff',
+        message: `📋 ${task.title} assigned`,
+        details: `Priority: ${task.priority} | Target: ${task.revenueTarget} | Timeline: ${task.timeline}`,
+        priority: task.priority,
+        category: 'desperate_prospects',
+      })),
+    ];
+
+    // Update activities and save to localStorage
+    setLiveActivities((prevActivities) => [
+      ...newActivities,
+      ...prevActivities,
+    ]);
+    localStorage.setItem(
+      'depointe-activity-feed',
+      JSON.stringify([...newActivities, ...liveActivities].slice(0, 50))
+    );
+
+    setIsDesperateProspectsTaskOpen(false);
+
+    // Show success notification
+    console.log(
+      '🚨 Desperate prospects crisis response deployed successfully to DEPOINTE AI team!'
     );
   };
 
@@ -757,10 +1163,33 @@ export default function DEPOINTEDashboard() {
               Direct
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {healthcareTasks.length === 0 && (
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            {shipperTasks.length === 0 && (
               <button
-                onClick={() => setIsHealthcareTaskOpen(true)}
+                onClick={() => setIsShipperTaskOpen(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '16px 24px',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 20px -4px rgba(59, 130, 246, 0.4)',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span style={{ fontSize: '18px' }}>🚛</span>
+                Shipper Expansion
+              </button>
+            )}
+            {desperateProspectsTasks.length === 0 && (
+              <button
+                onClick={() => setIsDesperateProspectsTaskOpen(true)}
                 style={{
                   background: 'linear-gradient(135deg, #ef4444, #dc2626)',
                   border: 'none',
@@ -777,8 +1206,8 @@ export default function DEPOINTEDashboard() {
                   gap: '8px',
                 }}
               >
-                <span style={{ fontSize: '18px' }}>🏥</span>
-                Healthcare Tasks
+                <span style={{ fontSize: '18px' }}>🚨</span>
+                Desperate Prospects
               </button>
             )}
             <button
@@ -806,8 +1235,68 @@ export default function DEPOINTEDashboard() {
         </div>
       </div>
 
+      {/* Main Navigation Tabs */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          marginTop: '20px',
+          borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
+          paddingBottom: '15px',
+          marginBottom: '30px',
+        }}
+      >
+        {[
+          { key: 'overview', label: '📊 Dashboard Overview', icon: '📊' },
+          { key: 'crm', label: '📞 CRM & Leads', icon: '📞' },
+          { key: 'analytics', label: '📈 Analytics', icon: '📈' },
+          { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setSelectedMainView(tab.key as any)}
+            style={{
+              background: selectedMainView === tab.key ? 'rgba(139, 92, 246, 0.2)' : 'transparent',
+              border: selectedMainView === tab.key ? '2px solid #8b5cf6' : '1px solid rgba(148, 163, 184, 0.2)',
+              color: selectedMainView === tab.key ? '#8b5cf6' : 'rgba(255, 255, 255, 0.7)',
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onMouseEnter={(e) => {
+              if (selectedMainView !== tab.key) {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selectedMainView !== tab.key) {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
+            }}
+          >
+            <span style={{ fontSize: '1.2rem' }}>{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* MAIN CONTENT VIEWS */}
+      {selectedMainView === 'overview' && (
+        <div>
+          {/* Move all existing dashboard content here */}
+
       {/* Live Campaign Deployments Section */}
-      {healthcareTasks.length > 0 && (
+      {(healthcareTasks.length > 0 ||
+        shipperTasks.length > 0 ||
+        desperateProspectsTasks.length > 0) && (
         <div style={{ marginBottom: '20px' }}>
           <h3
             style={{
@@ -850,12 +1339,9 @@ export default function DEPOINTEDashboard() {
 
           {/* Ultra-Compact Campaign Card */}
           <div
-            onClick={() => {
-              // Click to expand functionality will go here
-              console.log(
-                'Healthcare campaign clicked - expand to show individual tasks'
-              );
-            }}
+            onClick={() =>
+              setExpandedHealthcareCampaign(!expandedHealthcareCampaign)
+            }
             style={{
               background: 'rgba(34, 197, 94, 0.1)',
               border: '1px solid rgba(34, 197, 94, 0.3)',
@@ -1029,12 +1515,608 @@ export default function DEPOINTEDashboard() {
                 style={{
                   color: 'rgba(255, 255, 255, 0.5)',
                   fontSize: '12px',
+                  transform: expandedHealthcareCampaign
+                    ? 'rotate(90deg)'
+                    : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease',
                 }}
               >
                 ▶
               </div>
             </div>
           </div>
+
+          {/* Expanded Healthcare Campaign Details */}
+          {expandedHealthcareCampaign && (
+            <div
+              style={{
+                marginTop: '15px',
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.3rem',
+                  fontWeight: '700',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                🏥 Healthcare Logistics Campaign Details
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '15px',
+                }}
+              >
+                {healthcareTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    style={{
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      borderRadius: '10px',
+                      padding: '15px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      <h5
+                        style={{
+                          color: 'white',
+                          fontSize: '1.1rem',
+                          fontWeight: '700',
+                          margin: 0,
+                        }}
+                      >
+                        {task.title}
+                      </h5>
+                      <span
+                        style={{
+                          background:
+                            task.priority === 'CRITICAL'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : task.priority === 'HIGH'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : task.priority === 'MEDIUM'
+                                  ? 'rgba(34, 197, 94, 0.2)'
+                                  : 'rgba(148, 163, 184, 0.2)',
+                          color:
+                            task.priority === 'CRITICAL'
+                              ? '#ef4444'
+                              : task.priority === 'HIGH'
+                                ? '#f59e0b'
+                                : task.priority === 'MEDIUM'
+                                  ? '#22c55e'
+                                  : '#94a3b8',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.7rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {task.priority}
+                      </span>
+                    </div>
+                    <p
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.4',
+                        margin: '0 0 12px 0',
+                      }}
+                    >
+                      {task.description}
+                    </p>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: '#22c55e',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        📅 {task.timeline}
+                      </span>
+                      <span
+                        style={{
+                          color: '#22c55e',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        💰 {task.revenueTarget}
+                      </span>
+                    </div>
+                    <div style={{ marginTop: '12px' }}>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Assigned Staff:
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '6px',
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        {task.assignedTo.map((staffId) => {
+                          const staff = staffData.find((s) => s.id === staffId);
+                          return staff ? (
+                            <div
+                              key={staffId}
+                              style={{
+                                background: 'rgba(34, 197, 94, 0.3)',
+                                color: 'white',
+                                padding: '4px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.75rem',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <span>{staff.avatar}</span>
+                              {staff.name}
+                            </div>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '12px' }}>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Key Deliverables:
+                      </div>
+                      {task.deliverables
+                        .slice(0, 3)
+                        .map((deliverable, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '0.8rem',
+                              padding: '2px 0',
+                            }}
+                          >
+                            • {deliverable}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Desperate Prospects Campaign Card */}
+          {desperateProspectsTasks.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <div
+                onClick={() =>
+                  setExpandedDesperateProspectsCampaign(
+                    !expandedDesperateProspectsCampaign
+                  )
+                }
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  minHeight: '60px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {/* Left side - Campaign info */}
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
+                >
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                    }}
+                  >
+                    🚨
+                  </div>
+                  <div>
+                    <h4
+                      style={{
+                        color: 'white',
+                        fontSize: '1rem',
+                        fontWeight: '700',
+                        margin: 0,
+                      }}
+                    >
+                      Desperate Prospects Crisis Response
+                    </h4>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '0.85rem',
+                        marginTop: '2px',
+                      }}
+                    >
+                      {desperateProspectsTasks.length} tasks,{' '}
+                      {
+                        [
+                          ...new Set(
+                            desperateProspectsTasks.flatMap(
+                              (task) => task.assignedTo
+                            )
+                          ),
+                        ].length
+                      }{' '}
+                      staff, $1,300K+ target,{' '}
+                      {
+                        desperateProspectsTasks.filter(
+                          (task) => task.priority === 'CRITICAL'
+                        ).length
+                      }{' '}
+                      critical
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side - Staff avatars and actions */}
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
+                >
+                  {/* Staff avatars */}
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    {[
+                      ...new Set(
+                        desperateProspectsTasks.flatMap(
+                          (task) => task.assignedTo
+                        )
+                      ),
+                    ]
+                      .slice(0, 3)
+                      .map((staffId) => {
+                        const staff = staffData.find((s) => s.id === staffId);
+                        return staff ? (
+                          <div
+                            key={staffId}
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              background:
+                                'linear-gradient(135deg, #ef4444, #dc2626)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '10px',
+                              border: '1px solid rgba(239, 68, 68, 0.5)',
+                            }}
+                            title={staff.name}
+                          >
+                            {staff.avatar}
+                          </div>
+                        ) : null;
+                      })}
+                    {[
+                      ...new Set(
+                        desperateProspectsTasks.flatMap(
+                          (task) => task.assignedTo
+                        )
+                      ),
+                    ].length > 3 && (
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        +
+                        {[
+                          ...new Set(
+                            desperateProspectsTasks.flatMap(
+                              (task) => task.assignedTo
+                            )
+                          ),
+                        ].length - 3}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Clear button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent campaign click
+                      setDesperateProspectsTasks([]);
+                      setLiveActivities([]);
+                      localStorage.removeItem(
+                        'depointe-desperate-prospects-tasks'
+                      );
+                      localStorage.removeItem('depointe-activity-feed');
+                      setStaffData((prevStaff) =>
+                        prevStaff.map((staff) => ({
+                          ...staff,
+                          status: 'available',
+                          currentTask: 'Ready for task assignment',
+                          revenue: 0,
+                          efficiency: 0,
+                          tasksCompleted: 0,
+                        }))
+                      );
+                    }}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '6px',
+                      padding: '6px 12px',
+                      color: '#ef4444',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Clear
+                  </button>
+
+                  {/* Expand indicator */}
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontSize: '12px',
+                      transform: expandedDesperateProspectsCampaign
+                        ? 'rotate(90deg)'
+                        : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease',
+                    }}
+                  >
+                    ▶
+                  </div>
+                </div>
+              </div>
+
+              {/* Expanded Desperate Prospects Campaign Details */}
+              {expandedDesperateProspectsCampaign && (
+                <div
+                  style={{
+                    marginTop: '15px',
+                    background: 'rgba(15, 23, 42, 0.8)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: 'white',
+                      fontSize: '1.3rem',
+                      fontWeight: '700',
+                      marginBottom: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                    }}
+                  >
+                    🚨 Desperate Prospects Crisis Response Details
+                  </h4>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(350px, 1fr))',
+                      gap: '15px',
+                    }}
+                  >
+                    {desperateProspectsTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.1)',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          borderRadius: '10px',
+                          padding: '15px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            marginBottom: '10px',
+                          }}
+                        >
+                          <h5
+                            style={{
+                              color: 'white',
+                              fontSize: '1.1rem',
+                              fontWeight: '700',
+                              margin: 0,
+                            }}
+                          >
+                            {task.title}
+                          </h5>
+                          <span
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.2)',
+                              color: '#ef4444',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.7rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {task.priority}
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4',
+                            margin: '0 0 12px 0',
+                          }}
+                        >
+                          {task.description}
+                        </p>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '15px',
+                            marginBottom: '10px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: '#ef4444',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            ⚡ {task.timeline}
+                          </span>
+                          <span
+                            style={{
+                              color: '#ef4444',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            💰 {task.revenueTarget}
+                          </span>
+                        </div>
+                        <div style={{ marginTop: '12px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            Crisis Response Team:
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              gap: '6px',
+                              flexWrap: 'wrap',
+                            }}
+                          >
+                            {task.assignedTo.map((staffId) => {
+                              const staff = staffData.find(
+                                (s) => s.id === staffId
+                              );
+                              return staff ? (
+                                <div
+                                  key={staffId}
+                                  style={{
+                                    background: 'rgba(239, 68, 68, 0.3)',
+                                    color: 'white',
+                                    padding: '4px 8px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                  }}
+                                >
+                                  <span>{staff.avatar}</span>
+                                  {staff.name}
+                                </div>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '12px' }}>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            Emergency Deliverables:
+                          </div>
+                          {task.deliverables
+                            .slice(0, 3)
+                            .map((deliverable, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.7)',
+                                  fontSize: '0.8rem',
+                                  padding: '2px 0',
+                                }}
+                              >
+                                • {deliverable}
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <style jsx>{`
             @keyframes pulse {
@@ -1133,7 +2215,11 @@ export default function DEPOINTEDashboard() {
             },
             {
               label: 'Active Campaigns',
-              value: (healthcareTasks.length > 0 ? 1 : 0).toString(),
+              value: (
+                (healthcareTasks.length > 0 ? 1 : 0) +
+                (shipperTasks.length > 0 ? 1 : 0) +
+                (desperateProspectsTasks.length > 0 ? 1 : 0)
+              ).toString(),
             },
             {
               label: 'Tasks in Progress',
@@ -2955,6 +4041,417 @@ export default function DEPOINTEDashboard() {
         </div>
       )}
 
+        </div>
+      )}
+
+      {/* CRM & LEADS VIEW */}
+      {selectedMainView === 'crm' && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            <div>
+              <h2
+                style={{
+                  color: 'white',
+                  fontSize: '2rem',
+                  fontWeight: '700',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                📞 DEPOINTE AI CRM & Lead Management
+              </h2>
+              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1.1rem', margin: '8px 0 0 0' }}>
+                Campaign connections, follow-ups, and deal pipeline for Dee's freight brokerage
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                // Test function - create sample lead
+                createCRMLead({
+                  company: 'Test Healthcare Corp',
+                  contactName: 'John Smith',
+                  contactEmail: 'j.smith@testhealthcare.com',
+                  contactPhone: '555-0123',
+                  source: 'healthcare',
+                  estimatedValue: 125000,
+                  assignedTo: 'will-004',
+                  priority: 'HIGH',
+                  notes: 'Sample lead from healthcare campaign test',
+                });
+              }}
+              style={{
+                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              ➕ Add Test Lead
+            </button>
+          </div>
+
+          {/* CRM Stats Cards */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '20px',
+              marginBottom: '30px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🎯</div>
+              <div style={{ color: '#8b5cf6', fontSize: '2rem', fontWeight: '700' }}>
+                {crmLeads.length}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem' }}>
+                Total Leads
+              </div>
+            </div>
+            
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.1)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📞</div>
+              <div style={{ color: '#22c55e', fontSize: '2rem', fontWeight: '700' }}>
+                {crmLeads.filter(lead => lead.status === 'contacted' || lead.status === 'qualified').length}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem' }}>
+                Active Prospects
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📅</div>
+              <div style={{ color: '#f59e0b', fontSize: '2rem', fontWeight: '700' }}>
+                {followUpTasks.filter(task => task.status === 'pending').length}
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem' }}>
+                Pending Follow-ups
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💰</div>
+              <div style={{ color: '#ef4444', fontSize: '1.5rem', fontWeight: '700' }}>
+                ${(crmLeads.reduce((sum, lead) => sum + (lead.estimatedValue || 0), 0) / 1000).toFixed(0)}K
+              </div>
+              <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem' }}>
+                Pipeline Value
+              </div>
+            </div>
+          </div>
+
+          {/* CRM Leads Grid */}
+          <div style={{ marginBottom: '30px' }}>
+            <h3
+              style={{
+                color: 'white',
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '20px',
+              }}
+            >
+              🎯 Campaign Leads Database
+            </h3>
+            
+            {crmLeads.length > 0 ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '20px',
+                }}
+              >
+                {crmLeads.map((lead) => {
+                  const staff = staffData.find(s => s.id === lead.assignedTo);
+                  const statusColors = {
+                    'new': '#3b82f6',
+                    'contacted': '#f59e0b', 
+                    'qualified': '#22c55e',
+                    'proposal-sent': '#8b5cf6',
+                    'negotiating': '#ef4444',
+                    'won': '#22c55e',
+                    'lost': '#6b7280',
+                  };
+                  const statusColor = statusColors[lead.status as keyof typeof statusColors] || '#6b7280';
+
+                  return (
+                    <div
+                      key={lead.id}
+                      style={{
+                        background: 'rgba(15, 23, 42, 0.8)',
+                        border: '1px solid rgba(148, 163, 184, 0.2)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        transition: 'transform 0.3s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px)';
+                        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                        <div>
+                          <h4
+                            style={{
+                              color: 'white',
+                              fontSize: '1.2rem',
+                              fontWeight: '700',
+                              margin: '0 0 4px 0',
+                            }}
+                          >
+                            {lead.company}
+                          </h4>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '0.9rem',
+                              margin: '0 0 8px 0',
+                            }}
+                          >
+                            👤 {lead.contactName}
+                          </p>
+                          {lead.contactPhone && (
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '0.85rem',
+                                margin: 0,
+                              }}
+                            >
+                              📞 {lead.contactPhone}
+                            </p>
+                          )}
+                        </div>
+                        <span
+                          style={{
+                            background: `${statusColor}20`,
+                            color: statusColor,
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.7rem',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {lead.status.replace('-', ' ')}
+                        </span>
+                      </div>
+
+                      <div style={{ marginBottom: '15px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '8px' }}>
+                          <span style={{ color: '#22c55e', fontSize: '0.9rem', fontWeight: '600' }}>
+                            💰 ${(lead.estimatedValue / 1000).toFixed(0)}K
+                          </span>
+                          <span style={{ color: '#3b82f6', fontSize: '0.9rem', fontWeight: '600' }}>
+                            📋 {lead.source.replace('-', ' ')}
+                          </span>
+                          <span
+                            style={{
+                              color: lead.priority === 'CRITICAL' ? '#ef4444' : lead.priority === 'HIGH' ? '#f59e0b' : '#22c55e',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            🔥 {lead.priority}
+                          </span>
+                        </div>
+                        <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem', marginBottom: '4px' }}>
+                          Assigned to: <strong>{staff ? `${staff.avatar} ${staff.name}` : 'Unknown'}</strong>
+                        </div>
+                        <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.8rem' }}>
+                          Added: {new Date(lead.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => {
+                            // Update lead status
+                            const updatedLeads = crmLeads.map(l => 
+                              l.id === lead.id 
+                                ? { ...l, status: 'contacted', lastContact: new Date(), updatedAt: new Date() }
+                                : l
+                            );
+                            setCrmLeads(updatedLeads);
+                            localStorage.setItem('depointe-crm-leads', JSON.stringify(updatedLeads));
+                          }}
+                          style={{
+                            background: 'rgba(34, 197, 94, 0.2)',
+                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            color: '#22c55e',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📞 Contact
+                        </button>
+                        <button
+                          onClick={() => {
+                            // Create follow-up task
+                            const followUpTask = {
+                              id: `followup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                              leadId: lead.id,
+                              title: `Follow up with ${lead.company}`,
+                              description: `Schedule next contact with ${lead.contactName}`,
+                              dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                              priority: lead.priority,
+                              assignedTo: lead.assignedTo,
+                              status: 'pending',
+                              type: 'call',
+                              createdAt: new Date(),
+                            };
+
+                            const updatedTasks = [...followUpTasks, followUpTask];
+                            setFollowUpTasks(updatedTasks);
+                            localStorage.setItem('depointe-followup-tasks', JSON.stringify(updatedTasks));
+                            
+                            alert('Follow-up task created!');
+                          }}
+                          style={{
+                            background: 'rgba(139, 92, 246, 0.2)',
+                            border: '1px solid rgba(139, 92, 246, 0.3)',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            color: '#8b5cf6',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📅 Follow-up
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm('Move this lead to qualified status?')) {
+                              const updatedLeads = crmLeads.map(l => 
+                                l.id === lead.id 
+                                  ? { ...l, status: 'qualified', updatedAt: new Date() }
+                                  : l
+                              );
+                              setCrmLeads(updatedLeads);
+                              localStorage.setItem('depointe-crm-leads', JSON.stringify(updatedLeads));
+                            }
+                          }}
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.2)',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            color: '#f59e0b',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          ✅ Qualify
+                        </button>
+                      </div>
+
+                      {lead.notes && lead.notes.length > 0 && (
+                        <div style={{ marginTop: '12px', padding: '10px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px' }}>
+                          <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.8rem', fontWeight: '600', marginBottom: '4px' }}>
+                            📝 Notes:
+                          </div>
+                          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.8rem' }}>
+                            {lead.notes[lead.notes.length - 1]}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  background: 'rgba(15, 23, 42, 0.3)',
+                  borderRadius: '12px',
+                  border: '1px dashed rgba(148, 163, 184, 0.3)',
+                }}
+              >
+                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎯</div>
+                <h3 style={{ color: 'white', marginBottom: '10px', fontSize: '1.5rem' }}>No Leads Yet</h3>
+                <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '1.1rem', marginBottom: '20px' }}>
+                  Campaign connections will automatically appear here as your AI teams make contact
+                </p>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}>
+                  Deploy healthcare, shipper, or desperate prospects campaigns to start generating leads
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ANALYTICS VIEW */}
+      {selectedMainView === 'analytics' && (
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>📈</div>
+          <h2 style={{ color: 'white', marginBottom: '10px' }}>DEPOINTE AI Analytics</h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            Advanced analytics and reporting coming soon
+          </p>
+        </div>
+      )}
+
+      {/* CAMPAIGNS VIEW */}
+      {selectedMainView === 'campaigns' && (
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚀</div>
+          <h2 style={{ color: 'white', marginBottom: '10px' }}>Campaign Management Center</h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            Advanced campaign management and templates coming soon
+          </p>
+        </div>
+      )}
+
       {/* Task Creation Modal */}
       <TaskCreationInterface
         isOpen={isTaskCreationOpen}
@@ -2968,6 +4465,22 @@ export default function DEPOINTEDashboard() {
         <HealthcareBatchDeployment
           onClose={() => setIsHealthcareTaskOpen(false)}
           onBatchDeploy={handleHealthcareBatchDeploy}
+        />
+      )}
+
+      {/* Shipper Batch Deployment Modal */}
+      {isShipperTaskOpen && (
+        <ShipperBatchDeployment
+          onClose={() => setIsShipperTaskOpen(false)}
+          onBatchDeploy={handleShipperBatchDeploy}
+        />
+      )}
+
+      {/* Desperate Prospects Batch Deployment Modal */}
+      {isDesperateProspectsTaskOpen && (
+        <DesperateProspectsBatchDeployment
+          onClose={() => setIsDesperateProspectsTaskOpen(false)}
+          onBatchDeploy={handleDesperateProspectsBatchDeploy}
         />
       )}
     </div>
