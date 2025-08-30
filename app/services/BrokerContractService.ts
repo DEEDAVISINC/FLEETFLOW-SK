@@ -56,75 +56,8 @@ class BrokerContractService {
   getBrokerContracts(): BrokerContract[] {
     const currentUser = getCurrentUser();
 
-    // Mock contract data - in production would come from database
-    return [
-      {
-        id: 'contract-001',
-        contractNumber: 'BRC-2025-001',
-        customerName: 'Walmart Distribution Center',
-        customerEmail: 'logistics@walmart.com',
-        customerPhone: '(555) 123-4567',
-        loadId: 'FL-2025-001',
-        services: ['FTL Transport', 'Load Tracking', 'Insurance Coverage'],
-        totalValue: 2450,
-        margin: 551.25,
-        marginPercent: 22.5,
-        status: 'pending_approval',
-        createdAt: '2025-01-19T10:30:00Z',
-        updatedAt: '2025-01-19T10:30:00Z',
-        approvalRequiredFrom: this.APPROVAL_EMAILS,
-        approvalReceivedFrom: [],
-        paymentStatus: 'pending',
-        notes: 'Standard FTL contract with preferred customer',
-      },
-      {
-        id: 'contract-002',
-        contractNumber: 'BRC-2025-002',
-        customerName: 'Amazon Logistics',
-        customerEmail: 'freight@amazon.com',
-        customerPhone: '(555) 987-6543',
-        loadId: 'FL-2025-002',
-        services: ['Expedited FTL', 'Real-time Tracking', 'Premium Insurance'],
-        totalValue: 3200,
-        margin: 800,
-        marginPercent: 25.0,
-        status: 'approved',
-        createdAt: '2025-01-18T14:15:00Z',
-        updatedAt: '2025-01-19T09:00:00Z',
-        approvalRequiredFrom: this.APPROVAL_EMAILS,
-        approvalReceivedFrom: this.APPROVAL_EMAILS,
-        paymentStatus: 'invoiced',
-        invoiceId: 'INV-2025-002',
-        squareInvoiceUrl: 'https://squareup.com/invoice/INV-2025-002',
-        notes: 'High-value expedited shipment',
-      },
-      {
-        id: 'contract-003',
-        contractNumber: 'BRC-2025-003',
-        customerName: 'Target Supply Chain',
-        customerEmail: 'transport@target.com',
-        customerPhone: '(555) 456-7890',
-        services: ['LTL Consolidation', 'Cross-dock Services'],
-        totalValue: 1875,
-        margin: 421.88,
-        marginPercent: 22.5,
-        status: 'signed',
-        createdAt: '2025-01-17T11:20:00Z',
-        updatedAt: '2025-01-18T16:45:00Z',
-        approvalRequiredFrom: this.APPROVAL_EMAILS,
-        approvalReceivedFrom: this.APPROVAL_EMAILS,
-        signedAt: '2025-01-18T16:45:00Z',
-        paymentStatus: 'paid',
-        notes: 'Multi-service LTL contract',
-      },
-    ].filter((contract) => {
-      // Filter by current broker/tenant
-      return (
-        contract.id.includes('001') ||
-        contract.id.includes('002') ||
-        contract.id.includes('003')
-      );
-    });
+    // Production-ready contract data (cleared for production)
+    return [];
   }
 
   // Request approval for a contract
