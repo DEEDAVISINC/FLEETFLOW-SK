@@ -16,7 +16,7 @@ export default function PilotCarNetworkAI() {
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/ai-flow/pilot-car-network?tenantId=tenant-demo-123&type=${activeTab}&limit=10`
+        `/api/ai-flow/pilot-car-network?type=${activeTab}&limit=10`
       );
       const result = await response.json();
 
@@ -843,4 +843,3 @@ export default function PilotCarNetworkAI() {
     </div>
   );
 }
-

@@ -76,7 +76,7 @@ export default function AIFlowPlatform() {
     conversionType: string,
     sourceData: any
   ) => {
-    const tenantId = 'tenant-demo-123'; // In production, get from auth context
+    const tenantId = ''; // In production, get from auth context
 
     try {
       setProcessingConversion(conversionType);
@@ -145,288 +145,49 @@ export default function AIFlowPlatform() {
 
   // Initialize sample data
   useEffect(() => {
-    setActiveCalls([
-      {
-        id: 1,
-        caller: 'Mark Thompson',
-        phone: '(555) 123-4567',
-        type: 'Driver Recruitment',
-        status: 'active',
-        duration: '02:34',
-        sentiment: 'positive',
-        leadScore: 82,
-      },
-      {
-        id: 2,
-        caller: 'Sarah Wilson',
-        phone: '(555) 987-6543',
-        type: 'Freight Inquiry',
-        status: 'hold',
-        duration: '01:45',
-        sentiment: 'neutral',
-        leadScore: 67,
-      },
-    ]);
+    setActiveCalls([]);
 
-    setLoads([
-      {
-        id: 'FL-001',
-        origin: 'Chicago, IL',
-        destination: 'Atlanta, GA',
-        weight: '45,000 lbs',
-        rate: '$2,850',
-        status: 'In Transit',
-        driver: 'Mike Rodriguez',
-        revenue: 2850,
-        margin: 15,
-      },
-      {
-        id: 'FL-002',
-        origin: 'Dallas, TX',
-        destination: 'Phoenix, AZ',
-        weight: '38,500 lbs',
-        rate: '$1,950',
-        status: 'Dispatched',
-        driver: 'Lisa Chen',
-        revenue: 1950,
-        margin: 18,
-      },
-    ]);
+    setLoads([]);
 
-    setDrivers([
-      {
-        id: 'DR-001',
-        name: 'Mike Rodriguez',
-        phone: '(555) 234-5678',
-        location: 'Chicago, IL',
-        status: 'In Transit',
-        loadId: 'FL-001',
-        rating: 4.8,
-        availability: 'Available 12/28',
-      },
-      {
-        id: 'DR-002',
-        name: 'Lisa Chen',
-        phone: '(555) 345-6789',
-        location: 'Dallas, TX',
-        status: 'Dispatched',
-        loadId: 'FL-002',
-        rating: 4.9,
-        availability: 'Available 12/26',
-      },
-    ]);
+    setDrivers([]);
 
-    setCustomers([
-      {
-        id: 'CU-001',
-        name: 'ABC Manufacturing',
-        contact: 'John Smith',
-        phone: '(555) 456-7890',
-        loads: 23,
-        revenue: 65000,
-        status: 'Active',
-      },
-      {
-        id: 'CU-002',
-        name: 'XYZ Logistics',
-        contact: 'Jane Doe',
-        phone: '(555) 567-8901',
-        loads: 18,
-        revenue: 48000,
-        status: 'Active',
-      },
-    ]);
+    setCustomers([]);
 
-    setNotifications([
-      {
-        id: 1,
-        type: 'urgent',
-        message: 'Driver Mike Rodriguez reports traffic delay - ETA updated',
-        timestamp: '2 min ago',
-      },
-      {
-        id: 2,
-        type: 'success',
-        message: 'Load FL-003 successfully delivered and signed',
-        timestamp: '15 min ago',
-      },
-    ]);
+    setNotifications([]);
 
     setMetrics({
-      totalCalls: 1247,
-      activeLoads: 42,
-      availableDrivers: 18,
-      dailyRevenue: 23750,
-      callsHandled: 1685,
-      automationRate: 91,
-      leadAccuracy: 96,
-      avgResponseTime: 18,
+      totalCalls: 0,
+      activeLoads: 0,
+      availableDrivers: 0,
+      dailyRevenue: 0,
+      callsHandled: 0,
+      automationRate: 0,
+      leadAccuracy: 0,
+      avgResponseTime: 0,
     });
 
-    setAiInsights([
-      {
-        type: 'optimization',
-        title: 'Route Optimization Opportunity',
-        description: 'Combine FL-004 and FL-005 for 15% cost savings',
-        impact: '$450 savings',
-        priority: 'medium',
-      },
-      {
-        type: 'alert',
-        title: 'Driver Shortage Alert',
-        description: 'Phoenix region showing 23% driver shortage',
-        impact: 'Potential delays',
-        priority: 'high',
-      },
-    ]);
+    setAiInsights([]);
 
-    setDispatchQueue([
-      {
-        id: 'DQ-001',
-        load: 'FL-010',
-        origin: 'Seattle, WA',
-        destination: 'Portland, OR',
-        priority: 'high',
-        requiredBy: '12/26 8:00 AM',
-        matchingDrivers: 3,
-      },
-      {
-        id: 'DQ-002',
-        load: 'FL-011',
-        origin: 'Denver, CO',
-        destination: 'Salt Lake City, UT',
-        priority: 'medium',
-        requiredBy: '12/26 2:00 PM',
-        matchingDrivers: 7,
-      },
-    ]);
+    setDispatchQueue([]);
 
-    setActiveDispatches([
-      {
-        id: 'AD-001',
-        load: 'FL-001',
-        driver: 'Mike Rodriguez',
-        status: 'En Route',
-        eta: '12/25 6:00 PM',
-        completion: 65,
-      },
-      {
-        id: 'AD-002',
-        load: 'FL-002',
-        driver: 'Lisa Chen',
-        status: 'Pickup Complete',
-        eta: '12/26 10:00 AM',
-        completion: 35,
-      },
-    ]);
+    setActiveDispatches([]);
 
-    setLeads([
-      {
-        id: 'L-001',
-        name: 'Robert Johnson',
-        phone: '(555) 678-9012',
-        experience: '5 years OTR',
-        cdlClass: 'Class A',
-        score: 89,
-        status: 'Hot Lead',
-        source: 'Indeed',
-      },
-      {
-        id: 'L-002',
-        name: 'Maria Garcia',
-        phone: '(555) 789-0123',
-        experience: '3 years Regional',
-        cdlClass: 'Class A',
-        score: 76,
-        status: 'Qualified',
-        source: 'Facebook',
-      },
-      {
-        id: 'L-003',
-        name: 'David Chen',
-        phone: '(555) 890-1234',
-        experience: '7 years Freight Brokerage',
-        cdlClass: 'Broker License',
-        score: 94,
-        status: 'Hot Lead',
-        source: 'LinkedIn',
-      },
-      {
-        id: 'L-004',
-        name: 'Sarah Mitchell',
-        phone: '(555) 901-2345',
-        experience: '4 years Dispatch Operations',
-        cdlClass: 'TMS Certified',
-        score: 82,
-        status: 'Qualified',
-        source: 'Indeed',
-      },
-      {
-        id: 'L-005',
-        name: 'Michael Torres',
-        phone: '(555) 012-3456',
-        experience: 'Owner Operator',
-        cdlClass: 'Class A + Own Truck',
-        score: 91,
-        status: 'Hot Lead',
-        source: 'DAT',
-      },
-    ]);
+    setLeads([]);
 
-    setRecruitingCampaigns([
-      {
-        id: 'RC-001',
-        name: 'OTR Driver Holiday Bonus',
-        platform: 'Indeed',
-        budget: '$2,500',
-        leads: 47,
-        qualified: 12,
-        hired: 3,
-        status: 'Active',
-      },
-      {
-        id: 'RC-002',
-        name: 'Regional Driver Referral',
-        platform: 'Facebook',
-        budget: '$1,800',
-        leads: 23,
-        qualified: 8,
-        hired: 2,
-        status: 'Active',
-      },
-      {
-        id: 'RC-003',
-        name: 'Broker Agent Book of Business',
-        platform: 'LinkedIn',
-        budget: '$4,200',
-        leads: 18,
-        qualified: 12,
-        hired: 4,
-        status: 'Active',
-      },
-      {
-        id: 'RC-004',
-        name: 'Dispatcher High Volume Ops',
-        platform: 'Indeed',
-        budget: '$1,500',
-        leads: 31,
-        qualified: 15,
-        hired: 6,
-        status: 'Active',
-      },
-      {
-        id: 'RC-005',
-        name: 'Owner Operator Southeast',
-        platform: 'DAT',
-        budget: '$3,100',
-        leads: 38,
-        qualified: 22,
-        hired: 8,
-        status: 'Active',
-      },
-    ]);
+    setRecruitingCampaigns([]);
 
-    setMessageTemplates([
+    setMessageTemplates([]); // Cleared sample data
+    setAiConversations([]);
+    setAppointments([]);
+    setBrokerAppointments([]);
+    setDispatchAppointments([]);
+    setSchedulingQueue([]);
+  }, []); // Closed useEffect
+
+  // Helper functions (formatCurrency defined below with other helper functions)
+
+  // Commented out large sample data section
+  /*
       {
         id: 'MT-001',
         name: 'Driver Welcome Call',
@@ -535,16 +296,7 @@ export default function AIFlowPlatform() {
         preferredTime: 'Morning',
         autoScheduled: false,
       },
-      {
-        id: 'SQ-002',
-        requestType: 'Customer Meeting',
-        contact: 'Delta Shipping',
-        priority: 'medium',
-        preferredTime: 'Afternoon',
-        autoScheduled: true,
-      },
-    ]);
-  }, []);
+  */ // End of commented large sample data section
 
   // AI Action Handler for Automation Services
   const handleAIAction = async (action: string) => {

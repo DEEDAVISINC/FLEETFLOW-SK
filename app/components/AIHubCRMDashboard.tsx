@@ -17,63 +17,7 @@ interface Lead {
 export default function AIHubCRMDashboard() {
   console.log('🚀 AIHubCRMDashboard LOADED - MATCHES AI HUB STYLING');
 
-  const [leads] = useState<Lead[]>([
-    {
-      id: '1',
-      companyName: 'Midwest Manufacturing Corp',
-      serviceCategory: 'Logistics',
-      estimatedValue: 480000,
-      priority: 'hot',
-      status: 'proposal_sent',
-      lastContact: '2024-12-15',
-      nextFollowUp: '2024-12-22',
-      winProbability: 0.9,
-    },
-    {
-      id: '2',
-      companyName: 'Pacific Coast Imports LLC',
-      serviceCategory: 'Warehousing',
-      estimatedValue: 360000,
-      priority: 'urgent',
-      status: 'demo_scheduled',
-      lastContact: '2024-12-18',
-      nextFollowUp: '2024-12-20',
-      winProbability: 0.75,
-    },
-    {
-      id: '3',
-      companyName: 'Thunder Trucking LLC',
-      serviceCategory: 'Dispatching',
-      estimatedValue: 72000,
-      priority: 'high',
-      status: 'qualified',
-      lastContact: '2024-12-10',
-      nextFollowUp: '2024-12-25',
-      winProbability: 0.6,
-    },
-    {
-      id: '4',
-      companyName: 'Urban Retail Solutions Inc',
-      serviceCategory: 'Freight_Brokerage',
-      estimatedValue: 750000,
-      priority: 'hot',
-      status: 'negotiating',
-      lastContact: '2024-12-19',
-      nextFollowUp: '2024-12-21',
-      winProbability: 0.9,
-    },
-    {
-      id: '5',
-      companyName: 'Southwest Food Distributors',
-      serviceCategory: 'Supply_Chain_Consulting',
-      estimatedValue: 180000,
-      priority: 'high',
-      status: 'contacted',
-      lastContact: '2024-12-12',
-      nextFollowUp: '2024-12-26',
-      winProbability: 0.5,
-    },
-  ]);
+  const [leads] = useState<Lead[]>([]);
 
   const totalPipeline = leads.reduce(
     (sum, lead) => sum + lead.estimatedValue,

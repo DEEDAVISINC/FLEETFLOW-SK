@@ -63,9 +63,7 @@ export default function AIHubPage() {
 
   // Load Shipper Discovery data
   useEffect(() => {
-    fetch(
-      '/api/ai-flow/shipper-discovery?metrics=true'
-    )
+    fetch('/api/ai-flow/shipper-discovery?metrics=true')
       .then((response) => response.json())
       .then((data) => {
         setShipperData(data);

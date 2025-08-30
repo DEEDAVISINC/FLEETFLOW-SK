@@ -57,32 +57,11 @@ export default function DetailedProspectViewer({
                 gap: '20px',
               }}
             >
-              {[
-                {
-                  company: 'Tesla Inc.',
-                  industry: 'Electric Vehicle Manufacturing',
-                  score: 95,
-                  revenue: '$96.8B',
-                  employees: '127,855',
-                  location: 'Austin, TX',
-                  contactPerson: 'Sarah Chen - VP Logistics',
-                  email: 's.chen@tesla.com',
-                  phone: '(512) 555-0198',
-                  lastContact: '2024-12-18',
-                  nextAction: 'Executive meeting scheduled 12/22',
-                  dealSize: '$2.4M',
-                  probability: '92%',
-                  timeline: '30 days',
-                  notes:
-                    'Expanding Gigafactory operations, need dedicated logistics partner for battery supply chain',
-                  keyNeeds: [
-                    'Battery transport',
-                    'Temperature-controlled shipping',
-                    '24/7 operations',
-                  ],
-                  competitiveInfo:
-                    'Currently using UPS & FedEx, dissatisfied with reliability',
-                },
+              {[].map((prospect: any, index: number) => (
+                /* All mock prospect data cleared - was showing real company names like Tesla, P&G, etc. */
+                <div key={index}></div>
+              ))}
+              {/* Commented out all prospect data
                 {
                   company: 'Procter & Gamble',
                   industry: 'Consumer Goods',
@@ -2336,7 +2315,3 @@ export default function DetailedProspectViewer({
     </div>
   );
 }
-
-
-
-

@@ -109,7 +109,7 @@ export default function AIAutomationDashboard() {
     try {
       // Production-ready test data (cleared for production)
       const testLoad = {};
-      const testCarriers = [];
+      const testCarriers: any[] = [];
 
       const response = await fetch('/api/ai/dispatch-match', {
         method: 'POST',
@@ -1073,7 +1073,7 @@ export default function AIAutomationDashboard() {
                 <h4 className='mb-2 font-semibold text-white'>
                   Match Accuracy
                 </h4>
-                <p className='text-2xl font-bold text-blue-400'>94.2%</p>
+                <p className='text-2xl font-bold text-blue-400'>0%</p>
                 <p className='text-sm text-white/70'>
                   AI recommendation accuracy
                 </p>
@@ -1082,14 +1082,14 @@ export default function AIAutomationDashboard() {
               <div className='rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-lg backdrop-blur-sm'>
                 <div className='mb-3 text-3xl'>💰</div>
                 <h4 className='mb-2 font-semibold text-white'>Cost Savings</h4>
-                <p className='text-2xl font-bold text-green-400'>$18,420</p>
+                <p className='text-2xl font-bold text-green-400'>$0</p>
                 <p className='text-sm text-white/70'>This month</p>
               </div>
 
               <div className='rounded-2xl border border-white/20 bg-white/10 p-6 text-center shadow-lg backdrop-blur-sm'>
                 <div className='mb-3 text-3xl'>⚡</div>
                 <h4 className='mb-2 font-semibold text-white'>Response Time</h4>
-                <p className='text-2xl font-bold text-purple-400'>1.2s</p>
+                <p className='text-2xl font-bold text-purple-400'>0s</p>
                 <p className='text-sm text-white/70'>
                   Average AI decision time
                 </p>
@@ -1326,10 +1326,10 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      89
+                      0
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
-                      +12% from yesterday
+                      +0% from yesterday
                     </p>
                   </div>
                   <div style={{ fontSize: '24px' }}>👨‍💼</div>
@@ -1370,7 +1370,7 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      94.2%
+                      0%
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
                       AI Optimized Routes
@@ -1414,7 +1414,7 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      98.1%
+                      0%
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
                       Industry Leading
@@ -1458,7 +1458,7 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      94.2%
+                      0%
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
                       AI Load Matching
@@ -1502,7 +1502,7 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      23%
+                      0%
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
                       Monthly Average
@@ -1546,7 +1546,7 @@ export default function AIAutomationDashboard() {
                         marginBottom: '4px',
                       }}
                     >
-                      1.2s
+                      0s
                     </p>
                     <p style={{ fontSize: '12px', opacity: 0.8 }}>
                       Average API Response
@@ -2229,29 +2229,29 @@ export default function AIAutomationDashboard() {
             {[
               {
                 title: 'Market Rates',
-                value: '$2.85/mile',
-                change: '+5.2%',
+                value: '$0/mile',
+                change: '+0%',
                 color: '#10b981',
                 icon: '💰',
               },
               {
                 title: 'Fuel Prices',
-                value: '$3.42/gal',
-                change: '-2.1%',
+                value: '$0/gal',
+                change: '+0%',
                 color: '#f59e0b',
                 icon: '⛽',
               },
               {
                 title: 'Load Volume',
-                value: '12,847',
-                change: '+8.7%',
+                value: '0',
+                change: '+0%',
                 color: '#3b82f6',
                 icon: '📦',
               },
               {
                 title: 'Competition',
-                value: '847 Carriers',
-                change: '+3.2%',
+                value: '0 Carriers',
+                change: '+0%',
                 color: '#8b5cf6',
                 icon: '🏆',
               },
@@ -2341,9 +2341,9 @@ export default function AIAutomationDashboard() {
                 🎯 Lane Analysis
               </h4>
               <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                <p>• Hot lanes: TX→CA (+12% rates)</p>
-                <p>• Emerging: FL→NY (+8% volume)</p>
-                <p>• Declining: IL→OH (-5% rates)</p>
+                <p>• Hot lanes: Loading lane data...</p>
+                <p>• Emerging: Analyzing volume trends...</p>
+                <p>• Declining: Rate analysis pending...</p>
               </div>
             </div>
 
@@ -2367,9 +2367,9 @@ export default function AIAutomationDashboard() {
                 📈 Trend Predictions
               </h4>
               <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                <p>• Q1 rates expected +7%</p>
-                <p>• Capacity tightening in West</p>
-                <p>• Fuel stabilizing at $3.40</p>
+                <p>• Rate forecasting in progress...</p>
+                <p>• Capacity analysis pending...</p>
+                <p>• Fuel price monitoring active...</p>
               </div>
             </div>
           </div>
@@ -2433,28 +2433,28 @@ export default function AIAutomationDashboard() {
             {[
               {
                 title: 'Miles Saved',
-                value: '2,847',
+                value: '0',
                 subtitle: 'This Month',
                 color: '#10b981',
                 icon: '🛣️',
               },
               {
                 title: 'Fuel Saved',
-                value: '$12,450',
+                value: '$0',
                 subtitle: 'Cost Reduction',
                 color: '#f59e0b',
                 icon: '⛽',
               },
               {
                 title: 'Time Saved',
-                value: '147 hrs',
+                value: '0 hrs',
                 subtitle: 'Driver Hours',
                 color: '#3b82f6',
                 icon: '⏱️',
               },
               {
                 title: 'Efficiency',
-                value: '94.2%',
+                value: '0%',
                 subtitle: 'Route Accuracy',
                 color: '#8b5cf6',
                 icon: '🎯',
@@ -2751,12 +2751,12 @@ export default function AIAutomationDashboard() {
                 },
                 {
                   label: 'Recommendations',
-                  value: '12',
+                  value: '0',
                   color: '#10b981',
                 },
                 {
                   label: 'Accuracy Rate',
-                  value: '94.2%',
+                  value: '0%',
                   color: '#3b82f6',
                 },
               ].map((stat, index) => (
