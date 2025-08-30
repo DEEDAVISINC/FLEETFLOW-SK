@@ -64,7 +64,7 @@ export default function AIHubPage() {
   // Load Shipper Discovery data
   useEffect(() => {
     fetch(
-      '/api/ai-flow/shipper-discovery?tenantId=tenant-demo-123&metrics=true'
+      '/api/ai-flow/shipper-discovery?metrics=true'
     )
       .then((response) => response.json())
       .then((data) => {
@@ -107,16 +107,16 @@ export default function AIHubPage() {
     ) {
       if (lowerMessage.includes('create') || lowerMessage.includes('new')) {
         response =
-          '🚛 **Creating new load order...**\n\n✅ Load FL-2025-019 created successfully!\n- Origin: Atlanta, GA → Destination: Miami, FL\n- Rate: $2,450 (optimized with AI)\n- Equipment: Dry Van\n- Pickup: Tomorrow 8:00 AM\n- AI selected best multimodal option\n- Dock appointment auto-scheduled\n\n📋 Would you like me to assign a driver or optimize the route?';
+          '🚛 **Creating new load order...**\n\n✅ Load created successfully!\n- Origin: → Destination:\n- Rate: (optimized with AI)\n- Equipment: \n- Pickup: \n- AI selected best multimodal option\n- Dock appointment auto-scheduled\n\n📋 Would you like me to assign a driver or optimize the route?';
       } else if (
         lowerMessage.includes('status') ||
         lowerMessage.includes('track')
       ) {
         response =
-          '📍 **Load Status Update:**\n\n🚛 **FL-2025-007** (Swift Transportation)\n- Status: In Transit\n- Location: Currently in Jacksonville, FL\n- ETA: Tomorrow 2:30 PM (AI predicted)\n- 🟢 On schedule\n- Next update in 2 hours\n\n📱 SMS notifications sent to customer. Need me to contact the carrier?';
+          '📍 **Load Status Update:**\n\n🚛 **Load Status**\n- Status: \n- Location: \n- ETA: (AI predicted)\n- Status indicator\n- Next update scheduled\n\n📱 SMS notifications sent to customer. Need me to contact the carrier?';
       } else if (lowerMessage.includes('optimize')) {
         response =
-          '🧠 **AI Load Optimization Complete:**\n\n💡 **Found 3 optimization opportunities:**\n1. Switch FL-2025-008 from Truckload→LTL: **Save $600**\n2. Combine loads FL-2025-012 & FL-2025-013: **Save $450**\n3. Use rail for FL-2025-015 (long haul): **Save $800**\n\n💰 **Total potential savings: $1,850**\n\n✅ Should I apply these optimizations automatically?';
+          '🧠 **AI Load Optimization Complete:**\n\n💡 **Found optimization opportunities:**\n1. Switch load from Truckload→LTL: **Potential Savings**\n2. Combine multiple loads: **Potential Savings**\n3. Use rail for long haul: **Potential Savings**\n\n💰 **Total potential savings calculated**\n\n✅ Should I apply these optimizations automatically?';
       }
     } else if (
       lowerMessage.includes('dock') ||
@@ -124,62 +124,62 @@ export default function AIHubPage() {
       lowerMessage.includes('schedul')
     ) {
       response =
-        '🏭 **AI Dock Scheduling Analysis:**\n\n📅 **Current Status:**\n- Dock 1: Available (35% utilization)\n- Dock 2: Loading (95% utilization) \n- Dock 3: ⚠️ Critical (85% utilization)\n\n🤖 **AI Recommendations:**\n- Redistribute 2 appointments from Dock 3\n- Schedule LTL deliveries during off-peak\n- Predicted bottleneck at 2:00 PM resolved\n\n✅ **Auto-scheduled 4 appointments optimally!**\nCarriers have been notified via SMS.';
+        '🏭 **AI Dock Scheduling Analysis:**\n\n📅 **Current Status:**\n- Dock: Available (utilization)\n- Dock: Loading (utilization) \n- Dock: Status (utilization)\n\n🤖 **AI Recommendations:**\n- Redistribute appointments as needed\n- Schedule deliveries during off-peak\n- Predicted bottlenecks managed\n\n✅ **Appointments optimized!**\nCarriers have been notified via SMS.';
     } else if (
       lowerMessage.includes('invoice') ||
       lowerMessage.includes('payment') ||
       lowerMessage.includes('settlement')
     ) {
       response =
-        "💰 **AI Settlement Processing:**\n\n🤖 **Just processed 5 new invoices:**\n- 3 auto-approved (95%+ confidence)\n- 1 flagged for review (rate variance)\n- 1 pending documentation\n\n📊 **Today's Performance:**\n- 45 invoices processed\n- 99.2% AI accuracy\n- 8.5 hours saved\n- $2,100 in discrepancies caught\n\n✅ **All settlements ready for ACH processing!**";
+        "💰 **AI Settlement Processing:**\n\n🤖 **Processing invoices:**\n- Auto-approved (high confidence)\n- Flagged for review (variance detected)\n- Pending documentation\n\n📊 **Today's Performance:**\n- Invoices processed\n- AI accuracy maintained\n- Processing time optimized\n- Discrepancies detected\n\n✅ **Settlements ready for processing!**";
     } else if (
       lowerMessage.includes('driver') ||
       lowerMessage.includes('assign')
     ) {
       response =
-        '👨‍💼 **Smart Driver Assignment:**\n\n🎯 **Best driver for FL-2025-007:**\n- **Mike Rodriguez** (Driver #447)\n- Location: 15 miles from pickup\n- HOS: 9.5 hours available\n- Safety score: 98/100\n- Specialized in reefer loads\n\n✅ **Assignment sent via SMS!**\n📱 Driver confirmed - ETA to pickup: 45 minutes\n📋 Route optimization in progress...';
+        '👨‍💼 **Smart Driver Assignment:**\n\n🎯 **Best driver identified:**\n- **Driver Name** (Driver #)\n- Location: Distance from pickup\n- HOS: Hours available\n- Safety score: /100\n- Load specialization noted\n\n✅ **Assignment sent via SMS!**\n📱 Driver confirmed - ETA calculated\n📋 Route optimization in progress...';
     } else if (
       lowerMessage.includes('route') ||
       lowerMessage.includes('navigation')
     ) {
       response =
-        '🗺️ **AI Route Optimization:**\n\n⚡ **Quantum algorithm analysis complete:**\n- 3 stops optimized\n- 47 miles saved (12% reduction)\n- $156 fuel savings\n- 2.5 hours faster delivery\n- Avoided 2 traffic bottlenecks\n\n🛰️ **Live traffic integration:**\n- Current optimal route sent to driver\n- Real-time updates every 15 minutes\n- Geofence alerts activated\n\n📱 Customer notified of improved ETA!';
+        '🗺️ **AI Route Optimization:**\n\n⚡ **Algorithm analysis complete:**\n- Stops optimized\n- Miles saved (reduction %)\n- Fuel savings calculated\n- Delivery time improved\n- Traffic bottlenecks avoided\n\n🛰️ **Live traffic integration:**\n- Optimal route sent to driver\n- Real-time updates active\n- Geofence alerts activated\n\n📱 Customer notified of improved ETA!';
     } else if (
       lowerMessage.includes('report') ||
       lowerMessage.includes('analytic') ||
       lowerMessage.includes('insight')
     ) {
       response =
-        '📊 **Strategic AI Analytics:**\n\n💡 **Key Insights This Week:**\n- Multimodal optimization saved $12,450\n- Dock efficiency increased 23%\n- Invoice processing 87% automated\n- Carrier performance up 15%\n\n🎯 **Predictive Alerts:**\n- Fuel costs rising 8% next week\n- Peak season demand in 3 weeks\n- 2 drivers need HOS training\n\n📈 **Custom reports generated and emailed!**';
+        '📊 **Strategic AI Analytics:**\n\n💡 **Key Insights This Week:**\n- Multimodal optimization savings calculated\n- Dock efficiency improvements tracked\n- Invoice processing automation active\n- Carrier performance monitoring\n\n🎯 **Predictive Alerts:**\n- Market trends monitoring\n- Demand forecasting active\n- Training requirements tracked\n\n📈 **Custom reports generated and emailed!**';
     } else if (
       lowerMessage.includes('carrier') ||
       lowerMessage.includes('partner')
     ) {
       response =
-        '🤝 **Carrier Intelligence:**\n\n📋 **Top performing carriers:**\n1. Swift Transportation (98% on-time)\n2. YRC Freight (95% rate accuracy)\n3. J.B. Hunt (92% overall score)\n\n⚠️ **Flagged for attention:**\n- Carrier X: 3 late deliveries this week\n- Carrier Y: Rate disputes increasing\n\n✅ **Auto-generated performance reviews sent**\n🔄 **Carrier rotation optimized for cost/quality**';
+        '🤝 **Carrier Intelligence:**\n\n📋 **Top performing carriers:**\n1. Carrier (% on-time)\n2. Carrier (% rate accuracy)\n3. Carrier (% overall score)\n\n⚠️ **Flagged for attention:**\n- Carrier: Performance issues detected\n- Carrier: Rate disputes detected\n\n✅ **Auto-generated performance reviews sent**\n🔄 **Carrier rotation optimized for cost/quality**';
     } else if (
       lowerMessage.includes('cost') ||
       lowerMessage.includes('saving') ||
       lowerMessage.includes('profit')
     ) {
       response =
-        "💰 **Cost Optimization Analysis:**\n\n📈 **This Month's AI Savings:**\n- Multimodal switching: $18,200\n- Route optimization: $7,450\n- Dock efficiency: $3,890\n- Settlement automation: $5,100\n\n🎯 **Total AI-driven savings: $34,640**\n\n🔮 **Next month projections:**\n- Additional $28,000 in optimizations identified\n- New efficiency opportunities detected\n\n✅ **Profit margins improved 12.3%!**";
+        "💰 **Cost Optimization Analysis:**\n\n📈 **This Month's AI Savings:**\n- Multimodal switching: Savings calculated\n- Route optimization: Savings tracked\n- Dock efficiency: Improvements measured\n- Settlement automation: Cost reductions\n\n🎯 **Total AI-driven savings calculated**\n\n🔮 **Next month projections:**\n- Additional optimizations identified\n- New efficiency opportunities detected\n\n✅ **Profit margins improved!**";
     } else if (
       lowerMessage.includes('predict') ||
       lowerMessage.includes('forecast') ||
       lowerMessage.includes('eta')
     ) {
       response =
-        '🔮 **AI Predictions & Forecasting:**\n\n⏰ **ETA Predictions (ML-powered):**\n- FL-2025-007: 96% confidence, arrives 2:30 PM\n- FL-2025-008: Delayed 45 minutes (weather)\n- FL-2025-009: Early by 1 hour (light traffic)\n\n🌦️ **External factors considered:**\n- Weather patterns\n- Traffic conditions\n- Driver behavior\n- Historical performance\n\n📱 **Proactive notifications sent to all stakeholders**';
+        '🔮 **AI Predictions & Forecasting:**\n\n⏰ **ETA Predictions (ML-powered):**\n- Load: Confidence %, estimated arrival\n- Load: Delay detected (conditions)\n- Load: Early arrival (traffic)\n\n🌦️ **External factors considered:**\n- Weather patterns\n- Traffic conditions\n- Driver behavior\n- Historical performance\n\n📱 **Proactive notifications sent to all stakeholders**';
     } else if (
       lowerMessage.includes('problem') ||
       lowerMessage.includes('issue') ||
       lowerMessage.includes('help')
     ) {
       response =
-        '🆘 **Problem Resolution Assistant:**\n\n🔍 **Current issues detected:**\n- Load FL-2025-006: Driver running 30min late\n- Dock 3: Approaching capacity limit\n- Invoice INV-2025-045: Rate discrepancy\n\n🤖 **AI auto-resolution:**\n- Rerouted driver via optimal path\n- Redistributed dock appointments\n- Flagged invoice for quick review\n\n✅ **All issues resolved or escalated appropriately!**';
+        '🆘 **Problem Resolution Assistant:**\n\n🔍 **Current issues detected:**\n- Load: Driver delay detected\n- Dock: Capacity monitoring\n- Invoice: Rate discrepancy detected\n\n🤖 **AI auto-resolution:**\n- Rerouted driver via optimal path\n- Redistributed dock appointments\n- Flagged invoice for quick review\n\n✅ **All issues resolved or escalated appropriately!**';
     } else {
-      response = `🤖 **I can help you with anything in FleetFlow:**\n\n🚛 **Load Management:** Create, track, optimize loads\n🏭 **Dock Scheduling:** Appointments, bottleneck prevention\n💰 **Settlement Processing:** Invoice automation, payments\n📊 **Analytics:** Custom reports, predictions\n🗺️ **Route Optimization:** AI-powered routing\n👥 **Driver Management:** Assignments, compliance\n🤝 **Carrier Relations:** Performance, optimization\n\n**Just ask me to do anything!** Examples:\n- "Create a load from Atlanta to Miami"\n- "What's the status of load FL-2025-007?"\n- "Optimize my dock schedule for tomorrow"\n- "Process pending invoices with AI"\n- "Show me this week's cost savings"`;
+      response = `🤖 **I can help you with anything in FleetFlow:**\n\n🚛 **Load Management:** Create, track, optimize loads\n🏭 **Dock Scheduling:** Appointments, bottleneck prevention\n💰 **Settlement Processing:** Invoice automation, payments\n📊 **Analytics:** Custom reports, predictions\n🗺️ **Route Optimization:** AI-powered routing\n👥 **Driver Management:** Assignments, compliance\n🤝 **Carrier Relations:** Performance, optimization\n\n**Just ask me to do anything!** Examples:\n- "Create a new load"\n- "What's the status of my loads?"\n- "Optimize my dock schedule"\n- "Process pending invoices with AI"\n- "Show me this week's savings"`;
     }
 
     const assistantMsg = {
@@ -2656,7 +2656,7 @@ export default function AIHubPage() {
                               }
                             }
                           }}
-                          placeholder="Ask Flowter AI anything... (e.g., 'Create a load from Atlanta to Miami', 'What's the status of load FL-2025-007?', 'Optimize my dock schedule')"
+                          placeholder="Ask Flowter AI anything... (e.g., 'Create a new load', 'Check load status', 'Optimize my dock schedule')"
                           disabled={flowterTyping}
                           style={{
                             width: '100%',
