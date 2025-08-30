@@ -85,6 +85,26 @@ interface MaintenanceComplianceData {
   };
 }
 
+interface MaintenanceTask {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  task: string;
+  dueDate: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  cost: string;
+}
+
+interface RecentWork {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  work: string;
+  completedDate: string;
+  cost: string;
+  provider: string;
+}
+
 // DOT inspection data (cleared for production)
 const mockDOTInspections: DOTInspectionData[] = [];
 
@@ -199,82 +219,17 @@ export default function VehiclesPage() {
     setShowComplianceModal(true);
   };
 
-  // Mock maintenance data for demonstration
+  // Production-ready maintenance data (cleared for production)
   const maintenanceData = {
-    upcomingTasks: [
-      {
-        id: 'T001',
-        vehicleId: 'V001',
-        vehicleName: 'Truck-045',
-        task: 'Oil Change',
-        dueDate: '2024-01-15',
-        priority: 'high',
-        cost: '$89.99',
-      },
-      {
-        id: 'T002',
-        vehicleId: 'V003',
-        vehicleName: 'Truck-067',
-        task: 'Tire Rotation',
-        dueDate: '2024-01-18',
-        priority: 'medium',
-        cost: '$45.00',
-      },
-      {
-        id: 'T003',
-        vehicleId: 'V002',
-        vehicleName: 'Van-023',
-        task: 'Brake Inspection',
-        dueDate: '2024-01-20',
-        priority: 'high',
-        cost: '$125.50',
-      },
-      {
-        id: 'T004',
-        vehicleId: 'V004',
-        vehicleName: 'Truck-089',
-        task: 'DOT Inspection',
-        dueDate: '2024-01-25',
-        priority: 'critical',
-        cost: '$275.00',
-      },
-    ],
-    recentWork: [
-      {
-        id: 'W001',
-        vehicleId: 'V001',
-        vehicleName: 'Truck-045',
-        work: 'Oil Change & Filter',
-        completedDate: '2024-12-20',
-        cost: '$89.99',
-        provider: 'Fleet Maintenance Co.',
-      },
-      {
-        id: 'W002',
-        vehicleId: 'V003',
-        vehicleName: 'Truck-067',
-        work: 'Tire Replacement',
-        completedDate: '2024-12-18',
-        cost: '$320.00',
-        provider: 'Tire Pro Services',
-      },
-      {
-        id: 'W003',
-        vehicleId: 'V002',
-        vehicleName: 'Van-023',
-        work: 'Engine Diagnostic',
-        completedDate: '2024-12-15',
-        cost: '$150.00',
-        provider: 'AutoTech Solutions',
-      },
-    ],
-    monthlySpending: 2450.75,
-    averageCostPerVehicle: 612.69,
-    scheduledThisWeek: 3,
-    overdueItems: 1,
+    upcomingTasks: [] as MaintenanceTask[],
+    recentWork: [] as RecentWork[],
+    monthlySpending: 0,
+    averageCostPerVehicle: 0,
+    scheduledThisWeek: 0,
+    overdueItems: 0,
   };
 
-  // Initialize auto-refresh functionality  
+  // Initialize auto-refresh functionality
   useEffect(() => {
     // Remove demo data initialization for production
 
