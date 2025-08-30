@@ -103,108 +103,11 @@ export class BrokerAIIntelligenceService {
   }
 
   private initializeMockData() {
-    // Initialize mock load opportunities
-    this.loadOpportunities = [
-      {
-        id: 'LO001',
-        shipperName: 'Walmart Distribution',
-        origin: 'Atlanta, GA',
-        destination: 'Charlotte, NC',
-        pickupDate: '2024-01-15',
-        deliveryDate: '2024-01-16',
-        equipmentType: 'Dry Van',
-        weight: 45000,
-        distance: 245,
-        estimatedRate: 1850,
-        commodity: 'Consumer Goods',
-        aiScore: 92,
-        confidenceLevel: 'HIGH',
-        riskLevel: 'LOW',
-        predictedMargin: 18.5,
-        competitionLevel: 3,
-        recommendations: [
-          'High-value customer with excellent payment history',
-          'Lane shows 15% margin improvement trend',
-          'Submit bid within 2 hours for best chance',
-        ],
-      },
-      {
-        id: 'LO002',
-        shipperName: 'Amazon Logistics',
-        origin: 'Dallas, TX',
-        destination: 'Phoenix, AZ',
-        pickupDate: '2024-01-16',
-        deliveryDate: '2024-01-17',
-        equipmentType: 'Dry Van',
-        weight: 42000,
-        distance: 887,
-        estimatedRate: 3200,
-        commodity: 'E-commerce',
-        aiScore: 88,
-        confidenceLevel: 'HIGH',
-        riskLevel: 'LOW',
-        predictedMargin: 22.3,
-        competitionLevel: 5,
-        recommendations: [
-          'Peak season pricing advantage',
-          'Your win rate with Amazon: 73%',
-          'Consider expedited service upsell',
-        ],
-      },
-      {
-        id: 'LO003',
-        shipperName: 'Home Depot Supply',
-        origin: 'Chicago, IL',
-        destination: 'Milwaukee, WI',
-        pickupDate: '2024-01-15',
-        deliveryDate: '2024-01-15',
-        equipmentType: 'Flatbed',
-        weight: 48000,
-        distance: 92,
-        estimatedRate: 950,
-        commodity: 'Building Materials',
-        specialRequirements: ['Tarps Required', 'Crane Unloading'],
-        aiScore: 76,
-        confidenceLevel: 'MEDIUM',
-        riskLevel: 'MEDIUM',
-        predictedMargin: 12.8,
-        competitionLevel: 7,
-        recommendations: [
-          'Specialized equipment premium opportunity',
-          'Weather delays possible - factor into pricing',
-          'Strong repeat customer potential',
-        ],
-      },
-    ];
-
-    // Initialize customer insights
-    this.customerInsights.set('walmart', {
-      shipperId: 'walmart',
-      shipperName: 'Walmart Distribution',
-      relationshipScore: 95,
-      paymentHistory: 'EXCELLENT',
-      averageMargin: 16.8,
-      volumeTrend: 'INCREASING',
-      bidAcceptanceRate: 78,
-      preferredServices: ['Standard Delivery', 'Cross-Docking'],
-      negotiationStyle: 'SERVICE_FOCUSED',
-      nextOpportunityPrediction: 'High-priority load expected Jan 18-20',
-      upsellPotential: ['Temperature Monitoring', 'White Glove Service'],
-    });
-
-    this.customerInsights.set('amazon', {
-      shipperId: 'amazon',
-      shipperName: 'Amazon Logistics',
-      relationshipScore: 87,
-      paymentHistory: 'EXCELLENT',
-      averageMargin: 19.2,
-      volumeTrend: 'STABLE',
-      bidAcceptanceRate: 73,
-      preferredServices: ['Expedited', 'Last Mile'],
-      negotiationStyle: 'SPEED_FOCUSED',
-      nextOpportunityPrediction: 'Peak season surge starting Jan 25',
-      upsellPotential: ['Weekend Delivery', 'Real-time Tracking Plus'],
-    });
+    // Production-ready data (cleared for production)
+    this.loadOpportunities = [];
+    
+    // Initialize empty customer insights
+    this.customerInsights.clear();
   }
 
   /**
@@ -282,7 +185,7 @@ export class BrokerAIIntelligenceService {
       competitorAnalysis: {
         averageBid: Math.round(baseRate * 0.98),
         bidCount: competitorCount,
-        topCompetitors: ['Swift Transportation', 'J.B. Hunt', 'Schneider'],
+        topCompetitors: [],
       },
       strategicNotes: [
         'Consider bundling with upcoming loads',
@@ -365,41 +268,24 @@ export class BrokerAIIntelligenceService {
   public getBrokerPerformanceInsights(brokerId: string) {
     return {
       aiOptimizationImpact: {
-        marginImprovement: 15.3,
-        winRateIncrease: 12.7,
-        timeToBook: -23.5,
-        customerSatisfaction: 8.9,
+        marginImprovement: 0,
+        winRateIncrease: 0,
+        timeToBook: 0,
+        customerSatisfaction: 0,
       },
-      smartRecommendations: [
-        'Focus on Amazon loads - 22% higher margins',
-        'Target flatbed opportunities in Q1',
-        'Develop relationship with new automotive shippers',
-        'Consider expanding into refrigerated transport',
-      ],
+      smartRecommendations: [],
       trendAnalysis: {
-        bestPerformingLanes: [
-          'Atlanta-Charlotte',
-          'Dallas-Phoenix',
-          'Chicago-Detroit',
-        ],
-        emergingOpportunities: ['Cross-border Mexico', 'Last-mile e-commerce'],
-        marketThreats: [
-          'Capacity tightening in West Coast',
-          'Fuel price volatility',
-        ],
+        bestPerformingLanes: [],
+        emergingOpportunities: [],
+        marketThreats: [],
       },
     };
   }
 
   // Private helper methods
   private calculatePaymentRisk(shipperName: string): number {
-    const riskScores: { [key: string]: number } = {
-      'Walmart Distribution': 0.05,
-      'Amazon Logistics': 0.08,
-      'Home Depot Supply': 0.12,
-      'Target Corporation': 0.1,
-      'Unknown Shipper': 0.45,
-    };
+    // Production-ready risk scores (cleared for production)
+    const riskScores: { [key: string]: number } = {};
     return riskScores[shipperName] || 0.35;
   }
 
