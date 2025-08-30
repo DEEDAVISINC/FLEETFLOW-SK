@@ -4,103 +4,11 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 
 // Sample data for notes and communications
-const sampleNotes = [
-  {
-    id: 'note-1',
-    title: 'High Priority Load - Chicago to Miami',
-    content:
-      'Customer requests expedited delivery. Driver Smith confirmed pickup at 0800 tomorrow.',
-    type: 'load',
-    priority: 'high',
-    department: 'dispatch',
-    timestamp: '2024-12-24T10:30:00Z',
-    author: 'Sarah Johnson (DC)',
-    tags: ['urgent', 'chicago', 'miami', 'expedited'],
-  },
-  {
-    id: 'note-2',
-    title: 'Driver Safety Training Reminder',
-    content:
-      'Monthly safety training scheduled for all drivers. New DOT regulations effective January 1st.',
-    type: 'safety',
-    priority: 'normal',
-    department: 'safety',
-    timestamp: '2024-12-24T09:15:00Z',
-    author: 'Mike Roberts (MGR)',
-    tags: ['training', 'safety', 'dot', 'compliance'],
-  },
-  {
-    id: 'note-3',
-    title: 'Broker Commission Update',
-    content:
-      'Q4 commission rates updated in system. New rate structure effective immediately.',
-    type: 'financial',
-    priority: 'critical',
-    department: 'finance',
-    timestamp: '2024-12-24T08:45:00Z',
-    author: 'Amanda Chen (BB)',
-    tags: ['commission', 'rates', 'q4', 'financial'],
-  },
-];
+const sampleNotes: any[] = [];
 
-const sampleNotifications = [
-  {
-    id: 'notif-1',
-    title: 'Load Assignment Alert',
-    message:
-      'New load assigned to Driver Johnson - Load FL-2024-001 requires immediate attention',
-    type: 'assignment',
-    priority: 'urgent',
-    department: 'dispatch',
-    timestamp: '2024-12-24T11:00:00Z',
-    read: false,
-  },
-  {
-    id: 'notif-2',
-    title: 'Document Expiration Warning',
-    message: 'Insurance certificate for ABC Trucking expires in 3 days',
-    type: 'compliance',
-    priority: 'high',
-    department: 'compliance',
-    timestamp: '2024-12-24T10:45:00Z',
-    read: false,
-  },
-  {
-    id: 'notif-3',
-    title: 'Payment Processing Complete',
-    message: 'Invoice #INV-2024-0892 processed successfully - $4,250.00',
-    type: 'financial',
-    priority: 'normal',
-    department: 'finance',
-    timestamp: '2024-12-24T10:30:00Z',
-    read: true,
-  },
-];
+const sampleNotifications: any[] = [];
 
-const sampleCommunications = [
-  {
-    id: 'comm-1',
-    from: 'Sarah Johnson (DC)',
-    to: 'Driver Team',
-    subject: 'Route Optimization Update',
-    message:
-      'New routing algorithm implemented. Expect 12% efficiency improvement.',
-    timestamp: '2024-12-24T09:30:00Z',
-    type: 'broadcast',
-    priority: 'normal',
-  },
-  {
-    id: 'comm-2',
-    from: 'Mike Roberts (MGR)',
-    to: 'All Departments',
-    subject: 'Holiday Schedule Changes',
-    message:
-      'Updated holiday schedule attached. Please review and confirm availability.',
-    timestamp: '2024-12-24T08:15:00Z',
-    type: 'announcement',
-    priority: 'high',
-  },
-];
+const sampleCommunications: any[] = [];
 
 const NoteCard: React.FC<{ note: any; onClick: () => void }> = ({
   note,
@@ -282,9 +190,9 @@ export default function NotesAndCommunicationsHub() {
   const [activeView, setActiveView] = useState<
     'notifications' | 'notes' | 'communications'
   >('notifications');
-  const [notes, setNotes] = useState(sampleNotes);
-  const [notifications, setNotifications] = useState(sampleNotifications);
-  const [communications, setCommunications] = useState(sampleCommunications);
+  const [notes, setNotes] = useState<any[]>(sampleNotes);
+  const [notifications, setNotifications] = useState<any[]>(sampleNotifications);
+  const [communications, setCommunications] = useState<any[]>(sampleCommunications);
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<
     'all' | 'critical' | 'high' | 'normal' | 'low'
@@ -1773,7 +1681,7 @@ export default function NotesAndCommunicationsHub() {
                   onChange={(e) =>
                     handleNoteInputChange('subject', e.target.value)
                   }
-                  placeholder='e.g., Load SHP-003, Driver John Smith'
+                  placeholder='e.g., Load ID, Driver Name'
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -1803,7 +1711,7 @@ export default function NotesAndCommunicationsHub() {
                   onChange={(e) =>
                     handleNoteInputChange('tags', e.target.value)
                   }
-                  placeholder='urgent, delivery, chicago (comma-separated)'
+                  placeholder='tag1, tag2, tag3 (comma-separated)'
                   style={{
                     width: '100%',
                     padding: '8px 12px',
