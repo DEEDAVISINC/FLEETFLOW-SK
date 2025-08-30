@@ -81,157 +81,21 @@ const BrokerOperationsPage: React.FC = () => {
     postedBy: 'Alex Rodriguez',
   });
 
-  // Mock data for broker overview
+  // Production-ready broker overview data (cleared for production)
   const [dashboardData] = useState({
-    activeRFx: 12,
-    pendingResponses: 4,
-    monthlyWinRate: 34.6,
-    monthlyRevenue: 285450,
-    topShippers: [
-      { name: 'Walmart Distribution', loads: 23, revenue: 125000 },
-      { name: 'Home Depot Logistics', loads: 18, revenue: 98500 },
-      { name: 'Amazon Fulfillment', loads: 15, revenue: 156000 },
-    ],
-    recentActivity: [
-      {
-        type: 'RFQ',
-        shipper: 'Walmart Distribution',
-        status: 'Won',
-        amount: 12500,
-        time: '2 hours ago',
-      },
-      {
-        type: 'RFB',
-        shipper: 'Home Depot',
-        status: 'Submitted',
-        amount: 18000,
-        time: '4 hours ago',
-      },
-      {
-        type: 'RFP',
-        shipper: 'Amazon',
-        status: 'In Progress',
-        amount: 25000,
-        time: '6 hours ago',
-      },
-    ],
+    activeRFx: 0,
+    pendingResponses: 0,
+    monthlyWinRate: 0,
+    monthlyRevenue: 0,
+    topShippers: [],
+    recentActivity: [],
   });
 
-  // Initialize mock dispatchers and loads
+  // Initialize production-ready data (cleared for production)
   useEffect(() => {
-    const mockDispatchers: Dispatcher[] = [
-      {
-        id: 'DISP001',
-        name: 'Sarah Johnson',
-        email: 'sarah.johnson@fleetflow.com',
-        phone: '555-0123',
-        region: 'Southeast',
-        activeLoads: 8,
-        rating: 4.8,
-        specialties: ['Refrigerated', 'Expedited', 'High Value'],
-      },
-      {
-        id: 'DISP002',
-        name: 'Mike Chen',
-        email: 'mike.chen@fleetflow.com',
-        phone: '555-0456',
-        region: 'West Coast',
-        activeLoads: 12,
-        rating: 4.6,
-        specialties: ['Flatbed', 'Oversized', 'Construction'],
-      },
-      {
-        id: 'DISP003',
-        name: 'Emily Davis',
-        email: 'emily.davis@fleetflow.com',
-        phone: '555-0789',
-        region: 'Midwest',
-        activeLoads: 6,
-        rating: 4.9,
-        specialties: ['LTL', 'Food Grade', 'Pharmaceutical'],
-      },
-      {
-        id: 'DISP004',
-        name: 'James Wilson',
-        email: 'james.wilson@fleetflow.com',
-        phone: '555-0321',
-        region: 'Northeast',
-        activeLoads: 10,
-        rating: 4.7,
-        specialties: ['Hazmat', 'Temperature Controlled', 'White Glove'],
-      },
-    ];
+    const mockDispatchers: Dispatcher[] = [];
 
-    const mockLoads: LoadPosting[] = [
-      {
-        id: 'LD001',
-        type: 'FTL',
-        origin: { city: 'Atlanta', state: 'GA', zipCode: '30309' },
-        destination: { city: 'Jacksonville', state: 'FL', zipCode: '32202' },
-        pickupDate: '2025-07-11',
-        deliveryDate: '2025-07-12',
-        weight: 45000,
-        equipment: 'Dry Van',
-        rate: 1250,
-        commodity: 'Auto Parts',
-        status: 'posted',
-        postedBy: 'Alex Rodriguez',
-        postedAt: new Date(),
-        shipper: {
-          name: 'John Smith',
-          company: 'AutoParts Distribution',
-          email: 'john@autoparts.com',
-          phone: '555-1234',
-        },
-      },
-      {
-        id: 'LD002',
-        type: 'LTL',
-        origin: { city: 'Chicago', state: 'IL', zipCode: '60601' },
-        destination: { city: 'Detroit', state: 'MI', zipCode: '48201' },
-        pickupDate: '2025-07-12',
-        deliveryDate: '2025-07-13',
-        weight: 8500,
-        pallets: 6,
-        freightClass: 70,
-        rate: 850,
-        commodity: 'Electronics',
-        status: 'assigned',
-        assignedDispatcher: 'Emily Davis',
-        postedBy: 'Alex Rodriguez',
-        postedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        shipper: {
-          name: 'Lisa Johnson',
-          company: 'TechCorp Manufacturing',
-          email: 'lisa@techcorp.com',
-          phone: '555-5678',
-        },
-      },
-      {
-        id: 'LD003',
-        type: 'Specialized',
-        origin: { city: 'Houston', state: 'TX', zipCode: '77002' },
-        destination: { city: 'Phoenix', state: 'AZ', zipCode: '85001' },
-        pickupDate: '2025-07-13',
-        deliveryDate: '2025-07-15',
-        weight: 32000,
-        equipment: 'Refrigerated',
-        rate: 2100,
-        commodity: 'Pharmaceuticals',
-        specialInstructions: 'Temperature must be maintained at 2-8°C',
-        status: 'in-transit',
-        assignedDispatcher: 'Sarah Johnson',
-        assignedCarrier: 'ColdChain Express',
-        postedBy: 'Alex Rodriguez',
-        postedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        shipper: {
-          name: 'Dr. Michael Brown',
-          company: 'PharmaLogistics Inc',
-          email: 'mbrown@pharmalog.com',
-          phone: '555-9012',
-        },
-      },
-    ];
+    const mockLoads: LoadPosting[] = [];
 
     setDispatchers(mockDispatchers);
     setLoads(mockLoads);

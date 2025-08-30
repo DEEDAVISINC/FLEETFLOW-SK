@@ -12,40 +12,14 @@ const BrokerOperationsPage: React.FC = () => {
     email: 'alex.rodriguez@fleetflow.com',
   });
 
-  // Mock data for broker overview
+  // Production-ready broker overview data (cleared for production)
   const [dashboardData] = useState({
-    activeRFx: 12,
-    pendingResponses: 4,
-    monthlyWinRate: 34.6,
-    monthlyRevenue: 285450,
-    topShippers: [
-      { name: 'Walmart Distribution', loads: 23, revenue: 125000 },
-      { name: 'Home Depot Logistics', loads: 18, revenue: 98500 },
-      { name: 'Amazon Fulfillment', loads: 15, revenue: 156000 },
-    ],
-    recentActivity: [
-      {
-        type: 'RFQ',
-        shipper: 'Walmart Distribution',
-        status: 'Won',
-        amount: 12500,
-        time: '2 hours ago',
-      },
-      {
-        type: 'RFB',
-        shipper: 'Home Depot',
-        status: 'Submitted',
-        amount: 18000,
-        time: '4 hours ago',
-      },
-      {
-        type: 'RFP',
-        shipper: 'Amazon',
-        status: 'In Progress',
-        amount: 25000,
-        time: '6 hours ago',
-      },
-    ],
+    activeRFx: 0,
+    pendingResponses: 0,
+    monthlyWinRate: 0,
+    monthlyRevenue: 0,
+    topShippers: [],
+    recentActivity: [],
   });
 
   const formatCurrency = (amount: number) => {
