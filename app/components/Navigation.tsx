@@ -12,6 +12,13 @@ import OrganizationSwitcher from './OrganizationSwitcher';
 export default function ProfessionalNavigation() {
   const pathname = usePathname();
   const isCarrierPlatform = pathname === '/carrier-landing';
+  
+  // Hide navigation on landing page and other marketing pages
+  const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
+  if (hiddenPaths.includes(pathname)) {
+    console.info('🚫 Navigation not hydrated yet, waiting...');
+    return null;
+  }
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
     null

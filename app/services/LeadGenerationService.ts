@@ -166,9 +166,9 @@ export class LeadGenerationService {
       const thomasNetLeads = await this.getOptimizedThomasNetLeads(filters);
       leads.push(...thomasNetLeads);
 
-                  // 7. FMCSA Carrier Intelligence (cost-optimized)
-            const optimizedFmcsaLeads = await this.getOptimizedFMCSALeads(filters);
-            leads.push(...optimizedFmcsaLeads);
+      // 7. FMCSA Carrier Intelligence (cost-optimized)
+      const optimizedFmcsaLeads = await this.getOptimizedFMCSALeads(filters);
+      leads.push(...optimizedFmcsaLeads);
 
       // 8. Apply cost-optimized AI scoring and patterns
       const aiScoredLeads = await this.applyCostOptimizedAIScoring(leads);
