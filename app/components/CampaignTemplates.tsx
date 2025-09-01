@@ -11,22 +11,6 @@ import {
   Target,
   TrendingUp,
   Users,
-  Zap,
-  Building2,
-  Truck,
-  Phone,
-  Heart,
-  Shield,
-  Briefcase,
-  Factory,
-  Package,
-  Stethoscope,
-  ShoppingCart,
-  Coffee,
-  Plane,
-  MapPin,
-  Award,
-  UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -52,7 +36,7 @@ interface CampaignTemplate {
   channels: string[];
   steps: CampaignStep[];
   successMetrics: string[];
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  icon: string;
   color: string;
 }
 
@@ -122,7 +106,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium', // Slightly higher due to phone component
       aiStaff: ['Desiree', 'Cliff', 'Gary', 'Charin'], // Added Charin for phone outreach support
       channels: ['Phone', 'Email', 'LinkedIn'], // Phone primary for immediate crisis response
-      icon: Phone,
+      icon: '📞',
       color: 'bg-red-500',
       steps: [
         {
@@ -217,7 +201,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Gary', 'Desiree', 'Logan', 'Lea D.'], // Added Lea D. for lead nurturing
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Building2,
+      icon: '🏢',
       color: 'bg-green-500',
       steps: [
         {
@@ -308,7 +292,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['LinkedIn', 'Email', 'Phone'],
-      icon: Factory,
+      icon: '🏭',
       color: 'bg-blue-500',
       steps: [
         {
@@ -374,7 +358,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Zap,
+      icon: '⚡',
       color: 'bg-orange-500',
       steps: [
         {
@@ -440,7 +424,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Gary', 'Will'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Mail,
+      icon: '📧',
       color: 'bg-green-500',
       steps: [
         {
@@ -508,7 +492,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Gary', 'Desiree'],
       channels: ['Email', 'LinkedIn', 'Content'],
-      icon: TrendingUp,
+      icon: '📈',
       color: 'bg-purple-500',
       steps: [
         {
@@ -575,7 +559,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Will', 'Gary', 'Resse A. Bell', 'Charin', 'Lea D.'], // Added Charin (phone) + Lea D. (nurturing)
       channels: ['Phone', 'Email', 'LinkedIn', 'In-Person'],
-      icon: Zap,
+      icon: '⚡',
       color: 'bg-indigo-500',
       steps: [
         {
@@ -650,7 +634,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Miles'],
       channels: ['Phone', 'Email', 'LinkedIn'],
-      icon: Truck,
+      icon: '🚛',
       color: 'bg-orange-500',
       steps: [
         {
@@ -720,7 +704,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Miles', 'Logan', 'Desiree', 'Roland'], // Added Roland for carrier relations
       channels: ['LinkedIn', 'Phone', 'Email', 'Industry Events'],
-      icon: Truck,
+      icon: '🚛',
       color: 'bg-blue-600',
       steps: [
         {
@@ -792,7 +776,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Gary', 'Logan', 'Kameelah'],
       channels: ['Email', 'LinkedIn', 'Phone'],
-      icon: Stethoscope,
+      icon: '🏥',
       color: 'bg-red-500',
       steps: [
         {
@@ -861,7 +845,7 @@ export default function CampaignTemplates() {
       difficulty: 'high',
       aiStaff: ['Cliff', 'Desiree', 'Miles'],
       channels: ['Email', 'Phone', 'LinkedIn', 'Industry Events'],
-      icon: ShoppingCart,
+      icon: '🛒',
       color: 'bg-purple-500',
       steps: [
         {
@@ -930,7 +914,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Will'],
       channels: ['Phone', 'Email', 'Local Networking'],
-      icon: MapPin,
+      icon: '📍',
       color: 'bg-green-500',
       steps: [
         {
@@ -999,7 +983,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Drew', 'Cliff', 'Logan'],
       channels: ['LinkedIn', 'Phone', 'Executive Presentations'],
-      icon: Building2,
+      icon: '🏢',
       color: 'bg-blue-600',
       steps: [
         {
@@ -1068,7 +1052,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Shanell', 'Desiree', 'Brook R.'],
       channels: ['Phone', 'Email', 'Personal Outreach'],
-      icon: Target,
+      icon: '🎯',
       color: 'bg-orange-500',
       steps: [
         {
@@ -1137,7 +1121,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Carrie R.', 'Brook R.', 'Will'],
       channels: ['Phone', 'Email', 'Networking Events'],
-      icon: UserPlus,
+      icon: '🤝',
       color: 'bg-indigo-500',
       steps: [
         {
@@ -1206,7 +1190,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Kameelah'],
       channels: ['Phone', 'Email', 'Industry Trade Shows'],
-      icon: Coffee,
+      icon: '🍕',
       color: 'bg-yellow-500',
       steps: [
         {
@@ -1277,7 +1261,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Coffee,
+      icon: '🍕',
       color: 'bg-orange-400',
       steps: [
         {
@@ -1346,7 +1330,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Package,
+      icon: '📦',
       color: 'bg-purple-500',
       steps: [
         {
@@ -1414,7 +1398,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Desiree', 'Brook R.', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn', 'In-Person'],
-      icon: Factory,
+      icon: '🏭',
       color: 'bg-cyan-500',
       steps: [
         {
@@ -1482,7 +1466,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: ShoppingCart,
+      icon: '🛒',
       color: 'bg-pink-500',
       steps: [
         {
@@ -1550,7 +1534,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Building2,
+      icon: '🏢',
       color: 'bg-yellow-600',
       steps: [
         {
@@ -1619,7 +1603,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Desiree', 'Kameelah', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: Stethoscope,
+      icon: '🏥',
       color: 'bg-red-600',
       steps: [
         {
@@ -1687,7 +1671,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Desiree', 'Miles', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: ShoppingCart,
+      icon: '🛒',
       color: 'bg-indigo-500',
       steps: [
         {
@@ -1755,7 +1739,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Shanell', 'Gary', 'Brook R.'],
       channels: ['Email', 'Phone', 'Survey', 'Newsletter'],
-      icon: Award,
+      icon: '💎',
       color: 'bg-teal-500',
       steps: [
         {
@@ -2067,7 +2051,7 @@ export default function CampaignTemplates() {
                     color: 'white',
                   }}
                 >
-                  <template.icon style={{ width: '20px', height: '20px' }} />
+                  <span style={{ fontSize: '1.25rem' }}>{template.icon}</span>
                 </div>
                 <div>
                   <h3
@@ -2499,7 +2483,9 @@ export default function CampaignTemplates() {
                       color: 'white',
                     }}
                   >
-                    <selectedTemplate.icon style={{ width: '24px', height: '24px' }} />
+                    <span style={{ fontSize: '1.5rem' }}>
+                      {selectedTemplate.icon}
+                    </span>
                   </div>
                   <div>
                     <h2
